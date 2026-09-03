@@ -13,11 +13,11 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use hermes_core::{Message, Platform};
+use hermes_core::{Message, Platform, StreamEvent};
 use tokio::sync::mpsc;
 use tracing::{error, warn};
 
-use crate::agent::{AgentClient, AgentEvent};
+use crate::agent::AgentClient;
 use crate::platform::PlatformAdapter;
 
 /// Owns the inbound channel and routes turns to the agent and back out.
@@ -52,7 +52,7 @@ impl Dispatcher {
     }
 
     async fn handle_turn(&self, msg: Message) {
-        let (tx, mut rx) = mpsc::channel::<AgentEvent>(64);
+        let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
 
         // Run the agent turn; it streams events into `tx`.
         let agent = Arc::clone(&self.agent);
@@ -60,23 +60,35 @@ impl Dispatcher {
         let agent_task = tokio::spawn(async move { agent.run_turn(&msg_for_agent, tx).await });
 
         // Accumulate assistant text and deliver it back to the source platform.
-        // Streaming partial deliveries (typing/edits) come later; for now we
-        // buffer the turn and send one reply, which every adapter supports.
+        // Streaming partial deliveries (native drafts, edit-in-place) and tool
+        // chrome come later; for now we buffer the turn's text and Commentary
+        // into one reply, which every adapter supports. The turn ends on a
+        // terminal MessageStop; other event kinds are presentation we don't
+        // render yet.
         let mut reply = String::new();
         while let Some(event) = rx.recv().await {
             match event {
-                AgentEvent::Text(chunk) => reply.push_str(&chunk),
-                AgentEvent::Done => break,
-                AgentEvent::Error(reason) => {
-                    warn!(platform = ?msg.platform, %reason, "agent turn errored");
-                    reply.push_str(&reason);
-                    break;
+                StreamEvent::MessageChunk { text } => reply.push_str(&text),
+                StreamEvent::Commentary { text } => {
+                    if !reply.is_empty() {
+                        reply.push_str("\n\n");
+                    }
+                    reply.push_str(&text);
                 }
+                StreamEvent::MessageStop { final_: true } => break,
+                StreamEvent::MessageStop { final_: false } => reply.push_str("\n\n"),
+                // Tool chrome, hints and notices: not rendered in this pass.
+                StreamEvent::ToolCallChunk { .. }
+                | StreamEvent::ToolCallFinished { .. }
+                | StreamEvent::LongToolHint { .. }
+                | StreamEvent::GatewayNotice { .. } => {}
             }
         }
 
-        if let Err(err) = agent_task.await {
-            error!(?err, "agent task panicked");
+        match agent_task.await {
+            Ok(Err(err)) => warn!(platform = ?msg.platform, %err, "agent turn failed"),
+            Err(err) => error!(?err, "agent task panicked"),
+            Ok(Ok(())) => {}
         }
 
         if reply.is_empty() {

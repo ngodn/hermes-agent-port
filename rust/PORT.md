@@ -60,8 +60,14 @@ last. Next concrete targets, in order:
 - [x] Workspace + toolchain + build
 - [x] Server skeleton (axum) with `/healthz`, `/readyz`, graceful shutdown
 - [x] Env-driven config (`HERMES_GATEWAY_BIND`)
-- [ ] Agent RPC boundary (client to the Python agent, then native)
+- [x] Agent boundary trait (`AgentClient`) + `StreamEvent` contract
+- [x] Strangler bridge: Rust drives the Python agent via
+      `python -m hermes_cli.stream_turn` (JSONL over stdio), tested end to end
+      (agent::tests::empty_prompt_terminates_cleanly)
+- [x] Turn-dispatch loop (`Dispatcher`)
+- [ ] Wire dispatcher + a first platform adapter into main() (needs an adapter)
 - [ ] Platform adapters: Telegram, Discord, Slack, WhatsApp, Signal
+- [ ] Native (non-subprocess) agent client, once run_agent.py is ported
 - [ ] Session lifecycle + delivery ledger
 - [ ] Control socket / drain control
 ```

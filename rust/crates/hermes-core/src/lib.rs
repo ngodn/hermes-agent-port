@@ -8,8 +8,10 @@
 use serde::{Deserialize, Serialize};
 
 pub mod error;
+pub mod stream;
 
 pub use error::{Error, Result};
+pub use stream::StreamEvent;
 
 /// A messaging platform Hermes can talk on. Mirrors the Python
 /// `gateway.platform_registry` set. Kept as an enum so routing is exhaustive.
