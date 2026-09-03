@@ -6,6 +6,7 @@
 
 mod config;
 mod health;
+mod platform;
 
 use axum::routing::get;
 use axum::Router;

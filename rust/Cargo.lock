@@ -173,6 +173,7 @@ name = "hermes-gateway"
 version = "0.0.1"
 dependencies = [
  "anyhow",
+ "async-trait",
  "axum",
  "hermes-core",
  "serde",

@@ -1,0 +1,22 @@
+You are a code-analysis assistant helping plan a Python-to-Rust port. This is
+READ-ONLY analysis. Do NOT modify any existing file in the repository. Write
+your entire output to exactly one file:
+rust/analysis/gateway-map.md
+
+Task: Analyze the Python package in the `gateway/` directory of this repo.
+
+For every `.py` file directly inside `gateway/` (not subdirectories), determine:
+1. Its line count.
+2. One sentence on what it does (from its docstring / top-of-file comment).
+3. Which OTHER `gateway/*` modules it imports (intra-package deps only).
+4. Which modules OUTSIDE gateway it imports (list the top-level module names
+   only, e.g. `hermes_state`, `agent.secret_scope`, `httpx`).
+
+Then produce a ranked "port order" list: the modules that are LEAF nodes (few or
+no intra-gateway imports AND few external-repo imports) ranked first as the
+safest to port to Rust early, the deeply-coupled hub modules last. Put the
+ranked list in a markdown table with columns: Rank | Module | LOC | intra-deps
+count | external-deps count | why.
+
+Be accurate and terse. Base everything on the actual import statements in the
+files. Do not guess. Output only to the file path given above.
