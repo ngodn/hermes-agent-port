@@ -120,7 +120,10 @@ impl TelegramAdapter {
         if envelope.get("ok").and_then(Value::as_bool) != Some(true) {
             return Err(Error::Other(format!(
                 "telegram getUpdates not ok: {}",
-                envelope.get("description").and_then(Value::as_str).unwrap_or("?")
+                envelope
+                    .get("description")
+                    .and_then(Value::as_str)
+                    .unwrap_or("?")
             )));
         }
         Ok(envelope
@@ -188,7 +191,10 @@ impl PlatformAdapter for TelegramAdapter {
         if envelope.get("ok").and_then(Value::as_bool) != Some(true) {
             return Err(Error::Other(format!(
                 "telegram sendMessage not ok: {}",
-                envelope.get("description").and_then(Value::as_str).unwrap_or("?")
+                envelope
+                    .get("description")
+                    .and_then(Value::as_str)
+                    .unwrap_or("?")
             )));
         }
         Ok(())

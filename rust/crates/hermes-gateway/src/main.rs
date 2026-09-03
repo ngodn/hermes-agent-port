@@ -8,20 +8,20 @@ mod agent;
 mod config;
 mod config_file;
 mod discord;
-mod display_config;
 mod dispatch;
+mod display_config;
 mod health;
 mod message;
 mod platform;
 mod response_filters;
 mod session_stall;
+mod session_state;
 mod slack;
 mod slash;
 mod slash_access;
 mod telegram;
-mod whatsapp_identity;
-mod session_state;
 mod turn_lease;
+mod whatsapp_identity;
 
 use std::sync::Arc;
 
@@ -90,14 +90,19 @@ async fn main() -> anyhow::Result<()> {
 
     // Strangler step: drive the existing Python agent as a subprocess. Swapped
     // for a native client once run_agent.py is ported.
-    let mut agent = SubprocessAgentClient::new(config.agent_python.clone(), config.agent_cwd.clone());
+    let mut agent =
+        SubprocessAgentClient::new(config.agent_python.clone(), config.agent_cwd.clone());
     if let Some(model) = &config.agent_model {
         agent = agent.with_model(model.clone());
     }
     // Load the user config (config.yaml) once at startup; consumers read it
     // from shared state. Absent/broken config degrades to defaults.
     let user_config = Arc::new(config_file::load_config());
-    if user_config.as_object().map(|m| m.is_empty()).unwrap_or(true) {
+    if user_config
+        .as_object()
+        .map(|m| m.is_empty())
+        .unwrap_or(true)
+    {
         tracing::info!(path = %config_file::config_path().display(), "no user config found; using defaults");
     } else {
         tracing::info!(path = %config_file::config_path().display(), "loaded user config");
@@ -122,23 +127,43 @@ async fn main() -> anyhow::Result<()> {
     // the same AgentClient as /message.
     if let Some(token) = config.telegram_token.clone() {
         match telegram::TelegramAdapter::new(token) {
-            Ok(tg) => start_push_path(hermes_core::Platform::Telegram, Arc::new(tg), &state, shutdown.clone()),
+            Ok(tg) => start_push_path(
+                hermes_core::Platform::Telegram,
+                Arc::new(tg),
+                &state,
+                shutdown.clone(),
+            ),
             Err(err) => tracing::error!(%err, "telegram adapter init failed"),
         }
     }
     if let Some(token) = config.discord_token.clone() {
         match discord::DiscordAdapter::new(token) {
-            Ok(dc) => start_push_path(hermes_core::Platform::Discord, Arc::new(dc), &state, shutdown.clone()),
+            Ok(dc) => start_push_path(
+                hermes_core::Platform::Discord,
+                Arc::new(dc),
+                &state,
+                shutdown.clone(),
+            ),
             Err(err) => tracing::error!(%err, "discord adapter init failed"),
         }
     }
-    match (config.slack_app_token.clone(), config.slack_bot_token.clone()) {
+    match (
+        config.slack_app_token.clone(),
+        config.slack_bot_token.clone(),
+    ) {
         (Some(app), Some(bot)) => match slack::SlackAdapter::new(app, bot) {
-            Ok(sl) => start_push_path(hermes_core::Platform::Slack, Arc::new(sl), &state, shutdown.clone()),
+            Ok(sl) => start_push_path(
+                hermes_core::Platform::Slack,
+                Arc::new(sl),
+                &state,
+                shutdown.clone(),
+            ),
             Err(err) => tracing::error!(%err, "slack adapter init failed"),
         },
         (Some(_), None) | (None, Some(_)) => {
-            tracing::warn!("slack needs both HERMES_SLACK_APP_TOKEN and HERMES_SLACK_BOT_TOKEN; skipping")
+            tracing::warn!(
+                "slack needs both HERMES_SLACK_APP_TOKEN and HERMES_SLACK_BOT_TOKEN; skipping"
+            )
         }
         (None, None) => {}
     }

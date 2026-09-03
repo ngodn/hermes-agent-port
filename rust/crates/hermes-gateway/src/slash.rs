@@ -169,7 +169,10 @@ mod tests {
     #[test]
     fn non_slash_passes_through() {
         let cfg = json!({});
-        assert_eq!(evaluate(&cfg, &msg("just chatting", "u", "private")), SlashDecision::NotSlash);
+        assert_eq!(
+            evaluate(&cfg, &msg("just chatting", "u", "private")),
+            SlashDecision::NotSlash
+        );
     }
 
     #[test]
@@ -178,7 +181,9 @@ mod tests {
         let cfg = json!({"platforms": {"telegram": {"extra": {}}}});
         assert_eq!(
             evaluate(&cfg, &msg("/deploy", "u", "private")),
-            SlashDecision::Allowed { command: "deploy".into() }
+            SlashDecision::Allowed {
+                command: "deploy".into()
+            }
         );
     }
 
@@ -193,22 +198,30 @@ mod tests {
         // Non-admin running an unlisted command is denied.
         assert_eq!(
             evaluate(&cfg, &msg("/deploy", "111", "private")),
-            SlashDecision::Denied { command: "deploy".into() }
+            SlashDecision::Denied {
+                command: "deploy".into()
+            }
         );
         // Allowlisted command is permitted.
         assert_eq!(
             evaluate(&cfg, &msg("/status", "111", "private")),
-            SlashDecision::Allowed { command: "status".into() }
+            SlashDecision::Allowed {
+                command: "status".into()
+            }
         );
         // The always-allowed floor (help/whoami) is permitted for non-admins.
         assert_eq!(
             evaluate(&cfg, &msg("/help", "111", "private")),
-            SlashDecision::Allowed { command: "help".into() }
+            SlashDecision::Allowed {
+                command: "help".into()
+            }
         );
         // Admin runs anything.
         assert_eq!(
             evaluate(&cfg, &msg("/deploy", "999", "private")),
-            SlashDecision::Allowed { command: "deploy".into() }
+            SlashDecision::Allowed {
+                command: "deploy".into()
+            }
         );
     }
 

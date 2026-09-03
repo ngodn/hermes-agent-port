@@ -41,8 +41,12 @@ pub trait AgentClient: Send + Sync {
 #[derive(Debug, Deserialize)]
 #[serde(tag = "event", content = "data", rename_all = "snake_case")]
 enum BridgeEvent {
-    TextDelta { text: String },
-    ThinkingDelta { text: String },
+    TextDelta {
+        text: String,
+    },
+    ThinkingDelta {
+        text: String,
+    },
     ToolStart {
         tool: String,
         #[serde(default)]
@@ -61,7 +65,9 @@ enum BridgeEvent {
         #[serde(default)]
         final_response: String,
     },
-    Error { message: String },
+    Error {
+        message: String,
+    },
 }
 
 fn default_true() -> bool {
@@ -245,7 +251,12 @@ mod tests {
     #[test]
     fn thinking_is_dropped() {
         let mut streamed = false;
-        let out = emit(BridgeEvent::ThinkingDelta { text: "reasoning".into() }, &mut streamed);
+        let out = emit(
+            BridgeEvent::ThinkingDelta {
+                text: "reasoning".into(),
+            },
+            &mut streamed,
+        );
         assert!(out.is_empty());
         assert!(!streamed);
     }
@@ -254,12 +265,21 @@ mod tests {
     fn tool_events_map_through() {
         let mut streamed = false;
         let start = emit(
-            BridgeEvent::ToolStart { tool: "bash".into(), args: None },
+            BridgeEvent::ToolStart {
+                tool: "bash".into(),
+                args: None,
+            },
             &mut streamed,
         );
-        assert!(matches!(&start[..], [StreamEvent::ToolCallChunk { tool_name, .. }] if tool_name == "bash"));
+        assert!(
+            matches!(&start[..], [StreamEvent::ToolCallChunk { tool_name, .. }] if tool_name == "bash")
+        );
         let done = emit(
-            BridgeEvent::ToolComplete { tool: "bash".into(), ok: false, duration: 1.5 },
+            BridgeEvent::ToolComplete {
+                tool: "bash".into(),
+                ok: false,
+                duration: 1.5,
+            },
             &mut streamed,
         );
         assert!(matches!(
@@ -273,7 +293,10 @@ mod tests {
     fn done_without_deltas_delivers_final_then_stop() {
         let mut streamed = false;
         let out = emit(
-            BridgeEvent::Done { completed: true, final_response: "answer".into() },
+            BridgeEvent::Done {
+                completed: true,
+                final_response: "answer".into(),
+            },
             &mut streamed,
         );
         assert!(matches!(
@@ -288,16 +311,27 @@ mod tests {
         // Text already streamed: don't re-send final_response, just stop.
         let mut streamed = true;
         let out = emit(
-            BridgeEvent::Done { completed: true, final_response: "answer".into() },
+            BridgeEvent::Done {
+                completed: true,
+                final_response: "answer".into(),
+            },
             &mut streamed,
         );
-        assert!(matches!(&out[..], [StreamEvent::MessageStop { final_: true }]));
+        assert!(matches!(
+            &out[..],
+            [StreamEvent::MessageStop { final_: true }]
+        ));
     }
 
     #[test]
     fn error_event_is_fatal() {
         let mut streamed = false;
-        match map_bridge_event(BridgeEvent::Error { message: "boom".into() }, &mut streamed) {
+        match map_bridge_event(
+            BridgeEvent::Error {
+                message: "boom".into(),
+            },
+            &mut streamed,
+        ) {
             Mapped::Error(m) => assert_eq!(m, "boom"),
             Mapped::Emit(_) => panic!("expected error"),
         }

@@ -74,9 +74,8 @@ fn is_bare_phone(candidate: &str) -> bool {
     if s.is_empty() {
         return false;
     }
-    s.chars().all(|c| {
-        c.is_ascii_digit() || c.is_whitespace() || matches!(c, '(' | ')' | '.' | '-')
-    })
+    s.chars()
+        .all(|c| c.is_ascii_digit() || c.is_whitespace() || matches!(c, '(' | ')' | '.' | '-'))
 }
 
 /// Normalize an outbound WhatsApp target to a bridge-safe JID.
@@ -337,14 +336,8 @@ mod tests {
             normalize_whatsapp_identifier("60123456789@lid"),
             "60123456789"
         );
-        assert_eq!(
-            normalize_whatsapp_identifier("+60123456789"),
-            "60123456789"
-        );
-        assert_eq!(
-            normalize_whatsapp_identifier("60123456789"),
-            "60123456789"
-        );
+        assert_eq!(normalize_whatsapp_identifier("+60123456789"), "60123456789");
+        assert_eq!(normalize_whatsapp_identifier("60123456789"), "60123456789");
         assert_eq!(
             normalize_whatsapp_identifier("  +60123456789:47@s.whatsapp.net  "),
             "60123456789"
@@ -371,10 +364,7 @@ mod tests {
             to_whatsapp_jid("+50766715226"),
             "50766715226@s.whatsapp.net"
         );
-        assert_eq!(
-            to_whatsapp_jid("50766715226"),
-            "50766715226@s.whatsapp.net"
-        );
+        assert_eq!(to_whatsapp_jid("50766715226"), "50766715226@s.whatsapp.net");
         assert_eq!(
             to_whatsapp_jid("+1 (555) 123-4567"),
             "15551234567@s.whatsapp.net"
@@ -455,8 +445,7 @@ mod tests {
         )
         .unwrap();
 
-        let aliases_from_lid =
-            expand_whatsapp_aliases_in_dir(&format!("{lid}@lid"), &temp_dir);
+        let aliases_from_lid = expand_whatsapp_aliases_in_dir(&format!("{lid}@lid"), &temp_dir);
         assert_eq!(
             aliases_from_lid,
             HashSet::from([lid.to_string(), phone.to_string()])

@@ -44,7 +44,9 @@ impl Config {
         let agent_cwd = std::env::var("HERMES_AGENT_CWD")
             .map(PathBuf::from)
             .unwrap_or_else(|_| PathBuf::from("."));
-        let agent_model = std::env::var("HERMES_AGENT_MODEL").ok().filter(|s| !s.is_empty());
+        let agent_model = std::env::var("HERMES_AGENT_MODEL")
+            .ok()
+            .filter(|s| !s.is_empty());
         let telegram_token = std::env::var("HERMES_TELEGRAM_TOKEN")
             .ok()
             .filter(|s| !s.is_empty());

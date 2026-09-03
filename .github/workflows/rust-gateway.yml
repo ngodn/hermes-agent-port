@@ -1,0 +1,46 @@
+name: rust-gateway
+
+# Build, test, and lint the Rust gateway rewrite. Scoped to rust/ so it only
+# runs when that tree changes.
+on:
+  push:
+    paths:
+      - "rust/**"
+      - ".github/workflows/rust-gateway.yml"
+  pull_request:
+    paths:
+      - "rust/**"
+      - ".github/workflows/rust-gateway.yml"
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (stable) with clippy + rustfmt
+        run: |
+          rustup toolchain install stable --profile minimal --component clippy,rustfmt
+          rustup default stable
+
+      - name: Cache cargo + target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('rust/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Format check
+        run: cargo fmt --all --check
+
+      - name: Clippy (deny warnings)
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Test
+        run: cargo test --all

@@ -159,7 +159,11 @@ gateway:
         let path = temp_path("real");
         {
             let mut f = std::fs::File::create(&path).unwrap();
-            writeln!(f, "gateway:\n  media_delivery_allow_dirs:\n    - /a\n    - /b").unwrap();
+            writeln!(
+                f,
+                "gateway:\n  media_delivery_allow_dirs:\n    - /a\n    - /b"
+            )
+            .unwrap();
         }
         let v = load_config_from(&path);
         assert_eq!(

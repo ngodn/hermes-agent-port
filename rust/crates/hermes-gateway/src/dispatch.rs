@@ -189,7 +189,11 @@ mod tests {
     impl crate::agent::AgentClient for StubAgent {
         async fn run_turn(&self, _msg: &Message, tx: mpsc::Sender<StreamEvent>) -> Result<()> {
             self.calls.fetch_add(1, Ordering::SeqCst);
-            let _ = tx.send(StreamEvent::MessageChunk { text: self.reply.clone() }).await;
+            let _ = tx
+                .send(StreamEvent::MessageChunk {
+                    text: self.reply.clone(),
+                })
+                .await;
             let _ = tx.send(StreamEvent::MessageStop { final_: true }).await;
             Ok(())
         }
@@ -237,10 +241,7 @@ mod tests {
             calls: calls.clone(),
         });
         let mut d = Dispatcher::new(agent, Arc::new(cfg));
-        d.register_adapter(
-            Platform::Cli,
-            Arc::new(StubAdapter { sent: sent.clone() }),
-        );
+        d.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
         (d, calls, sent)
     }
 

@@ -173,7 +173,9 @@ impl SlackAdapter {
                     }
                 }
                 // Slack asks us to reconnect (URL refresh, server rotation).
-                "disconnect" => return Err(Error::Other("slack: server requested disconnect".into())),
+                "disconnect" => {
+                    return Err(Error::Other("slack: server requested disconnect".into()))
+                }
                 _ => {} // "hello" and others: nothing to do.
             }
         }

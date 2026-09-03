@@ -169,8 +169,9 @@ impl DiscordAdapter {
 
     async fn read_loop(
         &self,
-        read: &mut (impl StreamExt<Item = std::result::Result<WsMessage, tokio_tungstenite::tungstenite::Error>>
-                  + Unpin),
+        read: &mut (impl StreamExt<
+            Item = std::result::Result<WsMessage, tokio_tungstenite::tungstenite::Error>,
+        > + Unpin),
         last_seq: &AtomicI64,
         out_tx: &mpsc::Sender<WsMessage>,
         inbound: &mpsc::Sender<Message>,

@@ -429,19 +429,25 @@ pub fn policy_for_source_value(
     };
 
     let source_obj = source.as_object();
-    let platform = source_obj.and_then(|s| s.get("platform")).and_then(|p| match p {
-        Value::String(s) => Some(s.clone()),
-        _ => None,
-    });
-    let chat_type = source_obj.and_then(|s| s.get("chat_type")).and_then(|c| match c {
-        Value::String(s) => Some(s.clone()),
-        _ => None,
-    });
-    let user_id = source_obj.and_then(|s| s.get("user_id")).and_then(|u| match u {
-        Value::String(s) => Some(s.clone()),
-        Value::Number(n) => Some(n.to_string()),
-        _ => None,
-    });
+    let platform = source_obj
+        .and_then(|s| s.get("platform"))
+        .and_then(|p| match p {
+            Value::String(s) => Some(s.clone()),
+            _ => None,
+        });
+    let chat_type = source_obj
+        .and_then(|s| s.get("chat_type"))
+        .and_then(|c| match c {
+            Value::String(s) => Some(s.clone()),
+            _ => None,
+        });
+    let user_id = source_obj
+        .and_then(|s| s.get("user_id"))
+        .and_then(|u| match u {
+            Value::String(s) => Some(s.clone()),
+            Value::Number(n) => Some(n.to_string()),
+            _ => None,
+        });
 
     let src = SessionSource {
         platform,

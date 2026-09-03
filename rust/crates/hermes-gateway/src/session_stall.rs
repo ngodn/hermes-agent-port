@@ -54,9 +54,7 @@ pub fn should_clear_session_stall_notification(
 /// User-facing stall warning (ASCII minutes; matches issue #72016 copy).
 pub fn format_session_stall_notification(idle_seconds: f64) -> String {
     let mins = ((idle_seconds / 60.0).floor() as i64).max(1);
-    format!(
-        "⚠️ Agent session appears stalled (last activity {mins} min ago). Try /new to reset."
-    )
+    format!("⚠️ Agent session appears stalled (last activity {mins} min ago). Try /new to reset.")
 }
 
 /// Idle seconds from a shared activity snapshot only (#72039 contract).
@@ -126,17 +124,44 @@ mod tests {
 
     #[test]
     fn emit_requires_pending_stale_and_unnotified() {
-        assert!(should_emit_session_stall_notification(60.0, Some(90.0), true, false));
+        assert!(should_emit_session_stall_notification(
+            60.0,
+            Some(90.0),
+            true,
+            false
+        ));
         // not stale yet
-        assert!(!should_emit_session_stall_notification(60.0, Some(30.0), true, false));
+        assert!(!should_emit_session_stall_notification(
+            60.0,
+            Some(30.0),
+            true,
+            false
+        ));
         // no pending inbound
-        assert!(!should_emit_session_stall_notification(60.0, Some(90.0), false, false));
+        assert!(!should_emit_session_stall_notification(
+            60.0,
+            Some(90.0),
+            false,
+            false
+        ));
         // already notified
-        assert!(!should_emit_session_stall_notification(60.0, Some(90.0), true, true));
+        assert!(!should_emit_session_stall_notification(
+            60.0,
+            Some(90.0),
+            true,
+            true
+        ));
         // unknown idle
-        assert!(!should_emit_session_stall_notification(60.0, None, true, false));
+        assert!(!should_emit_session_stall_notification(
+            60.0, None, true, false
+        ));
         // disabled
-        assert!(!should_emit_session_stall_notification(0.0, Some(90.0), true, false));
+        assert!(!should_emit_session_stall_notification(
+            0.0,
+            Some(90.0),
+            true,
+            false
+        ));
     }
 
     #[test]
@@ -144,13 +169,25 @@ mod tests {
         // episode ended: no pending inbound
         assert!(should_clear_session_stall_notification(60.0, None, false));
         // disabled clears
-        assert!(should_clear_session_stall_notification(0.0, Some(90.0), true));
+        assert!(should_clear_session_stall_notification(
+            0.0,
+            Some(90.0),
+            true
+        ));
         // unknown idle while pending: hold the latch
         assert!(!should_clear_session_stall_notification(60.0, None, true));
         // recovered
-        assert!(should_clear_session_stall_notification(60.0, Some(30.0), true));
+        assert!(should_clear_session_stall_notification(
+            60.0,
+            Some(30.0),
+            true
+        ));
         // still stalled
-        assert!(!should_clear_session_stall_notification(60.0, Some(90.0), true));
+        assert!(!should_clear_session_stall_notification(
+            60.0,
+            Some(90.0),
+            true
+        ));
     }
 
     #[test]
@@ -163,13 +200,22 @@ mod tests {
     #[test]
     fn idle_prefers_seconds_since_activity() {
         let a = json!({"seconds_since_activity": 42.5});
-        assert_eq!(resolve_session_idle_seconds_from_activity(Some(&a), None), Some(42.5));
+        assert_eq!(
+            resolve_session_idle_seconds_from_activity(Some(&a), None),
+            Some(42.5)
+        );
         // negative clamps to zero
         let a = json!({"seconds_since_activity": -5});
-        assert_eq!(resolve_session_idle_seconds_from_activity(Some(&a), None), Some(0.0));
+        assert_eq!(
+            resolve_session_idle_seconds_from_activity(Some(&a), None),
+            Some(0.0)
+        );
         // numeric string is accepted
         let a = json!({"seconds_since_activity": "10"});
-        assert_eq!(resolve_session_idle_seconds_from_activity(Some(&a), None), Some(10.0));
+        assert_eq!(
+            resolve_session_idle_seconds_from_activity(Some(&a), None),
+            Some(10.0)
+        );
     }
 
     #[test]
@@ -200,6 +246,9 @@ mod tests {
         );
         // present bool timestamp yields None with no fallback
         let a = json!({"last_activity_at": false, "last_activity_ts": 100.0});
-        assert_eq!(resolve_session_idle_seconds_from_activity(Some(&a), Some(200.0)), None);
+        assert_eq!(
+            resolve_session_idle_seconds_from_activity(Some(&a), Some(200.0)),
+            None
+        );
     }
 }

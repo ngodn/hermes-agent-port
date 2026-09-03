@@ -566,7 +566,9 @@ pub fn resolve_display_setting(
 
         // 1b. Backward compatibility: display.tool_progress_overrides.<platform>
         if setting == "tool_progress" {
-            if let Some(legacy) = display.get("tool_progress_overrides").and_then(|v| v.as_object())
+            if let Some(legacy) = display
+                .get("tool_progress_overrides")
+                .and_then(|v| v.as_object())
             {
                 if let Some(val) = legacy.get(platform_key) {
                     if !val.is_null() {
@@ -624,12 +626,8 @@ impl ResolvedDisplayConfig {
         let tp_val = resolve_display_setting(user_config, platform_key, "tool_progress", None);
         let tool_progress = ToolProgress::from_value(&tp_val);
 
-        let tpg_val = resolve_display_setting(
-            user_config,
-            platform_key,
-            "tool_progress_grouping",
-            None,
-        );
+        let tpg_val =
+            resolve_display_setting(user_config, platform_key, "tool_progress_grouping", None);
         let tool_progress_grouping = ToolProgressGrouping::from_value(&tpg_val);
 
         let sr_val = resolve_display_setting(user_config, platform_key, "show_reasoning", None);
@@ -664,12 +662,8 @@ impl ResolvedDisplayConfig {
         let bad_val = resolve_display_setting(user_config, platform_key, "busy_ack_detail", None);
         let busy_ack_detail = bad_val.as_bool().unwrap_or(true);
 
-        let bsae_val = resolve_display_setting(
-            user_config,
-            platform_key,
-            "busy_steer_ack_enabled",
-            None,
-        );
+        let bsae_val =
+            resolve_display_setting(user_config, platform_key, "busy_steer_ack_enabled", None);
         let busy_steer_ack_enabled = bsae_val.as_bool().unwrap_or(true);
 
         let cp_val = resolve_display_setting(user_config, platform_key, "cleanup_progress", None);
@@ -1142,13 +1136,19 @@ mod tests {
         let empty = json!({});
         let telegram = ResolvedDisplayConfig::resolve(&empty, "telegram");
         assert_eq!(telegram.tool_progress, ToolProgress::Off);
-        assert_eq!(telegram.tool_progress_grouping, ToolProgressGrouping::Accumulate);
+        assert_eq!(
+            telegram.tool_progress_grouping,
+            ToolProgressGrouping::Accumulate
+        );
         assert!(!telegram.show_reasoning);
         assert_eq!(telegram.reasoning_style, ReasoningStyle::Code);
         assert_eq!(telegram.tool_preview_length, 40);
         assert_eq!(telegram.streaming, None);
         assert!(telegram.interim_assistant_messages);
-        assert_eq!(telegram.long_running_notifications, LongRunningNotifications::On);
+        assert_eq!(
+            telegram.long_running_notifications,
+            LongRunningNotifications::On
+        );
         assert!(!telegram.busy_ack_detail);
         assert!(telegram.busy_steer_ack_enabled);
         assert!(!telegram.cleanup_progress);

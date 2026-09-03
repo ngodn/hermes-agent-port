@@ -52,7 +52,8 @@ fn strip_edge_silence_punctuation(text: &str) -> String {
     let chars: Vec<char> = text.chars().collect();
     let mut start = 0usize;
     let mut end = chars.len();
-    while start < end && chars[start] != '[' && chars[start] != ']' && is_punctuation(chars[start]) {
+    while start < end && chars[start] != '[' && chars[start] != ']' && is_punctuation(chars[start])
+    {
         start += 1;
     }
     while end > start
@@ -62,7 +63,11 @@ fn strip_edge_silence_punctuation(text: &str) -> String {
     {
         end -= 1;
     }
-    chars[start..end].iter().collect::<String>().trim().to_string()
+    chars[start..end]
+        .iter()
+        .collect::<String>()
+        .trim()
+        .to_string()
 }
 
 fn canonical_silence_candidates(text: &str) -> Vec<String> {
@@ -138,12 +143,14 @@ pub fn is_partial_silence_marker(text: &str) -> bool {
     if stripped.is_empty() || stripped.chars().count() > 64 {
         return false;
     }
-    canonical_silence_candidates(stripped).iter().any(|candidate| {
-        !candidate.is_empty()
-            && LIVE_GATEWAY_SILENT_MARKERS
-                .iter()
-                .any(|marker| marker.starts_with(candidate.as_str()))
-    })
+    canonical_silence_candidates(stripped)
+        .iter()
+        .any(|candidate| {
+            !candidate.is_empty()
+                && LIVE_GATEWAY_SILENT_MARKERS
+                    .iter()
+                    .any(|marker| marker.starts_with(candidate.as_str()))
+        })
 }
 
 /// Python truthiness for the `failed` flag (bool, non-zero number, non-empty
@@ -190,9 +197,15 @@ mod tests {
 
     #[test]
     fn autonomous_is_looser() {
-        assert!(is_autonomous_silence_response("[SILENT] No changes detected"));
-        assert!(is_autonomous_silence_response("2 deals filtered\n\n[SILENT]"));
-        assert!(is_autonomous_silence_response("[SILENT]\nleading note ignored"));
+        assert!(is_autonomous_silence_response(
+            "[SILENT] No changes detected"
+        ));
+        assert!(is_autonomous_silence_response(
+            "2 deals filtered\n\n[SILENT]"
+        ));
+        assert!(is_autonomous_silence_response(
+            "[SILENT]\nleading note ignored"
+        ));
         assert!(!is_autonomous_silence_response("Silent retry succeeded"));
     }
 

@@ -47,7 +47,10 @@ pub async fn get_display_config(
     State(state): State<AppState>,
     Path(platform): Path<String>,
 ) -> Json<ResolvedDisplayConfig> {
-    Json(ResolvedDisplayConfig::resolve(&state.user_config, &platform))
+    Json(ResolvedDisplayConfig::resolve(
+        &state.user_config,
+        &platform,
+    ))
 }
 
 /// Run one turn synchronously and return the assembled reply.
