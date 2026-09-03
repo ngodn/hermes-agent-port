@@ -68,6 +68,57 @@ fn default_true() -> bool {
     true
 }
 
+/// Result of mapping one bridge event: stream events to forward, or a fatal
+/// turn error.
+enum Mapped {
+    Emit(Vec<StreamEvent>),
+    Error(String),
+}
+
+/// Map one JSONL bridge event onto stream events. `streamed_text` tracks whether
+/// any assistant text has been forwarded, so a turn that only carried a
+/// `final_response` (no deltas) still delivers that text on `done`. Pure aside
+/// from flipping `streamed_text`, so it is unit-tested directly.
+fn map_bridge_event(event: BridgeEvent, streamed_text: &mut bool) -> Mapped {
+    match event {
+        BridgeEvent::TextDelta { text } => {
+            *streamed_text = true;
+            Mapped::Emit(vec![StreamEvent::MessageChunk { text }])
+        }
+        // Reasoning is presentation-only and filtered from history; the stream
+        // contract keeps it out of MessageChunk. Drop for now.
+        BridgeEvent::ThinkingDelta { .. } => Mapped::Emit(vec![]),
+        BridgeEvent::ToolStart { tool, args } => Mapped::Emit(vec![StreamEvent::ToolCallChunk {
+            tool_name: tool,
+            preview: None,
+            args,
+            index: 0,
+        }]),
+        BridgeEvent::ToolComplete { tool, ok, duration } => {
+            Mapped::Emit(vec![StreamEvent::ToolCallFinished {
+                tool_name: tool,
+                duration,
+                ok,
+                index: 0,
+            }])
+        }
+        BridgeEvent::Done {
+            completed: _,
+            final_response,
+        } => {
+            let mut out = Vec::new();
+            if !*streamed_text && !final_response.is_empty() {
+                out.push(StreamEvent::MessageChunk {
+                    text: final_response,
+                });
+            }
+            out.push(StreamEvent::MessageStop { final_: true });
+            Mapped::Emit(out)
+        }
+        BridgeEvent::Error { message } => Mapped::Error(message),
+    }
+}
+
 /// Strangler-step client: runs the existing Python agent as a subprocess via
 /// the `hermes_cli.stream_turn` bridge shim.
 pub struct SubprocessAgentClient {
@@ -144,50 +195,13 @@ impl AgentClient for SubprocessAgentClient {
                 }
             };
 
-            match event {
-                BridgeEvent::TextDelta { text } => {
-                    streamed_text = true;
-                    let _ = events.send(StreamEvent::MessageChunk { text }).await;
-                }
-                // Reasoning is presentation-only and filtered from history; the
-                // stream contract keeps it out of MessageChunk. Drop for now.
-                BridgeEvent::ThinkingDelta { .. } => {}
-                BridgeEvent::ToolStart { tool, args } => {
-                    let _ = events
-                        .send(StreamEvent::ToolCallChunk {
-                            tool_name: tool,
-                            preview: None,
-                            args,
-                            index: 0,
-                        })
-                        .await;
-                }
-                BridgeEvent::ToolComplete { tool, ok, duration } => {
-                    let _ = events
-                        .send(StreamEvent::ToolCallFinished {
-                            tool_name: tool,
-                            duration,
-                            ok,
-                            index: 0,
-                        })
-                        .await;
-                }
-                BridgeEvent::Done {
-                    completed: _,
-                    final_response,
-                } => {
-                    if !streamed_text && !final_response.is_empty() {
-                        let _ = events
-                            .send(StreamEvent::MessageChunk {
-                                text: final_response,
-                            })
-                            .await;
+            match map_bridge_event(event, &mut streamed_text) {
+                Mapped::Emit(events_out) => {
+                    for ev in events_out {
+                        let _ = events.send(ev).await;
                     }
-                    let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
                 }
-                BridgeEvent::Error { message } => {
-                    turn_error = Some(message);
-                }
+                Mapped::Error(message) => turn_error = Some(message),
             }
         }
 
@@ -212,6 +226,82 @@ impl AgentClient for SubprocessAgentClient {
 mod tests {
     use super::*;
     use hermes_core::Platform;
+
+    fn emit(event: BridgeEvent, streamed: &mut bool) -> Vec<StreamEvent> {
+        match map_bridge_event(event, streamed) {
+            Mapped::Emit(v) => v,
+            Mapped::Error(m) => panic!("unexpected error: {m}"),
+        }
+    }
+
+    #[test]
+    fn text_delta_maps_to_chunk_and_marks_streamed() {
+        let mut streamed = false;
+        let out = emit(BridgeEvent::TextDelta { text: "hi".into() }, &mut streamed);
+        assert!(streamed);
+        assert!(matches!(&out[..], [StreamEvent::MessageChunk { text }] if text == "hi"));
+    }
+
+    #[test]
+    fn thinking_is_dropped() {
+        let mut streamed = false;
+        let out = emit(BridgeEvent::ThinkingDelta { text: "reasoning".into() }, &mut streamed);
+        assert!(out.is_empty());
+        assert!(!streamed);
+    }
+
+    #[test]
+    fn tool_events_map_through() {
+        let mut streamed = false;
+        let start = emit(
+            BridgeEvent::ToolStart { tool: "bash".into(), args: None },
+            &mut streamed,
+        );
+        assert!(matches!(&start[..], [StreamEvent::ToolCallChunk { tool_name, .. }] if tool_name == "bash"));
+        let done = emit(
+            BridgeEvent::ToolComplete { tool: "bash".into(), ok: false, duration: 1.5 },
+            &mut streamed,
+        );
+        assert!(matches!(
+            &done[..],
+            [StreamEvent::ToolCallFinished { tool_name, ok: false, duration, .. }]
+                if tool_name == "bash" && (*duration - 1.5).abs() < 1e-9
+        ));
+    }
+
+    #[test]
+    fn done_without_deltas_delivers_final_then_stop() {
+        let mut streamed = false;
+        let out = emit(
+            BridgeEvent::Done { completed: true, final_response: "answer".into() },
+            &mut streamed,
+        );
+        assert!(matches!(
+            &out[..],
+            [StreamEvent::MessageChunk { text }, StreamEvent::MessageStop { final_: true }]
+                if text == "answer"
+        ));
+    }
+
+    #[test]
+    fn done_after_deltas_only_stops() {
+        // Text already streamed: don't re-send final_response, just stop.
+        let mut streamed = true;
+        let out = emit(
+            BridgeEvent::Done { completed: true, final_response: "answer".into() },
+            &mut streamed,
+        );
+        assert!(matches!(&out[..], [StreamEvent::MessageStop { final_: true }]));
+    }
+
+    #[test]
+    fn error_event_is_fatal() {
+        let mut streamed = false;
+        match map_bridge_event(BridgeEvent::Error { message: "boom".into() }, &mut streamed) {
+            Mapped::Error(m) => assert_eq!(m, "boom"),
+            Mapped::Emit(_) => panic!("expected error"),
+        }
+    }
 
     /// End-to-end wiring check that does NOT hit the model: an all-whitespace
     /// prompt makes the bridge shim emit `done` and exit 0 before it imports
