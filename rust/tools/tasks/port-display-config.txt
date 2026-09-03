@@ -1,0 +1,38 @@
+You are porting one Python module to Rust for the hermes-agent Rust rewrite.
+Write ONLY the file rust/crates/hermes-gateway/src/display_config.rs. Do not
+modify any other file (do NOT touch main.rs; I wire the module in myself after
+review).
+
+Source to port: gateway/display_config.py (a pure leaf: per-platform
+display/verbosity configuration resolver, depends only on stdlib + typing).
+
+Requirements, matching the conventions already used in this crate (read
+rust/crates/hermes-gateway/src/response_filters.rs and turn_lease.rs first to
+copy the style EXACTLY):
+
+1. Start with a `//!` module doc comment that says it is a port of
+   gateway/display_config.py and one sentence on what it does.
+2. If any public items will not have callers yet, put this right after the
+   first doc line, exactly like the other modules do:
+       // <one line reason>
+       #![allow(dead_code)]
+       //!
+3. Faithfully port the logic and the resolution/precedence rules. Preserve
+   defaults and behavior precisely. Keep Python dict-ish config as typed Rust
+   (structs/enums) where the shape is clear; use serde_json::Value only where
+   the Python genuinely handles arbitrary data.
+4. Idiomatic Rust: no `unwrap()` on fallible paths that can realistically fail,
+   derive Debug/Clone where sensible, use enums for closed sets of string
+   values.
+5. Add a `#[cfg(test)] mod tests` with unit tests covering the main resolution
+   rules and at least the default cases and any precedence/override logic.
+6. It MUST compile as a standalone module (it will be added with
+   `mod display_config;`). Only use crates already in
+   rust/crates/hermes-gateway/Cargo.toml (serde, serde_json, tokio, axum,
+   tracing, async-trait, unicode-general-category) plus hermes-core — do not
+   add new dependencies.
+7. No em dashes in comments. Plain, direct comment style.
+
+Base everything on the actual Python source. Do not invent behavior. When the
+Python does something you cannot express cleanly in Rust, port the behavior and
+leave a short `// TODO(port):` note rather than guessing.

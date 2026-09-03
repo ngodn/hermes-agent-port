@@ -6,6 +6,7 @@
 
 mod agent;
 mod config;
+mod display_config;
 mod dispatch;
 mod health;
 mod message;
