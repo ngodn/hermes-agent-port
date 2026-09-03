@@ -11,6 +11,7 @@
 //! session/lease/queue machinery, which is ported on top of this.
 
 use std::collections::HashMap;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
 use hermes_core::{Message, Platform, StreamEvent};
@@ -19,12 +20,18 @@ use tracing::{error, warn};
 
 use crate::agent::AgentClient;
 use crate::platform::PlatformAdapter;
+use crate::turn_lease::SessionTurnLeaseRegistry;
 
 /// Owns the inbound channel and routes turns to the agent and back out.
 pub struct Dispatcher {
     agent: Arc<dyn AgentClient>,
     /// Adapters keyed by platform, used for outbound delivery.
     adapters: HashMap<Platform, Arc<dyn PlatformAdapter>>,
+    /// Serializes turns per resolved session so two routing keys mapped to one
+    /// session never interleave their transcript flushes (see turn_lease).
+    lease: Arc<SessionTurnLeaseRegistry>,
+    /// Monotonic per-turn generation, for lease ownership diagnostics.
+    generation: AtomicU64,
 }
 
 impl Dispatcher {
@@ -32,6 +39,8 @@ impl Dispatcher {
         Self {
             agent,
             adapters: HashMap::new(),
+            lease: Arc::new(SessionTurnLeaseRegistry::default()),
+            generation: AtomicU64::new(0),
         }
     }
 
@@ -52,6 +61,23 @@ impl Dispatcher {
     }
 
     async fn handle_turn(&self, msg: Message) {
+        // Serialize per resolved session. The channel_id is the session proxy
+        // until full session resolution (switch_session/tip-walk) is ported.
+        // A held lease means a same-session turn is in flight; fail closed on
+        // timeout rather than run two turns unserialized on one transcript.
+        let generation = self.generation.fetch_add(1, Ordering::Relaxed);
+        let _lease = match self
+            .lease
+            .acquire(&msg.channel_id, &msg.sender_id, generation, None)
+            .await
+        {
+            Ok(token) => token, // held for the turn; released on drop below
+            Err(err) => {
+                warn!(%err, "rejecting turn: could not serialize against the in-flight turn");
+                return;
+            }
+        };
+
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
 
         // Run the agent turn; it streams events into `tx`.
