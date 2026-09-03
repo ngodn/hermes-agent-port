@@ -258,8 +258,7 @@ impl SlashAccessPolicy {
             return true;
         }
         match user_id {
-            None => false,
-            Some(uid) if uid.is_empty() => false,
+            None | Some("") => false,
             Some(uid) => self.admin_user_ids.contains(uid),
         }
     }

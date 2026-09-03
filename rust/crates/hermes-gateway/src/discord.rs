@@ -189,15 +189,11 @@ impl DiscordAdapter {
             }
             match op {
                 // Dispatch.
-                0 => {
-                    if payload.get("t").and_then(Value::as_str) == Some("MESSAGE_CREATE") {
-                        if let Some(d) = payload.get("d") {
-                            if let Some(msg) = parse_message_create(d) {
-                                if inbound.send(msg).await.is_err() {
-                                    debug!("discord: inbound channel closed, stopping");
-                                    return Ok(());
-                                }
-                            }
+                0 if payload.get("t").and_then(Value::as_str) == Some("MESSAGE_CREATE") => {
+                    if let Some(msg) = payload.get("d").and_then(parse_message_create) {
+                        if inbound.send(msg).await.is_err() {
+                            debug!("discord: inbound channel closed, stopping");
+                            return Ok(());
                         }
                     }
                 }

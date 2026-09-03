@@ -35,25 +35,45 @@ use crate::dispatch::Dispatcher;
 use crate::health::{healthz, readyz, AppState};
 use crate::message::{get_display_config, post_message};
 use crate::platform::PlatformAdapter;
+use tokio_util::sync::CancellationToken;
 
 /// Start one platform's push path: the adapter's inbound loop feeding a
 /// Dispatcher that runs turns and delivers replies through the same adapter.
+/// Both halves stop when `shutdown` is cancelled, so a SIGTERM/SIGINT tears the
+/// push paths down instead of leaving them running into process teardown.
 fn start_push_path(
     platform: hermes_core::Platform,
     adapter: Arc<dyn PlatformAdapter>,
     state: &AppState,
+    shutdown: CancellationToken,
 ) {
     let mut dispatcher = Dispatcher::new(state.agent.clone(), state.user_config.clone());
     dispatcher.register_adapter(platform, adapter.clone());
     let dispatcher = Arc::new(dispatcher);
 
     let (inbound_tx, inbound_rx) = tokio::sync::mpsc::channel::<hermes_core::Message>(128);
+
+    let adapter_shutdown = shutdown.clone();
     tokio::spawn(async move {
-        if let Err(err) = adapter.run(inbound_tx).await {
-            tracing::error!(?platform, %err, "adapter loop exited");
+        tokio::select! {
+            _ = adapter_shutdown.cancelled() => {
+                tracing::info!(?platform, "adapter stopping on shutdown");
+            }
+            r = adapter.run(inbound_tx) => {
+                if let Err(err) = r {
+                    tracing::error!(?platform, %err, "adapter loop exited");
+                }
+            }
         }
     });
-    tokio::spawn(dispatcher.run(inbound_rx));
+
+    let disp_run = dispatcher.run(inbound_rx);
+    tokio::spawn(async move {
+        tokio::select! {
+            _ = shutdown.cancelled() => {}
+            _ = disp_run => {}
+        }
+    });
     tracing::info!(?platform, "push path started");
 }
 
@@ -85,24 +105,36 @@ async fn main() -> anyhow::Result<()> {
 
     let state = AppState::new(Arc::new(agent), user_config);
 
+    // One shutdown token, cancelled on SIGINT/SIGTERM, drives both the push
+    // paths and the HTTP server's graceful shutdown.
+    let shutdown = CancellationToken::new();
+    tokio::spawn({
+        let shutdown = shutdown.clone();
+        async move {
+            wait_for_signal().await;
+            tracing::info!("shutdown signal received, draining");
+            shutdown.cancel();
+        }
+    });
+
     // Push paths: for each configured platform, start the adapter's inbound
     // loop feeding a Dispatcher that runs turns and delivers replies. All share
     // the same AgentClient as /message.
     if let Some(token) = config.telegram_token.clone() {
         match telegram::TelegramAdapter::new(token) {
-            Ok(tg) => start_push_path(hermes_core::Platform::Telegram, Arc::new(tg), &state),
+            Ok(tg) => start_push_path(hermes_core::Platform::Telegram, Arc::new(tg), &state, shutdown.clone()),
             Err(err) => tracing::error!(%err, "telegram adapter init failed"),
         }
     }
     if let Some(token) = config.discord_token.clone() {
         match discord::DiscordAdapter::new(token) {
-            Ok(dc) => start_push_path(hermes_core::Platform::Discord, Arc::new(dc), &state),
+            Ok(dc) => start_push_path(hermes_core::Platform::Discord, Arc::new(dc), &state, shutdown.clone()),
             Err(err) => tracing::error!(%err, "discord adapter init failed"),
         }
     }
     match (config.slack_app_token.clone(), config.slack_bot_token.clone()) {
         (Some(app), Some(bot)) => match slack::SlackAdapter::new(app, bot) {
-            Ok(sl) => start_push_path(hermes_core::Platform::Slack, Arc::new(sl), &state),
+            Ok(sl) => start_push_path(hermes_core::Platform::Slack, Arc::new(sl), &state, shutdown.clone()),
             Err(err) => tracing::error!(%err, "slack adapter init failed"),
         },
         (Some(_), None) | (None, Some(_)) => {
@@ -127,15 +159,16 @@ async fn main() -> anyhow::Result<()> {
     state.mark_ready();
 
     axum::serve(listener, app)
-        .with_graceful_shutdown(shutdown_signal())
+        .with_graceful_shutdown(async move { shutdown.cancelled().await })
         .await?;
 
     Ok(())
 }
 
-/// Wait for SIGINT / SIGTERM so we drain cleanly, mirroring the Python
-/// gateway's `shutdown_flush` / `drain_control` behavior.
-async fn shutdown_signal() {
+/// Resolve on the first SIGINT / SIGTERM. The caller cancels the shutdown
+/// token, which drains the push paths and the HTTP server together (mirroring
+/// the Python gateway's `shutdown_flush` / `drain_control` intent).
+async fn wait_for_signal() {
     let ctrl_c = async {
         tokio::signal::ctrl_c()
             .await
@@ -157,6 +190,4 @@ async fn shutdown_signal() {
         _ = ctrl_c => {},
         _ = terminate => {},
     }
-
-    tracing::info!("shutdown signal received, draining");
 }

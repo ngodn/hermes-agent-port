@@ -100,3 +100,18 @@ last. Next concrete targets, in order:
     curl -s localhost:8787/healthz
     curl -s -X POST localhost:8787/message \
       -H 'content-type: application/json' -d '{"text":"hello"}'
+
+Platform push paths start when their tokens are set: `HERMES_TELEGRAM_TOKEN`,
+`HERMES_DISCORD_TOKEN`, `HERMES_SLACK_APP_TOKEN` + `HERMES_SLACK_BOT_TOKEN`.
+
+## Footprint / deploy
+
+Release binary is ~5 MB (LTO + strip), TLS roots compiled in. Build a
+container with `rust/Dockerfile` (multi-stage -> debian-slim, non-root):
+
+    cd rust && docker build -t hermes-gateway .
+    docker run -p 8787:8787 -e HERMES_TELEGRAM_TOKEN=... hermes-gateway
+
+The gateway runs standalone (health + adapters); to also run the strangler
+agent bridge, mount the hermes repo + Python and set HERMES_AGENT_CWD /
+HERMES_AGENT_PYTHON.

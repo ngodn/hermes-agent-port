@@ -539,7 +539,7 @@ pub fn global_default_setting(setting: &str) -> Option<Value> {
 ///
 /// Resolution order:
 /// 1. `display.platforms.<platform>.<key>` (explicit per-platform user override)
-/// 1b. `display.tool_progress_overrides.<platform>` (legacy fallback for tool_progress)
+///    1b. `display.tool_progress_overrides.<platform>` (legacy tool_progress fallback)
 /// 2. `display.<key>` (global user setting, skipped for `streaming`)
 /// 3. Built-in platform default (`platform_default_setting`)
 /// 4. Built-in global default (`global_default_setting`)

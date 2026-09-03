@@ -33,6 +33,10 @@ pub trait PlatformAdapter: Send + Sync {
     async fn send(&self, msg: &Message) -> Result<()>;
 }
 
+/// Builds a live adapter from its config.
+pub type AdapterFactory =
+    Box<dyn Fn(&PlatformConfig) -> Result<Arc<dyn PlatformAdapter>> + Send + Sync>;
+
 /// Metadata + factory for a platform, registered before instantiation.
 /// Mirrors `PlatformEntry` in the Python registry.
 pub struct PlatformEntry {
@@ -43,7 +47,7 @@ pub struct PlatformEntry {
     /// Hint shown when requirements are missing.
     pub install_hint: &'static str,
     /// Builds a live adapter from its config.
-    pub factory: Box<dyn Fn(&PlatformConfig) -> Result<Arc<dyn PlatformAdapter>> + Send + Sync>,
+    pub factory: AdapterFactory,
 }
 
 /// Per-platform configuration slice. Filled out as `gateway/config.py` is
