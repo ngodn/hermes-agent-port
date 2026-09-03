@@ -20,13 +20,17 @@ use crate::agent::AgentClient;
 pub struct AppState {
     ready: Arc<AtomicBool>,
     pub agent: Arc<dyn AgentClient>,
+    /// Parsed user config (`$HERMES_HOME/config.yaml`) as a JSON value, the
+    /// shape the ported resolvers consume. Empty object when absent.
+    pub user_config: Arc<serde_json::Value>,
 }
 
 impl AppState {
-    pub fn new(agent: Arc<dyn AgentClient>) -> Self {
+    pub fn new(agent: Arc<dyn AgentClient>, user_config: Arc<serde_json::Value>) -> Self {
         Self {
             ready: Arc::new(AtomicBool::new(false)),
             agent,
+            user_config,
         }
     }
 

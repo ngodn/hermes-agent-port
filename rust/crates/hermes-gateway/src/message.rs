@@ -6,7 +6,7 @@
 //! platform). Push-based platform adapters (Telegram et al.) drive the async
 //! [`Dispatcher`](crate::dispatch) instead; both share the same AgentClient.
 
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::Json;
 use hermes_core::{Message, Platform, StreamEvent};
@@ -14,6 +14,7 @@ use serde::{Deserialize, Serialize};
 use tokio::sync::mpsc;
 use tracing::warn;
 
+use crate::display_config::ResolvedDisplayConfig;
 use crate::health::AppState;
 
 #[derive(Debug, Deserialize)]
@@ -37,6 +38,16 @@ fn default_sender() -> String {
 #[derive(Debug, Serialize)]
 pub struct MessageResponse {
     pub reply: String,
+}
+
+/// Resolve the effective display config for a platform from the loaded user
+/// config. Introspection endpoint: lets an operator verify how per-platform
+/// display settings resolve against the built-in tiered defaults.
+pub async fn get_display_config(
+    State(state): State<AppState>,
+    Path(platform): Path<String>,
+) -> Json<ResolvedDisplayConfig> {
+    Json(ResolvedDisplayConfig::resolve(&state.user_config, &platform))
 }
 
 /// Run one turn synchronously and return the assembled reply.

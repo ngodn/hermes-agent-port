@@ -6,6 +6,7 @@
 
 mod agent;
 mod config;
+mod config_file;
 mod display_config;
 mod dispatch;
 mod health;
@@ -28,7 +29,7 @@ use tower_http::trace::TraceLayer;
 use crate::agent::SubprocessAgentClient;
 use crate::config::Config;
 use crate::health::{healthz, readyz, AppState};
-use crate::message::post_message;
+use crate::message::{get_display_config, post_message};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -47,7 +48,16 @@ async fn main() -> anyhow::Result<()> {
     if let Some(model) = &config.agent_model {
         agent = agent.with_model(model.clone());
     }
-    let state = AppState::new(Arc::new(agent));
+    // Load the user config (config.yaml) once at startup; consumers read it
+    // from shared state. Absent/broken config degrades to defaults.
+    let user_config = Arc::new(config_file::load_config());
+    if user_config.as_object().map(|m| m.is_empty()).unwrap_or(true) {
+        tracing::info!(path = %config_file::config_path().display(), "no user config found; using defaults");
+    } else {
+        tracing::info!(path = %config_file::config_path().display(), "loaded user config");
+    }
+
+    let state = AppState::new(Arc::new(agent), user_config);
 
     // Push path: when a Telegram token is configured, start the adapter's
     // getUpdates loop feeding the Dispatcher, which runs turns and delivers
@@ -78,6 +88,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/healthz", get(healthz))
         .route("/readyz", get(readyz))
         .route("/message", post(post_message))
+        .route("/display/:platform", get(get_display_config))
         .layer(TraceLayer::new_for_http())
         .with_state(state.clone());
 
