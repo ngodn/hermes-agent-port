@@ -26,6 +26,14 @@ rust/
 4. **Agent core loop** — `run_agent.py`. Last, once contracts are frozen.
 5. **TUI / web frontend** — left in TS/React unless there's a reason to move it.
 
+## Deferred (port later, with the subsystem they belong to)
+
+- `turn_context.py` — a Python closure-extraction artifact (~60 opaque handles,
+  `[None]` single-element cells simulating shared closure state). Its Rust shape
+  will be nothing like this; port it with the TurnRunner/_run_agent_inner loop.
+- `session_state.py` legacy dict-view adapters — backward-compat shim for
+  pre-refactor Python tests only; no Rust equivalent needed. (Data model ported.)
+
 ## Stack mapping
 
 | Python            | Rust                         |

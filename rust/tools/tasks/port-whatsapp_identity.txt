@@ -1,0 +1,34 @@
+You are porting one Python module to Rust for the hermes-agent Rust rewrite.
+Write ONLY the file rust/crates/hermes-gateway/src/whatsapp_identity.rs. Do not modify any
+other file (do NOT touch main.rs; I wire the module in after review).
+
+Source to port: gateway/whatsapp_identity.py (a pure leaf module).
+
+Match the conventions already used in this crate EXACTLY. Read these first and
+copy their style: rust/crates/hermes-gateway/src/response_filters.rs and
+rust/crates/hermes-gateway/src/session_state.rs.
+
+Requirements:
+1. Start with a //! module doc comment: "Port of gateway/whatsapp_identity.py." plus one
+   sentence on what it does.
+2. If public items lack callers yet, put right after the first doc line:
+       // <one line reason>
+       #![allow(dead_code)]
+       //!
+3. Faithfully port the logic, defaults, and precedence. Preserve behavior
+   exactly. Use typed Rust (structs/enums) where the shape is clear; use
+   serde_json::Value only where the Python truly handles arbitrary data.
+4. Idiomatic Rust: derive Debug/Clone where sensible; enums for closed string
+   sets; no unwrap() on realistically-fallible paths.
+5. Add #[cfg(test)] mod tests covering the main behavior, defaults, and edge
+   cases you can see in the Python.
+6. MUST compile standalone (added later with mod whatsapp_identity;). Only use crates already
+   in rust/crates/hermes-gateway/Cargo.toml (serde, serde_json, tokio, axum,
+   tracing, async-trait, unicode-general-category) plus hermes-core. Do NOT add
+   dependencies. If the Python needs regex, prefer hand-written parsing over
+   pulling a new crate, or leave a // TODO(port) note.
+7. No em dashes in comments. Plain, direct style.
+
+Base everything on the actual Python source. Do not invent behavior. Where you
+cannot express something cleanly, port the behavior and leave a short
+// TODO(port): note rather than guessing.
