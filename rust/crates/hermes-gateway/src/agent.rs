@@ -234,6 +234,7 @@ mod tests {
             channel_id: "t".into(),
             sender_id: "t".into(),
             text: "   ".into(),
+            chat_type: None,
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(16);
         let run = tokio::spawn(async move { client.run_turn(&msg, tx).await });

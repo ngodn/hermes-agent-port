@@ -14,6 +14,7 @@ mod message;
 mod platform;
 mod response_filters;
 mod session_stall;
+mod slash;
 mod slash_access;
 mod telegram;
 mod whatsapp_identity;
@@ -69,7 +70,7 @@ async fn main() -> anyhow::Result<()> {
         use hermes_core::{Message, Platform};
 
         let tg = Arc::new(TelegramAdapter::new(token)?);
-        let mut dispatcher = Dispatcher::new(state.agent.clone());
+        let mut dispatcher = Dispatcher::new(state.agent.clone(), state.user_config.clone());
         dispatcher.register_adapter(Platform::Telegram, tg.clone() as Arc<dyn PlatformAdapter>);
         let dispatcher = Arc::new(dispatcher);
 

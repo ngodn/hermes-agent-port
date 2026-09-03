@@ -37,4 +37,8 @@ pub struct Message {
     /// Opaque per-platform sender id.
     pub sender_id: String,
     pub text: String,
+    /// Platform-provided chat type (e.g. Telegram "private"/"group"/"channel").
+    /// Used to resolve DM-vs-group access scope. None when unknown.
+    #[serde(default)]
+    pub chat_type: Option<String>,
 }

@@ -60,7 +60,17 @@ pub async fn post_message(
         channel_id: req.channel_id,
         sender_id: req.sender_id,
         text: req.text,
+        chat_type: Some("dm".to_string()),
     };
+
+    // Slash-command gating, same policy as the push path.
+    if let crate::slash::SlashDecision::Denied { command } =
+        crate::slash::evaluate(&state.user_config, &msg)
+    {
+        return Ok(Json(MessageResponse {
+            reply: crate::slash::denial_text(&command),
+        }));
+    }
 
     let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
     let agent = state.agent.clone();

@@ -15,11 +15,13 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
 use hermes_core::{Message, Platform, StreamEvent};
+use serde_json::Value;
 use tokio::sync::mpsc;
-use tracing::{error, warn};
+use tracing::{error, info, warn};
 
 use crate::agent::AgentClient;
 use crate::platform::PlatformAdapter;
+use crate::slash::{self, SlashDecision};
 use crate::turn_lease::SessionTurnLeaseRegistry;
 
 /// Owns the inbound channel and routes turns to the agent and back out.
@@ -32,15 +34,18 @@ pub struct Dispatcher {
     lease: Arc<SessionTurnLeaseRegistry>,
     /// Monotonic per-turn generation, for lease ownership diagnostics.
     generation: AtomicU64,
+    /// User config, for slash-command gating.
+    user_config: Arc<Value>,
 }
 
 impl Dispatcher {
-    pub fn new(agent: Arc<dyn AgentClient>) -> Self {
+    pub fn new(agent: Arc<dyn AgentClient>, user_config: Arc<Value>) -> Self {
         Self {
             agent,
             adapters: HashMap::new(),
             lease: Arc::new(SessionTurnLeaseRegistry::default()),
             generation: AtomicU64::new(0),
+            user_config,
         }
     }
 
@@ -60,7 +65,35 @@ impl Dispatcher {
         }
     }
 
+    /// Deliver text back to the source platform's adapter, if one is registered.
+    async fn deliver(&self, to: &Message, text: String) {
+        match self.adapters.get(&to.platform) {
+            Some(adapter) => {
+                let out = Message {
+                    platform: to.platform,
+                    channel_id: to.channel_id.clone(),
+                    sender_id: to.sender_id.clone(),
+                    text,
+                    chat_type: to.chat_type.clone(),
+                };
+                if let Err(err) = adapter.send(&out).await {
+                    error!(platform = ?to.platform, ?err, "outbound delivery failed");
+                }
+            }
+            None => warn!(platform = ?to.platform, "no adapter registered for delivery"),
+        }
+    }
+
     async fn handle_turn(&self, msg: Message) {
+        // Slash-command gating: refuse a command this sender may not run before
+        // spending a turn on it. Allowed commands flow to the agent as normal
+        // text for now (built-in handlers land with the command dispatcher).
+        if let SlashDecision::Denied { command } = slash::evaluate(&self.user_config, &msg) {
+            info!(platform = ?msg.platform, %command, "slash command denied by policy");
+            self.deliver(&msg, slash::denial_text(&command)).await;
+            return;
+        }
+
         // Serialize per resolved session. The channel_id is the session proxy
         // until full session resolution (switch_session/tip-walk) is ported.
         // A held lease means a same-session turn is in flight; fail closed on
@@ -122,19 +155,6 @@ impl Dispatcher {
             return;
         }
 
-        match self.adapters.get(&msg.platform) {
-            Some(adapter) => {
-                let out = Message {
-                    platform: msg.platform,
-                    channel_id: msg.channel_id.clone(),
-                    sender_id: msg.sender_id.clone(),
-                    text: reply,
-                };
-                if let Err(err) = adapter.send(&out).await {
-                    error!(platform = ?msg.platform, ?err, "outbound delivery failed");
-                }
-            }
-            None => warn!(platform = ?msg.platform, "no adapter registered for delivery"),
-        }
+        self.deliver(&msg, reply).await;
     }
 }

@@ -41,7 +41,12 @@ pub fn extract_update(update: &Value) -> Option<ParsedUpdate> {
     // posts, callbacks etc. still advance the offset but produce no Message.
     let message = update.get("message").and_then(|m| {
         let text = m.get("text").and_then(Value::as_str)?;
-        let chat_id = m.get("chat").and_then(|c| c.get("id")).and_then(Value::as_i64)?;
+        let chat = m.get("chat");
+        let chat_id = chat.and_then(|c| c.get("id")).and_then(Value::as_i64)?;
+        let chat_type = chat
+            .and_then(|c| c.get("type"))
+            .and_then(Value::as_str)
+            .map(str::to_string);
         let sender_id = m
             .get("from")
             .and_then(|f| f.get("id"))
@@ -53,6 +58,7 @@ pub fn extract_update(update: &Value) -> Option<ParsedUpdate> {
             channel_id: chat_id.to_string(),
             sender_id: sender_id.to_string(),
             text: text.to_string(),
+            chat_type,
         })
     });
 
