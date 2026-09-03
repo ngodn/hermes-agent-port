@@ -11,6 +11,7 @@ mod health;
 mod message;
 mod platform;
 mod response_filters;
+mod session_state;
 mod turn_lease;
 
 use std::sync::Arc;
