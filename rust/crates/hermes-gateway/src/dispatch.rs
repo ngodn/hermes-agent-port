@@ -167,3 +167,125 @@ impl Dispatcher {
         self.deliver(&msg, reply).await;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::atomic::AtomicUsize;
+    use std::sync::Mutex;
+
+    use async_trait::async_trait;
+    use hermes_core::Result;
+    use serde_json::json;
+
+    /// Agent stub: emits a fixed reply and counts how many turns it ran, so a
+    /// test can assert the agent was (or was not) invoked.
+    struct StubAgent {
+        reply: String,
+        calls: Arc<AtomicUsize>,
+    }
+
+    #[async_trait]
+    impl crate::agent::AgentClient for StubAgent {
+        async fn run_turn(&self, _msg: &Message, tx: mpsc::Sender<StreamEvent>) -> Result<()> {
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            let _ = tx.send(StreamEvent::MessageChunk { text: self.reply.clone() }).await;
+            let _ = tx.send(StreamEvent::MessageStop { final_: true }).await;
+            Ok(())
+        }
+    }
+
+    /// Adapter stub: records every outbound message.
+    struct StubAdapter {
+        sent: Arc<Mutex<Vec<Message>>>,
+    }
+
+    #[async_trait]
+    impl crate::platform::PlatformAdapter for StubAdapter {
+        fn name(&self) -> &str {
+            "stub"
+        }
+        async fn run(&self, _inbound: mpsc::Sender<Message>) -> Result<()> {
+            Ok(())
+        }
+        async fn send(&self, msg: &Message) -> Result<()> {
+            self.sent.lock().unwrap().push(msg.clone());
+            Ok(())
+        }
+    }
+
+    fn cli_msg(text: &str, sender: &str) -> Message {
+        Message {
+            platform: Platform::Cli,
+            channel_id: "chan".into(),
+            sender_id: sender.into(),
+            text: text.into(),
+            chat_type: Some("dm".into()),
+        }
+    }
+
+    /// Build a dispatcher with the stub agent+adapter, returning the shared
+    /// call counter and outbound record.
+    fn harness(
+        reply: &str,
+        cfg: Value,
+    ) -> (Dispatcher, Arc<AtomicUsize>, Arc<Mutex<Vec<Message>>>) {
+        let calls = Arc::new(AtomicUsize::new(0));
+        let sent = Arc::new(Mutex::new(Vec::new()));
+        let agent = Arc::new(StubAgent {
+            reply: reply.to_string(),
+            calls: calls.clone(),
+        });
+        let mut d = Dispatcher::new(agent, Arc::new(cfg));
+        d.register_adapter(
+            Platform::Cli,
+            Arc::new(StubAdapter { sent: sent.clone() }),
+        );
+        (d, calls, sent)
+    }
+
+    #[tokio::test]
+    async fn normal_turn_runs_agent_and_delivers_reply() {
+        let (d, calls, sent) = harness("hello there", json!({}));
+        d.handle_turn(cli_msg("hi", "u")).await;
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        let out = sent.lock().unwrap();
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].text, "hello there");
+        assert_eq!(out[0].channel_id, "chan");
+    }
+
+    #[tokio::test]
+    async fn silence_marker_suppresses_delivery() {
+        let (d, calls, sent) = harness("NO_REPLY", json!({}));
+        d.handle_turn(cli_msg("hi", "u")).await;
+        // The agent ran, but the silence marker means nothing is delivered.
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert!(sent.lock().unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn denied_slash_command_skips_agent_and_delivers_refusal() {
+        let cfg = json!({"platforms": {"cli": {"extra": {
+            "allow_admin_from": ["admin"],
+            "user_allowed_commands": ["status"]
+        }}}});
+        let (d, calls, sent) = harness("should not run", cfg);
+        d.handle_turn(cli_msg("/deploy", "nonadmin")).await;
+        // Denied before any turn is spent.
+        assert_eq!(calls.load(Ordering::SeqCst), 0);
+        let out = sent.lock().unwrap();
+        assert_eq!(out.len(), 1);
+        assert!(out[0].text.contains("not allowed"));
+    }
+
+    #[tokio::test]
+    async fn builtin_status_answered_without_agent() {
+        let (d, calls, sent) = harness("should not run", json!({}));
+        d.handle_turn(cli_msg("/status", "u")).await;
+        assert_eq!(calls.load(Ordering::SeqCst), 0);
+        let out = sent.lock().unwrap();
+        assert_eq!(out.len(), 1);
+        assert!(out[0].text.contains("online"));
+    }
+}
