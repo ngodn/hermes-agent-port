@@ -4,6 +4,7 @@
 //! that the Python `gateway/run.py` owns today. Platform adapters and the
 //! agent RPC boundary are ported in behind this skeleton one at a time.
 
+mod agent;
 mod config;
 mod health;
 mod platform;

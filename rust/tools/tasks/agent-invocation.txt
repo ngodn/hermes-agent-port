@@ -1,0 +1,27 @@
+You are a code-analysis assistant helping plan a Python-to-Rust port. This is
+READ-ONLY analysis. Do NOT modify any existing file. Write your entire output
+to exactly one file: rust/analysis/agent-invocation.md
+
+Question: How is a SINGLE agent turn run non-interactively (headless), so a
+Rust process could spawn the Python agent as a subprocess, feed it one user
+message, and stream the result back?
+
+Investigate these files and any they point to: run_agent.py, cli.py,
+batch_runner.py, mini_swe_runner.py, gateway/run.py (search for
+create_subprocess / how it invokes the agent), and hermes_cli/main.py.
+
+Report, with exact evidence (file:line and the actual code/flag names):
+1. The concrete command(s) that run one agent turn without the TUI, if any
+   exist (e.g. a `--print`/`-p` style flag, a batch mode, a subcommand). Quote
+   the argparse/fire flag definitions.
+2. Required arguments and environment variables (model, provider, session key,
+   hermes home, etc.) needed for one turn.
+3. How output/streaming is emitted in that mode: stdout text, JSON lines,
+   SSE, a socket? Quote the code that writes it.
+4. How the input message is passed (argv, stdin, a file, an env var?).
+5. Whether a single turn can run statelessly or if it requires an existing
+   session/DB on disk.
+
+If no clean single-turn headless entrypoint exists, say so explicitly and
+describe the closest thing plus what would need to be added. Be concrete and
+cite code. Output only to the file path above.
