@@ -14,6 +14,7 @@ use axum::Json;
 use serde_json::json;
 
 use crate::agent::AgentClient;
+use crate::{config_file, readiness};
 
 /// Shared runtime state for the gateway. Grows as subsystems are ported.
 #[derive(Clone)]
@@ -23,14 +24,21 @@ pub struct AppState {
     /// Parsed user config (`$HERMES_HOME/config.yaml`) as a JSON value, the
     /// shape the ported resolvers consume. Empty object when absent.
     pub user_config: Arc<serde_json::Value>,
+    /// Configured model, if any, for the readiness `model` probe.
+    pub configured_model: Option<String>,
 }
 
 impl AppState {
-    pub fn new(agent: Arc<dyn AgentClient>, user_config: Arc<serde_json::Value>) -> Self {
+    pub fn new(
+        agent: Arc<dyn AgentClient>,
+        user_config: Arc<serde_json::Value>,
+        configured_model: Option<String>,
+    ) -> Self {
         Self {
             ready: Arc::new(AtomicBool::new(false)),
             agent,
             user_config,
+            configured_model,
         }
     }
 
@@ -48,12 +56,30 @@ pub async fn healthz() -> Json<serde_json::Value> {
 }
 
 pub async fn readyz(State(state): State<AppState>) -> (StatusCode, Json<serde_json::Value>) {
-    if state.is_ready() {
-        (StatusCode::OK, Json(json!({ "ready": true })))
+    let started = state.is_ready();
+    // Bounded, non-destructive probes (config / model / state_db). Run on a
+    // blocking thread since they touch the filesystem and SQLite.
+    let model = state.configured_model.clone();
+    let report = tokio::task::spawn_blocking(move || {
+        readiness::collect_readiness(&config_file::hermes_home(), model.as_deref())
+    })
+    .await
+    .ok();
+
+    // Ready requires startup complete AND no degraded probe.
+    let probes_ok = report.as_ref().map(|r| r.status == "ok").unwrap_or(false);
+    let ready = started && probes_ok;
+    let code = if ready {
+        StatusCode::OK
     } else {
-        (
-            StatusCode::SERVICE_UNAVAILABLE,
-            Json(json!({ "ready": false })),
-        )
-    }
+        StatusCode::SERVICE_UNAVAILABLE
+    };
+    (
+        code,
+        Json(json!({
+            "ready": ready,
+            "started": started,
+            "readiness": report,
+        })),
+    )
 }

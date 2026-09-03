@@ -25,3 +25,4 @@ serde_yaml_ng = "0.10"
 tokio-tungstenite = { version = "0.30", features = ["connect", "rustls-tls-webpki-roots"] }
 futures-util = "0.3"
 tokio-util = "0.7"
+rusqlite.workspace = true

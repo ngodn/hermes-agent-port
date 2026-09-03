@@ -13,6 +13,7 @@ mod display_config;
 mod health;
 mod message;
 mod platform;
+mod readiness;
 mod response_filters;
 mod session_stall;
 mod session_state;
@@ -108,7 +109,17 @@ async fn main() -> anyhow::Result<()> {
         tracing::info!(path = %config_file::config_path().display(), "loaded user config");
     }
 
-    let state = AppState::new(Arc::new(agent), user_config);
+    // Resolve the configured model for the readiness probe: the explicit
+    // override wins, else config.yaml's model.default / model.model.
+    let configured_model = config.agent_model.clone().or_else(|| {
+        user_config
+            .get("model")
+            .and_then(|m| m.get("default").or_else(|| m.get("model")))
+            .and_then(|v| v.as_str())
+            .map(str::to_string)
+    });
+
+    let state = AppState::new(Arc::new(agent), user_config, configured_model);
 
     // One shutdown token, cancelled on SIGINT/SIGTERM, drives both the push
     // paths and the HTTP server's graceful shutdown.
