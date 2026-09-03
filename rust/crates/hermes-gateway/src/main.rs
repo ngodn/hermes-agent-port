@@ -13,6 +13,8 @@ mod message;
 mod platform;
 mod response_filters;
 mod session_stall;
+mod slash_access;
+mod whatsapp_identity;
 mod session_state;
 mod turn_lease;
 
