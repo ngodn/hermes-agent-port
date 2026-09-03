@@ -80,7 +80,10 @@ last. Next concrete targets, in order:
 - [x] Telegram adapter (long-poll getUpdates -> Dispatcher -> sendMessage),
       started when `HERMES_TELEGRAM_TOKEN` is set. Boot + graceful-backoff
       verified against the live API.
-- [ ] More platform adapters: Discord, Slack, WhatsApp, Signal
+- [x] Discord adapter (Gateway WebSocket: HELLO/heartbeat/IDENTIFY/dispatch ->
+      Dispatcher -> REST sendMessage), started when `HERMES_DISCORD_TOKEN` set.
+      WS handshake verified against the live gateway.
+- [ ] More platform adapters: Slack, WhatsApp, Signal
 - [ ] Native (non-subprocess) agent client, once run_agent.py is ported
 - [ ] Session lifecycle + delivery ledger
 - [ ] Control socket / drain control

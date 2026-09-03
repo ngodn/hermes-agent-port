@@ -7,6 +7,7 @@
 mod agent;
 mod config;
 mod config_file;
+mod discord;
 mod display_config;
 mod dispatch;
 mod health;
@@ -29,8 +30,31 @@ use tower_http::trace::TraceLayer;
 
 use crate::agent::SubprocessAgentClient;
 use crate::config::Config;
+use crate::dispatch::Dispatcher;
 use crate::health::{healthz, readyz, AppState};
 use crate::message::{get_display_config, post_message};
+use crate::platform::PlatformAdapter;
+
+/// Start one platform's push path: the adapter's inbound loop feeding a
+/// Dispatcher that runs turns and delivers replies through the same adapter.
+fn start_push_path(
+    platform: hermes_core::Platform,
+    adapter: Arc<dyn PlatformAdapter>,
+    state: &AppState,
+) {
+    let mut dispatcher = Dispatcher::new(state.agent.clone(), state.user_config.clone());
+    dispatcher.register_adapter(platform, adapter.clone());
+    let dispatcher = Arc::new(dispatcher);
+
+    let (inbound_tx, inbound_rx) = tokio::sync::mpsc::channel::<hermes_core::Message>(128);
+    tokio::spawn(async move {
+        if let Err(err) = adapter.run(inbound_tx).await {
+            tracing::error!(?platform, %err, "adapter loop exited");
+        }
+    });
+    tokio::spawn(dispatcher.run(inbound_rx));
+    tracing::info!(?platform, "push path started");
+}
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -60,29 +84,20 @@ async fn main() -> anyhow::Result<()> {
 
     let state = AppState::new(Arc::new(agent), user_config);
 
-    // Push path: when a Telegram token is configured, start the adapter's
-    // getUpdates loop feeding the Dispatcher, which runs turns and delivers
-    // replies back via sendMessage. Shares the same AgentClient as /message.
+    // Push paths: for each configured platform, start the adapter's inbound
+    // loop feeding a Dispatcher that runs turns and delivers replies. All share
+    // the same AgentClient as /message.
     if let Some(token) = config.telegram_token.clone() {
-        use crate::dispatch::Dispatcher;
-        use crate::platform::PlatformAdapter;
-        use crate::telegram::TelegramAdapter;
-        use hermes_core::{Message, Platform};
-
-        let tg = Arc::new(TelegramAdapter::new(token)?);
-        let mut dispatcher = Dispatcher::new(state.agent.clone(), state.user_config.clone());
-        dispatcher.register_adapter(Platform::Telegram, tg.clone() as Arc<dyn PlatformAdapter>);
-        let dispatcher = Arc::new(dispatcher);
-
-        let (inbound_tx, inbound_rx) = tokio::sync::mpsc::channel::<Message>(128);
-        let tg_run = tg.clone();
-        tokio::spawn(async move {
-            if let Err(err) = tg_run.run(inbound_tx).await {
-                tracing::error!(%err, "telegram adapter loop exited");
-            }
-        });
-        tokio::spawn(dispatcher.run(inbound_rx));
-        tracing::info!("telegram push path started");
+        match telegram::TelegramAdapter::new(token) {
+            Ok(tg) => start_push_path(hermes_core::Platform::Telegram, Arc::new(tg), &state),
+            Err(err) => tracing::error!(%err, "telegram adapter init failed"),
+        }
+    }
+    if let Some(token) = config.discord_token.clone() {
+        match discord::DiscordAdapter::new(token) {
+            Ok(dc) => start_push_path(hermes_core::Platform::Discord, Arc::new(dc), &state),
+            Err(err) => tracing::error!(%err, "discord adapter init failed"),
+        }
     }
 
     let app = Router::new()

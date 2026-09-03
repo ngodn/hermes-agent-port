@@ -20,6 +20,8 @@ pub struct Config {
     pub agent_model: Option<String>,
     /// Telegram bot token; when set, the Telegram push path is started.
     pub telegram_token: Option<String>,
+    /// Discord bot token; when set, the Discord push path is started.
+    pub discord_token: Option<String>,
 }
 
 impl Config {
@@ -42,12 +44,16 @@ impl Config {
         let telegram_token = std::env::var("HERMES_TELEGRAM_TOKEN")
             .ok()
             .filter(|s| !s.is_empty());
+        let discord_token = std::env::var("HERMES_DISCORD_TOKEN")
+            .ok()
+            .filter(|s| !s.is_empty());
         Ok(Self {
             bind,
             agent_python,
             agent_cwd,
             agent_model,
             telegram_token,
+            discord_token,
         })
     }
 }
