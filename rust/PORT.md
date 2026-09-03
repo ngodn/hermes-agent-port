@@ -39,6 +39,22 @@ rust/
 | jinja2            | minijinja                    |
 | croniter          | tokio-cron-scheduler / cron  |
 
+## Gateway port order (from analysis/gateway-map.md)
+
+68 modules directly in `gateway/`. 38 are pure leaves (0 intra-package deps),
+2 are the hubs everything hangs off: `run.py` (34,847 LOC, 56 intra + 158
+external deps) and `slash_commands.py` (6,576 LOC). Port leaves first, hubs
+last. Next concrete targets, in order:
+
+1. `stream_events.py` (171 LOC) — the agent->gateway delivery contract; pins
+   down the real `AgentEvent` shape (currently a minimal guess in agent.rs).
+2. `turn_context.py` (150), `session_state.py` (475), `turn_lease.py` (355) —
+   per-turn/session state + the lease that serializes a session's turns.
+3. `response_filters.py` (147), `display_config.py` (322) — pure leaves.
+4. `platform_registry.py` (699) — done (platform.rs).
+5. hubs last: `config.py`, `session.py`, `stream_consumer.py`, `status.py`,
+   `slash_commands.py`, `run.py`.
+
 ## Gateway status
 
 - [x] Workspace + toolchain + build

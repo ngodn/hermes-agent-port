@@ -13,7 +13,7 @@ pub use error::{Error, Result};
 
 /// A messaging platform Hermes can talk on. Mirrors the Python
 /// `gateway.platform_registry` set. Kept as an enum so routing is exhaustive.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Platform {
     Cli,

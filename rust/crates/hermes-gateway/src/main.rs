@@ -6,6 +6,7 @@
 
 mod agent;
 mod config;
+mod dispatch;
 mod health;
 mod platform;
 
