@@ -18,6 +18,8 @@ pub struct Config {
     pub agent_cwd: PathBuf,
     /// Optional model override passed to the agent.
     pub agent_model: Option<String>,
+    /// Telegram bot token; when set, the Telegram push path is started.
+    pub telegram_token: Option<String>,
 }
 
 impl Config {
@@ -37,11 +39,15 @@ impl Config {
             .map(PathBuf::from)
             .unwrap_or_else(|_| PathBuf::from("."));
         let agent_model = std::env::var("HERMES_AGENT_MODEL").ok().filter(|s| !s.is_empty());
+        let telegram_token = std::env::var("HERMES_TELEGRAM_TOKEN")
+            .ok()
+            .filter(|s| !s.is_empty());
         Ok(Self {
             bind,
             agent_python,
             agent_cwd,
             agent_model,
+            telegram_token,
         })
     }
 }

@@ -76,8 +76,11 @@ last. Next concrete targets, in order:
 - [x] Runnable end to end: `POST /message` runs a turn through the agent and
       returns the reply (the "local" adapter over HTTP). Config via
       `HERMES_AGENT_PYTHON` / `HERMES_AGENT_CWD` / `HERMES_AGENT_MODEL`.
-- [ ] Push-based platform adapters driving the Dispatcher: Telegram, Discord,
-      Slack, WhatsApp, Signal
+- [x] Dispatcher wired into main() with a real push-based adapter
+- [x] Telegram adapter (long-poll getUpdates -> Dispatcher -> sendMessage),
+      started when `HERMES_TELEGRAM_TOKEN` is set. Boot + graceful-backoff
+      verified against the live API.
+- [ ] More platform adapters: Discord, Slack, WhatsApp, Signal
 - [ ] Native (non-subprocess) agent client, once run_agent.py is ported
 - [ ] Session lifecycle + delivery ledger
 - [ ] Control socket / drain control

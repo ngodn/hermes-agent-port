@@ -29,7 +29,7 @@ pub enum Platform {
 /// A single inbound or outbound message on some platform. This is the minimal
 /// shape the gateway needs before it hands off to the agent; richer per-turn
 /// context is layered on later in the port.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Message {
     pub platform: Platform,
     /// Opaque per-platform conversation id (chat id, channel id, ...).

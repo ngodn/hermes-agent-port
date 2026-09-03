@@ -20,3 +20,4 @@ tracing-subscriber.workspace = true
 anyhow.workspace = true
 async-trait = "0.1"
 unicode-general-category = "1"
+reqwest.workspace = true

@@ -14,6 +14,7 @@ mod platform;
 mod response_filters;
 mod session_stall;
 mod slash_access;
+mod telegram;
 mod whatsapp_identity;
 mod session_state;
 mod turn_lease;
@@ -47,6 +48,31 @@ async fn main() -> anyhow::Result<()> {
         agent = agent.with_model(model.clone());
     }
     let state = AppState::new(Arc::new(agent));
+
+    // Push path: when a Telegram token is configured, start the adapter's
+    // getUpdates loop feeding the Dispatcher, which runs turns and delivers
+    // replies back via sendMessage. Shares the same AgentClient as /message.
+    if let Some(token) = config.telegram_token.clone() {
+        use crate::dispatch::Dispatcher;
+        use crate::platform::PlatformAdapter;
+        use crate::telegram::TelegramAdapter;
+        use hermes_core::{Message, Platform};
+
+        let tg = Arc::new(TelegramAdapter::new(token)?);
+        let mut dispatcher = Dispatcher::new(state.agent.clone());
+        dispatcher.register_adapter(Platform::Telegram, tg.clone() as Arc<dyn PlatformAdapter>);
+        let dispatcher = Arc::new(dispatcher);
+
+        let (inbound_tx, inbound_rx) = tokio::sync::mpsc::channel::<Message>(128);
+        let tg_run = tg.clone();
+        tokio::spawn(async move {
+            if let Err(err) = tg_run.run(inbound_tx).await {
+                tracing::error!(%err, "telegram adapter loop exited");
+            }
+        });
+        tokio::spawn(dispatcher.run(inbound_rx));
+        tracing::info!("telegram push path started");
+    }
 
     let app = Router::new()
         .route("/healthz", get(healthz))
