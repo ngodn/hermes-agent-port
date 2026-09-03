@@ -76,6 +76,12 @@ pub async fn post_message(
         }
     }
 
+    // Intentional-silence markers suppress delivery: return an empty reply
+    // rather than echoing "NO_REPLY" to the caller.
+    if crate::response_filters::is_intentional_silence_response(&reply) {
+        reply.clear();
+    }
+
     match turn.await {
         Ok(Ok(())) => Ok(Json(MessageResponse { reply })),
         Ok(Err(err)) => {

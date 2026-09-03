@@ -10,6 +10,7 @@ mod dispatch;
 mod health;
 mod message;
 mod platform;
+mod response_filters;
 mod turn_lease;
 
 use std::sync::Arc;

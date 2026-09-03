@@ -117,7 +117,8 @@ impl Dispatcher {
             Ok(Ok(())) => {}
         }
 
-        if reply.is_empty() {
+        // Suppress delivery for intentional-silence markers and empty turns.
+        if reply.is_empty() || crate::response_filters::is_intentional_silence_response(&reply) {
             return;
         }
 
