@@ -8,14 +8,19 @@ mod agent;
 mod config;
 mod dispatch;
 mod health;
+mod message;
 mod platform;
 
-use axum::routing::get;
+use std::sync::Arc;
+
+use axum::routing::{get, post};
 use axum::Router;
 use tower_http::trace::TraceLayer;
 
+use crate::agent::SubprocessAgentClient;
 use crate::config::Config;
 use crate::health::{healthz, readyz, AppState};
+use crate::message::post_message;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -27,11 +32,19 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let config = Config::from_env()?;
-    let state = AppState::new();
+
+    // Strangler step: drive the existing Python agent as a subprocess. Swapped
+    // for a native client once run_agent.py is ported.
+    let mut agent = SubprocessAgentClient::new(config.agent_python.clone(), config.agent_cwd.clone());
+    if let Some(model) = &config.agent_model {
+        agent = agent.with_model(model.clone());
+    }
+    let state = AppState::new(Arc::new(agent));
 
     let app = Router::new()
         .route("/healthz", get(healthz))
         .route("/readyz", get(readyz))
+        .route("/message", post(post_message))
         .layer(TraceLayer::new_for_http())
         .with_state(state.clone());
 

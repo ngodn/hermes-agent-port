@@ -65,18 +65,20 @@ last. Next concrete targets, in order:
       `python -m hermes_cli.stream_turn` (JSONL over stdio), tested end to end
       (agent::tests::empty_prompt_terminates_cleanly)
 - [x] Turn-dispatch loop (`Dispatcher`)
-- [ ] Wire dispatcher + a first platform adapter into main() (needs an adapter)
-- [ ] Platform adapters: Telegram, Discord, Slack, WhatsApp, Signal
+- [x] Runnable end to end: `POST /message` runs a turn through the agent and
+      returns the reply (the "local" adapter over HTTP). Config via
+      `HERMES_AGENT_PYTHON` / `HERMES_AGENT_CWD` / `HERMES_AGENT_MODEL`.
+- [ ] Push-based platform adapters driving the Dispatcher: Telegram, Discord,
+      Slack, WhatsApp, Signal
 - [ ] Native (non-subprocess) agent client, once run_agent.py is ported
 - [ ] Session lifecycle + delivery ledger
 - [ ] Control socket / drain control
-```
-```
 
 ## Running
 
-```bash
-cd rust
-cargo run -p hermes-gateway          # serves on 127.0.0.1:8787 by default
-HERMES_GATEWAY_BIND=0.0.0.0:8080 cargo run -p hermes-gateway
-```
+    cd rust && cargo run -p hermes-gateway
+    # then, from the hermes repo root as agent cwd:
+    HERMES_AGENT_CWD=/path/to/hermes-agent-port cargo run -p hermes-gateway
+    curl -s localhost:8787/healthz
+    curl -s -X POST localhost:8787/message \
+      -H 'content-type: application/json' -d '{"text":"hello"}'

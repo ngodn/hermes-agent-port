@@ -1,8 +1,9 @@
-//! Health and readiness endpoints.
+//! Shared app state, health and readiness endpoints.
 //!
-//! Mirrors the intent of `gateway/readiness.py` / `gateway/status.py`:
-//! `/healthz` is a liveness check (process is up), `/readyz` reports whether
-//! the gateway has finished startup and can accept traffic.
+//! Health mirrors `gateway/readiness.py` / `gateway/status.py`: `/healthz` is a
+//! liveness check (process is up), `/readyz` reports whether the gateway has
+//! finished startup and can accept traffic. [`AppState`] is the shared handle
+//! every route gets; it also carries the [`AgentClient`] used to run turns.
 
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -12,15 +13,21 @@ use axum::http::StatusCode;
 use axum::Json;
 use serde_json::json;
 
-/// Shared runtime state for the gateway. Grows as platform adapters are ported.
-#[derive(Clone, Default)]
+use crate::agent::AgentClient;
+
+/// Shared runtime state for the gateway. Grows as subsystems are ported.
+#[derive(Clone)]
 pub struct AppState {
     ready: Arc<AtomicBool>,
+    pub agent: Arc<dyn AgentClient>,
 }
 
 impl AppState {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(agent: Arc<dyn AgentClient>) -> Self {
+        Self {
+            ready: Arc::new(AtomicBool::new(false)),
+            agent,
+        }
     }
 
     pub fn mark_ready(&self) {
