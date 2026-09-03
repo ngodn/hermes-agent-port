@@ -7,7 +7,7 @@
 set -euo pipefail
 
 REPO=/home/eins0fx/development/hermes-agent-port
-MODEL=gemini-3.7-flash-high
+MODEL=gemini-3.8-flash-high
 PROMPT_FILE="$1"
 
 cd "$REPO"

@@ -85,13 +85,22 @@ impl Dispatcher {
     }
 
     async fn handle_turn(&self, msg: Message) {
-        // Slash-command gating: refuse a command this sender may not run before
-        // spending a turn on it. Allowed commands flow to the agent as normal
-        // text for now (built-in handlers land with the command dispatcher).
-        if let SlashDecision::Denied { command } = slash::evaluate(&self.user_config, &msg) {
-            info!(platform = ?msg.platform, %command, "slash command denied by policy");
-            self.deliver(&msg, slash::denial_text(&command)).await;
-            return;
+        // Slash-command gating + built-ins. Refuse a command this sender may not
+        // run before spending a turn; answer gateway built-ins directly; let any
+        // other allowed command flow to the agent as normal text.
+        match slash::evaluate(&self.user_config, &msg) {
+            SlashDecision::Denied { command } => {
+                info!(platform = ?msg.platform, %command, "slash command denied by policy");
+                self.deliver(&msg, slash::denial_text(&command)).await;
+                return;
+            }
+            SlashDecision::Allowed { command } => {
+                if let Some(reply) = slash::handle_builtin(&command, &msg, &self.user_config) {
+                    self.deliver(&msg, reply).await;
+                    return;
+                }
+            }
+            SlashDecision::NotSlash => {}
         }
 
         // Serialize per resolved session. The channel_id is the session proxy

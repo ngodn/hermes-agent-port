@@ -63,13 +63,19 @@ pub async fn post_message(
         chat_type: Some("dm".to_string()),
     };
 
-    // Slash-command gating, same policy as the push path.
-    if let crate::slash::SlashDecision::Denied { command } =
-        crate::slash::evaluate(&state.user_config, &msg)
-    {
-        return Ok(Json(MessageResponse {
-            reply: crate::slash::denial_text(&command),
-        }));
+    // Slash-command gating + built-ins, same policy as the push path.
+    match crate::slash::evaluate(&state.user_config, &msg) {
+        crate::slash::SlashDecision::Denied { command } => {
+            return Ok(Json(MessageResponse {
+                reply: crate::slash::denial_text(&command),
+            }));
+        }
+        crate::slash::SlashDecision::Allowed { command } => {
+            if let Some(reply) = crate::slash::handle_builtin(&command, &msg, &state.user_config) {
+                return Ok(Json(MessageResponse { reply }));
+            }
+        }
+        crate::slash::SlashDecision::NotSlash => {}
     }
 
     let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
