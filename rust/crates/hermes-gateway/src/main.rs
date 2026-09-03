@@ -7,6 +7,7 @@
 mod agent;
 mod config;
 mod config_file;
+mod dead_targets;
 mod discord;
 mod dispatch;
 mod display_config;

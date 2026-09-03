@@ -20,6 +20,7 @@ use tokio::sync::mpsc;
 use tracing::{error, info, warn};
 
 use crate::agent::AgentClient;
+use crate::dead_targets::DeadTargetRegistry;
 use crate::platform::PlatformAdapter;
 use crate::slash::{self, SlashDecision};
 use crate::turn_lease::SessionTurnLeaseRegistry;
@@ -36,16 +37,36 @@ pub struct Dispatcher {
     generation: AtomicU64,
     /// User config, for slash-command gating.
     user_config: Arc<Value>,
+    /// Confirmed-unreachable delivery targets: skip sends to them, clear on
+    /// success. Shared with the Python gateway's dead_targets.json.
+    dead_targets: Arc<DeadTargetRegistry>,
 }
 
 impl Dispatcher {
     pub fn new(agent: Arc<dyn AgentClient>, user_config: Arc<Value>) -> Self {
+        let dead_path = crate::config_file::hermes_home()
+            .join("gateway")
+            .join("dead_targets.json");
+        Self::with_dead_targets(
+            agent,
+            user_config,
+            Arc::new(DeadTargetRegistry::new(dead_path)),
+        )
+    }
+
+    /// Construct with an explicit dead-target registry (for tests).
+    pub fn with_dead_targets(
+        agent: Arc<dyn AgentClient>,
+        user_config: Arc<Value>,
+        dead_targets: Arc<DeadTargetRegistry>,
+    ) -> Self {
         Self {
             agent,
             adapters: HashMap::new(),
             lease: Arc::new(SessionTurnLeaseRegistry::default()),
             generation: AtomicU64::new(0),
             user_config,
+            dead_targets,
         }
     }
 
@@ -67,20 +88,36 @@ impl Dispatcher {
 
     /// Deliver text back to the source platform's adapter, if one is registered.
     async fn deliver(&self, to: &Message, text: String) {
-        match self.adapters.get(&to.platform) {
-            Some(adapter) => {
-                let out = Message {
-                    platform: to.platform,
-                    channel_id: to.channel_id.clone(),
-                    sender_id: to.sender_id.clone(),
-                    text,
-                    chat_type: to.chat_type.clone(),
-                };
-                if let Err(err) = adapter.send(&out).await {
-                    error!(platform = ?to.platform, ?err, "outbound delivery failed");
-                }
+        let Some(adapter) = self.adapters.get(&to.platform) else {
+            warn!(platform = ?to.platform, "no adapter registered for delivery");
+            return;
+        };
+        let platform_key = adapter.name();
+
+        // Skip a target we have already proven unreachable (self-heals on the
+        // next successful send to it).
+        if self.dead_targets.is_dead(platform_key, &to.channel_id) {
+            info!(platform = platform_key, channel = %to.channel_id, "skipping delivery to dead target");
+            return;
+        }
+
+        let out = Message {
+            platform: to.platform,
+            channel_id: to.channel_id.clone(),
+            sender_id: to.sender_id.clone(),
+            text,
+            chat_type: to.chat_type.clone(),
+        };
+        match adapter.send(&out).await {
+            Ok(()) => {
+                // A successful send clears any stale dead flag.
+                self.dead_targets.clear(platform_key, &to.channel_id);
             }
-            None => warn!(platform = ?to.platform, "no adapter registered for delivery"),
+            Err(err) => {
+                // Marking a target dead needs adapter send-error classification
+                // (forbidden / not_found), which is not ported yet.
+                error!(platform = ?to.platform, ?err, "outbound delivery failed");
+            }
         }
     }
 
@@ -240,7 +277,19 @@ mod tests {
             reply: reply.to_string(),
             calls: calls.clone(),
         });
-        let mut d = Dispatcher::new(agent, Arc::new(cfg));
+        // Use a throwaway dead-target registry so tests never touch the real
+        // HERMES_HOME.
+        let mut dead_path = std::env::temp_dir();
+        dead_path.push(format!(
+            "hermes_disp_dead_{}_{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_nanos()
+        ));
+        let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(dead_path));
+        let mut d = Dispatcher::with_dead_targets(agent, Arc::new(cfg), dead);
         d.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
         (d, calls, sent)
     }
@@ -288,5 +337,34 @@ mod tests {
         let out = sent.lock().unwrap();
         assert_eq!(out.len(), 1);
         assert!(out[0].text.contains("online"));
+    }
+
+    #[tokio::test]
+    async fn delivery_to_dead_target_is_skipped() {
+        let calls = Arc::new(AtomicUsize::new(0));
+        let sent = Arc::new(Mutex::new(Vec::new()));
+        let agent = Arc::new(StubAgent {
+            reply: "hello".into(),
+            calls: calls.clone(),
+        });
+        let mut dead_path = std::env::temp_dir();
+        dead_path.push(format!(
+            "hermes_disp_deadskip_{}_{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_nanos()
+        ));
+        let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(dead_path));
+        // The stub adapter's name() is "stub"; mark the target dead under it.
+        dead.mark_dead("stub", "chan", "test");
+        let mut d = Dispatcher::with_dead_targets(agent, Arc::new(json!({})), dead);
+        d.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
+
+        d.handle_turn(cli_msg("hi", "u")).await;
+        // The agent still runs, but delivery is skipped because the target is dead.
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert!(sent.lock().unwrap().is_empty());
     }
 }
