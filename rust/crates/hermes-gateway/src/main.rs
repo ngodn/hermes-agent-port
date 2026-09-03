@@ -15,6 +15,7 @@ mod message;
 mod platform;
 mod response_filters;
 mod session_stall;
+mod slack;
 mod slash;
 mod slash_access;
 mod telegram;
@@ -98,6 +99,16 @@ async fn main() -> anyhow::Result<()> {
             Ok(dc) => start_push_path(hermes_core::Platform::Discord, Arc::new(dc), &state),
             Err(err) => tracing::error!(%err, "discord adapter init failed"),
         }
+    }
+    match (config.slack_app_token.clone(), config.slack_bot_token.clone()) {
+        (Some(app), Some(bot)) => match slack::SlackAdapter::new(app, bot) {
+            Ok(sl) => start_push_path(hermes_core::Platform::Slack, Arc::new(sl), &state),
+            Err(err) => tracing::error!(%err, "slack adapter init failed"),
+        },
+        (Some(_), None) | (None, Some(_)) => {
+            tracing::warn!("slack needs both HERMES_SLACK_APP_TOKEN and HERMES_SLACK_BOT_TOKEN; skipping")
+        }
+        (None, None) => {}
     }
 
     let app = Router::new()

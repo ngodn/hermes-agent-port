@@ -83,7 +83,11 @@ last. Next concrete targets, in order:
 - [x] Discord adapter (Gateway WebSocket: HELLO/heartbeat/IDENTIFY/dispatch ->
       Dispatcher -> REST sendMessage), started when `HERMES_DISCORD_TOKEN` set.
       WS handshake verified against the live gateway.
-- [ ] More platform adapters: Slack, WhatsApp, Signal
+- [x] Slack adapter (Socket Mode: apps.connections.open -> WS -> events_api
+      envelopes with ack -> Dispatcher -> chat.postMessage), started when both
+      `HERMES_SLACK_APP_TOKEN` and `HERMES_SLACK_BOT_TOKEN` are set. Handshake
+      verified against the live API.
+- [ ] More platform adapters: WhatsApp (Baileys bridge), Signal
 - [ ] Native (non-subprocess) agent client, once run_agent.py is ported
 - [ ] Session lifecycle + delivery ledger
 - [ ] Control socket / drain control

@@ -22,6 +22,10 @@ pub struct Config {
     pub telegram_token: Option<String>,
     /// Discord bot token; when set, the Discord push path is started.
     pub discord_token: Option<String>,
+    /// Slack app-level token (xapp-) for Socket Mode, and bot token (xoxb-) for
+    /// posting. Both are required to start the Slack push path.
+    pub slack_app_token: Option<String>,
+    pub slack_bot_token: Option<String>,
 }
 
 impl Config {
@@ -47,6 +51,12 @@ impl Config {
         let discord_token = std::env::var("HERMES_DISCORD_TOKEN")
             .ok()
             .filter(|s| !s.is_empty());
+        let slack_app_token = std::env::var("HERMES_SLACK_APP_TOKEN")
+            .ok()
+            .filter(|s| !s.is_empty());
+        let slack_bot_token = std::env::var("HERMES_SLACK_BOT_TOKEN")
+            .ok()
+            .filter(|s| !s.is_empty());
         Ok(Self {
             bind,
             agent_python,
@@ -54,6 +64,8 @@ impl Config {
             agent_model,
             telegram_token,
             discord_token,
+            slack_app_token,
+            slack_bot_token,
         })
     }
 }
