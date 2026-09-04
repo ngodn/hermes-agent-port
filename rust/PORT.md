@@ -159,8 +159,35 @@ golden-tested against real Python:
       decrypt via RustCrypto aes-gcm, never hand-rolled; CSPRNG bind key; golden
       vectors vs Python cryptography AESGCM)
 - [x] platforms/qqbot/{constants,utils}.py -> qqbot_common.rs
+- [x] platforms/qqbot/keyboards.py -> qqbot_keyboards.rs (inline-keyboard wire
+      structs, approval/update-prompt parsers + builders, InteractionEvent;
+      ApprovalSender's adapter send is deferred to the QQ adapter)
 - [x] platforms/signal_format.py -> signal_format.rs (markdown -> Signal
       bodyRanges, UTF-16 offset math + overlap suppression; 18 golden vectors)
+- [x] platforms/signal_rate_limit.py -> signal_rate_limit.rs (token-bucket
+      attachment scheduler; asyncio.Lock -> std Mutex held only across the brief
+      refill/deduct sections, never across an await; process-global singleton)
+- [x] `agent/retry_utils.py` -> retry_utils.rs (Retry-After parse incl. RFC 7231
+      HTTP-date via chrono rfc2822; jittered/adaptive backoff; zai overload).
+      Obsolete RFC 850 / asctime date forms are not accepted (documented gap,
+      only affects a future date in those rare forms)
+- [x] platforms/_http_client_limits.py -> http_client_limits.rs (adapter
+      connection-pool tuning; httpx Limits -> reqwest pool knobs)
+- [x] `relay/transport.py` -> relay_transport.rs (RelayTransport async trait;
+      reuses MessageEvent + CapabilityDescriptor; pure interface)
+- [x] platforms/webhook_filters.py -> webhook_filters.rs (declarative route
+      filters + subprocess script transforms; timeout kills+reaps the direct
+      child without joining reader threads, matching CPython subprocess.run's
+      leak-the-grandchild-fd timeout behavior). Deferred: build_subprocess_env
+      secret-scrub and agent.redact output redaction (base behavior reproduced).
+- [x] platforms/yuanbao_proto.py -> yuanbao_proto.rs (Yuanbao WebSocket protobuf
+      codec, hand-rolled varint + length-delimited ConnMsg framing; 14 golden
+      test fns). Deviation: decode_conn_msg/decode_biz_msg degrade to a default
+      struct on a hard wire error instead of raising.
+- [x] platforms/yuanbao_sticker.py -> yuanbao_sticker.rs (sticker catalogue +
+      fuzzy search + FaceMsg wire body). Gap: _normalize_text NFKC is strip+
+      lowercase only (no NFKC crate); a no-op for ASCII/CJK, diverges only for
+      compatibility-form search queries. Closing it needs unicode-normalization.
 
 ## Live HTTP surface
 
@@ -181,6 +208,13 @@ golden-tested against real Python:
   calls in Python tool code. The Rust dispatcher already threads the session
   scope explicitly (Message + session key), so like turn_context this belongs
   with the agent-core turn path, not a contextvar emulation.
+- `agent/secret_scope.py` — same `contextvars` set/reset-token model as
+  session_context (per-session secret scope with an `os.environ` fallback and a
+  multiplex-active flag). Its imperative set/reset-token API does not map to
+  tokio task-locals (which are scope-based), so it lands with the session-
+  threading path, not as a standalone contextvar emulation. The pure helpers
+  (`load_env_file`, `_is_global_env`, `_strip_inline_comment`,
+  `build_profile_secret_scope`) can be extracted when a consumer needs them.
 - `wake.py` — the delegation-persistence half is DONE (wake.rs). The remaining
   push-capable and API-server self-POST wake paths are coupled to the adapter
   base (`MessageEvent`/`handle_message`) and the API-server adapter; port them
