@@ -70,6 +70,7 @@ mod retry_utils;
 mod rich_sent_store;
 mod runtime_footer;
 mod scale_to_zero;
+mod secret_scope;
 mod session;
 mod session_db;
 mod session_db_recovery;
