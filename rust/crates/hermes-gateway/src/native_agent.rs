@@ -83,6 +83,9 @@ pub struct NativeAgentClient {
     api_key: String,
     base_url: String,
     client: reqwest::Client,
+    /// When non-empty, turns run through the tool-calling loop (non-streaming);
+    /// when empty, run_turn streams a plain completion.
+    tools: Vec<std::sync::Arc<dyn crate::native_tools::Tool>>,
 }
 
 impl NativeAgentClient {
@@ -100,13 +103,36 @@ impl NativeAgentClient {
             api_key: api_key.into(),
             base_url: base_url.into().trim_end_matches('/').to_string(),
             client,
+            tools: Vec::new(),
         })
     }
+
+    /// Enable tool-calling with the given toolset. Turns then run the tool loop
+    /// (non-streaming) instead of streaming a plain completion.
+    pub fn with_tools(mut self, tools: Vec<std::sync::Arc<dyn crate::native_tools::Tool>>) -> Self {
+        self.tools = tools;
+        self
+    }
+
+    /// The maximum tool-loop iterations before giving up.
+    const MAX_TOOL_ITERS: usize = 8;
 }
 
 #[async_trait]
 impl AgentClient for NativeAgentClient {
     async fn run_turn(&self, msg: &Message, events: mpsc::Sender<StreamEvent>) -> Result<()> {
+        // Tool-capable turns run the loop (non-streaming); plain turns stream.
+        if !self.tools.is_empty() {
+            return crate::native_tools::run_tool_loop(
+                self,
+                &self.tools,
+                &msg.text,
+                &events,
+                Self::MAX_TOOL_ITERS,
+            )
+            .await;
+        }
+
         let url = format!("{}/chat/completions", self.base_url);
         let resp = self
             .client

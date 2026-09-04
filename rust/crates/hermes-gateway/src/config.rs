@@ -43,6 +43,8 @@ pub struct Config {
     /// Flag used to pass the prompt to the CLI (`HERMES_AGENT_CLI_PROMPT_FLAG`,
     /// default `-p`; set empty to pass the prompt as a trailing positional).
     pub agent_cli_prompt_flag: Option<String>,
+    /// Enable built-in tools on the native HTTP client (`HERMES_AGENT_TOOLS=1`).
+    pub agent_tools: bool,
 }
 
 impl Config {
@@ -98,6 +100,14 @@ impl Config {
             .filter(|s| !s.is_empty());
         // Distinguish "unset" (use default -p) from "set empty" (positional).
         let agent_cli_prompt_flag = std::env::var("HERMES_AGENT_CLI_PROMPT_FLAG").ok();
+        let agent_tools = std::env::var("HERMES_AGENT_TOOLS")
+            .map(|v| {
+                matches!(
+                    v.trim().to_ascii_lowercase().as_str(),
+                    "1" | "true" | "yes" | "on"
+                )
+            })
+            .unwrap_or(false);
         Ok(Self {
             bind,
             agent_python,
@@ -113,6 +123,7 @@ impl Config {
             agent_cli,
             agent_cli_args,
             agent_cli_prompt_flag,
+            agent_tools,
         })
     }
 }

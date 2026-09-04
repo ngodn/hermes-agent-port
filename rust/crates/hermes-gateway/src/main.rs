@@ -94,8 +94,13 @@ fn build_agent_client(
 
         match (key, model) {
             (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone()) {
-                Ok(c) => {
-                    tracing::info!(model, base_url, "using native agent client");
+                Ok(mut c) => {
+                    if config.agent_tools {
+                        c = c.with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+                        tracing::info!(model, base_url, "using native agent client (tools enabled)");
+                    } else {
+                        tracing::info!(model, base_url, "using native agent client");
+                    }
                     return Arc::new(c);
                 }
                 Err(err) => {
