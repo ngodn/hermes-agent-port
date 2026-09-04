@@ -1,0 +1,3 @@
+gateway:
+  write_sessions_json: false
+  max_concurrent_sessions: 7

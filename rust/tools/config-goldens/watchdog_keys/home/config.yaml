@@ -1,0 +1,4 @@
+gateway:
+  systemd_watchdog_seconds: 20
+  loop_watchdog: false
+  loop_watchdog_max_strikes: 9

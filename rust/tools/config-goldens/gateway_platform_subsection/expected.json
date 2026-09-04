@@ -1,0 +1,60 @@
+{
+  "always_log_local": true,
+  "default_reset_policy": {
+    "at_hour": 4,
+    "bg_process_max_age_hours": 24,
+    "idle_minutes": 1440,
+    "mode": "none",
+    "notify": true,
+    "notify_exclude_platforms": [
+      "api_server",
+      "webhook"
+    ]
+  },
+  "filter_silence_narration": true,
+  "group_sessions_per_user": true,
+  "loop_watchdog": true,
+  "loop_watchdog_max_strikes": 3,
+  "loop_watchdog_probe_interval_s": 30.0,
+  "loop_watchdog_probe_timeout_s": 10.0,
+  "max_concurrent_sessions": null,
+  "multiplex_profile_allowlist": null,
+  "multiplex_profiles": false,
+  "platforms": {
+    "api_server": {
+      "enabled": true,
+      "extra": {
+        "host": "0.0.0.0",
+        "port": 8642
+      },
+      "gateway_restart_notification": true,
+      "reply_to_mode": "first",
+      "typing_indicator": true
+    }
+  },
+  "profile_routes": [],
+  "quick_commands": {},
+  "reset_by_platform": {},
+  "reset_by_type": {},
+  "reset_triggers": [
+    "/new",
+    "/reset"
+  ],
+  "room_link_url": null,
+  "session_store_max_age_days": 90,
+  "sessions_dir": "/home/eins0fx/development/hermes-agent-port/rust/tools/config-goldens/gateway_platform_subsection/home/sessions",
+  "streaming": {
+    "buffer_threshold": 24,
+    "cursor": " ▉",
+    "edit_interval": 0.8,
+    "enabled": false,
+    "fresh_final_after_seconds": 0.0,
+    "transport": "auto"
+  },
+  "stt_echo_transcripts": true,
+  "stt_enabled": true,
+  "systemd_watchdog_seconds": 0,
+  "thread_sessions_per_user": false,
+  "unauthorized_dm_behavior": "pair",
+  "write_sessions_json": true
+}

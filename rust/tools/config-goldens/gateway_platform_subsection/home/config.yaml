@@ -1,0 +1,5 @@
+gateway:
+  api_server:
+    enabled: true
+    port: 8642
+    host: 0.0.0.0

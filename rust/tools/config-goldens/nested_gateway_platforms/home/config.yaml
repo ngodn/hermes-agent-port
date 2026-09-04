@@ -1,0 +1,4 @@
+gateway:
+  platforms:
+    discord:
+      enabled: true

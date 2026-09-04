@@ -1,0 +1,3 @@
+platforms:
+  telegram:
+    enabled: false

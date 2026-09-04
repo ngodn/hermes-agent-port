@@ -1,0 +1,3 @@
+write_sessions_json: false
+gateway:
+  write_sessions_json: true

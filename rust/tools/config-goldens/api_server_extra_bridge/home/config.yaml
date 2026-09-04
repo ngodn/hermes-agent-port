@@ -1,0 +1,6 @@
+platforms:
+  api_server:
+    enabled: true
+    port: 8642
+    key: sekret
+    model_name: m1

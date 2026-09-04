@@ -1,0 +1,7 @@
+telegram:
+  allow_from: [alice, bob]
+  require_mention: true
+  allowed_chats: [1, 2]
+  channel_prompts:
+    123: hello
+  unauthorized_dm_behavior: IGNORE

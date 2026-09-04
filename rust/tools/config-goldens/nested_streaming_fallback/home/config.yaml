@@ -1,0 +1,3 @@
+gateway:
+  streaming:
+    mode: edit

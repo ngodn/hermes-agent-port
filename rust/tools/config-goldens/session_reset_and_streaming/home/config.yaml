@@ -1,0 +1,7 @@
+session_reset:
+  mode: idle
+  idle_minutes: 30
+streaming:
+  enabled: true
+  transport: ws
+  edit_interval: 1.5

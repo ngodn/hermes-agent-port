@@ -1,0 +1,39 @@
+You are a READ-ONLY code analyst helping port a Python gateway to Rust. Do NOT modify any file except the single output file named below. Do NOT run cargo, do NOT run tests.
+
+REPO: /home/eins0fx/development/hermes-agent-port
+TARGET TO ANALYSE: gateway/run.py (very large, ~34k lines) — the GatewayRunner hub.
+
+GOAL: produce a port-order map so a Rust engineer can port this hub incrementally.
+
+WRITE YOUR OUTPUT TO EXACTLY ONE FILE: rust/analysis/run-py-map.md
+(create it; overwrite if present). Write nothing else anywhere.
+
+The Rust port already exists under rust/crates/hermes-gateway/src/ (about 100 modules).
+Read rust/PORT.md first for what is already ported and what is deferred, so you can
+say which pieces of run.py already have a Rust counterpart.
+
+Your output must cover:
+
+1. STRUCTURE: the classes defined in run.py, and for GatewayRunner list its
+   mixin base classes and where each mixin lives (file path).
+2. STATE: the instance attributes GatewayRunner owns (the long-lived state:
+   queues, locks, caches, adapter registry, session maps, tasks). Group them by
+   concern. This is the most important section: the Rust port needs to know what
+   state the hub owns before it can be decomposed.
+3. METHOD INVENTORY: group GatewayRunner's methods into coherent concerns (e.g.
+   startup/shutdown, inbound message handling, turn execution, progress/streaming,
+   authorization, slash/commands, cron/scheduling, delivery, hosted rooms,
+   adapter lifecycle). For each group give: the method names, approximate line
+   ranges, and a one-line purpose.
+4. SEAMS: identify the natural decomposition boundaries — which method groups
+   could become standalone Rust modules with an explicit state struct passed in,
+   versus which are irreducibly coupled to the hub. Call out which groups already
+   have a partial Rust counterpart (name the .rs file).
+5. PORT ORDER: a proposed bottom-up ordering of the groups, with the dependency
+   reason for each step. Put the pieces with the fewest inbound dependencies first.
+6. RISKS: the specific places where Python dynamism (contextvars, monkeypatching,
+   getattr dispatch, duck-typed adapters, asyncio task/callback juggling) will not
+   map cleanly to Rust, with the line numbers.
+
+Be concrete and cite line numbers. Do not speculate about code you did not read;
+if a region is too large to read fully, say which ranges you sampled.

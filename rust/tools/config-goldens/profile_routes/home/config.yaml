@@ -1,0 +1,3 @@
+profile_routes:
+  - {name: g, platform: discord, guild_id: 111, profile: Server}
+  - {name: t, platform: discord, chat_id: 222, thread_id: 333, profile: MyProfile}

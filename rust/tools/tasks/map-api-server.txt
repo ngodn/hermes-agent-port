@@ -1,0 +1,39 @@
+You are a READ-ONLY code analyst helping port a Python gateway to Rust. Do NOT modify any file except the single output file named below. Do NOT run cargo, do NOT run tests.
+
+REPO: /home/eins0fx/development/hermes-agent-port
+TARGET TO ANALYSE: the API-server subsystem, primarily
+  gateway/platforms/api_server.py (~370KB, the big one)
+and its siblings:
+  gateway/platforms/api_server_runs.py
+  gateway/platforms/api_server_room_grants.py
+  gateway/platforms/api_server_room_dispatch.py
+
+WRITE YOUR OUTPUT TO EXACTLY ONE FILE: rust/analysis/api-server-map.md
+(create it; overwrite if present). Write nothing else anywhere.
+
+Context: gateway/platforms/api_server_run_idempotency.py is ALREADY ported to
+rust/crates/hermes-gateway/src/api_server_run_idempotency.rs. The Rust gateway
+serves HTTP with axum. Read rust/PORT.md first for what is already ported.
+
+Your output must cover:
+
+1. HTTP SURFACE: the complete route table — for every registered route give
+   method, path, the handler function name, and a one-line purpose. This is the
+   most important section (it is the contract a Rust axum port must reproduce).
+   Include the auth/middleware applied per route.
+2. AUTH: how requests are authenticated (API keys, bearer tokens, room grants),
+   where the key material comes from, and what the failure responses look like.
+3. REQUEST/RESPONSE SHAPES: for the main endpoints, the JSON request and
+   response bodies, including error envelopes and status codes. Note anything
+   that must be byte-compatible (e.g. OpenAI-compatible shapes).
+4. STATE + COUPLING: what the api_server adapter holds and which parts reach into
+   GatewayRunner or the platform adapter base. Separate "pure request handling"
+   from "needs the runner".
+5. STREAMING: how streaming responses / SSE / long-running runs work, and how the
+   run lifecycle (create, poll, cancel) is modelled.
+6. PORT ORDER: a proposed bottom-up ordering for porting this to axum, with a
+   dependency reason for each step, and which steps are blocked on the
+   GatewayRunner port.
+
+Be concrete and cite file paths + line numbers. The file is very large; state
+which line ranges you actually read and do not invent routes you did not see.
