@@ -57,6 +57,14 @@ rust/
   TimeoutStopSec sizing). `shutdown_forensics.py` -> shutdown_forensics.rs
   (SIGTERM/SIGINT /proc snapshot, detached ps/pstree/dmesg diagnostic, systemd
   timing-alignment check).
+- **Data-loss flush/recover**: `shutdown_flush.py` -> shutdown_flush.rs
+  (flush_pending_to_file / recover_pending_to_db / flush_agent_history_to_file;
+  wired live: recover_pending_to_db runs at singleton startup and is verified to
+  reinsert a prior life's flushed messages). SessionDb gained
+  `append_message_with` (tool fields + display_kind/display_metadata + explicit
+  timestamp) + `get_message`, the shape delivery/TUI rows and cron deliveries
+  need. `wake.py` delegation-persistence half -> wake.rs
+  (persist_delegation_delivery + delegation_display_metadata over SessionDb).
 
 ## Deferred (port later, with the subsystem they belong to)
 
@@ -70,11 +78,13 @@ rust/
   calls in Python tool code. The Rust dispatcher already threads the session
   scope explicitly (Message + session key), so like turn_context this belongs
   with the agent-core turn path, not a contextvar emulation.
-- `wake.py` — wakes a session on a background completion; coupled to the adapter
-  base (`MessageEvent`/`handle_message`), the API-server adapter internals, and
-  `SessionDB.append_message` with display metadata. Port with the adapter /
-  API-server subsystem. (`_delegation_display_metadata` is a pure helper that
-  can come along then.)
+- `wake.py` — the delegation-persistence half is DONE (wake.rs). The remaining
+  push-capable and API-server self-POST wake paths are coupled to the adapter
+  base (`MessageEvent`/`handle_message`) and the API-server adapter; port them
+  with the adapter / API-server subsystem.
+- `shutdown_flush.py` transcript-spool WRITER queue (flush_overflow_to_file /
+  spool_dropped_transcript_message / drain_transcript_spool) — tied to run.py's
+  transcript-cap-drop path; recovery already handles their files by reason.
 - `stream_dispatch.py` — the event router hangs off the adapter render-hooks and
   the `GatewayStreamConsumer` sink, both in the `stream_consumer.py` hub (3.6k
   LOC, unported). Port it with that subsystem, not against stubs.
