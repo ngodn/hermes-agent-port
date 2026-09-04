@@ -294,6 +294,21 @@ async fn main() -> anyhow::Result<()> {
 
     let state = AppState::new(agent, user_config, configured_model, session_db);
 
+    // Recover any messages a prior gateway life flushed to disk before it died
+    // (data-loss guard, #72680). Only when we own the profile (singleton), so
+    // it doesn't race the Python gateway during migration.
+    if singleton {
+        if let Some(db) = state.session_db.as_deref() {
+            let n = shutdown_flush::recover_pending_to_db(db, None);
+            if n > 0 {
+                tracing::info!(
+                    recovered = n,
+                    "recovered flushed pending messages at startup"
+                );
+            }
+        }
+    }
+
     // One shutdown token, cancelled on SIGINT/SIGTERM, drives both the push
     // paths and the HTTP server's graceful shutdown.
     let shutdown = CancellationToken::new();
