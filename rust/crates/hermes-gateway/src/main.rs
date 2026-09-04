@@ -25,6 +25,7 @@ mod lifecycle_ledger;
 mod media;
 mod media_policy;
 mod media_repair;
+mod memory_monitor;
 mod memory_status;
 mod message;
 mod message_timestamps;
@@ -327,6 +328,10 @@ async fn main() -> anyhow::Result<()> {
         config_file::hermes_home(),
         shutdown.clone(),
     ));
+
+    // Periodic RSS logging (leak detection). Passive logging only, so it runs
+    // regardless of the singleton flag; stops with the shutdown token.
+    memory_monitor::start_memory_monitoring(std::time::Duration::from_secs(300), shutdown.clone());
 
     // Loop-liveness heartbeat: every 30s write state/gateway.heartbeat with a
     // memory sample, so an unclean death leaves pre-death telemetry and
