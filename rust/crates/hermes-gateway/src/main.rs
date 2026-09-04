@@ -15,6 +15,7 @@ mod channel_directory;
 mod cli_agent;
 mod code_skew;
 mod config;
+mod config_env_overrides;
 mod config_file;
 mod config_gateway;
 mod config_schema;
