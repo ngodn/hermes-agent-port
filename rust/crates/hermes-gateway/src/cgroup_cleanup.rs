@@ -20,7 +20,7 @@ use std::path::PathBuf;
 
 /// The cgroup v2 path for the calling process (the `0::<path>` line of
 /// `/proc/self/cgroup`), or `None`.
-fn own_cgroup_path() -> Option<String> {
+pub(crate) fn own_cgroup_path() -> Option<String> {
     let text = std::fs::read_to_string("/proc/self/cgroup").ok()?;
     for line in text.lines() {
         if let Some(rest) = line.strip_prefix("0::") {

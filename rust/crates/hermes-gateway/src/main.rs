@@ -5,6 +5,7 @@
 //! agent RPC boundary are ported in behind this skeleton one at a time.
 
 mod agent;
+mod agent_cache_pressure;
 mod cgroup_cleanup;
 mod cli_agent;
 mod config;
