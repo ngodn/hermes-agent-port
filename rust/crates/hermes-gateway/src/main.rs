@@ -53,6 +53,7 @@ mod sticker_cache;
 mod systemd_notify;
 mod telegram;
 mod turn_lease;
+mod wake;
 mod whatsapp_identity;
 
 use std::sync::Arc;
