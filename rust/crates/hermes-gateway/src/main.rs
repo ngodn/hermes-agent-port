@@ -21,6 +21,7 @@ mod display_config;
 mod drain_control;
 mod health;
 mod hooks;
+mod lifecycle_ledger;
 mod media;
 mod media_policy;
 mod media_repair;
