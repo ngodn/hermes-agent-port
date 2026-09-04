@@ -91,6 +91,7 @@ mod wake;
 mod webhook_filters;
 mod whatsapp_identity;
 mod yuanbao_proto;
+mod yuanbao_sticker;
 
 use std::sync::Arc;
 
