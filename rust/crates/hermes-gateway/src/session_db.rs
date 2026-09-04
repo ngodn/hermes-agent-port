@@ -22,14 +22,41 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 
 use hermes_core::{Message, Platform};
-use rusqlite::{params, Connection};
+use rusqlite::{params, Connection, OptionalExtension};
 use serde::Serialize;
+use serde_json::Value;
 
 /// One message in a conversation, as needed to reconstruct history for a turn.
 #[derive(Debug, Clone, PartialEq)]
 pub struct HistoryMessage {
     pub role: String,
     pub content: String,
+}
+
+/// Optional columns for [`SessionDb::append_message_with`]. `None` fields are
+/// left NULL. `display_metadata` is serialized to JSON text.
+#[derive(Default)]
+pub struct AppendOptions<'a> {
+    pub tool_call_id: Option<&'a str>,
+    pub tool_calls: Option<&'a str>,
+    pub tool_name: Option<&'a str>,
+    pub display_kind: Option<&'a str>,
+    pub display_metadata: Option<Value>,
+    pub timestamp: Option<f64>,
+}
+
+/// A full stored message row (recovery / diagnostics read path).
+#[derive(Debug, Clone, PartialEq)]
+pub struct StoredMessage {
+    pub session_id: String,
+    pub role: String,
+    pub content: String,
+    pub tool_call_id: Option<String>,
+    pub tool_calls: Option<String>,
+    pub tool_name: Option<String>,
+    pub display_kind: Option<String>,
+    pub display_metadata: Option<String>,
+    pub timestamp: f64,
 }
 
 /// One full-text search hit.
@@ -145,6 +172,8 @@ impl SessionDb {
                 tool_call_id TEXT,
                 tool_calls TEXT,
                 tool_name TEXT,
+                display_kind TEXT,
+                display_metadata TEXT,
                 timestamp REAL NOT NULL,
                 active INTEGER NOT NULL DEFAULT 1
             )",
@@ -213,28 +242,84 @@ impl SessionDb {
         Ok(())
     }
 
-    /// Append a message to a session and bump its counters. Returns the new row id.
+    /// Append a plain message to a session. Returns the new row id.
     pub fn append_message(
         &self,
         session_id: &str,
         role: &str,
         content: &str,
     ) -> rusqlite::Result<i64> {
+        self.append_message_with(session_id, role, content, &AppendOptions::default())
+    }
+
+    /// Append a message with the full column set (tool fields, display kind /
+    /// metadata, explicit timestamp). `display_metadata` is serialized to JSON
+    /// text. Mirrors the shape the delivery/TUI poll path and cron delegation
+    /// deliveries persist (`display_kind="async_delegation_complete"`, ...).
+    pub fn append_message_with(
+        &self,
+        session_id: &str,
+        role: &str,
+        content: &str,
+        opts: &AppendOptions,
+    ) -> rusqlite::Result<i64> {
         let conn = self.conn.lock().unwrap();
-        let now = now_secs();
+        let ts = opts.timestamp.unwrap_or_else(now_secs);
+        let display_metadata = opts
+            .display_metadata
+            .as_ref()
+            .and_then(|v| serde_json::to_string(v).ok());
         conn.execute(
-            "INSERT INTO messages (session_id, role, content, timestamp, active)
-             VALUES (?, ?, ?, ?, 1)",
-            params![session_id, role, content, now],
+            "INSERT INTO messages
+                (session_id, role, content, tool_call_id, tool_calls, tool_name,
+                 display_kind, display_metadata, timestamp, active)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)",
+            params![
+                session_id,
+                role,
+                content,
+                opts.tool_call_id,
+                opts.tool_calls,
+                opts.tool_name,
+                opts.display_kind,
+                display_metadata,
+                ts,
+            ],
         )?;
         let id = conn.last_insert_rowid();
         // Best-effort counter bump; ignore if the session row isn't present.
         let _ = conn.execute(
             "UPDATE sessions SET message_count = message_count + 1, last_activity_at = ?
              WHERE id = ?",
-            params![now, session_id],
+            params![ts, session_id],
         );
         Ok(id)
+    }
+
+    /// Read a single stored message by row id (for recovery / diagnostics).
+    pub fn get_message(&self, id: i64) -> rusqlite::Result<Option<StoredMessage>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT session_id, role, content, tool_call_id, tool_calls, tool_name,
+                    display_kind, display_metadata, timestamp
+             FROM messages WHERE id = ?",
+        )?;
+        let row = stmt
+            .query_row(params![id], |r| {
+                Ok(StoredMessage {
+                    session_id: r.get(0)?,
+                    role: r.get(1)?,
+                    content: r.get::<_, Option<String>>(2)?.unwrap_or_default(),
+                    tool_call_id: r.get(3)?,
+                    tool_calls: r.get(4)?,
+                    tool_name: r.get(5)?,
+                    display_kind: r.get(6)?,
+                    display_metadata: r.get(7)?,
+                    timestamp: r.get(8)?,
+                })
+            })
+            .optional()?;
+        Ok(row)
     }
 
     /// Load a session's live history (active = 1), oldest first. `limit` caps the
@@ -336,6 +421,39 @@ mod tests {
         ));
         p.push("state.db");
         p
+    }
+
+    #[test]
+    fn append_with_display_kind_roundtrips() {
+        let path = temp_db("display");
+        let db = SessionDb::open(path).unwrap();
+        db.ensure_session("s1", "api_server", None, None, None)
+            .unwrap();
+        let id = db
+            .append_message_with(
+                "s1",
+                "user",
+                "delegation done",
+                &AppendOptions {
+                    display_kind: Some("async_delegation_complete"),
+                    display_metadata: Some(serde_json::json!({"task_count": 2, "failed_count": 0})),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        let row = db.get_message(id).unwrap().unwrap();
+        assert_eq!(row.role, "user");
+        assert_eq!(row.content, "delegation done");
+        assert_eq!(
+            row.display_kind.as_deref(),
+            Some("async_delegation_complete")
+        );
+        // display_metadata is stored as JSON text and parses back.
+        let meta: serde_json::Value =
+            serde_json::from_str(row.display_metadata.as_deref().unwrap()).unwrap();
+        assert_eq!(meta["task_count"], serde_json::json!(2));
+        // It is a live message and shows up in history.
+        assert_eq!(db.message_count("s1").unwrap(), 1);
     }
 
     #[test]
