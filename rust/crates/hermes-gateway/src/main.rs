@@ -5,6 +5,7 @@
 //! agent RPC boundary are ported in behind this skeleton one at a time.
 
 mod agent;
+mod cli_agent;
 mod config;
 mod config_file;
 mod dead_targets;
@@ -51,6 +52,24 @@ fn build_agent_client(
     user_config: &serde_json::Value,
     model: Option<&str>,
 ) -> Arc<dyn AgentClient> {
+    // Highest precedence: a CLI backend (Claude Code / Antigravity / any print-
+    // mode LLM CLI). Turns run via that CLI, no Python and no HTTP key needed.
+    if let Some(program) = config.agent_cli.clone() {
+        let extra = config
+            .agent_cli_args
+            .as_deref()
+            .map(cli_agent::split_extra_args)
+            .unwrap_or_default();
+        // Prompt flag: unset -> default "-p"; set-empty -> positional prompt.
+        let prompt_flag = match config.agent_cli_prompt_flag.as_deref() {
+            None => Some("-p".to_string()),
+            Some("") => None,
+            Some(f) => Some(f.to_string()),
+        };
+        tracing::info!(program, "using CLI-backend agent client");
+        return Arc::new(cli_agent::CliAgentClient::new(program, extra, prompt_flag));
+    }
+
     if config.agent_native {
         // base_url: explicit env override, else config's model.base_url, else OpenRouter.
         let base_url = config

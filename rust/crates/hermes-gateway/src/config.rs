@@ -35,6 +35,14 @@ pub struct Config {
     /// API root for the native client (`HERMES_LLM_BASE_URL`), else config's
     /// `model.base_url`, else the OpenRouter default.
     pub llm_base_url: Option<String>,
+    /// CLI-backend agent program (`HERMES_AGENT_CLI`, e.g. "claude" or "agy").
+    /// When set it takes precedence: turns run via that CLI, no Python or HTTP.
+    pub agent_cli: Option<String>,
+    /// Extra args for the CLI backend (`HERMES_AGENT_CLI_ARGS`), whitespace-split.
+    pub agent_cli_args: Option<String>,
+    /// Flag used to pass the prompt to the CLI (`HERMES_AGENT_CLI_PROMPT_FLAG`,
+    /// default `-p`; set empty to pass the prompt as a trailing positional).
+    pub agent_cli_prompt_flag: Option<String>,
 }
 
 impl Config {
@@ -82,6 +90,14 @@ impl Config {
         let llm_base_url = std::env::var("HERMES_LLM_BASE_URL")
             .ok()
             .filter(|s| !s.is_empty());
+        let agent_cli = std::env::var("HERMES_AGENT_CLI")
+            .ok()
+            .filter(|s| !s.is_empty());
+        let agent_cli_args = std::env::var("HERMES_AGENT_CLI_ARGS")
+            .ok()
+            .filter(|s| !s.is_empty());
+        // Distinguish "unset" (use default -p) from "set empty" (positional).
+        let agent_cli_prompt_flag = std::env::var("HERMES_AGENT_CLI_PROMPT_FLAG").ok();
         Ok(Self {
             bind,
             agent_python,
@@ -94,6 +110,9 @@ impl Config {
             agent_native,
             llm_api_key,
             llm_base_url,
+            agent_cli,
+            agent_cli_args,
+            agent_cli_prompt_flag,
         })
     }
 }

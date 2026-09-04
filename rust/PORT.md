@@ -93,8 +93,13 @@ last. Next concrete targets, in order:
       `/chat/completions` and streams the reply (no Python). Narrow scope: no
       tools/history/memory yet. Auth path verified against OpenRouter (401 on a
       bad key, no spend); request-building + SSE parsing unit-tested.
+- [x] CLI-backend agent client (`HERMES_AGENT_CLI`, e.g. claude/agy): runs a
+      turn via an external agent CLI, no Python and no HTTP key. VERIFIED live:
+      POST /message -> agy (gemini-3.8-flash-high) -> real reply, zero Python.
+      This is the path that works for a CLI-backend hermes setup.
 - [ ] Native agent: tools, conversation history, memory/skills (the rest of
-      run_agent.py) — the large remaining work to fully shed Python.
+      run_agent.py) — the large remaining work to fully shed Python on the HTTP
+      path. Tool loop (native_tools.rs) exists; wire it into run_turn next.
 - [ ] Session lifecycle + delivery ledger
 - [ ] Control socket / drain control
 
