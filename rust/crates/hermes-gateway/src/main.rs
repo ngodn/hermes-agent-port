@@ -25,6 +25,7 @@ mod readiness;
 mod response_filters;
 mod restart_loop_guard;
 mod rich_sent_store;
+mod runtime_footer;
 mod session_db;
 mod session_stall;
 mod session_state;
