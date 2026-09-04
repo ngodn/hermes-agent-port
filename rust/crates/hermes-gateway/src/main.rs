@@ -35,6 +35,7 @@ mod profile_name;
 mod profile_routing;
 mod readiness;
 mod response_filters;
+mod restart;
 mod restart_loop_guard;
 mod rich_sent_store;
 mod runtime_footer;
