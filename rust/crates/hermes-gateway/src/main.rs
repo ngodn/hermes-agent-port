@@ -89,6 +89,7 @@ mod telegram;
 mod turn_lease;
 mod wake;
 mod whatsapp_identity;
+mod yuanbao_proto;
 
 use std::sync::Arc;
 
