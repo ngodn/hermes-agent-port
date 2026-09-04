@@ -128,15 +128,22 @@ pub fn parse_message_step(message: &Value) -> Step {
 }
 
 /// Run the tool loop for one user message, streaming the outcome as events.
+/// `history` seeds the message list with prior turns (user/assistant/system).
 pub async fn run_tool_loop(
     model: &dyn ChatModel,
     tools: &[Arc<dyn Tool>],
+    history: &[crate::session_db::HistoryMessage],
     user_text: &str,
     events: &mpsc::Sender<StreamEvent>,
     max_iters: usize,
 ) -> Result<()> {
     let tool_specs: Vec<Value> = tools.iter().map(|t| tool_spec_json(&t.spec())).collect();
-    let mut messages = vec![json!({ "role": "user", "content": user_text })];
+    let mut messages: Vec<Value> = history
+        .iter()
+        .filter(|m| matches!(m.role.as_str(), "user" | "assistant" | "system"))
+        .map(|m| json!({ "role": m.role, "content": m.content }))
+        .collect();
+    messages.push(json!({ "role": "user", "content": user_text }));
 
     for _ in 0..max_iters {
         match model.step(&messages, &tool_specs).await? {
@@ -299,7 +306,7 @@ mod tests {
         };
         let tools: Vec<Arc<dyn Tool>> = vec![Arc::new(CurrentTimeTool)];
         let (tx, rx) = mpsc::channel(32);
-        run_tool_loop(&model, &tools, "what time is it?", &tx, 8)
+        run_tool_loop(&model, &tools, &[], "what time is it?", &tx, 8)
             .await
             .unwrap();
         drop(tx);
@@ -340,7 +347,7 @@ mod tests {
         };
         let tools: Vec<Arc<dyn Tool>> = vec![Arc::new(CurrentTimeTool)];
         let (tx, rx) = mpsc::channel(32);
-        run_tool_loop(&model, &tools, "call a bad tool", &tx, 8)
+        run_tool_loop(&model, &tools, &[], "call a bad tool", &tx, 8)
             .await
             .unwrap();
         drop(tx);
@@ -371,7 +378,7 @@ mod tests {
         };
         let tools: Vec<Arc<dyn Tool>> = vec![Arc::new(CurrentTimeTool)];
         let (tx, _rx) = mpsc::channel(64);
-        let result = run_tool_loop(&model, &tools, "loop", &tx, 3).await;
+        let result = run_tool_loop(&model, &tools, &[], "loop", &tx, 3).await;
         assert!(result.is_err());
     }
 }

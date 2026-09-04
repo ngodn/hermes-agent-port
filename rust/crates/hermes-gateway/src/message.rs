@@ -81,10 +81,14 @@ pub async fn post_message(
         crate::slash::SlashDecision::NotSlash => {}
     }
 
+    // Load prior history + record the inbound message for stateless backends.
+    let manages = state.agent.manages_history();
+    let history = crate::session_db::begin_turn(state.session_db.as_deref(), manages, &msg, "cli");
+
     let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
     let agent = state.agent.clone();
     let msg_for_agent = msg.clone();
-    let turn = tokio::spawn(async move { agent.run_turn(&msg_for_agent, tx).await });
+    let turn = tokio::spawn(async move { agent.run_turn(&msg_for_agent, &history, tx).await });
 
     // Assemble text + commentary into one reply, same rule as the Dispatcher.
     let mut reply = String::new();
@@ -105,6 +109,9 @@ pub async fn post_message(
             | StreamEvent::GatewayNotice { .. } => {}
         }
     }
+
+    // Record the assistant reply for stateless backends (before the silence gate).
+    crate::session_db::end_turn(state.session_db.as_deref(), manages, &msg, &reply);
 
     // Intentional-silence markers suppress delivery: return an empty reply
     // rather than echoing "NO_REPLY" to the caller.

@@ -5,10 +5,11 @@
 //! `/chat/completions` endpoint directly and streams the reply, so a plain-chat
 //! turn needs no Python at all.
 //!
-//! Scope is deliberately narrow: single user message, streamed text out, no
-//! tools, no conversation history, no memory or skills. Those are what
-//! `run_agent.py` provides and are ported later; until then the subprocess
-//! bridge remains the default and this is opt-in.
+//! Scope: streamed plain chat, or the tool-calling loop when tools are
+//! attached, with prior conversation history threaded in as the messages array.
+//! Memory and skills are what `run_agent.py` additionally provides and are
+//! ported later; until then the subprocess bridge remains the default and this
+//! is opt-in.
 //!
 //! Streaming contract (OpenAI / OpenRouter, verified against the docs): POST
 //! `{base_url}/chat/completions` with `Authorization: Bearer <key>` and
@@ -37,11 +38,27 @@ pub enum SseEvent {
     Ignore,
 }
 
-/// Build the chat-completions request body for a single user message.
-pub fn build_request_body(model: &str, text: &str) -> Value {
+/// Build the OpenAI `messages` array from prior history plus the current user
+/// message. Only roles the chat API accepts are forwarded from history.
+pub fn build_messages(history: &[crate::session_db::HistoryMessage], text: &str) -> Vec<Value> {
+    let mut messages: Vec<Value> = history
+        .iter()
+        .filter(|m| matches!(m.role.as_str(), "user" | "assistant" | "system"))
+        .map(|m| json!({ "role": m.role, "content": m.content }))
+        .collect();
+    messages.push(json!({ "role": "user", "content": text }));
+    messages
+}
+
+/// Build the streaming chat-completions request body for a message list.
+pub fn build_request_body_with_history(
+    model: &str,
+    history: &[crate::session_db::HistoryMessage],
+    text: &str,
+) -> Value {
     json!({
         "model": model,
-        "messages": [{ "role": "user", "content": text }],
+        "messages": build_messages(history, text),
         "stream": true,
     })
 }
@@ -120,12 +137,18 @@ impl NativeAgentClient {
 
 #[async_trait]
 impl AgentClient for NativeAgentClient {
-    async fn run_turn(&self, msg: &Message, events: mpsc::Sender<StreamEvent>) -> Result<()> {
+    async fn run_turn(
+        &self,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+        events: mpsc::Sender<StreamEvent>,
+    ) -> Result<()> {
         // Tool-capable turns run the loop (non-streaming); plain turns stream.
         if !self.tools.is_empty() {
             return crate::native_tools::run_tool_loop(
                 self,
                 &self.tools,
+                history,
                 &msg.text,
                 &events,
                 Self::MAX_TOOL_ITERS,
@@ -138,7 +161,11 @@ impl AgentClient for NativeAgentClient {
             .client
             .post(&url)
             .bearer_auth(&self.api_key)
-            .json(&build_request_body(&self.model, &msg.text))
+            .json(&build_request_body_with_history(
+                &self.model,
+                history,
+                &msg.text,
+            ))
             .send()
             .await
             .map_err(|e| Error::Other(format!("native agent request: {e}")))?;
@@ -236,11 +263,39 @@ mod tests {
 
     #[test]
     fn request_body_shape() {
-        let b = build_request_body("openai/gpt-x", "hi");
+        let b = build_request_body_with_history("openai/gpt-x", &[], "hi");
         assert_eq!(b["model"], "openai/gpt-x");
         assert_eq!(b["stream"], true);
         assert_eq!(b["messages"][0]["role"], "user");
         assert_eq!(b["messages"][0]["content"], "hi");
+    }
+
+    #[test]
+    fn history_is_threaded_into_messages() {
+        use crate::session_db::HistoryMessage;
+        let hist = vec![
+            HistoryMessage {
+                role: "user".into(),
+                content: "hi".into(),
+            },
+            HistoryMessage {
+                role: "assistant".into(),
+                content: "hello".into(),
+            },
+            // A non-chat role is filtered out.
+            HistoryMessage {
+                role: "tool".into(),
+                content: "x".into(),
+            },
+        ];
+        let msgs = build_messages(&hist, "next");
+        assert_eq!(msgs.len(), 3); // 2 chat history + current user
+        assert_eq!(msgs[0]["content"], "hi");
+        assert_eq!(msgs[1]["role"], "assistant");
+        assert_eq!(
+            msgs[2],
+            serde_json::json!({"role": "user", "content": "next"})
+        );
     }
 
     #[test]

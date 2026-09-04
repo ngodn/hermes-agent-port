@@ -26,6 +26,8 @@ pub struct AppState {
     pub user_config: Arc<serde_json::Value>,
     /// Configured model, if any, for the readiness `model` probe.
     pub configured_model: Option<String>,
+    /// Conversation-history store; None when it could not be opened.
+    pub session_db: Option<Arc<crate::session_db::SessionDb>>,
 }
 
 impl AppState {
@@ -33,12 +35,14 @@ impl AppState {
         agent: Arc<dyn AgentClient>,
         user_config: Arc<serde_json::Value>,
         configured_model: Option<String>,
+        session_db: Option<Arc<crate::session_db::SessionDb>>,
     ) -> Self {
         Self {
             ready: Arc::new(AtomicBool::new(false)),
             agent,
             user_config,
             configured_model,
+            session_db,
         }
     }
 

@@ -32,9 +32,26 @@ use tokio::sync::mpsc;
 use tracing::warn;
 
 /// Drives a single agent turn for an inbound message, streaming events out.
+///
+/// `history` is the session's prior messages (oldest first, excluding the
+/// current `msg`), for backends that are otherwise stateless (native HTTP, CLI).
+/// A backend that manages its own history (the Python subprocess bridge, which
+/// loads/persists via the hermes session DB) reports [`Self::manages_history`]
+/// `= true`, and the caller then neither loads nor persists history for it.
 #[async_trait]
 pub trait AgentClient: Send + Sync {
-    async fn run_turn(&self, msg: &Message, events: mpsc::Sender<StreamEvent>) -> Result<()>;
+    async fn run_turn(
+        &self,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+        events: mpsc::Sender<StreamEvent>,
+    ) -> Result<()>;
+
+    /// True when the backend loads and persists conversation history itself, so
+    /// the gateway must not inject or record history around it.
+    fn manages_history(&self) -> bool {
+        false
+    }
 }
 
 /// The JSONL envelope emitted by `hermes_cli.stream_turn` (one per stdout line).
@@ -153,7 +170,18 @@ impl SubprocessAgentClient {
 
 #[async_trait]
 impl AgentClient for SubprocessAgentClient {
-    async fn run_turn(&self, msg: &Message, events: mpsc::Sender<StreamEvent>) -> Result<()> {
+    // The Python agent loads and persists its own history via the hermes
+    // session DB, so the gateway must not inject or record history around it.
+    fn manages_history(&self) -> bool {
+        true
+    }
+
+    async fn run_turn(
+        &self,
+        msg: &Message,
+        _history: &[crate::session_db::HistoryMessage],
+        events: mpsc::Sender<StreamEvent>,
+    ) -> Result<()> {
         let mut cmd = Command::new(&self.python);
         cmd.arg("-m")
             .arg("hermes_cli.stream_turn")
@@ -361,7 +389,7 @@ mod tests {
             chat_type: None,
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(16);
-        let run = tokio::spawn(async move { client.run_turn(&msg, tx).await });
+        let run = tokio::spawn(async move { client.run_turn(&msg, &[], tx).await });
 
         let mut saw_stop = false;
         while let Some(ev) = rx.recv().await {

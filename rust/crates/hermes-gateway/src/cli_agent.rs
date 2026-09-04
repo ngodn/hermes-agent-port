@@ -38,6 +38,25 @@ pub fn split_extra_args(raw: &str) -> Vec<String> {
     raw.split_whitespace().map(str::to_string).collect()
 }
 
+/// Compose the prompt for a stateless CLI: prior turns rendered as a plain
+/// transcript, then the current message. With no history the message is passed
+/// through unchanged.
+pub fn compose_prompt(history: &[crate::session_db::HistoryMessage], text: &str) -> String {
+    if history.is_empty() {
+        return text.to_string();
+    }
+    let mut out = String::new();
+    for m in history {
+        out.push_str(&m.role);
+        out.push_str(": ");
+        out.push_str(&m.content);
+        out.push_str("\n\n");
+    }
+    out.push_str("user: ");
+    out.push_str(text);
+    out
+}
+
 /// Spawns an external agent CLI per turn.
 pub struct CliAgentClient {
     program: String,
@@ -63,8 +82,14 @@ impl CliAgentClient {
 
 #[async_trait]
 impl AgentClient for CliAgentClient {
-    async fn run_turn(&self, msg: &Message, events: mpsc::Sender<StreamEvent>) -> Result<()> {
-        let args = build_args(&self.extra_args, self.prompt_flag.as_deref(), &msg.text);
+    async fn run_turn(
+        &self,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+        events: mpsc::Sender<StreamEvent>,
+    ) -> Result<()> {
+        let prompt = compose_prompt(history, &msg.text);
+        let args = build_args(&self.extra_args, self.prompt_flag.as_deref(), &prompt);
         let output = tokio::time::timeout(
             self.timeout,
             Command::new(&self.program)
@@ -143,7 +168,7 @@ mod tests {
             chat_type: None,
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(8);
-        client.run_turn(&msg, tx).await.unwrap();
+        client.run_turn(&msg, &[], tx).await.unwrap();
         let mut got = String::new();
         let mut stopped = false;
         while let Ok(ev) = rx.try_recv() {
@@ -169,6 +194,6 @@ mod tests {
             chat_type: None,
         };
         let (tx, _rx) = mpsc::channel::<StreamEvent>(8);
-        assert!(client.run_turn(&msg, tx).await.is_err());
+        assert!(client.run_turn(&msg, &[], tx).await.is_err());
     }
 }

@@ -21,6 +21,7 @@
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+use hermes_core::{Message, Platform};
 use rusqlite::{params, Connection};
 
 /// One message in a conversation, as needed to reconstruct history for a turn.
@@ -28,6 +29,54 @@ use rusqlite::{params, Connection};
 pub struct HistoryMessage {
     pub role: String,
     pub content: String,
+}
+
+/// How many prior messages to feed a stateless backend as context.
+pub const HISTORY_LIMIT: usize = 40;
+
+/// Stable session id for a message: `<platform>:<channel_id>`, lowercased.
+pub fn session_id_for(platform: Platform, channel_id: &str) -> String {
+    format!("{platform:?}:{channel_id}").to_lowercase()
+}
+
+/// Start a turn for a stateless backend: ensure the session exists, load prior
+/// history, and record the inbound user message. Returns the prior history
+/// (empty when the backend manages its own history or no store is available).
+pub fn begin_turn(
+    db: Option<&SessionDb>,
+    manages_history: bool,
+    msg: &Message,
+    source: &str,
+) -> Vec<HistoryMessage> {
+    if manages_history {
+        return Vec::new();
+    }
+    let Some(db) = db else {
+        return Vec::new();
+    };
+    let sid = session_id_for(msg.platform, &msg.channel_id);
+    let _ = db.ensure_session(
+        &sid,
+        source,
+        None,
+        Some(&msg.channel_id),
+        msg.chat_type.as_deref(),
+    );
+    let prior = db.load_history(&sid, HISTORY_LIMIT).unwrap_or_default();
+    let _ = db.append_message(&sid, "user", &msg.text);
+    prior
+}
+
+/// Finish a turn for a stateless backend: record the assistant reply. No-op when
+/// the backend manages its own history, the reply is empty, or no store exists.
+pub fn end_turn(db: Option<&SessionDb>, manages_history: bool, msg: &Message, reply: &str) {
+    if manages_history || reply.is_empty() {
+        return;
+    }
+    if let Some(db) = db {
+        let sid = session_id_for(msg.platform, &msg.channel_id);
+        let _ = db.append_message(&sid, "assistant", reply);
+    }
 }
 
 fn now_secs() -> f64 {

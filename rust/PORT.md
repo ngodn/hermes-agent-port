@@ -99,9 +99,12 @@ last. Next concrete targets, in order:
       This is the path that works for a CLI-backend hermes setup.
 - [x] Native HTTP tool loop wired into run_turn (opt-in `HERMES_AGENT_TOOLS=1`;
       native_tools.rs ChatModel + run_tool_loop + CurrentTimeTool).
-- [ ] Native agent: conversation history, memory/skills (the rest of
-      run_agent.py) — the large remaining work to fully shed Python on the HTTP
-      path.
+- [x] Conversation history: SessionDb (state.db) persists per-session
+      user/assistant messages; the turn path loads prior history and threads it
+      into stateless backends (native HTTP messages array, CLI transcript). The
+      Python bridge opts out (manages_history) since it owns its own history.
+      VERIFIED live multi-turn via agy: "my name is Denny" then "what is my
+      name?" -> "Denny". Memory/skills (rest of run_agent.py) still remain.
 - [x] Delivery ledger (durable outbound obligations): SQLite ledger over
       state.db (record/attempting/delivered/failed + startup sweep_recoverable
       that claims dead-owner rows via pid+/proc start-time liveness, with

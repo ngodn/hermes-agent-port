@@ -40,25 +40,33 @@ pub struct Dispatcher {
     /// Confirmed-unreachable delivery targets: skip sends to them, clear on
     /// success. Shared with the Python gateway's dead_targets.json.
     dead_targets: Arc<DeadTargetRegistry>,
+    /// Conversation-history store for stateless backends (None = stateless).
+    session_db: Option<Arc<crate::session_db::SessionDb>>,
 }
 
 impl Dispatcher {
-    pub fn new(agent: Arc<dyn AgentClient>, user_config: Arc<Value>) -> Self {
+    pub fn new(
+        agent: Arc<dyn AgentClient>,
+        user_config: Arc<Value>,
+        session_db: Option<Arc<crate::session_db::SessionDb>>,
+    ) -> Self {
         let dead_path = crate::config_file::hermes_home()
             .join("gateway")
             .join("dead_targets.json");
-        Self::with_dead_targets(
+        Self::with_deps(
             agent,
             user_config,
             Arc::new(DeadTargetRegistry::new(dead_path)),
+            session_db,
         )
     }
 
-    /// Construct with an explicit dead-target registry (for tests).
-    pub fn with_dead_targets(
+    /// Construct with explicit dependencies (for tests).
+    pub fn with_deps(
         agent: Arc<dyn AgentClient>,
         user_config: Arc<Value>,
         dead_targets: Arc<DeadTargetRegistry>,
+        session_db: Option<Arc<crate::session_db::SessionDb>>,
     ) -> Self {
         Self {
             agent,
@@ -67,6 +75,7 @@ impl Dispatcher {
             generation: AtomicU64::new(0),
             user_config,
             dead_targets,
+            session_db,
         }
     }
 
@@ -159,10 +168,17 @@ impl Dispatcher {
 
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
 
+        // Load prior history + record the inbound message for stateless backends.
+        let manages = self.agent.manages_history();
+        let source = format!("{:?}", msg.platform).to_lowercase();
+        let history =
+            crate::session_db::begin_turn(self.session_db.as_deref(), manages, &msg, &source);
+
         // Run the agent turn; it streams events into `tx`.
         let agent = Arc::clone(&self.agent);
         let msg_for_agent = msg.clone();
-        let agent_task = tokio::spawn(async move { agent.run_turn(&msg_for_agent, tx).await });
+        let agent_task =
+            tokio::spawn(async move { agent.run_turn(&msg_for_agent, &history, tx).await });
 
         // Accumulate assistant text and deliver it back to the source platform.
         // Streaming partial deliveries (native drafts, edit-in-place) and tool
@@ -196,6 +212,10 @@ impl Dispatcher {
             Ok(Ok(())) => {}
         }
 
+        // Record the assistant reply for stateless backends (before the silence
+        // gate: a silence marker is still part of the transcript history).
+        crate::session_db::end_turn(self.session_db.as_deref(), manages, &msg, &reply);
+
         // Suppress delivery for intentional-silence markers and empty turns.
         if reply.is_empty() || crate::response_filters::is_intentional_silence_response(&reply) {
             return;
@@ -224,7 +244,12 @@ mod tests {
 
     #[async_trait]
     impl crate::agent::AgentClient for StubAgent {
-        async fn run_turn(&self, _msg: &Message, tx: mpsc::Sender<StreamEvent>) -> Result<()> {
+        async fn run_turn(
+            &self,
+            _msg: &Message,
+            _history: &[crate::session_db::HistoryMessage],
+            tx: mpsc::Sender<StreamEvent>,
+        ) -> Result<()> {
             self.calls.fetch_add(1, Ordering::SeqCst);
             let _ = tx
                 .send(StreamEvent::MessageChunk {
@@ -289,7 +314,7 @@ mod tests {
                 .as_nanos()
         ));
         let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(dead_path));
-        let mut d = Dispatcher::with_dead_targets(agent, Arc::new(cfg), dead);
+        let mut d = Dispatcher::with_deps(agent, Arc::new(cfg), dead, None);
         d.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
         (d, calls, sent)
     }
@@ -359,7 +384,7 @@ mod tests {
         let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(dead_path));
         // The stub adapter's name() is "stub"; mark the target dead under it.
         dead.mark_dead("stub", "chan", "test");
-        let mut d = Dispatcher::with_dead_targets(agent, Arc::new(json!({})), dead);
+        let mut d = Dispatcher::with_deps(agent, Arc::new(json!({})), dead, None);
         d.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
 
         d.handle_turn(cli_msg("hi", "u")).await;

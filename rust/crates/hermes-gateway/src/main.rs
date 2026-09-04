@@ -139,7 +139,11 @@ fn start_push_path(
     state: &AppState,
     shutdown: CancellationToken,
 ) {
-    let mut dispatcher = Dispatcher::new(state.agent.clone(), state.user_config.clone());
+    let mut dispatcher = Dispatcher::new(
+        state.agent.clone(),
+        state.user_config.clone(),
+        state.session_db.clone(),
+    );
     dispatcher.register_adapter(platform, adapter.clone());
     let dispatcher = Arc::new(dispatcher);
 
@@ -207,7 +211,17 @@ async fn main() -> anyhow::Result<()> {
     // a model; otherwise fall back to the Python subprocess bridge (default).
     let agent = build_agent_client(&config, &user_config, configured_model.as_deref());
 
-    let state = AppState::new(agent, user_config, configured_model);
+    // Conversation-history store. Backends that manage their own history (the
+    // Python bridge) ignore it; native/CLI backends use it for multi-turn.
+    let session_db = match session_db::SessionDb::open_default() {
+        Ok(db) => Some(Arc::new(db)),
+        Err(err) => {
+            tracing::warn!(%err, "session store unavailable; turns will be stateless");
+            None
+        }
+    };
+
+    let state = AppState::new(agent, user_config, configured_model, session_db);
 
     // One shutdown token, cancelled on SIGINT/SIGTERM, drives both the push
     // paths and the HTTP server's graceful shutdown.
