@@ -68,13 +68,18 @@ rust/
 external deps) and `slash_commands.py` (6,576 LOC). Port leaves first, hubs
 last. Next concrete targets, in order:
 
-1. `stream_events.py` (171 LOC) — the agent->gateway delivery contract; pins
-   down the real `AgentEvent` shape (currently a minimal guess in agent.rs).
+1. `stream_events.py` (171 LOC) — DONE. Ported verbatim as the `StreamEvent`
+   enum in `hermes-core/src/stream.rs` (all 7 variants, exhaustiveness compiler-
+   enforced). Only deviation: `GatewayNotice.kind` is `notice_kind` in Rust to
+   avoid colliding with the enum's `kind` discriminator tag; it is an internal
+   representation the bridge maps into, not a direct Python-dataclass decode.
 2. `turn_context.py` (150), `session_state.py` (475), `turn_lease.py` (355) —
    per-turn/session state + the lease that serializes a session's turns.
-3. `response_filters.py` (147), `display_config.py` (322) — pure leaves.
+   (turn_lease done; session_state data model done; turn_context deferred.)
+3. `response_filters.py` (147), `display_config.py` (322) — done (leaves).
 4. `platform_registry.py` (699) — done (platform.rs).
-5. hubs last: `config.py`, `session.py`, `stream_consumer.py`, `status.py`,
+5. Status rollups (`disk_status.py`, `memory_status.py`) — done.
+6. hubs last: `config.py`, `session.py`, `stream_consumer.py`, `status.py`,
    `slash_commands.py`, `run.py`.
 
 ## Gateway status
@@ -145,6 +150,9 @@ sites tracked separately)
 - [x] `status_phrases.py` -> status_phrases.rs (generic status-line catalog;
       built-in asset embedded, profile-relative user catalogs, recent-repeat avoidance)
 - [x] `runtime_footer.py` -> runtime_footer.rs (final-message metadata footer)
+- [x] `disk_status.py` -> disk_status.rs (/api/status disk block; statvfs sample)
+- [x] `memory_status.py` -> memory_status.rs (/api/status memory block; reads the
+      persisted heartbeat + lifecycle sentinel, no new sampling)
 
 ## Running
 
