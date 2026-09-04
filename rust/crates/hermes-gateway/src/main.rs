@@ -18,6 +18,7 @@ mod config;
 mod config_env_overrides;
 mod config_file;
 mod config_gateway;
+mod config_loader;
 mod config_schema;
 mod config_types;
 mod control_socket;
