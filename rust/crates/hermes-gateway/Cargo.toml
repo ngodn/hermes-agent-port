@@ -28,3 +28,6 @@ tokio-util = "0.7"
 rusqlite.workspace = true
 sha2 = { workspace = true }
 chrono = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"

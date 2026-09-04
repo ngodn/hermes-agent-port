@@ -472,6 +472,7 @@ dependencies = [
  "chrono",
  "futures-util",
  "hermes-core",
+ "libc",
  "reqwest",
  "rusqlite",
  "serde",

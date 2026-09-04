@@ -13,6 +13,7 @@ mod cwd_placeholder;
 mod dead_targets;
 mod delivery_ledger;
 mod discord;
+mod disk_status;
 mod dispatch;
 mod display_config;
 mod drain_control;
