@@ -663,10 +663,11 @@ pub fn replica_state(db_path: &Path, room_id: &Value) -> Result<ReplicaState> {
 /// `authority.claimed` event, and clears the replica. Mirrors
 /// `promote_replica`.
 ///
-/// Fails closed until a stable install identity is available: the Rust port of
-/// `local_authority_gateway_id` returns an error while the install-id module is
-/// unported (see `hosted_rooms_log.rs`), exactly like Python fails when the
-/// install id is unavailable. `reason` defaults to `"authority-unreachable"`.
+/// Fails closed when no stable install identity is available:
+/// `local_authority_gateway_id` returns an error if the install id can neither
+/// be read nor minted (see `hosted_rooms_log.rs`), exactly like Python fails
+/// when the install id is unavailable. `reason` defaults to
+/// `"authority-unreachable"`.
 pub fn promote_replica(
     db_path: &Path,
     room_id: &Value,
@@ -830,7 +831,7 @@ pub fn promote_replica(
 /// Appends `authority.lost` and adopts the observed lineage; idempotent for
 /// repeated observations of the same lineage. Mirrors `demote_room`.
 ///
-/// Like `promote_replica`, this fails closed until a stable install identity is
+/// Like `promote_replica`, this fails closed when no stable install identity is
 /// available (`local_authority_gateway_id`).
 pub fn demote_room(
     db_path: &Path,
@@ -1130,19 +1131,27 @@ mod tests {
     }
 
     #[test]
-    fn promote_fails_closed_without_install_identity() {
-        // local_authority_gateway_id fails while the install-id module is
-        // unported, so the takeover primitive fails closed before touching the
-        // store, matching Python's behavior when the install id is unavailable.
+    fn promote_takes_over_with_wired_install_identity() {
+        // With the install-id module wired, local_authority_gateway_id resolves
+        // to a stable `install:<id>` distinct from the replica's authority, so
+        // the takeover primitive succeeds and claims epoch+1. Mirrors Python's
+        // behavior once the install id is available.
         let db = TempDb::new("promote");
         ingest(db.path(), &page(1, 2, 1, 2)).unwrap();
-        let err = promote_replica(db.path(), &json!("room-1"), None, Some(3000.0)).unwrap_err();
-        assert_eq!(
-            err.to_string(),
-            "stable gateway install identity is unavailable"
+        let result = promote_replica(db.path(), &json!("room-1"), None, Some(3000.0)).unwrap();
+        assert_eq!(result.room_id, "room-1");
+        assert_eq!(result.previous_gateway_id, "install:owner");
+        assert_eq!(result.previous_epoch, 1);
+        assert_eq!(result.authority_epoch, 2);
+        assert_eq!(result.claim_seq, 3);
+        assert!(
+            result.authority_gateway_id.starts_with("install:")
+                && result.authority_gateway_id != "install:owner",
+            "took over under the local install identity: {}",
+            result.authority_gateway_id
         );
-        // The replica is untouched: still recoverable.
-        let state = replica_state(db.path(), &json!("room-1")).unwrap();
-        assert_eq!(state.last_seq, 2);
+        // The replica has been consumed into the local authoritative store.
+        let err = replica_state(db.path(), &json!("room-1")).unwrap_err();
+        assert_eq!(err.to_string(), "replica not found");
     }
 }

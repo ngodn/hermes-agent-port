@@ -33,6 +33,7 @@ mod hosted_room_policy_checkpoint;
 mod hosted_room_replicas;
 mod hosted_rooms;
 mod hosted_rooms_log;
+mod install_identity;
 mod kanban_watchers;
 mod lifecycle_ledger;
 mod media;

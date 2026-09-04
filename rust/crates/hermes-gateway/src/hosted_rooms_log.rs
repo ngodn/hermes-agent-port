@@ -338,12 +338,11 @@ fn now_secs() -> f64 {
 
 /// Stable install id for this host.
 ///
-/// TODO: the Python source pulls this from `hermes_cli.install_identity`
-/// (`get_install_id`), which is not ported to Rust yet. Until that module is
-/// ported this returns None, so [`local_authority_gateway_id`] fails closed
-/// exactly like Python does when the install id is unavailable.
+/// Mirrors the Python `hermes_cli.install_identity.get_install_id`: the stable
+/// opaque id for this physical install (or `None` when it cannot be read or
+/// minted, so [`local_authority_gateway_id`] fails closed exactly like Python).
 fn install_id() -> Option<String> {
-    None
+    crate::install_identity::get_install_id()
 }
 
 /// The stable server-owned identity for hosted-room authority
