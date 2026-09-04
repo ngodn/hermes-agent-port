@@ -48,6 +48,15 @@ rust/
   flock, and the respawn-storm breaker. session_db_recovery's health aggregate
   is wired into it via a startup sink.
 - `message_timestamps.py` -> message_timestamps.rs (chrono; parse/strip/render).
+- **Lifecycle / shutdown telemetry**: `lifecycle_ledger.py` -> lifecycle_ledger.rs
+  (unclean-death detection via the sentinel, sample_memory, the loop-heartbeat
+  writer, state.db quick_check — the write side of what memory_status reads;
+  wired live into the singleton path: record_startup on boot, 30s heartbeat,
+  mark_exited on shutdown). `restart.py` -> restart.rs (supervisor detection,
+  container-restart routing, drain/cron/signal timeout budgets, systemd
+  TimeoutStopSec sizing). `shutdown_forensics.py` -> shutdown_forensics.rs
+  (SIGTERM/SIGINT /proc snapshot, detached ps/pstree/dmesg diagnostic, systemd
+  timing-alignment check).
 
 ## Deferred (port later, with the subsystem they belong to)
 
@@ -56,6 +65,11 @@ rust/
   will be nothing like this; port it with the TurnRunner/_run_agent_inner loop.
 - `session_state.py` legacy dict-view adapters — backward-compat shim for
   pre-refactor Python tests only; no Rust equivalent needed. (Data model ported.)
+- `session_context.py` — Python `contextvars` + `os.environ` fallback emulating
+  task-local session scope; its consumers are `os.getenv("HERMES_SESSION_*")`
+  calls in Python tool code. The Rust dispatcher already threads the session
+  scope explicitly (Message + session key), so like turn_context this belongs
+  with the agent-core turn path, not a contextvar emulation.
 - `wake.py` — wakes a session on a background completion; coupled to the adapter
   base (`MessageEvent`/`handle_message`), the API-server adapter internals, and
   `SessionDB.append_message` with display metadata. Port with the adapter /
