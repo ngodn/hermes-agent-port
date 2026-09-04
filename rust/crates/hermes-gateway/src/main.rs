@@ -7,6 +7,7 @@
 mod agent;
 mod agent_cache_pressure;
 mod cgroup_cleanup;
+mod channel_directory;
 mod cli_agent;
 mod config;
 mod config_file;
