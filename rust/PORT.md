@@ -26,6 +26,29 @@ rust/
 4. **Agent core loop** — `run_agent.py`. Last, once contracts are frozen.
 5. **TUI / web frontend** — left in TS/React unless there's a reason to move it.
 
+## Subsystems ported (cohesive units, not leaves)
+
+- **Media delivery** (`platforms/base.py` core -> media.rs) + `media_policy.py`
+  -> media_policy.rs + `media_repair.py` -> media_repair.rs. The security gate
+  (validate_media_delivery_path: denylist, allowlist, strict/recency, symlink
+  resolution), MEDIA extraction (extract_media/extract_local_files with fenced/
+  inline/blockquote/JSON masking, char-accurate offsets), the config->env policy
+  bridge, and computer_use path repair. Docker container-path translation is
+  behind a `SandboxLayout` seam (configured volumes + cwd bind work now; the
+  session-scoped sandbox roots plug in with the terminal subsystem).
+- **Hooks** (`hooks.py` -> hooks.rs). Design decision made: a compiled binary
+  can't import user Python in-process, so hooks execute as SUBPROCESSES
+  (executable / interpreter model) with event on argv + JSON context on stdin +
+  JSON stdout as the return. HOOK.yaml discovery, `command:*` wildcard routing,
+  and emit / emit_collect are preserved.
+- **Status / lifecycle core** (`status.py` -> status.rs). gateway_state.json
+  writer/reader (StatusUpdate), the pure derivations (normalize_updated_at,
+  parse_active_agents, derive_gateway_busy/_drainable, staleness + no-kill PID
+  liveness with a /proc start-time reuse guard), PID file, the exclusive runtime
+  flock, and the respawn-storm breaker. session_db_recovery's health aggregate
+  is wired into it via a startup sink.
+- `message_timestamps.py` -> message_timestamps.rs (chrono; parse/strip/render).
+
 ## Deferred (port later, with the subsystem they belong to)
 
 - `turn_context.py` — a Python closure-extraction artifact (~60 opaque handles,
@@ -33,36 +56,19 @@ rust/
   will be nothing like this; port it with the TurnRunner/_run_agent_inner loop.
 - `session_state.py` legacy dict-view adapters — backward-compat shim for
   pre-refactor Python tests only; no Rust equivalent needed. (Data model ported.)
-- `message_timestamps.py` — leans on Python local-tz `%Z` abbreviation (CEST,
-  etc.); port with the Phase-4 context-building path where tz handling is
-  decided (chrono/chrono-tz), not as a stray leaf.
-- `media_policy.py` — a config->env bridge whose only purpose is aligning
-  separate Python processes; in Rust the media-path validator reads config
-  in-process, so port it together with `platforms/base.py`
-  `validate_media_delivery_path`.
-- `media_repair.py` — repairs model-mangled computer_use screenshot paths in a
-  MEDIA: response; needs `BasePlatformAdapter.extract_media` (MEDIA: directive
-  parsing). Port with the media-delivery subsystem (base.py) alongside
-  media_policy.
 - `wake.py` — wakes a session on a background completion; coupled to the adapter
   base (`MessageEvent`/`handle_message`), the API-server adapter internals, and
   `SessionDB.append_message` with display metadata. Port with the adapter /
   API-server subsystem. (`_delegation_display_metadata` is a pure helper that
   can come along then.)
-
-## Needs a design decision (not a mechanical port)
-
-- `hooks.py` — the event-hook system discovers `~/.hermes/hooks/<name>/` dirs and
-  dynamically imports+executes a user-authored Python `handler.py` per event.
-  Executing arbitrary user Python is exactly the interpreter capability the
-  rewrite drops, so this needs a new hook model in Rust: spawn `python
-  handler.py` as a subprocess per event (context as JSON on stdin), support
-  executable-script / webhook hooks instead, or drop the feature. The event
-  vocabulary + wildcard resolution (`command:*`) port trivially once the
-  execution model is chosen. Flagged for the user rather than guessed.
 - `stream_dispatch.py` — the event router hangs off the adapter render-hooks and
   the `GatewayStreamConsumer` sink, both in the `stream_consumer.py` hub (3.6k
   LOC, unported). Port it with that subsystem, not against stubs.
+- `status.py` remainder — the scoped credential-lock protocol (acquire/release
+  _scoped_lock, cross-profile --replace takeover markers) and the dashboard-side
+  liveness ladder (`resolve_gateway_liveness` + cmdline/profile heuristics). Port
+  with the CLI/dashboard surface that consumes them; the gateway's own
+  process-singleton + status-writer core is done.
 - `startup_watchdog.py` — a re-export shim for the repo-root
   `hermes_startup_watchdog` (a pre-import deadlock guard). A compiled binary has
   no import-time deadlock; if a boot-liveness watchdog is wanted it is a separate
