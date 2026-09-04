@@ -193,10 +193,18 @@ golden-tested against real Python:
 
 - [x] gateway/config.py schema tier -> config_schema.rs (Platform enum with all
       24 built-in members, the coercion/normalization helpers, watchdog clamp,
-      platform_binds_port). The config dataclasses
-      (PlatformConfig/StreamingConfig/GatewayConfig/...) and
-      load_gateway_config / _validate / env-overrides stay deferred: they touch
-      the deferred secret_scope. config.rs remains the runnable skeleton.
+      platform_binds_port). config.rs remains the runnable skeleton.
+- [x] gateway/config.py dataclasses -> config_types.rs (HomeChannel,
+      SessionResetPolicy, ChannelOverride, PlatformConfig, StreamingConfig; each
+      Default + from_dict/to_dict, reusing config_schema). Only GatewayConfig +
+      load_gateway_config / _validate / _apply_env_overrides remain (the load
+      path reads secrets via secret_scope, below).
+- [x] agent/secret_scope.py -> secret_scope.rs (get_secret fail-closed
+      resolution, is_global_env tables, multiplex flag, parse_env_value /
+      strip_inline_comment / load_env_file). The Python ContextVar is modeled as
+      a tokio task-local with a scope-based with_secret_scope(...) API. Remaining:
+      the external get_secret_source_values merge (its loader is unported) and
+      wiring the scope into the multiplex turn path when multiplexing is built.
 - [x] platforms/api_server_run_idempotency.py -> api_server_run_idempotency.rs
       (the full RunIdempotencyStore: SQLite dedup for POST /v1/runs, Created/
       Reused/Conflict via constant-time fingerprint check, terminal+expired
@@ -223,13 +231,9 @@ golden-tested against real Python:
   calls in Python tool code. The Rust dispatcher already threads the session
   scope explicitly (Message + session key), so like turn_context this belongs
   with the agent-core turn path, not a contextvar emulation.
-- `agent/secret_scope.py` — same `contextvars` set/reset-token model as
-  session_context (per-session secret scope with an `os.environ` fallback and a
-  multiplex-active flag). Its imperative set/reset-token API does not map to
-  tokio task-locals (which are scope-based), so it lands with the session-
-  threading path, not as a standalone contextvar emulation. The pure helpers
-  (`load_env_file`, `_is_global_env`, `_strip_inline_comment`,
-  `build_profile_secret_scope`) can be extracted when a consumer needs them.
+- `agent/secret_scope.py` — DONE (secret_scope.rs), see the config foundation
+  section. The ContextVar became a tokio task-local scope API. session_context
+  can follow the same pattern when its turn-path consumers are ported.
 - `wake.py` — the delegation-persistence half is DONE (wake.rs). The remaining
   push-capable and API-server self-POST wake paths are coupled to the adapter
   base (`MessageEvent`/`handle_message`) and the API-server adapter; port them
