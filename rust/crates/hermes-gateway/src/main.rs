@@ -22,6 +22,7 @@ mod native_tools;
 mod platform;
 mod readiness;
 mod response_filters;
+mod session_db;
 mod session_stall;
 mod session_state;
 mod slack;

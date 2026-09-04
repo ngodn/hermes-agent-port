@@ -1,0 +1,28 @@
+You are a code-analysis assistant for a Python-to-Rust port. READ-ONLY: do not
+modify any file. Write your entire output to exactly one file:
+rust/analysis/session-db.md
+
+Goal: document the SQLite schema and the minimal read/write API for CONVERSATION
+SESSION HISTORY in state.db, so it can be reimplemented in Rust with rusqlite.
+
+Investigate hermes_state.py, hermes_state_schema.py, hermes_state_search.py,
+hermes_state_common.py (and anything they reference). Report, with exact
+evidence (file:line and the actual SQL / code):
+
+1. The exact CREATE TABLE schema (all columns, types, PKs, indexes) for the
+   table(s) that store per-session conversation MESSAGES and any SESSIONS/
+   metadata table. Quote the DDL (even if built from f-strings/constants,
+   resolve it to the literal SQL).
+2. How WAL and any PRAGMAs are applied (apply_wal_with_fallback etc.).
+3. The primary write path: the function(s) that append/persist a message to a
+   session (name, signature, the INSERT SQL, and what a "message" row contains:
+   role, content, timestamps, ids, ordering column).
+4. The primary read path: the function(s) that load a session's message history
+   (name, signature, the SELECT SQL, ordering, any limit/pagination).
+5. The FTS5 setup for search (hermes_state_search.py): the FTS5 virtual table
+   DDL, the custom tokenizer/C ext (native/fts5_cjk), how rows are indexed, and
+   the query SQL used for session search.
+6. The db path + how the SessionDB/connection object is constructed and cached.
+
+Be precise and quote real SQL. If a table is created lazily or migrated across
+versions, note the current shape. Output only to the file path above.
