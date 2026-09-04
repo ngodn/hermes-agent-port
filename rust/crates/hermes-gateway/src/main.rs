@@ -58,6 +58,7 @@ mod slash_access;
 mod status;
 mod status_phrases;
 mod sticker_cache;
+mod stream_consumer;
 mod systemd_notify;
 mod telegram;
 mod turn_lease;
