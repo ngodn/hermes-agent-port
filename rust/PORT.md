@@ -77,6 +77,17 @@ rust/
   format_directory_for_display). The adapter-driven BUILD half lands with the
   adapter subsystem.
 
+## Hub cores (bounded slices of the big files)
+
+- `session.py` IDENTITY core -> session.rs: SessionSource (+ to_dict/from_dict
+  with the scope_id/guild_id migration + description), build_session_key (the
+  single source of truth: DM/group/thread isolation, Slack scope prefix,
+  WhatsApp canonicalization, Discord prospective-thread continuity, profile
+  namespacing), is_shared_multi_user_session, id hashing, path/key traversal
+  guards, sanitize_model_override. The 3k-line SessionStore transcript layer
+  (persistence, prompt building, auto-continue) overlaps session_db.rs and lands
+  with the agent-core turn path.
+
 ## Live HTTP surface
 
 - `GET /healthz`, `GET /readyz` (readiness probes), `GET /status` — the last
