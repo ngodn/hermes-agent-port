@@ -26,6 +26,7 @@ mod media_policy;
 mod media_repair;
 mod memory_status;
 mod message;
+mod message_timestamps;
 mod native_agent;
 mod native_tools;
 mod platform;
