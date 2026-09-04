@@ -70,7 +70,7 @@ use tower_http::trace::TraceLayer;
 use crate::agent::{AgentClient, SubprocessAgentClient};
 use crate::config::Config;
 use crate::dispatch::Dispatcher;
-use crate::health::{healthz, readyz, AppState};
+use crate::health::{healthz, readyz, status, AppState};
 use crate::message::{get_display_config, get_search, post_message};
 use crate::native_agent::NativeAgentClient;
 use crate::platform::PlatformAdapter;
@@ -403,6 +403,7 @@ async fn main() -> anyhow::Result<()> {
     let app = Router::new()
         .route("/healthz", get(healthz))
         .route("/readyz", get(readyz))
+        .route("/status", get(status))
         .route("/message", post(post_message))
         .route("/display/:platform", get(get_display_config))
         .route("/search", get(get_search))

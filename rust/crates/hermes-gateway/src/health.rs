@@ -59,6 +59,33 @@ pub async fn healthz() -> Json<serde_json::Value> {
     Json(json!({ "status": "ok" }))
 }
 
+/// Assembled status surface (mirrors the shape `/api/status` serves): the
+/// persisted runtime record plus the live disk and memory blocks, so the
+/// telemetry the gateway writes is observable over HTTP. Best-effort: any
+/// unreadable block degrades to its own "unknown" form rather than failing.
+pub async fn status(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let report = tokio::task::spawn_blocking(|| {
+        let home = config_file::hermes_home();
+        let gateway = crate::status::read_runtime_status(None);
+        let disk = crate::disk_status::collect_disk_status(Some(&home));
+        let memory = crate::memory_status::collect_memory_status(Some(&home), None);
+        json!({
+            "gateway": gateway,
+            "disk": disk,
+            "memory": memory,
+        })
+    })
+    .await
+    .unwrap_or_else(|_| json!({ "gateway": null, "disk": null, "memory": null }));
+
+    let mut body = report;
+    // Surface readiness alongside so a single probe answers "up and healthy?".
+    if let Some(obj) = body.as_object_mut() {
+        obj.insert("ready".into(), json!(state.is_ready()));
+    }
+    Json(body)
+}
+
 pub async fn readyz(State(state): State<AppState>) -> (StatusCode, Json<serde_json::Value>) {
     let started = state.is_ready();
     // Bounded, non-destructive probes (config / model / state_db). Run on a
