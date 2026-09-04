@@ -189,6 +189,21 @@ golden-tested against real Python:
       lowercase only (no NFKC crate); a no-op for ASCII/CJK, diverges only for
       compatibility-form search queries. Closing it needs unicode-normalization.
 
+## Config + API-server foundation
+
+- [x] gateway/config.py schema tier -> config_schema.rs (Platform enum with all
+      24 built-in members, the coercion/normalization helpers, watchdog clamp,
+      platform_binds_port). The config dataclasses
+      (PlatformConfig/StreamingConfig/GatewayConfig/...) and
+      load_gateway_config / _validate / env-overrides stay deferred: they touch
+      the deferred secret_scope. config.rs remains the runnable skeleton.
+- [x] platforms/api_server_run_idempotency.py -> api_server_run_idempotency.rs
+      (the full RunIdempotencyStore: SQLite dedup for POST /v1/runs, Created/
+      Reused/Conflict via constant-time fingerprint check, terminal+expired
+      prune). The rest of the api_server layer (api_server.py, room_grants,
+      room_dispatch, runs) is aiohttp-mixin / runner coupled and lands with the
+      API-server subsystem.
+
 ## Live HTTP surface
 
 - `GET /healthz`, `GET /readyz` (readiness probes), `GET /status` — the last
