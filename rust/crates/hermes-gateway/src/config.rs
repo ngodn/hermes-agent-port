@@ -26,6 +26,15 @@ pub struct Config {
     /// posting. Both are required to start the Slack push path.
     pub slack_app_token: Option<String>,
     pub slack_bot_token: Option<String>,
+    /// Opt in to the native (in-Rust) agent client instead of the Python
+    /// subprocess bridge. Requires `llm_api_key` and a resolved model.
+    pub agent_native: bool,
+    /// API key for the native client (`HERMES_LLM_API_KEY`). Kept separate from
+    /// the user's .env so native mode never auto-spends against stored keys.
+    pub llm_api_key: Option<String>,
+    /// API root for the native client (`HERMES_LLM_BASE_URL`), else config's
+    /// `model.base_url`, else the OpenRouter default.
+    pub llm_base_url: Option<String>,
 }
 
 impl Config {
@@ -59,6 +68,20 @@ impl Config {
         let slack_bot_token = std::env::var("HERMES_SLACK_BOT_TOKEN")
             .ok()
             .filter(|s| !s.is_empty());
+        let agent_native = std::env::var("HERMES_AGENT_NATIVE")
+            .map(|v| {
+                matches!(
+                    v.trim().to_ascii_lowercase().as_str(),
+                    "1" | "true" | "yes" | "on"
+                )
+            })
+            .unwrap_or(false);
+        let llm_api_key = std::env::var("HERMES_LLM_API_KEY")
+            .ok()
+            .filter(|s| !s.is_empty());
+        let llm_base_url = std::env::var("HERMES_LLM_BASE_URL")
+            .ok()
+            .filter(|s| !s.is_empty());
         Ok(Self {
             bind,
             agent_python,
@@ -68,6 +91,9 @@ impl Config {
             discord_token,
             slack_app_token,
             slack_bot_token,
+            agent_native,
+            llm_api_key,
+            llm_base_url,
         })
     }
 }

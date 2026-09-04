@@ -88,7 +88,13 @@ last. Next concrete targets, in order:
       `HERMES_SLACK_APP_TOKEN` and `HERMES_SLACK_BOT_TOKEN` are set. Handshake
       verified against the live API.
 - [ ] More platform adapters: WhatsApp (Baileys bridge), Signal
-- [ ] Native (non-subprocess) agent client, once run_agent.py is ported
+- [x] Native (in-Rust) agent client for plain chat turns: opt-in via
+      `HERMES_AGENT_NATIVE=1` + `HERMES_LLM_API_KEY`, calls an OpenAI-compatible
+      `/chat/completions` and streams the reply (no Python). Narrow scope: no
+      tools/history/memory yet. Auth path verified against OpenRouter (401 on a
+      bad key, no spend); request-building + SSE parsing unit-tested.
+- [ ] Native agent: tools, conversation history, memory/skills (the rest of
+      run_agent.py) — the large remaining work to fully shed Python.
 - [ ] Session lifecycle + delivery ledger
 - [ ] Control socket / drain control
 

@@ -13,6 +13,7 @@ mod dispatch;
 mod display_config;
 mod health;
 mod message;
+mod native_agent;
 mod platform;
 mod readiness;
 mod response_filters;
@@ -31,13 +32,60 @@ use axum::routing::{get, post};
 use axum::Router;
 use tower_http::trace::TraceLayer;
 
-use crate::agent::SubprocessAgentClient;
+use crate::agent::{AgentClient, SubprocessAgentClient};
 use crate::config::Config;
 use crate::dispatch::Dispatcher;
 use crate::health::{healthz, readyz, AppState};
 use crate::message::{get_display_config, post_message};
+use crate::native_agent::NativeAgentClient;
 use crate::platform::PlatformAdapter;
 use tokio_util::sync::CancellationToken;
+
+/// Pick the agent backend. Native (in-Rust LLM chat) requires opt-in
+/// (`HERMES_AGENT_NATIVE`), an API key (`HERMES_LLM_API_KEY`), and a resolved
+/// model; anything missing falls back to the Python subprocess bridge so the
+/// gateway never silently does nothing.
+fn build_agent_client(
+    config: &Config,
+    user_config: &serde_json::Value,
+    model: Option<&str>,
+) -> Arc<dyn AgentClient> {
+    if config.agent_native {
+        match (config.llm_api_key.as_deref(), model) {
+            (Some(key), Some(model)) => {
+                // base_url: explicit env, else config's model.base_url, else OpenRouter.
+                let base_url = config
+                    .llm_base_url
+                    .clone()
+                    .or_else(|| {
+                        user_config
+                            .get("model")
+                            .and_then(|m| m.get("base_url"))
+                            .and_then(|v| v.as_str())
+                            .map(str::to_string)
+                    })
+                    .unwrap_or_else(|| "https://openrouter.ai/api/v1".to_string());
+                match NativeAgentClient::new(model, key, base_url) {
+                    Ok(c) => {
+                        tracing::info!(model, "using native agent client");
+                        return Arc::new(c);
+                    }
+                    Err(err) => tracing::error!(%err, "native agent init failed; falling back to subprocess"),
+                }
+            }
+            _ => tracing::warn!(
+                "HERMES_AGENT_NATIVE set but HERMES_LLM_API_KEY or a model is missing; falling back to subprocess"
+            ),
+        }
+    }
+    let mut agent =
+        SubprocessAgentClient::new(config.agent_python.clone(), config.agent_cwd.clone());
+    if let Some(model) = &config.agent_model {
+        agent = agent.with_model(model.clone());
+    }
+    tracing::info!("using subprocess agent bridge");
+    Arc::new(agent)
+}
 
 /// Start one platform's push path: the adapter's inbound loop feeding a
 /// Dispatcher that runs turns and delivers replies through the same adapter.
@@ -90,13 +138,6 @@ async fn main() -> anyhow::Result<()> {
 
     let config = Config::from_env()?;
 
-    // Strangler step: drive the existing Python agent as a subprocess. Swapped
-    // for a native client once run_agent.py is ported.
-    let mut agent =
-        SubprocessAgentClient::new(config.agent_python.clone(), config.agent_cwd.clone());
-    if let Some(model) = &config.agent_model {
-        agent = agent.with_model(model.clone());
-    }
     // Load the user config (config.yaml) once at startup; consumers read it
     // from shared state. Absent/broken config degrades to defaults.
     let user_config = Arc::new(config_file::load_config());
@@ -110,8 +151,8 @@ async fn main() -> anyhow::Result<()> {
         tracing::info!(path = %config_file::config_path().display(), "loaded user config");
     }
 
-    // Resolve the configured model for the readiness probe: the explicit
-    // override wins, else config.yaml's model.default / model.model.
+    // Resolve the configured model: the explicit override wins, else config.yaml's
+    // model.default / model.model.
     let configured_model = config.agent_model.clone().or_else(|| {
         user_config
             .get("model")
@@ -120,7 +161,11 @@ async fn main() -> anyhow::Result<()> {
             .map(str::to_string)
     });
 
-    let state = AppState::new(Arc::new(agent), user_config, configured_model);
+    // Choose the agent backend. Native (in-Rust LLM) is opt-in and needs a key +
+    // a model; otherwise fall back to the Python subprocess bridge (default).
+    let agent = build_agent_client(&config, &user_config, configured_model.as_deref());
+
+    let state = AppState::new(agent, user_config, configured_model);
 
     // One shutdown token, cancelled on SIGINT/SIGTERM, drives both the push
     // paths and the HTTP server's graceful shutdown.
