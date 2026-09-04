@@ -31,6 +31,7 @@ mod slack;
 mod slash;
 mod slash_access;
 mod sticker_cache;
+mod systemd_notify;
 mod telegram;
 mod turn_lease;
 mod whatsapp_identity;
