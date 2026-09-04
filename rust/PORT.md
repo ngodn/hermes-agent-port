@@ -40,6 +40,10 @@ rust/
   separate Python processes; in Rust the media-path validator reads config
   in-process, so port it together with `platforms/base.py`
   `validate_media_delivery_path`.
+- `media_repair.py` — repairs model-mangled computer_use screenshot paths in a
+  MEDIA: response; needs `BasePlatformAdapter.extract_media` (MEDIA: directive
+  parsing). Port with the media-delivery subsystem (base.py) alongside
+  media_policy.
 - `stream_dispatch.py` — the event router hangs off the adapter render-hooks and
   the `GatewayStreamConsumer` sink, both in the `stream_consumer.py` hub (3.6k
   LOC, unported). Port it with that subsystem, not against stubs.
@@ -165,6 +169,9 @@ sites tracked separately)
       handle cache; single-flight opens, exponential backoff, health aggregate)
 - [x] `profile_routing.py` -> profile_routing.rs (+ profile_name.rs for the
       profile-id path-traversal guard from hermes_cli/profiles.py)
+- [x] `agent_cache_pressure.py` -> agent_cache_pressure.rs (pure/OS parts:
+      bounds resolution, cgroup/total-mem limits, anon RSS, eviction planner;
+      the AIAgent-shaped guard + sweep land in Phase 4)
 
 ## Running
 
