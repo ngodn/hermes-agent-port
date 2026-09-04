@@ -41,6 +41,7 @@ mod restart;
 mod restart_loop_guard;
 mod rich_sent_store;
 mod runtime_footer;
+mod scale_to_zero;
 mod session_db;
 mod session_db_recovery;
 mod session_stall;
