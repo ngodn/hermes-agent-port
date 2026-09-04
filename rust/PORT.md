@@ -40,6 +40,13 @@ rust/
   separate Python processes; in Rust the media-path validator reads config
   in-process, so port it together with `platforms/base.py`
   `validate_media_delivery_path`.
+- `stream_dispatch.py` — the event router hangs off the adapter render-hooks and
+  the `GatewayStreamConsumer` sink, both in the `stream_consumer.py` hub (3.6k
+  LOC, unported). Port it with that subsystem, not against stubs.
+- `startup_watchdog.py` — a re-export shim for the repo-root
+  `hermes_startup_watchdog` (a pre-import deadlock guard). A compiled binary has
+  no import-time deadlock; if a boot-liveness watchdog is wanted it is a separate
+  process-level concern, not this shim.
 
 ## Not applicable (no Rust analogue)
 
@@ -153,6 +160,11 @@ sites tracked separately)
 - [x] `disk_status.py` -> disk_status.rs (/api/status disk block; statvfs sample)
 - [x] `memory_status.py` -> memory_status.rs (/api/status memory block; reads the
       persisted heartbeat + lifecycle sentinel, no new sampling)
+- [x] `cgroup_cleanup.py` -> cgroup_cleanup.rs (ExecStopPost cgroup reaper)
+- [x] `session_db_recovery.py` -> session_db_recovery.rs (recoverable per-path
+      handle cache; single-flight opens, exponential backoff, health aggregate)
+- [x] `profile_routing.py` -> profile_routing.rs (+ profile_name.rs for the
+      profile-id path-traversal guard from hermes_cli/profiles.py)
 
 ## Running
 
