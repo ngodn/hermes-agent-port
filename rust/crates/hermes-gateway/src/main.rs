@@ -29,6 +29,7 @@ mod memory_monitor;
 mod memory_status;
 mod message;
 mod message_timestamps;
+mod mirror;
 mod native_agent;
 mod native_tools;
 mod platform;

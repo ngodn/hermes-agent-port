@@ -393,6 +393,54 @@ impl SessionDb {
         }
     }
 
+    /// Set a session's `thread_id` (forum-topic / thread root). Best-effort.
+    pub fn set_thread_id(&self, session_id: &str, thread_id: &str) -> rusqlite::Result<()> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            "UPDATE sessions SET thread_id = ? WHERE id = ?",
+            params![thread_id, session_id],
+        )?;
+        Ok(())
+    }
+
+    /// Find the session id for a platform chat by origin, or `None`.
+    ///
+    /// Matches on `chat_id` (narrowed by `thread_id` when given) and returns a
+    /// session only when the match is UNAMBIGUOUS: zero or multiple candidates
+    /// both return `None` (a wrong guess would contaminate another
+    /// participant's session — the mirror deliberately refuses to guess, #2221).
+    /// The most recently active row wins when `thread_id` uniquely narrows it.
+    pub fn find_session_by_origin(
+        &self,
+        chat_id: &str,
+        thread_id: Option<&str>,
+    ) -> rusqlite::Result<Option<String>> {
+        if chat_id.is_empty() {
+            return Ok(None);
+        }
+        let conn = self.conn.lock().unwrap();
+        let ids: Vec<String> = if let Some(tid) = thread_id.filter(|t| !t.is_empty()) {
+            let mut stmt = conn.prepare(
+                "SELECT id FROM sessions WHERE chat_id = ?1 AND thread_id = ?2
+                 ORDER BY last_activity_at DESC",
+            )?;
+            let rows = stmt.query_map(params![chat_id, tid], |r| r.get::<_, String>(0))?;
+            rows.collect::<rusqlite::Result<Vec<_>>>()?
+        } else {
+            let mut stmt = conn.prepare(
+                "SELECT id FROM sessions WHERE chat_id = ?1 ORDER BY last_activity_at DESC",
+            )?;
+            let rows = stmt.query_map(params![chat_id], |r| r.get::<_, String>(0))?;
+            rows.collect::<rusqlite::Result<Vec<_>>>()?
+        };
+        // Unambiguous match only.
+        if ids.len() == 1 {
+            Ok(Some(ids.into_iter().next().unwrap()))
+        } else {
+            Ok(None)
+        }
+    }
+
     /// Count live messages in a session.
     pub fn message_count(&self, session_id: &str) -> rusqlite::Result<i64> {
         let conn = self.conn.lock().unwrap();
