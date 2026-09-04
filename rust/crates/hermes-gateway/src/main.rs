@@ -88,6 +88,7 @@ mod systemd_notify;
 mod telegram;
 mod turn_lease;
 mod wake;
+mod webhook_filters;
 mod whatsapp_identity;
 mod yuanbao_proto;
 
