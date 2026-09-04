@@ -204,14 +204,44 @@ async fn main() -> anyhow::Result<()> {
 
     let config = Config::from_env()?;
 
-    // Publish the session-store recovery health aggregate into the runtime
-    // status surface (gateway_state.json), mirroring the Python gateway.
-    session_db_recovery::set_health_sink(|aggregate| {
+    // Singleton / status lifecycle is opt-in (`HERMES_GATEWAY_SINGLETON=1`). It
+    // takes the profile's runtime flock and owns gateway_state.json, so it is
+    // OFF by default: during the strangler migration the Python gateway still
+    // owns those, and only the operator flips this at cutover.
+    let singleton = matches!(
+        std::env::var("HERMES_GATEWAY_SINGLETON")
+            .unwrap_or_default()
+            .trim(),
+        "1" | "true" | "yes" | "on"
+    );
+
+    if singleton {
+        if let Some(storm) = status::record_start_and_check_storm(5, 120.0, 300.0) {
+            tracing::warn!(
+                count = storm.count,
+                backoff_s = storm.backoff_s,
+                "respawn storm detected; backing off before continuing"
+            );
+            tokio::time::sleep(std::time::Duration::from_secs_f64(storm.backoff_s)).await;
+        }
+        if !status::acquire_gateway_runtime_lock() {
+            tracing::error!("another gateway already holds this profile's runtime lock; exiting");
+            return Ok(());
+        }
+        status::write_pid_file();
         status::write_runtime_status(&status::StatusUpdate {
-            session_store: Some(serde_json::json!({ "status": aggregate })),
+            gateway_state: Some(serde_json::json!("starting")),
+            clear_profile_platforms: true,
             ..Default::default()
         });
-    });
+        // Now that we own the status file, publish session-store health into it.
+        session_db_recovery::set_health_sink(|aggregate| {
+            status::write_runtime_status(&status::StatusUpdate {
+                session_store: Some(serde_json::json!({ "status": aggregate })),
+                ..Default::default()
+            });
+        });
+    }
 
     // Load the user config (config.yaml) once at startup; consumers read it
     // from shared state. Absent/broken config degrades to defaults.
@@ -332,10 +362,27 @@ async fn main() -> anyhow::Result<()> {
     // Startup work (adapter registration, DB recovery, ...) happens here as it
     // is ported. Once complete the gateway flips readiness on.
     state.mark_ready();
+    if singleton {
+        status::write_runtime_status(&status::StatusUpdate {
+            gateway_state: Some(serde_json::json!("running")),
+            ..Default::default()
+        });
+    }
 
     axum::serve(listener, app)
         .with_graceful_shutdown(async move { shutdown.cancelled().await })
         .await?;
+
+    // Graceful shutdown finished: record it and release the singleton claims.
+    if singleton {
+        status::write_runtime_status(&status::StatusUpdate {
+            gateway_state: Some(serde_json::json!("stopped")),
+            exit_reason: Some(serde_json::json!("shutdown_signal")),
+            ..Default::default()
+        });
+        status::release_gateway_runtime_lock();
+        status::remove_pid_file();
+    }
 
     Ok(())
 }

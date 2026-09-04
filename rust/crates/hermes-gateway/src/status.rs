@@ -427,7 +427,7 @@ pub fn acquire_gateway_runtime_lock() -> bool {
     if let Some(parent) = path.parent() {
         let _ = std::fs::create_dir_all(parent);
     }
-    let Ok(file) = std::fs::OpenOptions::new()
+    let Ok(mut file) = std::fs::OpenOptions::new()
         .create(true)
         .truncate(false)
         .read(true)
@@ -441,10 +441,26 @@ pub fn acquire_gateway_runtime_lock() -> bool {
     if rc != 0 {
         return false;
     }
-    // Record the owner for diagnostics (best-effort).
-    write_json_file(&path, &build_pid_record());
+    // Record the owner for diagnostics IN PLACE on the locked fd. It must NOT go
+    // through write_json_file's atomic rename: a rename swaps the file's inode,
+    // and the flock lives on the inode, so a rename would silently release our
+    // exclusion and let a second gateway lock the fresh inode.
+    write_locked_record_in_place(&mut file);
     *guard = Some(file);
     true
+}
+
+/// Write the owner record over the already-locked lock file, truncating in
+/// place so the inode (and thus the flock) is preserved. Best-effort.
+#[cfg(unix)]
+fn write_locked_record_in_place(file: &mut std::fs::File) {
+    use std::io::{Seek, SeekFrom, Write};
+    if let Ok(bytes) = serde_json::to_vec(&build_pid_record()) {
+        let _ = file.set_len(0);
+        let _ = file.seek(SeekFrom::Start(0));
+        let _ = file.write_all(&bytes);
+        let _ = file.flush();
+    }
 }
 
 #[cfg(not(unix))]
