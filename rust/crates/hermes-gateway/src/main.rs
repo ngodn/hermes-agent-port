@@ -16,6 +16,7 @@ mod cli_agent;
 mod code_skew;
 mod config;
 mod config_file;
+mod config_gateway;
 mod config_schema;
 mod config_types;
 mod control_socket;
