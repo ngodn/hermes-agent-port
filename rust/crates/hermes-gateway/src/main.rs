@@ -17,6 +17,7 @@ mod code_skew;
 mod config;
 mod config_file;
 mod config_schema;
+mod config_types;
 mod control_socket;
 mod cwd_placeholder;
 mod dead_targets;
