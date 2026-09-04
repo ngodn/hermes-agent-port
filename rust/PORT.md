@@ -129,8 +129,38 @@ management), `hosted_room_replicas.rs` (replica store + promote/demote fencing),
 tested where crypto or canonical JSON is involved. Remaining in this cluster:
 `hosted_room_discussion.py` (1461) + `hosted_room_driver.py` (1778) + the rest of
 `hosted_rooms.py` orchestration — these are GatewayRunner/agent-core coupled and
-land with the runner. `local_authority_gateway_id` fails closed until the
-install-id module (hermes_cli.install_identity) is ported.
+land with the runner. `hermes_cli/install_identity.py` is now ported
+(`install_identity.rs`: CSPRNG-minted 32-hex install id, flock publication
+fence, atomic write, process cache) and wired into `hosted_rooms_log`, so
+`local_authority_gateway_id` resolves a real `install:<id>` and the
+promote/demote fencing takes over under it. It still fails closed if the id can
+neither be read nor minted.
+
+## Adapter-support + relay leaves (ported in parallel)
+
+Self-contained slices that unblock the adapter and relay subsystems, each
+golden-tested against real Python:
+
+- [x] `code_skew.py` -> code_skew.rs (git-revision fingerprint + hot-pull skew
+      detection; also ported the `.git` ref parser it borrows from hermes_cli.main)
+- [x] platforms/base.py value tier -> platform_base_types.rs (MessageType,
+      ProcessingOutcome, MessageEvent + is_command/get_command/get_command_args,
+      SendResult, EphemeralReply, and the pure send-error classifiers
+      classify_send_error / is_chat_level_not_found). BasePlatformAdapter, the
+      media-cache primitives, TextDebounceState, MessageHandler and the
+      caption/pending-event merges stay with the adapter/runner tier.
+- [x] `relay/auth.py` -> relay_auth.rs (HMAC-SHA256 sign/verify, base64url
+      tokens, delivery signatures; RFC 4231 verified)
+- [x] `relay/command_manifest.py` -> relay_command_manifest.rs (Discord slash
+      palette on the relay hello frame; byte-exact wire shape)
+- [x] `relay/descriptor.py` -> relay_descriptor.rs (CapabilityDescriptor
+      handshake; byte-exact json.dumps(sort_keys=True, ensure_ascii=False))
+- [x] platforms/qqbot/crypto.py -> qqbot_crypto.rs (AES-256-GCM credential
+      decrypt via RustCrypto aes-gcm, never hand-rolled; CSPRNG bind key; golden
+      vectors vs Python cryptography AESGCM)
+- [x] platforms/qqbot/{constants,utils}.py -> qqbot_common.rs
+- [x] platforms/signal_format.py -> signal_format.rs (markdown -> Signal
+      bodyRanges, UTF-16 offset math + overlap suppression; 18 golden vectors)
 
 ## Live HTTP surface
 
