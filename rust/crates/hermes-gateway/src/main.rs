@@ -8,6 +8,7 @@ mod agent;
 mod cli_agent;
 mod config;
 mod config_file;
+mod control_socket;
 mod dead_targets;
 mod delivery_ledger;
 mod discord;
@@ -218,6 +219,13 @@ async fn main() -> anyhow::Result<()> {
             shutdown.cancel();
         }
     });
+
+    // Local control socket: an owned identify/status surface for tooling.
+    // Best-effort; stops with the shutdown token.
+    tokio::spawn(control_socket::serve(
+        config_file::hermes_home(),
+        shutdown.clone(),
+    ));
 
     // Push paths: for each configured platform, start the adapter's inbound
     // loop feeding a Dispatcher that runs turns and delivers replies. All share

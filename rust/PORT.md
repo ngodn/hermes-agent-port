@@ -111,7 +111,10 @@ last. Next concrete targets, in order:
       (.drain_request.json), with instantiation-epoch (boot_id + PID1 start) and
       max-age staleness so a restart/orphan clears the drain. Contract + tests
       done; the drain watcher that flips the gateway to "draining" is not wired.
-- [ ] Control socket (control_socket.py): local UDS identify/status verbs.
+- [x] Control socket (control_socket.py): local owner-only UDS answering
+      identify/status (one JSON line in/out), with the sun_path fallback +
+      pointer file. Wired live and cleaned up on shutdown; verified via a real
+      UDS client (identify payload, unknown-verb listing, 0600 perms).
 - [ ] More platform adapters: WhatsApp (Baileys bridge), Signal
 
 ## Running
