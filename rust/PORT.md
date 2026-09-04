@@ -103,6 +103,16 @@ rust/
 - `hosted_room_execution_policy.py` -> hosted_room_execution_policy.rs
   (RoomExecutionPolicy + strict parser + canonical-JSON/sha256 digest, golden-
   tested against real Python; config-resolution half deferred to the runner).
+- `hosted_room_peer.py` -> hosted_room_peer.rs (GatewayRoomCatalog + strict
+  parser/catalog digest, validate_room_link_url with by-hand urlsplit + IPv4/IPv6
+  loopback classification, HostedMemberDispatch, select_room_link, and the grant
+  issue/verify/decode machinery with hand-rolled HMAC-SHA256 and byte-exact
+  canonical JSON; golden-tested against real Python). Deferred: the filesystem
+  grant-secret minting (gateway_room_grant_secret) and the config/env-driven
+  catalog/endpoint builders (catalog_mapping, local_catalog_mapping,
+  local_room_link_endpoint), which couple to hermes_constants, gateway.config,
+  and the deferred front half of execution_policy_mapping. Not yet declared in
+  main.rs (add `mod hosted_room_peer;` when wiring its callers).
 - `pairing.py` core -> pairing.rs (pairing store: salted-hash codes, rate limit,
   lockout, expiry, atomic 0600 writes, split-dir migration). Operator-allowlist
   mirror (hermes_cli.config + live adapters) deferred to the runner.
