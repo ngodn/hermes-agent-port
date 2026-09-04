@@ -18,6 +18,7 @@ mod dispatch;
 mod display_config;
 mod drain_control;
 mod health;
+mod memory_status;
 mod message;
 mod native_agent;
 mod native_tools;
