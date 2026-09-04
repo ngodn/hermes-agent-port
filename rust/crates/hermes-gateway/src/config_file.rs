@@ -47,6 +47,61 @@ pub fn hermes_home() -> PathBuf {
     PathBuf::from(".hermes")
 }
 
+/// The per-platform default Hermes home, IGNORING `HERMES_HOME`
+/// (`%LOCALAPPDATA%\hermes` on Windows, else `~/.hermes`). This is
+/// `hermes_constants._get_platform_default_hermes_home`, used by
+/// [`hermes_root`] to decide whether `HERMES_HOME` is a profile/Docker layout.
+pub fn native_hermes_home() -> PathBuf {
+    #[cfg(windows)]
+    {
+        if let Ok(val) = std::env::var("LOCALAPPDATA") {
+            let trimmed = val.trim();
+            if !trimmed.is_empty() {
+                return PathBuf::from(trimmed).join("hermes");
+            }
+        }
+    }
+    if let Ok(home) = std::env::var("HOME").or_else(|_| std::env::var("USERPROFILE")) {
+        let trimmed = home.trim();
+        if !trimmed.is_empty() {
+            return PathBuf::from(trimmed).join(".hermes");
+        }
+    }
+    PathBuf::from(".hermes")
+}
+
+/// The root Hermes directory for profile-level operations
+/// (`hermes_constants.get_default_hermes_root`). In standard installs this is
+/// the native home; when `HERMES_HOME` is a profile path (`<root>/profiles/<name>`)
+/// it is `<root>`; in a custom/Docker layout it is `HERMES_HOME` itself.
+pub fn hermes_root() -> PathBuf {
+    let native = native_hermes_home();
+    let env_home = std::env::var("HERMES_HOME").unwrap_or_default();
+    if env_home.is_empty() {
+        return native;
+    }
+    let env_path = PathBuf::from(&env_home);
+    let env_resolved = env_path.canonicalize().unwrap_or_else(|_| env_path.clone());
+    let native_resolved = native.canonicalize().unwrap_or_else(|_| native.clone());
+    if env_resolved.starts_with(&native_resolved) {
+        // HERMES_HOME is under ~/.hermes (normal or profile mode).
+        return native;
+    }
+    // Custom/Docker deployment. A profile path `<root>/profiles/<name>` maps to
+    // `<root>` (the grandparent); otherwise HERMES_HOME itself is the root.
+    if env_path
+        .parent()
+        .and_then(|p| p.file_name())
+        .map(|n| n == "profiles")
+        .unwrap_or(false)
+    {
+        if let Some(grandparent) = env_path.parent().and_then(|p| p.parent()) {
+            return grandparent.to_path_buf();
+        }
+    }
+    env_path
+}
+
 /// The main config file path: `$HERMES_HOME/config.yaml` (matches
 /// `hermes_cli.config.get_config_path`).
 pub fn config_path() -> PathBuf {
