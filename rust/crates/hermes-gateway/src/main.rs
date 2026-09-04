@@ -15,6 +15,7 @@ mod config_file;
 mod control_socket;
 mod cwd_placeholder;
 mod dead_targets;
+mod delivery;
 mod delivery_ledger;
 mod discord;
 mod disk_status;
