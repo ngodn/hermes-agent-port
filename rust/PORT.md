@@ -65,6 +65,13 @@ rust/
   timestamp) + `get_message`, the shape delivery/TUI rows and cron deliveries
   need. `wake.py` delegation-persistence half -> wake.rs
   (persist_delegation_delivery + delegation_display_metadata over SessionDb).
+- `memory_monitor.py` -> memory_monitor.rs (periodic [MEMORY] RSS logging on a
+  tokio task, getrusage-based; wired into startup, always on).
+- `mirror.py` -> mirror.rs (delivery-mirror into a session transcript; +
+  SessionDb::find_session_by_origin unambiguous-match + set_thread_id).
+- `scale_to_zero.py` DECISION layer -> scale_to_zero.rs (idle predicate, arming
+  precondition, idle-timeout parse, relay-only check, dashboard-client liveness
+  marker, self_suspend_available). The Fly Machines suspend POST is deploy I/O.
 
 ## Deferred (port later, with the subsystem they belong to)
 
