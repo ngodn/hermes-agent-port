@@ -26,3 +26,4 @@ tokio-tungstenite = { version = "0.30", features = ["connect", "rustls-tls-webpk
 futures-util = "0.3"
 tokio-util = "0.7"
 rusqlite.workspace = true
+sha2 = { workspace = true }

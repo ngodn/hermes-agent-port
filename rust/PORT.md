@@ -97,11 +97,18 @@ last. Next concrete targets, in order:
       turn via an external agent CLI, no Python and no HTTP key. VERIFIED live:
       POST /message -> agy (gemini-3.8-flash-high) -> real reply, zero Python.
       This is the path that works for a CLI-backend hermes setup.
-- [ ] Native agent: tools, conversation history, memory/skills (the rest of
+- [x] Native HTTP tool loop wired into run_turn (opt-in `HERMES_AGENT_TOOLS=1`;
+      native_tools.rs ChatModel + run_tool_loop + CurrentTimeTool).
+- [ ] Native agent: conversation history, memory/skills (the rest of
       run_agent.py) — the large remaining work to fully shed Python on the HTTP
-      path. Tool loop (native_tools.rs) exists; wire it into run_turn next.
-- [ ] Session lifecycle + delivery ledger
+      path.
+- [x] Delivery ledger (durable outbound obligations): SQLite ledger over
+      state.db (record/attempting/delivered/failed + startup sweep_recoverable
+      that claims dead-owner rows via pid+/proc start-time liveness, with
+      at-least-once markers; attempts cap + stale/retention pruning). Not yet
+      wired into the delivery path; runtime-reconnect sweep deferred.
 - [ ] Control socket / drain control
+- [ ] More platform adapters: WhatsApp (Baileys bridge), Signal
 
 ## Running
 

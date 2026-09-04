@@ -9,6 +9,7 @@ mod cli_agent;
 mod config;
 mod config_file;
 mod dead_targets;
+mod delivery_ledger;
 mod discord;
 mod dispatch;
 mod display_config;
