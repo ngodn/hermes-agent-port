@@ -118,7 +118,6 @@ last. Next concrete targets, in order:
       identify/status (one JSON line in/out), with the sun_path fallback +
       pointer file. Wired live and cleaned up on shutdown; verified via a real
       UDS client (identify payload, unknown-verb listing, 0600 perms).
-- [ ] More platform adapters: WhatsApp (Baileys bridge), Signal
 
 ## Running
 
