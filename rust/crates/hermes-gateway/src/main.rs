@@ -20,6 +20,7 @@ mod dispatch;
 mod display_config;
 mod drain_control;
 mod health;
+mod hooks;
 mod media;
 mod media_policy;
 mod media_repair;
