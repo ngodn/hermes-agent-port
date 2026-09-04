@@ -27,6 +27,7 @@ mod drain_control;
 mod health;
 mod hooks;
 mod hosted_room_execution_policy;
+mod hosted_room_links;
 mod hosted_room_peer;
 mod hosted_rooms;
 mod hosted_rooms_log;
