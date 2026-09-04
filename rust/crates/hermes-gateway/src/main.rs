@@ -242,7 +242,14 @@ async fn main() -> anyhow::Result<()> {
                 ..Default::default()
             });
         });
+        // Lifecycle sentinel: report any unclean previous death, claim this life.
+        lifecycle_ledger::record_startup(None);
     }
+    // Gateway process start time (wall epoch) for heartbeat PID-reuse detection.
+    let boot_epoch = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs_f64())
+        .unwrap_or(0.0);
 
     // Load the user config (config.yaml) once at startup; consumers read it
     // from shared state. Absent/broken config degrades to defaults.
@@ -301,6 +308,24 @@ async fn main() -> anyhow::Result<()> {
         config_file::hermes_home(),
         shutdown.clone(),
     ));
+
+    // Loop-liveness heartbeat: every 30s write state/gateway.heartbeat with a
+    // memory sample, so an unclean death leaves pre-death telemetry and
+    // /api/status shows current memory pressure. Only when we own the profile.
+    if singleton {
+        let hb_shutdown = shutdown.clone();
+        tokio::spawn(async move {
+            let mut tick = tokio::time::interval(std::time::Duration::from_secs(30));
+            loop {
+                tokio::select! {
+                    _ = hb_shutdown.cancelled() => break,
+                    _ = tick.tick() => {
+                        lifecycle_ledger::write_loop_heartbeat(None, Some(boot_epoch), None, None);
+                    }
+                }
+            }
+        });
+    }
 
     // Push paths: for each configured platform, start the adapter's inbound
     // loop feeding a Dispatcher that runs turns and delivers replies. All share
@@ -381,6 +406,7 @@ async fn main() -> anyhow::Result<()> {
             exit_reason: Some(serde_json::json!("shutdown_signal")),
             ..Default::default()
         });
+        lifecycle_ledger::mark_exited(Some(0), "graceful_shutdown", None);
         status::release_gateway_runtime_lock();
         status::remove_pid_file();
     }
