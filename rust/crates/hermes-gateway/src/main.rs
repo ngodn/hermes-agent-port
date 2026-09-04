@@ -30,6 +30,7 @@ mod session_state;
 mod slack;
 mod slash;
 mod slash_access;
+mod sticker_cache;
 mod telegram;
 mod turn_lease;
 mod whatsapp_identity;
