@@ -196,9 +196,27 @@ golden-tested against real Python:
       platform_binds_port). config.rs remains the runnable skeleton.
 - [x] gateway/config.py dataclasses -> config_types.rs (HomeChannel,
       SessionResetPolicy, ChannelOverride, PlatformConfig, StreamingConfig; each
-      Default + from_dict/to_dict, reusing config_schema). Only GatewayConfig +
-      load_gateway_config / _validate / _apply_env_overrides remain (the load
-      path reads secrets via secret_scope, below).
+      Default + from_dict/to_dict, reusing config_schema).
+- [x] GatewayConfig -> config_gateway.rs (fields, defaults, __post_init__,
+      to_dict/from_dict, _has_usable_api_server_key).
+- [x] _apply_env_overrides -> config_env_overrides.rs. All 158 env vars present,
+      verified mechanically by rust/tools/check_env_override_parity.sh. Faithful
+      quirks kept (the dead BLUEBUBBLES_REQUIRE_MENTION guard writing false; the
+      warn helper bypassing the secret scope). The registry-driven plugin-enable
+      pass is a documented no-op (Python wraps it in try/except -> debug).
+- [x] load_gateway_config + _validate_gateway_config -> config_loader.rs, which
+      composes the pipeline: file layers -> env overrides -> validate. The
+      non-uniform precedence is reproduced exactly, including multiplex_profiles
+      having no elif (so gateway.json beats gateway.multiplex_profiles).
+      Deferred, matching Python's fail-open: managed_scope.apply_managed_overlay
+      (identity) and plugin discovery (the _pr = None branch).
+
+THE CONFIG LAYER IS COMPLETE AND DIFFERENTIALLY VERIFIED. rust/tools/
+gen_config_goldens.py captures real Python `load_gateway_config().to_dict()` for
+18 fixture homes; the `golden_corpus` test in config_loader.rs replays them
+through the full Rust pipeline with a cleared process environment, and all 18
+match exactly. That covers config_loader + config_env_overrides + config_gateway
++ config_types + config_schema together.
 - [x] agent/secret_scope.py -> secret_scope.rs (get_secret fail-closed
       resolution, is_global_env tables, multiplex flag, parse_env_value /
       strip_inline_comment / load_env_file). The Python ContextVar is modeled as
