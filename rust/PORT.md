@@ -88,6 +88,25 @@ rust/
   (persistence, prompt building, auto-continue) overlaps session_db.rs and lands
   with the agent-core turn path.
 
+## Feature / coupled-module cores (ported in parallel, verified + integrated)
+
+- `authz_mixin.py` primitives -> authz.rs (allowlist parsing, gate-env reads,
+  bech32 Nostr npub->hex, verified against a NIP-19 vector). Full
+  _is_user_authorized decision needs the adapter registry / pairing store.
+- `delivery.py` primitives -> delivery.rs (DeliveryTarget parse/render, silence
+  filter, telegram private-chat heuristic). Router is adapter-coupled.
+- `stream_consumer.py` display helpers -> stream_consumer.rs (code-fence escape /
+  close, StreamConsumerConfig). The async sink is adapter-coupled.
+- `browser_control_artifacts.py` -> browser_control_artifacts.rs (one-shot
+  artifact store: SHA-256 provenance, MIME/size caps, traversal guard, atomic
+  write, TTL + orphan sweep, rate limiter).
+- `hosted_room_execution_policy.py` -> hosted_room_execution_policy.rs
+  (RoomExecutionPolicy + strict parser + canonical-JSON/sha256 digest, golden-
+  tested against real Python; config-resolution half deferred to the runner).
+- `pairing.py` core -> pairing.rs (pairing store: salted-hash codes, rate limit,
+  lockout, expiry, atomic 0600 writes, split-dir migration). Operator-allowlist
+  mirror (hermes_cli.config + live adapters) deferred to the runner.
+
 ## Live HTTP surface
 
 - `GET /healthz`, `GET /readyz` (readiness probes), `GET /status` — the last
