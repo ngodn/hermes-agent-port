@@ -14,6 +14,7 @@
 //! yields an empty object (defaults), never a hard error, so config problems
 //! degrade gracefully instead of taking the gateway down.
 
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 use serde_json::Value;
@@ -50,6 +51,96 @@ pub fn hermes_home() -> PathBuf {
 /// `hermes_cli.config.get_config_path`).
 pub fn config_path() -> PathBuf {
     hermes_home().join("config.yaml")
+}
+
+/// The dotenv path: `$HERMES_HOME/.env`.
+pub fn env_path() -> PathBuf {
+    hermes_home().join(".env")
+}
+
+/// Minimal `.env` loader: `KEY=VALUE` per line, `#` comments and blanks
+/// skipped, an optional `export ` prefix stripped, and surrounding single or
+/// double quotes removed. Values are returned but never logged.
+pub fn load_dotenv(path: &std::path::Path) -> HashMap<String, String> {
+    let mut out = HashMap::new();
+    let Ok(text) = std::fs::read_to_string(path) else {
+        return out;
+    };
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let line = line.strip_prefix("export ").unwrap_or(line);
+        let Some((k, v)) = line.split_once('=') else {
+            continue;
+        };
+        let k = k.trim();
+        if k.is_empty() {
+            continue;
+        }
+        let mut v = v.trim();
+        if v.len() >= 2
+            && ((v.starts_with('"') && v.ends_with('"'))
+                || (v.starts_with('\'') && v.ends_with('\'')))
+        {
+            v = &v[1..v.len() - 1];
+        }
+        out.insert(k.to_string(), v.to_string());
+    }
+    out
+}
+
+/// Candidate API-key env var names for a provider base URL, most specific first.
+fn key_names_for(base_url: &str) -> Vec<&'static str> {
+    let b = base_url.to_lowercase();
+    let mut names: Vec<&'static str> = Vec::new();
+    if b.contains("openrouter") {
+        names.push("OPENROUTER_API_KEY");
+    } else if b.contains("anthropic") {
+        names.push("ANTHROPIC_API_KEY");
+    } else if b.contains("openai.com") {
+        names.push("OPENAI_API_KEY");
+    } else if b.contains("nousresearch") || b.contains("portal.nous") {
+        names.push("NOUS_API_KEY");
+        names.push("HERMES_NOUS_API_KEY");
+    } else if b.contains("groq") {
+        names.push("GROQ_API_KEY");
+    } else if b.contains("together") {
+        names.push("TOGETHER_API_KEY");
+    } else if b.contains("generativelanguage") || b.contains("gemini") {
+        names.push("GEMINI_API_KEY");
+        names.push("GOOGLE_API_KEY");
+    }
+    // Generic fallbacks for an unknown host or a proxy.
+    for n in ["OPENROUTER_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"] {
+        if !names.contains(&n) {
+            names.push(n);
+        }
+    }
+    names
+}
+
+/// Resolve an API key for `base_url`: the process environment wins, then the
+/// supplied dotenv map. Returns the first candidate name that holds a value.
+/// The key value is never logged.
+pub fn resolve_provider_api_key(
+    base_url: &str,
+    dotenv: &HashMap<String, String>,
+) -> Option<String> {
+    for name in key_names_for(base_url) {
+        if let Ok(v) = std::env::var(name) {
+            if !v.trim().is_empty() {
+                return Some(v);
+            }
+        }
+        if let Some(v) = dotenv.get(name) {
+            if !v.trim().is_empty() {
+                return Some(v.clone());
+            }
+        }
+    }
+    None
 }
 
 /// Load and parse the user config into a JSON `Value`.
@@ -171,5 +262,49 @@ gateway:
             serde_json::json!(["/a", "/b"])
         );
         let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn dotenv_parses_lines_quotes_and_export() {
+        let path = temp_path("env");
+        {
+            let mut f = std::fs::File::create(&path).unwrap();
+            writeln!(f, "# a comment").unwrap();
+            writeln!(f, "OPENROUTER_API_KEY=sk-plain").unwrap();
+            writeln!(f, "export OPENAI_API_KEY=\"sk-quoted\"").unwrap();
+            writeln!(f, "SINGLE='sk-single'").unwrap();
+            writeln!(f, "  BLANKY=  ").unwrap();
+            writeln!(f, "novalue").unwrap();
+        }
+        let env = load_dotenv(&path);
+        assert_eq!(env.get("OPENROUTER_API_KEY").unwrap(), "sk-plain");
+        assert_eq!(env.get("OPENAI_API_KEY").unwrap(), "sk-quoted");
+        assert_eq!(env.get("SINGLE").unwrap(), "sk-single");
+        assert_eq!(env.get("BLANKY").unwrap(), "");
+        assert!(!env.contains_key("novalue"));
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn resolve_key_prefers_host_specific_then_falls_back() {
+        let mut env = std::collections::HashMap::new();
+        env.insert("OPENROUTER_API_KEY".to_string(), "sk-or".to_string());
+        env.insert("OPENAI_API_KEY".to_string(), "sk-oai".to_string());
+        // OpenRouter host picks the OpenRouter key.
+        assert_eq!(
+            resolve_provider_api_key("https://openrouter.ai/api/v1", &env).as_deref(),
+            Some("sk-or")
+        );
+        // An unknown host falls back through the generic list.
+        assert_eq!(
+            resolve_provider_api_key("https://proxy.example/v1", &env).as_deref(),
+            Some("sk-or")
+        );
+        // Empty values are ignored.
+        let empty = std::collections::HashMap::new();
+        assert_eq!(
+            resolve_provider_api_key("https://openrouter.ai", &empty),
+            None
+        );
     }
 }

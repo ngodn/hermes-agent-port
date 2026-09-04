@@ -51,30 +51,43 @@ fn build_agent_client(
     model: Option<&str>,
 ) -> Arc<dyn AgentClient> {
     if config.agent_native {
-        match (config.llm_api_key.as_deref(), model) {
-            (Some(key), Some(model)) => {
-                // base_url: explicit env, else config's model.base_url, else OpenRouter.
-                let base_url = config
-                    .llm_base_url
-                    .clone()
-                    .or_else(|| {
-                        user_config
-                            .get("model")
-                            .and_then(|m| m.get("base_url"))
-                            .and_then(|v| v.as_str())
-                            .map(str::to_string)
-                    })
-                    .unwrap_or_else(|| "https://openrouter.ai/api/v1".to_string());
-                match NativeAgentClient::new(model, key, base_url) {
-                    Ok(c) => {
-                        tracing::info!(model, "using native agent client");
-                        return Arc::new(c);
-                    }
-                    Err(err) => tracing::error!(%err, "native agent init failed; falling back to subprocess"),
+        // base_url: explicit env override, else config's model.base_url, else OpenRouter.
+        let base_url = config
+            .llm_base_url
+            .clone()
+            .or_else(|| {
+                user_config
+                    .get("model")
+                    .and_then(|m| m.get("base_url"))
+                    .and_then(|v| v.as_str())
+                    .map(str::to_string)
+            })
+            .unwrap_or_else(|| "https://openrouter.ai/api/v1".to_string());
+
+        // Key: explicit HERMES_LLM_API_KEY override, else resolve from the
+        // process env / $HERMES_HOME/.env by the provider the base_url implies
+        // (same source the Python agent uses). The value is never logged.
+        let key = config.llm_api_key.clone().or_else(|| {
+            let dotenv = config_file::load_dotenv(&config_file::env_path());
+            config_file::resolve_provider_api_key(&base_url, &dotenv)
+        });
+
+        match (key, model) {
+            (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone()) {
+                Ok(c) => {
+                    tracing::info!(model, base_url, "using native agent client");
+                    return Arc::new(c);
                 }
-            }
-            _ => tracing::warn!(
-                "HERMES_AGENT_NATIVE set but HERMES_LLM_API_KEY or a model is missing; falling back to subprocess"
+                Err(err) => {
+                    tracing::error!(%err, "native agent init failed; falling back to subprocess")
+                }
+            },
+            (None, _) => tracing::warn!(
+                base_url,
+                "HERMES_AGENT_NATIVE set but no API key found (env or .env) for this provider; falling back to subprocess"
+            ),
+            (_, None) => tracing::warn!(
+                "HERMES_AGENT_NATIVE set but no model resolved; falling back to subprocess"
             ),
         }
     }
