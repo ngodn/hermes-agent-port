@@ -6,6 +6,7 @@
 
 mod agent;
 mod agent_cache_pressure;
+mod authz;
 mod cgroup_cleanup;
 mod channel_directory;
 mod cli_agent;
