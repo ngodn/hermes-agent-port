@@ -204,6 +204,15 @@ async fn main() -> anyhow::Result<()> {
 
     let config = Config::from_env()?;
 
+    // Publish the session-store recovery health aggregate into the runtime
+    // status surface (gateway_state.json), mirroring the Python gateway.
+    session_db_recovery::set_health_sink(|aggregate| {
+        status::write_runtime_status(&status::StatusUpdate {
+            session_store: Some(serde_json::json!({ "status": aggregate })),
+            ..Default::default()
+        });
+    });
+
     // Load the user config (config.yaml) once at startup; consumers read it
     // from shared state. Absent/broken config degrades to defaults.
     let user_config = Arc::new(config_file::load_config());

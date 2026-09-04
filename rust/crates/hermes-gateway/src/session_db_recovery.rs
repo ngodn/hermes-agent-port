@@ -243,13 +243,32 @@ impl<H: Clone> RecoverableHandleCache<H> {
 
     fn publish_health(&self, path: &Path, state: &str) {
         let global = health_map().get_or_init(|| Mutex::new(GlobalHealth::default()));
-        let mut g = global.lock().unwrap();
-        g.states
-            .entry(self.id)
-            .or_default()
-            .insert(path.to_path_buf(), state.to_string());
-        g.recompute();
+        let aggregate = {
+            let mut g = global.lock().unwrap();
+            g.states
+                .entry(self.id)
+                .or_default()
+                .insert(path.to_path_buf(), state.to_string());
+            g.recompute();
+            g.aggregate.clone()
+        };
+        // Publish one privacy-safe aggregate to the runtime status surface, if a
+        // sink is installed (the gateway wires this to write_runtime_status;
+        // tests leave it unset so they cause no file side effects). Mirrors the
+        // Python `_publish_health` -> `write_runtime_status(session_store=...)`.
+        if let Some(sink) = HEALTH_SINK.get() {
+            sink(&aggregate);
+        }
     }
+}
+
+/// A sink for the cross-cache session-store health aggregate. The gateway
+/// installs one at startup; unset by default (so tests write nothing).
+static HEALTH_SINK: OnceLock<fn(&str)> = OnceLock::new();
+
+/// Install the health-aggregate sink (idempotent; first install wins).
+pub fn set_health_sink(sink: fn(&str)) {
+    let _ = HEALTH_SINK.set(sink);
 }
 
 impl<H: Clone> Default for RecoverableHandleCache<H> {
