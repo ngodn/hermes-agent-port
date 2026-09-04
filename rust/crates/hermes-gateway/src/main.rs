@@ -6,6 +6,7 @@
 
 mod agent;
 mod agent_cache_pressure;
+mod api_server_run_idempotency;
 mod authz;
 mod browser_control_artifacts;
 mod browser_control_broker;
