@@ -21,6 +21,8 @@ mod display_config;
 mod drain_control;
 mod health;
 mod media;
+mod media_policy;
+mod media_repair;
 mod memory_status;
 mod message;
 mod native_agent;
