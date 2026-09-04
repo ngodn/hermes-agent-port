@@ -14,6 +14,7 @@ mod display_config;
 mod health;
 mod message;
 mod native_agent;
+mod native_tools;
 mod platform;
 mod readiness;
 mod response_filters;

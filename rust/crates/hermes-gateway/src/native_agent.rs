@@ -24,6 +24,7 @@ use serde_json::{json, Value};
 use tokio::sync::mpsc;
 
 use crate::agent::AgentClient;
+use crate::native_tools::{parse_message_step, ChatModel, Step};
 
 /// One decoded SSE line.
 #[derive(Debug, PartialEq)]
@@ -159,6 +160,47 @@ impl AgentClient for NativeAgentClient {
 
         let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
         Ok(())
+    }
+}
+
+#[async_trait]
+impl ChatModel for NativeAgentClient {
+    /// One non-streaming completion with tools. Tool calls arrive whole in the
+    /// message, which is simpler and more reliable than reassembling streamed
+    /// tool-call deltas; the streaming path ([`AgentClient::run_turn`]) stays
+    /// for the no-tools case.
+    async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
+        let url = format!("{}/chat/completions", self.base_url);
+        let mut body = json!({ "model": self.model, "messages": messages, "stream": false });
+        if !tools.is_empty() {
+            body["tools"] = Value::Array(tools.to_vec());
+        }
+        let resp = self
+            .client
+            .post(&url)
+            .bearer_auth(&self.api_key)
+            .json(&body)
+            .send()
+            .await
+            .map_err(|e| Error::Other(format!("native agent step request: {e}")))?;
+        if !resp.status().is_success() {
+            let status = resp.status();
+            let text = resp.text().await.unwrap_or_default();
+            return Err(Error::Other(format!(
+                "native agent step HTTP {status}: {}",
+                text.chars().take(300).collect::<String>()
+            )));
+        }
+        let v: Value = resp
+            .json()
+            .await
+            .map_err(|e| Error::Other(format!("native agent step decode: {e}")))?;
+        let message = v
+            .get("choices")
+            .and_then(|c| c.get(0))
+            .and_then(|c| c.get("message"))
+            .ok_or_else(|| Error::Other("native agent step: no choices[0].message".into()))?;
+        Ok(parse_message_step(message))
     }
 }
 
