@@ -29,6 +29,8 @@ mod hooks;
 mod hosted_room_execution_policy;
 mod hosted_room_links;
 mod hosted_room_peer;
+mod hosted_room_policy_checkpoint;
+mod hosted_room_replicas;
 mod hosted_rooms;
 mod hosted_rooms_log;
 mod kanban_watchers;

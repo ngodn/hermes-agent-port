@@ -372,7 +372,9 @@ fn resolve_created_at(v: Option<&Value>, now: f64) -> f64 {
 /// positive-integer `seq` (contiguous across the page), non-empty string
 /// `event_id`/`kind`, an object `actor`, and a present `payload`.
 fn validate_page(page: &Value) -> Result<(Vec<PageEvent>, Authority)> {
-    let obj = page.as_object().ok_or_else(|| invalid("page must be an object"))?;
+    let obj = page
+        .as_object()
+        .ok_or_else(|| invalid("page must be an object"))?;
     let events_arr = match obj.get("events") {
         Some(Value::Array(a)) => a,
         _ => return Err(invalid("page.events must be a list")),
@@ -479,7 +481,9 @@ pub fn ingest_page(
     let (stored_epoch, last_seq, stored_bytes) = match row {
         None => {
             let count: i64 =
-                tx.query_row("SELECT COUNT(*) FROM hosted_room_replicas", [], |r| r.get(0))?;
+                tx.query_row("SELECT COUNT(*) FROM hosted_room_replicas", [], |r| {
+                    r.get(0)
+                })?;
             if count >= MAX_REPLICA_ROOMS {
                 return Err(invalid("replica room capacity exhausted"));
             }
@@ -507,8 +511,8 @@ pub fn ingest_page(
         if stored_bytes + added_bytes + size > MAX_REPLICA_EVENT_BYTES {
             return Err(invalid("replica event storage exhausted"));
         }
-        let actor_json =
-            rooms::canonical_json(&event.actor, "actor", ACTOR_JSON_MAX_BYTES).map_err(ReplicaError::from)?;
+        let actor_json = rooms::canonical_json(&event.actor, "actor", ACTOR_JSON_MAX_BYTES)
+            .map_err(ReplicaError::from)?;
         let payload_json = rooms::canonical_json(&event.payload, "payload", MAX_EVENT_JSON_BYTES)
             .map_err(ReplicaError::from)?;
         let epoch_value = authority_epoch_to_sql(event.authority_epoch.as_ref());
@@ -881,7 +885,9 @@ pub fn demote_room(
         ));
     }
     if current_gateway != local_gateway {
-        return Err(invalid("room is not locally authoritative; nothing to demote"));
+        return Err(invalid(
+            "room is not locally authoritative; nothing to demote",
+        ));
     }
 
     let seq = next_seq;
@@ -1054,7 +1060,10 @@ mod tests {
         // seq 2 skips a sequence the replica has not stored.
         let err = ingest(db.path(), &page(2, 3, 1, 3)).unwrap_err();
         assert!(err.is_gap(), "expected gap, got {err:?}");
-        assert_eq!(err.to_string(), "page skips sequences the replica has not stored");
+        assert_eq!(
+            err.to_string(),
+            "page skips sequences the replica has not stored"
+        );
 
         // A non-contiguous page is rejected during validation.
         let broken = json!({
@@ -1078,7 +1087,10 @@ mod tests {
         ingest(db.path(), &page(1, 2, 2, 2)).unwrap();
         // A later page carrying an older epoch is refused.
         let err = ingest(db.path(), &page(3, 3, 1, 3)).unwrap_err();
-        assert!(err.is_epoch_regression(), "expected epoch regression, got {err:?}");
+        assert!(
+            err.is_epoch_regression(),
+            "expected epoch regression, got {err:?}"
+        );
         assert_eq!(
             err.to_string(),
             "page authority epoch is older than the stored replica epoch"
@@ -1094,14 +1106,20 @@ mod tests {
         let db = TempDb::new("shape");
         // Missing authority stamp.
         let err = ingest(db.path(), &json!({"events": []})).unwrap_err();
-        assert_eq!(err.to_string(), "page.authority is required for replication");
+        assert_eq!(
+            err.to_string(),
+            "page.authority is required for replication"
+        );
         // Non-positive epoch.
         let err2 = ingest(
             db.path(),
             &json!({"events": [], "authority": {"gateway_id": "install:owner", "epoch": 0}}),
         )
         .unwrap_err();
-        assert_eq!(err2.to_string(), "page.authority.epoch must be a positive integer");
+        assert_eq!(
+            err2.to_string(),
+            "page.authority.epoch must be a positive integer"
+        );
     }
 
     #[test]
@@ -1119,7 +1137,10 @@ mod tests {
         let db = TempDb::new("promote");
         ingest(db.path(), &page(1, 2, 1, 2)).unwrap();
         let err = promote_replica(db.path(), &json!("room-1"), None, Some(3000.0)).unwrap_err();
-        assert_eq!(err.to_string(), "stable gateway install identity is unavailable");
+        assert_eq!(
+            err.to_string(),
+            "stable gateway install identity is unavailable"
+        );
         // The replica is untouched: still recoverable.
         let state = replica_state(db.path(), &json!("room-1")).unwrap();
         assert_eq!(state.last_seq, 2);
