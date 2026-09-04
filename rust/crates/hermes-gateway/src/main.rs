@@ -76,6 +76,7 @@ mod session_state;
 mod shutdown_flush;
 mod shutdown_forensics;
 mod signal_format;
+mod signal_rate_limit;
 mod slack;
 mod slash;
 mod slash_access;
