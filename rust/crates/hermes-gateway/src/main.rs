@@ -24,6 +24,8 @@ mod message;
 mod native_agent;
 mod native_tools;
 mod platform;
+mod profile_name;
+mod profile_routing;
 mod readiness;
 mod response_filters;
 mod restart_loop_guard;
