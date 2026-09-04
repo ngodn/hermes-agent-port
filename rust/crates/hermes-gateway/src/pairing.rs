@@ -19,9 +19,11 @@
 //!
 //! Time is stored as epoch-second floats to match Python's `time.time()`
 //! exactly (not RFC3339), since every timestamp comparison here is arithmetic
-//! on those floats. Randomness uses a small splitmix64 helper reseeded from
-//! wall-clock nanos + pid + a per-call counter; it is NOT cryptographic, unlike
-//! Python's `secrets`, but produces codes of the same shape.
+//! on those floats. Codes, salts, and request ids come from the kernel CSPRNG
+//! (`/dev/urandom`, falling back to `getrandom(2)`), matching Python's
+//! `secrets`; a code alphabet index uses rejection sampling to avoid modulo
+//! bias. If the CSPRNG is unavailable the mint fails closed (returns `None`)
+//! rather than emit a guessable, authorization-gating value.
 
 use std::collections::HashSet;
 use std::io::Write as _;
@@ -65,39 +67,71 @@ fn now() -> f64 {
         .unwrap_or(0.0)
 }
 
-/// A non-cryptographic 64-bit pseudo-random number. Reseeded on every call
-/// from wall-clock nanos, the process id, and a monotonic counter so back-to-
-/// back calls do not collide. Python uses `secrets` (cryptographic); this port
-/// has no rand crate available, so it uses this splitmix64 helper as specified.
-fn rng_next() -> u64 {
+/// Fill `buf` from the kernel CSPRNG. Pairing codes, salts, and request ids all
+/// gate authorization, so they MUST come from a cryptographically secure source
+/// (Python uses `secrets`), never a time/pid-seeded PRNG. Reads `/dev/urandom`,
+/// falling back to the `getrandom(2)` syscall on Linux. Returns `false` when no
+/// CSPRNG could be read, so callers fail closed (mint nothing) rather than emit
+/// a guessable value.
+fn fill_random(buf: &mut [u8]) -> bool {
+    use std::io::Read;
+    if let Ok(mut f) = std::fs::File::open("/dev/urandom") {
+        if f.read_exact(buf).is_ok() {
+            return true;
+        }
+    }
+    #[cfg(target_os = "linux")]
+    {
+        let mut filled = 0usize;
+        while filled < buf.len() {
+            // SAFETY: writing into our own buffer for the remaining length.
+            let rc = unsafe {
+                libc::getrandom(
+                    buf[filled..].as_mut_ptr() as *mut libc::c_void,
+                    buf.len() - filled,
+                    0,
+                )
+            };
+            if rc > 0 {
+                filled += rc as usize;
+            } else if rc == 0 {
+                break;
+            } else {
+                let err = std::io::Error::last_os_error();
+                if err.raw_os_error() == Some(libc::EINTR) {
+                    continue;
+                }
+                break;
+            }
+        }
+        return filled == buf.len();
+    }
+    #[allow(unreachable_code)]
+    false
+}
+
+/// `n` CSPRNG bytes, or `None` when the CSPRNG is unavailable.
+fn rand_bytes(n: usize) -> Option<Vec<u8>> {
+    let mut out = vec![0u8; n];
+    if fill_random(&mut out) {
+        Some(out)
+    } else {
+        None
+    }
+}
+
+/// A non-cryptographic 64-bit nonce for temp-file names only (uniqueness, not
+/// security). Never used for a value that gates authorization.
+fn nonce_u64() -> u64 {
     static COUNTER: AtomicU64 = AtomicU64::new(0);
     let nanos = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_nanos() as u64)
         .unwrap_or(0);
     let c = COUNTER.fetch_add(1, Ordering::Relaxed);
-    let seed = nanos
+    nanos
         ^ (std::process::id() as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
-        ^ c.wrapping_mul(0xD1B5_4A32_D192_ED03);
-    // splitmix64
-    let mut z = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
-    z = (z ^ (z >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
-    z = (z ^ (z >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
-    z ^ (z >> 31)
-}
-
-fn rand_bytes(n: usize) -> Vec<u8> {
-    let mut out = Vec::with_capacity(n);
-    while out.len() < n {
-        let word = rng_next().to_le_bytes();
-        for b in word {
-            if out.len() == n {
-                break;
-            }
-            out.push(b);
-        }
-    }
-    out
+        ^ c.wrapping_mul(0xD1B5_4A32_D192_ED03)
 }
 
 fn to_hex(bytes: &[u8]) -> String {
@@ -124,20 +158,43 @@ fn from_hex(s: &str) -> Option<Vec<u8>> {
     Some(out)
 }
 
-/// `secrets.token_hex(n)` — `n` random bytes, hex-encoded (2n chars).
-fn token_hex(n: usize) -> String {
-    to_hex(&rand_bytes(n))
+/// `secrets.token_hex(n)` — `n` CSPRNG bytes, hex-encoded (2n chars). `None`
+/// when the CSPRNG is unavailable.
+fn token_hex(n: usize) -> Option<String> {
+    rand_bytes(n).map(|b| to_hex(&b))
 }
 
-/// An 8-char code, each character drawn from [`ALPHABET`].
-fn generate_code_string() -> String {
+/// An 8-char code, each character drawn uniformly from [`ALPHABET`] via CSPRNG
+/// bytes with rejection sampling (no modulo bias). `None` when the CSPRNG is
+/// unavailable, so the caller mints nothing rather than a guessable code.
+fn generate_code_string() -> Option<String> {
     let alpha: Vec<char> = ALPHABET.chars().collect();
-    let mut code = String::with_capacity(CODE_LENGTH);
-    for _ in 0..CODE_LENGTH {
-        let idx = (rng_next() as usize) % alpha.len();
-        code.push(alpha[idx]);
+    let n = alpha.len();
+    if n == 0 || n > 256 {
+        return None;
     }
-    code
+    // Largest multiple of n that fits in a byte; reject values at or above it so
+    // every alphabet index is equally likely. For a 32-char alphabet this is
+    // 256, so nothing is ever rejected.
+    let limit = (256 / n) * n;
+    let mut code = String::with_capacity(CODE_LENGTH);
+    let mut buf = [0u8; 1];
+    let mut guard = 0usize;
+    while code.len() < CODE_LENGTH {
+        guard += 1;
+        if guard > CODE_LENGTH * 256 {
+            return None; // pathological CSPRNG stall
+        }
+        if !fill_random(&mut buf) {
+            return None;
+        }
+        let v = buf[0] as usize;
+        if v >= limit {
+            continue;
+        }
+        code.push(alpha[v % n]);
+    }
+    Some(code)
 }
 
 /// SHA-256 of `salt || code`, hex-encoded. Mirrors `PairingStore._hash_code`.
@@ -298,7 +355,7 @@ fn secure_write(path: &Path, data: &str) {
     let tmp = parent.join(format!(
         ".pairing-{}-{}.tmp",
         std::process::id(),
-        rng_next()
+        nonce_u64()
     ));
     let write_res = (|| -> std::io::Result<()> {
         let mut f = std::fs::File::create(&tmp)?;
@@ -647,10 +704,12 @@ impl PairingStore {
             return None;
         }
 
-        let code = generate_code_string();
-        let salt = rand_bytes(16);
+        // Fail closed if the CSPRNG is unavailable: mint nothing rather than a
+        // guessable code/salt/id (these gate authorization).
+        let code = generate_code_string()?;
+        let salt = rand_bytes(16)?;
         let code_hash = hash_code(&code, &salt);
-        let entry_id = token_hex(8);
+        let entry_id = token_hex(8)?;
 
         let mut entry = Obj::new();
         entry.insert("hash".to_string(), Value::String(code_hash));
@@ -974,7 +1033,7 @@ mod tests {
             "hermes_pairing_{}_{}_{}",
             tag,
             std::process::id(),
-            rng_next()
+            nonce_u64()
         ));
         (PairingStore::from_dir(dir.clone()), dir)
     }
