@@ -44,6 +44,22 @@ rust/
   MEDIA: response; needs `BasePlatformAdapter.extract_media` (MEDIA: directive
   parsing). Port with the media-delivery subsystem (base.py) alongside
   media_policy.
+- `wake.py` — wakes a session on a background completion; coupled to the adapter
+  base (`MessageEvent`/`handle_message`), the API-server adapter internals, and
+  `SessionDB.append_message` with display metadata. Port with the adapter /
+  API-server subsystem. (`_delegation_display_metadata` is a pure helper that
+  can come along then.)
+
+## Needs a design decision (not a mechanical port)
+
+- `hooks.py` — the event-hook system discovers `~/.hermes/hooks/<name>/` dirs and
+  dynamically imports+executes a user-authored Python `handler.py` per event.
+  Executing arbitrary user Python is exactly the interpreter capability the
+  rewrite drops, so this needs a new hook model in Rust: spawn `python
+  handler.py` as a subprocess per event (context as JSON on stdin), support
+  executable-script / webhook hooks instead, or drop the feature. The event
+  vocabulary + wildcard resolution (`command:*`) port trivially once the
+  execution model is chosen. Flagged for the user rather than guessed.
 - `stream_dispatch.py` — the event router hangs off the adapter render-hooks and
   the `GatewayStreamConsumer` sink, both in the `stream_consumer.py` hub (3.6k
   LOC, unported). Port it with that subsystem, not against stubs.
