@@ -107,7 +107,11 @@ last. Next concrete targets, in order:
       that claims dead-owner rows via pid+/proc start-time liveness, with
       at-least-once markers; attempts cap + stale/retention pruning). Not yet
       wired into the delivery path; runtime-reconnect sweep deferred.
-- [ ] Control socket / drain control
+- [x] Drain control (drain_control.py): external drain-marker contract
+      (.drain_request.json), with instantiation-epoch (boot_id + PID1 start) and
+      max-age staleness so a restart/orphan clears the drain. Contract + tests
+      done; the drain watcher that flips the gateway to "draining" is not wired.
+- [ ] Control socket (control_socket.py): local UDS identify/status verbs.
 - [ ] More platform adapters: WhatsApp (Baileys bridge), Signal
 
 ## Running

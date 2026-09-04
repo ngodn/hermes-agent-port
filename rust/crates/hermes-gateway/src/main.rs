@@ -13,6 +13,7 @@ mod delivery_ledger;
 mod discord;
 mod dispatch;
 mod display_config;
+mod drain_control;
 mod health;
 mod message;
 mod native_agent;

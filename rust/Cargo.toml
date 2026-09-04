@@ -28,6 +28,7 @@ reqwest = { version = "0.12", default-features = false, features = ["json", "str
 rusqlite = { version = "0.32", features = ["bundled"] }
 minijinja = "2"
 sha2 = "0.10"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 
 [profile.release]
 lto = true
