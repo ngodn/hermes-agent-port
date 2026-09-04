@@ -448,13 +448,22 @@ pub fn ensure_platform_extra_dict<'a>(
 }
 
 // --- Env readers ------------------------------------------------------------
-//
-// The Python `_getenv` prefers the active profile secret scope when one is
-// installed; that scope is not ported here, so these mirror the unscoped
-// `os.environ` fallback path used by single-profile callers.
 
-/// Port of `_getenv` (unscoped path): the env var, else the default.
+/// Port of `_getenv`: read through the active profile secret scope when one is
+/// installed, else fall back to the process environment.
+///
+/// `load_gateway_config` runs in many contexts, including multiplexed profile
+/// startup where a per-profile scope is installed. In that scope the scoped
+/// value wins and an absent key yields `default` (we do NOT fall through to the
+/// environment, which may hold another profile's value). Outside a scope this is
+/// the legacy `os.getenv` behavior.
 pub fn getenv(name: &str, default: Option<&str>) -> Option<String> {
+    if crate::secret_scope::current_secret_scope().is_some() {
+        // A scope is installed, so `get_secret` cannot fail closed here (it only
+        // errors on an UNSCOPED read under multiplexing).
+        let scoped = crate::secret_scope::get_secret(name, None).ok().flatten();
+        return scoped.or_else(|| default.map(|d| d.to_string()));
+    }
     match std::env::var(name) {
         Ok(v) => Some(v),
         Err(_) => default.map(|d| d.to_string()),
@@ -940,6 +949,58 @@ mod tests {
         assert_eq!(getenv_int(key, 42), 17);
         std::env::set_var(key, "bad");
         assert_eq!(getenv_int(key, 42), 42);
+        std::env::remove_var(key);
+    }
+
+    /// `_getenv` prefers the active profile secret scope over the process
+    /// environment. Golden behavior captured from real Python:
+    ///   no scope                            -> env value
+    ///   scope hit                           -> scoped value
+    ///   scope miss, env set, multiplex OFF  -> env value (scope is an overlay)
+    ///   scope miss, env set, multiplex ON   -> default (never leak another
+    ///                                          profile's env value)
+    #[test]
+    fn getenv_prefers_secret_scope() {
+        use crate::secret_scope::{set_multiplex_active, with_secret_scope};
+        use std::collections::HashMap;
+
+        // The multiplex flag and the environment are process-global; share the
+        // one crate-wide test lock with secret_scope's tests. Taken once, never
+        // nested (the mutex is not reentrant).
+        let _guard = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+
+        let rt = tokio::runtime::Builder::new_current_thread()
+            .build()
+            .unwrap();
+
+        let key = "HERMES_CONFIG_SCHEMA_SCOPE_VAR";
+        std::env::set_var(key, "from_env");
+        set_multiplex_active(false);
+
+        // No scope installed: the environment wins.
+        assert_eq!(getenv(key, None), Some("from_env".to_string()));
+
+        let mut scope = HashMap::new();
+        scope.insert(key.to_string(), "from_scope".to_string());
+
+        // Scope hit wins over the environment.
+        rt.block_on(with_secret_scope(Some(scope.clone()), async {
+            assert_eq!(getenv(key, None), Some("from_scope".to_string()));
+        }));
+
+        // Scope miss with multiplex OFF falls through to the environment.
+        let empty: HashMap<String, String> = HashMap::new();
+        rt.block_on(with_secret_scope(Some(empty.clone()), async {
+            assert_eq!(getenv(key, Some("dflt")), Some("from_env".to_string()));
+        }));
+
+        // Scope miss with multiplex ON returns the default, never the env value.
+        set_multiplex_active(true);
+        rt.block_on(with_secret_scope(Some(empty), async {
+            assert_eq!(getenv(key, Some("dflt")), Some("dflt".to_string()));
+        }));
+        set_multiplex_active(false);
+
         std::env::remove_var(key);
     }
 }

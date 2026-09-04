@@ -362,15 +362,20 @@ pub fn build_profile_secret_scope(hermes_home: &Path) -> HashMap<String, String>
     load_env_file(&hermes_home.join(".env"))
 }
 
+/// Process-global test lock. The multiplex flag and the process environment are
+/// global, so every test in this crate that mutates either must hold this single
+/// lock. Take it ONCE per test and never nest it (it is not reentrant).
+#[cfg(test)]
+pub(crate) static GLOBAL_TEST_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Mutex;
 
     // The multiplex flag and the process environment are global; serialize the
     // tests that mutate them. The guard is taken once per test and never nested,
     // so a single non-reentrant Mutex is safe.
-    static GLOBAL_LOCK: Mutex<()> = Mutex::new(());
+    use super::GLOBAL_TEST_LOCK as GLOBAL_LOCK;
 
     fn block_on<F: std::future::Future>(fut: F) -> F::Output {
         tokio::runtime::Builder::new_current_thread()
