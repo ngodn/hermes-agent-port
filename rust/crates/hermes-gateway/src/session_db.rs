@@ -23,12 +23,23 @@ use std::sync::Mutex;
 
 use hermes_core::{Message, Platform};
 use rusqlite::{params, Connection};
+use serde::Serialize;
 
 /// One message in a conversation, as needed to reconstruct history for a turn.
 #[derive(Debug, Clone, PartialEq)]
 pub struct HistoryMessage {
     pub role: String,
     pub content: String,
+}
+
+/// One full-text search hit.
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct SearchHit {
+    pub session_id: String,
+    pub message_id: i64,
+    /// Content excerpt with the matched terms bracketed.
+    pub snippet: String,
+    pub timestamp: f64,
 }
 
 /// How many prior messages to feed a stateless backend as context.
@@ -143,6 +154,35 @@ impl SessionDb {
             "CREATE INDEX IF NOT EXISTS idx_messages_session_id ON messages(session_id, id)",
             [],
         )?;
+        // Full-text search over messages (external-content FTS5). Matches the
+        // real hermes DDL: indexes content/tool_name/tool_calls, rowid = id.
+        // IF NOT EXISTS makes it a no-op against a hermes-managed DB.
+        conn.execute(
+            "CREATE VIRTUAL TABLE IF NOT EXISTS messages_fts USING fts5(
+                content, tool_name, tool_calls,
+                content='messages', content_rowid='id'
+            )",
+            [],
+        )?;
+        // Sync triggers, reusing hermes's trigger NAMES so on a shared DB our
+        // (simpler) versions are never created alongside theirs and thus can't
+        // double-index. On a fresh Rust-only DB these keep the FTS in sync.
+        conn.execute_batch(
+            "CREATE TRIGGER IF NOT EXISTS messages_fts_insert AFTER INSERT ON messages BEGIN
+                 INSERT INTO messages_fts(rowid, content, tool_name, tool_calls)
+                 VALUES (new.id, new.content, new.tool_name, new.tool_calls);
+             END;
+             CREATE TRIGGER IF NOT EXISTS messages_fts_delete AFTER DELETE ON messages BEGIN
+                 INSERT INTO messages_fts(messages_fts, rowid, content, tool_name, tool_calls)
+                 VALUES ('delete', old.id, old.content, old.tool_name, old.tool_calls);
+             END;
+             CREATE TRIGGER IF NOT EXISTS messages_fts_update AFTER UPDATE ON messages BEGIN
+                 INSERT INTO messages_fts(messages_fts, rowid, content, tool_name, tool_calls)
+                 VALUES ('delete', old.id, old.content, old.tool_name, old.tool_calls);
+                 INSERT INTO messages_fts(rowid, content, tool_name, tool_calls)
+                 VALUES (new.id, new.content, new.tool_name, new.tool_calls);
+             END;",
+        )?;
         Ok(())
     }
 
@@ -227,6 +267,45 @@ impl SessionDb {
             })
         })?;
         rows.collect()
+    }
+
+    /// Full-text search live messages across all sessions, newest-matching
+    /// first by FTS rank. `query` is an FTS5 MATCH expression; a malformed
+    /// expression is caught and returned as an empty result rather than an error.
+    pub fn search(&self, query: &str, limit: usize) -> rusqlite::Result<Vec<SearchHit>> {
+        if query.trim().is_empty() {
+            return Ok(Vec::new());
+        }
+        let limit = if limit == 0 { 50 } else { limit };
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT m.session_id, m.id,
+                    snippet(messages_fts, 0, '[', ']', '…', 12) AS snip,
+                    m.timestamp
+             FROM messages_fts
+             JOIN messages m ON m.id = messages_fts.rowid
+             WHERE messages_fts MATCH ?1 AND m.active = 1
+             ORDER BY rank
+             LIMIT ?2",
+        )?;
+        // A malformed FTS5 MATCH surfaces while stepping rows, so catch the
+        // syntax error across the whole execute-and-collect, not just query_map.
+        let result: rusqlite::Result<Vec<SearchHit>> = stmt
+            .query_map(params![query, limit as i64], |r| {
+                Ok(SearchHit {
+                    session_id: r.get(0)?,
+                    message_id: r.get(1)?,
+                    snippet: r.get::<_, Option<String>>(2)?.unwrap_or_default(),
+                    timestamp: r.get(3)?,
+                })
+            })
+            .and_then(|mapped| mapped.collect());
+        match result {
+            Ok(hits) => Ok(hits),
+            // A bad MATCH expression is user input, not a DB failure.
+            Err(rusqlite::Error::SqliteFailure(_, _)) => Ok(Vec::new()),
+            Err(e) => Err(e),
+        }
     }
 
     /// Count live messages in a session.
@@ -315,6 +394,57 @@ mod tests {
         db.append_message("b", "user", "for b").unwrap();
         assert_eq!(db.load_history("a", 0).unwrap().len(), 1);
         assert_eq!(db.load_history("b", 0).unwrap()[0].content, "for b");
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn fts_search_finds_messages() {
+        let path = temp_db("search");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("s1", "cli", None, None, None).unwrap();
+        db.append_message("s1", "user", "the quick brown fox jumps")
+            .unwrap();
+        db.append_message("s1", "assistant", "a lazy dog sleeps")
+            .unwrap();
+        db.ensure_session("s2", "cli", None, None, None).unwrap();
+        db.append_message("s2", "user", "quantum entanglement is spooky")
+            .unwrap();
+
+        let hits = db.search("brown", 10).unwrap();
+        assert_eq!(hits.len(), 1);
+        assert_eq!(hits[0].session_id, "s1");
+        assert!(hits[0].snippet.contains("[brown]"));
+
+        // A term across sessions matches the right one.
+        let q = db.search("quantum", 10).unwrap();
+        assert_eq!(q.len(), 1);
+        assert_eq!(q[0].session_id, "s2");
+
+        // No match, empty query, and a malformed MATCH all yield no rows (no error).
+        assert!(db.search("nonexistentword", 10).unwrap().is_empty());
+        assert!(db.search("   ", 10).unwrap().is_empty());
+        assert!(db.search("\"unbalanced", 10).unwrap().is_empty());
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn fts_reflects_edits_and_deletes() {
+        let path = temp_db("ftsedit");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("s1", "cli", None, None, None).unwrap();
+        let id = db.append_message("s1", "user", "findme original").unwrap();
+        assert_eq!(db.search("findme", 10).unwrap().len(), 1);
+        // Update the row -> the FTS update trigger re-indexes it.
+        {
+            let conn = db.conn.lock().unwrap();
+            conn.execute(
+                "UPDATE messages SET content='replaced text' WHERE id=?",
+                params![id],
+            )
+            .unwrap();
+        }
+        assert!(db.search("findme", 10).unwrap().is_empty());
+        assert_eq!(db.search("replaced", 10).unwrap().len(), 1);
         let _ = std::fs::remove_dir_all(path.parent().unwrap());
     }
 

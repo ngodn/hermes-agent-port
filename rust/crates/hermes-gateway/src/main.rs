@@ -42,7 +42,7 @@ use crate::agent::{AgentClient, SubprocessAgentClient};
 use crate::config::Config;
 use crate::dispatch::Dispatcher;
 use crate::health::{healthz, readyz, AppState};
-use crate::message::{get_display_config, post_message};
+use crate::message::{get_display_config, get_search, post_message};
 use crate::native_agent::NativeAgentClient;
 use crate::platform::PlatformAdapter;
 use tokio_util::sync::CancellationToken;
@@ -293,6 +293,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/readyz", get(readyz))
         .route("/message", post(post_message))
         .route("/display/:platform", get(get_display_config))
+        .route("/search", get(get_search))
         .layer(TraceLayer::new_for_http())
         .with_state(state.clone());
 

@@ -21,8 +21,8 @@ rust/
 1. **Gateway** (`crates/hermes-gateway`) — the long-lived, latency-sensitive,
    most self-contained process. Ports `gateway/`. *In progress.*
 2. **Tool runtime + RPC host** — tool-calling layer and subprocess/RPC plumbing.
-3. **State + search** — `hermes_state*.py`, `hermes_state_search.py` onto
-   rusqlite + FTS5 (reuse the existing C ext in `native/fts5_cjk/`).
+3. **State + search** — SessionDb (conversation history) + FTS5 message search
+   done (session_db.rs); full schema/migrations + CJK C ext remain. *In progress.*
 4. **Agent core loop** — `run_agent.py`. Last, once contracts are frozen.
 5. **TUI / web frontend** — left in TS/React unless there's a reason to move it.
 

@@ -6,7 +6,7 @@
 //! platform). Push-based platform adapters (Telegram et al.) drive the async
 //! [`Dispatcher`](crate::dispatch) instead; both share the same AgentClient.
 
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::Json;
 use hermes_core::{Message, Platform, StreamEvent};
@@ -16,6 +16,27 @@ use tracing::warn;
 
 use crate::display_config::ResolvedDisplayConfig;
 use crate::health::AppState;
+
+#[derive(Debug, Deserialize)]
+pub struct SearchParams {
+    /// FTS5 query expression.
+    pub q: String,
+    #[serde(default)]
+    pub limit: usize,
+}
+
+/// Full-text search across past conversation messages.
+pub async fn get_search(
+    State(state): State<AppState>,
+    Query(params): Query<SearchParams>,
+) -> Json<serde_json::Value> {
+    let hits = state
+        .session_db
+        .as_ref()
+        .map(|db| db.search(&params.q, params.limit).unwrap_or_default())
+        .unwrap_or_default();
+    Json(serde_json::json!({ "query": params.q, "hits": hits }))
+}
 
 #[derive(Debug, Deserialize)]
 pub struct MessageRequest {
