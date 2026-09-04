@@ -33,6 +33,20 @@ rust/
   will be nothing like this; port it with the TurnRunner/_run_agent_inner loop.
 - `session_state.py` legacy dict-view adapters — backward-compat shim for
   pre-refactor Python tests only; no Rust equivalent needed. (Data model ported.)
+- `message_timestamps.py` — leans on Python local-tz `%Z` abbreviation (CEST,
+  etc.); port with the Phase-4 context-building path where tz handling is
+  decided (chrono/chrono-tz), not as a stray leaf.
+- `media_policy.py` — a config->env bridge whose only purpose is aligning
+  separate Python processes; in Rust the media-path validator reads config
+  in-process, so port it together with `platforms/base.py`
+  `validate_media_delivery_path`.
+
+## Not applicable (no Rust analogue)
+
+- `code_skew.py` — detects a Python interpreter running stale code after a hot
+  `git pull` (frozen `sys.modules`, first-time lazy imports resolving against a
+  stale cached dep). A compiled Rust binary is fully loaded into memory and has
+  no lazy imports, so it can never run stale code this way. Nothing to port.
 
 ## Stack mapping
 
@@ -118,6 +132,19 @@ last. Next concrete targets, in order:
       identify/status (one JSON line in/out), with the sun_path fallback +
       pointer file. Wired live and cleaned up on shutdown; verified via a real
       UDS client (identify payload, unknown-verb listing, 0600 perms).
+
+### Leaf modules ported (self-contained, tested; wiring into their real call
+sites tracked separately)
+
+- [x] `rich_sent_store.py` -> rich_sent_store.rs (Telegram rich-send text index)
+- [x] `restart_loop_guard.py` -> restart_loop_guard.rs (auto-resume respawn breaker)
+- [x] `sticker_cache.py` -> sticker_cache.rs (Telegram sticker description cache)
+- [x] `systemd_notify.py` -> systemd_notify.rs (sd_notify READY/WATCHDOG/STOPPING
+      + a tokio watchdog that feeds only while the runtime keeps making progress)
+- [x] `cwd_placeholder.py` -> cwd_placeholder.rs (TERMINAL_CWD placeholder resolution)
+- [x] `status_phrases.py` -> status_phrases.rs (generic status-line catalog;
+      built-in asset embedded, profile-relative user catalogs, recent-repeat avoidance)
+- [x] `runtime_footer.py` -> runtime_footer.rs (final-message metadata footer)
 
 ## Running
 
