@@ -1,0 +1,29 @@
+You are porting one Python module to Rust for the hermes-agent Rust rewrite.
+Write ONLY the file rust/crates/hermes-gateway/src/sticker_cache.rs. Do NOT
+modify any other file (I wire it into main.rs after review). Do NOT run cargo,
+git, or any build/test command — just write the one Rust file.
+
+Source: gateway/sticker_cache.py (a self-contained JSON-backed leaf).
+
+Match this crate's conventions EXACTLY. Read these first and copy their style:
+rust/crates/hermes-gateway/src/rich_sent_store.rs and
+rust/crates/hermes-gateway/src/dead_targets.rs.
+
+Requirements:
+1. //! doc: "Port of gateway/sticker_cache.py." + one sentence.
+2. If public items lack callers yet, right after the first doc line put:
+       // <one line reason>
+       #![allow(dead_code)]
+       //!
+3. Port logic, defaults, caps, TTL faithfully. JSON persistence best-effort with
+   an atomic temp-file+rename write like rich_sent_store.rs. Use a std::sync::Mutex
+   over an in-memory HashMap loaded on open, flushed on mutation.
+4. Idiomatic Rust; derive Debug/Clone/Serialize/Deserialize where sensible; no
+   unwrap() on realistically-fallible paths. char-based truncation if the Python
+   slices strings.
+5. #[cfg(test)] mod tests: record/lookup, TTL/expiry if present, cap eviction,
+   persistence across reopen, empty-input no-ops. Unique temp path per test.
+6. Self-contained: only serde, serde_json, std, tracing. No new deps. Clock via
+   std::time::SystemTime.
+7. No em dashes in comments. Base on the real source; leave // TODO(port) where
+   you cannot express something cleanly.

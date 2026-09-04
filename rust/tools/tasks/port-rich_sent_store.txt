@@ -1,0 +1,32 @@
+You are porting one Python module to Rust for the hermes-agent Rust rewrite.
+Write ONLY the file rust/crates/hermes-gateway/src/rich_sent_store.rs. Do NOT modify any
+other file (I wire the module into main.rs after review). Do NOT run cargo,
+git, or any build/test command — just write the one Rust file.
+
+Source to port: gateway/rich_sent_store.py (a self-contained leaf module).
+
+Match the conventions of this crate EXACTLY. Read these first and copy their
+style: rust/crates/hermes-gateway/src/dead_targets.rs and
+rust/crates/hermes-gateway/src/session_stall.rs (both are JSON/file-backed
+leaf ports with the same shape you should produce).
+
+Requirements:
+1. Start with a //! doc: "Port of gateway/rich_sent_store.py." + one sentence on purpose.
+2. If public items lack callers yet, right after the first doc line put:
+       // <one line reason>
+       #![allow(dead_code)]
+       //!
+3. Port the logic, defaults, thresholds, and state shape faithfully. JSON
+   persistence should be best-effort (a corrupt/unwritable file must not panic),
+   using serde_json and an atomic temp-file+rename write like dead_targets.rs.
+4. Idiomatic Rust: std::sync::Mutex for shared state if the Python uses a lock;
+   derive Debug/Clone/Serialize/Deserialize where sensible; no unwrap() on
+   realistically-fallible paths.
+5. Add #[cfg(test)] mod tests covering the main behavior + edge cases, using a
+   unique temp path per test (see dead_targets.rs temp_path helper).
+6. MUST be self-contained: only crates already used by the crate (serde,
+   serde_json, tokio, tracing) plus std. Do NOT add dependencies. If the Python
+   needs a clock, use std::time::SystemTime.
+7. No em dashes in comments. Plain, direct style. Base everything on the actual
+   Python source; do not invent behavior. Where you cannot express something
+   cleanly, port the behavior and leave a short // TODO(port): note.
