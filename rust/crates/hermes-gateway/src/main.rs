@@ -43,6 +43,7 @@ mod session_db;
 mod session_db_recovery;
 mod session_stall;
 mod session_state;
+mod shutdown_forensics;
 mod slack;
 mod slash;
 mod slash_access;
