@@ -277,8 +277,7 @@ pub fn wake_scope_id_from_metadata(sub: &Value) -> Option<String> {
 /// applies this predicate to the message of an already-classified DB error.
 pub fn is_corrupt_board_db_message(msg: &str) -> bool {
     let lower = msg.to_lowercase();
-    lower.contains("file is not a database")
-        || lower.contains("database disk image is malformed")
+    lower.contains("file is not a database") || lower.contains("database disk image is malformed")
 }
 
 // ── terminal-event notification text (from _kanban_notifier_watcher) ─────────
@@ -479,7 +478,10 @@ mod tests {
             resolve_auto_decompose_settings(Some(&json!("nope"))),
             (true, 3)
         );
-        assert_eq!(resolve_auto_decompose_settings(Some(&json!({})), ), (true, 3));
+        assert_eq!(
+            resolve_auto_decompose_settings(Some(&json!({})),),
+            (true, 3)
+        );
     }
 
     #[test]
@@ -492,7 +494,7 @@ mod tests {
     fn auto_decompose_string_false_is_truthy() {
         // Python bool("false") == True.
         let cfg = json!({"kanban": {"auto_decompose": "false"}});
-        assert_eq!(resolve_auto_decompose_settings(Some(&cfg)).0, true);
+        assert!(resolve_auto_decompose_settings(Some(&cfg)).0);
     }
 
     #[test]
@@ -604,10 +606,9 @@ mod tests {
     #[test]
     fn notif_blocked_with_reason() {
         let payload = json!({"reason": "needs creds"});
-        let msg = format_terminal_notification(
-            "blocked", "", "@bot ", "T-3", "T", None, Some(&payload),
-        )
-        .unwrap();
+        let msg =
+            format_terminal_notification("blocked", "", "@bot ", "T-3", "T", None, Some(&payload))
+                .unwrap();
         assert_eq!(msg, "\u{23f8} @bot Kanban T-3 blocked: needs creds");
     }
 
@@ -622,7 +623,8 @@ mod tests {
             "\u{23f1} Kanban T-4 timed out (max_runtime=90s); will retry"
         );
         // Missing limit defaults to 0.
-        let msg = format_terminal_notification("timed_out", "", "", "T-4", "T", None, None).unwrap();
+        let msg =
+            format_terminal_notification("timed_out", "", "", "T-4", "T", None, None).unwrap();
         assert!(msg.contains("max_runtime=0s"));
     }
 

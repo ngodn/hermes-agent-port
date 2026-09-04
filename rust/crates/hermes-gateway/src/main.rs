@@ -26,6 +26,8 @@ mod drain_control;
 mod health;
 mod hooks;
 mod hosted_room_execution_policy;
+mod hosted_rooms;
+mod kanban_watchers;
 mod lifecycle_ledger;
 mod media;
 mod media_policy;

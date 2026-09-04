@@ -191,8 +191,9 @@ pub fn upsert_room_link_record(
         )
         .optional()?;
     if existing.is_none() {
-        let count: i64 =
-            tx.query_row("SELECT COUNT(*) FROM hosted_room_links", [], |row| row.get(0))?;
+        let count: i64 = tx.query_row("SELECT COUNT(*) FROM hosted_room_links", [], |row| {
+            row.get(0)
+        })?;
         if count >= max_links {
             // Dropping `tx` without committing rolls the transaction back,
             // matching Python's exception-then-rollback path.
@@ -313,7 +314,9 @@ mod tests {
     fn schema_init_creates_link_table_with_expected_columns() {
         let db = TempDb::new("schema");
         let conn = open_rooms_db(db.path()).unwrap();
-        let mut stmt = conn.prepare("PRAGMA table_info(hosted_room_links)").unwrap();
+        let mut stmt = conn
+            .prepare("PRAGMA table_info(hosted_room_links)")
+            .unwrap();
         let cols: Vec<String> = stmt
             .query_map([], |row| row.get::<_, String>(1))
             .unwrap()
