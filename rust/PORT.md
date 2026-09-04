@@ -111,11 +111,26 @@ rust/
   grant-secret minting (gateway_room_grant_secret) and the config/env-driven
   catalog/endpoint builders (catalog_mapping, local_catalog_mapping,
   local_room_link_endpoint), which couple to hermes_constants, gateway.config,
-  and the deferred front half of execution_policy_mapping. Not yet declared in
-  main.rs (add `mod hosted_room_peer;` when wiring its callers).
+  and the deferred front half of execution_policy_mapping.
 - `pairing.py` core -> pairing.rs (pairing store: salted-hash codes, rate limit,
-  lockout, expiry, atomic 0600 writes, split-dir migration). Operator-allowlist
-  mirror (hermes_cli.config + live adapters) deferred to the runner.
+  lockout, expiry, atomic 0600 writes, split-dir migration; codes/salts/ids use
+  the kernel CSPRNG, fail closed). Operator-allowlist mirror (hermes_cli.config
+  + live adapters) deferred to the runner.
+
+## Hosted-room cluster (storage/logic tier COMPLETE; ported in parallel)
+
+Bottom-up: `hosted_room_execution_policy.rs` (RoomExecutionPolicy + digest) ->
+`hosted_room_peer.rs` (catalog + grants + validate_room_link_url) ->
+`hosted_rooms.rs` (link-store) + `hosted_rooms_log.rs` (the 7-table room-log
+authority layer: create_room/append_event/read_events with idempotent ingest +
+gap + epoch-regression refusal) -> `hosted_room_links.rs` (StoredRoomLink
+management), `hosted_room_replicas.rs` (replica store + promote/demote fencing),
+`hosted_room_policy_checkpoint.rs` (bounded policy projection). All golden/vector
+tested where crypto or canonical JSON is involved. Remaining in this cluster:
+`hosted_room_discussion.py` (1461) + `hosted_room_driver.py` (1778) + the rest of
+`hosted_rooms.py` orchestration — these are GatewayRunner/agent-core coupled and
+land with the runner. `local_authority_gateway_id` fails closed until the
+install-id module (hermes_cli.install_identity) is ported.
 
 ## Live HTTP surface
 
