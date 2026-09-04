@@ -44,6 +44,7 @@ mod session_state;
 mod slack;
 mod slash;
 mod slash_access;
+mod status;
 mod status_phrases;
 mod sticker_cache;
 mod systemd_notify;
