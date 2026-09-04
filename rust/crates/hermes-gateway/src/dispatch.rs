@@ -42,6 +42,8 @@ pub struct Dispatcher {
     dead_targets: Arc<DeadTargetRegistry>,
     /// Conversation-history store for stateless backends (None = stateless).
     session_db: Option<Arc<crate::session_db::SessionDb>>,
+    /// Durable delivery-obligation ledger (None = disabled / unavailable).
+    delivery_ledger: Option<Arc<crate::delivery_ledger::DeliveryLedger>>,
 }
 
 impl Dispatcher {
@@ -53,11 +55,20 @@ impl Dispatcher {
         let dead_path = crate::config_file::hermes_home()
             .join("gateway")
             .join("dead_targets.json");
+        // Open the delivery ledger unless disabled by config.
+        let ledger = if crate::delivery_ledger::ledger_enabled(&user_config) {
+            crate::delivery_ledger::DeliveryLedger::open_default()
+                .map(Arc::new)
+                .ok()
+        } else {
+            None
+        };
         Self::with_deps(
             agent,
             user_config,
             Arc::new(DeadTargetRegistry::new(dead_path)),
             session_db,
+            ledger,
         )
     }
 
@@ -67,6 +78,7 @@ impl Dispatcher {
         user_config: Arc<Value>,
         dead_targets: Arc<DeadTargetRegistry>,
         session_db: Option<Arc<crate::session_db::SessionDb>>,
+        delivery_ledger: Option<Arc<crate::delivery_ledger::DeliveryLedger>>,
     ) -> Self {
         Self {
             agent,
@@ -76,6 +88,7 @@ impl Dispatcher {
             user_config,
             dead_targets,
             session_db,
+            delivery_ledger,
         }
     }
 
@@ -110,6 +123,32 @@ impl Dispatcher {
             return;
         }
 
+        // Durably record the obligation before attempting the send, so a crash
+        // between here and the platform ACK can be recovered on restart.
+        let obligation = self.delivery_ledger.as_ref().map(|ledger| {
+            let session_id = crate::session_db::session_id_for(to.platform, &to.channel_id);
+            let now_ns = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_nanos())
+                .unwrap_or(0);
+            let oid = crate::delivery_ledger::compute_obligation_id(
+                &session_id,
+                &now_ns.to_string(),
+                &text,
+            );
+            let _ = ledger.record_obligation(
+                &oid,
+                &session_id,
+                platform_key,
+                &to.channel_id,
+                to.chat_type.as_deref(),
+                &text,
+                None,
+            );
+            let _ = ledger.mark_attempting(&oid);
+            oid
+        });
+
         let out = Message {
             platform: to.platform,
             channel_id: to.channel_id.clone(),
@@ -119,13 +158,20 @@ impl Dispatcher {
         };
         match adapter.send(&out).await {
             Ok(()) => {
-                // A successful send clears any stale dead flag.
+                // A successful send clears any stale dead flag and settles the
+                // obligation.
                 self.dead_targets.clear(platform_key, &to.channel_id);
+                if let (Some(ledger), Some(oid)) = (&self.delivery_ledger, &obligation) {
+                    let _ = ledger.mark_delivered(oid);
+                }
             }
             Err(err) => {
                 // Marking a target dead needs adapter send-error classification
                 // (forbidden / not_found), which is not ported yet.
                 error!(platform = ?to.platform, ?err, "outbound delivery failed");
+                if let (Some(ledger), Some(oid)) = (&self.delivery_ledger, &obligation) {
+                    let _ = ledger.mark_failed(oid, &err.to_string());
+                }
             }
         }
     }
@@ -314,7 +360,7 @@ mod tests {
                 .as_nanos()
         ));
         let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(dead_path));
-        let mut d = Dispatcher::with_deps(agent, Arc::new(cfg), dead, None);
+        let mut d = Dispatcher::with_deps(agent, Arc::new(cfg), dead, None, None);
         d.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
         (d, calls, sent)
     }
@@ -384,12 +430,50 @@ mod tests {
         let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(dead_path));
         // The stub adapter's name() is "stub"; mark the target dead under it.
         dead.mark_dead("stub", "chan", "test");
-        let mut d = Dispatcher::with_deps(agent, Arc::new(json!({})), dead, None);
+        let mut d = Dispatcher::with_deps(agent, Arc::new(json!({})), dead, None, None);
         d.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
 
         d.handle_turn(cli_msg("hi", "u")).await;
         // The agent still runs, but delivery is skipped because the target is dead.
         assert_eq!(calls.load(Ordering::SeqCst), 1);
         assert!(sent.lock().unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn successful_delivery_records_a_delivered_obligation() {
+        let calls = Arc::new(AtomicUsize::new(0));
+        let sent = Arc::new(Mutex::new(Vec::new()));
+        let agent = Arc::new(StubAgent {
+            reply: "durable hello".into(),
+            calls: calls.clone(),
+        });
+        let uniq = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        let mut dead_path = std::env::temp_dir();
+        dead_path.push(format!(
+            "hermes_disp_led_dead_{}_{uniq}.json",
+            std::process::id()
+        ));
+        let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(dead_path));
+        let mut led_path = std::env::temp_dir();
+        led_path.push(format!(
+            "hermes_disp_led_{}_{uniq}/state.db",
+            std::process::id()
+        ));
+        let ledger =
+            Arc::new(crate::delivery_ledger::DeliveryLedger::open(led_path.clone()).unwrap());
+
+        let mut d =
+            Dispatcher::with_deps(agent, Arc::new(json!({})), dead, None, Some(ledger.clone()));
+        d.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
+
+        d.handle_turn(cli_msg("hi", "u")).await;
+        assert_eq!(sent.lock().unwrap().len(), 1);
+        // The obligation was recorded and settled as delivered.
+        assert_eq!(ledger.count_state("delivered").unwrap(), 1);
+        assert_eq!(ledger.count_state("pending").unwrap(), 0);
+        let _ = std::fs::remove_dir_all(led_path.parent().unwrap());
     }
 }
