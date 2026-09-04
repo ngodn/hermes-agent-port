@@ -72,6 +72,17 @@ rust/
 - `scale_to_zero.py` DECISION layer -> scale_to_zero.rs (idle predicate, arming
   precondition, idle-timeout parse, relay-only check, dashboard-client liveness
   marker, self_suspend_available). The Fly Machines suspend POST is deploy I/O.
+- `channel_directory.py` READ half -> channel_directory.rs (load the cached
+  directory + friendly-name alias overlay, resolve_channel_name, lookup type,
+  format_directory_for_display). The adapter-driven BUILD half lands with the
+  adapter subsystem.
+
+## Live HTTP surface
+
+- `GET /healthz`, `GET /readyz` (readiness probes), `GET /status` — the last
+  assembles the persisted runtime record (status.rs) + live disk_status +
+  memory_status + readiness, so all the ported telemetry is observable over
+  HTTP. `POST /message`, `GET /display/:platform`, `GET /search`.
 
 ## Deferred (port later, with the subsystem they belong to)
 
