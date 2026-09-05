@@ -1,5 +1,95 @@
 # Hermes Rust rewrite
 
+## Current handoff: 2026-09-05, Codex takeover
+
+Read [the analysis index](analysis/INDEX.md) first when resuming. Codex owns
+integration and validation, with Claude Opus 4.8 (medium) and Gemini 3.8 Flash
+(high) as CLI helpers. Both wrappers use the user's requested permission bypass.
+Usage and reference-app findings are in [tools/README.md](tools/README.md).
+
+Commit history confirms two separate levels of completion:
+
+| Capability | State | Evidence |
+| --- | --- | --- |
+| Runnable gateway, Telegram/Discord/Slack, CLI/native/Python agent backends | Existing runtime paths | `379f8b74e8`, `ea428d0723`, `5db3460dc8`, `8a761a89f4` |
+| History and delivery ledger | Wired into Dispatcher | `3afb9d2145`, `232626198d` |
+| Full gateway config pipeline | Ported and differential-tested; runner integration remains | `811fcaca55`, config_loader golden corpus |
+| Session registry and run generations | Ported and tested; future runner owns consumption | `1a6cfb3546` |
+| QQBot onboarding, WhatsApp helpers, shared text helpers | Support modules, not complete platform adapters | `6fc55e3f38`, `b5271716b2` |
+| Inbound attachment classification | New Tier 2 slice, compiled and tested; not yet called by Dispatcher | `inbound_media.rs`, 217 Python differential cases plus focused unit tests |
+| Media placeholders and document/audio/video notes | Ported; display names and sandbox paths are caller-resolved | `media_context.rs`, 28 placeholder cases, 40 document cases, 4 audio/video input pairs |
+| Pending STT and combined transcribe/echo flow | Ported with injectable async operations; real providers remain unwired | `pending_stt.rs`, 27 Python transition steps |
+| Pending event merge and caption deduplication | Ported, with STT state bundled alongside the event | `pending_messages.rs`, 166 Python merge cases and executable cache/echo integration tests |
+| Native-image buffer consumption | Atomic take, scoped to one session | `session_registry.rs`, simultaneous-consumer and cross-session tests |
+| Sandbox cache-path mapping | Ported, including staging creation and legacy layout selection | `cache_paths.rs`, 224 mappings generated with real Python imports |
+| Sender and reply context | Ported, preserving prompt placement and shared-session policy | `inbound_text_context.rs`, 144 context cases and 30 metadata-normalization cases |
+| Transcription enrichment orchestration | Ported with an explicit provider boundary; live provider implementation remains | `transcription_enrichment.rs`, 38 Python scenarios plus recording-backend tests |
+| Vision enrichment and memory-context sanitizer | Ported with an explicit provider boundary; live vision provider remains | `vision_enrichment.rs`, 51 Python scenarios checking output and call order |
+| Attachment display names | Ported inside the existing media context module | `media_context.rs`, 14 source-executed cases |
+| Image mode and capability overrides | Ported with live capability lookup; runner construction remains | `image_routing.rs`, 392 Python cases including recorded lookup effects |
+| Session-aware image routing wrapper | Ported with runtime resolution supplied by the runner | `session_image_routing.rs`, 28 Python cases checking fallback and call order |
+| Image references in text | Ported with real filesystem checks | `image_references.rs`, 46 Python cases on temporary files |
+| Native image content | Real file reads, guarded loading, base64, and PNG conversion; dispatcher integration and HEIC/AVIF decoding remain | `native_image_content.rs`, 23 byte signatures and 20 real-file/Pillow comparisons |
+| File read policy | Ported for the POSIX reference, used by native image loading | `file_read_safety.rs`, 69 Python cases including missing paths and symlinks |
+| MIME inference and document fallback | CPython default mappings plus system overlays, wired to native image and document helpers | `mime_types.rs` and `media_context.rs`, 78 MIME and 56 document cases |
+| Structured message transport and history | Prepared text/image parts reach the native streaming and tool paths through `/message`, survive SQLite replay, and are rejected by unsupported backends | Inline core, storage, native-agent and HTTP tests; [verification](analysis/structured-content-verification.md) |
+| Inference endpoint resolution | Ported inside image_routing.rs with explicit turn context; consumed by live capability lookup | 1,164 Python cases, inline tests, [lookup plan](analysis/live-capability-plan.md) |
+| Local server detection and Ollama vision probes | Real HTTP and memory/disk cache implemented; prefix recognition implemented; discovery and runner integration remain | 42 source-derived cases plus inline HTTP/cache tests; [verification](analysis/local-probe-verification.md) |
+| Endpoint locality and Ollama fallback | Locality gate connected to URL/key resolution and real probes; managed/catalog stages connected through live lookup | 253 Python cases and inline HTTP integration; [verification](analysis/endpoint-locality-verification.md) |
+| Managed local vision capability | Staged files, live state/props, and projector fallback implemented; packaged catalog available, caller supplies shared root | 50 source-derived cases and real HTTP tests; [verification](analysis/managed-capability-verification.md) |
+| Managed curated catalog | Embedded shared catalog, constructor coercions, explicit background/forced refresh and failure retention | 43 Python loader cases and real HTTP/filesystem tests; [verification](analysis/managed-catalog-verification.md) |
+| Cloud registry cache | Memory/disk/network cache, stale background refresh, ETag and failure backoff implemented; capability/context lookup available | 60 Python cases and inline HTTP/concurrency tests; [verification](analysis/cloud-catalog-verification.md) |
+| Cloud capability and context metadata | Provider map, override/default selection, model matching and vision catalog stage implemented | 683 Python cases, HTTP tests and insertion-order collision regression; [verification](analysis/cloud-metadata-verification.md) |
+| Provider registration and live vision lookup | Registration/aliases, prefix recognition and combined lookup implemented; discovery and runner construction remain | Six registration transitions, 265 Python prefix cases, full HTTP-stage tests; [verification](analysis/provider-registry-verification.md) |
+| Base provider model-list hook | Native endpoint selection, model-list HTTP and credential-safe redirects implemented; per-provider TLS contexts and overrides remain | 49 Python fetch and 12 hostname cases plus real redirect/header tests; [verification](analysis/provider-fetch-verification.md) |
+| Provider model-list CA bundles | Environment precedence, full PEM bundles, default fallback and custom trust store implemented | Real local HTTPS and public environment-to-fetch tests; [verification](analysis/provider-tls-verification.md) |
+| Bundled base profiles and native startup | 17 profiles across 13 modules loaded natively; selected endpoints, headers and declared credentials wired into startup | Source regeneration, real streaming/tool HTTP requests and saved-key rotation; [verification](analysis/bundled-base-profiles-verification.md) |
+| Upstage provider hook and reasoning config | Native Solar profile, reasoning hook, shared clamping and per-model config resolution wired into both request paths | 561 Python comparisons and 12 real HTTP requests; [verification](analysis/upstage-verification.md) |
+| Nebius Token Factory | Native profile, model allowlist and request reasoning hook wired into startup | 812 Python cases and 12 real HTTP requests; [verification](analysis/nebius-verification.md) |
+| Output caps and profile defaults | Gateway/init cap resolution, wire parameter selection and profile temperature/token defaults reach both native request paths | 496 Python comparisons, eight startup HTTP requests; [verification](analysis/output-cap-verification.md) |
+| Request-body projection and Vercel | Split profile maps, caller overrides, shallow SDK projection and legacy custom-provider body selection wired into native requests | 76 source comparisons and eight HTTP requests; [verification](analysis/request-merge-verification.md) |
+| Gemini thinking caps and wire reasoning | Shared pre-hook normalization and thinking output headroom wired into both native request paths | 115 Python comparisons and 14 HTTP requests; [verification](analysis/gemini-thinking-verification.md) |
+| Native prompt-cache routing | Per-turn persisted scope, static-prefix/tool hashing and explicit key bounding wired before SDK body flattening; dispatcher locks share history identity | 65 Python comparisons, ten HTTP requests and endpoint/profile gate checks; [verification](analysis/prompt-cache-verification.md) |
+| Native tool replay and message projection | Valid argument text, thought signatures and reasoning sidecars preserved in flight; outgoing copies enforce model filtering and provider echo policy | 92 Python comparisons, eight tool HTTP requests and twelve startup HTTP requests; [verification](analysis/tool-call-replay-verification.md) |
+| Native refusal payloads | Non-streaming refusal-only responses reach the user; usable text and tool calls retain precedence | 48 Python comparisons and a real HTTP-to-event test; [verification](analysis/refusal-verification.md) |
+| Native tool events | Decoded arguments, per-turn correlation indexes and measured execution duration emitted through the loop | Inline multi-iteration, failed-call and counter-reset regression; [verification](analysis/tool-events-verification.md) |
+| Native tool-result construction | Names, canonical IDs, timestamps, elision notices, untrusted framing and advisory findings wired into result creation; internal fields stripped at wire projection | 191 Python comparisons and three real HTTP tool rounds; [verification](analysis/tool-result-verification.md) |
+
+The classification oracle executes AST-extracted Python predicates and the
+actual inbound bucketing loop. This proves the pure transformation contract,
+not end-to-end media delivery, model resolution, STT, or vision integration.
+The broader runner tier includes network calls and session mutation, despite
+the earlier map calling it pure. See [the source audit](analysis/tier2-source-audit.md).
+
+Current validation: 1164 workspace tests passed, one existing Python-bridge
+test ignored. Clippy with warnings denied and formatting pass. Rust tests live
+inside their implementation files, following the user's layout preference.
+See [inbound verification](analysis/inbound-state-verification.md) and
+[routing verification](analysis/image-routing-verification.md) and
+[native image verification](analysis/native-image-verification.md) and
+[structured transport verification](analysis/structured-content-verification.md) for source
+comparison results and limitations. The full-port goal remains active;
+tested orchestration is not yet the complete live runner.
+
+Next steps, in order:
+
+1. Port the live image capability lookup, runtime model resolution, remaining
+   native decoder support (HEIC/AVIF), and @ context expansion.
+   Local-server probes, locality, and the Ollama fallback now exist. Next are
+   dynamic provider discovery and custom hooks (the 13 base-only bundled modules
+   now load natively, along with Upstage and Nebius request hooks), then runner construction around the live
+   capability lookup. Managed local capability and cloud registry caching are implemented;
+   follow the corrected [dependency plan](analysis/live-capability-plan.md).
+2. Connect transcription and vision orchestration to real provider adapters
+   behind their explicit I/O boundaries.
+3. Integrate the pipeline and pending-message state into the richer runner event path with real
+   adapter and model-runtime resolution. The Dispatcher accepts a
+   core Message type carrying prepared content parts, but platform adapters
+   still need attachment download, enrichment, and session routing integration.
+
+The sections below retain the earlier port inventory; this handoff qualifies
+what "ported" means where that inventory does not distinguish runtime wiring.
+
 Full rewrite of hermes-agent from Python to Rust. Goal: lower memory/startup
 footprint and a single deployable binary. Strategy is strangler-fig, not
 big-bang: we stand up Rust components one at a time behind the boundaries that

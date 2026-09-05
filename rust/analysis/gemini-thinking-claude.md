@@ -1,0 +1,124 @@
+# gemini_thinking.rs port notes
+
+Ports the Gemini thinking-config translation and output-cap raising from two
+Python modules into `rust/crates/hermes-gateway/src/gemini_thinking.rs`.
+
+## What it covers
+
+Six Python functions, all pure:
+
+From `agent/transports/chat_completions.py`:
+
+- `_build_gemini_thinking_config` -> `build_gemini_thinking_config`
+- `_snake_case_gemini_thinking_config` -> `snake_case_gemini_thinking_config`
+- `_raise_gemini_thinking_max_tokens` -> `raise_output_cap` (public API)
+
+From `agent/gemini_native_adapter.py`:
+
+- `_normalize_thinking_config` -> `normalize_thinking_config`
+- `_thinking_requests_output_headroom` -> `thinking_requests_output_headroom`
+- `_effective_gemini_max_output_tokens` -> `effective_gemini_max_output_tokens`
+
+Public API (the wrapper the gateway needs):
+
+```rust
+pub fn raise_output_cap(
+    model: &str,
+    reasoning_config: Option<&serde_json::Value>,
+    requested: &serde_json::Value,
+) -> serde_json::Value
+```
+
+It builds the Gemini thinking config for `model` + `reasoning_config` and, only
+when that config is nonempty, runs `requested` through the effective-cap
+resolver. When no config is produced (`None`), the original `requested` value is
+returned unchanged (type preserved, not coerced).
+
+The other five functions are `pub` for the future native Gemini REST transport
+(`build_gemini_request` uses the normalize + effective pair directly). They are
+unused by the gateway today, so the module carries `#![allow(dead_code)]`.
+
+## Preserved Python behaviour
+
+- **Non-dict / non-Gemini gate.** `build` returns `None` for a `None` or
+  non-object `reasoning_config`, and for any model that does not start with
+  `gemini` after lowercasing and stripping a `google/` aggregator prefix. Gemma /
+  PaLM reject `thinking_config` with HTTP 400 (#17426).
+- **Disabled config is nonempty.** `reasoning_config["enabled"] is False` (an
+  exact bool, not any falsy value) and `effort == "none"` both return
+  `{"includeThoughts": false}`. That is a nonempty dict, so `raise_output_cap`
+  still calls the effective-cap resolver: a disabled config with `requested =
+  None` (JSON null) resolves to the default ceiling rather than passing null
+  through, and a valid explicit cap passes through coerced (no headroom). This is
+  the behaviour called out in the task and pinned by the
+  `disabled-config-*` goldens plus `disabled_config_still_reaches_effective_cap`.
+- **Effort resolution.** `str(get("effort", "medium") or "medium").strip().lower()`
+  is reproduced exactly: absent key -> `"medium"`; falsy value -> `"medium"`;
+  otherwise `str()` (via `py_str` on `python_repr`). An effort outside the known
+  set is clamped to `"medium"`. Gemini 2.5 returns `{"includeThoughts": true}`
+  with no level; Gemini 3 (incl. 3.1, since `startswith(("gemini-3","gemini-3.1"))`
+  is just `startswith("gemini-3")`) clamps flash to low/medium/high and pro to
+  low/high; other Gemini families get includeThoughts only.
+- **Snake-case translation.** Only bool `includeThoughts`, non-blank str
+  `thinkingLevel` (stripped + lowered), and int/float `thinkingBudget` translate.
+  `isinstance(x, (int, float))` includes `bool` in Python, so a bool budget
+  coerces via `int()` (True -> 1); the Rust arm matches `Value::Bool | Number`.
+- **Normalize.** camelCase key wins over snake_case (`get(k, get(snake))` is
+  key-presence, not truthiness, so a present-but-null camel key still wins). Same
+  int/float-includes-bool rule for `thinkingBudget`.
+- **Headroom.** With `includeThoughts is False`, true iff a `thinkingLevel` is
+  present or the budget is truthy. Otherwise a present non-positive budget with
+  no level means false; everything else true.
+- **Effective cap.** `None` (JSON null) -> default ceiling. Otherwise `int(...)`
+  coercion via `python_value::integer` (bool/int/float/str accepted, float
+  truncates toward zero, invalid str / list / dict -> default). `<= 0` ->
+  default. With headroom, `max(requested, 65535)`, else `requested`.
+
+## Integer bound (explicit)
+
+Python ints are unbounded; Rust returns `i64`. Real Gemini output caps live far
+inside `i64`, so `effective_gemini_max_output_tokens` returns `i64` and
+`as_i64_saturating` clamps a coerced value above `i64::MAX` (only reachable from
+a huge float/string) to `i64::MAX` instead of wrapping. Covered by
+`effective_saturates_beyond_i64`. The default ceiling constant
+`GEMINI_DEFAULT_MAX_OUTPUT_TOKENS = 65535` mirrors the Python module and is read
+from source (not hard-coded) by the golden generator.
+
+## Reused helpers
+
+From `python_value.rs`: `integer` (int coercion), `python_repr` (via `py_str`),
+`python_whitespace` (via `strip`), `truthy`. No new scalar coercions were added.
+
+## Tests
+
+Inline `#[cfg(test)]` only. The goldens live in
+`rust/tools/gemini-thinking-goldens.json` (62 cases across three arrays:
+`wrapper`, `configs`, `effective`) and are replayed through the ported functions.
+
+The fixture is generated by `rust/tools/gen_gemini_thinking_goldens.py`, which
+extracts the six real functions from the two source files with `ast` and execs
+just them into one shared namespace (no httpx / agent-runtime import). The
+wrapper's lazy `from agent.gemini_native_adapter import ...` is satisfied with a
+`sys.modules` stub pointing at the exec'd copy, so the fixture tracks actual
+source. Regenerate or verify with:
+
+```
+mise x python@3.12.13 -- python rust/tools/gen_gemini_thinking_goldens.py
+mise x python@3.12.13 -- python rust/tools/gen_gemini_thinking_goldens.py --check
+```
+
+Extra inline tests cover the disabled-config effective path, the
+none-config passthrough (type preserved), and the `i64` saturation edge.
+
+## Not run
+
+Per task constraint I did not run cargo; the integrating agent registers
+`mod gemini_thinking;` in `main.rs` and runs the build/tests. I did not touch
+`main.rs`, Cargo files, `native_agent.rs`, or any reasoning file. Owned files:
+`gemini_thinking.rs`, `gen_gemini_thinking_goldens.py`,
+`gemini-thinking-goldens.json`, and this note.
+
+Integration follow-up: main agent replaced the initial i64 saturation with exact
+i64/u64 JSON preservation and added Python unsigned-boundary cases. The helper
+module is now registered and its output-cap wrapper is wired into native requests.
+See gemini-thinking-verification.md for final test and integration evidence.

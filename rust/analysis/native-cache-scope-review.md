@@ -1,0 +1,23 @@
+# Native Cache Scope, Session Identity, and Extra Body Review
+
+Audit of [`dispatch.rs`](../crates/hermes-gateway/src/dispatch.rs), [`session_db.rs`](../crates/hermes-gateway/src/session_db.rs), [`native_agent.rs`](../crates/hermes-gateway/src/native_agent.rs), [`session_registry.rs`](../crates/hermes-gateway/src/session_registry.rs), and Python reference sources ([`agent/prompt_cache_scope.py`](../../agent/prompt_cache_scope.py), [`agent/transports/chat_completions.py`](../../agent/transports/chat_completions.py), [`agent/transports/codex.py`](../../agent/transports/codex.py)).
+
+## 1. Rust History Identity Verification & Main Agent Plan
+- **Persisted History Identity** ([`session_db.rs:139-141`](../crates/hermes-gateway/src/session_db.rs#L139-L141)): `session_db::session_id_for(platform, channel_id)` defines the canonical session ID as `{platform:?}:{channel_id}` lowercased. Used by `begin_turn` (L158), `end_turn` (L184), and `delivery_ledger` ([`dispatch.rs:129`](../crates/hermes-gateway/src/dispatch.rs#L129)).
+- **Identity Agreement**: Main agent's plan to clone `NativeAgentClient` per turn scoped to `session_db::session_id_for(msg.platform, &msg.channel_id)` strictly matches persisted history. Scoping the client per-turn threads this identity across the initial streaming call (`run_turn`) and through every tool loop iteration (`ChatModel::step` in [`native_agent.rs:451`](../crates/hermes-gateway/src/native_agent.rs#L451)).
+- **Session Registry Status** ([`session_registry.rs:8-13`](../crates/hermes-gateway/src/session_registry.rs#L8-L13)): `SessionRegistry` is an unintegrated Tier 1 in-memory container for `SessionState` (`run_generation`, `native_image_paths`) keyed by gateway `session_key`. It is not yet wired to `dispatch.rs` or `native_agent.rs`. Full session registry resolution and compression lineage are not ported.
+
+## 2. Cross-Platform & Channel Collision Caveats
+- **Unscoped Turn Lease Collision** ([`dispatch.rs:213-217`](../crates/hermes-gateway/src/dispatch.rs#L213-L217)): `SessionTurnLeaseRegistry::acquire` uses raw `&msg.channel_id` rather than `session_id_for(platform, channel_id)`. Identical channel IDs across different platforms (e.g. Discord `123` and Telegram `123`) falsely contend on the same lease.
+- **Missing Scope Granularity**: Unlike Python's `build_session_key` ([`gateway/session.py:1098`](../../gateway/session.py#L1098)), `session_id_for` omits `chat_type`, `thread_id`, and `sender_id`. All participants in group channels, separate threads in a channel, and colliding DM/channel IDs collapse into the same session.
+- **Case Sensitivity Loss**: Unconditional `.to_lowercase()` risks collisions on platforms with case-sensitive channel IDs.
+
+## 3. Python Prompt Cache Scope & Opt-In Caller Flow
+- **Profile-Gated Capability**: `supports_prompt_cache_key` defaults to `False` ([`providers/base.py:79`](../../providers/base.py#L79)) and requires explicit opt-in on `ProviderProfile` ([`chat_completions.py:977`](../../agent/transports/chat_completions.py#L977)).
+- **Scope Hierarchy** ([`agent/prompt_cache_scope.py:246-274`](../../agent/prompt_cache_scope.py#L246-L274)): Python resolves (1) declared `gateway_session_key` + generation (`gwk_<sha256[:24]>`), (2) compression lineage root via `get_compression_lineage()`, (3) physical `session_id`. Trailing timestamps in cron sessions (`^(cron_.+)_\d{8}_\d{6}$`) are stripped by `_cache_scope_from_session_id` ([`codex.py:19-31`](../../agent/transports/codex.py#L19-L31)).
+- **Caller Precedence**: Explicit caller keys in `api_kwargs` or `extra_body` take precedence; bounding strips empty keys and returns early without autogeneration ([`chat_completions.py:134-151`](../../agent/transports/chat_completions.py#L134-L151)).
+
+## 4. Rationale: Bounding Keys Before Extra Body Flattening
+- **Wire Length Limit**: OpenAI, DeepSeek, and Zai reject keys $>64$ chars with HTTP 400. `_bounded_prompt_cache_key` hashes keys $>64$ chars into `pck_<sha256[:24]>` (28 chars) ([`codex.py:44-56`](../../agent/transports/codex.py#L44-L56)).
+- **Dual-Location Shallow Overwrite**: In `merge_request_overrides` ([`native_agent.rs:381-404`](../crates/hermes-gateway/src/native_agent.rs#L381-404)), `extra_body` shallow-overlays root request keys. If an unbounded key is in `extra_body`, flattening it over a bounded top-level key leaks the invalid $>64$ char string to the HTTP wire. Both top-level and `extra_body` must be bounded/popped separately before flattening.
+- **Preserving Explicit Opt-Outs**: If a caller passes `prompt_cache_key: ""` in `extra_body` to disable caching, bounding pops the key and notes caller presence, preventing downstream auto-generation from populating a top-level key before flattening.
