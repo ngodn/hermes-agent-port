@@ -200,6 +200,85 @@ impl PooledCredential {
             &self.fields["base_url"]
         }
     }
+
+    // ---- read accessors used by the pool selection layer -------------------
+
+    pub fn id(&self) -> &str {
+        self.fields["id"].as_str().unwrap_or("")
+    }
+
+    pub fn provider(&self) -> &str {
+        &self.provider
+    }
+
+    /// `auth_type`, always a normalized string (`decode` guarantees it).
+    pub fn auth_type(&self) -> &str {
+        self.fields["auth_type"].as_str().unwrap_or("api_key")
+    }
+
+    pub fn source(&self) -> &str {
+        self.fields["source"].as_str().unwrap_or("")
+    }
+
+    /// `last_status`, or `None` when the field is JSON null (never set).
+    pub fn last_status(&self) -> Option<&str> {
+        self.fields["last_status"].as_str()
+    }
+
+    /// `priority`, coerced like Python `int()` on the stored value.
+    pub fn priority(&self) -> i64 {
+        self.fields["priority"].as_i64().unwrap_or(0)
+    }
+
+    pub fn request_count(&self) -> i64 {
+        self.fields["request_count"].as_i64().unwrap_or(0)
+    }
+
+    /// Epoch seconds of the last status transition, or `None` when unset/zero
+    /// (matching Python `entry.last_status_at or 0` guards).
+    pub fn last_status_at(&self) -> Option<f64> {
+        self.fields["last_status_at"].as_f64()
+    }
+
+    pub fn access_token(&self) -> &str {
+        self.fields["access_token"].as_str().unwrap_or("")
+    }
+
+    /// Return a copy with the exhaustion status cleared back to `ok`, matching
+    /// the `clear_expired` reset in `_available_entries` (status -> ok, all the
+    /// `last_error_*`/`last_status_at` fields cleared to null).
+    pub fn with_cleared_status(&self) -> Self {
+        let mut next = self.clone();
+        next.fields
+            .insert("last_status".into(), Value::String("ok".into()));
+        for key in [
+            "last_status_at",
+            "last_error_code",
+            "last_error_reason",
+            "last_error_message",
+            "last_error_reset_at",
+        ] {
+            next.fields.insert(key.into(), Value::Null);
+        }
+        next
+    }
+
+    /// Return a copy with `request_count` set (LEAST_USED distributes load by
+    /// bumping the selected entry's counter).
+    pub fn with_request_count(&self, count: i64) -> Self {
+        let mut next = self.clone();
+        next.fields
+            .insert("request_count".into(), serde_json::json!(count));
+        next
+    }
+
+    /// Return a copy with `priority` set (ROUND_ROBIN re-numbers entries).
+    pub fn with_priority(&self, priority: i64) -> Self {
+        let mut next = self.clone();
+        next.fields
+            .insert("priority".into(), serde_json::json!(priority));
+        next
+    }
 }
 
 /// Refresh one source in memory. The return value means its disk-safe state
@@ -594,8 +673,518 @@ pub fn normalize_error_context(context: &Value, now: f64) -> Value {
     Value::Object(result)
 }
 
+// ---------------------------------------------------------------------------
+// CredentialPool selection core (agent/credential_pool.py CredentialPool)
+// ---------------------------------------------------------------------------
+//
+// This is the availability + current-key selection layer only. Store hydration
+// (load_pool + singleton seeding), OAuth token refresh, the provider-specific
+// auth-store sync branches (anthropic/nous/openai-codex/xai-oauth) and lease
+// ownership are NOT ported here and are documented as deferred. For an API-key
+// provider none of those branches execute, so this reproduces the real Python
+// selection behavior exactly for that path; a pool whose entries are OAuth /
+// device-code sources is out of this slice's scope.
+
+const STATUS_OK: &str = "ok";
+const STATUS_EXHAUSTED: &str = "exhausted";
+const STATUS_DEAD: &str = "dead";
+const AUTH_TYPE_OAUTH: &str = "oauth";
+const AUTH_TYPE_API_KEY: &str = "api_key";
+const STRATEGY_FILL_FIRST: &str = "fill_first";
+const STRATEGY_ROUND_ROBIN: &str = "round_robin";
+const STRATEGY_RANDOM: &str = "random";
+const STRATEGY_LEAST_USED: &str = "least_used";
+const SUPPORTED_POOL_STRATEGIES: &[&str] = &[
+    STRATEGY_FILL_FIRST,
+    STRATEGY_ROUND_ROBIN,
+    STRATEGY_RANDOM,
+    STRATEGY_LEAST_USED,
+];
+const SOURCE_MANUAL: &str = "manual";
+/// 24h quiet window before a DEAD manual entry is pruned.
+const DEAD_MANUAL_PRUNE_TTL_SECONDS: f64 = 24.0 * 60.0 * 60.0;
+
+/// Port of `_is_manual_source`: the source is `manual` or `manual:<...>`.
+fn is_manual_source(source: &str) -> bool {
+    let normalized = source
+        .trim_matches(crate::python_value::python_whitespace)
+        .to_lowercase();
+    normalized == SOURCE_MANUAL || normalized.starts_with(&format!("{SOURCE_MANUAL}:"))
+}
+
+/// Port of `get_pool_strategy`: read `credential_pool_strategies[provider]` from
+/// the resolved config, defaulting to `fill_first` for a missing/unknown value.
+/// The caller supplies the loaded config so the pool stays free of config I/O.
+pub fn pool_strategy(provider: &str, config: &Value) -> String {
+    let strategies = match config.get("credential_pool_strategies") {
+        Some(Value::Object(map)) => map,
+        _ => return STRATEGY_FILL_FIRST.to_string(),
+    };
+    let raw = strategies.get(provider).cloned().unwrap_or(Value::Null);
+    let strategy = if crate::python_value::truthy(&raw) {
+        raw.as_str().unwrap_or("").to_string()
+    } else {
+        String::new()
+    };
+    let strategy = strategy
+        .trim_matches(crate::python_value::python_whitespace)
+        .to_lowercase();
+    if SUPPORTED_POOL_STRATEGIES.contains(&strategy.as_str()) {
+        strategy
+    } else {
+        STRATEGY_FILL_FIRST.to_string()
+    }
+}
+
+/// Sink for persisting the pool after a mutation (clear-expired, prune,
+/// round-robin renumber). Mirrors Python `persist_pool_entries(provider,
+/// [to_dict...], removed_ids)`; the pool owns WHEN to persist, the sink owns HOW.
+pub type PersistSink = Box<dyn FnMut(&str, Vec<Value>, Vec<String>) + Send>;
+
+/// The runtime credential pool for one provider. Entries are kept sorted by
+/// ascending priority. `select`/`peek`/availability run over a shared clock so
+/// tests are deterministic.
+pub struct CredentialPool {
+    provider: String,
+    entries: Vec<PooledCredential>,
+    current_id: Option<String>,
+    strategy: String,
+    clock: Box<dyn Fn() -> f64 + Send>,
+    persist: Option<PersistSink>,
+    /// STRATEGY_RANDOM index chooser over `[0, len)`. Injectable for tests;
+    /// defaults to a kernel-seeded uniform pick.
+    choose_random: Box<dyn FnMut(usize) -> usize + Send>,
+}
+
+fn default_now() -> f64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs_f64())
+        .unwrap_or(0.0)
+}
+
+impl CredentialPool {
+    /// Construct a pool. `entries` are sorted by ascending priority (stable),
+    /// matching Python `sorted(entries, key=priority)`.
+    pub fn new(provider: &str, mut entries: Vec<PooledCredential>, strategy: &str) -> Self {
+        entries.sort_by_key(|e| e.priority());
+        Self {
+            provider: provider.to_string(),
+            entries,
+            current_id: None,
+            strategy: strategy.to_string(),
+            clock: Box::new(default_now),
+            persist: None,
+            choose_random: Box::new(|len| {
+                if len <= 1 {
+                    0
+                } else {
+                    // Non-security load spread; a weak uniform pick is fine.
+                    (default_now().to_bits() as usize) % len
+                }
+            }),
+        }
+    }
+
+    /// Inject a fixed clock (tests / reproducible selection windows).
+    pub fn with_clock(mut self, clock: impl Fn() -> f64 + Send + 'static) -> Self {
+        self.clock = Box::new(clock);
+        self
+    }
+
+    /// Install the persistence sink invoked after a mutating availability pass.
+    pub fn with_persist(mut self, persist: PersistSink) -> Self {
+        self.persist = Some(persist);
+        self
+    }
+
+    /// Inject the STRATEGY_RANDOM chooser (tests pin it deterministically).
+    pub fn with_random_chooser(
+        mut self,
+        chooser: impl FnMut(usize) -> usize + Send + 'static,
+    ) -> Self {
+        self.choose_random = Box::new(chooser);
+        self
+    }
+
+    pub fn has_credentials(&self) -> bool {
+        !self.entries.is_empty()
+    }
+
+    pub fn has_available(&mut self) -> bool {
+        !self.available_entries(false).is_empty()
+    }
+
+    pub fn entries(&self) -> &[PooledCredential] {
+        &self.entries
+    }
+
+    /// The runtime key of an API-key entry. Non-nous providers return the
+    /// access token unchanged; nous validation is out of this slice, so a nous
+    /// key resolves via the existing `runtime_key` with a never-usable stub.
+    fn runtime_api_key(entry: &PooledCredential) -> String {
+        entry.runtime_key(|_, _, _| false)
+    }
+
+    /// Earliest epoch any entry re-enters rotation, or `None` when one is
+    /// available now or no exhausted entry has a usable recovery time.
+    pub fn next_available_at(&mut self) -> Option<f64> {
+        if !self.available_entries(false).is_empty() {
+            return None;
+        }
+        let sole = self.sole_credential();
+        let mut candidates: Vec<f64> = Vec::new();
+        for entry in &self.entries {
+            if entry.last_status() != Some(STATUS_EXHAUSTED) {
+                continue;
+            }
+            if let Some(until) = entry.cooldown_until(sole) {
+                candidates.push(until);
+            }
+        }
+        candidates.into_iter().reduce(f64::min)
+    }
+
+    fn current_unlocked(&self) -> Option<&PooledCredential> {
+        let id = self.current_id.as_deref()?;
+        self.entries.iter().find(|e| e.id() == id)
+    }
+
+    pub fn current(&self) -> Option<&PooledCredential> {
+        self.current_unlocked()
+    }
+
+    /// Stable id for the runtime credential in use. Prefer the current
+    /// selection when it still supplies `api_key_hint`; otherwise fall back to
+    /// an unambiguous key match. `None` hint returns the current id (if any).
+    pub fn entry_id_for_api_key(&self, api_key_hint: Option<&str>) -> Option<String> {
+        if let Some(current) = self.current_unlocked() {
+            if api_key_hint.is_none()
+                || Some(Self::runtime_api_key(current).as_str()) == api_key_hint
+            {
+                return Some(current.id().to_string());
+            }
+        }
+        let hint = api_key_hint?;
+        let matches: Vec<&PooledCredential> = self
+            .entries
+            .iter()
+            .filter(|e| Self::runtime_api_key(e) == hint)
+            .collect();
+        if matches.len() == 1 {
+            Some(matches[0].id().to_string())
+        } else {
+            None
+        }
+    }
+
+    /// DEAD entries never re-enter rotation, so a single non-DEAD entry means
+    /// there is nothing to rotate to (the sole-credential short cooldown).
+    fn sole_credential(&self) -> bool {
+        self.entries
+            .iter()
+            .filter(|e| e.last_status() != Some(STATUS_DEAD))
+            .count()
+            <= 1
+    }
+
+    /// Port of `_available_entries` for the API-key path. Returns the ids of
+    /// entries not in cooldown, in priority order. When `clear_expired` is set,
+    /// entries whose cooldown elapsed are reset to `ok` and the pool persists;
+    /// aged-out DEAD manual entries are pruned and the pool persists.
+    ///
+    /// Deferred vs Python (never reached for API-key entries, documented so a
+    /// future OAuth port knows the seam): the anthropic/nous/codex/xai
+    /// auth-store sync branches, the single-use-token refresh defer, the codex
+    /// early-reopen probe, and the OAuth empty-access-token guard.
+    fn available_entries(&mut self, clear_expired: bool) -> Vec<String> {
+        let now = (self.clock)();
+        let sole = self.sole_credential();
+        let mut cleared_any = false;
+        let mut prune: Vec<String> = Vec::new();
+        let mut available: Vec<String> = Vec::new();
+        // Index-based so we can replace an entry in place on clear.
+        for idx in 0..self.entries.len() {
+            let entry = &self.entries[idx];
+            if entry.auth_type() == AUTH_TYPE_API_KEY && Self::runtime_api_key(entry).is_empty() {
+                continue;
+            }
+            match entry.last_status() {
+                Some(STATUS_DEAD) => {
+                    if is_manual_source(entry.source()) {
+                        let dead_at = entry.last_status_at().unwrap_or(0.0);
+                        if dead_at != 0.0 && now - dead_at > DEAD_MANUAL_PRUNE_TTL_SECONDS {
+                            prune.push(entry.id().to_string());
+                            cleared_any = true;
+                        }
+                    }
+                    continue;
+                }
+                Some(STATUS_EXHAUSTED) => {
+                    let until = entry.cooldown_until(sole);
+                    if let Some(until) = until {
+                        if now < until {
+                            continue;
+                        }
+                    }
+                    if clear_expired {
+                        let cleared = entry.with_cleared_status();
+                        self.entries[idx] = cleared;
+                        cleared_any = true;
+                    }
+                }
+                _ => {}
+            }
+            // API-key entries never need refresh; OAuth refresh is deferred.
+            available.push(self.entries[idx].id().to_string());
+        }
+        if !prune.is_empty() {
+            let pruned: std::collections::HashSet<&str> =
+                prune.iter().map(String::as_str).collect();
+            self.entries.retain(|e| !pruned.contains(e.id()));
+        }
+        if cleared_any {
+            self.persist_now(prune.clone());
+        }
+        // `available` holds ids captured before pruning; drop any pruned ids so
+        // the returned set matches the surviving entries.
+        let pruned: std::collections::HashSet<&str> = prune.iter().map(String::as_str).collect();
+        available.retain(|id| !pruned.contains(id.as_str()));
+        available
+    }
+
+    fn persist_now(&mut self, removed_ids: Vec<String>) {
+        let provider = self.provider.clone();
+        let snapshot: Vec<Value> = self.entries.iter().map(|e| e.to_dict()).collect();
+        if let Some(persist) = self.persist.as_mut() {
+            persist(&provider, snapshot, removed_ids);
+        }
+    }
+
+    fn index_of(&self, id: &str) -> Option<usize> {
+        self.entries.iter().position(|e| e.id() == id)
+    }
+
+    /// Port of `_select_unlocked`. Selects the best available entry by the
+    /// configured strategy, updates the current cursor, and applies the
+    /// strategy's side effects (least-used counter bump, round-robin renumber
+    /// + persist).
+    fn select_unlocked(&mut self) -> Option<String> {
+        let available = self.available_entries(true);
+        if available.is_empty() {
+            self.current_id = None;
+            tracing::info!("credential pool: no available entries (all exhausted or empty)");
+            return None;
+        }
+
+        if self.strategy == STRATEGY_RANDOM {
+            let pick = (self.choose_random)(available.len()).min(available.len() - 1);
+            let id = available[pick].clone();
+            self.current_id = Some(id.clone());
+            return Some(id);
+        }
+
+        if self.strategy == STRATEGY_LEAST_USED && available.len() > 1 {
+            // min by request_count, ties broken by first (priority order).
+            let id = available
+                .iter()
+                .min_by_key(|id| {
+                    self.index_of(id)
+                        .map(|i| self.entries[i].request_count())
+                        .unwrap_or(i64::MAX)
+                })
+                .unwrap()
+                .clone();
+            if let Some(i) = self.index_of(&id) {
+                let bumped =
+                    self.entries[i].with_request_count(self.entries[i].request_count() + 1);
+                self.entries[i] = bumped;
+            }
+            self.current_id = Some(id.clone());
+            return Some(id);
+        }
+
+        if self.strategy == STRATEGY_ROUND_ROBIN && available.len() > 1 {
+            let id = available[0].clone();
+            // Move the chosen entry to the back, then renumber priorities 0..n
+            // to match `[replace(c, priority=idx) for idx, c in enumerate(...)]`.
+            let chosen_pos = self.index_of(&id).unwrap();
+            let chosen = self.entries.remove(chosen_pos);
+            self.entries.push(chosen);
+            let renumbered: Vec<PooledCredential> = self
+                .entries
+                .iter()
+                .enumerate()
+                .map(|(idx, e)| e.with_priority(idx as i64))
+                .collect();
+            self.entries = renumbered;
+            self.persist_now(Vec::new());
+            self.current_id = Some(id.clone());
+            return Some(id);
+        }
+
+        // fill_first / default: highest-precedence available entry.
+        let id = available[0].clone();
+        self.current_id = Some(id.clone());
+        Some(id)
+    }
+
+    /// Port of `select`. Returns the selected entry's id, or `None` when the
+    /// pool is empty or fully exhausted. (Single-use-token refresh, which
+    /// Python runs outside the lock and then re-selects, is deferred; it never
+    /// applies to API-key providers.)
+    pub fn select(&mut self) -> Option<String> {
+        self.select_unlocked()
+    }
+
+    /// Port of `peek`: the current selection if any, else the first available
+    /// entry by priority (strategy is NOT applied to a peek).
+    pub fn peek(&mut self) -> Option<String> {
+        if let Some(current) = self.current_unlocked() {
+            return Some(current.id().to_string());
+        }
+        self.available_entries(false).into_iter().next()
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use std::sync::{Arc, Mutex};
+
+    #[test]
+    fn pool_selection_matches_python() {
+        let data: Value = serde_json::from_str(include_str!(
+            "../../../tools/credential-pool-select-goldens.json"
+        ))
+        .unwrap();
+        let now = data["now"].as_f64().unwrap();
+        for row in data["rows"].as_array().unwrap() {
+            let name = row["name"].as_str().unwrap();
+            let provider = row["provider"].as_str().unwrap();
+            let strategy = row["strategy"].as_str().unwrap();
+            let entries: Vec<PooledCredential> = row["entries_in"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|d| PooledCredential::from_dict(provider, d).unwrap())
+                .collect();
+
+            // Capture persist calls as (count, removed_ids), matching the oracle.
+            type PersistLog = Arc<Mutex<Vec<(usize, Vec<String>)>>>;
+            let log: PersistLog = Arc::new(Mutex::new(Vec::new()));
+            let sink_log = log.clone();
+            let mut pool = CredentialPool::new(provider, entries, strategy)
+                .with_clock(move || now)
+                .with_persist(Box::new(move |_provider, snapshot, removed| {
+                    sink_log.lock().unwrap().push((snapshot.len(), removed));
+                }));
+
+            assert_eq!(
+                pool.has_credentials(),
+                row["has_credentials"].as_bool().unwrap(),
+                "{name}: has_credentials"
+            );
+            assert_eq!(
+                pool.has_available(),
+                row["has_available"].as_bool().unwrap(),
+                "{name}: has_available"
+            );
+            let next = pool.next_available_at();
+            let exp_next = row["next_available_at"].as_f64();
+            assert_eq!(next, exp_next, "{name}: next_available_at");
+
+            assert_eq!(pool.peek().as_deref(), row["peek"].as_str(), "{name}: peek");
+            assert_eq!(
+                pool.select().as_deref(),
+                row["select_1"].as_str(),
+                "{name}: select_1"
+            );
+            assert_eq!(
+                pool.current().map(|e| e.id()),
+                row["current_after_1"].as_str(),
+                "{name}: current_after_1"
+            );
+            assert_eq!(
+                pool.select().as_deref(),
+                row["select_2"].as_str(),
+                "{name}: select_2"
+            );
+
+            // entries_after: id, priority, last_status, request_count, access_token.
+            let got: Vec<(String, i64, Option<String>, i64, String)> = pool
+                .entries()
+                .iter()
+                .map(|e| {
+                    (
+                        e.id().to_string(),
+                        e.priority(),
+                        e.last_status().map(str::to_string),
+                        e.request_count(),
+                        e.access_token().to_string(),
+                    )
+                })
+                .collect();
+            let want: Vec<(String, i64, Option<String>, i64, String)> = row["entries_after"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|e| {
+                    (
+                        e["id"].as_str().unwrap().to_string(),
+                        e["priority"].as_i64().unwrap(),
+                        e["last_status"].as_str().map(str::to_string),
+                        e["request_count"].as_i64().unwrap(),
+                        e["access_token"].as_str().unwrap().to_string(),
+                    )
+                })
+                .collect();
+            assert_eq!(got, want, "{name}: entries_after");
+
+            // persisted call sequence (count + removed_ids per call).
+            let got_persist: Vec<(usize, Vec<String>)> = log.lock().unwrap().clone();
+            let want_persist: Vec<(usize, Vec<String>)> = row["persisted"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|p| {
+                    (
+                        p["count"].as_u64().unwrap() as usize,
+                        p["removed_ids"]
+                            .as_array()
+                            .unwrap()
+                            .iter()
+                            .map(|v| v.as_str().unwrap().to_string())
+                            .collect(),
+                    )
+                })
+                .collect();
+            assert_eq!(got_persist, want_persist, "{name}: persisted");
+
+            // entry_id lookups run on the final selected state.
+            // Mirror the oracle's `if first_key` guard: a falsy (empty/absent)
+            // access token yields None without calling entry_id_for_api_key.
+            let first_key = row["entries_in"]
+                .as_array()
+                .unwrap()
+                .first()
+                .and_then(|d| d["access_token"].as_str())
+                .filter(|k| !k.is_empty());
+            let got_first = first_key.and_then(|k| pool.entry_id_for_api_key(Some(k)));
+            assert_eq!(
+                got_first.as_deref(),
+                row["id_for_first_key"].as_str(),
+                "{name}: id_for_first_key"
+            );
+            let got_unknown = pool.entry_id_for_api_key(Some("no-such-key"));
+            assert_eq!(
+                got_unknown.as_deref(),
+                row["id_for_unknown_key"].as_str(),
+                "{name}: id_for_unknown_key"
+            );
+        }
+    }
+
     #[test]
     fn pruning_and_source_priorities_match_python() {
         let rows: serde_json::Value = serde_json::from_str(include_str!(
@@ -781,7 +1370,6 @@ mod tests {
             );
         }
     }
-    use super::*;
     #[test]
     fn cooldown_policies_match_python() {
         let rows: Value = serde_json::from_str(include_str!(
