@@ -1,0 +1,1230 @@
+{
+  "trace": [
+    {
+      "step": {
+        "key": "a",
+        "name": "first",
+        "aliases": [
+          "alias",
+          "second"
+        ]
+      },
+      "get": {
+        "first": "a",
+        "second": "a",
+        "third": null,
+        "alias": "a",
+        "new": null,
+        "renamed": null,
+        "latest-alias": null,
+        " First ": null,
+        "Mixed": null,
+        "mixed": null,
+        "missing": null
+      },
+      "listed": [
+        "a"
+      ]
+    },
+    {
+      "step": {
+        "key": "b",
+        "name": "second",
+        "aliases": []
+      },
+      "get": {
+        "first": "a",
+        "second": "a",
+        "third": null,
+        "alias": "a",
+        "new": null,
+        "renamed": null,
+        "latest-alias": null,
+        " First ": null,
+        "Mixed": null,
+        "mixed": null,
+        "missing": null
+      },
+      "listed": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "step": {
+        "key": "c",
+        "name": "first",
+        "aliases": [
+          "new"
+        ]
+      },
+      "get": {
+        "first": "c",
+        "second": "c",
+        "third": null,
+        "alias": "c",
+        "new": "c",
+        "renamed": null,
+        "latest-alias": null,
+        " First ": null,
+        "Mixed": null,
+        "mixed": null,
+        "missing": null
+      },
+      "listed": [
+        "c",
+        "b"
+      ]
+    },
+    {
+      "step": {
+        "key": "d",
+        "name": "third",
+        "aliases": [
+          "alias"
+        ]
+      },
+      "get": {
+        "first": "c",
+        "second": "c",
+        "third": "d",
+        "alias": "d",
+        "new": "c",
+        "renamed": null,
+        "latest-alias": null,
+        " First ": null,
+        "Mixed": null,
+        "mixed": null,
+        "missing": null
+      },
+      "listed": [
+        "c",
+        "b",
+        "d"
+      ]
+    },
+    {
+      "step": {
+        "key": "c",
+        "name": "renamed",
+        "aliases": [
+          "latest-alias"
+        ]
+      },
+      "get": {
+        "first": "c",
+        "second": "c",
+        "third": "d",
+        "alias": "d",
+        "new": "c",
+        "renamed": "c",
+        "latest-alias": "c",
+        " First ": null,
+        "Mixed": null,
+        "mixed": null,
+        "missing": null
+      },
+      "listed": [
+        "c",
+        "b",
+        "d"
+      ]
+    },
+    {
+      "step": {
+        "key": "e",
+        "name": " First ",
+        "aliases": [
+          "Mixed"
+        ]
+      },
+      "get": {
+        "first": "c",
+        "second": "c",
+        "third": "d",
+        "alias": "d",
+        "new": "c",
+        "renamed": "c",
+        "latest-alias": "c",
+        " First ": "e",
+        "Mixed": "e",
+        "mixed": null,
+        "missing": null
+      },
+      "listed": [
+        "c",
+        "b",
+        "d",
+        "e"
+      ]
+    }
+  ],
+  "final_list": [
+    "c",
+    "b",
+    "d",
+    "e"
+  ],
+  "prefixes": [
+    {
+      "model": "local:model",
+      "expected": "model"
+    },
+    {
+      "model": "local:",
+      "expected": ""
+    },
+    {
+      "model": "local: m:tag ",
+      "expected": " m:tag "
+    },
+    {
+      "model": "local:7b",
+      "expected": "local:7b"
+    },
+    {
+      "model": "local:0.5b",
+      "expected": "local:0.5b"
+    },
+    {
+      "model": "local:7B-extra",
+      "expected": "local:7B-extra"
+    },
+    {
+      "model": "local:7",
+      "expected": "7"
+    },
+    {
+      "model": "local:latest",
+      "expected": "local:latest"
+    },
+    {
+      "model": "local:stable-beta",
+      "expected": "local:stable-beta"
+    },
+    {
+      "model": "local:q4_0",
+      "expected": "local:q4_0"
+    },
+    {
+      "model": "local:fp16",
+      "expected": "local:fp16"
+    },
+    {
+      "model": "local:f8",
+      "expected": "local:f8"
+    },
+    {
+      "model": "local:instructive",
+      "expected": "local:instructive"
+    },
+    {
+      "model": "local:chatty",
+      "expected": "local:chatty"
+    },
+    {
+      "model": "local:coder-x",
+      "expected": "local:coder-x"
+    },
+    {
+      "model": "local:visionary",
+      "expected": "local:visionary"
+    },
+    {
+      "model": "local:textual",
+      "expected": "local:textual"
+    },
+    {
+      "model": "local:\u0130NSTRUCT",
+      "expected": "local:\u0130NSTRUCT"
+    },
+    {
+      "model": "local:\u0131nstruct",
+      "expected": "local:\u0131nstruct"
+    },
+    {
+      "model": "local:vi\u017fion",
+      "expected": "local:vi\u017fion"
+    },
+    {
+      "model": "local:\ud839\uddf1b",
+      "expected": "\ud839\uddf1b"
+    },
+    {
+      "model": "local:q\ud839\uddf1",
+      "expected": "q\ud839\uddf1"
+    },
+    {
+      "model": "local:\u0661\u0662b",
+      "expected": "local:\u0661\u0662b"
+    },
+    {
+      "model": "local:q\uff14",
+      "expected": "local:q\uff14"
+    },
+    {
+      "model": "local: \u001c7b\u001f ",
+      "expected": "local: \u001c7b\u001f "
+    },
+    {
+      "model": "local:\nmodel",
+      "expected": "\nmodel"
+    },
+    {
+      "model": " LOCAL :model",
+      "expected": "model"
+    },
+    {
+      "model": " LOCAL :",
+      "expected": ""
+    },
+    {
+      "model": " LOCAL : m:tag ",
+      "expected": " m:tag "
+    },
+    {
+      "model": " LOCAL :7b",
+      "expected": " LOCAL :7b"
+    },
+    {
+      "model": " LOCAL :0.5b",
+      "expected": " LOCAL :0.5b"
+    },
+    {
+      "model": " LOCAL :7B-extra",
+      "expected": " LOCAL :7B-extra"
+    },
+    {
+      "model": " LOCAL :7",
+      "expected": "7"
+    },
+    {
+      "model": " LOCAL :latest",
+      "expected": " LOCAL :latest"
+    },
+    {
+      "model": " LOCAL :stable-beta",
+      "expected": " LOCAL :stable-beta"
+    },
+    {
+      "model": " LOCAL :q4_0",
+      "expected": " LOCAL :q4_0"
+    },
+    {
+      "model": " LOCAL :fp16",
+      "expected": " LOCAL :fp16"
+    },
+    {
+      "model": " LOCAL :f8",
+      "expected": " LOCAL :f8"
+    },
+    {
+      "model": " LOCAL :instructive",
+      "expected": " LOCAL :instructive"
+    },
+    {
+      "model": " LOCAL :chatty",
+      "expected": " LOCAL :chatty"
+    },
+    {
+      "model": " LOCAL :coder-x",
+      "expected": " LOCAL :coder-x"
+    },
+    {
+      "model": " LOCAL :visionary",
+      "expected": " LOCAL :visionary"
+    },
+    {
+      "model": " LOCAL :textual",
+      "expected": " LOCAL :textual"
+    },
+    {
+      "model": " LOCAL :\u0130NSTRUCT",
+      "expected": " LOCAL :\u0130NSTRUCT"
+    },
+    {
+      "model": " LOCAL :\u0131nstruct",
+      "expected": " LOCAL :\u0131nstruct"
+    },
+    {
+      "model": " LOCAL :vi\u017fion",
+      "expected": " LOCAL :vi\u017fion"
+    },
+    {
+      "model": " LOCAL :\ud839\uddf1b",
+      "expected": "\ud839\uddf1b"
+    },
+    {
+      "model": " LOCAL :q\ud839\uddf1",
+      "expected": "q\ud839\uddf1"
+    },
+    {
+      "model": " LOCAL :\u0661\u0662b",
+      "expected": " LOCAL :\u0661\u0662b"
+    },
+    {
+      "model": " LOCAL :q\uff14",
+      "expected": " LOCAL :q\uff14"
+    },
+    {
+      "model": " LOCAL : \u001c7b\u001f ",
+      "expected": " LOCAL : \u001c7b\u001f "
+    },
+    {
+      "model": " LOCAL :\nmodel",
+      "expected": "\nmodel"
+    },
+    {
+      "model": "custom:model",
+      "expected": "model"
+    },
+    {
+      "model": "custom:",
+      "expected": ""
+    },
+    {
+      "model": "custom: m:tag ",
+      "expected": " m:tag "
+    },
+    {
+      "model": "custom:7b",
+      "expected": "custom:7b"
+    },
+    {
+      "model": "custom:0.5b",
+      "expected": "custom:0.5b"
+    },
+    {
+      "model": "custom:7B-extra",
+      "expected": "custom:7B-extra"
+    },
+    {
+      "model": "custom:7",
+      "expected": "7"
+    },
+    {
+      "model": "custom:latest",
+      "expected": "custom:latest"
+    },
+    {
+      "model": "custom:stable-beta",
+      "expected": "custom:stable-beta"
+    },
+    {
+      "model": "custom:q4_0",
+      "expected": "custom:q4_0"
+    },
+    {
+      "model": "custom:fp16",
+      "expected": "custom:fp16"
+    },
+    {
+      "model": "custom:f8",
+      "expected": "custom:f8"
+    },
+    {
+      "model": "custom:instructive",
+      "expected": "custom:instructive"
+    },
+    {
+      "model": "custom:chatty",
+      "expected": "custom:chatty"
+    },
+    {
+      "model": "custom:coder-x",
+      "expected": "custom:coder-x"
+    },
+    {
+      "model": "custom:visionary",
+      "expected": "custom:visionary"
+    },
+    {
+      "model": "custom:textual",
+      "expected": "custom:textual"
+    },
+    {
+      "model": "custom:\u0130NSTRUCT",
+      "expected": "custom:\u0130NSTRUCT"
+    },
+    {
+      "model": "custom:\u0131nstruct",
+      "expected": "custom:\u0131nstruct"
+    },
+    {
+      "model": "custom:vi\u017fion",
+      "expected": "custom:vi\u017fion"
+    },
+    {
+      "model": "custom:\ud839\uddf1b",
+      "expected": "\ud839\uddf1b"
+    },
+    {
+      "model": "custom:q\ud839\uddf1",
+      "expected": "q\ud839\uddf1"
+    },
+    {
+      "model": "custom:\u0661\u0662b",
+      "expected": "custom:\u0661\u0662b"
+    },
+    {
+      "model": "custom:q\uff14",
+      "expected": "custom:q\uff14"
+    },
+    {
+      "model": "custom: \u001c7b\u001f ",
+      "expected": "custom: \u001c7b\u001f "
+    },
+    {
+      "model": "custom:\nmodel",
+      "expected": "\nmodel"
+    },
+    {
+      "model": "unknown:model",
+      "expected": "unknown:model"
+    },
+    {
+      "model": "unknown:",
+      "expected": "unknown:"
+    },
+    {
+      "model": "unknown: m:tag ",
+      "expected": "unknown: m:tag "
+    },
+    {
+      "model": "unknown:7b",
+      "expected": "unknown:7b"
+    },
+    {
+      "model": "unknown:0.5b",
+      "expected": "unknown:0.5b"
+    },
+    {
+      "model": "unknown:7B-extra",
+      "expected": "unknown:7B-extra"
+    },
+    {
+      "model": "unknown:7",
+      "expected": "unknown:7"
+    },
+    {
+      "model": "unknown:latest",
+      "expected": "unknown:latest"
+    },
+    {
+      "model": "unknown:stable-beta",
+      "expected": "unknown:stable-beta"
+    },
+    {
+      "model": "unknown:q4_0",
+      "expected": "unknown:q4_0"
+    },
+    {
+      "model": "unknown:fp16",
+      "expected": "unknown:fp16"
+    },
+    {
+      "model": "unknown:f8",
+      "expected": "unknown:f8"
+    },
+    {
+      "model": "unknown:instructive",
+      "expected": "unknown:instructive"
+    },
+    {
+      "model": "unknown:chatty",
+      "expected": "unknown:chatty"
+    },
+    {
+      "model": "unknown:coder-x",
+      "expected": "unknown:coder-x"
+    },
+    {
+      "model": "unknown:visionary",
+      "expected": "unknown:visionary"
+    },
+    {
+      "model": "unknown:textual",
+      "expected": "unknown:textual"
+    },
+    {
+      "model": "unknown:\u0130NSTRUCT",
+      "expected": "unknown:\u0130NSTRUCT"
+    },
+    {
+      "model": "unknown:\u0131nstruct",
+      "expected": "unknown:\u0131nstruct"
+    },
+    {
+      "model": "unknown:vi\u017fion",
+      "expected": "unknown:vi\u017fion"
+    },
+    {
+      "model": "unknown:\ud839\uddf1b",
+      "expected": "unknown:\ud839\uddf1b"
+    },
+    {
+      "model": "unknown:q\ud839\uddf1",
+      "expected": "unknown:q\ud839\uddf1"
+    },
+    {
+      "model": "unknown:\u0661\u0662b",
+      "expected": "unknown:\u0661\u0662b"
+    },
+    {
+      "model": "unknown:q\uff14",
+      "expected": "unknown:q\uff14"
+    },
+    {
+      "model": "unknown: \u001c7b\u001f ",
+      "expected": "unknown: \u001c7b\u001f "
+    },
+    {
+      "model": "unknown:\nmodel",
+      "expected": "unknown:\nmodel"
+    },
+    {
+      "model": "http:model",
+      "expected": "http:model"
+    },
+    {
+      "model": "http:",
+      "expected": "http:"
+    },
+    {
+      "model": "http: m:tag ",
+      "expected": "http: m:tag "
+    },
+    {
+      "model": "http:7b",
+      "expected": "http:7b"
+    },
+    {
+      "model": "http:0.5b",
+      "expected": "http:0.5b"
+    },
+    {
+      "model": "http:7B-extra",
+      "expected": "http:7B-extra"
+    },
+    {
+      "model": "http:7",
+      "expected": "http:7"
+    },
+    {
+      "model": "http:latest",
+      "expected": "http:latest"
+    },
+    {
+      "model": "http:stable-beta",
+      "expected": "http:stable-beta"
+    },
+    {
+      "model": "http:q4_0",
+      "expected": "http:q4_0"
+    },
+    {
+      "model": "http:fp16",
+      "expected": "http:fp16"
+    },
+    {
+      "model": "http:f8",
+      "expected": "http:f8"
+    },
+    {
+      "model": "http:instructive",
+      "expected": "http:instructive"
+    },
+    {
+      "model": "http:chatty",
+      "expected": "http:chatty"
+    },
+    {
+      "model": "http:coder-x",
+      "expected": "http:coder-x"
+    },
+    {
+      "model": "http:visionary",
+      "expected": "http:visionary"
+    },
+    {
+      "model": "http:textual",
+      "expected": "http:textual"
+    },
+    {
+      "model": "http:\u0130NSTRUCT",
+      "expected": "http:\u0130NSTRUCT"
+    },
+    {
+      "model": "http:\u0131nstruct",
+      "expected": "http:\u0131nstruct"
+    },
+    {
+      "model": "http:vi\u017fion",
+      "expected": "http:vi\u017fion"
+    },
+    {
+      "model": "http:\ud839\uddf1b",
+      "expected": "http:\ud839\uddf1b"
+    },
+    {
+      "model": "http:q\ud839\uddf1",
+      "expected": "http:q\ud839\uddf1"
+    },
+    {
+      "model": "http:\u0661\u0662b",
+      "expected": "http:\u0661\u0662b"
+    },
+    {
+      "model": "http:q\uff14",
+      "expected": "http:q\uff14"
+    },
+    {
+      "model": "http: \u001c7b\u001f ",
+      "expected": "http: \u001c7b\u001f "
+    },
+    {
+      "model": "http:\nmodel",
+      "expected": "http:\nmodel"
+    },
+    {
+      "model": "HTTP:model",
+      "expected": "model"
+    },
+    {
+      "model": "HTTP:",
+      "expected": ""
+    },
+    {
+      "model": "HTTP: m:tag ",
+      "expected": " m:tag "
+    },
+    {
+      "model": "HTTP:7b",
+      "expected": "HTTP:7b"
+    },
+    {
+      "model": "HTTP:0.5b",
+      "expected": "HTTP:0.5b"
+    },
+    {
+      "model": "HTTP:7B-extra",
+      "expected": "HTTP:7B-extra"
+    },
+    {
+      "model": "HTTP:7",
+      "expected": "7"
+    },
+    {
+      "model": "HTTP:latest",
+      "expected": "HTTP:latest"
+    },
+    {
+      "model": "HTTP:stable-beta",
+      "expected": "HTTP:stable-beta"
+    },
+    {
+      "model": "HTTP:q4_0",
+      "expected": "HTTP:q4_0"
+    },
+    {
+      "model": "HTTP:fp16",
+      "expected": "HTTP:fp16"
+    },
+    {
+      "model": "HTTP:f8",
+      "expected": "HTTP:f8"
+    },
+    {
+      "model": "HTTP:instructive",
+      "expected": "HTTP:instructive"
+    },
+    {
+      "model": "HTTP:chatty",
+      "expected": "HTTP:chatty"
+    },
+    {
+      "model": "HTTP:coder-x",
+      "expected": "HTTP:coder-x"
+    },
+    {
+      "model": "HTTP:visionary",
+      "expected": "HTTP:visionary"
+    },
+    {
+      "model": "HTTP:textual",
+      "expected": "HTTP:textual"
+    },
+    {
+      "model": "HTTP:\u0130NSTRUCT",
+      "expected": "HTTP:\u0130NSTRUCT"
+    },
+    {
+      "model": "HTTP:\u0131nstruct",
+      "expected": "HTTP:\u0131nstruct"
+    },
+    {
+      "model": "HTTP:vi\u017fion",
+      "expected": "HTTP:vi\u017fion"
+    },
+    {
+      "model": "HTTP:\ud839\uddf1b",
+      "expected": "\ud839\uddf1b"
+    },
+    {
+      "model": "HTTP:q\ud839\uddf1",
+      "expected": "q\ud839\uddf1"
+    },
+    {
+      "model": "HTTP:\u0661\u0662b",
+      "expected": "HTTP:\u0661\u0662b"
+    },
+    {
+      "model": "HTTP:q\uff14",
+      "expected": "HTTP:q\uff14"
+    },
+    {
+      "model": "HTTP: \u001c7b\u001f ",
+      "expected": "HTTP: \u001c7b\u001f "
+    },
+    {
+      "model": "HTTP:\nmodel",
+      "expected": "\nmodel"
+    },
+    {
+      "model": "qwen:model",
+      "expected": "model"
+    },
+    {
+      "model": "qwen:",
+      "expected": ""
+    },
+    {
+      "model": "qwen: m:tag ",
+      "expected": " m:tag "
+    },
+    {
+      "model": "qwen:7b",
+      "expected": "qwen:7b"
+    },
+    {
+      "model": "qwen:0.5b",
+      "expected": "qwen:0.5b"
+    },
+    {
+      "model": "qwen:7B-extra",
+      "expected": "qwen:7B-extra"
+    },
+    {
+      "model": "qwen:7",
+      "expected": "7"
+    },
+    {
+      "model": "qwen:latest",
+      "expected": "qwen:latest"
+    },
+    {
+      "model": "qwen:stable-beta",
+      "expected": "qwen:stable-beta"
+    },
+    {
+      "model": "qwen:q4_0",
+      "expected": "qwen:q4_0"
+    },
+    {
+      "model": "qwen:fp16",
+      "expected": "qwen:fp16"
+    },
+    {
+      "model": "qwen:f8",
+      "expected": "qwen:f8"
+    },
+    {
+      "model": "qwen:instructive",
+      "expected": "qwen:instructive"
+    },
+    {
+      "model": "qwen:chatty",
+      "expected": "qwen:chatty"
+    },
+    {
+      "model": "qwen:coder-x",
+      "expected": "qwen:coder-x"
+    },
+    {
+      "model": "qwen:visionary",
+      "expected": "qwen:visionary"
+    },
+    {
+      "model": "qwen:textual",
+      "expected": "qwen:textual"
+    },
+    {
+      "model": "qwen:\u0130NSTRUCT",
+      "expected": "qwen:\u0130NSTRUCT"
+    },
+    {
+      "model": "qwen:\u0131nstruct",
+      "expected": "qwen:\u0131nstruct"
+    },
+    {
+      "model": "qwen:vi\u017fion",
+      "expected": "qwen:vi\u017fion"
+    },
+    {
+      "model": "qwen:\ud839\uddf1b",
+      "expected": "\ud839\uddf1b"
+    },
+    {
+      "model": "qwen:q\ud839\uddf1",
+      "expected": "q\ud839\uddf1"
+    },
+    {
+      "model": "qwen:\u0661\u0662b",
+      "expected": "qwen:\u0661\u0662b"
+    },
+    {
+      "model": "qwen:q\uff14",
+      "expected": "qwen:q\uff14"
+    },
+    {
+      "model": "qwen: \u001c7b\u001f ",
+      "expected": "qwen: \u001c7b\u001f "
+    },
+    {
+      "model": "qwen:\nmodel",
+      "expected": "\nmodel"
+    },
+    {
+      "model": "deepseek:model",
+      "expected": "model"
+    },
+    {
+      "model": "deepseek:",
+      "expected": ""
+    },
+    {
+      "model": "deepseek: m:tag ",
+      "expected": " m:tag "
+    },
+    {
+      "model": "deepseek:7b",
+      "expected": "deepseek:7b"
+    },
+    {
+      "model": "deepseek:0.5b",
+      "expected": "deepseek:0.5b"
+    },
+    {
+      "model": "deepseek:7B-extra",
+      "expected": "deepseek:7B-extra"
+    },
+    {
+      "model": "deepseek:7",
+      "expected": "7"
+    },
+    {
+      "model": "deepseek:latest",
+      "expected": "deepseek:latest"
+    },
+    {
+      "model": "deepseek:stable-beta",
+      "expected": "deepseek:stable-beta"
+    },
+    {
+      "model": "deepseek:q4_0",
+      "expected": "deepseek:q4_0"
+    },
+    {
+      "model": "deepseek:fp16",
+      "expected": "deepseek:fp16"
+    },
+    {
+      "model": "deepseek:f8",
+      "expected": "deepseek:f8"
+    },
+    {
+      "model": "deepseek:instructive",
+      "expected": "deepseek:instructive"
+    },
+    {
+      "model": "deepseek:chatty",
+      "expected": "deepseek:chatty"
+    },
+    {
+      "model": "deepseek:coder-x",
+      "expected": "deepseek:coder-x"
+    },
+    {
+      "model": "deepseek:visionary",
+      "expected": "deepseek:visionary"
+    },
+    {
+      "model": "deepseek:textual",
+      "expected": "deepseek:textual"
+    },
+    {
+      "model": "deepseek:\u0130NSTRUCT",
+      "expected": "deepseek:\u0130NSTRUCT"
+    },
+    {
+      "model": "deepseek:\u0131nstruct",
+      "expected": "deepseek:\u0131nstruct"
+    },
+    {
+      "model": "deepseek:vi\u017fion",
+      "expected": "deepseek:vi\u017fion"
+    },
+    {
+      "model": "deepseek:\ud839\uddf1b",
+      "expected": "\ud839\uddf1b"
+    },
+    {
+      "model": "deepseek:q\ud839\uddf1",
+      "expected": "q\ud839\uddf1"
+    },
+    {
+      "model": "deepseek:\u0661\u0662b",
+      "expected": "deepseek:\u0661\u0662b"
+    },
+    {
+      "model": "deepseek:q\uff14",
+      "expected": "deepseek:q\uff14"
+    },
+    {
+      "model": "deepseek: \u001c7b\u001f ",
+      "expected": "deepseek: \u001c7b\u001f "
+    },
+    {
+      "model": "deepseek:\nmodel",
+      "expected": "\nmodel"
+    },
+    {
+      "model": " First :model",
+      "expected": "model"
+    },
+    {
+      "model": " First :",
+      "expected": ""
+    },
+    {
+      "model": " First : m:tag ",
+      "expected": " m:tag "
+    },
+    {
+      "model": " First :7b",
+      "expected": " First :7b"
+    },
+    {
+      "model": " First :0.5b",
+      "expected": " First :0.5b"
+    },
+    {
+      "model": " First :7B-extra",
+      "expected": " First :7B-extra"
+    },
+    {
+      "model": " First :7",
+      "expected": "7"
+    },
+    {
+      "model": " First :latest",
+      "expected": " First :latest"
+    },
+    {
+      "model": " First :stable-beta",
+      "expected": " First :stable-beta"
+    },
+    {
+      "model": " First :q4_0",
+      "expected": " First :q4_0"
+    },
+    {
+      "model": " First :fp16",
+      "expected": " First :fp16"
+    },
+    {
+      "model": " First :f8",
+      "expected": " First :f8"
+    },
+    {
+      "model": " First :instructive",
+      "expected": " First :instructive"
+    },
+    {
+      "model": " First :chatty",
+      "expected": " First :chatty"
+    },
+    {
+      "model": " First :coder-x",
+      "expected": " First :coder-x"
+    },
+    {
+      "model": " First :visionary",
+      "expected": " First :visionary"
+    },
+    {
+      "model": " First :textual",
+      "expected": " First :textual"
+    },
+    {
+      "model": " First :\u0130NSTRUCT",
+      "expected": " First :\u0130NSTRUCT"
+    },
+    {
+      "model": " First :\u0131nstruct",
+      "expected": " First :\u0131nstruct"
+    },
+    {
+      "model": " First :vi\u017fion",
+      "expected": " First :vi\u017fion"
+    },
+    {
+      "model": " First :\ud839\uddf1b",
+      "expected": "\ud839\uddf1b"
+    },
+    {
+      "model": " First :q\ud839\uddf1",
+      "expected": "q\ud839\uddf1"
+    },
+    {
+      "model": " First :\u0661\u0662b",
+      "expected": " First :\u0661\u0662b"
+    },
+    {
+      "model": " First :q\uff14",
+      "expected": " First :q\uff14"
+    },
+    {
+      "model": " First : \u001c7b\u001f ",
+      "expected": " First : \u001c7b\u001f "
+    },
+    {
+      "model": " First :\nmodel",
+      "expected": "\nmodel"
+    },
+    {
+      "model": "Mixed:model",
+      "expected": "Mixed:model"
+    },
+    {
+      "model": "Mixed:",
+      "expected": "Mixed:"
+    },
+    {
+      "model": "Mixed: m:tag ",
+      "expected": "Mixed: m:tag "
+    },
+    {
+      "model": "Mixed:7b",
+      "expected": "Mixed:7b"
+    },
+    {
+      "model": "Mixed:0.5b",
+      "expected": "Mixed:0.5b"
+    },
+    {
+      "model": "Mixed:7B-extra",
+      "expected": "Mixed:7B-extra"
+    },
+    {
+      "model": "Mixed:7",
+      "expected": "Mixed:7"
+    },
+    {
+      "model": "Mixed:latest",
+      "expected": "Mixed:latest"
+    },
+    {
+      "model": "Mixed:stable-beta",
+      "expected": "Mixed:stable-beta"
+    },
+    {
+      "model": "Mixed:q4_0",
+      "expected": "Mixed:q4_0"
+    },
+    {
+      "model": "Mixed:fp16",
+      "expected": "Mixed:fp16"
+    },
+    {
+      "model": "Mixed:f8",
+      "expected": "Mixed:f8"
+    },
+    {
+      "model": "Mixed:instructive",
+      "expected": "Mixed:instructive"
+    },
+    {
+      "model": "Mixed:chatty",
+      "expected": "Mixed:chatty"
+    },
+    {
+      "model": "Mixed:coder-x",
+      "expected": "Mixed:coder-x"
+    },
+    {
+      "model": "Mixed:visionary",
+      "expected": "Mixed:visionary"
+    },
+    {
+      "model": "Mixed:textual",
+      "expected": "Mixed:textual"
+    },
+    {
+      "model": "Mixed:\u0130NSTRUCT",
+      "expected": "Mixed:\u0130NSTRUCT"
+    },
+    {
+      "model": "Mixed:\u0131nstruct",
+      "expected": "Mixed:\u0131nstruct"
+    },
+    {
+      "model": "Mixed:vi\u017fion",
+      "expected": "Mixed:vi\u017fion"
+    },
+    {
+      "model": "Mixed:\ud839\uddf1b",
+      "expected": "Mixed:\ud839\uddf1b"
+    },
+    {
+      "model": "Mixed:q\ud839\uddf1",
+      "expected": "Mixed:q\ud839\uddf1"
+    },
+    {
+      "model": "Mixed:\u0661\u0662b",
+      "expected": "Mixed:\u0661\u0662b"
+    },
+    {
+      "model": "Mixed:q\uff14",
+      "expected": "Mixed:q\uff14"
+    },
+    {
+      "model": "Mixed: \u001c7b\u001f ",
+      "expected": "Mixed: \u001c7b\u001f "
+    },
+    {
+      "model": "Mixed:\nmodel",
+      "expected": "Mixed:\nmodel"
+    },
+    {
+      "model": "model",
+      "expected": "model"
+    },
+    {
+      "model": "httpfoo:bar",
+      "expected": "httpfoo:bar"
+    },
+    {
+      "model": "http://localhost/m",
+      "expected": "http://localhost/m"
+    },
+    {
+      "model": "https://host",
+      "expected": "https://host"
+    },
+    {
+      "model": ":model",
+      "expected": ":model"
+    }
+  ]
+}

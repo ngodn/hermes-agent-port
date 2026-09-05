@@ -1,0 +1,949 @@
+{
+  "detection": [
+    {
+      "label": "unknown",
+      "responses": {},
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "lm-studio",
+      "responses": {
+        "/api/v1/models": {
+          "body": "not-json"
+        }
+      },
+      "expected": "lm-studio",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "redirects-not-followed",
+      "responses": {
+        "/api/v1/models": {
+          "status": 302,
+          "location": "/redirect-target"
+        },
+        "/redirect-target": {
+          "body": "redirected"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "tags",
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        }
+      },
+      "expected": "ollama",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "tags",
+      "responses": {
+        "/api/tags": {
+          "body": "[\"models\"]"
+        }
+      },
+      "expected": "ollama",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "tags",
+      "responses": {
+        "/api/tags": {
+          "body": "\"models\""
+        }
+      },
+      "expected": "ollama",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "tags",
+      "responses": {
+        "/api/tags": {
+          "body": "{\"error\": \"Unexpected endpoint\"}"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "tags",
+      "responses": {
+        "/api/tags": {
+          "body": "null"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "tags",
+      "responses": {
+        "/api/tags": {
+          "body": "1"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "llamacpp",
+      "responses": {
+        "/v1/props": {
+          "body": "default_generation_settings"
+        }
+      },
+      "expected": "llamacpp",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "llamacpp-legacy",
+      "responses": {
+        "/props": {
+          "body": "default_generation_settings"
+        }
+      },
+      "expected": "llamacpp",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "no-fallback-on-200",
+      "responses": {
+        "/v1/props": {
+          "body": "other"
+        },
+        "/props": {
+          "body": "default_generation_settings"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "version",
+      "responses": {
+        "/version": {
+          "body": "{\"version\": null}"
+        }
+      },
+      "expected": "vllm",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "version",
+      "responses": {
+        "/version": {
+          "body": "[\"version\"]"
+        }
+      },
+      "expected": "vllm",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "version",
+      "responses": {
+        "/version": {
+          "body": "\"version\""
+        }
+      },
+      "expected": "vllm",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "version",
+      "responses": {
+        "/version": {
+          "body": "{}"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    },
+    {
+      "label": "version",
+      "responses": {
+        "/version": {
+          "body": "null"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/v1/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/props",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/version",
+          "auth": "Bearer key"
+        }
+      ]
+    }
+  ],
+  "vision": [
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{}"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"capabilities\": [\"vision\"]}"
+        }
+      },
+      "expected": true,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"capabilities\": [\"VISION\"]}"
+        }
+      },
+      "expected": true,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"capabilities\": [\" vision \"]}"
+        }
+      },
+      "expected": false,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"capabilities\": [true, 1]}"
+        }
+      },
+      "expected": false,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"capabilities\": [\"completion\"], \"model_info\": {\"x.vision.block_count\": 1}}"
+        }
+      },
+      "expected": false,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"capabilities\": [], \"model_info\": {\"X.VISION.BLOCK_COUNT\": 0}}"
+        }
+      },
+      "expected": true,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"capabilities\": \"vision\"}"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"capabilities\": null}"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"model_info\": {\"prefix.vision.block_count.suffix\": null}}"
+        }
+      },
+      "expected": true,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    },
+    {
+      "responses": {
+        "/api/tags": {
+          "body": "{\"models\": []}"
+        },
+        "/api/show": {
+          "body": "{\"model_info\": [\"vision.block_count\"]}"
+        }
+      },
+      "expected": null,
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/v1/models",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "GET",
+          "path": "/api/tags",
+          "auth": "Bearer key"
+        },
+        {
+          "method": "POST",
+          "path": "/api/show",
+          "auth": "Bearer key",
+          "body": {
+            "name": "model:7b"
+          }
+        }
+      ]
+    }
+  ],
+  "normalization": [
+    {
+      "input": "",
+      "server": "",
+      "lmstudio": ""
+    },
+    {
+      "input": "  http://localhost:123/v1///  ",
+      "server": "http://127.0.0.1:123",
+      "lmstudio": "http://127.0.0.1:123"
+    },
+    {
+      "input": "\u001chttp://localhost/v1\u001f",
+      "server": "http://127.0.0.1",
+      "lmstudio": "http://127.0.0.1"
+    },
+    {
+      "input": "http://localhost",
+      "server": "http://127.0.0.1",
+      "lmstudio": "http://127.0.0.1"
+    },
+    {
+      "input": "http://localhost?x=1",
+      "server": "http://localhost?x=1",
+      "lmstudio": "http://localhost?x=1"
+    },
+    {
+      "input": "HTTP://localhost/v1",
+      "server": "HTTP://localhost",
+      "lmstudio": "HTTP://localhost"
+    },
+    {
+      "input": "http://LOCALHOST/v1",
+      "server": "http://LOCALHOST",
+      "lmstudio": "http://LOCALHOST"
+    },
+    {
+      "input": "http://localhost.evil/v1",
+      "server": "http://localhost.evil",
+      "lmstudio": "http://localhost.evil"
+    },
+    {
+      "input": "https://localhost/v1",
+      "server": "https://127.0.0.1",
+      "lmstudio": "https://127.0.0.1"
+    },
+    {
+      "input": "http://remote/path?upstream=http://localhost/v1",
+      "server": "http://remote/path?upstream=http://localhost",
+      "lmstudio": "http://remote/path?upstream=http://localhost"
+    },
+    {
+      "input": "localhost:123/v1",
+      "server": "localhost:123",
+      "lmstudio": "localhost:123"
+    },
+    {
+      "input": "http://host/api/v1/",
+      "server": "http://host/api",
+      "lmstudio": "http://host"
+    },
+    {
+      "input": "http://host/api/",
+      "server": "http://host/api",
+      "lmstudio": "http://host"
+    },
+    {
+      "input": "http://host/nested/api/v1",
+      "server": "http://host/nested/api",
+      "lmstudio": "http://host/nested"
+    }
+  ]
+}

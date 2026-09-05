@@ -1,0 +1,734 @@
+{
+  "scope": [
+    {
+      "name": "cron-stripped",
+      "session_id": "cron_job42_20250101_120000",
+      "expected": "cron_job42"
+    },
+    {
+      "name": "cron-inner-underscores",
+      "session_id": "cron_a_b_c_20250101_120000",
+      "expected": "cron_a_b_c"
+    },
+    {
+      "name": "non-cron",
+      "session_id": "main_abc.child_1",
+      "expected": "main_abc.child_1"
+    },
+    {
+      "name": "none",
+      "session_id": null,
+      "expected": ""
+    },
+    {
+      "name": "empty",
+      "session_id": "",
+      "expected": ""
+    },
+    {
+      "name": "cron-trailing-newline",
+      "session_id": "cron_x_20250101_120000\n",
+      "expected": "cron_x"
+    },
+    {
+      "name": "cron-two-newlines",
+      "session_id": "cron_x_20250101_120000\n\n",
+      "expected": "cron_x_20250101_120000\n\n"
+    },
+    {
+      "name": "cron-empty-plus",
+      "session_id": "cron__20250101_120000",
+      "expected": "cron__20250101_120000"
+    },
+    {
+      "name": "cron-wrong-digit-count",
+      "session_id": "cron_x_2025010_120000",
+      "expected": "cron_x_2025010_120000"
+    },
+    {
+      "name": "cron-trailing-junk",
+      "session_id": "cron_x_20250101_120000z",
+      "expected": "cron_x_20250101_120000z"
+    },
+    {
+      "name": "not-cron-prefix",
+      "session_id": "job_x_20250101_120000",
+      "expected": "job_x_20250101_120000"
+    },
+    {
+      "name": "cron-unicode-digits",
+      "session_id": "cron_j_٠١٢٣٤٥٦٧_٠١٢٣٤٥",
+      "expected": "cron_j"
+    },
+    {
+      "name": "cron-newline-in-middle",
+      "session_id": "cron_a\nb_20250101_120000",
+      "expected": "cron_a\nb_20250101_120000"
+    }
+  ],
+  "bounded": [
+    {
+      "name": "none",
+      "value": null,
+      "expected": null
+    },
+    {
+      "name": "empty",
+      "value": "",
+      "expected": null
+    },
+    {
+      "name": "whitespace",
+      "value": "   \t\n",
+      "expected": null
+    },
+    {
+      "name": "short",
+      "value": "sess-123",
+      "expected": "sess-123"
+    },
+    {
+      "name": "exactly-64",
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "over-64",
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "pck_635361c48bb9eab14198e76e"
+    },
+    {
+      "name": "int",
+      "value": 12345,
+      "expected": "12345"
+    },
+    {
+      "name": "float",
+      "value": 1.5,
+      "expected": "1.5"
+    },
+    {
+      "name": "bool",
+      "value": false,
+      "expected": "False"
+    },
+    {
+      "name": "dict-repr",
+      "value": {
+        "a": 1,
+        "b": "x"
+      },
+      "expected": "{'a': 1, 'b': 'x'}"
+    },
+    {
+      "name": "list-repr",
+      "value": [
+        1,
+        2,
+        3
+      ],
+      "expected": "[1, 2, 3]"
+    },
+    {
+      "name": "unicode-64-codepoints",
+      "value": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "expected": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+    },
+    {
+      "name": "unicode-65-codepoints",
+      "value": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "expected": "pck_c8a2666a1a2bceeac205744f"
+    },
+    {
+      "name": "strip-then-measure",
+      "value": "  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  ",
+      "expected": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "static": [
+    {
+      "name": "empty",
+      "messages": [],
+      "expected": ""
+    },
+    {
+      "name": "first-not-dict",
+      "messages": [
+        "hi"
+      ],
+      "expected": ""
+    },
+    {
+      "name": "wrong-role",
+      "messages": [
+        {
+          "role": "user",
+          "content": "hi"
+        }
+      ],
+      "expected": ""
+    },
+    {
+      "name": "no-role",
+      "messages": [
+        {
+          "content": "hi"
+        }
+      ],
+      "expected": ""
+    },
+    {
+      "name": "system-str",
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "expected": "you are helpful"
+    },
+    {
+      "name": "developer-str",
+      "messages": [
+        {
+          "role": "developer",
+          "content": "dev prefix"
+        }
+      ],
+      "expected": "dev prefix"
+    },
+    {
+      "name": "missing-content",
+      "messages": [
+        {
+          "role": "system"
+        }
+      ],
+      "expected": "null"
+    },
+    {
+      "name": "content-null",
+      "messages": [
+        {
+          "role": "system",
+          "content": null
+        }
+      ],
+      "expected": "null"
+    },
+    {
+      "name": "content-list",
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "b"
+            },
+            {
+              "a": 1
+            }
+          ]
+        }
+      ],
+      "expected": "[{\"text\":\"b\",\"type\":\"text\"},{\"a\":1}]"
+    },
+    {
+      "name": "content-dict-sorted",
+      "messages": [
+        {
+          "role": "system",
+          "content": {
+            "z": 1,
+            "a": {
+              "n": 2,
+              "m": 1
+            }
+          }
+        }
+      ],
+      "expected": "{\"a\":{\"m\":1,\"n\":2},\"z\":1}"
+    },
+    {
+      "name": "content-nonascii",
+      "messages": [
+        {
+          "role": "developer",
+          "content": {
+            "msg": "café 中文"
+          }
+        }
+      ],
+      "expected": "{\"msg\":\"café 中文\"}"
+    },
+    {
+      "name": "content-float",
+      "messages": [
+        {
+          "role": "system",
+          "content": {
+            "t": 0.1,
+            "big": 1e+16,
+            "small": 1e-05
+          }
+        }
+      ],
+      "expected": "{\"big\":1e+16,\"small\":1e-05,\"t\":0.1}"
+    },
+    {
+      "name": "role-non-string",
+      "messages": [
+        {
+          "role": 5,
+          "content": "hi"
+        }
+      ],
+      "expected": ""
+    }
+  ],
+  "content": [
+    {
+      "name": "both-empty",
+      "instructions": "",
+      "tools": null,
+      "scope_id": "",
+      "expected": null
+    },
+    {
+      "name": "instructions-only",
+      "instructions": "sys",
+      "tools": null,
+      "scope_id": "",
+      "expected": "pck_356dfe20809ffdcb2f488806"
+    },
+    {
+      "name": "tools-only",
+      "instructions": "",
+      "tools": [
+        {
+          "name": "alpha",
+          "description": "a",
+          "parameters": {
+            "type": "object"
+          }
+        }
+      ],
+      "scope_id": "",
+      "expected": "pck_23821127d3a627064b301f78"
+    },
+    {
+      "name": "empty-tools-list",
+      "instructions": "",
+      "tools": [],
+      "scope_id": "",
+      "expected": null
+    },
+    {
+      "name": "tools-nondict-only",
+      "instructions": "",
+      "tools": [
+        "x",
+        5
+      ],
+      "scope_id": "",
+      "expected": "pck_ed0167440b3a1045b0447395"
+    },
+    {
+      "name": "sorted-by-name",
+      "instructions": "sys",
+      "tools": [
+        {
+          "name": "beta",
+          "type": "function"
+        },
+        {
+          "name": "alpha",
+          "description": "a",
+          "parameters": {
+            "type": "object"
+          }
+        }
+      ],
+      "scope_id": "s1",
+      "expected": "pck_b65afb7067fe97e3640b0d88"
+    },
+    {
+      "name": "sorted-reordered",
+      "instructions": "sys",
+      "tools": [
+        {
+          "name": "alpha",
+          "description": "a",
+          "parameters": {
+            "type": "object"
+          }
+        },
+        {
+          "name": "beta",
+          "type": "function"
+        }
+      ],
+      "scope_id": "s1",
+      "expected": "pck_b65afb7067fe97e3640b0d88"
+    },
+    {
+      "name": "sort-by-type-fallback",
+      "instructions": "",
+      "tools": [
+        {
+          "type": "web"
+        },
+        {
+          "type": "ackermann"
+        }
+      ],
+      "scope_id": "",
+      "expected": "pck_ca00fd2fba2c590c3aaaeb85"
+    },
+    {
+      "name": "sort-nondict-filtered",
+      "instructions": "",
+      "tools": [
+        {
+          "name": "beta",
+          "type": "function"
+        },
+        "junk",
+        {
+          "name": "alpha",
+          "description": "a",
+          "parameters": {
+            "type": "object"
+          }
+        },
+        42
+      ],
+      "scope_id": "",
+      "expected": "pck_9460a37f95c2d4f95e17f5d3"
+    },
+    {
+      "name": "scope-changes-hash",
+      "instructions": "sys",
+      "tools": [
+        {
+          "name": "alpha",
+          "description": "a",
+          "parameters": {
+            "type": "object"
+          }
+        }
+      ],
+      "scope_id": "other",
+      "expected": "pck_5fc80686e833c8aa2dc63dbc"
+    },
+    {
+      "name": "nested-function-name-ignored",
+      "instructions": "",
+      "tools": [
+        {
+          "name": "b",
+          "function": {
+            "name": "a"
+          }
+        },
+        {
+          "name": "a",
+          "function": {
+            "name": "b"
+          }
+        }
+      ],
+      "scope_id": "",
+      "expected": "pck_f02df5b1f4b731c637b984f4"
+    },
+    {
+      "name": "numeric-name-coercion",
+      "instructions": "",
+      "tools": [
+        {
+          "name": 2
+        },
+        {
+          "name": 10
+        }
+      ],
+      "scope_id": "",
+      "expected": "pck_791a588f97e12460010195ad"
+    },
+    {
+      "name": "nonascii-and-float",
+      "instructions": "café",
+      "tools": [
+        {
+          "name": "t",
+          "x": 0.1,
+          "y": 1e+16
+        }
+      ],
+      "scope_id": "s",
+      "expected": "pck_ae7139d7615e5221b6237362"
+    }
+  ],
+  "apply": [
+    {
+      "name": "caller-top-short",
+      "api_kwargs": {
+        "prompt_cache_key": "sess-1"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": null,
+      "supports": true,
+      "session_id": "s1",
+      "cache_scope_id": null,
+      "expected": {
+        "prompt_cache_key": "sess-1"
+      }
+    },
+    {
+      "name": "caller-top-long",
+      "api_kwargs": {
+        "prompt_cache_key": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": null,
+      "supports": true,
+      "session_id": "s1",
+      "cache_scope_id": null,
+      "expected": {
+        "prompt_cache_key": "pck_bd7475717a88f13dc3864a91"
+      }
+    },
+    {
+      "name": "caller-top-empty-removed",
+      "api_kwargs": {
+        "prompt_cache_key": "   "
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": [
+        {
+          "name": "alpha",
+          "type": "function"
+        }
+      ],
+      "supports": true,
+      "session_id": "s1",
+      "cache_scope_id": null,
+      "expected": {}
+    },
+    {
+      "name": "caller-top-unsupported",
+      "api_kwargs": {
+        "prompt_cache_key": "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": null,
+      "supports": false,
+      "session_id": null,
+      "cache_scope_id": null,
+      "expected": {
+        "prompt_cache_key": "pck_e87305875552ab70ea468f24"
+      }
+    },
+    {
+      "name": "caller-extra-long",
+      "api_kwargs": {
+        "extra_body": {
+          "prompt_cache_key": "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+          "keep": 1
+        }
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": null,
+      "supports": true,
+      "session_id": null,
+      "cache_scope_id": null,
+      "expected": {
+        "extra_body": {
+          "prompt_cache_key": "pck_8fd9856b4b5b1b9f8ef83047",
+          "keep": 1
+        }
+      }
+    },
+    {
+      "name": "caller-extra-empty",
+      "api_kwargs": {
+        "extra_body": {
+          "prompt_cache_key": "",
+          "keep": 2
+        }
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": null,
+      "supports": true,
+      "session_id": null,
+      "cache_scope_id": null,
+      "expected": {
+        "extra_body": {
+          "keep": 2
+        }
+      }
+    },
+    {
+      "name": "caller-both",
+      "api_kwargs": {
+        "prompt_cache_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "extra_body": {
+          "prompt_cache_key": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": null,
+      "supports": true,
+      "session_id": null,
+      "cache_scope_id": null,
+      "expected": {
+        "prompt_cache_key": "pck_6bd5e5034855a11241f0dee8",
+        "extra_body": {
+          "prompt_cache_key": "pck_b9444034ffef4484303e22cc"
+        }
+      }
+    },
+    {
+      "name": "extra-body-not-dict",
+      "api_kwargs": {
+        "extra_body": "nope"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": [
+        {
+          "name": "alpha",
+          "type": "function"
+        }
+      ],
+      "supports": true,
+      "session_id": "s1",
+      "cache_scope_id": null,
+      "expected": {
+        "extra_body": "nope",
+        "prompt_cache_key": "pck_f61223c942f08352390af4a9"
+      }
+    },
+    {
+      "name": "autogenerate",
+      "api_kwargs": {
+        "model": "gpt-5"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": [
+        {
+          "name": "alpha",
+          "type": "function"
+        }
+      ],
+      "supports": true,
+      "session_id": "cron_j_20250101_120000",
+      "cache_scope_id": null,
+      "expected": {
+        "model": "gpt-5",
+        "prompt_cache_key": "pck_b87cc26443cf50ade362857c"
+      }
+    },
+    {
+      "name": "scope-precedence",
+      "api_kwargs": {},
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": [
+        {
+          "name": "alpha",
+          "type": "function"
+        }
+      ],
+      "supports": true,
+      "session_id": "physical",
+      "cache_scope_id": "logical-scope",
+      "expected": {
+        "prompt_cache_key": "pck_a5e0d4e7cd7ae40bcd9c7cd4"
+      }
+    },
+    {
+      "name": "unsupported-no-caller",
+      "api_kwargs": {
+        "model": "x"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "you are helpful"
+        }
+      ],
+      "tools": [
+        {
+          "name": "alpha",
+          "type": "function"
+        }
+      ],
+      "supports": false,
+      "session_id": "s1",
+      "cache_scope_id": null,
+      "expected": {
+        "model": "x"
+      }
+    },
+    {
+      "name": "nothing-static",
+      "api_kwargs": {},
+      "messages": [],
+      "tools": null,
+      "supports": true,
+      "session_id": "s1",
+      "cache_scope_id": null,
+      "expected": {}
+    }
+  ]
+}

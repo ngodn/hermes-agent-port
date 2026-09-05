@@ -1,0 +1,345 @@
+[
+  {
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": null,
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        }
+      },
+      {}
+    ]
+  },
+  {
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": {},
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {}
+      },
+      {}
+    ]
+  },
+  {
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": [],
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {}
+      },
+      {}
+    ]
+  },
+  {
+    "config": false,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": false,
+    "supports": true,
+    "error": "TypeError"
+  },
+  {
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": true,
+    "supports": true,
+    "error": "TypeError"
+  },
+  {
+    "config": "",
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": "",
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {}
+      },
+      {}
+    ]
+  },
+  {
+    "config": "high",
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": "high",
+    "supports": true,
+    "error": "ValueError"
+  },
+  {
+    "config": 0,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": 0,
+    "supports": true,
+    "error": "TypeError"
+  },
+  {
+    "config": 3,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": 3,
+    "supports": true,
+    "error": "TypeError"
+  },
+  {
+    "config": [
+      "ab"
+    ],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": [
+      "ab"
+    ],
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {
+          "a": "b"
+        }
+      },
+      {}
+    ]
+  },
+  {
+    "config": [
+      [
+        "enabled",
+        false
+      ],
+      [
+        "effort",
+        "high"
+      ]
+    ],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": [
+      [
+        "enabled",
+        false
+      ],
+      [
+        "effort",
+        "high"
+      ]
+    ],
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {
+          "enabled": false,
+          "effort": "high"
+        }
+      },
+      {}
+    ]
+  },
+  {
+    "config": [
+      [
+        "x",
+        1
+      ],
+      [
+        "x",
+        2
+      ]
+    ],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": [
+      [
+        "x",
+        1
+      ],
+      [
+        "x",
+        2
+      ]
+    ],
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {
+          "x": 2
+        }
+      },
+      {}
+    ]
+  },
+  {
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {
+          "enabled": false
+        }
+      },
+      {}
+    ]
+  },
+  {
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {
+          "enabled": 0
+        }
+      },
+      {}
+    ]
+  },
+  {
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {
+          "effort": "ultra"
+        }
+      },
+      {}
+    ]
+  },
+  {
+    "config": {
+      "custom": {
+        "nested": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "config": {
+      "custom": {
+        "nested": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {
+        "reasoning": {
+          "custom": {
+            "nested": true
+          }
+        }
+      },
+      {}
+    ]
+  }
+]

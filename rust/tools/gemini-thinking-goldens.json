@@ -1,0 +1,789 @@
+{
+  "wrapper": [
+    {
+      "name": "none-config",
+      "model": "gemini-2.5-flash",
+      "reasoning_config": null,
+      "requested": 4096,
+      "build": null,
+      "snake": null,
+      "raised": 4096
+    },
+    {
+      "name": "non-dict-config",
+      "model": "gemini-2.5-flash",
+      "reasoning_config": "high",
+      "requested": 4096,
+      "build": null,
+      "snake": null,
+      "raised": 4096
+    },
+    {
+      "name": "non-gemini-model",
+      "model": "gpt-4",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 4096,
+      "build": null,
+      "snake": null,
+      "raised": 4096
+    },
+    {
+      "name": "gemma-model-omits",
+      "model": "gemma-3-27b",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 4096,
+      "build": null,
+      "snake": null,
+      "raised": 4096
+    },
+    {
+      "name": "google-prefix-stripped",
+      "model": "google/gemini-2.5-pro",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true
+      },
+      "snake": {
+        "include_thoughts": true
+      },
+      "raised": 65535
+    },
+    {
+      "name": "disabled-config",
+      "model": "gemini-2.5-flash",
+      "reasoning_config": {
+        "enabled": false
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": false
+      },
+      "snake": {
+        "include_thoughts": false
+      },
+      "raised": 4096
+    },
+    {
+      "name": "disabled-config-raises-cap",
+      "model": "gemini-2.5-flash",
+      "reasoning_config": {
+        "enabled": false
+      },
+      "requested": 1024,
+      "build": {
+        "includeThoughts": false
+      },
+      "snake": {
+        "include_thoughts": false
+      },
+      "raised": 1024
+    },
+    {
+      "name": "disabled-config-none-requested",
+      "model": "gemini-2.5-flash",
+      "reasoning_config": {
+        "enabled": false
+      },
+      "requested": null,
+      "build": {
+        "includeThoughts": false
+      },
+      "snake": {
+        "include_thoughts": false
+      },
+      "raised": 65535
+    },
+    {
+      "name": "enabled-not-false-int",
+      "model": "gemini-2.5-flash",
+      "reasoning_config": {
+        "enabled": 0,
+        "effort": "high"
+      },
+      "requested": 100,
+      "build": {
+        "includeThoughts": true
+      },
+      "snake": {
+        "include_thoughts": true
+      },
+      "raised": 65535
+    },
+    {
+      "name": "effort-none-string",
+      "model": "gemini-2.5-flash",
+      "reasoning_config": {
+        "effort": "none"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": false
+      },
+      "snake": {
+        "include_thoughts": false
+      },
+      "raised": 4096
+    },
+    {
+      "name": "gemini-25-ignores-level",
+      "model": "gemini-2.5-pro",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 100000,
+      "build": {
+        "includeThoughts": true
+      },
+      "snake": {
+        "include_thoughts": true
+      },
+      "raised": 100000
+    },
+    {
+      "name": "gemini-3-flash-low",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "minimal"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "low"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "low"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "gemini-3-flash-high",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "ultra"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "gemini-3-flash-medium",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "medium"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "medium"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "medium"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "gemini-3-pro-high",
+      "model": "gemini-3-pro",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "gemini-3-pro-low",
+      "model": "gemini-3-pro",
+      "reasoning_config": {
+        "effort": "low"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "low"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "low"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "gemini-3-plain-no-level",
+      "model": "gemini-3",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true
+      },
+      "snake": {
+        "include_thoughts": true
+      },
+      "raised": 65535
+    },
+    {
+      "name": "gemini-31-flash",
+      "model": "gemini-3.1-flash",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "effort-missing-defaults-medium",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "foo": "bar"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "medium"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "medium"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "effort-falsy-defaults-medium",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": ""
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "medium"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "medium"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "effort-unknown-defaults-medium",
+      "model": "gemini-3-pro",
+      "reasoning_config": {
+        "effort": "bogus"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "low"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "low"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "effort-uppercase-normalized",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "HIGH"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "model-uppercase-normalized",
+      "model": "GEMINI-2.5-FLASH",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 4096,
+      "build": {
+        "includeThoughts": true
+      },
+      "snake": {
+        "include_thoughts": true
+      },
+      "raised": 65535
+    },
+    {
+      "name": "requested-string-coerced",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": "2048",
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "requested-float-truncated",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 2048.9,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "requested-invalid-string",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": "abc",
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "requested-zero",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 0,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "requested-negative",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": -5,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 65535
+    },
+    {
+      "name": "requested-above-ceiling",
+      "model": "gemini-3-flash",
+      "reasoning_config": {
+        "effort": "high"
+      },
+      "requested": 999999,
+      "build": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "snake": {
+        "include_thoughts": true,
+        "thinking_level": "high"
+      },
+      "raised": 999999
+    }
+  ],
+  "configs": [
+    {
+      "name": "empty",
+      "thinking_config": {},
+      "normalized": null,
+      "headroom": false
+    },
+    {
+      "name": "non-dict",
+      "thinking_config": "nope",
+      "normalized": null,
+      "headroom": false
+    },
+    {
+      "name": "none",
+      "thinking_config": null,
+      "normalized": null,
+      "headroom": false
+    },
+    {
+      "name": "include-true",
+      "thinking_config": {
+        "includeThoughts": true
+      },
+      "normalized": {
+        "includeThoughts": true
+      },
+      "headroom": true
+    },
+    {
+      "name": "include-false",
+      "thinking_config": {
+        "includeThoughts": false
+      },
+      "normalized": {
+        "includeThoughts": false
+      },
+      "headroom": false
+    },
+    {
+      "name": "snake-include",
+      "thinking_config": {
+        "include_thoughts": true
+      },
+      "normalized": {
+        "includeThoughts": true
+      },
+      "headroom": true
+    },
+    {
+      "name": "level-only",
+      "thinking_config": {
+        "thinkingLevel": "  HIGH "
+      },
+      "normalized": {
+        "thinkingLevel": "high"
+      },
+      "headroom": true
+    },
+    {
+      "name": "snake-level",
+      "thinking_config": {
+        "thinking_level": "Low"
+      },
+      "normalized": {
+        "thinkingLevel": "low"
+      },
+      "headroom": true
+    },
+    {
+      "name": "level-blank",
+      "thinking_config": {
+        "thinkingLevel": "   "
+      },
+      "normalized": null,
+      "headroom": false
+    },
+    {
+      "name": "budget-int",
+      "thinking_config": {
+        "thinkingBudget": 512
+      },
+      "normalized": {
+        "thinkingBudget": 512
+      },
+      "headroom": true
+    },
+    {
+      "name": "budget-float",
+      "thinking_config": {
+        "thinkingBudget": 512.9
+      },
+      "normalized": {
+        "thinkingBudget": 512
+      },
+      "headroom": true
+    },
+    {
+      "name": "budget-zero",
+      "thinking_config": {
+        "thinkingBudget": 0
+      },
+      "normalized": {
+        "thinkingBudget": 0
+      },
+      "headroom": false
+    },
+    {
+      "name": "budget-negative",
+      "thinking_config": {
+        "thinkingBudget": -1
+      },
+      "normalized": {
+        "thinkingBudget": -1
+      },
+      "headroom": false
+    },
+    {
+      "name": "snake-budget",
+      "thinking_config": {
+        "thinking_budget": 256
+      },
+      "normalized": {
+        "thinkingBudget": 256
+      },
+      "headroom": true
+    },
+    {
+      "name": "prefers-camel-budget",
+      "thinking_config": {
+        "thinkingBudget": 1,
+        "thinking_budget": 999
+      },
+      "normalized": {
+        "thinkingBudget": 1
+      },
+      "headroom": true
+    },
+    {
+      "name": "false-with-level",
+      "thinking_config": {
+        "includeThoughts": false,
+        "thinkingLevel": "low"
+      },
+      "normalized": {
+        "includeThoughts": false,
+        "thinkingLevel": "low"
+      },
+      "headroom": true
+    },
+    {
+      "name": "false-with-budget",
+      "thinking_config": {
+        "includeThoughts": false,
+        "thinkingBudget": 100
+      },
+      "normalized": {
+        "thinkingBudget": 100,
+        "includeThoughts": false
+      },
+      "headroom": true
+    },
+    {
+      "name": "false-with-zero-budget",
+      "thinking_config": {
+        "includeThoughts": false,
+        "thinkingBudget": 0
+      },
+      "normalized": {
+        "thinkingBudget": 0,
+        "includeThoughts": false
+      },
+      "headroom": false
+    },
+    {
+      "name": "budget-zero-no-level",
+      "thinking_config": {
+        "thinkingBudget": 0
+      },
+      "normalized": {
+        "thinkingBudget": 0
+      },
+      "headroom": false
+    },
+    {
+      "name": "budget-neg-with-level",
+      "thinking_config": {
+        "thinkingBudget": -3,
+        "thinkingLevel": "high"
+      },
+      "normalized": {
+        "thinkingBudget": -3,
+        "thinkingLevel": "high"
+      },
+      "headroom": true
+    },
+    {
+      "name": "full",
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "HIGH",
+        "thinkingBudget": 42
+      },
+      "normalized": {
+        "thinkingBudget": 42,
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "headroom": true
+    }
+  ],
+  "effective": [
+    {
+      "name": "unsigned-json-cap",
+      "max_tokens": 18446744073709551615,
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 18446744073709551615
+    },
+    {
+      "name": "unsigned-string-cap",
+      "max_tokens": "18446744073709551615",
+      "thinking_config": {
+        "includeThoughts": false
+      },
+      "expected": 18446744073709551615
+    },
+    {
+      "name": "none-tokens",
+      "max_tokens": null,
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "no-headroom-passthrough",
+      "max_tokens": 2048,
+      "thinking_config": {
+        "includeThoughts": false
+      },
+      "expected": 2048
+    },
+    {
+      "name": "headroom-raises",
+      "max_tokens": 1024,
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "headroom-keeps-larger",
+      "max_tokens": 100000,
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 100000
+    },
+    {
+      "name": "zero-tokens",
+      "max_tokens": 0,
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "negative-tokens",
+      "max_tokens": -10,
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "float-tokens",
+      "max_tokens": 1024.9,
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "string-tokens",
+      "max_tokens": "3000",
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "string-invalid",
+      "max_tokens": "nope",
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "bool-tokens",
+      "max_tokens": true,
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "list-tokens",
+      "max_tokens": [
+        1,
+        2
+      ],
+      "thinking_config": {
+        "includeThoughts": true,
+        "thinkingLevel": "high"
+      },
+      "expected": 65535
+    },
+    {
+      "name": "no-config",
+      "max_tokens": 2048,
+      "thinking_config": null,
+      "expected": 2048
+    }
+  ]
+}

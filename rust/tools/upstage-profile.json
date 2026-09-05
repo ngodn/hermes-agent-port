@@ -1,0 +1,35 @@
+{
+  "name": "upstage",
+  "api_mode": "chat_completions",
+  "aliases": [
+    "solar"
+  ],
+  "display_name": "Upstage Solar",
+  "description": "Upstage (Solar API)",
+  "signup_url": "https://console.upstage.ai/api-keys",
+  "env_vars": [
+    "UPSTAGE_API_KEY",
+    "UPSTAGE_BASE_URL"
+  ],
+  "base_url": "https://api.upstage.ai/v1",
+  "models_url": "",
+  "auth_type": "api_key",
+  "supports_health_check": true,
+  "supports_vision": false,
+  "supports_vision_tool_messages": true,
+  "supports_prompt_cache_key": false,
+  "process_command": "",
+  "process_args": [],
+  "process_command_env_vars": [],
+  "process_args_env_var": "",
+  "fallback_models": [
+    "solar-pro3"
+  ],
+  "hostname": "",
+  "default_headers": {},
+  "fixed_temperature": {
+    "kind": "inherit"
+  },
+  "default_max_tokens": null,
+  "default_aux_model": ""
+}

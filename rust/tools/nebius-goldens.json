@@ -1,0 +1,9972 @@
+[
+  {
+    "model": null,
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": null,
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "vendor/DeepSeek-R1-fast",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "DEEPSEEK-V4",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "DeepSeek-Reasoner",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "GLM-5.1",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "Kimi-K2.5",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "MiniMax-M2",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "qwen3-coder",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "vendor/deepseek-v3",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "gpt-oss/llama",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "Llama-3.3",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": null,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": null,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": [],
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": [],
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": true,
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": true,
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {},
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {},
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "enabled": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "enabled": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "enabled": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "enabled": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "enabled": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "enabled": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": null
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": null
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": false
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": false
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": true
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": true
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "true"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": 0
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": 0
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": 123
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": 123
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "123"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": []
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": []
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": [
+        "high"
+      ]
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "['high']"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": {
+        "custom": true
+      }
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "{'custom': true}"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": ""
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": ""
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": " "
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": " "
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "\u001chigh\u001f"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "none"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "none"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "off"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "off"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "disabled"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {}
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "minimal"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "low"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "low"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "low"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "medium"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "medium"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "high"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "high"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "xhigh"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "max"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "max"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "ultra"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "high"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": false,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  },
+  {
+    "model": "\u001cQwen3\u001f",
+    "config": {
+      "effort": "custom"
+    },
+    "supports": true,
+    "result": [
+      {},
+      {
+        "reasoning_effort": "custom"
+      }
+    ]
+  }
+]

@@ -1,0 +1,432 @@
+[
+  {
+    "name": "provider-not-custom",
+    "provider": "openai",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": null
+  },
+  {
+    "name": "provider-empty",
+    "provider": "",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": null
+  },
+  {
+    "name": "base-url-empty",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "   ",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": null
+  },
+  {
+    "name": "fallback-no-model",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "url-trailing-slash",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x/",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "url-many-slashes-and-ws",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "  http://x///  ",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "url-mismatch",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://y",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": null
+  },
+  {
+    "name": "named-matches-provider-key",
+    "provider": "custom:foo",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "provider_key": "foo",
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "named-matches-name",
+    "provider": "custom:foo",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "name": "Foo",
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "named-filter-ws-and-case",
+    "provider": "custom:  Foo  ",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "provider_key": "FOO",
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "named-no-match",
+    "provider": "custom:bar",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "provider_key": "foo",
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": null
+  },
+  {
+    "name": "catalog-dict-hit",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "model": "other",
+        "models": {
+          "GPT-4": {}
+        },
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "catalog-list-numeric",
+    "provider": "custom",
+    "model": "123",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "model": "other",
+        "models": [
+          123
+        ],
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "provider-model-ci",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "model": "GPT-4",
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "provider-model-no-match",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "model": "gpt-3",
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": null
+  },
+  {
+    "name": "model-match-beats-earlier-fallback",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "reasoning_effort": "high"
+        }
+      },
+      {
+        "model": "gpt-4",
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "first-fallback-wins",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      },
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "reasoning_effort": "high"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "models-only-is-fallback",
+    "provider": "custom",
+    "model": "zzz",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "models": {
+          "gpt-4": {}
+        },
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "empty-extra-body-skipped",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {}
+      },
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "non-dict-extra-body-skipped",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": "nope"
+      },
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "non-dict-entry-skipped",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      "nope",
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "provider-uppercase",
+    "provider": "CUSTOM",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  },
+  {
+    "name": "no-entries",
+    "provider": "custom",
+    "model": "gpt-4",
+    "base_url": "http://x",
+    "entries": [],
+    "expected": null
+  },
+  {
+    "name": "catalog-miss-but-fallback",
+    "provider": "custom",
+    "model": "nope",
+    "base_url": "http://x",
+    "entries": [
+      {
+        "models": [
+          "a",
+          "b"
+        ],
+        "base_url": "http://x",
+        "extra_body": {
+          "service_tier": "flex"
+        }
+      }
+    ],
+    "expected": {
+      "service_tier": "flex"
+    }
+  }
+]

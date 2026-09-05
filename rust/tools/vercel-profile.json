@@ -1,0 +1,38 @@
+{
+  "name": "ai-gateway",
+  "api_mode": "chat_completions",
+  "aliases": [
+    "vercel",
+    "vercel-ai-gateway",
+    "ai_gateway",
+    "aigateway"
+  ],
+  "display_name": "",
+  "description": "",
+  "signup_url": "",
+  "env_vars": [
+    "AI_GATEWAY_API_KEY"
+  ],
+  "base_url": "https://ai-gateway.vercel.sh/v1",
+  "models_url": "",
+  "auth_type": "api_key",
+  "supports_health_check": true,
+  "supports_vision": false,
+  "supports_vision_tool_messages": true,
+  "supports_prompt_cache_key": false,
+  "process_command": "",
+  "process_args": [],
+  "process_command_env_vars": [],
+  "process_args_env_var": "",
+  "fallback_models": [],
+  "hostname": "",
+  "default_headers": {
+    "HTTP-Referer": "https://hermes-agent.nousresearch.com",
+    "X-Title": "Hermes Agent"
+  },
+  "fixed_temperature": {
+    "kind": "inherit"
+  },
+  "default_max_tokens": null,
+  "default_aux_model": "google/gemini-3-flash"
+}

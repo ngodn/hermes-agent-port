@@ -1,0 +1,2806 @@
+[
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "qwen3.8-27b",
+          "display_name": "Qwen3.8 27B",
+          "description": "Best all-round agent model; sees images; long context stays fast",
+          "repo": "unsloth/Qwen3.8-27B-GGUF",
+          "variants": [
+            {
+              "quant": "UD-Q4_K_M",
+              "files": [
+                {
+                  "path": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+                  "size_bytes": 16464440224
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 262144,
+          "full_layers": 16,
+          "recurrent_layers": 48,
+          "per_layer_f16": 4096,
+          "n_vocab": 248320,
+          "mmproj": {
+            "path": "mmproj-BF16.gguf",
+            "size_bytes": 931146432,
+            "local": "mmproj-Qwen3.8-27B-BF16.gguf"
+          },
+          "mtp": true,
+          "mtp_draft_depth": 2,
+          "sampling": {
+            "temp": "1.0",
+            "top-p": "0.95",
+            "top-k": "20",
+            "min-p": "0.0"
+          },
+          "quality": 90,
+          "decode_fraction": 1.0
+        },
+        {
+          "id": "qwen3.8-flash-next",
+          "display_name": "Qwen3.8 Flash Next",
+          "description": "Frontier-scale model; needs a very large GPU to run well",
+          "repo": "unsloth/Qwen3.8-Flash-Next-GGUF",
+          "variants": [
+            {
+              "quant": "UD-Q4_K_XL",
+              "files": [
+                {
+                  "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf",
+                  "size_bytes": 10946624
+                },
+                {
+                  "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00002-of-00004.gguf",
+                  "size_bytes": 49859583136
+                },
+                {
+                  "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00003-of-00004.gguf",
+                  "size_bytes": 49376141504
+                },
+                {
+                  "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00004-of-00004.gguf",
+                  "size_bytes": 12087983520
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 262144,
+          "full_layers": 12,
+          "recurrent_layers": 36,
+          "per_layer_f16": 2048,
+          "moe": true,
+          "n_vocab": 248320,
+          "mmproj": {
+            "path": "mmproj-BF16.gguf",
+            "size_bytes": 907542944,
+            "local": "mmproj-Qwen3.8-Flash-Next-BF16.gguf"
+          },
+          "min_engine": "b10678",
+          "quality": 95,
+          "decode_fraction": 0.08
+        },
+        {
+          "id": "qwen3.6-35b-a3b",
+          "display_name": "Qwen3.6 35B-A3B",
+          "description": "Bigger mixture-of-experts with multi-token prediction; sees images",
+          "repo": "unsloth/Qwen3.6-35B-A3B-MTP-GGUF",
+          "variants": [
+            {
+              "quant": "UD-Q4_K_M",
+              "files": [
+                {
+                  "path": "Qwen3.6-35B-A3B-UD-Q4_K_M.gguf",
+                  "size_bytes": 22663387424
+                }
+              ],
+              "validated": true
+            }
+          ],
+          "n_ctx_train": 262144,
+          "full_layers": 10,
+          "recurrent_layers": 30,
+          "per_layer_f16": 2048,
+          "moe": true,
+          "mtp": true,
+          "n_vocab": 248320,
+          "mtp_draft_depth": 2,
+          "mmproj": {
+            "path": "mmproj-BF16.gguf",
+            "size_bytes": 902822528,
+            "local": "mmproj-Qwen3.6-35B-A3B-BF16.gguf"
+          },
+          "sampling": {
+            "temp": "1.0",
+            "top-p": "0.95",
+            "top-k": "20",
+            "min-p": "0.0"
+          },
+          "quality": 80,
+          "decode_fraction": 0.15
+        },
+        {
+          "id": "deepseek-v4-flash",
+          "display_name": "DeepSeek V4 Flash",
+          "description": "Frontier-class model for machines with 128GB+ memory",
+          "repo": "unsloth/DeepSeek-V4-Flash-0731-GGUF",
+          "variants": [
+            {
+              "quant": "UD-Q4_K_XL",
+              "files": [
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00001-of-00005.gguf",
+                  "size_bytes": 5257408
+                },
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00002-of-00005.gguf",
+                  "size_bytes": 48935523072
+                },
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00003-of-00005.gguf",
+                  "size_bytes": 48980787136
+                },
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00004-of-00005.gguf",
+                  "size_bytes": 49999168416
+                },
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00005-of-00005.gguf",
+                  "size_bytes": 7174505088
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 1048576,
+          "full_layers": 43,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1152,
+          "moe": true,
+          "n_vocab": 163840,
+          "draft": {
+            "path": "dspark-DeepSeek-V4-Flash-0731-Q8_0.gguf",
+            "size_bytes": 10896057440
+          },
+          "sampling": {
+            "temp": "1.0",
+            "top-p": "0.95",
+            "min-p": "0.01"
+          },
+          "quality": 85,
+          "decode_fraction": 0.1
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "qwen3.8-27b",
+          "display_name": "Qwen3.8 27B",
+          "description": "Best all-round agent model; sees images; long context stays fast",
+          "repo": "unsloth/Qwen3.8-27B-GGUF",
+          "variants": [
+            {
+              "quant": "UD-Q4_K_M",
+              "files": [
+                {
+                  "path": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+                  "size_bytes": 16464440224,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 262144,
+          "full_layers": 16,
+          "recurrent_layers": 48,
+          "per_layer_f16": 4096,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": true,
+          "mtp_draft_depth": 2,
+          "n_vocab": 248320,
+          "mmproj": {
+            "path": "mmproj-BF16.gguf",
+            "size_bytes": 931146432,
+            "local": "mmproj-Qwen3.8-27B-BF16.gguf"
+          },
+          "draft": null,
+          "sampling": {
+            "temp": "1.0",
+            "top-p": "0.95",
+            "top-k": "20",
+            "min-p": "0.0"
+          },
+          "min_engine": "",
+          "quality": 90,
+          "decode_fraction": 1.0
+        },
+        {
+          "id": "qwen3.8-flash-next",
+          "display_name": "Qwen3.8 Flash Next",
+          "description": "Frontier-scale model; needs a very large GPU to run well",
+          "repo": "unsloth/Qwen3.8-Flash-Next-GGUF",
+          "variants": [
+            {
+              "quant": "UD-Q4_K_XL",
+              "files": [
+                {
+                  "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf",
+                  "size_bytes": 10946624,
+                  "local": null
+                },
+                {
+                  "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00002-of-00004.gguf",
+                  "size_bytes": 49859583136,
+                  "local": null
+                },
+                {
+                  "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00003-of-00004.gguf",
+                  "size_bytes": 49376141504,
+                  "local": null
+                },
+                {
+                  "path": "UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00004-of-00004.gguf",
+                  "size_bytes": 12087983520,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 262144,
+          "full_layers": 12,
+          "recurrent_layers": 36,
+          "per_layer_f16": 2048,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": true,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 248320,
+          "mmproj": {
+            "path": "mmproj-BF16.gguf",
+            "size_bytes": 907542944,
+            "local": "mmproj-Qwen3.8-Flash-Next-BF16.gguf"
+          },
+          "draft": null,
+          "sampling": {},
+          "min_engine": "b10678",
+          "quality": 95,
+          "decode_fraction": 0.08
+        },
+        {
+          "id": "qwen3.6-35b-a3b",
+          "display_name": "Qwen3.6 35B-A3B",
+          "description": "Bigger mixture-of-experts with multi-token prediction; sees images",
+          "repo": "unsloth/Qwen3.6-35B-A3B-MTP-GGUF",
+          "variants": [
+            {
+              "quant": "UD-Q4_K_M",
+              "files": [
+                {
+                  "path": "Qwen3.6-35B-A3B-UD-Q4_K_M.gguf",
+                  "size_bytes": 22663387424,
+                  "local": null
+                }
+              ],
+              "validated": true
+            }
+          ],
+          "n_ctx_train": 262144,
+          "full_layers": 10,
+          "recurrent_layers": 30,
+          "per_layer_f16": 2048,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": true,
+          "mtp": true,
+          "mtp_draft_depth": 2,
+          "n_vocab": 248320,
+          "mmproj": {
+            "path": "mmproj-BF16.gguf",
+            "size_bytes": 902822528,
+            "local": "mmproj-Qwen3.6-35B-A3B-BF16.gguf"
+          },
+          "draft": null,
+          "sampling": {
+            "temp": "1.0",
+            "top-p": "0.95",
+            "top-k": "20",
+            "min-p": "0.0"
+          },
+          "min_engine": "",
+          "quality": 80,
+          "decode_fraction": 0.15
+        },
+        {
+          "id": "deepseek-v4-flash",
+          "display_name": "DeepSeek V4 Flash",
+          "description": "Frontier-class model for machines with 128GB+ memory",
+          "repo": "unsloth/DeepSeek-V4-Flash-0731-GGUF",
+          "variants": [
+            {
+              "quant": "UD-Q4_K_XL",
+              "files": [
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00001-of-00005.gguf",
+                  "size_bytes": 5257408,
+                  "local": null
+                },
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00002-of-00005.gguf",
+                  "size_bytes": 48935523072,
+                  "local": null
+                },
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00003-of-00005.gguf",
+                  "size_bytes": 48980787136,
+                  "local": null
+                },
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00004-of-00005.gguf",
+                  "size_bytes": 49999168416,
+                  "local": null
+                },
+                {
+                  "path": "UD-Q4_K_XL/DeepSeek-V4-Flash-0731-UD-Q4_K_XL-00005-of-00005.gguf",
+                  "size_bytes": 7174505088,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 1048576,
+          "full_layers": 43,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1152,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": true,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 163840,
+          "mmproj": null,
+          "draft": {
+            "path": "dspark-DeepSeek-V4-Flash-0731-Q8_0.gguf",
+            "size_bytes": 10896057440,
+            "local": null
+          },
+          "sampling": {
+            "temp": "1.0",
+            "top-p": "0.95",
+            "min-p": "0.01"
+          },
+          "min_engine": "",
+          "quality": 85,
+          "decode_fraction": 0.1
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": []
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": []
+    }
+  },
+  {
+    "input": {},
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 2,
+      "models": []
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": "12",
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 12,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": "1_024",
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 1024,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": "\u0661\u0662",
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 12,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 12.9,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 12,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": true,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 1,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": null,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": "oops",
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": "1__2",
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": "_1",
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": "1_",
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": "  +\u0661_\u0662  ",
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 12,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "min_engine": null
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "None",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "min_engine": false
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "False",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "min_engine": 123
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "123",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "min_engine": "b123"
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "b123",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "min_engine": [
+            "x",
+            true
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "['x', True]",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "moe": null
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "moe": false
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "moe": true
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": true,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "moe": "false"
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": true,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "moe": []
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "moe": [
+            0
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": true,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "sampling": null
+        }
+      ]
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "sampling": []
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "sampling": [
+            [
+              "x",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {
+            "x": 1
+          },
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "sampling": [
+            "ab"
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {
+            "a": "b"
+          },
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "sampling": {
+            "x": 1
+          }
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {
+            "x": 1
+          },
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "decode_fraction": "0.5"
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 0.5
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "decode_fraction": "1_0.5"
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 10.5
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "decode_fraction": "1__0"
+        }
+      ]
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "decode_fraction": "\u0661.\u0665"
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.5
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "decode_fraction": false
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 0.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "decode_fraction": null
+        }
+      ]
+    },
+    "expected": null
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "mmproj": null
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "mmproj": {}
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "mmproj": []
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "mmproj": {
+            "path": "p.gguf",
+            "size_bytes": "12",
+            "local": ""
+          }
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": {
+            "path": "p.gguf",
+            "size_bytes": 12,
+            "local": ""
+          },
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1
+                }
+              ]
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "future_field": {
+            "anything": 1
+          }
+        }
+      ]
+    },
+    "expected": {
+      "schema_version": 1,
+      "models": [
+        {
+          "id": "a",
+          "display_name": "A",
+          "description": "",
+          "repo": "fixture",
+          "variants": [
+            {
+              "quant": "q",
+              "files": [
+                {
+                  "path": "a.gguf",
+                  "size_bytes": 1,
+                  "local": null
+                }
+              ],
+              "validated": false
+            }
+          ],
+          "n_ctx_train": 100,
+          "full_layers": 1,
+          "recurrent_layers": 0,
+          "per_layer_f16": 1,
+          "swa_layers": 0,
+          "swa_window": 0,
+          "moe": false,
+          "mtp": false,
+          "mtp_draft_depth": 3,
+          "n_vocab": 0,
+          "mmproj": null,
+          "draft": null,
+          "sampling": {},
+          "min_engine": "",
+          "quality": 0,
+          "decode_fraction": 1.0
+        }
+      ]
+    }
+  }
+]

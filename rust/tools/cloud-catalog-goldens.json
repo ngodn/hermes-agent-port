@@ -1,0 +1,1034 @@
+[
+  {
+    "initial": "missing",
+    "force": false,
+    "online": false,
+    "response": 200,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "missing",
+    "force": false,
+    "online": false,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "missing",
+    "force": false,
+    "online": false,
+    "response": 503,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "missing",
+    "force": false,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      null
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "missing",
+    "force": false,
+    "online": true,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": null
+  },
+  {
+    "initial": "missing",
+    "force": false,
+    "online": true,
+    "response": 503,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "missing",
+    "force": true,
+    "online": false,
+    "response": 200,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "missing",
+    "force": true,
+    "online": false,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "missing",
+    "force": true,
+    "online": false,
+    "response": 503,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "missing",
+    "force": true,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      null
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "missing",
+    "force": true,
+    "online": true,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": null
+  },
+  {
+    "initial": "missing",
+    "force": true,
+    "online": true,
+    "response": 503,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": false,
+    "online": false,
+    "response": 200,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": false,
+    "online": false,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": false,
+    "online": false,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": false,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": false,
+    "online": true,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": false,
+    "online": true,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": true,
+    "online": false,
+    "response": 200,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": true,
+    "online": false,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": true,
+    "online": false,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": true,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "fresh",
+    "force": true,
+    "online": true,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "fresh",
+    "force": true,
+    "online": true,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": false,
+    "online": false,
+    "response": 200,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": false,
+    "online": false,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": false,
+    "online": false,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": false,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "stale",
+    "force": false,
+    "online": true,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": false,
+    "online": true,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": true,
+    "online": false,
+    "response": 200,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": true,
+    "online": false,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": true,
+    "online": false,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": true,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "stale",
+    "force": true,
+    "online": true,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "stale",
+    "force": true,
+    "online": true,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": false,
+    "online": false,
+    "response": 200,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": false,
+    "online": false,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": false,
+    "online": false,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": false,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      null
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "future",
+    "force": false,
+    "online": true,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": null
+  },
+  {
+    "initial": "future",
+    "force": false,
+    "online": true,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": true,
+    "online": false,
+    "response": 200,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": true,
+    "online": false,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": true,
+    "online": false,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": true,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "future",
+    "force": true,
+    "online": true,
+    "response": 304,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": false,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "future",
+    "force": true,
+    "online": true,
+    "response": 503,
+    "returned": {
+      "old": {}
+    },
+    "final": {
+      "old": {}
+    },
+    "requests": [
+      "\"cached\""
+    ],
+    "backoff": true,
+    "quarantined": false,
+    "etag": "\"cached\""
+  },
+  {
+    "initial": "corrupt",
+    "force": false,
+    "online": false,
+    "response": 200,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": false,
+    "online": false,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": false,
+    "online": false,
+    "response": 503,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": false,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      null
+    ],
+    "backoff": false,
+    "quarantined": true,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "corrupt",
+    "force": false,
+    "online": true,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": false,
+    "online": true,
+    "response": 503,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": true,
+    "online": false,
+    "response": 200,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": true,
+    "online": false,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": true,
+    "online": false,
+    "response": 503,
+    "returned": {},
+    "final": {},
+    "requests": [],
+    "backoff": false,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": true,
+    "online": true,
+    "response": 200,
+    "returned": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "final": {
+      "provider": {
+        "models": {
+          "vision": {
+            "attachment": true
+          }
+        }
+      }
+    },
+    "requests": [
+      null
+    ],
+    "backoff": false,
+    "quarantined": true,
+    "etag": "\"v1\""
+  },
+  {
+    "initial": "corrupt",
+    "force": true,
+    "online": true,
+    "response": 304,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": true,
+    "etag": null
+  },
+  {
+    "initial": "corrupt",
+    "force": true,
+    "online": true,
+    "response": 503,
+    "returned": {},
+    "final": {},
+    "requests": [
+      null
+    ],
+    "backoff": true,
+    "quarantined": true,
+    "etag": null
+  }
+]

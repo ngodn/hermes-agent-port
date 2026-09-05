@@ -1,0 +1,1464 @@
+{
+  "staging": [
+    {
+      "files": [],
+      "expected": []
+    },
+    {
+      "files": [
+        "a.gguf"
+      ],
+      "expected": [
+        "a"
+      ]
+    },
+    {
+      "files": [
+        "z.gguf",
+        "a.gguf",
+        "B.GGUF"
+      ],
+      "expected": [
+        "a",
+        "z"
+      ]
+    },
+    {
+      "files": [
+        "a-00001-of-00002.gguf"
+      ],
+      "expected": []
+    },
+    {
+      "files": [
+        "a-00002-of-00002.gguf"
+      ],
+      "expected": []
+    },
+    {
+      "files": [
+        "a-00001-of-00002.gguf",
+        "a-00002-of-00002.gguf"
+      ],
+      "expected": [
+        "a"
+      ]
+    },
+    {
+      "files": [
+        "a-00001-of-00003.gguf",
+        "a-00003-of-00003.gguf"
+      ],
+      "expected": []
+    },
+    {
+      "files": [
+        "a-00001-of-00000.gguf"
+      ],
+      "expected": [
+        "a"
+      ]
+    },
+    {
+      "files": [
+        "a-00001-of-00001.gguf"
+      ],
+      "expected": [
+        "a"
+      ]
+    },
+    {
+      "files": [
+        "a-00001-of-0000\u0662.gguf",
+        "a-00002-of-0000\u0662.gguf"
+      ],
+      "expected": [
+        "a"
+      ]
+    },
+    {
+      "files": [
+        "assets/projector.gguf",
+        ".hidden.gguf",
+        "nested/model.gguf"
+      ],
+      "expected": [
+        ".hidden"
+      ]
+    },
+    {
+      "files": [
+        "a.gguf",
+        "a-00001-of-00001.gguf"
+      ],
+      "expected": [
+        "a",
+        "a"
+      ]
+    },
+    {
+      "files": [
+        "dir.gguf/"
+      ],
+      "expected": [
+        "dir"
+      ]
+    },
+    {
+      "files": [
+        ".gguf",
+        "a..gguf"
+      ],
+      "expected": [
+        ".gguf",
+        "a."
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "staged": false,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": false,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": null,
+      "calls": []
+    },
+    {
+      "staged": true,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": true,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": null,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": true,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": false,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": false,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": true,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": null
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": true,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": true,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "path/p.gguf",
+              "size_bytes": 0
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": true,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": false,
+      "expected": true,
+      "calls": [
+        "a"
+      ]
+    },
+    {
+      "staged": true,
+      "live": true,
+      "catalog": {
+        "schema_version": 1,
+        "models": [
+          {
+            "id": "fixture",
+            "display_name": "Fixture",
+            "description": "",
+            "repo": "fixture",
+            "n_ctx_train": 100,
+            "full_layers": 1,
+            "recurrent_layers": 0,
+            "per_layer_f16": 1,
+            "variants": [
+              {
+                "quant": "q4",
+                "files": [
+                  {
+                    "path": "weights/a.gguf",
+                    "size_bytes": 0
+                  }
+                ]
+              }
+            ],
+            "mmproj": {
+              "path": "p.gguf",
+              "size_bytes": 0,
+              "local": "chosen.gguf"
+            }
+          }
+        ]
+      },
+      "projector_present": true,
+      "expected": true,
+      "calls": [
+        "a"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1336 @@
+{
+  "fetch": [
+    {
+      "base": "",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": null,
+      "calls": []
+    },
+    {
+      "base": "",
+      "catalog": "",
+      "caller": "",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": null,
+      "calls": []
+    },
+    {
+      "base": "",
+      "catalog": "",
+      "caller": "  ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": null,
+      "calls": []
+    },
+    {
+      "base": "",
+      "catalog": "",
+      "caller": "https://inference.example/v1",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "",
+      "catalog": "",
+      "caller": "https://inference.example/v1/",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "",
+      "catalog": "",
+      "caller": " https://proxy.example/v1/ ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://proxy.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "",
+      "catalog": " https://catalog.example/models ",
+      "caller": null,
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "",
+      "catalog": " https://catalog.example/models ",
+      "caller": "",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "",
+      "catalog": " https://catalog.example/models ",
+      "caller": "  ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "",
+      "catalog": " https://catalog.example/models ",
+      "caller": "https://inference.example/v1",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "",
+      "catalog": " https://catalog.example/models ",
+      "caller": "https://inference.example/v1/",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "",
+      "catalog": " https://catalog.example/models ",
+      "caller": " https://proxy.example/v1/ ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://proxy.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": "",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": "  ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": "https://inference.example/v1",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": "https://inference.example/v1/",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": " https://proxy.example/v1/ ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://proxy.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": " https://catalog.example/models ",
+      "caller": null,
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": " https://catalog.example/models ",
+      "caller": "",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": " https://catalog.example/models ",
+      "caller": "  ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": " https://catalog.example/models ",
+      "caller": "https://inference.example/v1",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": " https://catalog.example/models ",
+      "caller": "https://inference.example/v1/",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": " https://catalog.example/models ",
+      "caller": " https://proxy.example/v1/ ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://proxy.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": "",
+      "caller": "",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": "",
+      "caller": "  ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": "",
+      "caller": "https://inference.example/v1",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": "",
+      "caller": "https://inference.example/v1/",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": "",
+      "caller": " https://proxy.example/v1/ ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://proxy.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": " https://catalog.example/models ",
+      "caller": null,
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": " https://catalog.example/models ",
+      "caller": "",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": " https://catalog.example/models ",
+      "caller": "  ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": " https://catalog.example/models ",
+      "caller": "https://inference.example/v1",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": " https://catalog.example/models ",
+      "caller": "https://inference.example/v1/",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://catalog.example/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1/",
+      "catalog": " https://catalog.example/models ",
+      "caller": " https://proxy.example/v1/ ",
+      "body": {
+        "data": [
+          {
+            "id": "m"
+          }
+        ]
+      },
+      "key": "secret",
+      "headers": {},
+      "expected": [
+        "m"
+      ],
+      "calls": [
+        {
+          "url": "https://proxy.example/v1/models",
+          "headers": {
+            "authorization": "Bearer secret",
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": [],
+      "key": "",
+      "headers": {},
+      "expected": [],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": [
+        {
+          "id": "a"
+        },
+        {
+          "id": "a"
+        },
+        {
+          "id": null
+        },
+        {
+          "id": 4
+        },
+        {
+          "other": 1
+        },
+        "skip"
+      ],
+      "key": "",
+      "headers": {},
+      "expected": [
+        "a",
+        "a",
+        null,
+        4
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": {},
+      "key": "",
+      "headers": {},
+      "expected": [],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": []
+      },
+      "key": "",
+      "headers": {},
+      "expected": [],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": null
+      },
+      "key": "",
+      "headers": {},
+      "expected": null,
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": {}
+      },
+      "key": "",
+      "headers": {},
+      "expected": [],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": "abc"
+      },
+      "key": "",
+      "headers": {},
+      "expected": [],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": false
+      },
+      "key": "",
+      "headers": {},
+      "expected": null,
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": {
+        "data": [
+          {
+            "id": [
+              "a"
+            ]
+          }
+        ]
+      },
+      "key": "",
+      "headers": {},
+      "expected": [
+        [
+          "a"
+        ]
+      ],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": null,
+      "key": "",
+      "headers": {},
+      "expected": null,
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": false,
+      "key": "",
+      "headers": {},
+      "expected": null,
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": "bad",
+      "key": "",
+      "headers": {},
+      "expected": null,
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "accept": "application/json",
+            "user-agent": "hermes-cli/fixture"
+          },
+          "timeout": 2
+        }
+      ]
+    },
+    {
+      "base": "https://inference.example/v1",
+      "catalog": "",
+      "caller": null,
+      "body": [],
+      "key": "key",
+      "headers": {
+        "Authorization": "Custom override",
+        "Accept": "custom/type",
+        "User-Agent": "custom-agent",
+        "X-Private": "private-value"
+      },
+      "expected": [],
+      "calls": [
+        {
+          "url": "https://inference.example/v1/models",
+          "headers": {
+            "authorization": "Custom override",
+            "accept": "custom/type",
+            "user-agent": "custom-agent",
+            "x-private": "private-value"
+          },
+          "timeout": 2
+        }
+      ]
+    }
+  ],
+  "hostnames": [
+    {
+      "explicit": "",
+      "base": "",
+      "expected": ""
+    },
+    {
+      "explicit": "",
+      "base": "https://EXAMPLE.COM:443/v1",
+      "expected": "example.com"
+    },
+    {
+      "explicit": "",
+      "base": "http://127.1/",
+      "expected": "127.1"
+    },
+    {
+      "explicit": "",
+      "base": "//Host.Name./m",
+      "expected": "host.name."
+    },
+    {
+      "explicit": "",
+      "base": "http://user:pass@[::1]:80/v1",
+      "expected": "::1"
+    },
+    {
+      "explicit": "",
+      "base": "relative/path",
+      "expected": ""
+    },
+    {
+      "explicit": " Explicit.Host. ",
+      "base": "",
+      "expected": " Explicit.Host. "
+    },
+    {
+      "explicit": " Explicit.Host. ",
+      "base": "https://EXAMPLE.COM:443/v1",
+      "expected": " Explicit.Host. "
+    },
+    {
+      "explicit": " Explicit.Host. ",
+      "base": "http://127.1/",
+      "expected": " Explicit.Host. "
+    },
+    {
+      "explicit": " Explicit.Host. ",
+      "base": "//Host.Name./m",
+      "expected": " Explicit.Host. "
+    },
+    {
+      "explicit": " Explicit.Host. ",
+      "base": "http://user:pass@[::1]:80/v1",
+      "expected": " Explicit.Host. "
+    },
+    {
+      "explicit": " Explicit.Host. ",
+      "base": "relative/path",
+      "expected": " Explicit.Host. "
+    }
+  ]
+}

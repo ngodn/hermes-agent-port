@@ -1,0 +1,7064 @@
+{
+  "hooks": [
+    {
+      "model": null,
+      "config": null,
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {},
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": false,
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": [],
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": "high",
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "enabled": false
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "enabled": 0
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": null
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": 0
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": true
+      },
+      "error": "AttributeError"
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": [
+          "high"
+        ]
+      },
+      "error": "AttributeError"
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": ""
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "none"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "low"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "minimal"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "low"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "low"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "medium"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "high"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "xhigh"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "max"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "ultra"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": " HIGH "
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "\u001chigh\u001f"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": null,
+      "config": {
+        "effort": "custom"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": null,
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {},
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": false,
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": [],
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": "high",
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "enabled": false
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "enabled": 0
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": null
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": 0
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": true
+      },
+      "error": "AttributeError"
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": [
+          "high"
+        ]
+      },
+      "error": "AttributeError"
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": ""
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "none"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "low"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "minimal"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "low"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "low"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "medium"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "high"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "xhigh"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "max"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "ultra"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": " HIGH "
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "\u001chigh\u001f"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "",
+      "config": {
+        "effort": "custom"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": null,
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {},
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": false,
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": [],
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": "high",
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "enabled": false
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "enabled": 0
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": null
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": 0
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": true
+      },
+      "error": "AttributeError"
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": [
+          "high"
+        ]
+      },
+      "error": "AttributeError"
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": ""
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "none"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "low"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "minimal"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "low"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "low"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "medium"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "high"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "xhigh"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "max"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "ultra"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": " HIGH "
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "\u001chigh\u001f"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "effort": "custom"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": null,
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {},
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": false,
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": [],
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": "high",
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "enabled": false
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "enabled": 0
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": null
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": 0
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": true
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": [
+          "high"
+        ]
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": ""
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "none"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "minimal"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "low"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "medium"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "high"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "xhigh"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "max"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "ultra"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": " HIGH "
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "\u001chigh\u001f"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "SOLAR-MINI-250127",
+      "config": {
+        "effort": "custom"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": null,
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {},
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": false,
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": [],
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": "high",
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "enabled": false
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "enabled": 0
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": null
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": 0
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": true
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": [
+          "high"
+        ]
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": ""
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "none"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "minimal"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "low"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "medium"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "high"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "xhigh"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "max"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "ultra"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": " HIGH "
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "\u001chigh\u001f"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "vendor/syn-pro-2026",
+      "config": {
+        "effort": "custom"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": null,
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {},
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": false,
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": [],
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": "high",
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "enabled": false
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "enabled": 0
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": null
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": 0
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": true
+      },
+      "error": "AttributeError"
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": [
+          "high"
+        ]
+      },
+      "error": "AttributeError"
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": ""
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "none"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "low"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "minimal"
+      },
+      "result": [
+        {},
+        {}
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "low"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "low"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "medium"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "medium"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "high"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "xhigh"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "max"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "ultra"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": " HIGH "
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "\u001chigh\u001f"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    },
+    {
+      "model": "future-solar",
+      "config": {
+        "effort": "custom"
+      },
+      "result": [
+        {},
+        {
+          "reasoning_effort": "high"
+        }
+      ]
+    }
+  ],
+  "clamps": [
+    {
+      "effort": null,
+      "supported": null,
+      "overrides": null,
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [],
+      "overrides": null,
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": null
+    },
+    {
+      "effort": null,
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": null
+    },
+    {
+      "effort": "",
+      "supported": null,
+      "overrides": null,
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [],
+      "overrides": null,
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": ""
+    },
+    {
+      "effort": "",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": ""
+    },
+    {
+      "effort": " HIGH ",
+      "supported": null,
+      "overrides": null,
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [],
+      "overrides": null,
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": " HIGH "
+    },
+    {
+      "effort": " HIGH ",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": " HIGH "
+    },
+    {
+      "effort": "none",
+      "supported": null,
+      "overrides": null,
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [],
+      "overrides": null,
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "none"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "none",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "minimal",
+      "supported": null,
+      "overrides": null,
+      "result": "minimal"
+    },
+    {
+      "effort": "minimal",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "minimal"
+    },
+    {
+      "effort": "minimal",
+      "supported": [],
+      "overrides": null,
+      "result": "minimal"
+    },
+    {
+      "effort": "minimal",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "minimal"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "minimal"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "minimal"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "minimal"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "minimal"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "minimal",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": null,
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "low",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "low"
+    },
+    {
+      "effort": "medium",
+      "supported": null,
+      "overrides": null,
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [],
+      "overrides": null,
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "medium"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "low"
+    },
+    {
+      "effort": "medium",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": null,
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "high",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "xhigh",
+      "supported": null,
+      "overrides": null,
+      "result": "xhigh"
+    },
+    {
+      "effort": "xhigh",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "xhigh"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [],
+      "overrides": null,
+      "result": "xhigh"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "xhigh"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "xhigh"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "xhigh"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "xhigh"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "xhigh"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "max"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "xhigh",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "max",
+      "supported": null,
+      "overrides": null,
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [],
+      "overrides": null,
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "max"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "max",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "ultra",
+      "supported": null,
+      "overrides": null,
+      "result": "ultra"
+    },
+    {
+      "effort": "ultra",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "ultra"
+    },
+    {
+      "effort": "ultra",
+      "supported": [],
+      "overrides": null,
+      "result": "ultra"
+    },
+    {
+      "effort": "ultra",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "ultra"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "ultra"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "ultra"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "ultra"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "ultra"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "max"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "max"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "high"
+    },
+    {
+      "effort": "ultra",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "high"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": null,
+      "overrides": null,
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [],
+      "overrides": null,
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "\u001chigh\u001f",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "\u001chigh\u001f"
+    },
+    {
+      "effort": "bespoke",
+      "supported": null,
+      "overrides": null,
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": null,
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [],
+      "overrides": null,
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "none"
+      ],
+      "overrides": null,
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "none"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "custom"
+      ],
+      "overrides": null,
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "custom"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": null,
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "LOW",
+        "HIGH"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": null,
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "none",
+        "high",
+        "max"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": null,
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": null,
+      "result": "bespoke"
+    },
+    {
+      "effort": "bespoke",
+      "supported": [
+        "\u001clow",
+        "high\u001f"
+      ],
+      "overrides": {
+        "xhigh": "max",
+        "medium": "high",
+        "custom": "low"
+      },
+      "result": "bespoke"
+    }
+  ],
+  "resolutions": [
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "solar-pro3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "claude-opus.4.5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "max"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "low"
+      }
+    },
+    {
+      "model": "openrouter/anthropic/claude-opus-4-5",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "minimal"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "minimal"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "minimal"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "minimal"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "minimal"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "minimal"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a1-2-3",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "minimal"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": null,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": false,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": true,
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "none",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": false
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "high",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "custom",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": null
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {}
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "solar-pro3": false
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "claude-opus-4.5": "max"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "anthropic/claude-opus-4.5": "low"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "a\u0661-\u0662-\u0663",
+      "config": {
+        "model": {
+          "default": "solar-pro3"
+        },
+        "agent": {
+          "reasoning_effort": "ultra",
+          "reasoning_overrides": {
+            "a1.2-3": "minimal"
+          }
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "ultra"
+      }
+    },
+    {
+      "model": "",
+      "config": null,
+      "result": null
+    },
+    {
+      "model": "",
+      "config": [],
+      "result": null
+    },
+    {
+      "model": "",
+      "config": false,
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "agent": []
+      },
+      "result": null
+    },
+    {
+      "model": "",
+      "config": {
+        "model": " solar-pro3 ",
+        "agent": {
+          "reasoning_effort": "\u001chigh\u001f"
+        }
+      },
+      "result": {
+        "enabled": true,
+        "effort": "high"
+      }
+    }
+  ]
+}
