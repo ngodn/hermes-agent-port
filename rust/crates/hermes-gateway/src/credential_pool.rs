@@ -1045,6 +1045,27 @@ impl CredentialPool {
         }
         self.available_entries(false).into_iter().next()
     }
+
+    /// The runtime key of the peeked entry, or `None` when the stripped key is
+    /// empty. Mirrors the STT/TTS resolver in tools/tool_backend_helpers.py:
+    /// `str(entry.runtime_api_key or entry.access_token or "").strip()`. This is
+    /// the exact shape tool_credentials::provider_secret's pool callback wants.
+    pub fn peek_runtime_key(&mut self) -> Option<String> {
+        let id = self.peek()?;
+        let entry = self.entries.iter().find(|e| e.id() == id)?;
+        let mut key = Self::runtime_api_key(entry);
+        if key.is_empty() {
+            key = entry.access_token().to_string();
+        }
+        let key = key
+            .trim_matches(crate::python_value::python_whitespace)
+            .to_string();
+        if key.is_empty() {
+            None
+        } else {
+            Some(key)
+        }
+    }
 }
 
 #[cfg(test)]

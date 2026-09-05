@@ -91,6 +91,69 @@ fn resolve_with(
 mod tests {
     use super::*;
 
+    // Integration: the CredentialPool selection core drives provider_secret's
+    // pool callback exactly as tools/tool_backend_helpers.py does (load_pool ->
+    // has_credentials -> peek -> runtime_api_key). With no config, scope or env
+    // value, resolution must fall through to the pool and return the peeked key.
+    #[test]
+    fn provider_secret_resolves_through_credential_pool() {
+        use crate::credential_pool::{CredentialPool, PooledCredential};
+
+        let _lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        let prev = crate::secret_scope::is_multiplex_active();
+        crate::secret_scope::set_multiplex_active(false);
+
+        // Two API-key entries; priority 0 wins the peek.
+        let entries = vec![
+            PooledCredential::from_dict(
+                "openai-api",
+                &serde_json::json!({
+                    "id": "hi0000", "auth_type": "api_key", "source": "manual",
+                    "access_token": "sk-high", "priority": 0, "last_status": "ok"
+                }),
+            )
+            .unwrap(),
+            PooledCredential::from_dict(
+                "openai-api",
+                &serde_json::json!({
+                    "id": "lo0000", "auth_type": "api_key", "source": "manual",
+                    "access_token": "sk-low", "priority": 1, "last_status": "ok"
+                }),
+            )
+            .unwrap(),
+        ];
+        let mut pool =
+            CredentialPool::new("openai-api", entries, "fill_first").with_clock(|| 1_700_000_000.0);
+
+        // A missing (non-empty dotenv) path with no matching key, and a callback
+        // that only answers for "openai-api" (the plain id), mirroring load_pool.
+        let dotenv = std::env::temp_dir().join(format!(
+            "hermes_toolcred_{}_{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let mut cb = |id: &str| -> anyhow::Result<Option<String>> {
+            if id == "openai-api" {
+                Ok(pool.peek_runtime_key())
+            } else {
+                Ok(None)
+            }
+        };
+        let key = provider_secret(
+            "OPENAI_API_KEY_UNSET_ENV_VAR_XYZ",
+            "openai-api",
+            "",
+            &dotenv,
+            &mut cb,
+        );
+        assert_eq!(key, "sk-high");
+
+        crate::secret_scope::set_multiplex_active(prev);
+    }
+
     #[test]
     fn real_scope_blocks_file_and_pool_and_preserves_voice_priority() {
         let _lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
