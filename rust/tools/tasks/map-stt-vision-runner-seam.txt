@@ -1,0 +1,32 @@
+READ-ONLY ANALYSIS. Do not modify any file except the single output file named
+below. Do not run cargo or tests.
+
+Goal: map exactly where and how gateway/run.py (the GatewayRunner) invokes
+speech-to-text transcription and image/vision enrichment on inbound messages,
+so a Rust port knows the precise integration seam.
+
+WRITE OUTPUT TO EXACTLY ONE FILE: rust/analysis/stt-vision-runner-seam.md
+(create/overwrite). Write nothing else anywhere.
+
+Cover, with exact file:line citations verified by reading the source (do NOT
+guess line numbers or invent function names; quote the real def line):
+
+1. Every call site in gateway/run.py that transcribes audio or enriches an
+   image/vision attachment on an inbound message. For each: the enclosing
+   method, the function/method it calls, and the module that defines the callee.
+2. The transcription entry point(s): trace from the run.py call site down to the
+   function that actually performs the STT provider request. Name each hop
+   (file + def). Where does it obtain the STT credential/provider config?
+3. The vision entry point(s): same tracing to the actual vision/model call and
+   its credential/capability source.
+4. What runner/adapter state each seam reads (session, config, pending message,
+   media paths) and what it mutates.
+5. Which of these callees already have a Rust counterpart. Check
+   rust/crates/hermes-gateway/src/ for: transcription_http.rs,
+   transcription_enrichment.rs, vision_enrichment.rs, tool_credentials.rs,
+   credential_pool.rs, audio_process.rs. State which behaviors are present vs
+   missing in Rust for each seam.
+
+Be precise and skeptical. If you cannot verify a claim from the source, say so
+rather than assert it. At the end, list the 3-5 concrete functions a Rust port
+must implement next to connect STT+vision to the runner, in dependency order.
