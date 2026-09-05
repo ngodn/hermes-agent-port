@@ -26,6 +26,14 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [tool-text-verification.md](tool-text-verification.md) | Tool-associated assistant text cleanup and remaining fallback scope |
+| [tool-name-repair-verification.md](tool-name-repair-verification.md) | Tool-name normalization and fuzzy recovery in native requests |
+| [tool-argument-verification.md](tool-argument-verification.md) | Argument rejection before native tool invocation |
+| [tool-pairing-verification.md](tool-pairing-verification.md) | Positional tool-result repair, alias-aware deduplication and fresh-batch ID uniqueness |
+| [message-repair-verification.md](message-repair-verification.md) | Thinking-only removal and adjacent-user merging before native requests |
+| [api-content-verification.md](api-content-verification.md) | Previously sent content restored before native wire projection |
+| [iteration-summary-verification.md](iteration-summary-verification.md) | Normal native budget exits, summary retry and tool-free HTTP behavior |
+| [turn-limit-verification.md](turn-limit-verification.md) | Turn-limit config authority, Python coercions and native HTTP iteration proof |
 | [tool-result-verification.md](tool-result-verification.md) | Native result construction, threat scanner corrections and HTTP replay proof |
 | [tool-result-goldens.json](../tools/tool-result-goldens.json) | 62 source-executed result construction and wrapping cases |
 | [threat-pattern-goldens.json](../tools/threat-pattern-goldens.json) | 129 scanner comparisons against Python |

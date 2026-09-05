@@ -52,6 +52,18 @@ Commit history confirms two separate levels of completion:
 | Native prompt-cache routing | Per-turn persisted scope, static-prefix/tool hashing and explicit key bounding wired before SDK body flattening; dispatcher locks share history identity | 65 Python comparisons, ten HTTP requests and endpoint/profile gate checks; [verification](analysis/prompt-cache-verification.md) |
 | Native tool replay and message projection | Valid argument text, thought signatures and reasoning sidecars preserved in flight; outgoing copies enforce model filtering and provider echo policy | 92 Python comparisons, eight tool HTTP requests and twelve startup HTTP requests; [verification](analysis/tool-call-replay-verification.md) |
 | Native refusal payloads | Non-streaming refusal-only responses reach the user; usable text and tool calls retain precedence | 48 Python comparisons and a real HTTP-to-event test; [verification](analysis/refusal-verification.md) |
+| Tool-name recovery | Name repair, deterministic identity ordering and three-strike invalid-batch termination integrated | 143 Python cases, native HTTP execution and retry sequences; [verification](analysis/tool-name-repair-verification.md) |
+| Malformed tool batches | Unchanged-history retries, third-attempt paired recovery, and immediate truncation stops integrated | Source-classified arguments and zero-execution batch regression; [verification](analysis/tool-argument-verification.md) |
+| Tool argument normalization | Blank and structured argument values normalized before the native execution guard | 21 source-loop cases plus execution comparisons; [verification](analysis/tool-argument-verification.md) |
+| Tool call validation | Invalid names and non-object arguments return paired errors without executing tools | 61 Python cases and native execution checks; [verification](analysis/tool-argument-verification.md) |
+| Tool-template marker cleanup | Bare bracketed protocol markers removed from validated tool-batch replay | 17 Python cases through the native loop; [verification](analysis/tool-text-verification.md) |
+| Delegation batch cap | Config/env limit propagated to native filtering before duplicate suppression; delegation engine remains pending | 39 Python cases and execution/replay order regression; [verification](analysis/tool-pairing-verification.md) |
+| Duplicate execution suppression | Equivalent name/argument pairs run once per batch while distinct requests retain unique IDs | 24 Python cases and native execution/replay regressions; [verification](analysis/tool-pairing-verification.md) |
+| Tool-call/result repair | Full JSON sanitizer, deterministic missing IDs and fresh-batch ID renaming wired into native requests | 447 Python cases, duplicate execution regression and main/summary HTTP; [verification](analysis/tool-pairing-verification.md) |
+| Thinking-only message repair | Empty-message healing, prefill/reasoning detection and adjacent-user text/image merges wired before native schema stripping | 207 Python cases, precedence checks and main/summary HTTP proof; [verification](analysis/message-repair-verification.md) |
+| API content replay | Existing sidecars restored on outgoing copies before native schema projection; persistence and note generation remain | 100 Python cases and main/summary HTTP replay; [verification](analysis/api-content-verification.md) |
+| Native iteration summary | Normal cap exit requests a tool-free summary with bounded empty retry; full provider/finalizer parity remains | 17 Python cleanup and 76 temperature cases, inline loop contracts and real HTTP; [verification](analysis/iteration-summary-verification.md) |
+| Native turn-limit configuration | Config/env authority and unlimited default reach the native loop; budget accounting and runtime refresh remain | 88 Python comparisons and real HTTP limit regression; [verification](analysis/turn-limit-verification.md) |
 | Native tool events | Decoded arguments, per-turn correlation indexes and measured execution duration emitted through the loop | Inline multi-iteration, failed-call and counter-reset regression; [verification](analysis/tool-events-verification.md) |
 | Native tool-result construction | Names, canonical IDs, timestamps, elision notices, untrusted framing and advisory findings wired into result creation; internal fields stripped at wire projection | 191 Python comparisons and three real HTTP tool rounds; [verification](analysis/tool-result-verification.md) |
 
@@ -61,7 +73,7 @@ not end-to-end media delivery, model resolution, STT, or vision integration.
 The broader runner tier includes network calls and session mutation, despite
 the earlier map calling it pure. See [the source audit](analysis/tier2-source-audit.md).
 
-Current validation: 1164 workspace tests passed, one existing Python-bridge
+Current validation: 1199 workspace tests passed, one existing Python-bridge
 test ignored. Clippy with warnings denied and formatting pass. Rust tests live
 inside their implementation files, following the user's layout preference.
 See [inbound verification](analysis/inbound-state-verification.md) and
