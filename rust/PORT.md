@@ -49,6 +49,42 @@ large differential fixture corpus. See the [scope audit](analysis/progress-audit
   [STT plan](analysis/stt-credential-resolution-plan.md), and
   [transcription verification](analysis/transcription-http-verification.md).
 
+### Continuation 2026-09-06 (Claude Opus 4.8, taking over from Codex)
+
+- Validated the entire uncommitted handoff tree (1238 workspace tests, clippy
+  -D warnings, fmt, and gen_custom_provider_config_goldens.py --check all pass)
+  and COMMITTED it as `c8f6358eb5` so it is no longer at risk. Nothing was reset.
+- Ported the CredentialPool API-key SELECTION CORE onto the existing
+  PooledCredential model (`829c2cfcf5`): new/has_credentials/has_available/
+  next_available_at/current/entries/entry_id_for_api_key/peek/select plus the
+  internal _available_entries/_select_unlocked, with fill_first/least_used/
+  round_robin/random strategies, sole-credential cooldown, clear-expired reset,
+  DEAD manual prune, injected persist+clock. Differentially verified against the
+  real AST-extracted CredentialPool via gen_credential_pool_select_goldens.py
+  (12 cases). Deferred, documented, and unreachable on the API-key path: store
+  hydration, OAuth refresh, the anthropic/nous/codex/xai auth-store sync
+  branches, the codex early-reopen probe, and lease ownership.
+- Re-enabled agy (Gemini 3.8 Flash) and produced analysis/stt-vision-runner-seam.md.
+  As before, agy's structural facts are reliable but its specifics are not:
+  spot-check found it fabricated a `runner_vision.rs`, mislocated
+  build_native_content_parts, and hedged/invented prepare_inbound_message_text.
+  The doc carries a verification banner; treat it as leads, not truth.
+
+**Immediate next seam: `load_pool(provider)` for the non-OAuth, non-custom path.**
+The building blocks exist (auth_store::read_pool, credential_sources::seed_from_env,
+credential_pool::{read_stored_entries, prune_stale_sources, normalize_priorities},
+credential_persistence). Assemble them in load_pool's exact control flow
+(read -> from_dict -> seed_from_env -> prune_stale_seeded -> normalize_priorities
+-> persist-if-changed -> CredentialPool::new), then wire the result into
+tool_credentials::provider_secret's `pool` callback and construct real STT
+credentials. CAVEAT for the verifier: load_pool is I/O-driven and its Python
+import graph needs yaml/httpx (won't import for a subprocess oracle), so verify
+with a temp HERMES_HOME + written auth.json integration test and/or an
+AST-extraction that stubs ONLY read_credential_pool/persist/env, never the
+selection or seeding logic. _seed_from_singletons is a no-op for pure API-key
+providers (anthropic/codex/xai/nous own the singletons); a general load_pool
+must still port it.
+
 ### What the next agent should do
 
 1. Read this handoff, the analysis index and relevant verification documents,
