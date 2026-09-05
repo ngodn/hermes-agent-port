@@ -70,7 +70,24 @@ large differential fixture corpus. See the [scope audit](analysis/progress-audit
   build_native_content_parts, and hedged/invented prepare_inbound_message_text.
   The doc carries a verification banner; treat it as leads, not truth.
 
-**Immediate next seam: `load_pool(provider)` for the non-OAuth, non-custom path.**
+UPDATE (later 2026-09-06): the credential vertical below is now built and
+verified end to end. Committed:
+- `load_pool_from_store` (`da9b10d2b1`): the read/heal/construct flow for
+  non-anthropic, non-custom, non-single-use providers (guarded; those need the
+  deferred seeding), differentially verified against the real AST-extracted
+  load_pool with seeders stubbed identically to the Rust deferral.
+- `store_pool_callback` + an end-to-end test (`f56e46ec4c`): AudioCredentials::
+  resolve pulls a stored key through provider_secret's pool branch ->
+  store_pool_callback -> load_pool_from_store -> peek. The STT credential can now
+  be constructed from the profile store.
+The one remaining step for a LIVE STT path is calling store_pool_callback at the
+actual inbound-audio construction site (build ProfileAudioCredentials with the
+runner-resolved profile/root auth.json paths, then hand it to the transcription
+backend). That is runner-integration work; verify it with a runner-level test,
+and note the deferred pieces still open: env/singleton/custom credential SEEDING
+(load_pool only reflects the persisted store), OAuth refresh, and lease ownership.
+
+**Earlier next seam (now done): `load_pool(provider)` for the non-OAuth, non-custom path.**
 The building blocks exist (auth_store::read_pool, credential_sources::seed_from_env,
 credential_pool::{read_stored_entries, prune_stale_sources, normalize_priorities},
 credential_persistence). Assemble them in load_pool's exact control flow
