@@ -113,6 +113,71 @@ impl AudioCredentials {
     }
 }
 
+/// Construct the OpenAI STT client from live config plus the profile credential
+/// store. This is the runtime construction site the runner calls: it wires
+/// `credential_pool::store_pool_callback` with the runner-resolved profile/root
+/// `auth.json` paths, so a stored profile credential (`hermes auth add`) resolves
+/// through the full resolver chain (config -> scope -> env -> pool). Managed
+/// (Nous Tool Gateway) audio is not ported yet, so that hook returns None with
+/// an explanatory unavailable note. `model`/`default_model` are resolved from
+/// the stt config by the caller.
+pub fn build_openai_transcription(
+    raw_config: &Value,
+    stt: &Value,
+    default_base_url: &str,
+    model: String,
+    default_model: &str,
+) -> Result<TranscriptionHttp> {
+    let profile = crate::config_file::hermes_home().join("auth.json");
+    let root = crate::config_file::hermes_root().join("auth.json");
+    let dotenv = crate::config_file::env_path();
+    build_openai_transcription_at(
+        raw_config,
+        stt,
+        default_base_url,
+        model,
+        default_model,
+        profile,
+        Some(root),
+        dotenv,
+    )
+}
+
+/// [`build_openai_transcription`] with the store/dotenv paths injected, so tests
+/// point at a temporary profile without touching the process HERMES_HOME.
+#[allow(clippy::too_many_arguments)]
+pub fn build_openai_transcription_at(
+    raw_config: &Value,
+    stt: &Value,
+    default_base_url: &str,
+    model: String,
+    default_model: &str,
+    profile: std::path::PathBuf,
+    root: Option<std::path::PathBuf>,
+    dotenv: std::path::PathBuf,
+) -> Result<TranscriptionHttp> {
+    let mut source = ProfileAudioCredentials {
+        dotenv_path: dotenv,
+        pool: crate::credential_pool::store_pool_callback(profile, root),
+        managed: || Ok(None),
+        unavailable: || {
+            Some(
+                "the native gateway does not yet provide the Nous Tool Gateway; set \
+                 stt.openai.api_key, VOICE_TOOLS_OPENAI_KEY or OPENAI_API_KEY"
+                    .to_owned(),
+            )
+        },
+    };
+    TranscriptionHttp::from_openai_config(
+        raw_config,
+        stt,
+        default_base_url,
+        model,
+        default_model,
+        &mut source,
+    )
+}
+
 #[derive(Debug)]
 struct ApiFailure {
     status: reqwest::StatusCode,
@@ -168,6 +233,11 @@ impl TranscriptionHttp {
             None,
         )?
         .with_language_config(stt, None))
+    }
+
+    #[cfg(test)]
+    pub(crate) fn resolved_key(&self) -> &str {
+        &self.key
     }
 
     pub fn new(
@@ -406,6 +476,127 @@ impl<B: TranscriptionBackend> TranscriptionBackend for HttpTranscriptionBackend<
 
 #[cfg(test)]
 mod tests {
+
+    fn temp_profile(
+        name: &str,
+        rows: Value,
+    ) -> (std::path::PathBuf, std::path::PathBuf, std::path::PathBuf) {
+        let dir = std::env::temp_dir().join(format!(
+            "hermes_sttfactory_{}_{}_{}",
+            name,
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        let profile = dir.join("auth.json");
+        std::fs::write(
+            &profile,
+            serde_json::to_string(&serde_json::json!({"credential_pool": {"openai-api": rows}}))
+                .unwrap(),
+        )
+        .unwrap();
+        let dotenv = dir.join(".env");
+        std::fs::write(&dotenv, "UNRELATED=1\n").unwrap();
+        (dir, profile, dotenv)
+    }
+
+    // The runtime factory constructs a client whose key comes from the profile
+    // store when nothing higher-precedence is set.
+    #[test]
+    fn factory_builds_client_from_profile_store() {
+        let _lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        let prev = crate::secret_scope::is_multiplex_active();
+        crate::secret_scope::set_multiplex_active(false);
+        for v in ["VOICE_TOOLS_OPENAI_KEY", "OPENAI_API_KEY"] {
+            std::env::remove_var(v);
+        }
+        let (dir, profile, dotenv) = temp_profile(
+            "hit",
+            serde_json::json!([{
+                "id": "stored0", "auth_type": "api_key", "source": "manual",
+                "access_token": "sk-STORED", "priority": 0, "last_status": "ok"
+            }]),
+        );
+        let client = build_openai_transcription_at(
+            &serde_json::json!({}),
+            &serde_json::json!({}),
+            "https://api.openai.com/v1",
+            "gpt-4o-transcribe".into(),
+            "gpt-4o-transcribe",
+            profile,
+            None,
+            dotenv,
+        )
+        .unwrap();
+        assert_eq!(client.resolved_key(), "sk-STORED");
+        crate::secret_scope::set_multiplex_active(prev);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    // stt.openai.api_key wins over the store (config precedence).
+    #[test]
+    fn factory_config_key_wins_over_store() {
+        let _lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        let prev = crate::secret_scope::is_multiplex_active();
+        crate::secret_scope::set_multiplex_active(false);
+        for v in ["VOICE_TOOLS_OPENAI_KEY", "OPENAI_API_KEY"] {
+            std::env::remove_var(v);
+        }
+        let (dir, profile, dotenv) = temp_profile(
+            "cfg",
+            serde_json::json!([{
+                "id": "stored0", "auth_type": "api_key", "source": "manual",
+                "access_token": "sk-STORED", "priority": 0, "last_status": "ok"
+            }]),
+        );
+        let client = build_openai_transcription_at(
+            &serde_json::json!({}),
+            &serde_json::json!({"openai": {"api_key": "sk-CONFIG"}}),
+            "https://api.openai.com/v1",
+            "gpt-4o-transcribe".into(),
+            "gpt-4o-transcribe",
+            profile,
+            None,
+            dotenv,
+        )
+        .unwrap();
+        assert_eq!(client.resolved_key(), "sk-CONFIG");
+        crate::secret_scope::set_multiplex_active(prev);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    // Nothing configured anywhere: honest error carrying the unavailable note.
+    #[test]
+    fn factory_errors_when_unconfigured() {
+        let _lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        let prev = crate::secret_scope::is_multiplex_active();
+        crate::secret_scope::set_multiplex_active(false);
+        for v in ["VOICE_TOOLS_OPENAI_KEY", "OPENAI_API_KEY"] {
+            std::env::remove_var(v);
+        }
+        let (dir, profile, dotenv) = temp_profile("miss", serde_json::json!([]));
+        let result = build_openai_transcription_at(
+            &serde_json::json!({}),
+            &serde_json::json!({}),
+            "https://api.openai.com/v1",
+            "gpt-4o-transcribe".into(),
+            "gpt-4o-transcribe",
+            profile,
+            None,
+            dotenv,
+        );
+        // TranscriptionHttp intentionally has no Debug (keeps the key out of
+        // logs), so unwrap_err is unavailable; match instead.
+        let Err(err) = result else {
+            panic!("expected an error when nothing is configured");
+        };
+        assert!(err.to_string().contains("Nous Tool Gateway"), "note: {err}");
+        crate::secret_scope::set_multiplex_active(prev);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 
     // End-to-end: an STT credential constructed from the PROFILE credential
     // store. No stt.openai.api_key, no base_url, and no env/scope key, so
