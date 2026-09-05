@@ -736,6 +736,81 @@ pub fn pool_strategy(provider: &str, config: &Value) -> String {
     }
 }
 
+/// Store-backed `load_pool` for the non-seeding path.
+///
+/// Ports the read/heal/construct flow of agent/credential_pool.py::load_pool for
+/// providers where NO seeder would re-add an entry: read the persisted pool
+/// (profile store with root fallback), build entries, prune genuinely stale
+/// borrowed/pkce sources, normalize priorities, persist iff that healing
+/// changed the set, and construct the pool. For such providers this reflects the
+/// persisted store identically to full Python.
+///
+/// DEFERRED and GUARDED: anthropic (singleton + priority seeding), custom:
+/// pools, and the single-use OAuth providers (openai-codex, xai-oauth, nous)
+/// require credential seeding that is not ported; this returns an error for them
+/// rather than a silently wrong pool. Env-var credentials that are not already
+/// persisted are also not seeded here; those resolve via the resolver's env
+/// branch before the pool is consulted.
+pub fn load_pool_from_store(
+    profile: &std::path::Path,
+    root: Option<&std::path::Path>,
+    provider: &str,
+    strategy: &str,
+    mut persist: Option<PersistSink>,
+) -> anyhow::Result<CredentialPool> {
+    let provider_norm = provider
+        .trim_matches(crate::python_value::python_whitespace)
+        .to_lowercase();
+    const SEEDING_REQUIRED: &[&str] = &["anthropic", "openai-codex", "xai-oauth", "nous"];
+    if provider_norm.starts_with("custom:") || SEEDING_REQUIRED.contains(&provider_norm.as_str()) {
+        anyhow::bail!(
+            "load_pool_from_store: provider {provider_norm} needs credential seeding (deferred)"
+        );
+    }
+
+    let raw = crate::auth_store::read_pool(profile, root, Some(&provider_norm))?;
+    let raw_arr = raw.as_array().cloned().unwrap_or_default();
+    // disk_ids mirrors Python: only rows that already carry an id (a minted id
+    // for an id-less row is never a "removed" candidate).
+    let disk_ids: std::collections::HashSet<String> = raw_arr
+        .iter()
+        .filter_map(|e| e.get("id").and_then(Value::as_str))
+        .map(str::to_string)
+        .collect();
+    let mut entries: Vec<PooledCredential> = raw_arr
+        .iter()
+        .map(|payload| PooledCredential::from_dict(&provider_norm, payload))
+        .collect::<anyhow::Result<Vec<_>>>()?;
+
+    // No seeding on this path, so the active-source set is empty and env sources
+    // are kept (prune_env_sources = false), matching load_pool's read semantics.
+    let active: std::collections::HashSet<String> = std::collections::HashSet::new();
+    let mut changed = prune_stale_sources(&mut entries, &active, false)?;
+    changed |= normalize_priorities(&provider_norm, &mut entries)?;
+
+    if changed {
+        let mut sorted = entries.clone();
+        sorted.sort_by_key(PooledCredential::priority);
+        let new_ids: std::collections::HashSet<&str> = sorted.iter().map(|e| e.id()).collect();
+        let mut removed: Vec<String> = disk_ids
+            .iter()
+            .filter(|id| !new_ids.contains(id.as_str()))
+            .cloned()
+            .collect();
+        removed.sort();
+        if let Some(sink) = persist.as_mut() {
+            let snapshot: Vec<Value> = sorted.iter().map(|e| e.to_dict()).collect();
+            sink(&provider_norm, snapshot, removed);
+        }
+    }
+
+    let mut pool = CredentialPool::new(&provider_norm, entries, strategy);
+    if let Some(sink) = persist {
+        pool = pool.with_persist(sink);
+    }
+    Ok(pool)
+}
+
 /// Sink for persisting the pool after a mutation (clear-expired, prune,
 /// round-robin renumber). Mirrors Python `persist_pool_entries(provider,
 /// [to_dict...], removed_ids)`; the pool owns WHEN to persist, the sink owns HOW.
@@ -1072,6 +1147,122 @@ impl CredentialPool {
 mod tests {
     use super::*;
     use std::sync::{Arc, Mutex};
+
+    #[test]
+    fn load_pool_from_store_matches_python() {
+        let data: Value = serde_json::from_str(include_str!(
+            "../../../tools/credential-pool-load-goldens.json"
+        ))
+        .unwrap();
+        for row in data["rows"].as_array().unwrap() {
+            let name = row["name"].as_str().unwrap();
+            let provider = row["provider"].as_str().unwrap();
+            let fixture = &row["fixture"];
+
+            // Write the fixture rows into a temp profile auth.json.
+            let dir = std::env::temp_dir().join(format!(
+                "hermes_loadpool_{}_{}_{}",
+                name,
+                std::process::id(),
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .unwrap()
+                    .as_nanos()
+            ));
+            std::fs::create_dir_all(&dir).unwrap();
+            let profile = dir.join("auth.json");
+            let store = serde_json::json!({"credential_pool": {provider: fixture}});
+            std::fs::write(&profile, serde_json::to_string(&store).unwrap()).unwrap();
+
+            type Log = Arc<Mutex<Vec<(usize, Vec<String>)>>>;
+            let log: Log = Arc::new(Mutex::new(Vec::new()));
+            let sink_log = log.clone();
+            let pool = super::load_pool_from_store(
+                &profile,
+                None,
+                provider,
+                "fill_first",
+                Some(Box::new(move |_p, snapshot, removed| {
+                    sink_log.lock().unwrap().push((snapshot.len(), removed));
+                })),
+            );
+            let mut pool = pool.unwrap();
+
+            assert_eq!(
+                pool.has_credentials(),
+                row["has_credentials"].as_bool().unwrap(),
+                "{name}: has_credentials"
+            );
+            assert_eq!(
+                pool.peek_runtime_key().as_deref(),
+                row["peek_key"].as_str(),
+                "{name}: peek_key"
+            );
+
+            // entries_out: assert (priority, source, last_status, access_token)
+            // positionally; assert id too when the fixture row carried one
+            // (a minted id for an id-less row is intentionally not pinned).
+            let fixture_had_ids: Vec<bool> = fixture
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|r| r.get("id").is_some())
+                .collect();
+            let want = row["entries_out"].as_array().unwrap();
+            let got = pool.entries();
+            assert_eq!(got.len(), want.len(), "{name}: entry count");
+            // Pool sorts by priority; the golden entries_out is already in
+            // pool order (Python entries() after sort).
+            for (i, (g, w)) in got.iter().zip(want).enumerate() {
+                assert_eq!(
+                    g.priority(),
+                    w["priority"].as_i64().unwrap(),
+                    "{name}[{i}]: priority"
+                );
+                assert_eq!(
+                    g.source(),
+                    w["source"].as_str().unwrap(),
+                    "{name}[{i}]: source"
+                );
+                assert_eq!(
+                    g.last_status(),
+                    w["last_status"].as_str(),
+                    "{name}[{i}]: last_status"
+                );
+                assert_eq!(
+                    g.access_token(),
+                    w["access_token"].as_str().unwrap(),
+                    "{name}[{i}]: access_token"
+                );
+                // Minted ids differ from the oracle's uuid; only pin real ones.
+                if fixture_had_ids.get(i).copied().unwrap_or(false) {
+                    assert_eq!(g.id(), w["id"].as_str().unwrap(), "{name}[{i}]: id");
+                }
+            }
+
+            // persist sequence: (count, removed_ids) per call.
+            let got_persist: Vec<(usize, Vec<String>)> = log.lock().unwrap().clone();
+            let want_persist: Vec<(usize, Vec<String>)> = row["persisted"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|p| {
+                    (
+                        p["count"].as_u64().unwrap() as usize,
+                        p["removed_ids"]
+                            .as_array()
+                            .unwrap()
+                            .iter()
+                            .map(|v| v.as_str().unwrap().to_string())
+                            .collect(),
+                    )
+                })
+                .collect();
+            assert_eq!(got_persist, want_persist, "{name}: persisted");
+
+            let _ = std::fs::remove_dir_all(&dir);
+        }
+    }
 
     #[test]
     fn pool_selection_matches_python() {
