@@ -1,0 +1,382 @@
+[
+  {
+    "model": "",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "kimi",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "kimi",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "kimi",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "kimi",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "KIMI-K2",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "KIMI-K2",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "KIMI-K2",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "KIMI-K2",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "moonshot/kimi-k2.5",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "moonshot/kimi-k2.5",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "moonshot/kimi-k2.5",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "moonshot/kimi-k2.5",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "kimi-other",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "kimi-other",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "kimi-other",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "kimi-other",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "kimiko",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "kimiko",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "kimiko",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "kimiko",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "moonshot-v1",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "moonshot-v1",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "moonshot-v1",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "moonshot-v1",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large-thinking",
+    "base_url": null,
+    "temperature": 0.5
+  },
+  {
+    "model": "trinity-large-thinking",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": "trinity-large-thinking",
+    "base_url": "http://localhost:8080",
+    "temperature": 0.5
+  },
+  {
+    "model": "trinity-large-thinking",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": "arcee-ai/trinity-large-thinking",
+    "base_url": null,
+    "temperature": 0.5
+  },
+  {
+    "model": "arcee-ai/trinity-large-thinking",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": "arcee-ai/trinity-large-thinking",
+    "base_url": "http://localhost:8080",
+    "temperature": 0.5
+  },
+  {
+    "model": "arcee-ai/trinity-large-thinking",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": "ARCEE/TRINITY-LARGE-THINKING",
+    "base_url": null,
+    "temperature": 0.5
+  },
+  {
+    "model": "ARCEE/TRINITY-LARGE-THINKING",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": "ARCEE/TRINITY-LARGE-THINKING",
+    "base_url": "http://localhost:8080",
+    "temperature": 0.5
+  },
+  {
+    "model": "ARCEE/TRINITY-LARGE-THINKING",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": "trinity-large-thinking:free",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "trinity-large-thinking:free",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large-thinking:free",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large-thinking:free",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large-thinking-v2",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "trinity-large-thinking-v2",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large-thinking-v2",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large-thinking-v2",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "prefix/trinity-large-thinking/",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "prefix/trinity-large-thinking/",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "prefix/trinity-large-thinking/",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "prefix/trinity-large-thinking/",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "trinity-large",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "trinity-large",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "gpt-5",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "gpt-5",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "gpt-5",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "gpt-5",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "\u001cArcee/trinity-large-thinking\u001f",
+    "base_url": null,
+    "temperature": 0.5
+  },
+  {
+    "model": "\u001cArcee/trinity-large-thinking\u001f",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": "\u001cArcee/trinity-large-thinking\u001f",
+    "base_url": "http://localhost:8080",
+    "temperature": 0.5
+  },
+  {
+    "model": "\u001cArcee/trinity-large-thinking\u001f",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": " arcee/trinity-large-thinking ",
+    "base_url": null,
+    "temperature": 0.5
+  },
+  {
+    "model": " arcee/trinity-large-thinking ",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": " arcee/trinity-large-thinking ",
+    "base_url": "http://localhost:8080",
+    "temperature": 0.5
+  },
+  {
+    "model": " arcee/trinity-large-thinking ",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": 0.5
+  },
+  {
+    "model": "​trinity-large-thinking",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "​trinity-large-thinking",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "​trinity-large-thinking",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "​trinity-large-thinking",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  },
+  {
+    "model": "arcee/ trinity-large-thinking",
+    "base_url": null,
+    "temperature": null
+  },
+  {
+    "model": "arcee/ trinity-large-thinking",
+    "base_url": "https://openrouter.ai/api/v1",
+    "temperature": null
+  },
+  {
+    "model": "arcee/ trinity-large-thinking",
+    "base_url": "http://localhost:8080",
+    "temperature": null
+  },
+  {
+    "model": "arcee/ trinity-large-thinking",
+    "base_url": "https://api.moonshot.ai/v1",
+    "temperature": null
+  }
+]

@@ -1,0 +1,87 @@
+[
+  {
+    "content": "",
+    "marker": false,
+    "expected": ""
+  },
+  {
+    "content": "[memory]",
+    "marker": true,
+    "expected": ""
+  },
+  {
+    "content": " [current_time]\n",
+    "marker": true,
+    "expected": ""
+  },
+  {
+    "content": "[_]",
+    "marker": true,
+    "expected": ""
+  },
+  {
+    "content": "[report.md]",
+    "marker": true,
+    "expected": ""
+  },
+  {
+    "content": "[foo-bar_1]",
+    "marker": true,
+    "expected": ""
+  },
+  {
+    "content": "[1foo]",
+    "marker": false,
+    "expected": "[1foo]"
+  },
+  {
+    "content": "[.]",
+    "marker": false,
+    "expected": "[.]"
+  },
+  {
+    "content": "[]",
+    "marker": false,
+    "expected": "[]"
+  },
+  {
+    "content": "[猫]",
+    "marker": false,
+    "expected": "[猫]"
+  },
+  {
+    "content": "[memory] done",
+    "marker": false,
+    "expected": "[memory] done"
+  },
+  {
+    "content": "done [memory]",
+    "marker": false,
+    "expected": "done [memory]"
+  },
+  {
+    "content": "[memory][todo]",
+    "marker": false,
+    "expected": "[memory][todo]"
+  },
+  {
+    "content": "[memory\n]",
+    "marker": false,
+    "expected": "[memory\n]"
+  },
+  {
+    "content": "\u001c[memory]\u001f",
+    "marker": true,
+    "expected": ""
+  },
+  {
+    "content": "​[memory]",
+    "marker": false,
+    "expected": "​[memory]"
+  },
+  {
+    "content": "[a/b]",
+    "marker": false,
+    "expected": "[a/b]"
+  }
+]

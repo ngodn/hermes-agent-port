@@ -27,6 +27,17 @@ use tokio::sync::mpsc;
 use crate::agent::AgentClient;
 use crate::native_tools::{parse_message_step, ChatModel, Step};
 
+/// Summary requests have no caller temperature default. The Python auxiliary
+/// policy omits temperature for Kimi and unspecified models, and fixes Arcee
+/// Trinity Large Thinking at 0.5. Provider profile defaults belong to main turns.
+fn summary_temperature(model: &str) -> Option<f64> {
+    let normalized = model
+        .trim_matches(crate::python_value::python_whitespace)
+        .to_lowercase();
+    let bare = normalized.rsplit('/').next().unwrap_or_default();
+    (bare == "trinity-large-thinking").then_some(0.5)
+}
+
 /// One decoded SSE line.
 #[derive(Debug, PartialEq)]
 pub enum SseEvent {
@@ -191,6 +202,8 @@ pub struct NativeAgentClient {
     output_cap: Option<Value>,
     request_overrides: serde_json::Map<String, Value>,
     cache_scope: Option<String>,
+    turn_limit: usize,
+    max_concurrent_children: usize,
     /// When non-empty, turns run through the tool-calling loop (non-streaming);
     /// when empty, run_turn streams a plain completion.
     tools: Vec<std::sync::Arc<dyn crate::native_tools::Tool>>,
@@ -218,6 +231,8 @@ impl NativeAgentClient {
             output_cap: None,
             request_overrides: Default::default(),
             cache_scope: None,
+            turn_limit: crate::turn_limit::UNLIMITED,
+            max_concurrent_children: 10,
             tools: Vec::new(),
         })
     }
@@ -291,10 +306,28 @@ impl NativeAgentClient {
                 );
             let mut wire = messages.clone();
             for message in &mut wire {
+                crate::chat_message_projection::substitute_api_content(message);
                 crate::reasoning_replay::apply(message, needs_echo);
                 if let Some(object) = message.as_object_mut() {
                     object.shift_remove("reasoning");
                     object.shift_remove("finish_reason");
+                }
+            }
+            let wire = crate::tool_pairing::sanitize(&wire);
+            let mut wire = crate::message_repair::repair(&wire, true);
+            // Keep raw malformed arguments in the execution history. The wire
+            // copy retains the prior empty-object fallback until the complete
+            // Python argument-string repair pipeline is integrated.
+            for message in &mut wire {
+                if let Some(calls) = message.get_mut("tool_calls").and_then(Value::as_array_mut) {
+                    for call in calls {
+                        if call["function"]["arguments"]
+                            .as_str()
+                            .is_some_and(|raw| serde_json::from_str::<Value>(raw).is_err())
+                        {
+                            call["function"]["arguments"] = json!("{}");
+                        }
+                    }
                 }
             }
             body["messages"] =
@@ -383,8 +416,17 @@ impl NativeAgentClient {
         self
     }
 
-    /// The maximum tool-loop iterations before giving up.
-    const MAX_TOOL_ITERS: usize = 8;
+    /// Apply the configured delegation batch cap, with Python's minimum of one.
+    pub fn with_max_concurrent_children(mut self, limit: usize) -> Self {
+        self.max_concurrent_children = limit.max(1);
+        self
+    }
+
+    /// Set the resolved per-turn API iteration cap from agent.max_turns.
+    pub fn with_turn_limit(mut self, limit: usize) -> Self {
+        self.turn_limit = limit;
+        self
+    }
 }
 
 #[async_trait]
@@ -416,7 +458,7 @@ impl AgentClient for NativeAgentClient {
                 history,
                 &content,
                 &events,
-                Self::MAX_TOOL_ITERS,
+                client.turn_limit,
             )
             .await;
         }
@@ -525,6 +567,9 @@ where
 
 #[async_trait]
 impl ChatModel for NativeAgentClient {
+    fn max_concurrent_children(&self) -> usize {
+        self.max_concurrent_children
+    }
     /// One non-streaming completion with tools. Tool calls arrive whole in the
     /// message, which is simpler and more reliable than reassembling streamed
     /// tool-call deltas; the streaming path ([`AgentClient::run_turn`]) stays
@@ -536,6 +581,18 @@ impl ChatModel for NativeAgentClient {
             body["tools"] = Value::Array(tools.to_vec());
         }
         self.apply_provider_extras(&mut body)?;
+        if tools.is_empty() {
+            // Summary calls cannot regain tool access through request overrides.
+            if let Some(body) = body.as_object_mut() {
+                body.shift_remove("tools");
+                body.shift_remove("tool_choice");
+                body.shift_remove("parallel_tool_calls");
+                body.shift_remove("temperature");
+                if let Some(temperature) = summary_temperature(&self.model) {
+                    body.insert("temperature".into(), json!(temperature));
+                }
+            }
+        }
         let resp = self
             .client
             .post(&url)
@@ -562,12 +619,268 @@ impl ChatModel for NativeAgentClient {
             .and_then(|c| c.get(0))
             .and_then(|c| c.get("message"))
             .ok_or_else(|| Error::Other("native agent step: no choices[0].message".into()))?;
-        Ok(parse_message_step(message))
+        // Name repair precedes assistant-message construction in Python, so
+        // missing-ID hashes must use the repaired name too.
+        let mut message = message.clone();
+        let valid_names: Vec<String> = tools
+            .iter()
+            .filter_map(|tool| tool["function"]["name"].as_str().map(str::to_owned))
+            .collect();
+        if let Some(calls) = message.get_mut("tool_calls").and_then(Value::as_array_mut) {
+            for call in calls {
+                if let Some(name) = call["function"]["name"].as_str() {
+                    if !valid_names.iter().any(|valid| valid == name) {
+                        if let Some(repaired) = crate::tool_name_repair::repair(name, &valid_names)
+                        {
+                            call["function"]["name"] = json!(repaired);
+                        }
+                    }
+                }
+            }
+        }
+        Ok(parse_message_step(&message))
     }
 }
 
 #[cfg(test)]
 mod tests {
+    #[tokio::test]
+    async fn tool_pairing_repairs_main_and_summary_http_requests() {
+        use crate::native_tools::ChatModel;
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+        let captures = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = captures.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                captured.lock().unwrap().push(body);
+                async {
+                    Json(json!({"choices":[{"message":{"role":"assistant","content":"done"}}]}))
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let client =
+            super::NativeAgentClient::new("model", "key", format!("http://{address}")).unwrap();
+        let call = |id: &str| json!({"id":id,"type":"function","function":{"name":"lookup","arguments":"{}"}});
+        let messages = vec![
+            json!({"role":"debug","content":"not for provider"}),
+            json!({"role":"user","content":"question"}),
+            json!({"role":"tool","tool_call_id":"a","content":"orphan"}),
+            json!({"role":"assistant","tool_calls":[call("a"), call("b")]}),
+            json!({"role":"tool","tool_call_id":"b","name":"internal_name","content":"B"}),
+            json!({"role":"user","content":"interrupted"}),
+            json!({"role":"tool","tool_call_id":"a","content":"displaced"}),
+            json!({"role":"assistant","tool_calls":[call("a")]}),
+            json!({"role":"tool","tool_call_id":"a","name":"lookup","content":"fresh result"}),
+        ];
+        let original = messages.clone();
+        client.step(&messages, &[json!({"type":"function","function":{"name":"lookup","parameters":{"type":"object"}}})]).await.unwrap();
+        let mut summary = messages.clone();
+        summary.push(json!({"role":"user","content":"summarize"}));
+        client.step(&summary, &[]).await.unwrap();
+        let captures = captures.lock().unwrap();
+        let repaired = captures[0]["messages"].as_array().unwrap();
+        assert_eq!(repaired.len(), 7);
+        assert_eq!(repaired[2]["tool_call_id"], "b");
+        assert_eq!(repaired[2]["name"], "lookup");
+        assert_eq!(repaired[3]["tool_call_id"], "a");
+        assert!(repaired[3]["content"]
+            .as_str()
+            .unwrap()
+            .contains("Result unavailable"));
+        assert_eq!(repaired[4]["role"], "user");
+        assert_eq!(repaired[6]["content"], "fresh result");
+        assert_eq!(
+            &captures[1]["messages"].as_array().unwrap()[..repaired.len()],
+            repaired.as_slice()
+        );
+        assert_eq!(messages, original);
+    }
+
+    #[tokio::test]
+    async fn api_content_is_restored_on_main_and_summary_requests() {
+        use crate::native_tools::ChatModel;
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+        let captures = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = captures.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                captured.lock().unwrap().push(body);
+                async {
+                    Json(json!({"choices":[{"message":{"role":"assistant","content":"done"}}]}))
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let client =
+            super::NativeAgentClient::new("model", "key", format!("http://{address}")).unwrap();
+        let messages = vec![
+            json!({"role":"system","content":"system prefix","api_content":"must not replace"}),
+            json!({"role":"assistant","content":null}),
+            json!({"role":"user","content":"clean user","api_content":"user with original notes"}),
+            json!({"role":"assistant","content":"healed placeholder","_thinking_prefill":true}),
+            json!({"role":"user","content":[{"type":"image_url","image_url":{"url":"data:image/png;base64,AA=="}}]}),
+            json!({"role":"assistant","content":"clean assistant","api_content":"previous wire answer"}),
+        ];
+        let original = messages.clone();
+        client.step(&messages, &[json!({"type":"function","function":{"name":"current_time","parameters":{"type":"object"}}})]).await.unwrap();
+        let mut summary_messages = messages.clone();
+        summary_messages.push(json!({"role":"user","content":"summarize"}));
+        client.step(&summary_messages, &[]).await.unwrap();
+        let captured = captures.lock().unwrap();
+        let first = captured[0]["messages"].as_array().unwrap();
+        assert_eq!(first[0]["content"], "system prefix");
+        assert_eq!(first.len(), 4);
+        assert_eq!(first[1]["content"], "[response interrupted]");
+        assert_eq!(
+            first[2]["content"],
+            json!([
+                {"type":"text","text":"user with original notes"},
+                {"type":"image_url","image_url":{"url":"data:image/png;base64,AA=="}}
+            ])
+        );
+        assert_eq!(first[3]["content"], "previous wire answer");
+        assert!(first
+            .iter()
+            .all(|message| message.get("api_content").is_none()));
+        assert_eq!(
+            &captured[1]["messages"].as_array().unwrap()[..first.len()],
+            first.as_slice()
+        );
+        assert_eq!(messages, original);
+        assert_eq!(&summary_messages[..messages.len()], messages.as_slice());
+    }
+
+    #[test]
+    fn summary_temperature_matches_python_auxiliary_policy() {
+        let rows: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/summary-temperature-goldens.json"
+        ))
+        .unwrap();
+        for row in rows.as_array().unwrap() {
+            assert_eq!(
+                super::summary_temperature(row["model"].as_str().unwrap()),
+                row["temperature"].as_f64(),
+                "{row}"
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn configured_turn_limit_reaches_native_http_loop() {
+        use crate::agent::AgentClient;
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+        let count = Arc::new(AtomicUsize::new(0));
+        let captured = count.clone();
+        let app = Router::new().route("/chat/completions", post(move |Json(body): Json<Value>| {
+            captured.fetch_add(1, Ordering::Relaxed);
+            async move {
+                if body.get("tools").is_some() {
+                    assert_eq!(body["temperature"], json!(0.9));
+                } else if body["model"] == "arcee-ai/trinity-large-thinking" {
+                    assert_eq!(body["temperature"], json!(0.5));
+                } else {
+                    assert!(body.get("temperature").is_none());
+                }
+                let completed = body["messages"].as_array().unwrap().iter().filter(|m| m["role"] == "tool").count();
+                if completed < 9 && body.get("tools").is_some() {
+                    // A valid call without an ID must still execute; the next
+                    // request then carries its deterministic call/result pair.
+                    let mut call = json!({"type":"function", "function":{"name":"current_time","arguments":"{}"}});
+                    if completed > 0 { call["id"] = json!(format!("call-{completed}")); }
+                    else { call["function"]["name"] = json!("CurrentTimeTool_tool"); }
+                    Json(json!({"choices":[{"message":{"role":"assistant","tool_calls":[call]}}]}))
+                } else {
+                    Json(json!({"choices":[{"message":{"role":"assistant","content":"finished"}}]}))
+                }
+            }
+        }));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let base = super::NativeAgentClient::new("model", "test", format!("http://{address}"))
+            .unwrap()
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_request_overrides(serde_json::Map::from_iter([(
+                "temperature".into(),
+                json!(0.9),
+            )]));
+        let message = serde_json::from_value(
+            json!({"platform":"cli","channel_id":"a","sender_id":"s","text":"work"}),
+        )
+        .unwrap();
+        for (model, config, expected_calls) in [
+            ("model", json!({}), 10),
+            ("model", json!({"agent":{"max_turns":3}}), 4),
+            ("moonshot/kimi-k2", json!({"agent":{"max_turns":3}}), 4),
+            (
+                "arcee-ai/trinity-large-thinking",
+                json!({"agent":{"max_turns":3}}),
+                4,
+            ),
+        ] {
+            count.store(0, Ordering::Relaxed);
+            let mut client = base
+                .clone()
+                .with_turn_limit(crate::turn_limit::gateway(&config, None).unwrap());
+            client.model = model.into();
+            let (tx, mut rx) = tokio::sync::mpsc::channel(64);
+            let result = client.run_turn(&message, &[], tx).await;
+            assert!(result.is_ok());
+            assert_eq!(count.load(Ordering::Relaxed), expected_calls);
+            let mut chunks = Vec::new();
+            while let Some(event) = rx.recv().await {
+                match event {
+                    hermes_core::StreamEvent::MessageChunk { text } => chunks.push(text),
+                    hermes_core::StreamEvent::ToolCallFinished { ok, .. } => {
+                        assert!(ok, "repaired clock call must execute")
+                    }
+                    _ => {}
+                }
+            }
+            assert_eq!(chunks, ["finished"]);
+        }
+    }
+
     #[tokio::test]
     async fn external_tool_results_are_framed_once_before_wire_projection() {
         use axum::{routing::post, Json, Router};

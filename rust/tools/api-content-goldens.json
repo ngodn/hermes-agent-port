@@ -1,0 +1,2126 @@
+[
+  {
+    "input": {
+      "role": "user",
+      "content": "clean",
+      "api_content": null
+    },
+    "expected": {
+      "role": "user",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": null
+    },
+    "expected": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": "clean",
+      "api_content": ""
+    },
+    "expected": {
+      "role": "user",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": ""
+    },
+    "expected": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": "clean",
+      "api_content": " "
+    },
+    "expected": {
+      "role": "user",
+      "content": " "
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": " "
+    },
+    "expected": {
+      "role": "user",
+      "content": " "
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": "clean",
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "user",
+      "content": "previous wire text"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "user",
+      "content": "previous wire text"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": "clean",
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "user",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": "clean",
+      "api_content": {}
+    },
+    "expected": {
+      "role": "user",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": {}
+    },
+    "expected": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": "clean",
+      "api_content": false
+    },
+    "expected": {
+      "role": "user",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": false
+    },
+    "expected": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": "clean",
+      "api_content": 12
+    },
+    "expected": {
+      "role": "user",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": 12
+    },
+    "expected": {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean",
+      "api_content": null
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": null
+    },
+    "expected": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean",
+      "api_content": ""
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": ""
+    },
+    "expected": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean",
+      "api_content": " "
+    },
+    "expected": {
+      "role": "assistant",
+      "content": " "
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": " "
+    },
+    "expected": {
+      "role": "assistant",
+      "content": " "
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean",
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "previous wire text"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "previous wire text"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean",
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean",
+      "api_content": {}
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": {}
+    },
+    "expected": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean",
+      "api_content": false
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": false
+    },
+    "expected": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean",
+      "api_content": 12
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": 12
+    },
+    "expected": {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": "clean",
+      "api_content": null
+    },
+    "expected": {
+      "role": "tool",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": null
+    },
+    "expected": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": "clean",
+      "api_content": ""
+    },
+    "expected": {
+      "role": "tool",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": ""
+    },
+    "expected": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": "clean",
+      "api_content": " "
+    },
+    "expected": {
+      "role": "tool",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": " "
+    },
+    "expected": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": "clean",
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "tool",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": "clean",
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "tool",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": "clean",
+      "api_content": {}
+    },
+    "expected": {
+      "role": "tool",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": {}
+    },
+    "expected": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": "clean",
+      "api_content": false
+    },
+    "expected": {
+      "role": "tool",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": false
+    },
+    "expected": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": "clean",
+      "api_content": 12
+    },
+    "expected": {
+      "role": "tool",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": 12
+    },
+    "expected": {
+      "role": "tool",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": "clean",
+      "api_content": null
+    },
+    "expected": {
+      "role": "system",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": null
+    },
+    "expected": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": "clean",
+      "api_content": ""
+    },
+    "expected": {
+      "role": "system",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": ""
+    },
+    "expected": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": "clean",
+      "api_content": " "
+    },
+    "expected": {
+      "role": "system",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": " "
+    },
+    "expected": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": "clean",
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "system",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": "clean",
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "system",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": "clean",
+      "api_content": {}
+    },
+    "expected": {
+      "role": "system",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": {}
+    },
+    "expected": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": "clean",
+      "api_content": false
+    },
+    "expected": {
+      "role": "system",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": false
+    },
+    "expected": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": "clean",
+      "api_content": 12
+    },
+    "expected": {
+      "role": "system",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": 12
+    },
+    "expected": {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": "clean",
+      "api_content": null
+    },
+    "expected": {
+      "role": "developer",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": null
+    },
+    "expected": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": "clean",
+      "api_content": ""
+    },
+    "expected": {
+      "role": "developer",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": ""
+    },
+    "expected": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": "clean",
+      "api_content": " "
+    },
+    "expected": {
+      "role": "developer",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": " "
+    },
+    "expected": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": "clean",
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "developer",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": "clean",
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "developer",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": "clean",
+      "api_content": {}
+    },
+    "expected": {
+      "role": "developer",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": {}
+    },
+    "expected": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": "clean",
+      "api_content": false
+    },
+    "expected": {
+      "role": "developer",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": false
+    },
+    "expected": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": "clean",
+      "api_content": 12
+    },
+    "expected": {
+      "role": "developer",
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": 12
+    },
+    "expected": {
+      "role": "developer",
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": "clean",
+      "api_content": null
+    },
+    "expected": {
+      "role": null,
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": null
+    },
+    "expected": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": "clean",
+      "api_content": ""
+    },
+    "expected": {
+      "role": null,
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": ""
+    },
+    "expected": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": "clean",
+      "api_content": " "
+    },
+    "expected": {
+      "role": null,
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": " "
+    },
+    "expected": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": "clean",
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": null,
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": "previous wire text"
+    },
+    "expected": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": "clean",
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": null,
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": [
+        "part"
+      ]
+    },
+    "expected": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": "clean",
+      "api_content": {}
+    },
+    "expected": {
+      "role": null,
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": {}
+    },
+    "expected": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": "clean",
+      "api_content": false
+    },
+    "expected": {
+      "role": null,
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": false
+    },
+    "expected": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": "clean",
+      "api_content": 12
+    },
+    "expected": {
+      "role": null,
+      "content": "clean"
+    }
+  },
+  {
+    "input": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ],
+      "api_content": 12
+    },
+    "expected": {
+      "role": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "clean"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,AA=="
+          }
+        }
+      ]
+    }
+  },
+  {
+    "input": {},
+    "expected": {}
+  },
+  {
+    "input": {
+      "role": "user"
+    },
+    "expected": {
+      "role": "user"
+    }
+  },
+  {
+    "input": {
+      "role": "user",
+      "api_content": "stored"
+    },
+    "expected": {
+      "role": "user",
+      "content": "stored"
+    }
+  },
+  {
+    "input": {
+      "role": "assistant",
+      "content": "clean"
+    },
+    "expected": {
+      "role": "assistant",
+      "content": "clean"
+    }
+  }
+]

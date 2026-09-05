@@ -1,0 +1,2264 @@
+[
+  {
+    "calls": [
+      {
+        "id": "a",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d2",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d3",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d2",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d3",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a ",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a ",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d2",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d3",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a ",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a ",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d2",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d3",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a ",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a ",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a ",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a ",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a ",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a ",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a ",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d2|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d3|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d2|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a_d3|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a|item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a|item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2|item",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3|item",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a|item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a|item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2|item",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3|item",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "a|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a | item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a | item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a _d2| item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a _d3| item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a | item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a | item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a _d2| item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "a _d3| item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a | item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a | item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2| item",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3| item",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a | item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a | item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2| item",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3| item",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " a | item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": " a | item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " a | item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "|item",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2|item",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3|item",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2|item",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3|item",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "",
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": "",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": null,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": null,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": null,
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": null,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": 12,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": null,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": 12,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": 12,
+        "call_id": "pair",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d2",
+        "call_id": "pair_d2",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "pair_d3",
+        "call_id": "pair_d3",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "id": 12,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": 12,
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a"
+      },
+      {
+        "id": "a_d2"
+      },
+      {
+        "id": "a"
+      },
+      {
+        "id": "a"
+      }
+    ],
+    "expected": [
+      {
+        "id": "a"
+      },
+      {
+        "id": "a_d2"
+      },
+      {
+        "id": "a_d3"
+      },
+      {
+        "id": "a_d4"
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a"
+      },
+      {
+        "id": "a"
+      },
+      {
+        "id": "a_d2"
+      }
+    ],
+    "expected": [
+      {
+        "id": "a"
+      },
+      {
+        "id": "a_d2"
+      },
+      {
+        "id": "a_d2_d2"
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a|one"
+      },
+      {
+        "id": "a|two"
+      }
+    ],
+    "expected": [
+      {
+        "id": "a|one"
+      },
+      {
+        "id": "a_d2|two"
+      }
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "a"
+      },
+      {
+        "id": "b"
+      },
+      {
+        "id": "a"
+      },
+      {
+        "id": "b"
+      }
+    ],
+    "expected": [
+      {
+        "id": "a"
+      },
+      {
+        "id": "b"
+      },
+      {
+        "id": "a_d2"
+      },
+      {
+        "id": "b_d2"
+      }
+    ]
+  }
+]

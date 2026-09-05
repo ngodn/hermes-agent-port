@@ -28,6 +28,7 @@ mod control_socket;
 mod custom_request_config;
 mod cwd_placeholder;
 mod dead_targets;
+mod delegation_policy;
 mod delivery;
 mod delivery_ledger;
 mod discord;
@@ -64,6 +65,7 @@ mod media_repair;
 mod memory_monitor;
 mod memory_status;
 mod message;
+mod message_repair;
 mod message_timestamps;
 mod mime_types;
 mod mirror;
@@ -123,9 +125,13 @@ mod stream_consumer;
 mod systemd_notify;
 mod telegram;
 mod threat_patterns;
+mod tool_arguments;
+mod tool_name_repair;
+mod tool_pairing;
 mod tool_result;
 mod transcription_enrichment;
 mod turn_lease;
+mod turn_limit;
 mod vision_enrichment;
 mod wake;
 mod webhook_filters;
@@ -229,6 +235,8 @@ fn build_agent_client(
 
         match (key, model) {
             (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone()).and_then(|client| {
+                let limit = turn_limit::gateway(user_config, std::env::var("HERMES_MAX_ITERATIONS").ok().as_deref())?;
+                let client = client.with_turn_limit(limit).with_max_concurrent_children(delegation_policy::max_children(user_config, std::env::var("DELEGATION_MAX_CONCURRENT_CHILDREN").ok().as_deref()));
                 match &profile { Some(profile) => client.with_provider_profile(profile), None => Ok(client) }
             }) {
                 Ok(mut c) => {

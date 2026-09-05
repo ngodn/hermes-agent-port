@@ -1,0 +1,157 @@
+[
+  {
+    "raw": null,
+    "arguments": {},
+    "error": null,
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "",
+    "arguments": {},
+    "error": null,
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": " ",
+    "arguments": {},
+    "error": null,
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "{}",
+    "arguments": {},
+    "error": null,
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "{\"x\":1}",
+    "arguments": {
+      "x": 1
+    },
+    "error": null,
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "{\"x\":",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": true,
+    "truncated": true
+  },
+  {
+    "raw": "{\"x\":1,}",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": true,
+    "truncated": false
+  },
+  {
+    "raw": "[]",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "[1]",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "null",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "false",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "12",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "\"text\"",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "None",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": true,
+    "truncated": true
+  },
+  {
+    "raw": true,
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": true,
+    "truncated": true
+  },
+  {
+    "raw": 12,
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": {},
+    "arguments": {},
+    "error": null,
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": [],
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "{ \"nested\": {\"unicode\": \"猫\"} }",
+    "arguments": {
+      "nested": {
+        "unicode": "猫"
+      }
+    },
+    "error": null,
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "{\"a\":1,\"a\":2}",
+    "arguments": {
+      "a": 2
+    },
+    "error": null,
+    "syntax_invalid": false,
+    "truncated": false
+  },
+  {
+    "raw": "{\"x\":\"line\nbreak\"}",
+    "arguments": {},
+    "error": "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}",
+    "syntax_invalid": true,
+    "truncated": false
+  }
+]

@@ -142,6 +142,29 @@ fn sanitize_message(msg: &Map<String, Value>, strip_extra_content: bool) -> Map<
     out
 }
 
+/// Restore the content previously sent to the provider before stripping
+/// bookkeeping fields. Python's turn_context.substitute_api_content only
+/// restores nonempty strings on user and assistant messages. Tool/system
+/// sidecars are removed without changing their content.
+///
+/// Call this on the outgoing copy, so persisted clean content stays available.
+pub fn substitute_api_content(message: &mut Value) {
+    let Some(message) = message.as_object_mut() else {
+        return;
+    };
+    let sidecar = message.shift_remove("api_content");
+    if matches!(
+        message.get("role").and_then(Value::as_str),
+        Some("user" | "assistant")
+    ) {
+        if let Some(Value::String(content)) = sidecar {
+            if !content.is_empty() {
+                message.insert("content".into(), Value::String(content));
+            }
+        }
+    }
+}
+
 /// Project already-OpenAI-shaped `messages` onto the strict Chat Completions
 /// wire schema for `model`, stripping Hermes-internal fields. Non-object entries
 /// pass through unchanged. Whether `extra_content` (Gemini thought_signature) is
@@ -161,6 +184,17 @@ pub fn convert(messages: &[Value], model: &str) -> Vec<Value> {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn api_content_substitution_matches_python() {
+        let rows: Value =
+            serde_json::from_str(include_str!("../../../tools/api-content-goldens.json")).unwrap();
+        for row in rows.as_array().unwrap() {
+            let mut message = row["input"].clone();
+            substitute_api_content(&mut message);
+            assert_eq!(message, row["expected"], "{row}");
+        }
+    }
 
     #[derive(serde::Deserialize)]
     struct Golden {

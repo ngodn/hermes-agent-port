@@ -1,0 +1,3746 @@
+[
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": null,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": null,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": null,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": null,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": null,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": null,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": null,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": null,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": " ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": " ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": " ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": " ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": " ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "\u001c\u001f",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "\u001c\u001f",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "id",
+      "id_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "id",
+      "id_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "id",
+      "id_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "id",
+      "id_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "id",
+      "id_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "id",
+      "id_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "id",
+      "id_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "id",
+      "id_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": " id ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": " id ",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call",
+      "call_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call",
+      "call_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call",
+      "call_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call",
+      "call_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call",
+      "call_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call",
+      "call_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call",
+      "call_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call",
+      "call_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "call|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "call|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "|item",
+      "|item"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "|item",
+      "|item"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "|item",
+      "|item"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "|item",
+      "|item"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "|item",
+      "|item"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "|item",
+      "|item"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "|item",
+      "|item"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "|item",
+      "|item"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "|item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "fc_item",
+      "fc_item_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "fc_item",
+      "fc_item_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "fc_item",
+      "fc_item_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "fc_item",
+      "fc_item_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "fc_item",
+      "fc_item_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "fc_item",
+      "fc_item_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "fc_item",
+      "fc_item_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "fc_item",
+      "fc_item_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "fc_item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": "fc_item",
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": 12,
+        "call_id": null,
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "call_682bb46f817d",
+      "call_85940f65a9c4"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "call_cc83d8d78638",
+      "call_e1c4aa538ed2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "call_6078d55e3ca2",
+      "call_f045e5abe276"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": 12,
+        "call_id": " pair ",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{}"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "{ \"q\": \"猫\" }"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": "broken JSON"
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      },
+      {
+        "id": 12,
+        "call_id": "pair|item",
+        "type": "function",
+        "function": {
+          "name": "lookup",
+          "arguments": null
+        }
+      }
+    ],
+    "ids": [
+      "pair|item",
+      "pair_d2"
+    ]
+  }
+]

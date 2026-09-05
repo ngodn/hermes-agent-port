@@ -1,0 +1,2205 @@
+[
+  {
+    "name": "reasoning-string-null-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "pondering"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-content-empty-string-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "pondering"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-whitespace-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": "   \n\t ",
+        "reasoning": "pondering"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-empty-list-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [],
+        "reasoning": "pondering"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "thinking-block-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "hmm"
+          }
+        ],
+        "reasoning": "pondering"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "redacted-thinking-block-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "redacted_thinking"
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "blank-text-block-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "   "
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "thinking-plus-blank-text-blocks",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "h"
+          },
+          {
+            "type": "text",
+            "text": ""
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "prefill-flag-beats-visible-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": "visible",
+        "_thinking_prefill": true
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "prefill-flag-null-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "_thinking_prefill": true
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-content-blank-falls-to-reasoning",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "",
+        "reasoning": "real"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-content-wins-over-reasoning",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "real",
+        "reasoning": "other"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-details-nonempty",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": [
+          {
+            "format": "x"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-details-multi",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": [
+          {
+            "a": 1
+          },
+          {
+            "b": 2
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "codex-reasoning-item-drop-true",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "reasoning",
+            "id": "r1"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "codex-reasoning-among-junk-drop-true",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "message"
+          },
+          {
+            "type": "reasoning"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before\n\nafter"
+      }
+    ]
+  },
+  {
+    "name": "truthy-tool-calls-with-reasoning",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "function": {
+              "name": "f"
+            }
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "function": {
+              "name": "f"
+            }
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "truthy-tool-calls-string",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x",
+        "tool_calls": "weird"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x",
+        "tool_calls": "weird"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "visible-string-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": "hello there",
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": "hello there",
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "text-block-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "hi"
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "hi"
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "tool-use-block-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "name": "f"
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "name": "f"
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "image-block-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "image"
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "image"
+          }
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "nondict-truthy-block",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          "raw"
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          "raw"
+        ],
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "nondict-falsy-blocks-no-reasoning",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          "",
+          0,
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": [
+          "",
+          0,
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "int-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": 5,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": 5,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "dict-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": {
+          "k": "v"
+        },
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": {
+          "k": "v"
+        },
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "empty-turn-null-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "empty-turn-blank-string",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-blank-only",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "   "
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "   "
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "reasoning-details-empty-list",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": []
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": []
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "checkpoint-protects-with-reasoning",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x",
+        "codex_reasoning_items": [
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x",
+        "codex_reasoning_items": [
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "checkpoint-protects-with-reasoning-details",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": [
+          {
+            "a": 1
+          }
+        ],
+        "codex_reasoning_items": [
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": [
+          {
+            "a": 1
+          }
+        ],
+        "codex_reasoning_items": [
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "checkpoint-alongside-reasoning-item",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "reasoning"
+          },
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "reasoning"
+          },
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "codex-junk-items-drop-true",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "message"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "message"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "codex-empty-list-drop-true",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": []
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": []
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "codex-nondict-items-drop-true",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          "x",
+          1,
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          "x",
+          1,
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "system-role-with-reasoning",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "system",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "system",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "tool-role-with-reasoning",
+    "messages": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "tool",
+        "content": null,
+        "reasoning": "x",
+        "tool_call_id": "c1"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "before"
+      },
+      {
+        "role": "tool",
+        "content": null,
+        "reasoning": "x",
+        "tool_call_id": "c1"
+      },
+      {
+        "role": "user",
+        "content": "after"
+      }
+    ]
+  },
+  {
+    "name": "codex-reasoning-drop-true",
+    "messages": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "reasoning",
+            "id": "r"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "a\n\nb"
+      }
+    ]
+  },
+  {
+    "name": "codex-reasoning-drop-false",
+    "messages": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "reasoning",
+            "id": "r"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ],
+    "drop_codex_reasoning_items": false,
+    "expected": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "reasoning",
+            "id": "r"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ]
+  },
+  {
+    "name": "checkpoint-drop-true",
+    "messages": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ]
+  },
+  {
+    "name": "checkpoint-drop-false",
+    "messages": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ],
+    "drop_codex_reasoning_items": false,
+    "expected": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          {
+            "type": "compaction"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ]
+  },
+  {
+    "name": "string-reasoning-drop-true",
+    "messages": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "think"
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "a\n\nb"
+      }
+    ]
+  },
+  {
+    "name": "string-reasoning-drop-false",
+    "messages": [
+      {
+        "role": "user",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "think"
+      },
+      {
+        "role": "user",
+        "content": "b"
+      }
+    ],
+    "drop_codex_reasoning_items": false,
+    "expected": [
+      {
+        "role": "user",
+        "content": "a\n\nb"
+      }
+    ]
+  },
+  {
+    "name": "merge-str-str",
+    "messages": [
+      {
+        "role": "user",
+        "content": "left"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "right"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "left\n\nright"
+      }
+    ]
+  },
+  {
+    "name": "merge-str-str-prev-empty",
+    "messages": [
+      {
+        "role": "user",
+        "content": ""
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "right"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "right"
+      }
+    ]
+  },
+  {
+    "name": "merge-str-str-cur-empty",
+    "messages": [
+      {
+        "role": "user",
+        "content": "left"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": ""
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "left"
+      }
+    ]
+  },
+  {
+    "name": "merge-str-str-both-empty",
+    "messages": [
+      {
+        "role": "user",
+        "content": ""
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": ""
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": ""
+      }
+    ]
+  },
+  {
+    "name": "merge-list-list",
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "L"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "R"
+          }
+        ]
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "L"
+          },
+          {
+            "type": "text",
+            "text": "R"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "merge-list-str",
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "L"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "right"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "L"
+          },
+          {
+            "type": "text",
+            "text": "right"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "merge-list-str-empty",
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "L"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": ""
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "L"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "merge-str-list",
+    "messages": [
+      {
+        "role": "user",
+        "content": "left"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "R"
+          }
+        ]
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "left"
+          },
+          {
+            "type": "text",
+            "text": "R"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "merge-str-list-prev-empty",
+    "messages": [
+      {
+        "role": "user",
+        "content": ""
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "R"
+          }
+        ]
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "R"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "merge-unknown-prev-int",
+    "messages": [
+      {
+        "role": "user",
+        "content": 7
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "right"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": 7
+      },
+      {
+        "role": "user",
+        "content": "right"
+      }
+    ]
+  },
+  {
+    "name": "merge-unknown-cur-int",
+    "messages": [
+      {
+        "role": "user",
+        "content": "left"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": 7
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "left"
+      },
+      {
+        "role": "user",
+        "content": 7
+      }
+    ]
+  },
+  {
+    "name": "merge-unknown-both-none",
+    "messages": [
+      {
+        "role": "user",
+        "content": null
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": null
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": null
+      }
+    ]
+  },
+  {
+    "name": "merge-cur-missing-content",
+    "messages": [
+      {
+        "role": "user",
+        "content": "left"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "left"
+      }
+    ]
+  },
+  {
+    "name": "merge-prev-missing-content",
+    "messages": [
+      {
+        "role": "user"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "right"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "right"
+      }
+    ]
+  },
+  {
+    "name": "merge-three-users",
+    "messages": [
+      {
+        "role": "user",
+        "content": "one"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "two"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "three"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "one\n\ntwo\n\nthree"
+      }
+    ]
+  },
+  {
+    "name": "merge-already-adjacent-no-drop",
+    "messages": [
+      {
+        "role": "user",
+        "content": "one"
+      },
+      {
+        "role": "user",
+        "content": "two"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "one\n\ntwo"
+      }
+    ]
+  },
+  {
+    "name": "no-merge-real-assistant-between",
+    "messages": [
+      {
+        "role": "user",
+        "content": "one"
+      },
+      {
+        "role": "assistant",
+        "content": "answer"
+      },
+      {
+        "role": "user",
+        "content": "two"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "one"
+      },
+      {
+        "role": "assistant",
+        "content": "answer"
+      },
+      {
+        "role": "user",
+        "content": "two"
+      }
+    ]
+  },
+  {
+    "name": "trailing-thinking-only-drop",
+    "messages": [
+      {
+        "role": "user",
+        "content": "q"
+      },
+      {
+        "role": "assistant",
+        "content": "a"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "q"
+      },
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "leading-thinking-only-drop",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "q"
+      },
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "q"
+      },
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "empty-messages",
+    "messages": [],
+    "drop_codex_reasoning_items": true,
+    "expected": []
+  },
+  {
+    "name": "single-user",
+    "messages": [
+      {
+        "role": "user",
+        "content": "hi"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "hi"
+      }
+    ]
+  },
+  {
+    "name": "clean-alternating",
+    "messages": [
+      {
+        "role": "user",
+        "content": "q1"
+      },
+      {
+        "role": "assistant",
+        "content": "a1"
+      },
+      {
+        "role": "user",
+        "content": "q2"
+      },
+      {
+        "role": "assistant",
+        "content": "a2"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "q1"
+      },
+      {
+        "role": "assistant",
+        "content": "a1"
+      },
+      {
+        "role": "user",
+        "content": "q2"
+      },
+      {
+        "role": "assistant",
+        "content": "a2"
+      }
+    ]
+  },
+  {
+    "name": "mixed-drop-and-merge",
+    "messages": [
+      {
+        "role": "user",
+        "content": "start"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "mid"
+      },
+      {
+        "role": "assistant",
+        "content": "real"
+      },
+      {
+        "role": "user",
+        "content": "end1"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "x"
+      },
+      {
+        "role": "user",
+        "content": "end2"
+      }
+    ],
+    "drop_codex_reasoning_items": true,
+    "expected": [
+      {
+        "role": "user",
+        "content": "start\n\nmid"
+      },
+      {
+        "role": "assistant",
+        "content": "real"
+      },
+      {
+        "role": "user",
+        "content": "end1\n\nend2"
+      }
+    ]
+  }
+]

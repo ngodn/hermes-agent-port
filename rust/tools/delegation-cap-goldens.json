@@ -1,0 +1,860 @@
+[
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": null
+      }
+    },
+    "env": null,
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": null
+      }
+    },
+    "env": "3",
+    "limit": 3,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": null
+      }
+    },
+    "env": "bad",
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 0
+      }
+    },
+    "env": null,
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 0
+      }
+    },
+    "env": "3",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 0
+      }
+    },
+    "env": "bad",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": -2
+      }
+    },
+    "env": null,
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": -2
+      }
+    },
+    "env": "3",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": -2
+      }
+    },
+    "env": "bad",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 1
+      }
+    },
+    "env": null,
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 1
+      }
+    },
+    "env": "3",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 1
+      }
+    },
+    "env": "bad",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 2
+      }
+    },
+    "env": null,
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 2
+      }
+    },
+    "env": "3",
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 2
+      }
+    },
+    "env": "bad",
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 20
+      }
+    },
+    "env": null,
+    "limit": 20,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 20
+      }
+    },
+    "env": "3",
+    "limit": 20,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 20
+      }
+    },
+    "env": "bad",
+    "limit": 20,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 2.9
+      }
+    },
+    "env": null,
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 2.9
+      }
+    },
+    "env": "3",
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": 2.9
+      }
+    },
+    "env": "bad",
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": true
+      }
+    },
+    "env": null,
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": true
+      }
+    },
+    "env": "3",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": true
+      }
+    },
+    "env": "bad",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": false
+      }
+    },
+    "env": null,
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": false
+      }
+    },
+    "env": "3",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": false
+      }
+    },
+    "env": "bad",
+    "limit": 1,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": "2"
+      }
+    },
+    "env": null,
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": "2"
+      }
+    },
+    "env": "3",
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": "2"
+      }
+    },
+    "env": "bad",
+    "limit": 2,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": "bad"
+      }
+    },
+    "env": null,
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": "bad"
+      }
+    },
+    "env": "3",
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": "bad"
+      }
+    },
+    "env": "bad",
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": {}
+      }
+    },
+    "env": null,
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": {}
+      }
+    },
+    "env": "3",
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": {}
+      }
+    },
+    "env": "bad",
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": []
+      }
+    },
+    "env": null,
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": []
+      }
+    },
+    "env": "3",
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "config": {
+      "delegation": {
+        "max_concurrent_children": []
+      }
+    },
+    "env": "bad",
+    "limit": 10,
+    "names": [
+      "delegate_task",
+      "other",
+      "delegate_task",
+      "delegate_task",
+      "other"
+    ],
+    "ids": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  }
+]

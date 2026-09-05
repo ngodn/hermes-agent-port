@@ -1,0 +1,110 @@
+[
+  {
+    "raw": null,
+    "expected": "{}"
+  },
+  {
+    "raw": "",
+    "expected": "{}"
+  },
+  {
+    "raw": " ",
+    "expected": "{}"
+  },
+  {
+    "raw": "\u001c\u001f",
+    "expected": "{}"
+  },
+  {
+    "raw": "​",
+    "expected": "​"
+  },
+  {
+    "raw": "{}",
+    "expected": "{}"
+  },
+  {
+    "raw": " {\"x\": 1} ",
+    "expected": " {\"x\": 1} "
+  },
+  {
+    "raw": "broken",
+    "expected": "broken"
+  },
+  {
+    "raw": true,
+    "expected": "True"
+  },
+  {
+    "raw": false,
+    "expected": "False"
+  },
+  {
+    "raw": 0,
+    "expected": "0"
+  },
+  {
+    "raw": 12,
+    "expected": "12"
+  },
+  {
+    "raw": 1e-05,
+    "expected": "1e-05"
+  },
+  {
+    "raw": {},
+    "expected": "{}"
+  },
+  {
+    "raw": [],
+    "expected": "[]"
+  },
+  {
+    "raw": {
+      "z": 1,
+      "a": 2
+    },
+    "expected": "{\"z\": 1, \"a\": 2}"
+  },
+  {
+    "raw": [
+      "猫",
+      "😀",
+      "",
+      "\u0000\n"
+    ],
+    "expected": "[\"\\u732b\", \"\\ud83d\\ude00\", \"\\u007f\", \"\\u0000\\n\"]"
+  },
+  {
+    "raw": {
+      "x": [
+        true,
+        false,
+        null,
+        {
+          "a": 1.0,
+          "b": 1e+20
+        }
+      ]
+    },
+    "expected": "{\"x\": [true, false, null, {\"a\": 1.0, \"b\": 1e+20}]}"
+  },
+  {
+    "raw": {
+      "\"\\": "text\t\r"
+    },
+    "expected": "{\"\\\"\\\\\": \"text\\t\\r\"}"
+  },
+  {
+    "raw": {
+      "x": 1e-07
+    },
+    "expected": "{\"x\": 1e-07}"
+  },
+  {
+    "raw": {
+      "x": -0.0
+    },
+    "expected": "{\"x\": -0.0}"
+  }
+]

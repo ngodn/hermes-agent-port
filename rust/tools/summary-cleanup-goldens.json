@@ -1,0 +1,73 @@
+{
+  "request": "You've reached the maximum number of tool-calling iterations allowed. Please provide a final response summarizing what you've found and accomplished so far, without calling any more tools.",
+  "cases": [
+    {
+      "input": "",
+      "expected": ""
+    },
+    {
+      "input": " answer ",
+      "expected": "answer"
+    },
+    {
+      "input": "<think>secret</think> answer",
+      "expected": "answer"
+    },
+    {
+      "input": "<think>secret</think>",
+      "expected": ""
+    },
+    {
+      "input": "<think>unclosed",
+      "expected": "<think>unclosed"
+    },
+    {
+      "input": "<THINK>secret</THINK> answer",
+      "expected": "<THINK>secret</THINK> answer"
+    },
+    {
+      "input": "a<think>one</think> b<think>two</think> c",
+      "expected": "abc"
+    },
+    {
+      "input": "<think>a\nb</think>\nreply",
+      "expected": "reply"
+    },
+    {
+      "input": "<think>outer<think>inner</think>end</think>",
+      "expected": "end</think>"
+    },
+    {
+      "input": "before </think> after",
+      "expected": "before </think> after"
+    },
+    {
+      "input": "<think>x</think>\u001canswer\u001c",
+      "expected": "answer"
+    },
+    {
+      "input": "<think>x</think>\u001fanswer\u001f",
+      "expected": "answer"
+    },
+    {
+      "input": "<think>x</think>answer",
+      "expected": "answer"
+    },
+    {
+      "input": "<think>x</think> answer ",
+      "expected": "answer"
+    },
+    {
+      "input": "<think>x</think>​answer​",
+      "expected": "​answer​"
+    },
+    {
+      "input": "<think>x</think> answer ",
+      "expected": "answer"
+    },
+    {
+      "input": "<think>x</think>　answer　",
+      "expected": "answer"
+    }
+  ]
+}

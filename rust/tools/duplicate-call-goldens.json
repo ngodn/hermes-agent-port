@@ -1,0 +1,547 @@
+[
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{}"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": " {} "
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{}"
+      }
+    ],
+    "ids": [
+      "0"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{}"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": " {} "
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"b\":2,\"a\":1}"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "{\"a\":1,\"b\":2}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"b\":2,\"a\":1}"
+      }
+    ],
+    "ids": [
+      "0"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"b\":2,\"a\":1}"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "{\"a\":1,\"b\":2}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"b\":2,\"a\":1}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"nested\":{\"b\":2,\"a\":1}}"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "{\"nested\":{\"a\":1,\"b\":2}}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"nested\":{\"b\":2,\"a\":1}}"
+      }
+    ],
+    "ids": [
+      "0"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"nested\":{\"b\":2,\"a\":1}}"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "{\"nested\":{\"a\":1,\"b\":2}}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"nested\":{\"b\":2,\"a\":1}}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"a\":1}"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "{\"a\":1.0}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"a\":1}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"a\":1}"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "{\"a\":1.0}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"a\":1}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"a\":1e0}"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "{\"a\":1.0}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"a\":1e0}"
+      }
+    ],
+    "ids": [
+      "0"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"a\":1e0}"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "{\"a\":1.0}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"a\":1e0}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"x\":\"猫\"}"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "{\"x\":\"\\u732b\"}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"x\":\"猫\"}"
+      }
+    ],
+    "ids": [
+      "0"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"x\":\"猫\"}"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "{\"x\":\"\\u732b\"}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"x\":\"猫\"}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "[1,2]"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "[2,1]"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "[1,2]"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "[1,2]"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "[2,1]"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "[1,2]"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "null"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "null"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "null"
+      }
+    ],
+    "ids": [
+      "0"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "null"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "null"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "null"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "broken"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "broken"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "broken"
+      }
+    ],
+    "ids": [
+      "0"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "broken"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "broken"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "broken"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "broken"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": " broken "
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "broken"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "broken"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": " broken "
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "broken"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"a\":1}"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "{\"a\":2}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"a\":1}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"a\":1}"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "{\"a\":2}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"a\":1}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"x\":true}"
+      },
+      {
+        "id": "1",
+        "name": "one",
+        "arguments": "{\"x\":1}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"x\":true}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "calls": [
+      {
+        "id": "0",
+        "name": "one",
+        "arguments": "{\"x\":true}"
+      },
+      {
+        "id": "1",
+        "name": "two",
+        "arguments": "{\"x\":1}"
+      },
+      {
+        "id": "2",
+        "name": "one",
+        "arguments": "{\"x\":true}"
+      }
+    ],
+    "ids": [
+      "0",
+      "1"
+    ]
+  }
+]

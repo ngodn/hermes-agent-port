@@ -1,0 +1,3436 @@
+[
+  {
+    "messages": [],
+    "expected": []
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": " \u001c"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": " "
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": 12
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          null,
+          "",
+          false
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": " \u001c"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": " "
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": 12
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": [
+          null,
+          "",
+          false
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": " \u001c"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": " \u001c"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": [
+          {
+            "type": "text",
+            "text": " "
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": [
+          {
+            "type": "text",
+            "text": " "
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": [
+          {
+            "type": "text",
+            "text": 12
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": [
+          {
+            "type": "text",
+            "text": 12
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": [
+          null,
+          "",
+          false
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": [
+          null,
+          "",
+          false
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "tool",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": " \u001c"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": " \u001c"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": " "
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": " "
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": 12
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "text",
+            "text": 12
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          null,
+          "",
+          false
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": [
+          null,
+          "",
+          false
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": " \u001c"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": " \u001c"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": "​"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": "visible"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": false
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": 0
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": [
+          {
+            "type": "text",
+            "text": " "
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": [
+          {
+            "type": "text",
+            "text": " "
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": [
+          {
+            "type": "text",
+            "text": 12
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": [
+          {
+            "type": "text",
+            "text": 12
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": [
+          {
+            "type": "image_url"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": [
+          {
+            "type": "thinking"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": [
+          {}
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": [
+          null,
+          "",
+          false
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": [
+          null,
+          "",
+          false
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "developer",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "developer",
+        "content": [
+          "x"
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_calls": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_calls": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_calls": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_calls": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_call_id": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_call_id": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_call_id": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_call_id": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_call_id": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_call_id": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_call_id": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_call_id": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_call_id": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_call_id": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_call_id": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_call_id": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_call_id": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_call_id": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_call_id": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "tool_call_id": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_content": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_content": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_content": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_content": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_content": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_content": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_content": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_details": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_details": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_details": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "reasoning_details": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_details": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "codex_message_items": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "codex_message_items": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "codex_message_items": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "codex_message_items": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_message_items": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "codex_reasoning_items": null
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "codex_reasoning_items": ""
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": " "
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "codex_reasoning_items": []
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": [
+          null
+        ]
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "[response interrupted]",
+        "codex_reasoning_items": {}
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null,
+        "codex_reasoning_items": "payload"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user"
+      },
+      {
+        "role": "assistant",
+        "content": ""
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "assistant",
+        "content": ""
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "user",
+        "content": ""
+      },
+      {
+        "role": "assistant",
+        "_thinking_prefill": true
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "assistant",
+        "_thinking_prefill": true,
+        "content": "[response interrupted]"
+      },
+      {
+        "role": "user",
+        "content": "next"
+      }
+    ]
+  }
+]

@@ -1,0 +1,442 @@
+[
+  {
+    "raw": null,
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": true,
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": false,
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": {},
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": [],
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": 0,
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": -5,
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": 1,
+    "default": 9223372036854775807,
+    "expected": 1
+  },
+  {
+    "raw": 8,
+    "default": 9223372036854775807,
+    "expected": 8
+  },
+  {
+    "raw": 120,
+    "default": 9223372036854775807,
+    "expected": 120
+  },
+  {
+    "raw": 2.9,
+    "default": 9223372036854775807,
+    "expected": 2
+  },
+  {
+    "raw": -0.5,
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": " ",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "none",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "NULL",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": " unlimited ",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "infinite",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "infinity",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "inf",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "∞",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "-1",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "0",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "-20",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "120",
+    "default": 9223372036854775807,
+    "expected": 120
+  },
+  {
+    "raw": "1_000",
+    "default": 9223372036854775807,
+    "expected": 1000
+  },
+  {
+    "raw": "2.9",
+    "default": 9223372036854775807,
+    "expected": 2
+  },
+  {
+    "raw": "1e2",
+    "default": 9223372036854775807,
+    "expected": 100
+  },
+  {
+    "raw": "0.9",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "nan",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "+inf",
+    "default": 9223372036854775807,
+    "error": "OverflowError"
+  },
+  {
+    "raw": "-inf",
+    "default": 9223372036854775807,
+    "error": "OverflowError"
+  },
+  {
+    "raw": "1e999",
+    "default": 9223372036854775807,
+    "error": "OverflowError"
+  },
+  {
+    "raw": "１２",
+    "default": 9223372036854775807,
+    "expected": 12
+  },
+  {
+    "raw": "١٢",
+    "default": 9223372036854775807,
+    "expected": 12
+  },
+  {
+    "raw": "\u001c12\u001f",
+    "default": 9223372036854775807,
+    "expected": 12
+  },
+  {
+    "raw": "1__2",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "_12",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "12_",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "1_.0",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "1e_2",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "wrong",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "0x10",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "9223372036854775807",
+    "default": 9223372036854775807,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": null,
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": true,
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": false,
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": {},
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": [],
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": 0,
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": -5,
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": 1,
+    "default": 17,
+    "expected": 1
+  },
+  {
+    "raw": 8,
+    "default": 17,
+    "expected": 8
+  },
+  {
+    "raw": 120,
+    "default": 17,
+    "expected": 120
+  },
+  {
+    "raw": 2.9,
+    "default": 17,
+    "expected": 2
+  },
+  {
+    "raw": -0.5,
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": " ",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "none",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "NULL",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": " unlimited ",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "infinite",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "infinity",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "inf",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "∞",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "-1",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "0",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "-20",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "120",
+    "default": 17,
+    "expected": 120
+  },
+  {
+    "raw": "1_000",
+    "default": 17,
+    "expected": 1000
+  },
+  {
+    "raw": "2.9",
+    "default": 17,
+    "expected": 2
+  },
+  {
+    "raw": "1e2",
+    "default": 17,
+    "expected": 100
+  },
+  {
+    "raw": "0.9",
+    "default": 17,
+    "expected": 9223372036854775807
+  },
+  {
+    "raw": "nan",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "+inf",
+    "default": 17,
+    "error": "OverflowError"
+  },
+  {
+    "raw": "-inf",
+    "default": 17,
+    "error": "OverflowError"
+  },
+  {
+    "raw": "1e999",
+    "default": 17,
+    "error": "OverflowError"
+  },
+  {
+    "raw": "１２",
+    "default": 17,
+    "expected": 12
+  },
+  {
+    "raw": "١٢",
+    "default": 17,
+    "expected": 12
+  },
+  {
+    "raw": "\u001c12\u001f",
+    "default": 17,
+    "expected": 12
+  },
+  {
+    "raw": "1__2",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "_12",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "12_",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "1_.0",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "1e_2",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "wrong",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "0x10",
+    "default": 17,
+    "expected": 17
+  },
+  {
+    "raw": "9223372036854775807",
+    "default": 17,
+    "expected": 9223372036854775807
+  }
+]
