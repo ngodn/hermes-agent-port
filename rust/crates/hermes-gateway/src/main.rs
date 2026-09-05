@@ -314,6 +314,12 @@ fn start_push_path(
         state.user_config.clone(),
         state.session_db.clone(),
     );
+    // Install the inbound-audio transcription backend when STT is configured, so
+    // a downloaded voice note is transcribed before its turn. None (no key
+    // resolvable) leaves audio untranscribed rather than failing the turn.
+    if let Some(backend) = transcription_http::build_gateway_transcription(&state.user_config) {
+        dispatcher = dispatcher.with_transcription(backend);
+    }
     dispatcher.register_adapter(platform, adapter.clone());
     let dispatcher = Arc::new(dispatcher);
 

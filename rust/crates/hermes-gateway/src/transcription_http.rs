@@ -449,6 +449,96 @@ fn extract_text(text: &str) -> String {
 
 /// Use HTTP STT and native duration probing while retaining the runner's local fallback,
 /// and sandbox path mapping. This plugs into the existing enrichment pipeline.
+/// Resolve the OpenAI STT model and the deprecated-alias default, mirroring
+/// tools/transcription_tools.py DEFAULT_STT_MODEL = os.getenv("STT_OPENAI_MODEL",
+/// "whisper-1"): the default is the STT_OPENAI_MODEL env value (when non-empty)
+/// else "whisper-1"; the effective model is stt.openai.model (when a non-empty
+/// string) else that default.
+pub fn resolve_openai_stt_model(stt: &Value, env_model: Option<&str>) -> (String, String) {
+    let default_model = env_model
+        .map(str::trim)
+        .filter(|m| !m.is_empty())
+        .unwrap_or("whisper-1")
+        .to_string();
+    let model = stt
+        .get("openai")
+        .and_then(|o| o.get("model"))
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|m| !m.is_empty())
+        .map(str::to_string)
+        .unwrap_or_else(|| default_model.clone());
+    (model, default_model)
+}
+
+/// The environment effects the HTTP transcription backend delegates to
+/// (`absolute_path`, `local_fallback`, `agent_visible_path`); the HTTP transport
+/// itself supplies `transcribe`, and `probe_duration` is handled by
+/// [`HttpTranscriptionBackend`] via `audio_process`.
+struct GatewayTranscriptionContext;
+
+#[async_trait]
+impl TranscriptionBackend for GatewayTranscriptionContext {
+    fn absolute_path(&self, path: &str) -> String {
+        // Lexical absolutization, like os.path.abspath (no symlink resolution).
+        std::path::absolute(path)
+            .map(|p| p.to_string_lossy().into_owned())
+            .unwrap_or_else(|_| path.to_string())
+    }
+    async fn probe_duration(&self, _abs_path: &str) -> Option<String> {
+        None // Overridden by HttpTranscriptionBackend::probe_duration.
+    }
+    async fn transcribe(&self, _path: &str) -> Result<Value> {
+        Ok(serde_json::json!({"success": false})) // Overridden by the transport.
+    }
+    async fn local_fallback(&self, _path: &str) -> Result<Value> {
+        // No local (ffmpeg/whisper) fallback in the native gateway yet; report
+        // failure so the enricher emits the agent-path note, never a wrong
+        // transcript.
+        Ok(serde_json::json!({"success": false}))
+    }
+    fn agent_visible_path(&self, abs_path: &str) -> String {
+        // No session sandbox translation configured here, so the host path is
+        // already the agent-visible path.
+        abs_path.to_string()
+    }
+}
+
+/// Build the runtime OpenAI transcription backend from the resolved user config,
+/// or `None` when STT is not configured (no key resolvable). This is what the
+/// runner installs on the Dispatcher via `with_transcription`. Composes
+/// [`build_openai_transcription`] (credential resolution incl. the profile
+/// credential pool) with the file-read policy and the gateway environment
+/// context.
+pub fn build_gateway_transcription(
+    user_config: &Value,
+) -> Option<std::sync::Arc<dyn TranscriptionBackend>> {
+    let stt = user_config.get("stt").cloned().unwrap_or(Value::Null);
+    let (model, default_model) =
+        resolve_openai_stt_model(&stt, std::env::var("STT_OPENAI_MODEL").ok().as_deref());
+    let transport = build_openai_transcription(
+        user_config,
+        &stt,
+        "https://api.openai.com/v1",
+        model,
+        &default_model,
+    )
+    .ok()?;
+    let read_policy = crate::file_read_safety::FileReadPolicy {
+        home: std::env::var("HOME")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_default(),
+        cwd: std::env::current_dir().unwrap_or_default(),
+        hermes_home: crate::config_file::hermes_home(),
+        hermes_root: crate::config_file::hermes_root(),
+    };
+    Some(std::sync::Arc::new(HttpTranscriptionBackend {
+        transport,
+        read_policy,
+        context: GatewayTranscriptionContext,
+    }))
+}
+
 pub struct HttpTranscriptionBackend<B> {
     pub transport: TranscriptionHttp,
     pub read_policy: crate::file_read_safety::FileReadPolicy,
@@ -476,6 +566,41 @@ impl<B: TranscriptionBackend> TranscriptionBackend for HttpTranscriptionBackend<
 
 #[cfg(test)]
 mod tests {
+
+    #[test]
+    fn openai_stt_model_defaults_match_python() {
+        use serde_json::json;
+        // No env, no config -> whisper-1 for both.
+        assert_eq!(
+            resolve_openai_stt_model(&json!({}), None),
+            ("whisper-1".to_string(), "whisper-1".to_string())
+        );
+        // STT_OPENAI_MODEL env sets the default (and the effective model when
+        // config does not override).
+        assert_eq!(
+            resolve_openai_stt_model(&json!({}), Some("gpt-4o-transcribe")),
+            (
+                "gpt-4o-transcribe".to_string(),
+                "gpt-4o-transcribe".to_string()
+            )
+        );
+        // Config model wins for the effective model; default stays the env/whisper-1.
+        assert_eq!(
+            resolve_openai_stt_model(
+                &json!({"openai": {"model": "gpt-4o-mini-transcribe"}}),
+                Some("x-default")
+            ),
+            (
+                "gpt-4o-mini-transcribe".to_string(),
+                "x-default".to_string()
+            )
+        );
+        // Blank/whitespace env falls back to whisper-1.
+        assert_eq!(
+            resolve_openai_stt_model(&json!({}), Some("  ")),
+            ("whisper-1".to_string(), "whisper-1".to_string())
+        );
+    }
 
     fn temp_profile(
         name: &str,
