@@ -1,0 +1,182 @@
+[
+  {
+    "pattern": "ignore\\s+(?:\\w+\\s+){0,8}(previous|all|above|prior)\\s+(?:\\w+\\s+){0,8}instructions",
+    "pattern_id": "prompt_injection",
+    "scope": "all"
+  },
+  {
+    "pattern": "system\\s+prompt\\s+override",
+    "pattern_id": "sys_prompt_override",
+    "scope": "all"
+  },
+  {
+    "pattern": "disregard\\s+(?:\\w+\\s+){0,8}(your|all|any)\\s+(?:\\w+\\s+){0,8}(instructions|rules|guidelines)",
+    "pattern_id": "disregard_rules",
+    "scope": "all"
+  },
+  {
+    "pattern": "act\\s+as\\s+(if|though)\\s+(?:\\w+\\s+){0,8}you\\s+(?:\\w+\\s+){0,8}(have\\s+no|don\\'t\\s+have)\\s+(?:\\w+\\s+){0,8}(restrictions|limits|rules)",
+    "pattern_id": "bypass_restrictions",
+    "scope": "all"
+  },
+  {
+    "pattern": "<!--[^>]{0,512}(?:ignore|override|system|secret|hidden)[^>]{0,512}-->",
+    "pattern_id": "html_comment_injection",
+    "scope": "all"
+  },
+  {
+    "pattern": "<\\s*div\\s+style\\s*=\\s*[\"\\'][^>]{0,2048}display\\s*:\\s*none",
+    "pattern_id": "hidden_div",
+    "scope": "all"
+  },
+  {
+    "pattern": "translate\\s+[^\\n]{0,512}\\s+into\\s+[^\\n]{0,512}\\s+and\\s+(execute|run|eval)",
+    "pattern_id": "translate_execute",
+    "scope": "all"
+  },
+  {
+    "pattern": "do\\s+not\\s+(?:\\w+\\s+){0,8}tell\\s+(?:\\w+\\s+){0,8}the\\s+user",
+    "pattern_id": "deception_hide",
+    "scope": "all"
+  },
+  {
+    "pattern": "you\\s+are\\s+(?:\\w+\\s+){0,8}now\\s+(?:a|an|the)\\s+",
+    "pattern_id": "role_hijack",
+    "scope": "context"
+  },
+  {
+    "pattern": "pretend\\s+(?:\\w+\\s+){0,8}(you\\s+are|to\\s+be)\\s+",
+    "pattern_id": "role_pretend",
+    "scope": "context"
+  },
+  {
+    "pattern": "output\\s+(?:\\w+\\s+){0,8}(system|initial)\\s+prompt",
+    "pattern_id": "leak_system_prompt",
+    "scope": "context"
+  },
+  {
+    "pattern": "(respond|answer|reply)\\s+without\\s+(?:\\w+\\s+){0,8}(restrictions|limitations|filters|safety)",
+    "pattern_id": "remove_filters",
+    "scope": "context"
+  },
+  {
+    "pattern": "you\\s+have\\s+been\\s+(?:\\w+\\s+){0,8}(updated|upgraded|patched)\\s+to",
+    "pattern_id": "fake_update",
+    "scope": "context"
+  },
+  {
+    "pattern": "\\bname\\s+yourself\\s+\\w+",
+    "pattern_id": "identity_override",
+    "scope": "context"
+  },
+  {
+    "pattern": "register\\s+(as\\s+)?a?\\s*node",
+    "pattern_id": "c2_node_registration",
+    "scope": "context"
+  },
+  {
+    "pattern": "(heartbeat|beacon|check[\\s\\-]?in)\\s+(to|with)\\s+",
+    "pattern_id": "c2_heartbeat",
+    "scope": "context"
+  },
+  {
+    "pattern": "pull\\s+(down\\s+)?(?:new\\s+)?task(?:ing|s)?\\b",
+    "pattern_id": "c2_task_pull",
+    "scope": "context"
+  },
+  {
+    "pattern": "connect\\s+to\\s+the\\s+network\\b",
+    "pattern_id": "c2_network_connect",
+    "scope": "context"
+  },
+  {
+    "pattern": "you\\s+must\\s+(?:\\w+\\s+){0,3}(register|connect|report|beacon)\\b",
+    "pattern_id": "forced_action",
+    "scope": "context"
+  },
+  {
+    "pattern": "only\\s+use\\s+one[\\s\\-]?liners?\\b",
+    "pattern_id": "anti_forensic_oneliner",
+    "scope": "context"
+  },
+  {
+    "pattern": "never\\s+(?:\\w+\\s+){0,8}(?:create|write)\\s+(?:\\w+\\s+){0,8}(?:script|file)\\s+(?:\\w+\\s+){0,8}disk",
+    "pattern_id": "anti_forensic_disk",
+    "scope": "context"
+  },
+  {
+    "pattern": "unset\\s+\\w*(?:CLAUDE|CODEX|HERMES|AGENT|OPENAI|ANTHROPIC)\\w*",
+    "pattern_id": "env_var_unset_agent",
+    "scope": "context"
+  },
+  {
+    "pattern": "\\b(?:cobalt\\s*strike|sliver|havoc|mythic|metasploit|brainworm)\\b",
+    "pattern_id": "known_c2_framework",
+    "scope": "context"
+  },
+  {
+    "pattern": "\\bc2\\s+(?:server|channel|infrastructure|beacon)\\b",
+    "pattern_id": "c2_explicit",
+    "scope": "context"
+  },
+  {
+    "pattern": "\\bcommand\\s+and\\s+control\\b",
+    "pattern_id": "c2_explicit_long",
+    "scope": "context"
+  },
+  {
+    "pattern": "curl\\s+[^\\n]{0,2048}\\$\\{?\\w*(?:KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL)S?\\b",
+    "pattern_id": "exfil_curl",
+    "scope": "all"
+  },
+  {
+    "pattern": "wget\\s+[^\\n]{0,2048}\\$\\{?\\w*(?:KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL)S?\\b",
+    "pattern_id": "exfil_wget",
+    "scope": "all"
+  },
+  {
+    "pattern": "cat\\s+[^\\n]{0,2048}(\\.env|credentials|\\.netrc|\\.pgpass|\\.npmrc|\\.pypirc)",
+    "pattern_id": "read_secrets",
+    "scope": "all"
+  },
+  {
+    "pattern": "(send|post|upload|transmit)\\s+[^\\n]{0,2048}\\s+(to|at)\\s+https?://",
+    "pattern_id": "send_to_url",
+    "scope": "strict"
+  },
+  {
+    "pattern": "(include|output|print|share)\\s+(?:\\w+\\s+){0,8}(conversation|chat\\s+history|previous\\s+messages|full\\s+context|entire\\s+context)",
+    "pattern_id": "context_exfil",
+    "scope": "strict"
+  },
+  {
+    "pattern": "authorized_keys",
+    "pattern_id": "ssh_backdoor",
+    "scope": "strict"
+  },
+  {
+    "pattern": "\\$HOME/\\.ssh|\\~/\\.ssh",
+    "pattern_id": "ssh_access",
+    "scope": "strict"
+  },
+  {
+    "pattern": "\\$HOME/\\.hermes/\\.env|\\~/\\.hermes/\\.env",
+    "pattern_id": "hermes_env",
+    "scope": "strict"
+  },
+  {
+    "pattern": "(update|modify|edit|write|change|append|add\\s+to)\\s+[^\\n]{0,2048}(?:AGENTS\\.md|CLAUDE\\.md|\\.cursorrules|\\.clinerules)",
+    "pattern_id": "agent_config_mod",
+    "scope": "strict"
+  },
+  {
+    "pattern": "(update|modify|edit|write|change|append|add\\s+to)\\s+[^\\n]{0,2048}\\.hermes/(config\\.yaml|SOUL\\.md)",
+    "pattern_id": "hermes_config_mod",
+    "scope": "strict"
+  },
+  {
+    "pattern": "(?:api[_-]?key|token|secret|password)\\s*[=:]\\s*[\"\\'][A-Za-z0-9+/=_-]{20,}",
+    "pattern_id": "hardcoded_secret",
+    "scope": "strict"
+  }
+]

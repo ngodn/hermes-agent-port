@@ -1,0 +1,898 @@
+{
+  "hostname_cases": [
+    {
+      "name": "host-0-moonshot.ai",
+      "base_url": "https://api.moonshot.ai/v1",
+      "domain": "moonshot.ai",
+      "expected_hostname": "api.moonshot.ai",
+      "expected_match": true
+    },
+    {
+      "name": "host-1-moonshot.ai",
+      "base_url": "https://moonshot.ai",
+      "domain": "moonshot.ai",
+      "expected_hostname": "moonshot.ai",
+      "expected_match": true
+    },
+    {
+      "name": "host-2-moonshot.ai",
+      "base_url": "https://evil.com/moonshot.ai/v1",
+      "domain": "moonshot.ai",
+      "expected_hostname": "evil.com",
+      "expected_match": false
+    },
+    {
+      "name": "host-3-moonshot.ai",
+      "base_url": "https://moonshot.ai.evil/v1",
+      "domain": "moonshot.ai",
+      "expected_hostname": "moonshot.ai.evil",
+      "expected_match": false
+    },
+    {
+      "name": "host-4-moonshot.ai",
+      "base_url": "moonshot.ai",
+      "domain": "moonshot.ai",
+      "expected_hostname": "moonshot.ai",
+      "expected_match": true
+    },
+    {
+      "name": "host-5-moonshot.ai",
+      "base_url": "api.moonshot.ai:8080",
+      "domain": "moonshot.ai",
+      "expected_hostname": "api.moonshot.ai",
+      "expected_match": true
+    },
+    {
+      "name": "host-6-api.kimi.com",
+      "base_url": "https://api.kimi.com/v1",
+      "domain": "api.kimi.com",
+      "expected_hostname": "api.kimi.com",
+      "expected_match": true
+    },
+    {
+      "name": "host-7-api.kimi.com",
+      "base_url": "https://api.kimi.com./v1",
+      "domain": "api.kimi.com",
+      "expected_hostname": "api.kimi.com",
+      "expected_match": true
+    },
+    {
+      "name": "host-8-api.deepseek.com",
+      "base_url": "   https://api.deepseek.com/v1   ",
+      "domain": "api.deepseek.com",
+      "expected_hostname": "api.deepseek.com",
+      "expected_match": true
+    },
+    {
+      "name": "host-9-xiaomimimo.com",
+      "base_url": "https://api.xiaomimimo.com",
+      "domain": "xiaomimimo.com",
+      "expected_hostname": "api.xiaomimimo.com",
+      "expected_match": true
+    },
+    {
+      "name": "host-10-api.xiaomimimo.com",
+      "base_url": "https://xiaomimimo.com",
+      "domain": "api.xiaomimimo.com",
+      "expected_hostname": "xiaomimimo.com",
+      "expected_match": false
+    },
+    {
+      "name": "host-11-localhost",
+      "base_url": "http://localhost:8000/v1",
+      "domain": "localhost",
+      "expected_hostname": "localhost",
+      "expected_match": true
+    },
+    {
+      "name": "host-12-127.0.0.1",
+      "base_url": "http://127.0.0.1:11434",
+      "domain": "127.0.0.1",
+      "expected_hostname": "127.0.0.1",
+      "expected_match": true
+    },
+    {
+      "name": "host-13-::1",
+      "base_url": "http://[::1]:8080/v1",
+      "domain": "::1",
+      "expected_hostname": "::1",
+      "expected_match": true
+    },
+    {
+      "name": "host-14-moonshot.ai",
+      "base_url": "",
+      "domain": "moonshot.ai",
+      "expected_hostname": "",
+      "expected_match": false
+    },
+    {
+      "name": "host-15-",
+      "base_url": "https://api.kimi.com",
+      "domain": "",
+      "expected_hostname": "api.kimi.com",
+      "expected_match": false
+    },
+    {
+      "name": "host-16-api.kimi.com",
+      "base_url": "//api.kimi.com",
+      "domain": "api.kimi.com",
+      "expected_hostname": "",
+      "expected_match": false
+    },
+    {
+      "name": "host-17-moonshot.ai",
+      "base_url": "https://evilmoonshot.ai/v1",
+      "domain": "moonshot.ai",
+      "expected_hostname": "evilmoonshot.ai",
+      "expected_match": false
+    }
+  ],
+  "echo_cases": [
+    {
+      "name": "echo-rule-0-kimi-coding-kimi",
+      "provider": "kimi-coding",
+      "model": "",
+      "base_url": "https://x",
+      "expected_family": "kimi",
+      "expected_needs_echo": true,
+      "matches_kimi": true,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-1-kimi-coding-cn-kimi",
+      "provider": "kimi-coding-cn",
+      "model": "",
+      "base_url": "https://x",
+      "expected_family": "kimi",
+      "expected_needs_echo": true,
+      "matches_kimi": true,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-2-custom-kimi",
+      "provider": "custom",
+      "model": "",
+      "base_url": "https://api.kimi.com/v1",
+      "expected_family": "kimi",
+      "expected_needs_echo": true,
+      "matches_kimi": true,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-3-custom-kimi",
+      "provider": "custom",
+      "model": "",
+      "base_url": "https://api.moonshot.ai/v1",
+      "expected_family": "kimi",
+      "expected_needs_echo": true,
+      "matches_kimi": true,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-4-custom-kimi",
+      "provider": "custom",
+      "model": "",
+      "base_url": "https://api.moonshot.cn/v1",
+      "expected_family": "kimi",
+      "expected_needs_echo": true,
+      "matches_kimi": true,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-5-deepseek-deepseek",
+      "provider": "deepseek",
+      "model": "whatever",
+      "base_url": "https://x",
+      "expected_family": "deepseek",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": true,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-6-DeepSeek-deepseek",
+      "provider": "DeepSeek",
+      "model": "whatever",
+      "base_url": "https://x",
+      "expected_family": "deepseek",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": true,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-7-openrouter-deepseek",
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v3",
+      "base_url": "https://openrouter.ai",
+      "expected_family": "deepseek",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": true,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-8-custom-deepseek",
+      "provider": "custom",
+      "model": "",
+      "base_url": "https://api.deepseek.com",
+      "expected_family": "deepseek",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": true,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-9-xiaomi-mimo",
+      "provider": "xiaomi",
+      "model": "",
+      "base_url": "https://x",
+      "expected_family": "mimo",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": true
+    },
+    {
+      "name": "echo-rule-10-custom-mimo",
+      "provider": "custom",
+      "model": "MiMo-7B",
+      "base_url": "https://x",
+      "expected_family": "mimo",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": true
+    },
+    {
+      "name": "echo-rule-11-custom-mimo",
+      "provider": "custom",
+      "model": "",
+      "base_url": "https://api.xiaomimimo.com/v1",
+      "expected_family": "mimo",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": true
+    },
+    {
+      "name": "echo-rule-12-openai-None",
+      "provider": "openai",
+      "model": "gpt-5",
+      "base_url": "https://api.openai.com/v1",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-13-mistral-None",
+      "provider": "mistral",
+      "model": "mistral-large",
+      "base_url": "https://api.mistral.ai/v1",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-14-None-None",
+      "provider": "",
+      "model": "",
+      "base_url": "",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-15-KIMI-CODING-None",
+      "provider": "KIMI-CODING",
+      "model": "",
+      "base_url": "https://x",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-16-custom-kimi",
+      "provider": "custom",
+      "model": "deepseek-chat",
+      "base_url": "https://api.kimi.com",
+      "expected_family": "kimi",
+      "expected_needs_echo": true,
+      "matches_kimi": true,
+      "matches_deepseek": true,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-17-custom-None",
+      "provider": "custom",
+      "model": "kimi-k3",
+      "base_url": "https://x",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-18-custom-deepseek",
+      "provider": "custom",
+      "model": "deepseek-r1",
+      "base_url": "https://proxy.example.com",
+      "expected_family": "deepseek",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": true,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-19-custom-mimo",
+      "provider": "custom",
+      "model": "model-mimo-v1",
+      "base_url": "https://proxy.example.com",
+      "expected_family": "mimo",
+      "expected_needs_echo": true,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": true
+    },
+    {
+      "name": "echo-rule-20-groq-None",
+      "provider": "groq",
+      "model": "llama-3",
+      "base_url": "https://api.groq.com/openai/v1",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-21-cerebras-None",
+      "provider": "cerebras",
+      "model": "llama3.1-8b",
+      "base_url": "https://api.cerebras.ai/v1",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-22-sambanova-None",
+      "provider": "sambanova",
+      "model": "Meta-Llama-3-70B",
+      "base_url": "https://api.sambanova.ai/v1",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    },
+    {
+      "name": "echo-rule-23--None",
+      "provider": "",
+      "model": "",
+      "base_url": "",
+      "expected_family": null,
+      "expected_needs_echo": false,
+      "matches_kimi": false,
+      "matches_deepseek": false,
+      "matches_mimo": false
+    }
+  ],
+  "apply_cases": [
+    {
+      "name": "user-untouched-require",
+      "source_msg": {
+        "role": "user",
+        "content": "u",
+        "reasoning_content": "keep"
+      },
+      "api_msg": {
+        "role": "user",
+        "content": "u",
+        "reasoning_content": "keep"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "user",
+        "content": "u",
+        "reasoning_content": "keep"
+      },
+      "expected_in_place_msg": {
+        "role": "user",
+        "content": "u",
+        "reasoning_content": "keep"
+      }
+    },
+    {
+      "name": "user-untouched-strict",
+      "source_msg": {
+        "role": "user",
+        "content": "u",
+        "reasoning_content": "keep"
+      },
+      "api_msg": {
+        "role": "user",
+        "content": "u",
+        "reasoning_content": "keep"
+      },
+      "needs_thinking_pad": false,
+      "expected_api_msg": {
+        "role": "user",
+        "content": "u",
+        "reasoning_content": "keep"
+      },
+      "expected_in_place_msg": {
+        "role": "user",
+        "content": "u",
+        "reasoning_content": "keep"
+      }
+    },
+    {
+      "name": "system-untouched-require",
+      "source_msg": {
+        "role": "system",
+        "content": "sys",
+        "reasoning": "r"
+      },
+      "api_msg": {
+        "role": "system",
+        "content": "sys"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "system",
+        "content": "sys"
+      },
+      "expected_in_place_msg": {
+        "role": "system",
+        "content": "sys",
+        "reasoning": "r"
+      }
+    },
+    {
+      "name": "tool-untouched-require",
+      "source_msg": {
+        "role": "tool",
+        "content": "t",
+        "tool_call_id": "c1"
+      },
+      "api_msg": {
+        "role": "tool",
+        "content": "t",
+        "tool_call_id": "c1"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "tool",
+        "content": "t",
+        "tool_call_id": "c1"
+      },
+      "expected_in_place_msg": {
+        "role": "tool",
+        "content": "t",
+        "tool_call_id": "c1"
+      }
+    },
+    {
+      "name": "require-preserves-existing",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": "thoughts"
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": "thoughts"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": "thoughts"
+      }
+    },
+    {
+      "name": "require-upgrades-empty-string-to-space",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": ""
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": ""
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      }
+    },
+    {
+      "name": "require-preserves-space-pad",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      }
+    },
+    {
+      "name": "require-poisoned-history-pads-space",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "foreign-model CoT",
+        "tool_calls": [
+          {
+            "id": "c",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            }
+          }
+        ]
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "foreign-model CoT",
+        "tool_calls": [
+          {
+            "id": "c",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            }
+          }
+        ],
+        "reasoning_content": " "
+      }
+    },
+    {
+      "name": "require-healthy-session-promotes-reasoning",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "genuine thought"
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": "genuine thought"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "genuine thought",
+        "reasoning_content": "genuine thought"
+      }
+    },
+    {
+      "name": "require-bare-assistant-receives-space",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      }
+    },
+    {
+      "name": "require-tool-calls-without-reasoning-receives-space",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "tool_calls": [
+          {
+            "id": "c"
+          }
+        ]
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "tool_calls": [
+          {
+            "id": "c"
+          }
+        ],
+        "reasoning_content": " "
+      }
+    },
+    {
+      "name": "require-none-reasoning-content-receives-space",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": null
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": null
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      }
+    },
+    {
+      "name": "require-empty-reasoning-with-tool-calls",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "",
+        "tool_calls": [
+          {
+            "id": "c"
+          }
+        ]
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "",
+        "tool_calls": [
+          {
+            "id": "c"
+          }
+        ],
+        "reasoning_content": " "
+      }
+    },
+    {
+      "name": "require-empty-tool-calls-promotes-reasoning",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "valid",
+        "tool_calls": []
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "needs_thinking_pad": true,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": "valid"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "valid",
+        "tool_calls": [],
+        "reasoning_content": "valid"
+      }
+    },
+    {
+      "name": "strict-strips-existing-reasoning-content",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": "thoughts"
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": "thoughts"
+      },
+      "needs_thinking_pad": false,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x"
+      }
+    },
+    {
+      "name": "strict-strips-space-pad",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": " "
+      },
+      "needs_thinking_pad": false,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x"
+      }
+    },
+    {
+      "name": "strict-strips-empty-string",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": ""
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": ""
+      },
+      "needs_thinking_pad": false,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x"
+      }
+    },
+    {
+      "name": "strict-strips-none",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": null
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": null
+      },
+      "needs_thinking_pad": false,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x"
+      }
+    },
+    {
+      "name": "strict-does-not-promote-reasoning",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "genuine thought"
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning_content": "stale"
+      },
+      "needs_thinking_pad": false,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x",
+        "reasoning": "genuine thought"
+      }
+    },
+    {
+      "name": "strict-bare-assistant-stays-without-key",
+      "source_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "needs_thinking_pad": false,
+      "expected_api_msg": {
+        "role": "assistant",
+        "content": "x"
+      },
+      "expected_in_place_msg": {
+        "role": "assistant",
+        "content": "x"
+      }
+    }
+  ]
+}

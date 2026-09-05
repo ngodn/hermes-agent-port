@@ -1,0 +1,721 @@
+[
+  {
+    "name": "clean-passthrough",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "user",
+        "content": "hi"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "hi"
+      }
+    ]
+  },
+  {
+    "name": "non-dict-messages",
+    "model": "gpt-4",
+    "messages": [
+      "raw",
+      42,
+      null,
+      {
+        "role": "user",
+        "content": "x"
+      }
+    ],
+    "expected": [
+      "raw",
+      42,
+      null,
+      {
+        "role": "user",
+        "content": "x"
+      }
+    ]
+  },
+  {
+    "name": "codex-reasoning-items",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "codex_reasoning_items": [
+          1,
+          2
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "codex-message-items",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "codex_message_items": [
+          {
+            "x": 1
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "tool-name",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "tool",
+        "content": "res",
+        "tool_name": "search",
+        "tool_call_id": "c1"
+      }
+    ],
+    "expected": [
+      {
+        "role": "tool",
+        "content": "res",
+        "tool_call_id": "c1"
+      }
+    ]
+  },
+  {
+    "name": "effect-disposition",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "effect_disposition": "applied"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "timestamp",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "timestamp": 1700000000,
+        "content": "a"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "platform-message-id",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "user",
+        "content": "hi",
+        "platform_message_id": "tg:42"
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "content": "hi"
+      }
+    ]
+  },
+  {
+    "name": "api-content",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "api_content": [
+          {
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "anthropic-content-blocks",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "anthropic_content_blocks": [
+          {
+            "type": "thinking"
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "bedrock-content-blocks",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "bedrock_content_blocks": [
+          {
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "all-sidecars",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "codex_reasoning_items": [
+          1
+        ],
+        "content": "a",
+        "codex_message_items": [
+          2
+        ],
+        "tool_name": "t",
+        "effect_disposition": "d",
+        "timestamp": 1,
+        "platform_message_id": "p",
+        "api_content": [
+          3
+        ],
+        "anthropic_content_blocks": [
+          4
+        ],
+        "bedrock_content_blocks": [
+          5
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "underscore-single",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "_thinking_prefill": true
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "underscore-multiple",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "_empty_recovery_synthetic": true,
+        "content": "a",
+        "_empty_terminal_sentinel": false,
+        "_thinking_prefill": "x"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "sidecar-and-underscore",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "timestamp": 1,
+        "_marker": 1
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "extra-content-stripped-non-gemini",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "type": "function",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            },
+            "extra_content": {
+              "thought_signature": "sig"
+            }
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "type": "function",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "extra-content-kept-gemini",
+    "model": "gemini-3-pro",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "type": "function",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            },
+            "extra_content": {
+              "thought_signature": "sig"
+            }
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "type": "function",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            },
+            "extra_content": {
+              "thought_signature": "sig"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "extra-content-kept-gemma",
+    "model": "google/gemma-2-27b",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "extra_content": {
+              "thought_signature": "sig"
+            }
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "extra_content": {
+              "thought_signature": "sig"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "gemini-strips-call-id-keeps-extra-content",
+    "model": "gemini-3-pro",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "call_id": "rc",
+            "response_item_id": "ri",
+            "extra_content": {
+              "thought_signature": "sig"
+            }
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "extra_content": {
+              "thought_signature": "sig"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "tool-call-codex-fields",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "call_id": "rc",
+            "response_item_id": "ri",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            }
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "mixed-tool-calls",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "keep",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            }
+          },
+          {
+            "id": "strip",
+            "call_id": "rc"
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "keep",
+            "function": {
+              "name": "f",
+              "arguments": "{}"
+            }
+          },
+          {
+            "id": "strip"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "non-dict-tool-call-entry",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          "raw",
+          {
+            "id": "x",
+            "response_item_id": "ri"
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          "raw",
+          {
+            "id": "x"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "empty-tool-calls-assistant",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": []
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": null
+      }
+    ]
+  },
+  {
+    "name": "empty-tool-calls-user",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "user",
+        "tool_calls": []
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "tool_calls": []
+      }
+    ]
+  },
+  {
+    "name": "null-tool-calls-assistant",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "a",
+        "tool_calls": null
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "content": "a"
+      }
+    ]
+  },
+  {
+    "name": "null-tool-calls-user",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "user",
+        "tool_calls": null
+      }
+    ],
+    "expected": [
+      {
+        "role": "user",
+        "tool_calls": null
+      }
+    ]
+  },
+  {
+    "name": "empty-tool-calls-with-sidecars",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "timestamp": 1,
+        "tool_calls": [],
+        "_m": 1
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant"
+      }
+    ]
+  },
+  {
+    "name": "tool-calls-non-list",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": "weird"
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": "weird"
+      }
+    ]
+  },
+  {
+    "name": "empty-model-strips-extra-content",
+    "model": "",
+    "messages": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "extra_content": {
+              "thought_signature": "s"
+            }
+          }
+        ]
+      }
+    ],
+    "expected": [
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "multi-message-batch",
+    "model": "gpt-4",
+    "messages": [
+      {
+        "role": "system",
+        "content": "sys"
+      },
+      {
+        "role": "user",
+        "content": "hi",
+        "platform_message_id": "p1"
+      },
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1",
+            "call_id": "rc"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "content": "res",
+        "tool_name": "search",
+        "tool_call_id": "c1"
+      }
+    ],
+    "expected": [
+      {
+        "role": "system",
+        "content": "sys"
+      },
+      {
+        "role": "user",
+        "content": "hi"
+      },
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "c1"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "content": "res",
+        "tool_call_id": "c1"
+      }
+    ]
+  }
+]
