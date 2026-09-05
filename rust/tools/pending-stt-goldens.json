@@ -1,0 +1,639 @@
+[
+  {
+    "name": "combined-fallback-and-reuse",
+    "kind": "voice",
+    "text": "caption",
+    "paths": [
+      "note.ogg"
+    ],
+    "mimes": [],
+    "steps": [
+      {
+        "op": "combined",
+        "user_text": "original",
+        "fail": true,
+        "expected": {
+          "result": [
+            "original",
+            []
+          ],
+          "calls": [
+            {
+              "text": "original",
+              "paths": [
+                "note.ogg"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      },
+      {
+        "op": "combined",
+        "user_text": "original",
+        "text": "",
+        "transcripts": [
+          "spoken"
+        ],
+        "routing_fail": true,
+        "expected": {
+          "result": [
+            "original",
+            []
+          ],
+          "calls": [
+            {
+              "text": "original",
+              "paths": [
+                "note.ogg"
+              ]
+            },
+            {
+              "text": "original",
+              "paths": [
+                "note.ogg"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      },
+      {
+        "op": "combined",
+        "user_text": "fallback",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": [
+            "fallback",
+            [
+              "spoken"
+            ]
+          ],
+          "calls": [
+            {
+              "text": "original",
+              "paths": [
+                "note.ogg"
+              ]
+            },
+            {
+              "text": "original",
+              "paths": [
+                "note.ogg"
+              ]
+            }
+          ],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"spoken\""
+          ]
+        }
+      },
+      {
+        "op": "combined",
+        "user_text": "next",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": [
+            "next",
+            [
+              "spoken"
+            ]
+          ],
+          "calls": [
+            {
+              "text": "original",
+              "paths": [
+                "note.ogg"
+              ]
+            },
+            {
+              "text": "original",
+              "paths": [
+                "note.ogg"
+              ]
+            }
+          ],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"spoken\""
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "combined-no-audio",
+    "kind": "document",
+    "text": "caption",
+    "paths": [
+      "song.mp3"
+    ],
+    "mimes": [
+      "audio/mpeg"
+    ],
+    "steps": [
+      {
+        "op": "combined",
+        "user_text": "original",
+        "fail": true,
+        "routing_fail": true,
+        "expected": {
+          "result": [
+            "original",
+            []
+          ],
+          "calls": [],
+          "sends": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "merge-and-echo-failure",
+    "kind": "voice",
+    "text": "caption",
+    "paths": [
+      "one.ogg"
+    ],
+    "mimes": [
+      "audio/ogg"
+    ],
+    "steps": [
+      {
+        "op": "transcribe",
+        "text": "first",
+        "transcripts": [
+          "same"
+        ],
+        "expected": {
+          "result": [
+            "first",
+            [
+              "same"
+            ]
+          ],
+          "calls": [
+            {
+              "text": "caption",
+              "paths": [
+                "one.ogg"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      },
+      {
+        "op": "transcribe",
+        "user_text": "ignored",
+        "text": "must not run",
+        "transcripts": [],
+        "expected": {
+          "result": [
+            "first",
+            [
+              "same"
+            ]
+          ],
+          "calls": [
+            {
+              "text": "caption",
+              "paths": [
+                "one.ogg"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      },
+      {
+        "op": "echo",
+        "transcripts": [
+          "same"
+        ],
+        "fail": true,
+        "expected": {
+          "result": null,
+          "calls": [
+            {
+              "text": "caption",
+              "paths": [
+                "one.ogg"
+              ]
+            }
+          ],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"same\""
+          ]
+        }
+      },
+      {
+        "op": "echo",
+        "transcripts": [
+          "same"
+        ],
+        "expected": {
+          "result": null,
+          "calls": [
+            {
+              "text": "caption",
+              "paths": [
+                "one.ogg"
+              ]
+            }
+          ],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"same\""
+          ]
+        }
+      },
+      {
+        "op": "append",
+        "path": "two.ogg",
+        "mime": "audio/ogg",
+        "expected": {
+          "result": null,
+          "calls": [
+            {
+              "text": "caption",
+              "paths": [
+                "one.ogg"
+              ]
+            }
+          ],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"same\""
+          ]
+        }
+      },
+      {
+        "op": "transcribe",
+        "user_text": "",
+        "text": "merged",
+        "transcripts": [
+          "same",
+          "same"
+        ],
+        "expected": {
+          "result": [
+            "merged",
+            [
+              "same",
+              "same"
+            ]
+          ],
+          "calls": [
+            {
+              "text": "caption",
+              "paths": [
+                "one.ogg"
+              ]
+            },
+            {
+              "text": "",
+              "paths": [
+                "one.ogg",
+                "two.ogg"
+              ]
+            }
+          ],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"same\""
+          ]
+        }
+      },
+      {
+        "op": "echo",
+        "transcripts": [
+          "same",
+          "same"
+        ],
+        "expected": {
+          "result": null,
+          "calls": [
+            {
+              "text": "caption",
+              "paths": [
+                "one.ogg"
+              ]
+            },
+            {
+              "text": "",
+              "paths": [
+                "one.ogg",
+                "two.ogg"
+              ]
+            }
+          ],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"same\"",
+            "\ud83c\udf99\ufe0f \"same\""
+          ]
+        }
+      },
+      {
+        "op": "echo",
+        "transcripts": [
+          "shorter"
+        ],
+        "expected": {
+          "result": null,
+          "calls": [
+            {
+              "text": "caption",
+              "paths": [
+                "one.ogg"
+              ]
+            },
+            {
+              "text": "",
+              "paths": [
+                "one.ogg",
+                "two.ogg"
+              ]
+            }
+          ],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"same\"",
+            "\ud83c\udf99\ufe0f \"same\""
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "no-audio",
+    "kind": "audio",
+    "text": "",
+    "paths": [
+      "song.mp3"
+    ],
+    "mimes": [
+      "audio/mpeg"
+    ],
+    "steps": [
+      {
+        "op": "transcribe",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": [
+            null,
+            []
+          ],
+          "calls": [],
+          "sends": []
+        }
+      },
+      {
+        "op": "transcribe",
+        "user_text": "",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": [
+            "",
+            []
+          ],
+          "calls": [],
+          "sends": []
+        }
+      },
+      {
+        "op": "transcribe",
+        "user_text": "override",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": [
+            "override",
+            []
+          ],
+          "calls": [],
+          "sends": []
+        }
+      },
+      {
+        "op": "clarify",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": "",
+          "calls": [],
+          "sends": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "retry-and-null-cache",
+    "kind": "voice",
+    "text": "original",
+    "paths": [
+      "file.pdf"
+    ],
+    "mimes": [
+      "application/pdf"
+    ],
+    "steps": [
+      {
+        "op": "transcribe",
+        "fail": true,
+        "expected": {
+          "result": {
+            "error": true
+          },
+          "calls": [
+            {
+              "text": "original",
+              "paths": [
+                "file.pdf"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      },
+      {
+        "op": "transcribe",
+        "text": null,
+        "transcripts": [],
+        "expected": {
+          "result": [
+            null,
+            []
+          ],
+          "calls": [
+            {
+              "text": "original",
+              "paths": [
+                "file.pdf"
+              ]
+            },
+            {
+              "text": "original",
+              "paths": [
+                "file.pdf"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      },
+      {
+        "op": "transcribe",
+        "user_text": "ignored",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": [
+            null,
+            []
+          ],
+          "calls": [
+            {
+              "text": "original",
+              "paths": [
+                "file.pdf"
+              ]
+            },
+            {
+              "text": "original",
+              "paths": [
+                "file.pdf"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "echo-gates",
+    "kind": "voice",
+    "text": "",
+    "paths": [],
+    "mimes": [],
+    "steps": [
+      {
+        "op": "echo",
+        "enabled": false,
+        "transcripts": [
+          "a"
+        ],
+        "expected": {
+          "result": null,
+          "calls": [],
+          "sends": []
+        }
+      },
+      {
+        "op": "echo",
+        "available": false,
+        "transcripts": [
+          "a"
+        ],
+        "expected": {
+          "result": null,
+          "calls": [],
+          "sends": []
+        }
+      },
+      {
+        "op": "echo",
+        "transcripts": [],
+        "expected": {
+          "result": null,
+          "calls": [],
+          "sends": []
+        }
+      },
+      {
+        "op": "echo",
+        "transcripts": [
+          "a",
+          "a"
+        ],
+        "expected": {
+          "result": null,
+          "calls": [],
+          "sends": [
+            "\ud83c\udf99\ufe0f \"a\"",
+            "\ud83c\udf99\ufe0f \"a\""
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "clarify-transcripts",
+    "kind": "voice",
+    "text": "caption",
+    "paths": [
+      "one.ogg"
+    ],
+    "mimes": [],
+    "steps": [
+      {
+        "op": "clarify",
+        "text": "enriched",
+        "transcripts": [
+          "\u001c first \u001f",
+          " \n",
+          "\u0085second\u00a0",
+          "\u001e"
+        ],
+        "expected": {
+          "result": "first\n\nsecond",
+          "calls": [
+            {
+              "text": "",
+              "paths": [
+                "one.ogg"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      },
+      {
+        "op": "clarify",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": "first\n\nsecond",
+          "calls": [
+            {
+              "text": "",
+              "paths": [
+                "one.ogg"
+              ]
+            }
+          ],
+          "sends": []
+        }
+      }
+    ]
+  },
+  {
+    "name": "clarify-plain",
+    "kind": "text",
+    "text": "\u001c plain \u001f",
+    "paths": [],
+    "mimes": [],
+    "steps": [
+      {
+        "op": "clarify",
+        "text": "unused",
+        "transcripts": [],
+        "expected": {
+          "result": "plain",
+          "calls": [],
+          "sends": []
+        }
+      }
+    ]
+  }
+]

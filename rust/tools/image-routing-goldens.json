@@ -1,0 +1,5664 @@
+{
+  "coercion": [
+    {
+      "value": null,
+      "expected": null
+    },
+    {
+      "value": false,
+      "expected": false
+    },
+    {
+      "value": true,
+      "expected": true
+    },
+    {
+      "value": 0,
+      "expected": false
+    },
+    {
+      "value": 1,
+      "expected": true
+    },
+    {
+      "value": 2,
+      "expected": null
+    },
+    {
+      "value": -1,
+      "expected": null
+    },
+    {
+      "value": 0.0,
+      "expected": null
+    },
+    {
+      "value": 1.0,
+      "expected": null
+    },
+    {
+      "value": "",
+      "expected": null
+    },
+    {
+      "value": "true",
+      "expected": true
+    },
+    {
+      "value": "FALSE",
+      "expected": false
+    },
+    {
+      "value": " on ",
+      "expected": true
+    },
+    {
+      "value": "yes",
+      "expected": true
+    },
+    {
+      "value": "no",
+      "expected": false
+    },
+    {
+      "value": "off",
+      "expected": false
+    },
+    {
+      "value": "1",
+      "expected": true
+    },
+    {
+      "value": "0",
+      "expected": false
+    },
+    {
+      "value": "bad",
+      "expected": null
+    },
+    {
+      "value": "\u001cTRUE\u001f",
+      "expected": true
+    },
+    {
+      "value": [],
+      "expected": null
+    },
+    {
+      "value": {},
+      "expected": null
+    },
+    {
+      "value": [
+        1
+      ],
+      "expected": null
+    },
+    {
+      "value": {
+        "k": 1
+      },
+      "expected": null
+    }
+  ],
+  "overrides": [
+    {
+      "cfg": null,
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": null,
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": [],
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": [],
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": "string",
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": "string",
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {},
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {},
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": "model"
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": "model"
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": []
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": []
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": 1
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": 1
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": null
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": null
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": null,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": null,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": null
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": null
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": false
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": false
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": false,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": false,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": true
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": true
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": true,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": true,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 0
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 0
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 0,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 0,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 0
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 0
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 1
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 1
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 1,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 1,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 1
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 1
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 2
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 2
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 2,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 2,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 2
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 2
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": -1
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": -1
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": -1,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": -1,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": -1
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": -1
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 0.0
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 0.0
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 0.0,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 0.0,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 0.0
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 0.0
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 1.0
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": 1.0
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 1.0,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": 1.0,
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 1.0
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": 1.0
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": ""
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": ""
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": ""
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": ""
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "true"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "true"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "true",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "true",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "true"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "true"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "FALSE"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "FALSE"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "FALSE",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "FALSE",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "FALSE"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "FALSE"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": " on "
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": " on "
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": " on ",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": " on ",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": " on "
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": " on "
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "yes"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "yes"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "yes",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "yes",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "yes"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "yes"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "no"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "no"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "no",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "no",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "no"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "no"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "off"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "off"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "off",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "off",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "off"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "off"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "1"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "1"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "1",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "1",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "1"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "1"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "0"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "0"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "0",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "0",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "0"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "0"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "bad"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "bad"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "bad",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "bad",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "bad"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "bad"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "\u001cTRUE\u001f"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": "\u001cTRUE\u001f"
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "\u001cTRUE\u001f",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": "\u001cTRUE\u001f",
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "\u001cTRUE\u001f"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": "\u001cTRUE\u001f"
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": []
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": []
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": [],
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": [],
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": []
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": []
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": {}
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": {}
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": {},
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": {},
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": {}
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": {}
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": [
+            1
+          ]
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": [
+            1
+          ]
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": [
+                  1
+                ],
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": [
+                  1
+                ],
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": [
+                  1
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": [
+                  1
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": {
+            "k": 1
+          }
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "supports_vision": {
+            "k": 1
+          }
+        },
+        "providers": {
+          "custom": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": {
+                  "k": 1
+                },
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "supports_vision": {
+                  "k": 1
+                },
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": {
+                  "k": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "custom_providers": [
+          {
+            "name": " LIVE ",
+            "models": {
+              "m": {
+                "vision": {
+                  "k": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": 1e-06
+        },
+        "providers": {
+          "1e-06": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": 1e-06
+        },
+        "providers": {
+          "1e-06": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": [
+            1e+20
+          ]
+        },
+        "providers": {
+          "[1e+20]": {
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": [
+            1e+20
+          ]
+        },
+        "providers": {
+          "[1e+20]": {
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": [
+            true,
+            null,
+            "a'b"
+          ]
+        },
+        "providers": {
+          "[True, None, \"a'b\"]": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": [
+            true,
+            null,
+            "a'b"
+          ]
+        },
+        "providers": {
+          "[True, None, \"a'b\"]": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": {
+            "x": true
+          }
+        },
+        "providers": {
+          "{'x': True}": {
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": {
+            "x": true
+          }
+        },
+        "providers": {
+          "{'x': True}": {
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": "default"
+        },
+        "custom_providers": [
+          {
+            "name": "default",
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          },
+          {
+            "name": "live",
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": "default"
+        },
+        "custom_providers": [
+          {
+            "name": "default",
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          },
+          {
+            "name": "live",
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "custom:live": {
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          },
+          "live": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "custom:live": {
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          },
+          "live": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": "\u001clive\u001f"
+        },
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "model": {
+          "provider": "\u001clive\u001f"
+        },
+        "providers": {
+          "live": {
+            "models": {
+              "m": {
+                "vision": true
+              }
+            }
+          }
+        }
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": true
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": null
+            }
+          }
+        },
+        "custom_providers": [
+          null,
+          [],
+          {
+            "name": "live",
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "",
+      "expected": null
+    },
+    {
+      "cfg": {
+        "providers": {
+          "live": {
+            "models": {
+              "m": null
+            }
+          }
+        },
+        "custom_providers": [
+          null,
+          [],
+          {
+            "name": "live",
+            "models": {
+              "m": {
+                "vision": false
+              }
+            }
+          }
+        ]
+      },
+      "provider": "custom",
+      "model": "m",
+      "requested": "custom:live",
+      "expected": false
+    }
+  ],
+  "aux": [
+    {
+      "cfg": {
+        "auxiliary": null
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": []
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": "bad"
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {}
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": []
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": "bad"
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": null
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": false
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": true
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": 0
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": 1
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": 2
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": -1
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": 0.0
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": 1.0
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": ""
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "true"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "FALSE"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": " on "
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "yes"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "no"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "off"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "1"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "0"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "bad"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "\u001cTRUE\u001f"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": []
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": {}
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": [
+              1
+            ]
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": {
+              "k": 1
+            }
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": " AUTO "
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "provider": "\u001cauto\u001f"
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": null
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": false
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": true
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": 0
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": 1
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": 2
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": -1
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": 0.0
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": 1.0
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": ""
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "true"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "FALSE"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": " on "
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "yes"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "no"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "off"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "1"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "0"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "bad"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "\u001cTRUE\u001f"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": []
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": {}
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": [
+              1
+            ]
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": {
+              "k": 1
+            }
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "auto"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": " AUTO "
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "model": "\u001cauto\u001f"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": null
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": false
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": true
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": 0
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": 1
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": 2
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": -1
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": 0.0
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": 1.0
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": ""
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "true"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "FALSE"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": " on "
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "yes"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "no"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "off"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "1"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "0"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "bad"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "\u001cTRUE\u001f"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": []
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": {}
+          }
+        }
+      },
+      "expected": false
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": [
+              1
+            ]
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": {
+              "k": 1
+            }
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "auto"
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": " AUTO "
+          }
+        }
+      },
+      "expected": true
+    },
+    {
+      "cfg": {
+        "auxiliary": {
+          "vision": {
+            "base_url": "\u001cauto\u001f"
+          }
+        }
+      },
+      "expected": true
+    }
+  ],
+  "modes": [
+    {
+      "value": null,
+      "expected": "auto"
+    },
+    {
+      "value": false,
+      "expected": "auto"
+    },
+    {
+      "value": true,
+      "expected": "auto"
+    },
+    {
+      "value": 0,
+      "expected": "auto"
+    },
+    {
+      "value": 1,
+      "expected": "auto"
+    },
+    {
+      "value": 2,
+      "expected": "auto"
+    },
+    {
+      "value": -1,
+      "expected": "auto"
+    },
+    {
+      "value": 0.0,
+      "expected": "auto"
+    },
+    {
+      "value": 1.0,
+      "expected": "auto"
+    },
+    {
+      "value": "",
+      "expected": "auto"
+    },
+    {
+      "value": "true",
+      "expected": "auto"
+    },
+    {
+      "value": "FALSE",
+      "expected": "auto"
+    },
+    {
+      "value": " on ",
+      "expected": "auto"
+    },
+    {
+      "value": "yes",
+      "expected": "auto"
+    },
+    {
+      "value": "no",
+      "expected": "auto"
+    },
+    {
+      "value": "off",
+      "expected": "auto"
+    },
+    {
+      "value": "1",
+      "expected": "auto"
+    },
+    {
+      "value": "0",
+      "expected": "auto"
+    },
+    {
+      "value": "bad",
+      "expected": "auto"
+    },
+    {
+      "value": "\u001cTRUE\u001f",
+      "expected": "auto"
+    },
+    {
+      "value": [],
+      "expected": "auto"
+    },
+    {
+      "value": {},
+      "expected": "auto"
+    },
+    {
+      "value": [
+        1
+      ],
+      "expected": "auto"
+    },
+    {
+      "value": {
+        "k": 1
+      },
+      "expected": "auto"
+    },
+    {
+      "value": "native",
+      "expected": "native"
+    },
+    {
+      "value": " TEXT ",
+      "expected": "text"
+    },
+    {
+      "value": "\u001cNATIVE\u001f",
+      "expected": "native"
+    }
+  ],
+  "decisions": [
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "text",
+      "calls": [
+        [
+          "custom",
+          "m",
+          ""
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": [
+        [
+          "custom",
+          "m",
+          "custom:live"
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "text",
+      "calls": [
+        [
+          "custom",
+          "m",
+          ""
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": [
+        [
+          "custom",
+          "m",
+          "custom:live"
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "native",
+      "calls": [
+        [
+          "custom",
+          "m",
+          ""
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": [
+        [
+          "custom",
+          "m",
+          "custom:live"
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "error",
+      "calls": [
+        [
+          "custom",
+          "m",
+          ""
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "error",
+      "calls": [
+        [
+          "custom",
+          "m",
+          "custom:live"
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "auto"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "native"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "text"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "text",
+      "calls": [
+        [
+          "custom",
+          "m",
+          ""
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": [
+        [
+          "custom",
+          "m",
+          "custom:live"
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "text",
+      "calls": [
+        [
+          "custom",
+          "m",
+          ""
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": [
+        [
+          "custom",
+          "m",
+          "custom:live"
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "native",
+      "calls": [
+        [
+          "custom",
+          "m",
+          ""
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": [
+        [
+          "custom",
+          "m",
+          "custom:live"
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "error",
+      "calls": [
+        [
+          "custom",
+          "m",
+          ""
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "error",
+      "calls": [
+        [
+          "custom",
+          "m",
+          "custom:live"
+        ]
+      ]
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "invalid"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "text",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "auto"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": null,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": false,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": true,
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "",
+      "expected": "native",
+      "calls": []
+    },
+    {
+      "cfg": {
+        "agent": {
+          "image_input_mode": "\u001cNATIVE\u001f"
+        },
+        "auxiliary": {
+          "vision": {
+            "provider": "custom"
+          }
+        }
+      },
+      "capability": "error",
+      "requested": "custom:live",
+      "expected": "native",
+      "calls": []
+    }
+  ]
+}

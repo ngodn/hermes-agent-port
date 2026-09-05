@@ -1,0 +1,314 @@
+{
+  "files": [
+    "a.png",
+    "b.JPG",
+    "\u6587\u6863.png",
+    "\u00bd.png",
+    "e\u0301.png",
+    "\u0345.png",
+    "x.t\u0130ff",
+    "x.t\u0131ff",
+    "x.tiff",
+    "a-b/c_d.png",
+    ".hidden.png",
+    "with space.png",
+    "back\\slash.png",
+    "a.pngsuffix",
+    "a.png\u540e",
+    "a.png\u0301"
+  ],
+  "directories": [
+    "directory.png"
+  ],
+  "cases": [
+    {
+      "text": "",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "no refs",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~/a.png",
+      "paths": [
+        "__HOME__/a.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "__HOME__/a.png __HOME__/b.JPG ~/a.png",
+      "paths": [
+        "__HOME__/a.png",
+        "__HOME__/b.JPG"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/missing.png ~/directory.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "`~/a.png` ~/b.JPG",
+      "paths": [
+        "__HOME__/b.JPG"
+      ],
+      "urls": []
+    },
+    {
+      "text": "```python\n~/a.png\n``` ~/b.JPG",
+      "paths": [
+        "__HOME__/b.JPG"
+      ],
+      "urls": []
+    },
+    {
+      "text": "```~/a.png```",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "```\n~/a.png",
+      "paths": [
+        "__HOME__/a.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "x~/a.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "(~/a.png),",
+      "paths": [
+        "__HOME__/a.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "https://host/a.png",
+      "paths": [],
+      "urls": [
+        "https://host/a.png"
+      ]
+    },
+    {
+      "text": "https://host/a.png?token=abc&x=1).",
+      "paths": [],
+      "urls": [
+        "https://host/a.png?token=abc&x=1"
+      ]
+    },
+    {
+      "text": "https://host/a.pngsuffix",
+      "paths": [],
+      "urls": [
+        "https://host/a.png"
+      ]
+    },
+    {
+      "text": "HTTPS://HOST/a.PNG#fragment",
+      "paths": [],
+      "urls": [
+        "HTTPS://HOST/a.PNG"
+      ]
+    },
+    {
+      "text": "file://__HOME__/a.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "https://host/a.png https://host/a.png",
+      "paths": [],
+      "urls": [
+        "https://host/a.png"
+      ]
+    },
+    {
+      "text": "`https://host/a.png` https://host/b.jpg",
+      "paths": [],
+      "urls": [
+        "https://host/b.jpg"
+      ]
+    },
+    {
+      "text": "```\nhttps://host/a.png\n```",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~/a.png/other ~/a.png\u5f8c",
+      "paths": [
+        "__HOME__/a.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/a.png\u0301",
+      "paths": [
+        "__HOME__/a.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "\u0345~/a.png",
+      "paths": [
+        "__HOME__/a.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "\u00bd~/a.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "https://host/a.png?x=1!?)]>",
+      "paths": [],
+      "urls": [
+        "https://host/a.png?x=1"
+      ]
+    },
+    {
+      "text": "https://host/a.t\u0130ff",
+      "paths": [],
+      "urls": [
+        "https://host/a.t\u0130ff"
+      ]
+    },
+    {
+      "text": "https://host/a.t\u0131ff",
+      "paths": [],
+      "urls": [
+        "https://host/a.t\u0131ff"
+      ]
+    },
+    {
+      "text": "~/../a.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "__HOME__//a.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~someone/a.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "https://host/a.png?x='quoted'",
+      "paths": [],
+      "urls": [
+        "https://host/a.png?x="
+      ]
+    },
+    {
+      "text": "~/a.png",
+      "paths": [
+        "__HOME__/a.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/b.JPG",
+      "paths": [
+        "__HOME__/b.JPG"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/\u6587\u6863.png",
+      "paths": [
+        "__HOME__/\u6587\u6863.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/\u00bd.png",
+      "paths": [
+        "__HOME__/\u00bd.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/e\u0301.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~/\u0345.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~/x.t\u0130ff",
+      "paths": [
+        "__HOME__/x.t\u0130ff"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/x.t\u0131ff",
+      "paths": [
+        "__HOME__/x.t\u0131ff"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/x.tiff",
+      "paths": [
+        "__HOME__/x.tiff"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/a-b/c_d.png",
+      "paths": [
+        "__HOME__/a-b/c_d.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/.hidden.png",
+      "paths": [
+        "__HOME__/.hidden.png"
+      ],
+      "urls": []
+    },
+    {
+      "text": "~/with space.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~/back\\slash.png",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~/a.pngsuffix",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~/a.png\u540e",
+      "paths": [],
+      "urls": []
+    },
+    {
+      "text": "~/a.png\u0301",
+      "paths": [
+        "__HOME__/a.png"
+      ],
+      "urls": []
+    }
+  ]
+}

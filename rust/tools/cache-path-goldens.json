@@ -1,0 +1,1530 @@
+[
+  {
+    "layout": "fresh",
+    "mounts": [
+      {
+        "host_path": "__HOME__/cache/documents",
+        "container_path": "/remote/cache/documents"
+      },
+      {
+        "host_path": "__HOME__/cache/images",
+        "container_path": "/remote/cache/images"
+      },
+      {
+        "host_path": "__HOME__/cache/audio",
+        "container_path": "/remote/cache/audio"
+      },
+      {
+        "host_path": "__HOME__/cache/videos",
+        "container_path": "/remote/cache/videos"
+      },
+      {
+        "host_path": "__HOME__/cache/screenshots",
+        "container_path": "/remote/cache/screenshots"
+      },
+      {
+        "host_path": "__HOME__/cache/web",
+        "container_path": "/remote/cache/web"
+      },
+      {
+        "host_path": "__HOME__/cache/delegation",
+        "container_path": "/remote/cache/delegation"
+      },
+      {
+        "host_path": "__HOME__/cache/spillover",
+        "container_path": "/remote/cache/spillover"
+      },
+      {
+        "host_path": "__HOME__/images",
+        "container_path": "/remote/images"
+      },
+      {
+        "host_path": "__HOME__/attachments",
+        "container_path": "/remote/attachments"
+      }
+    ],
+    "checks": [
+      {
+        "backend": "docker",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "/remote/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "/remote/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "/remote/cache/images/a.png",
+        "inverse": "/remote/cache/images/a.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "/remote/attachments/."
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "/remote/attachments/a.zip"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "/remote/images/photo.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "/remote/cache/images/../outside",
+        "inverse": "/remote/cache/images/../outside"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "/remote/cache/images/a.png",
+        "inverse": "/remote/cache/images/a.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "/remote/attachments/."
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "/remote/attachments/a.zip"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "/remote/images/photo.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "/remote/cache/images/../outside",
+        "inverse": "/remote/cache/images/../outside"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "~/.hermes/cache/images/a.png",
+        "inverse": "~/.hermes/cache/images/a.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "~/.hermes/cache/images/../outside",
+        "inverse": "~/.hermes/cache/images/../outside"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "~/.hermes/cache/images/a.png",
+        "inverse": "~/.hermes/cache/images/a.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "~/.hermes/cache/images/../outside",
+        "inverse": "~/.hermes/cache/images/../outside"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "~/.hermes/cache/images/a.png",
+        "inverse": "~/.hermes/cache/images/a.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "~/.hermes/cache/images/../outside",
+        "inverse": "~/.hermes/cache/images/../outside"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/attachments",
+        "mapped": "__HOME__/attachments",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "__HOME__/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "__HOME__/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/attachments",
+        "mapped": "__HOME__/attachments",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "__HOME__/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "__HOME__/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      }
+    ]
+  },
+  {
+    "layout": "empty-legacy",
+    "mounts": [
+      {
+        "host_path": "__HOME__/cache/documents",
+        "container_path": "/remote/cache/documents"
+      },
+      {
+        "host_path": "__HOME__/cache/images",
+        "container_path": "/remote/cache/images"
+      },
+      {
+        "host_path": "__HOME__/cache/audio",
+        "container_path": "/remote/cache/audio"
+      },
+      {
+        "host_path": "__HOME__/cache/videos",
+        "container_path": "/remote/cache/videos"
+      },
+      {
+        "host_path": "__HOME__/cache/screenshots",
+        "container_path": "/remote/cache/screenshots"
+      },
+      {
+        "host_path": "__HOME__/cache/web",
+        "container_path": "/remote/cache/web"
+      },
+      {
+        "host_path": "__HOME__/cache/delegation",
+        "container_path": "/remote/cache/delegation"
+      },
+      {
+        "host_path": "__HOME__/cache/spillover",
+        "container_path": "/remote/cache/spillover"
+      },
+      {
+        "host_path": "__HOME__/images",
+        "container_path": "/remote/images"
+      },
+      {
+        "host_path": "__HOME__/attachments",
+        "container_path": "/remote/attachments"
+      }
+    ],
+    "checks": [
+      {
+        "backend": "docker",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "/remote/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "/remote/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "/remote/cache/images/a.png",
+        "inverse": "/remote/cache/images/a.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "/remote/attachments/."
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "/remote/attachments/a.zip"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "/remote/images/photo.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "/remote/cache/images/../outside",
+        "inverse": "/remote/cache/images/../outside"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "/remote/cache/images/a.png",
+        "inverse": "/remote/cache/images/a.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "/remote/attachments/."
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "/remote/attachments/a.zip"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "/remote/images/photo.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "/remote/cache/images/../outside",
+        "inverse": "/remote/cache/images/../outside"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "~/.hermes/cache/images/a.png",
+        "inverse": "~/.hermes/cache/images/a.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "~/.hermes/cache/images/../outside",
+        "inverse": "~/.hermes/cache/images/../outside"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "~/.hermes/cache/images/a.png",
+        "inverse": "~/.hermes/cache/images/a.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "~/.hermes/cache/images/../outside",
+        "inverse": "~/.hermes/cache/images/../outside"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "~/.hermes/cache/images/a.png",
+        "inverse": "~/.hermes/cache/images/a.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "~/.hermes/cache/images/../outside",
+        "inverse": "~/.hermes/cache/images/../outside"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/attachments",
+        "mapped": "__HOME__/attachments",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "__HOME__/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "__HOME__/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/attachments",
+        "mapped": "__HOME__/attachments",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "__HOME__/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "__HOME__/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      }
+    ]
+  },
+  {
+    "layout": "populated-legacy",
+    "mounts": [
+      {
+        "host_path": "__HOME__/cache/documents",
+        "container_path": "/remote/cache/documents"
+      },
+      {
+        "host_path": "__HOME__/image_cache",
+        "container_path": "/remote/cache/images"
+      },
+      {
+        "host_path": "__HOME__/cache/audio",
+        "container_path": "/remote/cache/audio"
+      },
+      {
+        "host_path": "__HOME__/cache/videos",
+        "container_path": "/remote/cache/videos"
+      },
+      {
+        "host_path": "__HOME__/cache/screenshots",
+        "container_path": "/remote/cache/screenshots"
+      },
+      {
+        "host_path": "__HOME__/cache/web",
+        "container_path": "/remote/cache/web"
+      },
+      {
+        "host_path": "__HOME__/cache/delegation",
+        "container_path": "/remote/cache/delegation"
+      },
+      {
+        "host_path": "__HOME__/cache/spillover",
+        "container_path": "/remote/cache/spillover"
+      },
+      {
+        "host_path": "__HOME__/images",
+        "container_path": "/remote/images"
+      },
+      {
+        "host_path": "__HOME__/attachments",
+        "container_path": "/remote/attachments"
+      }
+    ],
+    "checks": [
+      {
+        "backend": "docker",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "/remote/cache/images/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "/remote/cache/images/existing.png",
+        "inverse": "/remote/cache/images/existing.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "/remote/attachments/."
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "/remote/attachments/a.zip"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "/remote/images/photo.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "/remote/cache/images/existing.png",
+        "inverse": "/remote/cache/images/existing.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "/remote/attachments/."
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "/remote/attachments/a.zip"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "/remote/images/photo.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "~/.hermes/cache/images/existing.png",
+        "inverse": "~/.hermes/cache/images/existing.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "~/.hermes/cache/images/existing.png",
+        "inverse": "~/.hermes/cache/images/existing.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "~/.hermes/cache/images/existing.png",
+        "inverse": "~/.hermes/cache/images/existing.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/attachments",
+        "mapped": "__HOME__/attachments",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "__HOME__/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "__HOME__/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/attachments",
+        "mapped": "__HOME__/attachments",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "__HOME__/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "__HOME__/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      }
+    ]
+  },
+  {
+    "layout": "file-legacy",
+    "mounts": [
+      {
+        "host_path": "__HOME__/cache/documents",
+        "container_path": "/remote/cache/documents"
+      },
+      {
+        "host_path": "__HOME__/cache/audio",
+        "container_path": "/remote/cache/audio"
+      },
+      {
+        "host_path": "__HOME__/cache/videos",
+        "container_path": "/remote/cache/videos"
+      },
+      {
+        "host_path": "__HOME__/cache/screenshots",
+        "container_path": "/remote/cache/screenshots"
+      },
+      {
+        "host_path": "__HOME__/cache/web",
+        "container_path": "/remote/cache/web"
+      },
+      {
+        "host_path": "__HOME__/cache/delegation",
+        "container_path": "/remote/cache/delegation"
+      },
+      {
+        "host_path": "__HOME__/cache/spillover",
+        "container_path": "/remote/cache/spillover"
+      },
+      {
+        "host_path": "__HOME__/images",
+        "container_path": "/remote/images"
+      },
+      {
+        "host_path": "__HOME__/attachments",
+        "container_path": "/remote/attachments"
+      }
+    ],
+    "checks": [
+      {
+        "backend": "docker",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "docker",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "/remote/attachments/."
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "/remote/attachments/a.zip"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "/remote/images/photo.png"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": " Docker ",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/attachments",
+        "mapped": "/remote/attachments/.",
+        "inverse": "/remote/attachments/."
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "/remote/attachments/a.zip",
+        "inverse": "/remote/attachments/a.zip"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "/remote/images/photo.png",
+        "inverse": "/remote/images/photo.png"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "modal",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "ssh",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "daytona",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/attachments",
+        "mapped": "~/.hermes/attachments/.",
+        "inverse": "~/.hermes/attachments/."
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "~/.hermes/attachments/a.zip",
+        "inverse": "~/.hermes/attachments/a.zip"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "~/.hermes/images/photo.png",
+        "inverse": "~/.hermes/images/photo.png"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "vercel_sandbox",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/attachments",
+        "mapped": "__HOME__/attachments",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "__HOME__/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "__HOME__/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "local",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/cache/images/a.png",
+        "mapped": "__HOME__/cache/images/a.png",
+        "inverse": "__HOME__/cache/images/a.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/image_cache/existing.png",
+        "mapped": "__HOME__/image_cache/existing.png",
+        "inverse": "__HOME__/image_cache/existing.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/attachments",
+        "mapped": "__HOME__/attachments",
+        "inverse": "__HOME__/attachments"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/attachments/a.zip",
+        "mapped": "__HOME__/attachments/a.zip",
+        "inverse": "__HOME__/attachments/a.zip"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/images/photo.png",
+        "mapped": "__HOME__/images/photo.png",
+        "inverse": "__HOME__/images/photo.png"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/images-other/a",
+        "mapped": "__HOME__/images-other/a",
+        "inverse": "__HOME__/images-other/a"
+      },
+      {
+        "backend": "singularity",
+        "host": "__HOME__/cache/images/../outside",
+        "mapped": "__HOME__/cache/images/../outside",
+        "inverse": "__HOME__/cache/images/../outside"
+      }
+    ]
+  }
+]

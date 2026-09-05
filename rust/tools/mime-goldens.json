@@ -1,0 +1,473 @@
+{
+  "cases": [
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "a.png"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "a.PNG"
+    },
+    {
+      "custom": false,
+      "encoding": "gzip",
+      "mime": "image/png",
+      "path": "a.png.gz"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a.png.GZ"
+    },
+    {
+      "custom": false,
+      "encoding": "gzip",
+      "mime": "image/svg+xml",
+      "path": "a.svgz"
+    },
+    {
+      "custom": false,
+      "encoding": "gzip",
+      "mime": "image/svg+xml",
+      "path": "a.SVGZ"
+    },
+    {
+      "custom": false,
+      "encoding": "gzip",
+      "mime": "application/x-tar",
+      "path": "a.tgz"
+    },
+    {
+      "custom": false,
+      "encoding": "bzip2",
+      "mime": "application/x-tar",
+      "path": "a.tbz2"
+    },
+    {
+      "custom": false,
+      "encoding": "xz",
+      "mime": "application/x-tar",
+      "path": "a.txz"
+    },
+    {
+      "custom": false,
+      "encoding": "compress",
+      "mime": null,
+      "path": "a.Z"
+    },
+    {
+      "custom": false,
+      "encoding": "compress",
+      "mime": "text/plain",
+      "path": "a.txt.Z"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a.txt.z"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": ".png"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "..png"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": ".hidden.png"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "dir/.png"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a."
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/jpeg",
+      "path": "a.jpg"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/jpeg",
+      "path": "a.jpeg"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/bmp",
+      "path": "a.bmp"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/vnd.microsoft.icon",
+      "path": "a.ico"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/tiff",
+      "path": "a.tif"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/tiff",
+      "path": "a.tiff"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/avif",
+      "path": "a.avif"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/heic",
+      "path": "a.heic"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a.webp"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a.audit"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a.cust"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a.pic"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "https://host/a.png?q=x#f"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "a.png?q=x"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "data:image/png;base64,abcd"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "text/plain",
+      "path": "data:;base64,abcd"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": null,
+      "path": "data:bad"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "http://host/a.png;params?x"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "file:///tmp/a.png"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "s3://bucket/a.png"
+    },
+    {
+      "custom": false,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "C:/a.png"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": "a.png"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": "a.PNG"
+    },
+    {
+      "custom": true,
+      "encoding": "gzip",
+      "mime": "application/x-custom",
+      "path": "a.png.gz"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "a.png.GZ"
+    },
+    {
+      "custom": true,
+      "encoding": "gzip",
+      "mime": "image/svg+xml",
+      "path": "a.svgz"
+    },
+    {
+      "custom": true,
+      "encoding": "gzip",
+      "mime": "image/svg+xml",
+      "path": "a.SVGZ"
+    },
+    {
+      "custom": true,
+      "encoding": "gzip",
+      "mime": "application/x-tar",
+      "path": "a.tgz"
+    },
+    {
+      "custom": true,
+      "encoding": "bzip2",
+      "mime": "application/x-tar",
+      "path": "a.tbz2"
+    },
+    {
+      "custom": true,
+      "encoding": "xz",
+      "mime": "application/x-tar",
+      "path": "a.txz"
+    },
+    {
+      "custom": true,
+      "encoding": "compress",
+      "mime": null,
+      "path": "a.Z"
+    },
+    {
+      "custom": true,
+      "encoding": "compress",
+      "mime": "text/plain",
+      "path": "a.txt.Z"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "a.txt.z"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": ".png"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "..png"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": ".hidden.png"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "dir/.png"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "a."
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "a"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/jpeg",
+      "path": "a.jpg"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/jpeg",
+      "path": "a.jpeg"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/bmp",
+      "path": "a.bmp"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/vnd.microsoft.icon",
+      "path": "a.ico"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/tiff",
+      "path": "a.tif"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/tiff",
+      "path": "a.tiff"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/avif",
+      "path": "a.avif"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/heic",
+      "path": "a.heic"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "a.webp"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "text/x-audit",
+      "path": "a.audit"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": "a.cust"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/x-private",
+      "path": "a.pic"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": "https://host/a.png?q=x#f"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "a.png?q=x"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "image/png",
+      "path": "data:image/png;base64,abcd"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "text/plain",
+      "path": "data:;base64,abcd"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": null,
+      "path": "data:bad"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": "http://host/a.png;params?x"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": "file:///tmp/a.png"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": "s3://bucket/a.png"
+    },
+    {
+      "custom": true,
+      "encoding": null,
+      "mime": "application/x-custom",
+      "path": "C:/a.png"
+    }
+  ],
+  "overrides": "application/x-custom png cust\ntext/x-audit audit # comment\nimage/x-private pic\n"
+}

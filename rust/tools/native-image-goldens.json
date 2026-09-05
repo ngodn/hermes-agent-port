@@ -1,0 +1,1068 @@
+{
+  "files": {
+    "image.png": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAFklEQVR4nGOUNPKuZWBgYGBigAI4AwAaGwEZ6uWUnQAAAABJRU5ErkJggg==",
+    "image.jpeg": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAADAAIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDyyiiiu84j/9k=",
+    "image.gif": "R0lGODdhAgADAIEAABkySwAAAAAAAAAAACwAAAAAAgADAAAIBgABCBwYEAA7",
+    "image.webp": "UklGRh4AAABXRUJQVlA4TBEAAAAvAYAAEAdQmWZ0qX2BiOh/AAA=",
+    "image.bmp": "Qk1OAAAAAAAAADYAAAAoAAAAAgAAAAMAAAABABgAAAAAABgAAADEDgAAxA4AAAAAAAAAAAAASzIZSzIZAABLMhlLMhkAAEsyGUsyGQAA",
+    "image.tiff": "SUkqAAgAAAALAAABBAABAAAAAgAAAAEBBAABAAAAAwAAAAIBAwAEAAAAkgAAAAMBAwABAAAAAQAAAAYBAwABAAAAAgAAABEBBAABAAAAmgAAABUBAwABAAAABAAAABYBBAABAAAAAwAAABcBBAABAAAAGAAAABwBAwABAAAAAQAAAFIBAwABAAAAAgAAAAAAAAAIAAgACAAIABkyS30ZMkt9GTJLfRkyS30ZMkt9GTJLfQ==",
+    "wrong.webp": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAFklEQVR4nGOUNPKuZWBgYGBigAI4AwAaGwEZ6uWUnQAAAABJRU5ErkJggg==",
+    "integer.tiff": "SUkqAAgAAAAKAAABBAABAAAAAgAAAAEBBAABAAAAAwAAAAIBAwABAAAAIAAAAAMBAwABAAAAAQAAAAYBAwABAAAAAQAAABEBBAABAAAAhgAAABYBBAABAAAAAwAAABcBBAABAAAAGAAAABwBAwABAAAAAQAAAFMBAwABAAAAAgAAAAAAAAAAAAAAgAAAAP8AAAAAAQAAAAQAAP//AAA=",
+    "numeric-H.tiff": "SUkqAAgAAAAJAAABBAABAAAAAgAAAAEBBAABAAAAAwAAAAIBAwABAAAAEAAAAAMBAwABAAAAAQAAAAYBAwABAAAAAQAAABEBBAABAAAAegAAABYBBAABAAAAAwAAABcBBAABAAAADAAAABwBAwABAAAAAQAAAAAAAAAAAIAA/wAAAQAE//8=",
+    "numeric-f.tiff": "SUkqAAgAAAAKAAABBAABAAAAAgAAAAEBBAABAAAAAwAAAAIBAwABAAAAIAAAAAMBAwABAAAAAQAAAAYBAwABAAAAAQAAABEBBAABAAAAhgAAABYBBAABAAAAAwAAABcBBAABAAAAGAAAABwBAwABAAAAAQAAAFMBAwABAAAAAwAAAAAAAAAAACDAAAAAP2bmAEMAAH9DAACAQwAAgEQ=",
+    "corrupt.png": "bm90IGEgZGVjb2RlZCBpbWFnZQ==",
+    "vector.svg": "PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjwvc3ZnPg==",
+    "unknown.bin": "dW5rbm93bg==",
+    ".env": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAFklEQVR4nGOUNPKuZWBgYGBigAI4AwAaGwEZ6uWUnQAAAABJRU5ErkJggg=="
+  },
+  "sniff": [
+    {
+      "bytes": [],
+      "expected": null
+    },
+    {
+      "bytes": [
+        120
+      ],
+      "expected": null
+    },
+    {
+      "bytes": [
+        137,
+        80,
+        78,
+        71,
+        13,
+        10,
+        26,
+        10
+      ],
+      "expected": "image/png"
+    },
+    {
+      "bytes": [
+        255,
+        216,
+        255
+      ],
+      "expected": "image/jpeg"
+    },
+    {
+      "bytes": [
+        71,
+        73,
+        70,
+        56,
+        55,
+        97
+      ],
+      "expected": "image/gif"
+    },
+    {
+      "bytes": [
+        71,
+        73,
+        70,
+        56,
+        57,
+        97
+      ],
+      "expected": "image/gif"
+    },
+    {
+      "bytes": [
+        82,
+        73,
+        70,
+        70,
+        49,
+        50,
+        51,
+        52,
+        87,
+        69,
+        66,
+        80
+      ],
+      "expected": "image/webp"
+    },
+    {
+      "bytes": [
+        82,
+        73,
+        70,
+        70,
+        87,
+        69,
+        66,
+        80
+      ],
+      "expected": null
+    },
+    {
+      "bytes": [
+        66,
+        77
+      ],
+      "expected": "image/bmp"
+    },
+    {
+      "bytes": [
+        73,
+        73,
+        42,
+        0
+      ],
+      "expected": "image/tiff"
+    },
+    {
+      "bytes": [
+        77,
+        77,
+        0,
+        42
+      ],
+      "expected": "image/tiff"
+    },
+    {
+      "bytes": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "expected": "image/x-icon"
+    },
+    {
+      "bytes": [
+        32,
+        9,
+        10,
+        60,
+        83,
+        86,
+        71,
+        62,
+        60,
+        47,
+        83,
+        86,
+        71,
+        62
+      ],
+      "expected": "image/svg+xml"
+    },
+    {
+      "bytes": [
+        28,
+        60,
+        115,
+        118,
+        103,
+        47,
+        62
+      ],
+      "expected": null
+    },
+    {
+      "bytes": [
+        60,
+        63,
+        120,
+        109,
+        108,
+        63,
+        62,
+        60,
+        115,
+        118,
+        103,
+        47,
+        62
+      ],
+      "expected": "image/svg+xml"
+    },
+    {
+      "bytes": [
+        60,
+        63,
+        120,
+        109,
+        108,
+        63,
+        62,
+        110,
+        111,
+        32,
+        115,
+        118,
+        103
+      ],
+      "expected": null
+    },
+    {
+      "bytes": [
+        239,
+        187,
+        191,
+        60,
+        115,
+        118,
+        103,
+        47,
+        62
+      ],
+      "expected": null
+    },
+    {
+      "bytes": [
+        49,
+        50,
+        51,
+        52,
+        102,
+        116,
+        121,
+        112,
+        97,
+        118,
+        105,
+        102
+      ],
+      "expected": "image/avif"
+    },
+    {
+      "bytes": [
+        49,
+        50,
+        51,
+        52,
+        102,
+        116,
+        121,
+        112,
+        97,
+        118,
+        105,
+        115
+      ],
+      "expected": "image/avif"
+    },
+    {
+      "bytes": [
+        49,
+        50,
+        51,
+        52,
+        102,
+        116,
+        121,
+        112,
+        104,
+        101,
+        105,
+        99
+      ],
+      "expected": "image/heic"
+    },
+    {
+      "bytes": [
+        49,
+        50,
+        51,
+        52,
+        102,
+        116,
+        121,
+        112,
+        109,
+        105,
+        102,
+        49
+      ],
+      "expected": "image/heic"
+    },
+    {
+      "bytes": [
+        49,
+        50,
+        51,
+        52,
+        102,
+        116,
+        121,
+        112,
+        109,
+        115,
+        102,
+        49
+      ],
+      "expected": "image/heic"
+    },
+    {
+      "bytes": [
+        49,
+        50,
+        51,
+        52,
+        102,
+        116,
+        121,
+        112,
+        106,
+        117,
+        110,
+        107
+      ],
+      "expected": null
+    }
+  ],
+  "cases": [
+    {
+      "paths": [
+        "image.png"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: image.png]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAFklEQVR4nGOUNPKuZWBgYGBigAI4AwAaGwEZ6uWUnQAAAABJRU5ErkJggg=="
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "image.jpeg"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: image.jpeg]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAADAAIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDyyiiiu84j/9k="
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "image.gif"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: image.gif]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/gif;base64,R0lGODdhAgADAIEAABkySwAAAAAAAAAAACwAAAAAAgADAAAIBgABCBwYEAA7"
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "image.webp"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: image.webp]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAYAAEAdQmWZ0qX2BiOh/AAA="
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "image.bmp"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": true,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: image.bmp]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "mime": "image/png",
+              "size": [
+                2,
+                3
+              ],
+              "rgba": [
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255
+              ]
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "image.tiff"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": true,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: image.tiff]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "mime": "image/png",
+              "size": [
+                2,
+                3
+              ],
+              "rgba": [
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125
+              ]
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "wrong.webp"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: wrong.webp]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAFklEQVR4nGOUNPKuZWBgYGBigAI4AwAaGwEZ6uWUnQAAAABJRU5ErkJggg=="
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "integer.tiff"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": true,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: integer.tiff]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "mime": "image/png",
+              "size": [
+                2,
+                3
+              ],
+              "rgba": [
+                0,
+                0,
+                0,
+                255,
+                128,
+                128,
+                128,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255
+              ]
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "numeric-H.tiff"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": true,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: numeric-H.tiff]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "mime": "image/png",
+              "size": [
+                2,
+                3
+              ],
+              "rgba": [
+                0,
+                0,
+                0,
+                255,
+                128,
+                128,
+                128,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255
+              ]
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "numeric-f.tiff"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": true,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: numeric-f.tiff]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "mime": "image/png",
+              "size": [
+                2,
+                3
+              ],
+              "rgba": [
+                0,
+                0,
+                0,
+                255,
+                0,
+                0,
+                0,
+                255,
+                128,
+                128,
+                128,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255,
+                255
+              ]
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "corrupt.png"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: corrupt.png]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,bm90IGEgZGVjb2RlZCBpbWFnZQ=="
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "vector.svg"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption"
+          }
+        ],
+        "skipped": [
+          "vector.svg"
+        ]
+      }
+    },
+    {
+      "paths": [
+        "unknown.bin"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption\n\n[Image attached at: unknown.bin]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/jpeg;base64,dW5rbm93bg=="
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        ".env"
+      ],
+      "urls": [],
+      "caption": "\u001c caption \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "caption"
+          }
+        ],
+        "skipped": [
+          ".env"
+        ]
+      }
+    },
+    {
+      "paths": [
+        "image.webp"
+      ],
+      "urls": [],
+      "caption": "",
+      "managed": true,
+      "pixels": true,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "What do you see in this image?\n\n[Image attached at: image.webp]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "mime": "image/png",
+              "size": [
+                2,
+                3
+              ],
+              "rgba": [
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125,
+                25,
+                50,
+                75,
+                125
+              ]
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "image.bmp",
+        "image.bmp"
+      ],
+      "urls": [
+        " https://host/a.png "
+      ],
+      "caption": "",
+      "managed": false,
+      "pixels": true,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "What do you see in this image?\n\n[Image attached at: image.bmp]\n[Image attached at: image.bmp]\n[Image attached: https://host/a.png]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "mime": "image/png",
+              "size": [
+                2,
+                3
+              ],
+              "rgba": [
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255
+              ]
+            }
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "mime": "image/png",
+              "size": [
+                2,
+                3
+              ],
+              "rgba": [
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255,
+                25,
+                50,
+                75,
+                255
+              ]
+            }
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://host/a.png"
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "image.png",
+        "missing.png",
+        ".env",
+        "directory.png",
+        "image.png"
+      ],
+      "urls": [
+        "",
+        "\u001c https://host/a.png \u001f",
+        "https://host/a.png"
+      ],
+      "caption": "",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "What do you see in this image?\n\n[Image attached at: image.png]\n[Image attached at: image.png]\n[Image attached: https://host/a.png]\n[Image attached: https://host/a.png]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAFklEQVR4nGOUNPKuZWBgYGBigAI4AwAaGwEZ6uWUnQAAAABJRU5ErkJggg=="
+            }
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAFklEQVR4nGOUNPKuZWBgYGBigAI4AwAaGwEZ6uWUnQAAAABJRU5ErkJggg=="
+            }
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://host/a.png"
+            }
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://host/a.png"
+            }
+          }
+        ],
+        "skipped": [
+          "missing.png",
+          ".env",
+          "directory.png"
+        ]
+      }
+    },
+    {
+      "paths": [],
+      "urls": [],
+      "caption": "\u001c \u001f",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [],
+      "urls": [
+        "https://host/a.png"
+      ],
+      "caption": "",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "What do you see in this image?\n\n[Image attached: https://host/a.png]"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://host/a.png"
+            }
+          }
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "paths": [
+        "missing.png"
+      ],
+      "urls": [],
+      "caption": "unchanged",
+      "managed": false,
+      "pixels": false,
+      "expected": {
+        "parts": [
+          {
+            "type": "text",
+            "text": "unchanged"
+          }
+        ],
+        "skipped": [
+          "missing.png"
+        ]
+      }
+    }
+  ],
+  "universal": [
+    "image/png",
+    "image/jpeg",
+    "image/gif",
+    "image/webp"
+  ]
+}

@@ -1,0 +1,3324 @@
+{
+  "neutralize": [
+    {
+      "text": "name",
+      "limit": 0,
+      "expected": "name"
+    },
+    {
+      "text": "name",
+      "limit": 1,
+      "expected": "na..."
+    },
+    {
+      "text": "name",
+      "limit": 2,
+      "expected": "nam..."
+    },
+    {
+      "text": "name",
+      "limit": 3,
+      "expected": "..."
+    },
+    {
+      "text": "name",
+      "limit": 4,
+      "expected": "name"
+    },
+    {
+      "text": "name",
+      "limit": 240,
+      "expected": "name"
+    },
+    {
+      "text": "\r\n## Override\t  hello\u001cworld",
+      "limit": 0,
+      "expected": "## Override hello world"
+    },
+    {
+      "text": "\r\n## Override\t  hello\u001cworld",
+      "limit": 1,
+      "expected": "## Override hello wor..."
+    },
+    {
+      "text": "\r\n## Override\t  hello\u001cworld",
+      "limit": 2,
+      "expected": "## Override hello worl..."
+    },
+    {
+      "text": "\r\n## Override\t  hello\u001cworld",
+      "limit": 3,
+      "expected": "..."
+    },
+    {
+      "text": "\r\n## Override\t  hello\u001cworld",
+      "limit": 4,
+      "expected": "#..."
+    },
+    {
+      "text": "\r\n## Override\t  hello\u001cworld",
+      "limit": 240,
+      "expected": "## Override hello world"
+    },
+    {
+      "text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+      "limit": 0,
+      "expected": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89"
+    },
+    {
+      "text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+      "limit": 1,
+      "expected": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89..."
+    },
+    {
+      "text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+      "limit": 2,
+      "expected": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89..."
+    },
+    {
+      "text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+      "limit": 3,
+      "expected": "..."
+    },
+    {
+      "text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+      "limit": 4,
+      "expected": "\ud83c\udf89..."
+    },
+    {
+      "text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+      "limit": 240,
+      "expected": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89..."
+    },
+    {
+      "text": "  ",
+      "limit": 0,
+      "expected": ""
+    },
+    {
+      "text": "  ",
+      "limit": 1,
+      "expected": ""
+    },
+    {
+      "text": "  ",
+      "limit": 2,
+      "expected": ""
+    },
+    {
+      "text": "  ",
+      "limit": 3,
+      "expected": ""
+    },
+    {
+      "text": "  ",
+      "limit": 4,
+      "expected": ""
+    },
+    {
+      "text": "  ",
+      "limit": 240,
+      "expected": ""
+    },
+    {
+      "text": "e\u0301\u00a0person",
+      "limit": 0,
+      "expected": "e\u0301 person"
+    },
+    {
+      "text": "e\u0301\u00a0person",
+      "limit": 1,
+      "expected": "e\u0301 pers..."
+    },
+    {
+      "text": "e\u0301\u00a0person",
+      "limit": 2,
+      "expected": "e\u0301 perso..."
+    },
+    {
+      "text": "e\u0301\u00a0person",
+      "limit": 3,
+      "expected": "..."
+    },
+    {
+      "text": "e\u0301\u00a0person",
+      "limit": 4,
+      "expected": "e..."
+    },
+    {
+      "text": "e\u0301\u00a0person",
+      "limit": 240,
+      "expected": "e\u0301 person"
+    }
+  ],
+  "cases": [
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override | Slack user <@U123>] message"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\ud83c\udf89\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[Triggering message id: `msg-1` \u2014 use as `message_id` for reply/react/pin via the discord tools.]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "dm",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "group",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": null
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": false,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": false,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\n[Person ## Override] message",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\n[Person ## Override] message"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": false
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": false,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    },
+    {
+      "source": {
+        "platform": "telegram",
+        "chat_id": "chat",
+        "chat_type": "thread",
+        "user_name": " Person\n## Override ",
+        "user_id": "U123",
+        "thread_id": "thread"
+      },
+      "event": {
+        "channel_context": "[history block]",
+        "message_id": "msg-1",
+        "reply_to_text": "quoted reply",
+        "reply_to_message_id": "old-1",
+        "reply_to_is_own_message": true
+      },
+      "group": true,
+      "thread": true,
+      "discord_tools_loaded": true,
+      "sender": "[history block]\n\n[New message]\nmessage",
+      "expected": "[Replying to your previous message: \"quoted reply\"]\n\n[history block]\n\n[New message]\nmessage"
+    }
+  ]
+}

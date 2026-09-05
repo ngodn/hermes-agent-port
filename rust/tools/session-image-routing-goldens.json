@@ -1,0 +1,919 @@
+[
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "auto"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "default-m",
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          },
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "native"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": true,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "auto"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "resolve",
+          true,
+          null,
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          }
+        ],
+        [
+          "lookup",
+          "session-p",
+          "session-m",
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          },
+          "custom:live"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": true,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "native"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "resolve",
+          true,
+          null,
+          {
+            "agent": {
+              "image_input_mode": "native"
+            }
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": " chosen ",
+    "source": false,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "auto"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "provider"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "chosen",
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          },
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": " chosen ",
+    "source": false,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "native"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "provider"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": " chosen ",
+    "source": true,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "auto"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "resolve",
+          true,
+          null,
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          }
+        ],
+        [
+          "lookup",
+          "session-p",
+          "chosen",
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          },
+          "custom:live"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": " chosen ",
+    "source": true,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "native"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "resolve",
+          true,
+          null,
+          {
+            "agent": {
+              "image_input_mode": "native"
+            }
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "provider": " explicit ",
+    "model": "",
+    "source": false,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "auto"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "explicit",
+          "default-m",
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          },
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": " explicit ",
+    "model": "",
+    "source": false,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "native"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "model"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": " explicit ",
+    "model": "",
+    "source": true,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "auto"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "resolve",
+          true,
+          null,
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          }
+        ],
+        [
+          "lookup",
+          "explicit",
+          "session-m",
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          },
+          "custom:live"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": " explicit ",
+    "model": "",
+    "source": true,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "native"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "resolve",
+          true,
+          null,
+          {
+            "agent": {
+              "image_input_mode": "native"
+            }
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "provider": " explicit ",
+    "model": " chosen ",
+    "source": false,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "auto"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "lookup",
+          "explicit",
+          "chosen",
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          },
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": " explicit ",
+    "model": " chosen ",
+    "source": false,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "native"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": []
+    }
+  },
+  {
+    "provider": " explicit ",
+    "model": " chosen ",
+    "source": true,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "auto"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "lookup",
+          "explicit",
+          "chosen",
+          {
+            "agent": {
+              "image_input_mode": "auto"
+            }
+          },
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": " explicit ",
+    "model": " chosen ",
+    "source": true,
+    "session_key": null,
+    "cfg": {
+      "agent": {
+        "image_input_mode": "native"
+      }
+    },
+    "runtime_model": " session-m ",
+    "runtime": {
+      "provider": " session-p ",
+      "requested_provider": " custom:live "
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": []
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": null,
+    "runtime": null,
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          false,
+          "key",
+          {}
+        ],
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "default-m",
+          {},
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": 42,
+    "runtime": [],
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          false,
+          "key",
+          {}
+        ],
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "default-m",
+          {},
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": "",
+    "runtime": {
+      "provider": null,
+      "requested_provider": 12
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          false,
+          "key",
+          {}
+        ],
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "default-m",
+          {},
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": "\u001cm\u001f",
+    "runtime": {
+      "provider": "\u001cp\u001f"
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          false,
+          "key",
+          {}
+        ],
+        [
+          "lookup",
+          "p",
+          "m",
+          {},
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": true,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": "",
+    "runtime": {},
+    "fault": "load",
+    "expected": {
+      "output": "text",
+      "calls": [
+        [
+          "load"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": true,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": "",
+    "runtime": {},
+    "fault": "resolve",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          true,
+          "key",
+          {}
+        ],
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "default-m",
+          {},
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": true,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": "",
+    "runtime": {},
+    "fault": "provider",
+    "expected": {
+      "output": "text",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          true,
+          "key",
+          {}
+        ],
+        [
+          "provider"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": true,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": "",
+    "runtime": {},
+    "fault": "model",
+    "expected": {
+      "output": "text",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          true,
+          "key",
+          {}
+        ],
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": true,
+    "session_key": "key",
+    "cfg": null,
+    "runtime_model": "",
+    "runtime": {},
+    "fault": "lookup",
+    "expected": {
+      "output": "text",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          true,
+          "key",
+          {}
+        ],
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "default-m",
+          {},
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": null,
+    "cfg": [],
+    "runtime_model": "session-m",
+    "runtime": {
+      "provider": "session-p"
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "default-m",
+          {},
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": "",
+    "cfg": [],
+    "runtime_model": "session-m",
+    "runtime": {
+      "provider": "session-p"
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "provider"
+        ],
+        [
+          "model"
+        ],
+        [
+          "lookup",
+          "default-p",
+          "default-m",
+          {},
+          ""
+        ]
+      ]
+    }
+  },
+  {
+    "provider": "",
+    "model": "",
+    "source": false,
+    "session_key": "key",
+    "cfg": [],
+    "runtime_model": "session-m",
+    "runtime": {
+      "provider": "session-p"
+    },
+    "fault": "",
+    "expected": {
+      "output": "native",
+      "calls": [
+        [
+          "load"
+        ],
+        [
+          "resolve",
+          false,
+          "key",
+          {}
+        ],
+        [
+          "lookup",
+          "session-p",
+          "session-m",
+          {},
+          ""
+        ]
+      ]
+    }
+  }
+]

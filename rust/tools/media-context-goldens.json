@@ -1,0 +1,1036 @@
+{
+  "placeholders": [
+    {
+      "message_type": "text",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "text",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "text",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "location",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "location",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "location",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "photo",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent an image: \u6587\u6863.pdf]\n[User sent an image: voice.ogg]\n[User sent an image: movie.mp4]"
+    },
+    {
+      "message_type": "photo",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "photo",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent an image: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent an image: movie.mp4]"
+    },
+    {
+      "message_type": "video",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a video: one.png]\n[User sent a video: \u6587\u6863.pdf]\n[User sent a video: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "video",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "video",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a video: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "audio",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent audio: one.png]\n[User sent audio: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent audio: movie.mp4]"
+    },
+    {
+      "message_type": "audio",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "audio",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent audio: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent audio: movie.mp4]"
+    },
+    {
+      "message_type": "voice",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent audio: one.png]\n[User sent audio: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent audio: movie.mp4]"
+    },
+    {
+      "message_type": "voice",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "voice",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent audio: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent audio: movie.mp4]"
+    },
+    {
+      "message_type": "document",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "document",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "document",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "sticker",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "sticker",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "sticker",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "command",
+      "media_types": [],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "command",
+      "media_types": [
+        "image/png",
+        "application/pdf",
+        "audio/ogg",
+        "video/mp4"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent an image: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent audio: voice.ogg]\n[User sent a video: movie.mp4]"
+    },
+    {
+      "message_type": "command",
+      "media_types": [
+        "IMAGE/PNG",
+        "",
+        "text/plain"
+      ],
+      "media_urls": [
+        "one.png",
+        "\u6587\u6863.pdf",
+        "voice.ogg",
+        "movie.mp4"
+      ],
+      "expected": "[User sent a file: one.png]\n[User sent a file: \u6587\u6863.pdf]\n[User sent a file: voice.ogg]\n[User sent a file: movie.mp4]"
+    },
+    {
+      "message_type": "photo",
+      "media_types": [],
+      "media_urls": [],
+      "expected": ""
+    }
+  ],
+  "documents": [
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "text/plain",
+      "content_inlined": false,
+      "expected": "[The user sent a text document: 'notes.txt'. It is saved at: /cache/notes.txt. Its content is not inlined here. Read the cached file yourself before answering when the user's request involves its contents.]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "text/plain",
+      "content_inlined": true,
+      "expected": "[The user sent a text document: 'notes.txt'. Its content has been included below. The file is also saved at: /cache/notes.txt]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "application/pdf",
+      "content_inlined": false,
+      "expected": "[The user sent a document: 'notes.txt'. It is saved at: /cache/notes.txt. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "application/pdf",
+      "content_inlined": true,
+      "expected": "[The user sent a document: 'notes.txt'. It is saved at: /cache/notes.txt. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "",
+      "content_inlined": false,
+      "expected": "[The user sent a document: 'notes.txt'. It is saved at: /cache/notes.txt. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "",
+      "content_inlined": true,
+      "expected": "[The user sent a document: 'notes.txt'. It is saved at: /cache/notes.txt. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "Text/plain",
+      "content_inlined": false,
+      "expected": "[The user sent a document: 'notes.txt'. It is saved at: /cache/notes.txt. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "Text/plain",
+      "content_inlined": true,
+      "expected": "[The user sent a document: 'notes.txt'. It is saved at: /cache/notes.txt. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "text/markdown",
+      "content_inlined": false,
+      "expected": "[The user sent a text document: 'notes.txt'. It is saved at: /cache/notes.txt. Its content is not inlined here. Read the cached file yourself before answering when the user's request involves its contents.]"
+    },
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "mtype": "text/markdown",
+      "content_inlined": true,
+      "expected": "[The user sent a text document: 'notes.txt'. Its content has been included below. The file is also saved at: /cache/notes.txt]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "text/plain",
+      "content_inlined": false,
+      "expected": "[The user sent a text document: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its content is not inlined here. Read the cached file yourself before answering when the user's request involves its contents.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "text/plain",
+      "content_inlined": true,
+      "expected": "[The user sent a text document: '\u6587\u6863's.pdf'. Its content has been included below. The file is also saved at: /cache/\u7a7a \u683c.pdf]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "application/pdf",
+      "content_inlined": false,
+      "expected": "[The user sent a document: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "application/pdf",
+      "content_inlined": true,
+      "expected": "[The user sent a document: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "",
+      "content_inlined": false,
+      "expected": "[The user sent a document: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "",
+      "content_inlined": true,
+      "expected": "[The user sent a document: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "Text/plain",
+      "content_inlined": false,
+      "expected": "[The user sent a document: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "Text/plain",
+      "content_inlined": true,
+      "expected": "[The user sent a document: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "text/markdown",
+      "content_inlined": false,
+      "expected": "[The user sent a text document: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its content is not inlined here. Read the cached file yourself before answering when the user's request involves its contents.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "mtype": "text/markdown",
+      "content_inlined": true,
+      "expected": "[The user sent a text document: '\u6587\u6863's.pdf'. Its content has been included below. The file is also saved at: /cache/\u7a7a \u683c.pdf]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "text/plain",
+      "content_inlined": false,
+      "expected": "[The user sent a text document: ''. It is saved at: . Its content is not inlined here. Read the cached file yourself before answering when the user's request involves its contents.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "text/plain",
+      "content_inlined": true,
+      "expected": "[The user sent a text document: ''. Its content has been included below. The file is also saved at: ]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "application/pdf",
+      "content_inlined": false,
+      "expected": "[The user sent a document: ''. It is saved at: . Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "application/pdf",
+      "content_inlined": true,
+      "expected": "[The user sent a document: ''. It is saved at: . Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "",
+      "content_inlined": false,
+      "expected": "[The user sent a document: ''. It is saved at: . Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "",
+      "content_inlined": true,
+      "expected": "[The user sent a document: ''. It is saved at: . Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "Text/plain",
+      "content_inlined": false,
+      "expected": "[The user sent a document: ''. It is saved at: . Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "Text/plain",
+      "content_inlined": true,
+      "expected": "[The user sent a document: ''. It is saved at: . Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "text/markdown",
+      "content_inlined": false,
+      "expected": "[The user sent a text document: ''. It is saved at: . Its content is not inlined here. Read the cached file yourself before answering when the user's request involves its contents.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "mtype": "text/markdown",
+      "content_inlined": true,
+      "expected": "[The user sent a text document: ''. Its content has been included below. The file is also saved at: ]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "text/plain",
+      "content_inlined": false,
+      "expected": "[The user sent a text document: 'a[quoted]'. It is saved at: line\nnext. Its content is not inlined here. Read the cached file yourself before answering when the user's request involves its contents.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "text/plain",
+      "content_inlined": true,
+      "expected": "[The user sent a text document: 'a[quoted]'. Its content has been included below. The file is also saved at: line\nnext]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "application/pdf",
+      "content_inlined": false,
+      "expected": "[The user sent a document: 'a[quoted]'. It is saved at: line\nnext. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "application/pdf",
+      "content_inlined": true,
+      "expected": "[The user sent a document: 'a[quoted]'. It is saved at: line\nnext. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "",
+      "content_inlined": false,
+      "expected": "[The user sent a document: 'a[quoted]'. It is saved at: line\nnext. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "",
+      "content_inlined": true,
+      "expected": "[The user sent a document: 'a[quoted]'. It is saved at: line\nnext. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "Text/plain",
+      "content_inlined": false,
+      "expected": "[The user sent a document: 'a[quoted]'. It is saved at: line\nnext. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "Text/plain",
+      "content_inlined": true,
+      "expected": "[The user sent a document: 'a[quoted]'. It is saved at: line\nnext. Its text is not inlined here (it's a binary format such as PDF or DOCX). To read it, extract the document's text yourself \u2014 for example with the terminal tool or the ocr-and-documents skill \u2014 before answering, instead of asking the user to paste the contents.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "text/markdown",
+      "content_inlined": false,
+      "expected": "[The user sent a text document: 'a[quoted]'. It is saved at: line\nnext. Its content is not inlined here. Read the cached file yourself before answering when the user's request involves its contents.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "mtype": "text/markdown",
+      "content_inlined": true,
+      "expected": "[The user sent a text document: 'a[quoted]'. Its content has been included below. The file is also saved at: line\nnext]"
+    }
+  ],
+  "attachments": [
+    {
+      "display_name": "notes.txt",
+      "agent_path": "/cache/notes.txt",
+      "audio": "[The user sent an audio file attachment: 'notes.txt'. It is saved at: /cache/notes.txt. Its content is not inlined here. If the user's request involves what the audio contains, transcribe or process it yourself \u2014 for example by passing the path to a transcription or media tool \u2014 instead of asking the user to describe it. Only ask what to do with it if their intent is genuinely unclear.]",
+      "video": "[The user sent a video attachment: 'notes.txt'. It is saved at: /cache/notes.txt. Its content is not inlined here. If the user's request involves what the video contains, inspect or process it yourself \u2014 for example by passing the path to a video analysis or media tool \u2014 instead of asking the user to describe it. Only ask what to do with it if their intent is genuinely unclear.]"
+    },
+    {
+      "display_name": "\u6587\u6863's.pdf",
+      "agent_path": "/cache/\u7a7a \u683c.pdf",
+      "audio": "[The user sent an audio file attachment: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its content is not inlined here. If the user's request involves what the audio contains, transcribe or process it yourself \u2014 for example by passing the path to a transcription or media tool \u2014 instead of asking the user to describe it. Only ask what to do with it if their intent is genuinely unclear.]",
+      "video": "[The user sent a video attachment: '\u6587\u6863's.pdf'. It is saved at: /cache/\u7a7a \u683c.pdf. Its content is not inlined here. If the user's request involves what the video contains, inspect or process it yourself \u2014 for example by passing the path to a video analysis or media tool \u2014 instead of asking the user to describe it. Only ask what to do with it if their intent is genuinely unclear.]"
+    },
+    {
+      "display_name": "",
+      "agent_path": "",
+      "audio": "[The user sent an audio file attachment: ''. It is saved at: . Its content is not inlined here. If the user's request involves what the audio contains, transcribe or process it yourself \u2014 for example by passing the path to a transcription or media tool \u2014 instead of asking the user to describe it. Only ask what to do with it if their intent is genuinely unclear.]",
+      "video": "[The user sent a video attachment: ''. It is saved at: . Its content is not inlined here. If the user's request involves what the video contains, inspect or process it yourself \u2014 for example by passing the path to a video analysis or media tool \u2014 instead of asking the user to describe it. Only ask what to do with it if their intent is genuinely unclear.]"
+    },
+    {
+      "display_name": "a[quoted]",
+      "agent_path": "line\nnext",
+      "audio": "[The user sent an audio file attachment: 'a[quoted]'. It is saved at: line\nnext. Its content is not inlined here. If the user's request involves what the audio contains, transcribe or process it yourself \u2014 for example by passing the path to a transcription or media tool \u2014 instead of asking the user to describe it. Only ask what to do with it if their intent is genuinely unclear.]",
+      "video": "[The user sent a video attachment: 'a[quoted]'. It is saved at: line\nnext. Its content is not inlined here. If the user's request involves what the video contains, inspect or process it yourself \u2014 for example by passing the path to a video analysis or media tool \u2014 instead of asking the user to describe it. Only ask what to do with it if their intent is genuinely unclear.]"
+    }
+  ],
+  "names": [
+    {
+      "path": "",
+      "expected": ""
+    },
+    {
+      "path": "/cache/",
+      "expected": ""
+    },
+    {
+      "path": "one.txt",
+      "expected": "one.txt"
+    },
+    {
+      "path": "one_two.txt",
+      "expected": "one_two.txt"
+    },
+    {
+      "path": "id_stamp_name_more.pdf",
+      "expected": "name_more.pdf"
+    },
+    {
+      "path": "/cache/id_stamp_\u4e2d\u6587 \u00bd\u2163.txt",
+      "expected": "\u4e2d\u6587 \u00bd\u2163.txt"
+    },
+    {
+      "path": "id_stamp_e\u0301.txt",
+      "expected": "e_.txt"
+    },
+    {
+      "path": "id_stamp_\u0345.txt",
+      "expected": "_.txt"
+    },
+    {
+      "path": "id_stamp_[x]'\n.png",
+      "expected": "_x___.png"
+    },
+    {
+      "path": "id_stamp_",
+      "expected": ""
+    },
+    {
+      "path": "__name.txt",
+      "expected": "name.txt"
+    },
+    {
+      "path": "a_b_../x.txt",
+      "expected": "x.txt"
+    },
+    {
+      "path": "C:\\cache\\one.txt",
+      "expected": "C__cache_one.txt"
+    },
+    {
+      "path": "/cache/a_b_a-b.c_d.txt",
+      "expected": "a-b.c_d.txt"
+    }
+  ],
+  "mime_cases": [
+    {
+      "path": "a.txt",
+      "supplied": "",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.txt",
+      "supplied": "application/octet-stream",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.txt",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.txt",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.JSON",
+      "supplied": "",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.JSON",
+      "supplied": "application/octet-stream",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.JSON",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.JSON",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.md",
+      "supplied": "",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.md",
+      "supplied": "application/octet-stream",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.md",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.md",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.xml",
+      "supplied": "",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.xml",
+      "supplied": "application/octet-stream",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.xml",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.xml",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.yaml",
+      "supplied": "",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.yaml",
+      "supplied": "application/octet-stream",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.yaml",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.yaml",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.csv",
+      "supplied": "",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.csv",
+      "supplied": "application/octet-stream",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.csv",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.csv",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.toml",
+      "supplied": "",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.toml",
+      "supplied": "application/octet-stream",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.toml",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.toml",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.pdf",
+      "supplied": "",
+      "expected": "application/pdf"
+    },
+    {
+      "path": "a.pdf",
+      "supplied": "application/octet-stream",
+      "expected": "application/pdf"
+    },
+    {
+      "path": "a.pdf",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.pdf",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.ttf",
+      "supplied": "",
+      "expected": "font/ttf"
+    },
+    {
+      "path": "a.ttf",
+      "supplied": "application/octet-stream",
+      "expected": "font/ttf"
+    },
+    {
+      "path": "a.ttf",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.ttf",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.png",
+      "supplied": "",
+      "expected": "image/png"
+    },
+    {
+      "path": "a.png",
+      "supplied": "application/octet-stream",
+      "expected": "image/png"
+    },
+    {
+      "path": "a.png",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.png",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "a.txt.gz",
+      "supplied": "",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.txt.gz",
+      "supplied": "application/octet-stream",
+      "expected": "text/plain"
+    },
+    {
+      "path": "a.txt.gz",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "a.txt.gz",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "unknown.xyzabc",
+      "supplied": "",
+      "expected": "application/octet-stream"
+    },
+    {
+      "path": "unknown.xyzabc",
+      "supplied": "application/octet-stream",
+      "expected": "application/octet-stream"
+    },
+    {
+      "path": "unknown.xyzabc",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "unknown.xyzabc",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": ".txt",
+      "supplied": "",
+      "expected": "application/octet-stream"
+    },
+    {
+      "path": ".txt",
+      "supplied": "application/octet-stream",
+      "expected": "application/octet-stream"
+    },
+    {
+      "path": ".txt",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": ".txt",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    },
+    {
+      "path": "..txt",
+      "supplied": "",
+      "expected": "application/octet-stream"
+    },
+    {
+      "path": "..txt",
+      "supplied": "application/octet-stream",
+      "expected": "application/octet-stream"
+    },
+    {
+      "path": "..txt",
+      "supplied": "custom/type",
+      "expected": "custom/type"
+    },
+    {
+      "path": "..txt",
+      "supplied": "Application/octet-stream",
+      "expected": "Application/octet-stream"
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+{
+  "directories": [
+    "user/.hermes/profiles/work",
+    "project",
+    "outside",
+    "user/.hermes/skills/.hub",
+    "user/.hermes/profiles/work/mcp-tokens",
+    "outside/deep"
+  ],
+  "links": {
+    "project/credential.png": "../user/.hermes/auth.json",
+    "project/profile-link": "../user/.hermes/profiles/work",
+    "project/out": "../outside/deep",
+    "project/loop": "loop",
+    "project/missing-link": "../missing/tail",
+    "user/.hermes/mcp-tokens": "../../outside",
+    "user/.hermes/profiles/work/skills": "../../../../outside"
+  },
+  "cases": [
+    {
+      "path": "",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": ".",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": ".ENV",
+      "expected": "Access denied: .ENV is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": ".env",
+      "expected": "Access denied: .env is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": ".env.example",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": ".env.production.local",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/outside/.hub/note",
+      "expected": "Access denied: __ROOT__/outside/.hub/note is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/outside/deep/token.png",
+      "expected": "Access denied: __ROOT__/outside/deep/token.png is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/outside/token.png",
+      "expected": "Access denied: __ROOT__/outside/token.png is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/project/../user/.hermes/auth.json",
+      "expected": "Access denied: __ROOT__/project/../user/.hermes/auth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/project/.env",
+      "expected": "Access denied: __ROOT__/project/.env is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/project/.env.development",
+      "expected": "Access denied: __ROOT__/project/.env.development is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/project/.env.local",
+      "expected": "Access denied: __ROOT__/project/.env.local is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/project/.env.production",
+      "expected": "Access denied: __ROOT__/project/.env.production is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/project/.env.staging",
+      "expected": "Access denied: __ROOT__/project/.env.staging is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/project/.env.test",
+      "expected": "Access denied: __ROOT__/project/.env.test is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/project/.envrc",
+      "expected": "Access denied: __ROOT__/project/.envrc is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/.anthropic_oauth.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/.anthropic_oauth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/.env",
+      "expected": "Access denied: __ROOT__/user/.hermes/.env is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/AUTH.JSON",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/auth.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/auth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/auth.lock",
+      "expected": "Access denied: __ROOT__/user/.hermes/auth.lock is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/auth/google_oauth.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/auth/google_oauth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/browser-profile",
+      "expected": "Access denied: __ROOT__/user/.hermes/browser-profile is the Hermes real-profile browser snapshot directory (copied cookies/logins) and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/browser-profile-old/Cookies",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/browser-profile/Cookies",
+      "expected": "Access denied: __ROOT__/user/.hermes/browser-profile/Cookies is inside the Hermes real-profile browser snapshot (copied cookies/logins) and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/cache/bws_cache.enc.json",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/cache/bws_cache.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/cache/bws_cache.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/config.yaml",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/mcp-tokens",
+      "expected": "Access denied: __ROOT__/user/.hermes/mcp-tokens is the Hermes MCP token directory and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/mcp-tokens-other/token.png",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/mcp-tokens/token.png",
+      "expected": "Access denied: __ROOT__/user/.hermes/mcp-tokens/token.png is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/.anthropic_oauth.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/.anthropic_oauth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/.env",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/.env is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/AUTH.JSON",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/auth.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/auth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/auth.lock",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/auth.lock is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/auth/google_oauth.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/auth/google_oauth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/browser-profile",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/browser-profile is the Hermes real-profile browser snapshot directory (copied cookies/logins) and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/browser-profile-old/Cookies",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/browser-profile/Cookies",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/browser-profile/Cookies is inside the Hermes real-profile browser snapshot (copied cookies/logins) and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/cache/bws_cache.enc.json",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/cache/bws_cache.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/cache/bws_cache.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/config.yaml",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/mcp-tokens",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/mcp-tokens is the Hermes MCP token directory and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/mcp-tokens-other/token.png",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/mcp-tokens/token.png",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/mcp-tokens/token.png is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/skills/.hub",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/skills/.hub is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/skills/.hub-other/index",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/skills/.hub-other/index is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/skills/.hub/index-cache",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/skills/.hub/index-cache is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/skills/.hub/index-cache/x",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/skills/.hub/index-cache/x is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/profiles/work/webhook_subscriptions.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/profiles/work/webhook_subscriptions.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/skills/.hub",
+      "expected": "Access denied: __ROOT__/user/.hermes/skills/.hub is an internal Hermes cache file and cannot be read directly to prevent prompt injection. Use the skills_list or skill_view tools instead.",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/skills/.hub-other/index",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "__ROOT__/user/.hermes/skills/.hub/index-cache",
+      "expected": "Access denied: __ROOT__/user/.hermes/skills/.hub/index-cache is an internal Hermes cache file and cannot be read directly to prevent prompt injection. Use the skills_list or skill_view tools instead.",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/skills/.hub/index-cache/x",
+      "expected": "Access denied: __ROOT__/user/.hermes/skills/.hub/index-cache/x is an internal Hermes cache file and cannot be read directly to prevent prompt injection. Use the skills_list or skill_view tools instead.",
+      "allowed": false
+    },
+    {
+      "path": "__ROOT__/user/.hermes/webhook_subscriptions.json",
+      "expected": "Access denied: __ROOT__/user/.hermes/webhook_subscriptions.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "auth.json",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "credential.png",
+      "expected": "Access denied: credential.png is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "credential.png/child",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "loop",
+      "expected": "resolution_error",
+      "allowed": true
+    },
+    {
+      "path": "loop/.env",
+      "expected": "resolution_error",
+      "allowed": true
+    },
+    {
+      "path": "missing-link/../.env",
+      "expected": "Access denied: missing-link/../.env is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "missing/.env",
+      "expected": "Access denied: missing/.env is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check the file structure, read .env.example instead. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "out/../.env",
+      "expected": "Access denied: out/../.env is a Hermes MCP token file and cannot be read directly. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "profile-link/auth.json",
+      "expected": "Access denied: profile-link/auth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "~/.hermes/auth.json",
+      "expected": "Access denied: ~/.hermes/auth.json is a Hermes credential store and cannot be read directly. Provider tools consume these credentials through internal channels. (Defense-in-depth \u2014 not a security boundary; the terminal tool can still bypass.)",
+      "allowed": false
+    },
+    {
+      "path": "~/project.png",
+      "expected": null,
+      "allowed": true
+    },
+    {
+      "path": "~hermes_fixture_nonexistent_user_173912/.env",
+      "expected": "resolution_error",
+      "allowed": true
+    }
+  ]
+}

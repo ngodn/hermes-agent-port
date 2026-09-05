@@ -1,0 +1,1389 @@
+[
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": "spoken"
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "\"spoken\"\n\n\"second\"\n\ncaption",
+        [
+          "spoken",
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": "spoken"
+    },
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "\"spoken\"\n\n\"second\"\n\ncaption",
+        [
+          "spoken",
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": "spoken"
+    },
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "\"spoken\"\n\n\"second\"\n\ncaption",
+        [
+          "spoken",
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": "\u001c \u001f"
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": "\u001c \u001f"
+    },
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": "\u001c \u001f"
+    },
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": null
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": null
+    },
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": null
+    },
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": 0
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": 0
+    },
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": 0
+    },
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "[The user sent a voice message but it came through empty or inaudible \u2014 speech-to-text returned no words. Do not guess at the content; ask the user to resend or type it out.]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": 123
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": 123
+    },
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true,
+      "transcript": 123
+    },
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true
+    },
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": true
+    },
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": false
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "\"recovered\"\n\n\"second\"\n\ncaption",
+        [
+          "recovered",
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "fallback",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": false
+    },
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "fallback",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": false
+    },
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "fallback",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "\"recovered\"\n\n\"second\"\n\ncaption",
+        [
+          "recovered",
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "fallback",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "fallback",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "fallback",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": [],
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": [],
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": [],
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\n\"second\"\n\ncaption",
+        [
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": "false",
+      "transcript": "truthy"
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "recovered"
+    },
+    "expected": {
+      "output": [
+        "\"truthy\"\n\n\"second\"\n\ncaption",
+        [
+          "truthy",
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": "false",
+      "transcript": "truthy"
+    },
+    "fallback": {
+      "success": false
+    },
+    "expected": {
+      "output": [
+        "\"truthy\"\n\n\"second\"\n\ncaption",
+        [
+          "truthy",
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {
+      "success": "false",
+      "transcript": "truthy"
+    },
+    "fallback": {
+      "raise": true
+    },
+    "expected": {
+      "output": [
+        "\"truthy\"\n\n\"second\"\n\ncaption",
+        [
+          "truthy",
+          "second"
+        ]
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "primary",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a"
+    ],
+    "primary": {
+      "raise": true
+    },
+    "fallback": {
+      "success": true,
+      "transcript": "must not run"
+    },
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed automatically; the audio is available at: /agent/fixture/a]\n\ncaption",
+        []
+      ],
+      "calls": [
+        [
+          "primary",
+          "a"
+        ],
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "visible",
+          "/fixture/a"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": true,
+    "caption": "",
+    "paths": [],
+    "primary": {},
+    "fallback": {},
+    "expected": {
+      "output": [
+        "",
+        []
+      ],
+      "calls": []
+    }
+  },
+  {
+    "enabled": false,
+    "available": true,
+    "caption": "",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {},
+    "expected": {
+      "output": [
+        "[The user sent a voice message: /fixture/a (duration: 0:12)]\n\n[The user sent a voice message: /fixture/b]",
+        []
+      ],
+      "calls": [
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "duration",
+          "/fixture/a"
+        ],
+        [
+          "absolute",
+          "b"
+        ],
+        [
+          "duration",
+          "/fixture/b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": false,
+    "available": true,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {},
+    "expected": {
+      "output": [
+        "[The user sent a voice message: /fixture/a (duration: 0:12)]\n\n[The user sent a voice message: /fixture/b]\n\ncaption",
+        []
+      ],
+      "calls": [
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "duration",
+          "/fixture/a"
+        ],
+        [
+          "absolute",
+          "b"
+        ],
+        [
+          "duration",
+          "/fixture/b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": false,
+    "available": true,
+    "caption": "\u001c(The user sent a message with no text content)\u001f",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {},
+    "expected": {
+      "output": [
+        "[The user sent a voice message: /fixture/a (duration: 0:12)]\n\n[The user sent a voice message: /fixture/b]",
+        []
+      ],
+      "calls": [
+        [
+          "absolute",
+          "a"
+        ],
+        [
+          "duration",
+          "/fixture/a"
+        ],
+        [
+          "absolute",
+          "b"
+        ],
+        [
+          "duration",
+          "/fixture/b"
+        ]
+      ]
+    }
+  },
+  {
+    "enabled": true,
+    "available": false,
+    "caption": "",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {},
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed]",
+        []
+      ],
+      "calls": []
+    }
+  },
+  {
+    "enabled": true,
+    "available": false,
+    "caption": "caption",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {},
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed]\n\ncaption",
+        []
+      ],
+      "calls": []
+    }
+  },
+  {
+    "enabled": true,
+    "available": false,
+    "caption": "\u001c(The user sent a message with no text content)\u001f",
+    "paths": [
+      "a",
+      "b",
+      "a"
+    ],
+    "primary": {},
+    "fallback": {},
+    "expected": {
+      "output": [
+        "[voice message could not be transcribed]",
+        []
+      ],
+      "calls": []
+    }
+  }
+]
