@@ -58,6 +58,7 @@ pub fn extract_update(update: &Value) -> Option<ParsedUpdate> {
             channel_id: chat_id.to_string(),
             sender_id: sender_id.to_string(),
             text: text.to_string(),
+            content_parts: None,
             chat_type,
         })
     });

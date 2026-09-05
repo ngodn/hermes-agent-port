@@ -138,7 +138,7 @@ fn read_enabled_explicit(pc: &PlatformConfig) -> bool {
 /// truthiness.
 fn pop_enabled_explicit(pc: &mut PlatformConfig) -> bool {
     pc.extra
-        .remove("_enabled_explicit")
+        .shift_remove("_enabled_explicit")
         .map(|v| py_truthy(&v))
         .unwrap_or(false)
 }
@@ -1317,7 +1317,7 @@ disabling directly-connected platform '{}'.",
     // Final cleanup: the `_enabled_explicit` marker is internal bookkeeping, so
     // scrub it from every platform once all passes are done.
     for platform_config in config.platforms.values_mut() {
-        platform_config.extra.remove("_enabled_explicit");
+        platform_config.extra.shift_remove("_enabled_explicit");
     }
 }
 

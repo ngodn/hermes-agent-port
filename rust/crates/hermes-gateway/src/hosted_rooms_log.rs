@@ -362,14 +362,12 @@ pub fn local_authority_gateway_id() -> Result<String> {
 // Validation helpers.
 // ---------------------------------------------------------------------------
 
-/// Canonical JSON: sorted keys, compact separators, no ASCII escaping, with a
-/// byte-length ceiling. Mirrors `_canonical_json`. serde_json's default `Map`
-/// is a `BTreeMap` (no `preserve_order` feature enabled in this workspace), so
-/// `to_string` already emits sorted keys with `(",", ":")` separators and
-/// leaves non-ASCII as UTF-8, matching Python's
-/// `sort_keys=True, separators=(",",":"), ensure_ascii=False`.
+/// Canonical JSON: recursively sorted keys, compact separators, UTF-8 text,
+/// and a byte-length ceiling. Sorting is confined to this wire format.
 pub fn canonical_json(value: &Value, label: &str, max_bytes: usize) -> Result<String> {
-    let encoded = serde_json::to_string(value)
+    let mut value = value.clone();
+    value.sort_all_objects();
+    let encoded = serde_json::to_string(&value)
         .map_err(|_| invalid(format!("{label} must be JSON-serializable")))?;
     if encoded.len() > max_bytes {
         return Err(invalid(format!("{label} is too large")));
@@ -1797,8 +1795,8 @@ fn legacy_members_match(existing_json: &str, proposed: &[Value]) -> bool {
         let mut cur = current.clone();
         // Python pops "target" with a None default; JSON null and an absent
         // key both read as None there, so normalize an explicit null away too.
-        let previous_target = prev.remove("target").filter(|v| !v.is_null());
-        let current_target = cur.remove("target").filter(|v| !v.is_null());
+        let previous_target = prev.shift_remove("target").filter(|v| !v.is_null());
+        let current_target = cur.shift_remove("target").filter(|v| !v.is_null());
         if prev != cur {
             return false;
         }
@@ -2069,6 +2067,17 @@ mod tests {
     fn canonical_json_sorts_keys_and_caps_bytes() {
         let v = serde_json::json!({"b": 1, "a": 2});
         assert_eq!(canonical_json(&v, "x", 4096).unwrap(), r#"{"a":2,"b":1}"#);
+        let nested: Value = serde_json::from_str(r#"{"z":[{"b":1,"a":2}],"a":0}"#).unwrap();
+        let before = nested.to_string();
+        assert_eq!(
+            canonical_json(&nested, "x", 4096).unwrap(),
+            r#"{"a":0,"z":[{"a":2,"b":1}]}"#
+        );
+        assert_eq!(
+            nested.to_string(),
+            before,
+            "canonical encoding must not mutate the input"
+        );
         let err = canonical_json(&v, "x", 3).unwrap_err();
         assert_eq!(err.to_string(), "x is too large");
     }

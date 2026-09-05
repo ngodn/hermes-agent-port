@@ -1,0 +1,104 @@
+[
+  {
+    "input": "plain",
+    "stored": "plain",
+    "decoded": "plain"
+  },
+  {
+    "input": "\u4e2d\u6587 \ud83d\uddbc",
+    "stored": "\u4e2d\u6587 \ud83d\uddbc",
+    "decoded": "\u4e2d\u6587 \ud83d\uddbc"
+  },
+  {
+    "input": "[1,2]",
+    "stored": "[1,2]",
+    "decoded": "[1,2]"
+  },
+  {
+    "input": "{\"type\":\"text\"}",
+    "stored": "{\"type\":\"text\"}",
+    "decoded": "{\"type\":\"text\"}"
+  },
+  {
+    "input": "\u0000json:broken",
+    "stored": "\u0000json:broken",
+    "decoded": "\u0000json:broken"
+  },
+  {
+    "input": "\u0000json:null",
+    "stored": "\u0000json:null",
+    "decoded": null
+  },
+  {
+    "input": [],
+    "stored": "\u0000json:[]",
+    "decoded": []
+  },
+  {
+    "input": {},
+    "stored": "\u0000json:{}",
+    "decoded": {}
+  },
+  {
+    "input": [
+      {
+        "type": "text",
+        "text": "\u4e2d\u6587 \ud83d\uddbc"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,AAAA"
+        }
+      }
+    ],
+    "stored": "\u0000json:[{\"type\": \"text\", \"text\": \"\\u4e2d\\u6587 \\ud83d\\uddbc\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"data:image/png;base64,AAAA\"}}]",
+    "decoded": [
+      {
+        "type": "text",
+        "text": "\u4e2d\u6587 \ud83d\uddbc"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,AAAA"
+        }
+      }
+    ]
+  },
+  {
+    "input": {
+      "text": "quotes: \"\\\n",
+      "nested": [
+        1,
+        null,
+        false
+      ]
+    },
+    "stored": "\u0000json:{\"text\": \"quotes: \\\"\\\\\\n\", \"nested\": [1, null, false]}",
+    "decoded": {
+      "text": "quotes: \"\\\n",
+      "nested": [
+        1,
+        null,
+        false
+      ]
+    }
+  },
+  {
+    "stored": "\u0000json:null",
+    "decoded": null
+  },
+  {
+    "stored": "\u0000json:true",
+    "decoded": true
+  },
+  {
+    "stored": "\u0000json:12",
+    "decoded": 12
+  },
+  {
+    "stored": "\u0000json:\"text\"",
+    "decoded": "text"
+  }
+]

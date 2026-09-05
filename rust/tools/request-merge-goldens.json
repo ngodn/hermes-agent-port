@@ -1,0 +1,529 @@
+{
+  "sdk_version": "2.24.0",
+  "cases": [
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {},
+      "result": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "temperature": 1
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "extra_body": {
+          "temperature": null
+        }
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": null,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "extra_body": {
+          "reasoning": {
+            "enabled": false
+          }
+        }
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "extra_body": {
+          "extra_body": {
+            "custom": true
+          }
+        }
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        },
+        "extra_body": {
+          "custom": true
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "extra_body": null
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "extra_body": []
+      },
+      "error": "TypeError"
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "extra_body": "bad"
+      },
+      "error": "TypeError"
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "extra_body": {
+          "temperature": 2
+        },
+        "temperature": 3
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 2,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {},
+      "overrides": {
+        "reasoning": {
+          "effort": "low"
+        },
+        "extra_body": {
+          "reasoning": {
+            "enabled": false
+          }
+        }
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {},
+      "result": {
+        "model": "fixture",
+        "temperature": 0.5,
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "temperature": 1
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.5,
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "extra_body": {
+          "temperature": null
+        }
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": null,
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "extra_body": {
+          "reasoning": {
+            "enabled": false
+          }
+        }
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.5,
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "extra_body": {
+          "extra_body": {
+            "custom": true
+          }
+        }
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.5,
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "extra_body": {
+          "custom": true
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "extra_body": null
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.5,
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "extra_body": []
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.5,
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "extra_body": "bad"
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.5,
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "extra_body": {
+          "temperature": 2
+        },
+        "temperature": 3
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 2,
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        }
+      }
+    },
+    {
+      "body": {
+        "model": "fixture",
+        "temperature": 0.1,
+        "reasoning": {
+          "enabled": true,
+          "effort": "high"
+        }
+      },
+      "profile_extra": {
+        "reasoning": {
+          "enabled": true,
+          "effort": "medium"
+        },
+        "temperature": 0.5
+      },
+      "overrides": {
+        "reasoning": {
+          "effort": "low"
+        },
+        "extra_body": {
+          "reasoning": {
+            "enabled": false
+          }
+        }
+      },
+      "result": {
+        "model": "fixture",
+        "temperature": 0.5,
+        "reasoning": {
+          "enabled": false
+        }
+      }
+    }
+  ]
+}

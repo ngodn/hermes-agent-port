@@ -40,6 +40,10 @@ use tracing::warn;
 /// `= true`, and the caller then neither loads nor persists history for it.
 #[async_trait]
 pub trait AgentClient: Send + Sync {
+    /// Whether prepared model content can cross this backend's input boundary.
+    fn supports_structured_content(&self) -> bool {
+        false
+    }
     async fn run_turn(
         &self,
         msg: &Message,
@@ -182,6 +186,11 @@ impl AgentClient for SubprocessAgentClient {
         _history: &[crate::session_db::HistoryMessage],
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()> {
+        if msg.content_parts.is_some() {
+            return Err(Error::Other(
+                "Python bridge does not yet accept structured content".into(),
+            ));
+        }
         let mut cmd = Command::new(&self.python);
         cmd.arg("-m")
             .arg("hermes_cli.stream_turn")
@@ -386,6 +395,7 @@ mod tests {
             channel_id: "t".into(),
             sender_id: "t".into(),
             text: "   ".into(),
+            content_parts: None,
             chat_type: None,
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(16);

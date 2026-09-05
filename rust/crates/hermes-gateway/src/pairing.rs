@@ -37,6 +37,7 @@ use sha2::{Digest, Sha256};
 use tracing::warn;
 
 use crate::config_file;
+use crate::config_file::get_hermes_dir;
 use crate::whatsapp_identity::{expand_whatsapp_aliases, normalize_whatsapp_identifier};
 
 /// Unambiguous alphabet -- excludes 0/O, 1/I to prevent confusion.
@@ -270,51 +271,6 @@ fn user_ids_match(platform: &str, left: &str, right: &str) -> bool {
 /// non-existent paths, and our constructed paths compare consistently).
 fn resolve(path: &Path) -> PathBuf {
     path.canonicalize().unwrap_or_else(|_| path.to_path_buf())
-}
-
-/// Mirror of `hermes_constants._legacy_path_has_content`: true iff `path`
-/// exists and has content worth honoring. A populated directory or any
-/// non-directory file counts; an empty directory does not. Inspection failures
-/// (short of "not found") assume occupied so legacy data is never orphaned.
-fn legacy_path_has_content(path: &Path) -> bool {
-    let meta = match std::fs::symlink_metadata(path) {
-        Ok(m) => m,
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return false,
-        Err(_) => return true,
-    };
-    if meta.file_type().is_symlink() {
-        // Judge on the link target; a dangling link has no content.
-        match std::fs::metadata(path) {
-            Ok(target) => {
-                if !target.is_dir() {
-                    return true;
-                }
-                // directory target -> fall through to emptiness check
-            }
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound => return false,
-            Err(_) => return true,
-        }
-    } else if !meta.is_dir() {
-        return true;
-    }
-    match std::fs::read_dir(path) {
-        Ok(mut entries) => entries.next().is_some(),
-        Err(_) => true,
-    }
-}
-
-/// Mirror of `hermes_constants.get_hermes_dir`: prefer the legacy location when
-/// it exists with content, otherwise the new consolidated location.
-fn get_hermes_dir(new_subpath: &str, old_name: &str, home: Option<&Path>) -> PathBuf {
-    let home = home
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(config_file::hermes_home);
-    let old_path = home.join(old_name);
-    if legacy_path_has_content(&old_path) {
-        old_path
-    } else {
-        home.join(new_subpath)
-    }
 }
 
 /// The default (non-profile-scoped) pairing directory. Resolved fresh on every
@@ -607,7 +563,7 @@ impl PairingStore {
             .cloned()
             .collect();
         for k in duplicate_ids {
-            approved.remove(&k);
+            approved.shift_remove(&k);
         }
         let mut record = Obj::new();
         record.insert(
@@ -638,7 +594,7 @@ impl PairingStore {
             .collect();
         if !matching_ids.is_empty() {
             for k in matching_ids {
-                approved.remove(&k);
+                approved.shift_remove(&k);
             }
             self.save_json(&path, &approved);
             // NOTE: `_sync_allowlist_remove` (env + live-adapter snapshot) is
@@ -659,7 +615,7 @@ impl PairingStore {
         matched_key: &str,
         matched_entry: &Obj,
     ) -> Value {
-        pending.remove(matched_key);
+        pending.shift_remove(matched_key);
         self.save_json(&self.pending_path(platform), pending);
 
         // A successful approval proves the requester legitimate, so the
@@ -995,7 +951,7 @@ impl PairingStore {
         }
         if !expired.is_empty() {
             for entry_id in expired {
-                pending.remove(&entry_id);
+                pending.shift_remove(&entry_id);
             }
             self.save_json(&path, &pending);
         }

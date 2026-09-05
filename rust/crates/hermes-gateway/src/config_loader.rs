@@ -580,7 +580,7 @@ fn apply_yaml_platforms(
         let mut moved: Vec<(String, Value)> = Vec::new();
         for bridge_key in ["port", "key", "host", "cors_origins", "model_name"] {
             if api_plat.contains_key(bridge_key) && !existing_extra.contains_key(bridge_key) {
-                if let Some(v) = api_plat.remove(bridge_key) {
+                if let Some(v) = api_plat.shift_remove(bridge_key) {
                     moved.push((bridge_key.to_string(), v));
                 }
             }

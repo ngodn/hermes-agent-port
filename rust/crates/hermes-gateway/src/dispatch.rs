@@ -154,6 +154,7 @@ impl Dispatcher {
             channel_id: to.channel_id.clone(),
             sender_id: to.sender_id.clone(),
             text,
+            content_parts: None,
             chat_type: to.chat_type.clone(),
         };
         match adapter.send(&out).await {
@@ -195,14 +196,24 @@ impl Dispatcher {
             SlashDecision::NotSlash => {}
         }
 
-        // Serialize per resolved session. The channel_id is the session proxy
-        // until full session resolution (switch_session/tip-walk) is ported.
+        if msg.content_parts.is_some() && !self.agent.supports_structured_content() {
+            self.deliver(
+                &msg,
+                "Configured agent backend does not accept structured content.".into(),
+            )
+            .await;
+            return;
+        }
+
+        // Serialize using the same identity as persisted history and cache routing.
+        // Full session resolution (switch_session/tip-walk) remains separate.
         // A held lease means a same-session turn is in flight; fail closed on
         // timeout rather than run two turns unserialized on one transcript.
+        let session_id = crate::session_db::session_id_for(msg.platform, &msg.channel_id);
         let generation = self.generation.fetch_add(1, Ordering::Relaxed);
         let _lease = match self
             .lease
-            .acquire(&msg.channel_id, &msg.sender_id, generation, None)
+            .acquire(&session_id, &msg.sender_id, generation, None)
             .await
         {
             Ok(token) => token, // held for the turn; released on drop below
@@ -273,6 +284,57 @@ impl Dispatcher {
 
 #[cfg(test)]
 mod tests {
+    #[tokio::test]
+    async fn same_channel_id_on_different_platforms_can_run_concurrently() {
+        struct GateAgent {
+            entered: mpsc::Sender<Platform>,
+            release: Arc<tokio::sync::Semaphore>,
+        }
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for GateAgent {
+            async fn run_turn(
+                &self,
+                msg: &Message,
+                _history: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                self.entered.send(msg.platform).await.unwrap();
+                self.release.acquire().await.unwrap().forget();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+        let (mut dispatcher, _, _) = harness("", serde_json::json!({}));
+        let (entered, mut arrivals) = mpsc::channel(2);
+        let release = Arc::new(tokio::sync::Semaphore::new(0));
+        dispatcher.agent = Arc::new(GateAgent {
+            entered,
+            release: release.clone(),
+        });
+        let mut telegram = cli_msg("hello", "sender");
+        telegram.platform = Platform::Telegram;
+        telegram.channel_id = "same-channel".into();
+        let mut discord = telegram.clone();
+        discord.platform = Platform::Discord;
+        let control = async {
+            tokio::time::timeout(std::time::Duration::from_secs(2), async {
+                let first = arrivals.recv().await.unwrap();
+                let second = arrivals.recv().await.unwrap();
+                assert_ne!(first, second);
+            })
+            .await
+            .expect("distinct persisted sessions must enter independently");
+            release.add_permits(2);
+        };
+        tokio::join!(
+            dispatcher.handle_turn(telegram),
+            dispatcher.handle_turn(discord),
+            control
+        );
+    }
+
     use super::*;
     use std::sync::atomic::AtomicUsize;
     use std::sync::Mutex;
@@ -332,6 +394,7 @@ mod tests {
             channel_id: "chan".into(),
             sender_id: sender.into(),
             text: text.into(),
+            content_parts: None,
             chat_type: Some("dm".into()),
         }
     }

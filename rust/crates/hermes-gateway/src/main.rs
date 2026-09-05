@@ -7,11 +7,14 @@
 mod agent;
 mod agent_cache_pressure;
 mod api_server_run_idempotency;
+mod atomic_file;
 mod authz;
 mod browser_control_artifacts;
 mod browser_control_broker;
+mod cache_paths;
 mod cgroup_cleanup;
 mod channel_directory;
+mod chat_message_projection;
 mod cli_agent;
 mod code_skew;
 mod config;
@@ -22,6 +25,7 @@ mod config_loader;
 mod config_schema;
 mod config_types;
 mod control_socket;
+mod custom_request_config;
 mod cwd_placeholder;
 mod dead_targets;
 mod delivery;
@@ -31,6 +35,8 @@ mod disk_status;
 mod dispatch;
 mod display_config;
 mod drain_control;
+mod file_read_safety;
+mod gemini_thinking;
 mod health;
 mod hooks;
 mod hosted_room_execution_policy;
@@ -41,30 +47,48 @@ mod hosted_room_replicas;
 mod hosted_rooms;
 mod hosted_rooms_log;
 mod http_client_limits;
+mod image_references;
+mod image_routing;
+mod inbound_media;
+mod inbound_text_context;
 mod install_identity;
 mod kanban_watchers;
 mod lifecycle_ledger;
+mod local_probe;
+mod managed_capabilities;
+mod managed_catalog;
 mod media;
+mod media_context;
 mod media_policy;
 mod media_repair;
 mod memory_monitor;
 mod memory_status;
 mod message;
 mod message_timestamps;
+mod mime_types;
 mod mirror;
+mod models_dev;
 mod native_agent;
+mod native_image_content;
 mod native_tools;
 mod pairing;
+mod pending_messages;
+mod pending_stt;
 mod platform;
 mod platform_base_types;
 mod platform_helpers;
 mod profile_name;
 mod profile_routing;
+mod prompt_cache;
+mod provider_registry;
+mod python_value;
 mod qqbot_common;
 mod qqbot_crypto;
 mod qqbot_keyboards;
 mod qqbot_onboard;
 mod readiness;
+mod reasoning_effort;
+mod reasoning_replay;
 mod relay_auth;
 mod relay_command_manifest;
 mod relay_descriptor;
@@ -80,6 +104,7 @@ mod secret_scope;
 mod session;
 mod session_db;
 mod session_db_recovery;
+mod session_image_routing;
 mod session_registry;
 mod session_stall;
 mod session_state;
@@ -97,7 +122,11 @@ mod sticker_cache;
 mod stream_consumer;
 mod systemd_notify;
 mod telegram;
+mod threat_patterns;
+mod tool_result;
+mod transcription_enrichment;
 mod turn_lease;
+mod vision_enrichment;
 mod wake;
 mod webhook_filters;
 mod whatsapp_common;
@@ -148,7 +177,20 @@ fn build_agent_client(
     }
 
     if config.agent_native {
-        // base_url: explicit env override, else config's model.base_url, else OpenRouter.
+        let profiles = provider_registry::ProviderRegistry::default();
+        profiles.register_bundled_base_profiles(env!("CARGO_PKG_VERSION"));
+        profiles.register_upstage();
+        profiles.register_nebius();
+        profiles.register_vercel();
+        let profile = user_config
+            .get("model")
+            .and_then(|model| model.get("provider"))
+            .and_then(serde_json::Value::as_str)
+            .and_then(|name| profiles.get(name))
+            .map(|profile| profile.read().unwrap().clone());
+
+        // Explicit endpoints win, then a registered base-profile endpoint.
+        // Generic configurations retain the OpenRouter default.
         let base_url = config
             .llm_base_url
             .clone()
@@ -159,19 +201,46 @@ fn build_agent_client(
                     .and_then(|v| v.as_str())
                     .map(str::to_string)
             })
+            .or_else(|| {
+                profile.as_ref().and_then(|profile| {
+                    profile
+                        .env_vars
+                        .iter()
+                        .find(|name| name.ends_with("_URL"))
+                        .and_then(|name| std::env::var(name).ok())
+                        .map(|value| value.trim().to_owned())
+                        .filter(|value| !value.is_empty())
+                })
+            })
+            .or_else(|| profile.as_ref().map(|profile| profile.base_url.clone()))
             .unwrap_or_else(|| "https://openrouter.ai/api/v1".to_string());
 
-        // Key: explicit HERMES_LLM_API_KEY override, else resolve from the
-        // process env / $HERMES_HOME/.env by the provider the base_url implies
-        // (same source the Python agent uses). The value is never logged.
+        // Explicit native credentials win. Registered profiles use their own
+        // declared key names; generic configurations retain the legacy lookup.
         let key = config.llm_api_key.clone().or_else(|| {
             let dotenv = config_file::load_dotenv(&config_file::env_path());
-            config_file::resolve_provider_api_key(&base_url, &dotenv)
+            match &profile {
+                Some(profile) => config_file::resolve_profile_api_key(profile, &dotenv, |name| {
+                    std::env::var(name).ok()
+                }),
+                None => config_file::resolve_provider_api_key(&base_url, &dotenv),
+            }
         });
 
         match (key, model) {
-            (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone()) {
+            (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone()).and_then(|client| {
+                match &profile { Some(profile) => client.with_provider_profile(profile), None => Ok(client) }
+            }) {
                 Ok(mut c) => {
+                    c = c.with_reasoning_config(reasoning_effort::resolve_config(user_config, model));
+                    c = c.with_reasoning_echo(
+                        python_value::truthy(&user_config["model"]["reasoning_echo"])
+                            || reasoning_replay::needs_echo(user_config["model"]["provider"].as_str().unwrap_or(""), model, &base_url),
+                    );
+                    if let Some(extra) = custom_request_config::select_extra_body(user_config["model"]["provider"].as_str().unwrap_or(""), model, &base_url, &user_config["custom_providers"]) {
+                        c = c.with_request_overrides(serde_json::Map::from_iter([("extra_body".into(), serde_json::Value::Object(extra))]));
+                    }
+                    c = c.with_output_cap(native_agent::resolve_output_cap(&user_config["model"]["max_tokens"], std::env::var("HERMES_MAX_TOKENS").ok().as_deref(), None));
                     if config.agent_tools {
                         c = c.with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
                         tracing::info!(model, base_url, "using native agent client (tools enabled)");
@@ -510,5 +579,313 @@ async fn wait_for_signal() {
     tokio::select! {
         _ = ctrl_c => {},
         _ = terminate => {},
+    }
+}
+
+#[cfg(test)]
+mod startup_tests {
+    use super::*;
+    use serde_json::{json, Value};
+
+    fn native_config() -> Config {
+        Config {
+            bind: "127.0.0.1:0".parse().unwrap(),
+            agent_python: "python3".into(),
+            agent_cwd: ".".into(),
+            agent_model: None,
+            telegram_token: None,
+            discord_token: None,
+            slack_app_token: None,
+            slack_bot_token: None,
+            agent_native: true,
+            llm_api_key: Some("fixture-key".into()),
+            llm_base_url: None,
+            agent_cli: None,
+            agent_cli_args: None,
+            agent_cli_prompt_flag: None,
+            agent_tools: false,
+        }
+    }
+
+    #[test]
+    fn selected_base_profile_reaches_native_stream_and_tool_requests() {
+        let _lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        struct RestoreEnv(Vec<(&'static str, Option<std::ffi::OsString>)>);
+        impl Drop for RestoreEnv {
+            fn drop(&mut self) {
+                for (name, value) in &self.0 {
+                    match value {
+                        Some(value) => std::env::set_var(name, value),
+                        None => std::env::remove_var(name),
+                    }
+                }
+            }
+        }
+        struct TestHome(std::path::PathBuf);
+        impl Drop for TestHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let directory = format!("hermes-profile-startup-{}-{nonce}", std::process::id());
+        let home = TestHome(std::env::temp_dir().join(directory));
+        std::fs::create_dir(&home.0).unwrap();
+        let _restore = RestoreEnv(
+            [
+                "HERMES_HOME",
+                "FIREWORKS_API_KEY",
+                "HERMES_MAX_TOKENS",
+                "OPENROUTER_API_KEY",
+            ]
+            .into_iter()
+            .map(|name| (name, std::env::var_os(name)))
+            .collect(),
+        );
+        std::env::set_var("HERMES_HOME", &home.0);
+        std::env::set_var("FIREWORKS_API_KEY", "stale-shell-key");
+        std::env::remove_var("HERMES_MAX_TOKENS");
+        std::env::set_var("OPENROUTER_API_KEY", "stale-generic-key");
+        std::fs::write(
+            home.0.join(".env"),
+            "FIREWORKS_API_KEY=fixture-key\nOPENROUTER_API_KEY=rotated-generic-key\n",
+        )
+        .unwrap();
+        tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap().block_on(async {
+
+            use axum::{http::HeaderMap, response::IntoResponse, routing::post, Json, Router};
+            let requests = Arc::new(std::sync::Mutex::new(Vec::new()));
+            let captured = requests.clone();
+            let app = Router::new().route("/chat/completions", post(move |headers: HeaderMap, Json(body): Json<Value>| {
+                let captured = captured.clone();
+                async move {
+                    captured.lock().unwrap().push((headers, body.clone()));
+                    if body["stream"] == true {
+                        ([("content-type", "text/event-stream")], "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\ndata: [DONE]\n\n").into_response()
+                    } else {
+                        Json(json!({"choices": [{"message": {"role": "assistant", "content": "ok"}}]})).into_response()
+                    }
+                }
+            }));
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base = format!("http://{}", listener.local_addr().unwrap());
+            struct Server(tokio::task::JoinHandle<()>);
+            impl Drop for Server {
+                fn drop(&mut self) {
+                    self.0.abort();
+                }
+            }
+            let _server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            let mut config = native_config();
+            config.llm_base_url = Some(base);
+            let user_config = json!({"model": {"provider": "fw", "base_url": "http://127.0.0.1:1"}});
+            let message: hermes_core::Message = serde_json::from_value(
+                json!({"platform": "cli", "channel_id": "c", "sender_id": "s", "text": "new turn"}),
+            )
+            .unwrap();
+            let history = vec![
+                session_db::HistoryMessage {
+                    role: "user".into(),
+                    content: "earlier".into(),
+                },
+                session_db::HistoryMessage {
+                    role: "assistant".into(),
+                    content: "reply".into(),
+                },
+            ];
+            for tools in [false, true] {
+                config.agent_tools = tools;
+                // Exercise both explicit credentials and real profile-scoped file
+                // loading through startup, including saved-key rotation precedence.
+                config.llm_api_key = (!tools).then(|| "fixture-key".into());
+                let agent = build_agent_client(&config, &user_config, Some("fixture-model"));
+                let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                agent.run_turn(&message, &history, tx).await.unwrap();
+                let mut saw_text = false;
+                while let Some(event) = rx.recv().await {
+                    if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                        saw_text |= text == "ok";
+                    }
+                }
+                assert!(saw_text);
+            }
+            {
+            let calls = requests.lock().unwrap();
+            assert_eq!(calls.len(), 2);
+            for (headers, body) in calls.iter() {
+                assert_eq!(headers["authorization"], "Bearer fixture-key");
+                assert_eq!(
+                    headers["user-agent"],
+                    format!("HermesAgent/{}", env!("CARGO_PKG_VERSION"))
+                );
+                assert_eq!(headers["x-title"], "Hermes Agent");
+                assert_eq!(
+                    body["messages"][0],
+                    json!({"role": "user", "content": "earlier"})
+                );
+                assert_eq!(
+                    body["messages"][1],
+                    json!({"role": "assistant", "content": "reply"})
+                );
+                assert_eq!(body["model"], "fixture-model");
+            }
+            assert_eq!(calls[0].1["stream"], true);
+            assert_eq!(calls[1].1["stream"], false);
+            assert!(calls[1].1["tools"].is_array());
+            }
+            // Exercise the custom hook through the same startup and HTTP path,
+            // with config resolution occurring before every client is built.
+            for tools in [false, true] {
+                for (model, agent_config, expected) in [
+                    ("solar-pro3", json!({}), json!("medium")),
+                    ("solar-pro3", json!({"reasoning_effort": false}), Value::Null),
+                    ("solar-pro3", json!({"reasoning_effort": "minimal"}), Value::Null),
+                    ("solar-pro3", json!({"reasoning_effort": "ultra"}), json!("high")),
+                    ("solar-mini-250127", json!({"reasoning_effort": "high"}), Value::Null),
+                    ("vendor/solar-pro3", json!({"reasoning_effort": "high", "reasoning_overrides": {"solar-pro3": "low"}}), json!("low")),
+                ] {
+                    config.agent_tools = tools;
+                    config.llm_api_key = Some("fixture-key".into());
+                    let selected = json!({"model": {"provider": "solar"}, "agent": agent_config});
+                    let agent = build_agent_client(&config, &selected, Some(model));
+                    let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                    agent.run_turn(&message, &history, tx).await.unwrap();
+                    while rx.recv().await.is_some() {}
+                    let calls = requests.lock().unwrap();
+                    let body = &calls.last().unwrap().1;
+                    assert_eq!(body["reasoning_effort"], expected, "{selected}");
+                    assert_eq!(body["stream"], !tools);
+                    assert_eq!(body["messages"][0], json!({"role": "user", "content": "earlier"}));
+                }
+            }
+
+            for tools in [false, true] {
+                for (model, setting, expected) in [
+                    ("Qwen/Qwen3.5-fast", Value::Null, json!("medium")),
+                    ("deepseek-ai/DeepSeek-V4-Pro", json!("ultra"), json!("high")),
+                    ("deepseek-ai/DeepSeek-R1", json!("minimal"), json!("low")),
+                    ("openai/gpt-oss-120b", json!(false), Value::Null),
+                    ("meta-llama/Llama-3.3", json!("high"), Value::Null),
+                    ("gpt-oss/llama", json!("high"), Value::Null),
+                ] {
+                    config.agent_tools = tools;
+                    config.llm_api_key = Some("fixture-key".into());
+                    let selected = json!({"model": {"provider": "nebius"}, "agent": {"reasoning_effort": setting}});
+                    let agent = build_agent_client(&config, &selected, Some(model));
+                    let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                    agent.run_turn(&message, &history, tx).await.unwrap();
+                    while rx.recv().await.is_some() {}
+                    let calls = requests.lock().unwrap();
+                    let body = &calls.last().unwrap().1;
+                    assert_eq!(body["reasoning_effort"], expected, "{selected}");
+                    assert_eq!(body["stream"], !tools);
+                }
+            }
+            for tools in [false, true] {
+                for (model, raw, parameter, expected) in [
+                    ("llama", json!(321), "max_tokens", json!(321)),
+                    ("vendor/gpt-5.4", json!(321), "max_completion_tokens", json!(321)),
+                    ("gpt-4o", json!("123"), "max_completion_tokens", json!(123)),
+                    ("llama", json!("bad"), "max_tokens", Value::Null),
+                ] {
+                    config.agent_tools = tools;
+                    let selected = json!({"model": {"provider": "fw", "max_tokens": raw}});
+                    let agent = build_agent_client(&config, &selected, Some(model));
+                    let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                    agent.run_turn(&message, &history, tx).await.unwrap();
+                    while rx.recv().await.is_some() {}
+                    let calls = requests.lock().unwrap();
+                    let body = &calls.last().unwrap().1;
+                    assert_eq!(body[parameter], expected, "{selected}");
+                    let other = if parameter == "max_tokens" { "max_completion_tokens" } else { "max_tokens" };
+                    assert!(body.get(other).is_none());
+                }
+            }
+            for tools in [false, true] {
+                config.agent_tools = tools;
+                config.llm_api_key = None;
+                let agent = build_agent_client(&config, &json!({}), Some("fixture-model"));
+                let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                agent.run_turn(&message, &history, tx).await.unwrap();
+                while rx.recv().await.is_some() {}
+                let calls = requests.lock().unwrap();
+                assert_eq!(calls.last().unwrap().0["authorization"], "Bearer rotated-generic-key");
+            }
+            for tools in [false, true] {
+                config.agent_tools = tools;
+                config.llm_api_key = Some("fixture-key".into());
+                let selected = json!({"model": {"provider": "custom:lab"}, "custom_providers": [{"name": "lab", "base_url": config.llm_base_url.as_ref().unwrap(), "model": "fixture-model", "extra_body": {"temperature": 0.6, "custom_field": {"active": true}}}]});
+                let agent = build_agent_client(&config, &selected, Some("fixture-model"));
+                let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                agent.run_turn(&message, &history, tx).await.unwrap();
+                while rx.recv().await.is_some() {}
+                let calls = requests.lock().unwrap();
+                let body = &calls.last().unwrap().1;
+                assert_eq!(body["temperature"], 0.6);
+                assert_eq!(body["custom_field"], json!({"active": true}));
+                assert!(body.get("extra_body").is_none());
+                assert_eq!(body["messages"][0], json!({"role": "user", "content": "earlier"}));
+            }
+            for tools in [false, true] {
+                for (provider, flag, expected) in [
+                    ("fw", json!(true), true), ("fw", json!(false), false),
+                    ("fw", json!("enabled"), true), ("kimi-coding", json!(false), true),
+                    ("KIMI-CODING", json!(false), false), ("deepseek", json!(false), true),
+                ] {
+                    config.agent_tools = tools;
+                    let selected = json!({"model": {"provider": provider, "reasoning_echo": flag}});
+                    let agent = build_agent_client(&config, &selected, Some("fixture-model"));
+                    let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                    agent.run_turn(&message, &history, tx).await.unwrap();
+                    while rx.recv().await.is_some() {}
+                    let calls = requests.lock().unwrap();
+                    let assistant = &calls.last().unwrap().1["messages"][1];
+                    if expected { assert_eq!(assistant["reasoning_content"], " "); }
+                    else { assert!(assistant.get("reasoning_content").is_none()); }
+                }
+            }
+            for tools in [false, true] {
+                for (model, effort, cap, expected) in [
+                    ("google/gemini-3-flash", json!("ultra"), 1024, 65535),
+                    ("gemini-3-pro", json!("low"), 2048, 65535),
+                    ("gemini-2.5-flash", json!(false), 1024, 1024),
+                    ("gemini-3-pro", json!(false), 0, 65535),
+                    ("gemini-3-flash", json!("high"), 70000, 70000),
+                    ("gemma-3", json!("high"), 1024, 1024),
+                    ("openrouter/google/gemini-3-flash", json!("high"), 1024, 1024),
+                ] {
+                    config.agent_tools = tools;
+                    config.llm_api_key = Some("fixture-key".into());
+                    let selected = json!({"model": {"provider": "fw", "max_tokens": cap}, "agent": {"reasoning_effort": effort}});
+                    let agent = build_agent_client(&config, &selected, Some(model));
+                    let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                    agent.run_turn(&message, &history, tx).await.unwrap();
+                    while rx.recv().await.is_some() {}
+                    let calls = requests.lock().unwrap();
+                    assert_eq!(calls.last().unwrap().1["max_tokens"], expected, "{selected}");
+                }
+            }
+        });
+    }
+
+    #[test]
+    fn unported_api_mode_and_missing_required_endpoint_use_existing_bridge() {
+        let config = native_config();
+        for provider in ["xai", "codex", "azure"] {
+            let agent = build_agent_client(
+                &config,
+                &json!({"model": {"provider": provider}}),
+                Some("fixture-model"),
+            );
+            assert!(
+                !agent.supports_structured_content(),
+                "provider {provider} must not become a generic native chat client"
+            );
+        }
     }
 }

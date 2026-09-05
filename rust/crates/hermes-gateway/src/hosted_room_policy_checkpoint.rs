@@ -160,10 +160,10 @@ fn ensure_ascii(s: &str) -> String {
     out
 }
 
-/// Serialize an event the way `_event_json` does: sorted keys (serde_json's
-/// default `Map` is a `BTreeMap`), compact `(",",":")` separators, ASCII-safe.
+/// Serialize an event with recursively sorted keys, compact separators,
+/// and ASCII-safe escaping, matching `_event_json`.
 fn encode_event(event: &Event) -> String {
-    let value = json!({
+    let mut value = json!({
         "room_id": event.room_id,
         "seq": event.seq,
         "event_id": event.event_id,
@@ -174,6 +174,7 @@ fn encode_event(event: &Event) -> String {
         "created_at": event.created_at,
         "idempotent": event.idempotent,
     });
+    value.sort_all_objects();
     ensure_ascii(&serde_json::to_string(&value).unwrap_or_default())
 }
 

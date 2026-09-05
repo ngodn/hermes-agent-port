@@ -1124,10 +1124,10 @@ mod tests {
     fn validate_accepts_recent_file_and_rejects_denylist() {
         let _g = ENV_LOCK.lock().unwrap();
         let home = fresh_home();
-        std::env::set_var("HOME", &home);
-        // HERMES_HOME is process-global; share the one crate-wide test lock so
-        // these do not race other suites that read or write it.
+        // Both home variables are process-global. Acquire the shared lock
+        // before changing either one so config tests see a consistent pair.
         let _env_guard = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        std::env::set_var("HOME", &home);
         std::env::set_var("HERMES_HOME", home.join(".hermes"));
         std::env::remove_var("HERMES_MEDIA_DELIVERY_STRICT");
         std::env::remove_var("HERMES_MEDIA_ALLOW_DIRS");
@@ -1166,10 +1166,10 @@ mod tests {
     fn extract_media_parses_and_cleans() {
         let _g = ENV_LOCK.lock().unwrap();
         let home = fresh_home();
-        std::env::set_var("HOME", &home);
-        // HERMES_HOME is process-global; share the one crate-wide test lock so
-        // these do not race other suites that read or write it.
+        // Both home variables are process-global. Acquire the shared lock
+        // before changing either one so config tests see a consistent pair.
         let _env_guard = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        std::env::set_var("HOME", &home);
         std::env::set_var("HERMES_HOME", home.join(".hermes"));
         std::env::remove_var("HERMES_MEDIA_DELIVERY_STRICT");
 
@@ -1190,10 +1190,10 @@ mod tests {
     fn extract_media_dedupes_same_path() {
         let _g = ENV_LOCK.lock().unwrap();
         let home = fresh_home();
-        std::env::set_var("HOME", &home);
-        // HERMES_HOME is process-global; share the one crate-wide test lock so
-        // these do not race other suites that read or write it.
+        // Both home variables are process-global. Acquire the shared lock
+        // before changing either one so config tests see a consistent pair.
         let _env_guard = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        std::env::set_var("HOME", &home);
         std::env::set_var("HERMES_HOME", home.join(".hermes"));
         let img = write_temp_file(&home, "a.png", b"x");
         let text = format!("MEDIA:{p}\nsummary\nMEDIA:{p}", p = img.display());
@@ -1206,10 +1206,10 @@ mod tests {
     fn media_inside_code_block_is_not_delivered() {
         let _g = ENV_LOCK.lock().unwrap();
         let home = fresh_home();
-        std::env::set_var("HOME", &home);
-        // HERMES_HOME is process-global; share the one crate-wide test lock so
-        // these do not race other suites that read or write it.
+        // Both home variables are process-global. Acquire the shared lock
+        // before changing either one so config tests see a consistent pair.
         let _env_guard = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        std::env::set_var("HOME", &home);
         std::env::set_var("HERMES_HOME", home.join(".hermes"));
         let img = write_temp_file(&home, "real.png", b"x");
         // A fenced code block containing a MEDIA tag must be ignored.
@@ -1224,10 +1224,10 @@ mod tests {
     fn voice_tag_only_marks_audio() {
         let _g = ENV_LOCK.lock().unwrap();
         let home = fresh_home();
-        std::env::set_var("HOME", &home);
-        // HERMES_HOME is process-global; share the one crate-wide test lock so
-        // these do not race other suites that read or write it.
+        // Both home variables are process-global. Acquire the shared lock
+        // before changing either one so config tests see a consistent pair.
         let _env_guard = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        std::env::set_var("HOME", &home);
         std::env::set_var("HERMES_HOME", home.join(".hermes"));
         let ogg = write_temp_file(&home, "v.ogg", b"OggS");
         let png = write_temp_file(&home, "p.png", b"x");
@@ -1250,10 +1250,10 @@ mod tests {
     fn extract_local_files_skips_code_and_missing() {
         let _g = ENV_LOCK.lock().unwrap();
         let home = fresh_home();
-        std::env::set_var("HOME", &home);
-        // HERMES_HOME is process-global; share the one crate-wide test lock so
-        // these do not race other suites that read or write it.
+        // Both home variables are process-global. Acquire the shared lock
+        // before changing either one so config tests see a consistent pair.
         let _env_guard = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        std::env::set_var("HOME", &home);
         std::env::set_var("HERMES_HOME", home.join(".hermes"));
         let doc = write_temp_file(&home, "notes.md", b"# hi");
         let text = format!(

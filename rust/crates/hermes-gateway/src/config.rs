@@ -29,11 +29,12 @@ pub struct Config {
     /// Opt in to the native (in-Rust) agent client instead of the Python
     /// subprocess bridge. Requires `llm_api_key` and a resolved model.
     pub agent_native: bool,
-    /// API key for the native client (`HERMES_LLM_API_KEY`). Kept separate from
-    /// the user's .env so native mode never auto-spends against stored keys.
+    /// Explicit native API key (`HERMES_LLM_API_KEY`). Otherwise native startup
+    /// resolves credentials from the selected provider's environment and .env.
     pub llm_api_key: Option<String>,
     /// API root for the native client (`HERMES_LLM_BASE_URL`), else config's
-    /// `model.base_url`, else the OpenRouter default.
+    /// `model.base_url`, then the selected profile's endpoint override/default,
+    /// or OpenRouter when no bundled profile is selected.
     pub llm_base_url: Option<String>,
     /// CLI-backend agent program (`HERMES_AGENT_CLI`, e.g. "claude" or "agy").
     /// When set it takes precedence: turns run via that CLI, no Python or HTTP.

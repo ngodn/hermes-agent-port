@@ -19,7 +19,8 @@ hyper = "1"
 tower = "0.5"
 tower-http = { version = "0.6", features = ["trace", "cors"] }
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+# Python dictionaries preserve insertion order, including metadata tie-breaking.
+serde_json = { version = "1", features = ["preserve_order"] }
 thiserror = "2"
 anyhow = "1"
 tracing = "0.1"

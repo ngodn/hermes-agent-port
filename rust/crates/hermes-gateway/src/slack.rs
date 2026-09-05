@@ -78,6 +78,7 @@ pub fn parse_message_event(payload: &Value) -> Option<Message> {
         channel_id: channel,
         sender_id: user,
         text: text.to_string(),
+        content_parts: None,
         chat_type: Some(chat_type.to_string()),
     })
 }

@@ -601,11 +601,11 @@ mod tests {
     use super::*;
     use serde_json::json;
 
-    /// Serialize a Value with sorted keys to match Python's
-    /// `json.dumps(..., sort_keys=True)`. serde_json's Map is a BTreeMap so its
-    /// object keys already serialize sorted; this is just `to_string`.
+    /// Fixture strings use Python's explicit sort_keys option.
     fn dumps(v: &Value) -> String {
-        v.to_string()
+        let mut value = v.clone();
+        value.sort_all_objects();
+        value.to_string()
     }
 
     /// Golden helper: from_dict(input).to_dict() must serialize to `expected`.

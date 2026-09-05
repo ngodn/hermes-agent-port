@@ -26,6 +26,22 @@ pub enum Platform {
     Signal,
 }
 
+/// Structured user content shared by gateway transport and model requests.
+/// Images arrive as provider-fetchable URLs or prepared base64 data URLs.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum ContentPart {
+    Text { text: String },
+    ImageUrl { image_url: ImageUrl },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ImageUrl {
+    pub url: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub detail: Option<String>,
+}
+
 /// A single inbound or outbound message on some platform. This is the minimal
 /// shape the gateway needs before it hands off to the agent; richer per-turn
 /// context is layered on later in the port.
@@ -37,8 +53,44 @@ pub struct Message {
     /// Opaque per-platform sender id.
     pub sender_id: String,
     pub text: String,
+    /// Prepared model content. Text stays available for command dispatch and
+    /// platform replies; when present these parts are the model's user turn.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub content_parts: Option<Vec<ContentPart>>,
     /// Platform-provided chat type (e.g. Telegram "private"/"group"/"channel").
     /// Used to resolve DM-vs-group access scope. None when unknown.
     #[serde(default)]
     pub chat_type: Option<String>,
+}
+
+impl Message {
+    pub fn model_content(&self) -> serde_json::Value {
+        match &self.content_parts {
+            Some(parts) => {
+                serde_json::to_value(parts).expect("content parts contain serializable strings")
+            }
+            None => serde_json::Value::String(self.text.clone()),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn old_text_messages_and_structured_parts_roundtrip() {
+        let old = json!({"platform":"cli", "channel_id":"c", "sender_id":"s", "text":"caption"});
+        let mut msg: Message = serde_json::from_value(old).unwrap();
+        assert_eq!(msg.model_content(), "caption");
+        assert!(serde_json::to_value(&msg)
+            .unwrap()
+            .get("content_parts")
+            .is_none());
+        let parts = json!([{"type":"text","text":"caption"},{"type":"image_url","image_url":{"url":"data:image/png;base64,AA==","detail":"high"}}]);
+        msg.content_parts = Some(serde_json::from_value(parts.clone()).unwrap());
+        let decoded: Message = serde_json::from_value(serde_json::to_value(&msg).unwrap()).unwrap();
+        assert_eq!(decoded.model_content(), parts);
+    }
 }

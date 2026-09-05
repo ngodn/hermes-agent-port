@@ -88,6 +88,11 @@ impl AgentClient for CliAgentClient {
         history: &[crate::session_db::HistoryMessage],
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()> {
+        if msg.content_parts.is_some() || history.iter().any(|m| !m.model_content().is_string()) {
+            return Err(Error::Other(
+                "CLI backend does not yet accept structured content".into(),
+            ));
+        }
         let prompt = compose_prompt(history, &msg.text);
         let args = build_args(&self.extra_args, self.prompt_flag.as_deref(), &prompt);
         let output = tokio::time::timeout(
@@ -165,6 +170,7 @@ mod tests {
             channel_id: "c".into(),
             sender_id: "u".into(),
             text: "hi from cli".into(),
+            content_parts: None,
             chat_type: None,
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(8);
@@ -191,6 +197,7 @@ mod tests {
             channel_id: "c".into(),
             sender_id: "u".into(),
             text: "x".into(),
+            content_parts: None,
             chat_type: None,
         };
         let (tx, _rx) = mpsc::channel::<StreamEvent>(8);

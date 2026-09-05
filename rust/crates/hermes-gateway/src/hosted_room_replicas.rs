@@ -306,9 +306,8 @@ fn as_positive_int(v: Option<&Value>) -> Option<i64> {
 
 /// Byte cost of one page event, matching `_event_bytes`: the UTF-8 length of
 /// `event_id + kind + json(actor) + json(payload)`. The Python source dumps
-/// actor/payload with `separators=(",",":")` and no `sort_keys`; serde's
-/// default `Map` is sorted, but key order never changes the total byte count
-/// (same keys and values), so the length matches. Float formatting can differ
+/// actor/payload with compact separators and no sorting. Key order does not
+/// change the total byte count. Float formatting can differ
 /// by a byte or two from CPython, immaterial at the 256 MiB ceiling.
 fn event_bytes(event_id: &str, kind: &str, actor: &Value, payload: &Value) -> i64 {
     let actor_len = serde_json::to_string(actor).map(|s| s.len()).unwrap_or(0);

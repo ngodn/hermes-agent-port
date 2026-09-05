@@ -15,10 +15,53 @@
 //! degrade gracefully instead of taking the gateway down.
 
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use serde_json::Value;
 use tracing::warn;
+
+/// Mirror of `hermes_constants._legacy_path_has_content`: true iff `path`
+/// exists and has content worth honoring. A populated directory or any
+/// non-directory file counts; an empty directory does not. Inspection failures
+/// (short of "not found") assume occupied so legacy data is never orphaned.
+fn legacy_path_has_content(path: &Path) -> bool {
+    let meta = match std::fs::symlink_metadata(path) {
+        Ok(m) => m,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return false,
+        Err(_) => return true,
+    };
+    if meta.file_type().is_symlink() {
+        // Judge on the link target; a dangling link has no content.
+        match std::fs::metadata(path) {
+            Ok(target) => {
+                if !target.is_dir() {
+                    return true;
+                }
+                // directory target -> fall through to emptiness check
+            }
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => return false,
+            Err(_) => return true,
+        }
+    } else if !meta.is_dir() {
+        return true;
+    }
+    match std::fs::read_dir(path) {
+        Ok(mut entries) => entries.next().is_some(),
+        Err(_) => true,
+    }
+}
+
+/// Mirror of `hermes_constants.get_hermes_dir`: prefer the legacy location when
+/// it exists with content, otherwise the new consolidated location.
+pub fn get_hermes_dir(new_subpath: &str, old_name: &str, home: Option<&Path>) -> PathBuf {
+    let home = home.map(|p| p.to_path_buf()).unwrap_or_else(hermes_home);
+    let old_path = home.join(old_name);
+    if legacy_path_has_content(&old_path) {
+        old_path
+    } else {
+        home.join(new_subpath)
+    }
+}
 
 /// Resolve the Hermes home directory. `HERMES_HOME` wins; otherwise the
 /// per-platform default (`%LOCALAPPDATA%\hermes` on Windows, else `~/.hermes`).
@@ -176,24 +219,72 @@ fn key_names_for(base_url: &str) -> Vec<&'static str> {
     names
 }
 
-/// Resolve an API key for `base_url`: the process environment wins, then the
-/// supplied dotenv map. Returns the first candidate name that holds a value.
+/// Resolve an API key for `base_url`: saved dotenv values win per candidate
+/// name, then the process environment. This honors deliberate key rotations.
 /// The key value is never logged.
 pub fn resolve_provider_api_key(
     base_url: &str,
     dotenv: &HashMap<String, String>,
 ) -> Option<String> {
     for name in key_names_for(base_url) {
-        if let Ok(v) = std::env::var(name) {
-            if !v.trim().is_empty() {
-                return Some(v);
+        let value = dotenv
+            .get(name)
+            .filter(|value| !value.is_empty())
+            .cloned()
+            .or_else(|| std::env::var(name).ok());
+        if let Some(value) = value {
+            let value = value.trim_matches(crate::python_value::python_whitespace);
+            if !value.is_empty() {
+                return Some(value.to_owned());
             }
         }
-        if let Some(v) = dotenv.get(name) {
-            if !v.trim().is_empty() {
-                return Some(v.clone());
-            }
+    }
+    None
+}
+
+/// Resolve the declared keys of a bundled API-key profile. A selected provider
+/// never borrows another provider's generic fallback key. Dotenv wins per name
+/// so a saved rotation supersedes a stale shell export, as in Python auth.
+/// Credential pools and per-turn secret scopes are handled by the bridge until
+/// those runtime subsystems are ported.
+pub fn resolve_profile_api_key(
+    profile: &crate::provider_registry::ProviderProfile,
+    dotenv: &HashMap<String, String>,
+    mut environment: impl FnMut(&str) -> Option<String>,
+) -> Option<String> {
+    if profile.auth_type != "api_key" {
+        return None;
+    }
+    for name in &profile.env_vars {
+        if name.ends_with("_URL") {
+            continue;
         }
+        let value = dotenv
+            .get(name)
+            .filter(|value| !value.is_empty())
+            .cloned()
+            .or_else(|| environment(name));
+        let Some(value) = value else { continue };
+        let value = value.trim();
+        if value.chars().count() < 4
+            || matches!(
+                value.to_lowercase().as_str(),
+                "*" | "**"
+                    | "***"
+                    | "changeme"
+                    | "your_api_key"
+                    | "your_api_key_here"
+                    | "your-api-key"
+                    | "placeholder"
+                    | "example"
+                    | "dummy"
+                    | "null"
+                    | "none"
+            )
+        {
+            continue;
+        }
+        return Some(value.to_owned());
     }
     None
 }
@@ -247,6 +338,43 @@ fn empty_object() -> Value {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn declared_profile_keys_honor_rotation_order_and_reject_placeholders() {
+        let registry = crate::provider_registry::ProviderRegistry::default();
+        registry.register_bundled_base_profiles("test");
+        let profile = registry.get("alibaba-coding-plan-cn").unwrap();
+        let profile = profile.read().unwrap();
+        let mut dotenv = std::collections::HashMap::from([
+            (
+                "ALIBABA_CODING_PLAN_CN_API_KEY".into(),
+                " rotated-key ".into(),
+            ),
+            ("ALIBABA_CODING_PLAN_API_KEY".into(), "fallback-key".into()),
+        ]);
+        let resolve = |dotenv: &std::collections::HashMap<String, String>| {
+            super::resolve_profile_api_key(&profile, dotenv, |_| Some("stale-shell-key".into()))
+        };
+        assert_eq!(resolve(&dotenv).as_deref(), Some("rotated-key"));
+        for invalid in ["   ", "dummy", "NONE", "abc", "***"] {
+            dotenv.insert("ALIBABA_CODING_PLAN_CN_API_KEY".into(), invalid.into());
+            assert_eq!(resolve(&dotenv).as_deref(), Some("fallback-key"));
+        }
+        dotenv.insert("ALIBABA_CODING_PLAN_CN_API_KEY".into(), String::new());
+        assert_eq!(resolve(&dotenv).as_deref(), Some("stale-shell-key"));
+        let only_urls_and_unrelated_keys = |name: &str| {
+            (name.ends_with("_URL") || name == "OPENROUTER_API_KEY")
+                .then(|| "unrelated-value".into())
+        };
+        assert_eq!(
+            super::resolve_profile_api_key(
+                &profile,
+                &Default::default(),
+                only_urls_and_unrelated_keys
+            ),
+            None
+        );
+    }
+
     use super::*;
     use std::io::Write;
 
@@ -342,6 +470,7 @@ gateway:
 
     #[test]
     fn resolve_key_prefers_host_specific_then_falls_back() {
+        let _lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
         let mut env = std::collections::HashMap::new();
         env.insert("OPENROUTER_API_KEY".to_string(), "sk-or".to_string());
         env.insert("OPENAI_API_KEY".to_string(), "sk-oai".to_string());

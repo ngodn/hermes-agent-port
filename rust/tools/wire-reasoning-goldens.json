@@ -1,0 +1,758 @@
+[
+  {
+    "config": null,
+    "result": null
+  },
+  {
+    "config": [],
+    "result": []
+  },
+  {
+    "config": false,
+    "result": false
+  },
+  {
+    "config": "ultra",
+    "result": "ultra"
+  },
+  {
+    "config": {},
+    "result": {}
+  },
+  {
+    "config": {
+      "effort": " HIGH "
+    },
+    "result": {
+      "effort": " HIGH "
+    }
+  },
+  {
+    "config": {
+      "effort": "\u001cultra\u001f"
+    },
+    "result": {
+      "effort": "max"
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": "ultra",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": "ULTRA",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": "xhigh",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": "xhigh",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": "none",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": "none",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": "custom",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": "custom",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": 4,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": 4,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": false,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": false,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": null,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": null,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": [],
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": [],
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": true,
+      "effort": [
+        "ultra"
+      ],
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": true,
+      "effort": [
+        "ultra"
+      ],
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": "ultra",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": "ULTRA",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": "xhigh",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": "xhigh",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": "none",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": "none",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": "custom",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": "custom",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": 4,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": 4,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": false,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": false,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": null,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": null,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": [],
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": [],
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": false,
+      "effort": [
+        "ultra"
+      ],
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": false,
+      "effort": [
+        "ultra"
+      ],
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": "ultra",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": "ULTRA",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": "xhigh",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": "xhigh",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": "none",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": "none",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": "custom",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": "custom",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": 4,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": 4,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": false,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": false,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": null,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": null,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": [],
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": [],
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": 0,
+      "effort": [
+        "ultra"
+      ],
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": 0,
+      "effort": [
+        "ultra"
+      ],
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": "ultra",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": "ULTRA",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": "max",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": "xhigh",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": "xhigh",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": "none",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": "none",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": "custom",
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": "custom",
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": 4,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": 4,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": false,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": false,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": null,
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": null,
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": [],
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": [],
+      "other": {
+        "keep": true
+      }
+    }
+  },
+  {
+    "config": {
+      "enabled": null,
+      "effort": [
+        "ultra"
+      ],
+      "other": {
+        "keep": true
+      }
+    },
+    "result": {
+      "enabled": null,
+      "effort": [
+        "ultra"
+      ],
+      "other": {
+        "keep": true
+      }
+    }
+  }
+]

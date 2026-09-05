@@ -47,6 +47,8 @@ pub struct MessageRequest {
     #[serde(default = "default_sender")]
     pub sender_id: String,
     pub text: String,
+    #[serde(default)]
+    pub content_parts: Option<Vec<hermes_core::ContentPart>>,
 }
 
 fn default_channel() -> String {
@@ -79,11 +81,20 @@ pub async fn post_message(
     State(state): State<AppState>,
     Json(req): Json<MessageRequest>,
 ) -> Result<Json<MessageResponse>, (StatusCode, Json<serde_json::Value>)> {
+    if req.content_parts.is_some() && !state.agent.supports_structured_content() {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            Json(
+                serde_json::json!({"error":"configured agent backend does not accept structured content"}),
+            ),
+        ));
+    }
     let msg = Message {
         platform: Platform::Cli,
         channel_id: req.channel_id,
         sender_id: req.sender_id,
         text: req.text,
+        content_parts: req.content_parts,
         chat_type: Some("dm".to_string()),
     };
 
@@ -153,5 +164,224 @@ pub async fn post_message(
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({ "error": format!("agent task panicked: {err}") })),
         )),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::native_agent::NativeAgentClient;
+    use crate::native_tools::{Tool, ToolSpec};
+    use axum::response::{IntoResponse, Response};
+    use axum::routing::post;
+    use base64::Engine;
+    use serde_json::{json, Value};
+    use std::sync::{Arc, Mutex};
+
+    struct TempHome(std::path::PathBuf);
+    impl TempHome {
+        fn new() -> Self {
+            let stamp = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos();
+            let path = std::env::temp_dir().join(format!(
+                "hermes-content-http-{}-{stamp}",
+                std::process::id()
+            ));
+            std::fs::create_dir_all(&path).unwrap();
+            Self(path)
+        }
+    }
+    impl Drop for TempHome {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+    struct Server(tokio::task::JoinHandle<()>);
+    impl Drop for Server {
+        fn drop(&mut self) {
+            self.0.abort();
+        }
+    }
+
+    async fn serve(router: axum::Router) -> (String, Server) {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let task = tokio::spawn(async move {
+            axum::serve(listener, router).await.unwrap();
+        });
+        (format!("http://{address}"), Server(task))
+    }
+
+    async fn model(
+        State(calls): State<Arc<Mutex<Vec<Value>>>>,
+        Json(body): Json<Value>,
+    ) -> Response {
+        calls.lock().unwrap().push(body.clone());
+        if body["stream"] == true {
+            return (
+                [("content-type", "text/event-stream")],
+                "data: {\"choices\":[{\"delta\":{\"content\":\"seen\"}}]}\n\ndata: [DONE]\n\n",
+            )
+                .into_response();
+        }
+        let had_tool = body["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|message| message["role"] == "tool");
+        let message = if had_tool {
+            json!({"content":"seen"})
+        } else {
+            json!({"tool_calls":[{"id":"call-1","type":"function","function":{"name":"echo","arguments":"{}"}}]})
+        };
+        Json(json!({"choices":[{"message":message}]})).into_response()
+    }
+
+    struct Echo;
+    impl Tool for Echo {
+        fn spec(&self) -> ToolSpec {
+            ToolSpec {
+                name: "echo".into(),
+                description: "test echo".into(),
+                parameters: json!({"type":"object"}),
+            }
+        }
+        fn call(&self, _: &Value) -> hermes_core::Result<String> {
+            Ok("done".into())
+        }
+    }
+
+    async fn roundtrip(with_tools: bool) {
+        let home = TempHome::new();
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        let (model_url, _model_server) = serve(
+            axum::Router::new()
+                .route("/chat/completions", post(model))
+                .with_state(calls.clone()),
+        )
+        .await;
+        let mut agent = NativeAgentClient::new("fixture-model", "fixture-key", model_url).unwrap();
+        if with_tools {
+            agent = agent.with_tools(vec![Arc::new(Echo)]);
+        }
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let state = AppState::new(Arc::new(agent), Arc::new(json!({})), None, Some(db.clone()));
+        let (gateway_url, _gateway_server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+
+        // Exercise real native preparation, HTTP deserialization, SQLite writes,
+        // and model HTTP serialization, not just a request-builder unit test.
+        let fixture: Value =
+            serde_json::from_str(include_str!("../../../tools/native-image-goldens.json")).unwrap();
+        let image = home.0.join("image.png");
+        std::fs::write(
+            &image,
+            base64::engine::general_purpose::STANDARD
+                .decode(fixture["files"]["image.png"].as_str().unwrap())
+                .unwrap(),
+        )
+        .unwrap();
+        let policy = crate::file_read_safety::FileReadPolicy {
+            home: home.0.clone(),
+            cwd: home.0.clone(),
+            hermes_home: home.0.join(".hermes"),
+            hermes_root: home.0.join(".hermes"),
+        };
+        let options = crate::native_image_content::NativeImageOptions {
+            read_policy: &policy,
+            accepted_mimes: crate::native_image_content::UNIVERSALLY_SUPPORTED_MIMES,
+        };
+        let (parts, skipped) = crate::native_image_content::build_native_content_parts(
+            "caption",
+            &[image.to_str().unwrap().to_owned()],
+            &[],
+            &options,
+        );
+        assert!(skipped.is_empty());
+        let client = reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(10))
+            .build()
+            .unwrap();
+        for body in [
+            json!({"channel_id":"picture","text":"caption","content_parts":parts}),
+            json!({"channel_id":"picture","text":"follow-up"}),
+        ] {
+            let response = client
+                .post(format!("{gateway_url}/message"))
+                .json(&body)
+                .send()
+                .await
+                .unwrap();
+            assert_eq!(response.status(), StatusCode::OK);
+            assert_eq!(response.json::<Value>().await.unwrap()["reply"], "seen");
+        }
+        let requests = calls.lock().unwrap();
+        assert_eq!(requests.len(), if with_tools { 4 } else { 2 });
+        for request in requests.iter() {
+            assert_eq!(request["messages"][0]["content"], json!(parts));
+        }
+        let last = requests.last().unwrap()["messages"].as_array().unwrap();
+        assert!(last
+            .iter()
+            .any(|m| m["role"] == "user" && m["content"] == "follow-up"));
+        if with_tools {
+            assert_eq!(last.last().unwrap()["role"], "tool");
+        }
+        drop(requests);
+        // A newly opened connection can replay the first image-bearing turn.
+        let reopened = crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap();
+        let sid = crate::session_db::session_id_for(Platform::Cli, "picture");
+        let history = reopened.load_history(&sid, 0).unwrap();
+        assert_eq!(history[0].model_content(), json!(parts));
+        assert_eq!(history.len(), 4);
+    }
+
+    #[tokio::test]
+    async fn images_reach_streaming_model_and_survive_next_turn() {
+        roundtrip(false).await;
+    }
+    #[tokio::test]
+    async fn images_survive_tool_rounds_and_history_replay() {
+        roundtrip(true).await;
+    }
+
+    #[tokio::test]
+    async fn unsupported_backend_rejects_parts_before_persisting_or_running() {
+        struct TextOnly;
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for TextOnly {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                _: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                panic!("unsupported content must be rejected before execution");
+            }
+        }
+        let home = TempHome::new();
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let state = AppState::new(
+            Arc::new(TextOnly),
+            Arc::new(json!({})),
+            None,
+            Some(db.clone()),
+        );
+        let (url, _server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+        let response = reqwest::Client::new().post(format!("{url}/message")).json(&json!({"text":"caption","content_parts":[{"type":"image_url","image_url":{"url":"https://fixture/image.png"}}]})).send().await.unwrap();
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+        let sid = crate::session_db::session_id_for(Platform::Cli, "local");
+        assert!(db.load_history(&sid, 0).unwrap().is_empty());
     }
 }

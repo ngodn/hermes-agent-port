@@ -71,6 +71,17 @@ impl SessionRegistry {
         sessions.get(session_key).map(f)
     }
 
+    /// Take this session's buffered native images once, without creating state.
+    /// Mirrors GatewayRunner._consume_pending_native_image_paths. Reading and
+    /// clearing share one lock so competing consumers cannot attach them twice.
+    pub fn consume_pending_native_image_paths(&self, session_key: &str) -> Vec<String> {
+        let mut sessions = self.sessions.lock().unwrap();
+        sessions
+            .get_mut(session_key)
+            .map(|state| std::mem::take(&mut state.persistent.native_image_paths))
+            .unwrap_or_default()
+    }
+
     /// True when the session holds a running-turn slot (agent or sentinel).
     ///
     /// Mirrors `_is_session_running`: Python tests `state.turn.agent is not
@@ -144,6 +155,56 @@ impl SessionRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn native_image_consumption_preserves_other_sessions_and_run_state() {
+        let reg = SessionRegistry::new();
+        assert!(reg.consume_pending_native_image_paths("missing").is_empty());
+        assert!(reg.is_empty());
+        reg.with_session("first", |s| {
+            s.persistent.native_image_paths = vec!["one.png".into(), "one.png".into()];
+            s.persistent.run_generation = 7;
+        });
+        reg.with_session("second", |s| {
+            s.persistent.native_image_paths = vec!["two.png".into()];
+        });
+        assert_eq!(
+            reg.consume_pending_native_image_paths("first"),
+            ["one.png", "one.png"]
+        );
+        assert!(reg.consume_pending_native_image_paths("first").is_empty());
+        assert!(reg.is_run_current("first", 7));
+        assert_eq!(
+            reg.consume_pending_native_image_paths("second"),
+            ["two.png"]
+        );
+        assert_eq!(reg.len(), 2);
+    }
+
+    #[test]
+    fn competing_native_image_consumers_take_each_batch_once() {
+        use std::sync::{Arc, Barrier};
+        let reg = Arc::new(SessionRegistry::new());
+        reg.with_session("s", |s| {
+            s.persistent.native_image_paths = vec!["image.png".into()]
+        });
+        let barrier = Arc::new(Barrier::new(2));
+        let handles: Vec<_> = (0..2)
+            .map(|_| {
+                let reg = Arc::clone(&reg);
+                let barrier = Arc::clone(&barrier);
+                std::thread::spawn(move || {
+                    barrier.wait();
+                    reg.consume_pending_native_image_paths("s")
+                })
+            })
+            .collect();
+        let consumed: Vec<_> = handles
+            .into_iter()
+            .flat_map(|h| h.join().unwrap())
+            .collect();
+        assert_eq!(consumed, ["image.png"]);
+    }
 
     #[test]
     fn session_state_is_created_on_demand_and_reused() {

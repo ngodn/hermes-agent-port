@@ -1,0 +1,674 @@
+[
+  {
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "refusal": null
+    },
+    "tool_calls": false,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "refusal": null,
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "refusal": ""
+    },
+    "tool_calls": false,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "refusal": "",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "refusal": " \t"
+    },
+    "tool_calls": false,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "refusal": " \t",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "refusal": "Provider declined this request."
+    },
+    "tool_calls": false,
+    "content": "Provider declined this request."
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "refusal": "Provider declined this request.",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "refusal": null
+    },
+    "tool_calls": false,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "refusal": null,
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "refusal": ""
+    },
+    "tool_calls": false,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "refusal": "",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "refusal": " \t"
+    },
+    "tool_calls": false,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "refusal": " \t",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "refusal": "Provider declined this request."
+    },
+    "tool_calls": false,
+    "content": "Provider declined this request."
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "refusal": "Provider declined this request.",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": ""
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": " \t\n",
+      "refusal": null
+    },
+    "tool_calls": false,
+    "content": " \t\n"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": " \t\n",
+      "refusal": null,
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": " \t\n"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": " \t\n",
+      "refusal": ""
+    },
+    "tool_calls": false,
+    "content": " \t\n"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": " \t\n",
+      "refusal": "",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": " \t\n"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": " \t\n",
+      "refusal": " \t"
+    },
+    "tool_calls": false,
+    "content": " \t\n"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": " \t\n",
+      "refusal": " \t",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": " \t\n"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": " \t\n",
+      "refusal": "Provider declined this request."
+    },
+    "tool_calls": false,
+    "content": "Provider declined this request."
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": " \t\n",
+      "refusal": "Provider declined this request.",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": " \t\n"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "usable answer",
+      "refusal": null
+    },
+    "tool_calls": false,
+    "content": "usable answer"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "usable answer",
+      "refusal": null,
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "usable answer"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "usable answer",
+      "refusal": ""
+    },
+    "tool_calls": false,
+    "content": "usable answer"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "usable answer",
+      "refusal": "",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "usable answer"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "usable answer",
+      "refusal": " \t"
+    },
+    "tool_calls": false,
+    "content": "usable answer"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "usable answer",
+      "refusal": " \t",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "usable answer"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "usable answer",
+      "refusal": "Provider declined this request."
+    },
+    "tool_calls": false,
+    "content": "usable answer"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "usable answer",
+      "refusal": "Provider declined this request.",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "usable answer"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "\u001c",
+      "refusal": null
+    },
+    "tool_calls": false,
+    "content": "\u001c"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "\u001c",
+      "refusal": null,
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "\u001c"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "\u001c",
+      "refusal": ""
+    },
+    "tool_calls": false,
+    "content": "\u001c"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "\u001c",
+      "refusal": "",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "\u001c"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "\u001c",
+      "refusal": " \t"
+    },
+    "tool_calls": false,
+    "content": "\u001c"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "\u001c",
+      "refusal": " \t",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "\u001c"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "\u001c",
+      "refusal": "Provider declined this request."
+    },
+    "tool_calls": false,
+    "content": "Provider declined this request."
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "\u001c",
+      "refusal": "Provider declined this request.",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "\u001c"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "​",
+      "refusal": null
+    },
+    "tool_calls": false,
+    "content": "​"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "​",
+      "refusal": null,
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "​"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "​",
+      "refusal": ""
+    },
+    "tool_calls": false,
+    "content": "​"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "​",
+      "refusal": "",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "​"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "​",
+      "refusal": " \t"
+    },
+    "tool_calls": false,
+    "content": "​"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "​",
+      "refusal": " \t",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "​"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "​",
+      "refusal": "Provider declined this request."
+    },
+    "tool_calls": false,
+    "content": "​"
+  },
+  {
+    "message": {
+      "role": "assistant",
+      "content": "​",
+      "refusal": "Provider declined this request.",
+      "tool_calls": [
+        {
+          "id": "clock",
+          "type": "function",
+          "function": {
+            "name": "current_time",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    "tool_calls": true,
+    "content": "​"
+  }
+]

@@ -74,6 +74,7 @@ pub fn parse_message_create(d: &Value) -> Option<Message> {
         channel_id,
         sender_id,
         text: content.to_string(),
+        content_parts: None,
         chat_type: Some(chat_type.to_string()),
     })
 }

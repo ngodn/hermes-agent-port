@@ -77,12 +77,11 @@ fn now_secs() -> f64 {
         .unwrap_or(0.0)
 }
 
-/// Compact, key-sorted JSON, matching Python's
-/// `json.dumps(status, sort_keys=True, separators=(",", ":"))`. serde_json's
-/// default `Map` is a `BTreeMap` (no `preserve_order` feature in this workspace),
-/// so keys serialize sorted and recursively, and `to_string` emits no spaces.
+/// Compact JSON with recursive sorting for Python's canonical status bytes.
 fn encode_status(status: &Value) -> String {
-    serde_json::to_string(status).unwrap_or_else(|_| "null".to_string())
+    let mut status = status.clone();
+    status.sort_all_objects();
+    serde_json::to_string(&status).unwrap_or_else(|_| "null".to_string())
 }
 
 /// Constant-time byte comparison, mirroring Python's `hmac.compare_digest` for
@@ -1090,5 +1089,12 @@ mod tests {
             )
             .unwrap();
         assert_eq!(o, Outcome::Created);
+    }
+    #[test]
+    fn status_encoding_is_independent_of_nested_insertion_order() {
+        let first: Value = serde_json::from_str(r#"{"z":[{"b":1,"a":2}],"a":0}"#).unwrap();
+        let second: Value = serde_json::from_str(r#"{"a":0,"z":[{"a":2,"b":1}]}"#).unwrap();
+        assert_eq!(encode_status(&first), encode_status(&second));
+        assert_eq!(encode_status(&first), r#"{"a":0,"z":[{"a":2,"b":1}]}"#);
     }
 }

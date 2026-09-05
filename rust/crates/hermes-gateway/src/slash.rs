@@ -152,6 +152,7 @@ mod tests {
             channel_id: "c".into(),
             sender_id: sender.into(),
             text: text.into(),
+            content_parts: None,
             chat_type: Some(chat_type.into()),
         }
     }

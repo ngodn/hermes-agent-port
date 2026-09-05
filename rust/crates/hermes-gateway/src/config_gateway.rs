@@ -670,6 +670,9 @@ mod tests {
     // does not depend on HERMES_HOME being set.
 
     fn assert_golden(input: Value, golden: &str, default_sessions: bool) {
+        // Keep config construction and its expected home in the same stable
+        // environment while other suites exercise profile/home overrides.
+        let _env_guard = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
         // The env override is consulted by from_dict; nothing else sets it, so a
         // one-shot remove keeps the round-trip deterministic.
         std::env::remove_var("GATEWAY_MULTIPLEX_PROFILES");

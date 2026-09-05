@@ -26,11 +26,74 @@ use rusqlite::{params, Connection, OptionalExtension};
 use serde::Serialize;
 use serde_json::Value;
 
+/// Sentinel prefix marking a JSON-encoded structured `content` value in the
+/// TEXT `content` column. Ported verbatim from hermes_state.py
+/// `_CONTENT_JSON_PREFIX = "\x00json:"`. Only this explicit prefix triggers
+/// decoding; an ordinary JSON-looking message remains a string.
+pub const CONTENT_JSON_PREFIX: &str = "\0json:";
+
+/// Serialize a model-facing `content` value into its stored TEXT form, ported
+/// from hermes_state.py `SessionDB._encode_content`.
+///
+/// - A plain string is stored verbatim (no sentinel), exactly like Python
+///   returns `str` inputs unchanged. A string that merely *looks* like JSON
+///   (e.g. `"[1,2]"`) is therefore never re-interpreted on the way back out:
+///   there is no auto-detection without the sentinel.
+/// - Lists/dicts (multimodal parts: text + image_url) and any other non-string
+///   value are serialized as sentinel-prefixed JSON so they survive a TEXT
+///   column and decode back to the same value. Python keeps bare int/float/None
+///   as native sqlite scalars, which a TEXT-only column cannot; prefixing those
+///   too keeps the model-level round-trip faithful for the real `begin_turn`
+///   inputs (string and array), which is all that path ever feeds. This is the
+///   only place the safe-scalar behavior diverges from Python, and only on the
+///   stored bytes, not on the decoded value.
+///
+/// Note: Rust `String` is always valid UTF-8, so there are no lone surrogates
+/// to scrub the way `_encode_content` does for Python's `str`. serde_json emits
+/// UTF-8 rather than Python's `ensure_ascii=True` escapes; both forms decode to
+/// the identical value, so a store written by either side reads back on the
+/// other.
+pub fn encode_message_content(content: &Value) -> String {
+    match content {
+        Value::String(s) => s.clone(),
+        other => {
+            // serde_json::to_string on an in-memory Value does not fail; the
+            // fallback keeps persistence from ever panicking regardless.
+            let json = serde_json::to_string(other).unwrap_or_else(|_| other.to_string());
+            format!("{CONTENT_JSON_PREFIX}{json}")
+        }
+    }
+}
+
 /// One message in a conversation, as needed to reconstruct history for a turn.
 #[derive(Debug, Clone, PartialEq)]
 pub struct HistoryMessage {
     pub role: String,
     pub content: String,
+}
+
+impl HistoryMessage {
+    /// Decode the stored `content` back into the model-facing value, ported from
+    /// hermes_state.py `SessionDB._decode_content`.
+    ///
+    /// A value carrying the JSON sentinel is parsed back to its structured form
+    /// (array of text/image_url parts, an object, or a prefixed scalar). A
+    /// malformed payload falls back to the raw stored string byte-for-byte,
+    /// including the sentinel, matching Python's warn-and-return-`content`
+    /// behavior. Anything without the sentinel is returned as a plain string
+    /// with no content-sniffing.
+    pub fn model_content(&self) -> Value {
+        if let Some(rest) = self.content.strip_prefix(CONTENT_JSON_PREFIX) {
+            match serde_json::from_str::<Value>(rest) {
+                Ok(v) => v,
+                // Python logs a warning and returns the raw `content` (the full
+                // string, sentinel included). We mirror that exactly.
+                Err(_) => Value::String(self.content.clone()),
+            }
+        } else {
+            Value::String(self.content.clone())
+        }
+    }
 }
 
 /// Optional columns for [`SessionDb::append_message_with`]. `None` fields are
@@ -101,7 +164,13 @@ pub fn begin_turn(
         msg.chat_type.as_deref(),
     );
     let prior = db.load_history(&sid, HISTORY_LIMIT).unwrap_or_default();
-    let _ = db.append_message(&sid, "user", &msg.text);
+    // Persist the structured model content (plain text or an array of typed
+    // text/image_url parts) through the existing append path, encoding it to the
+    // TEXT column exactly as hermes_state.py does on write. This is the only DB
+    // write here; there is no network work and the write critical section stays
+    // inside `append_message` unchanged.
+    let encoded = encode_message_content(&msg.model_content());
+    let _ = db.append_message(&sid, "user", &encoded);
     prior
 }
 
@@ -615,6 +684,133 @@ mod tests {
     }
 
     #[test]
+    fn encode_content_string_is_verbatim_no_sentinel() {
+        // Plain strings store raw, and strings that merely look like JSON are
+        // never re-interpreted (no auto-detection without the sentinel).
+        assert_eq!(
+            encode_message_content(&serde_json::json!("hello world")),
+            "hello world"
+        );
+        let looks_like_json = "[1,2,3]";
+        let stored = encode_message_content(&serde_json::json!(looks_like_json));
+        assert_eq!(stored, looks_like_json);
+        assert!(!stored.starts_with(CONTENT_JSON_PREFIX));
+        // Decoded back it stays a plain string, not a parsed array.
+        let hm = HistoryMessage {
+            role: "user".into(),
+            content: stored,
+        };
+        assert_eq!(hm.model_content(), serde_json::json!("[1,2,3]"));
+    }
+
+    #[test]
+    fn encode_content_array_and_object_are_prefixed_json() {
+        let parts = serde_json::json!([
+            {"type": "text", "text": "look at this"},
+            {"type": "image_url", "image_url": {"url": "data:image/png;base64,AAAA"}}
+        ]);
+        let stored = encode_message_content(&parts);
+        assert!(stored.starts_with(CONTENT_JSON_PREFIX));
+        let hm = HistoryMessage {
+            role: "user".into(),
+            content: stored,
+        };
+        assert_eq!(hm.model_content(), parts);
+
+        let obj = serde_json::json!({"type": "text", "text": "solo"});
+        let hm2 = HistoryMessage {
+            role: "user".into(),
+            content: encode_message_content(&obj),
+        };
+        assert_eq!(hm2.model_content(), obj);
+    }
+
+    #[test]
+    fn model_content_malformed_payload_falls_back_to_raw_string() {
+        // A sentinel with a broken JSON body returns the raw stored string
+        // (sentinel included), matching Python's warn-and-return-content path.
+        let raw = format!("{CONTENT_JSON_PREFIX}{{not valid json");
+        let hm = HistoryMessage {
+            role: "assistant".into(),
+            content: raw.clone(),
+        };
+        assert_eq!(hm.model_content(), Value::String(raw));
+    }
+
+    #[test]
+    fn model_content_prefixed_scalar_decodes() {
+        // Non-string scalars are prefixed on the way in so they round-trip back
+        // to their typed value at the model layer (the safe-scalar limitation
+        // only affects on-disk bytes, not the decoded value).
+        for v in [
+            serde_json::json!(42),
+            serde_json::json!(3.5),
+            serde_json::json!(true),
+            serde_json::json!(null),
+        ] {
+            let hm = HistoryMessage {
+                role: "user".into(),
+                content: encode_message_content(&v),
+            };
+            assert_eq!(hm.model_content(), v);
+        }
+    }
+
+    #[test]
+    fn ascii_and_unicode_string_content_roundtrips_through_db() {
+        let path = temp_db("unicode");
+        let ascii = "plain ascii reply";
+        let unicode = "日本語とemoji 🚀 café";
+        {
+            let db = SessionDb::open(path.clone()).unwrap();
+            db.ensure_session("s1", "cli", None, None, None).unwrap();
+            db.append_message(
+                "s1",
+                "user",
+                &encode_message_content(&serde_json::json!(ascii)),
+            )
+            .unwrap();
+            db.append_message(
+                "s1",
+                "assistant",
+                &encode_message_content(&serde_json::json!(unicode)),
+            )
+            .unwrap();
+        }
+        // Reopen from disk and confirm replay is byte-for-byte.
+        let db = SessionDb::open(path.clone()).unwrap();
+        let hist = db.load_history("s1", 0).unwrap();
+        assert_eq!(hist[0].model_content(), serde_json::json!(ascii));
+        assert_eq!(hist[1].model_content(), serde_json::json!(unicode));
+        // Stored verbatim: no sentinel snuck onto plain strings.
+        assert_eq!(hist[0].content, ascii);
+        assert_eq!(hist[1].content, unicode);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn image_parts_roundtrip_through_sqlite_reopen() {
+        let path = temp_db("imgparts");
+        let parts = serde_json::json!([
+            {"type": "text", "text": "describe this 日本語"},
+            {"type": "image_url", "image_url": {"url": "data:image/png;base64,QUJD"}}
+        ]);
+        {
+            let db = SessionDb::open(path.clone()).unwrap();
+            db.ensure_session("s1", "cli", None, None, None).unwrap();
+            db.append_message("s1", "user", &encode_message_content(&parts))
+                .unwrap();
+        }
+        // Drop the handle, reopen the file, and replay the structured content.
+        let db = SessionDb::open(path.clone()).unwrap();
+        let hist = db.load_history("s1", 0).unwrap();
+        assert_eq!(hist.len(), 1);
+        assert!(hist[0].content.starts_with(CONTENT_JSON_PREFIX));
+        assert_eq!(hist[0].model_content(), parts);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
     fn ensure_session_is_idempotent() {
         let path = temp_db("idem");
         let db = SessionDb::open(path.clone()).unwrap();
@@ -629,5 +825,31 @@ mod tests {
         };
         assert_eq!(count, 1);
         let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+}
+
+#[cfg(test)]
+mod golden_corpus {
+    use super::*;
+
+    #[test]
+    fn structured_codec_matches_python_values() {
+        let cases: Vec<Value> =
+            serde_json::from_str(include_str!("../../../tools/content-storage-goldens.json"))
+                .unwrap();
+        for case in cases {
+            let from_python = HistoryMessage {
+                role: "user".into(),
+                content: case["stored"].as_str().unwrap().into(),
+            };
+            assert_eq!(from_python.model_content(), case["decoded"], "{case}");
+            if let Some(input) = case.get("input") {
+                let from_rust = HistoryMessage {
+                    role: "user".into(),
+                    content: encode_message_content(input),
+                };
+                assert_eq!(from_rust.model_content(), case["decoded"], "{case}");
+            }
+        }
     }
 }

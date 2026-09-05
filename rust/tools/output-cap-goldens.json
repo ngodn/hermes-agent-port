@@ -1,0 +1,3114 @@
+{
+  "parameters": [
+    {
+      "model": "",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4o-mini",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "gpt-4.1-test",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/gpt-5.4",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "vendor/o1",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o3-mini",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "o4x",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "prefix/gpt-5/not-openai",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "llama",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "api.openai.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://API.OPENAI.COM./v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://api.openai.com.evil/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://proxy.test/api.openai.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://resource.openai.azure.com/openai/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://openai.azure.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://api.githubcopilot.com",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://other.githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://githubcopilot.com/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "http://localhost:8080/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    },
+    {
+      "model": "\u001co3\u001f",
+      "url": "https://openrouter.ai/api/v1",
+      "result": {
+        "max_completion_tokens": 42
+      }
+    }
+  ],
+  "resolutions": [
+    {
+      "raw": null,
+      "env": null,
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": null,
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": null,
+      "env": null,
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": null,
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": "",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": "",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": null,
+      "env": "",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": "",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": null,
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": null,
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": null,
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": null,
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": null,
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": null,
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": null,
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": null,
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": null,
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": null,
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": null,
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": null,
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": null,
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": null,
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": null,
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": null,
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": null,
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": false,
+      "env": null,
+      "fallback": null,
+      "result": false
+    },
+    {
+      "raw": false,
+      "env": null,
+      "fallback": 256,
+      "result": false
+    },
+    {
+      "raw": false,
+      "env": null,
+      "fallback": 0,
+      "result": false
+    },
+    {
+      "raw": false,
+      "env": null,
+      "fallback": false,
+      "result": false
+    },
+    {
+      "raw": false,
+      "env": "",
+      "fallback": null,
+      "result": false
+    },
+    {
+      "raw": false,
+      "env": "",
+      "fallback": 256,
+      "result": false
+    },
+    {
+      "raw": false,
+      "env": "",
+      "fallback": 0,
+      "result": false
+    },
+    {
+      "raw": false,
+      "env": "",
+      "fallback": false,
+      "result": false
+    },
+    {
+      "raw": false,
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": false,
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": false,
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": false,
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": false,
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": false,
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": false,
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": false,
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": false,
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": false,
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": false,
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": false,
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": false,
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": false,
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": false,
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": false,
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": false,
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": false,
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": false,
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": false,
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": true,
+      "env": null,
+      "fallback": null,
+      "result": true
+    },
+    {
+      "raw": true,
+      "env": null,
+      "fallback": 256,
+      "result": true
+    },
+    {
+      "raw": true,
+      "env": null,
+      "fallback": 0,
+      "result": true
+    },
+    {
+      "raw": true,
+      "env": null,
+      "fallback": false,
+      "result": true
+    },
+    {
+      "raw": true,
+      "env": "",
+      "fallback": null,
+      "result": true
+    },
+    {
+      "raw": true,
+      "env": "",
+      "fallback": 256,
+      "result": true
+    },
+    {
+      "raw": true,
+      "env": "",
+      "fallback": 0,
+      "result": true
+    },
+    {
+      "raw": true,
+      "env": "",
+      "fallback": false,
+      "result": true
+    },
+    {
+      "raw": true,
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": true,
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": true,
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": true,
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": true,
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": true,
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": true,
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": true,
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": true,
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": true,
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": true,
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": true,
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": true,
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": true,
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": true,
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": true,
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": true,
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": true,
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": true,
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": true,
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": -1,
+      "env": null,
+      "fallback": null,
+      "result": -1
+    },
+    {
+      "raw": -1,
+      "env": null,
+      "fallback": 256,
+      "result": -1
+    },
+    {
+      "raw": -1,
+      "env": null,
+      "fallback": 0,
+      "result": -1
+    },
+    {
+      "raw": -1,
+      "env": null,
+      "fallback": false,
+      "result": -1
+    },
+    {
+      "raw": -1,
+      "env": "",
+      "fallback": null,
+      "result": -1
+    },
+    {
+      "raw": -1,
+      "env": "",
+      "fallback": 256,
+      "result": -1
+    },
+    {
+      "raw": -1,
+      "env": "",
+      "fallback": 0,
+      "result": -1
+    },
+    {
+      "raw": -1,
+      "env": "",
+      "fallback": false,
+      "result": -1
+    },
+    {
+      "raw": -1,
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": -1,
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": -1,
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": -1,
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": -1,
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": -1,
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": -1,
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": -1,
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": -1,
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": -1,
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": -1,
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": -1,
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": -1,
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": -1,
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": -1,
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": -1,
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": -1,
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": -1,
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": -1,
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": -1,
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": 0,
+      "env": null,
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": null,
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": null,
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": null,
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": 0,
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": 0,
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": 0,
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": 0,
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": 0,
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": 0,
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": 0,
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": 0,
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": 0,
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": 0,
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": 0,
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": 0,
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": 0,
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": 0,
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": 0,
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": 0,
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": 42,
+      "env": null,
+      "fallback": null,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": null,
+      "fallback": 256,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": null,
+      "fallback": 0,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": null,
+      "fallback": false,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": "",
+      "fallback": null,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": "",
+      "fallback": 256,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": "",
+      "fallback": 0,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": "",
+      "fallback": false,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": 42,
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": 42,
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": 42,
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": 42,
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": 42,
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": 42,
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": 42,
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": 42,
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": 42,
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": 42,
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": 42,
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": 42,
+      "env": "invalid",
+      "fallback": null,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": 42,
+      "env": "invalid",
+      "fallback": 0,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": "invalid",
+      "fallback": false,
+      "result": 42
+    },
+    {
+      "raw": 42,
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": 42,
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": 42,
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": 42,
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": 12.8,
+      "env": null,
+      "fallback": null,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": null,
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": 12.8,
+      "env": null,
+      "fallback": 0,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": null,
+      "fallback": false,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": "",
+      "fallback": null,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": "",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": 12.8,
+      "env": "",
+      "fallback": 0,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": "",
+      "fallback": false,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": 12.8,
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": 12.8,
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": 12.8,
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": 12.8,
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": 12.8,
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": 12.8,
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": 12.8,
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": 12.8,
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": 12.8,
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": 12.8,
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": 12.8,
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": 12.8,
+      "env": "invalid",
+      "fallback": null,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": 12.8,
+      "env": "invalid",
+      "fallback": 0,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": "invalid",
+      "fallback": false,
+      "result": 12
+    },
+    {
+      "raw": 12.8,
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": 12.8,
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": 12.8,
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": 12.8,
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": "123",
+      "env": null,
+      "fallback": null,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": null,
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "123",
+      "env": null,
+      "fallback": 0,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": null,
+      "fallback": false,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": "",
+      "fallback": null,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": "",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "123",
+      "env": "",
+      "fallback": 0,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": "",
+      "fallback": false,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": "123",
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": "123",
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": "123",
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": "123",
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": "123",
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": "123",
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": "123",
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": "123",
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": "123",
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": "123",
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": "123",
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": "123",
+      "env": "invalid",
+      "fallback": null,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "123",
+      "env": "invalid",
+      "fallback": 0,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": "invalid",
+      "fallback": false,
+      "result": 123
+    },
+    {
+      "raw": "123",
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": "123",
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": "123",
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": "123",
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": "bad",
+      "env": null,
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": null,
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "bad",
+      "env": null,
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": null,
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": "",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": "",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "bad",
+      "env": "",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": "",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": "bad",
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": "bad",
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": "bad",
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": "bad",
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": "bad",
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": "bad",
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": "bad",
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": "bad",
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": "bad",
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": "bad",
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": "bad",
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": "bad",
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "bad",
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": "bad",
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": "bad",
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": "bad",
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": "bad",
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": "",
+      "env": null,
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": null,
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "",
+      "env": null,
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": null,
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": "",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": "",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "",
+      "env": "",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": "",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": "",
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": "",
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": "",
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": "",
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": "",
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": "",
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": "",
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": "",
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": "",
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": "",
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": "",
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": "",
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": "",
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": "",
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": "",
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": "",
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": "",
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": null,
+      "fallback": null,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": null,
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": null,
+      "fallback": 0,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": null,
+      "fallback": false,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "",
+      "fallback": null,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "",
+      "fallback": 0,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "",
+      "fallback": false,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "invalid",
+      "fallback": null,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "invalid",
+      "fallback": 0,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "invalid",
+      "fallback": false,
+      "result": 12
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": " \u0661_\u0662 ",
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": [],
+      "env": null,
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": null,
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": [],
+      "env": null,
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": null,
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": "",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": "",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": [],
+      "env": "",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": "",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": [],
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": [],
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": [],
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": [],
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": [],
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": [],
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": [],
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": [],
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": [],
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": [],
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": [],
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": [],
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": [],
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": [],
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": [],
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": [],
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": [],
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    },
+    {
+      "raw": {},
+      "env": null,
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": null,
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": {},
+      "env": null,
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": null,
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": "",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": "",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": {},
+      "env": "",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": "",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": "99",
+      "fallback": null,
+      "result": 99
+    },
+    {
+      "raw": {},
+      "env": "99",
+      "fallback": 256,
+      "result": 99
+    },
+    {
+      "raw": {},
+      "env": "99",
+      "fallback": 0,
+      "result": 99
+    },
+    {
+      "raw": {},
+      "env": "99",
+      "fallback": false,
+      "result": 99
+    },
+    {
+      "raw": {},
+      "env": "0",
+      "fallback": null,
+      "result": 0
+    },
+    {
+      "raw": {},
+      "env": "0",
+      "fallback": 256,
+      "result": 0
+    },
+    {
+      "raw": {},
+      "env": "0",
+      "fallback": 0,
+      "result": 0
+    },
+    {
+      "raw": {},
+      "env": "0",
+      "fallback": false,
+      "result": 0
+    },
+    {
+      "raw": {},
+      "env": "-3",
+      "fallback": null,
+      "result": -3
+    },
+    {
+      "raw": {},
+      "env": "-3",
+      "fallback": 256,
+      "result": -3
+    },
+    {
+      "raw": {},
+      "env": "-3",
+      "fallback": 0,
+      "result": -3
+    },
+    {
+      "raw": {},
+      "env": "-3",
+      "fallback": false,
+      "result": -3
+    },
+    {
+      "raw": {},
+      "env": "invalid",
+      "fallback": null,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": "invalid",
+      "fallback": 256,
+      "result": 256
+    },
+    {
+      "raw": {},
+      "env": "invalid",
+      "fallback": 0,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": "invalid",
+      "fallback": false,
+      "result": null
+    },
+    {
+      "raw": {},
+      "env": "1_024",
+      "fallback": null,
+      "result": 1024
+    },
+    {
+      "raw": {},
+      "env": "1_024",
+      "fallback": 256,
+      "result": 1024
+    },
+    {
+      "raw": {},
+      "env": "1_024",
+      "fallback": 0,
+      "result": 1024
+    },
+    {
+      "raw": {},
+      "env": "1_024",
+      "fallback": false,
+      "result": 1024
+    }
+  ]
+}
