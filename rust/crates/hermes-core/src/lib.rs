@@ -61,6 +61,12 @@ pub struct Message {
     /// Used to resolve DM-vs-group access scope. None when unknown.
     #[serde(default)]
     pub chat_type: Option<String>,
+    /// Local filesystem paths of inbound audio attachments (voice notes) an
+    /// adapter downloaded for this message. Empty when there is no audio. The
+    /// dispatcher transcribes these before running the turn; the resulting text
+    /// becomes the user turn. Adapters that do not download audio leave it empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub audio_paths: Vec<String>,
 }
 
 impl Message {

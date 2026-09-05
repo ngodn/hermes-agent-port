@@ -80,6 +80,7 @@ pub fn parse_message_event(payload: &Value) -> Option<Message> {
         text: text.to_string(),
         content_parts: None,
         chat_type: Some(chat_type.to_string()),
+        audio_paths: Vec::new(),
     })
 }
 

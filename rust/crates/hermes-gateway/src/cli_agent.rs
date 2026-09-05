@@ -172,6 +172,7 @@ mod tests {
             text: "hi from cli".into(),
             content_parts: None,
             chat_type: None,
+            audio_paths: Vec::new(),
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(8);
         client.run_turn(&msg, &[], tx).await.unwrap();
@@ -199,6 +200,7 @@ mod tests {
             text: "x".into(),
             content_parts: None,
             chat_type: None,
+            audio_paths: Vec::new(),
         };
         let (tx, _rx) = mpsc::channel::<StreamEvent>(8);
         assert!(client.run_turn(&msg, &[], tx).await.is_err());

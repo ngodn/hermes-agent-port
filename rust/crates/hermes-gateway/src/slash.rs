@@ -154,6 +154,7 @@ mod tests {
             text: text.into(),
             content_parts: None,
             chat_type: Some(chat_type.into()),
+            audio_paths: Vec::new(),
         }
     }
 

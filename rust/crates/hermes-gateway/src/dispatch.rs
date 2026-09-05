@@ -44,6 +44,9 @@ pub struct Dispatcher {
     session_db: Option<Arc<crate::session_db::SessionDb>>,
     /// Durable delivery-obligation ledger (None = disabled / unavailable).
     delivery_ledger: Option<Arc<crate::delivery_ledger::DeliveryLedger>>,
+    /// Inbound-audio transcription backend (None = STT not configured; audio
+    /// attachments are then left untranscribed and the turn runs on the caption).
+    transcription: Option<Arc<dyn crate::transcription_enrichment::TranscriptionBackend>>,
 }
 
 impl Dispatcher {
@@ -89,7 +92,18 @@ impl Dispatcher {
             dead_targets,
             session_db,
             delivery_ledger,
+            transcription: None,
         }
+    }
+
+    /// Install the inbound-audio transcription backend. When set, a message
+    /// carrying `audio_paths` is transcribed before its turn runs.
+    pub fn with_transcription(
+        mut self,
+        backend: Arc<dyn crate::transcription_enrichment::TranscriptionBackend>,
+    ) -> Self {
+        self.transcription = Some(backend);
+        self
     }
 
     pub fn register_adapter(&mut self, platform: Platform, adapter: Arc<dyn PlatformAdapter>) {
@@ -156,6 +170,7 @@ impl Dispatcher {
             text,
             content_parts: None,
             chat_type: to.chat_type.clone(),
+            audio_paths: Vec::new(),
         };
         match adapter.send(&out).await {
             Ok(()) => {
@@ -178,6 +193,36 @@ impl Dispatcher {
     }
 
     async fn handle_turn(&self, msg: Message) {
+        let mut msg = msg;
+        // Inbound audio: transcribe attached voice notes before anything else so
+        // the turn (and command/slash handling) sees the transcript as its text.
+        // Mirrors GatewayRunner._enrich_message_with_transcription: with no
+        // backend configured, or on an unexpected enrichment error, the caption
+        // is left as-is rather than dropping the message.
+        if !msg.audio_paths.is_empty() {
+            if let Some(backend) = &self.transcription {
+                let stt_enabled = self
+                    .user_config
+                    .get("stt_enabled")
+                    .and_then(serde_json::Value::as_bool)
+                    .unwrap_or(true);
+                match crate::transcription_enrichment::enrich_message_with_transcription(
+                    &msg.text,
+                    &msg.audio_paths,
+                    stt_enabled,
+                    true,
+                    backend.as_ref(),
+                )
+                .await
+                {
+                    Ok((enriched, _transcripts)) => msg.text = enriched,
+                    Err(err) => {
+                        tracing::warn!(%err, "inbound transcription enrichment failed; using caption");
+                    }
+                }
+            }
+        }
+
         // Slash-command gating + built-ins. Refuse a command this sender may not
         // run before spending a turn; answer gateway built-ins directly; let any
         // other allowed command flow to the agent as normal text.
@@ -343,6 +388,86 @@ mod tests {
     use hermes_core::Result;
     use serde_json::json;
 
+    /// Agent stub that echoes back the message text it received, so a test can
+    /// assert what text actually reached the turn (e.g. after enrichment).
+    struct EchoAgent;
+
+    #[async_trait]
+    impl crate::agent::AgentClient for EchoAgent {
+        async fn run_turn(
+            &self,
+            msg: &Message,
+            _history: &[crate::session_db::HistoryMessage],
+            tx: mpsc::Sender<StreamEvent>,
+        ) -> Result<()> {
+            let _ = tx
+                .send(StreamEvent::MessageChunk {
+                    text: msg.text.clone(),
+                })
+                .await;
+            let _ = tx.send(StreamEvent::MessageStop { final_: true }).await;
+            Ok(())
+        }
+    }
+
+    /// Transcription backend stub returning a fixed transcript for any clip.
+    struct FakeTranscription;
+
+    #[async_trait]
+    impl crate::transcription_enrichment::TranscriptionBackend for FakeTranscription {
+        fn absolute_path(&self, path: &str) -> String {
+            path.to_string()
+        }
+        async fn probe_duration(&self, _abs_path: &str) -> Option<String> {
+            None
+        }
+        async fn transcribe(&self, _path: &str) -> anyhow::Result<Value> {
+            Ok(json!({"success": true, "transcript": "hello from audio"}))
+        }
+        async fn local_fallback(&self, _path: &str) -> anyhow::Result<Value> {
+            Ok(json!({"success": false}))
+        }
+        fn agent_visible_path(&self, abs_path: &str) -> String {
+            abs_path.to_string()
+        }
+    }
+
+    // A message carrying audio is transcribed before the turn: the agent (and
+    // thus the outbound reply that echoes it) sees the transcript, not the
+    // empty caption.
+    #[tokio::test]
+    async fn inbound_audio_is_transcribed_before_the_turn() {
+        let (mut dispatcher, _calls, sent) = harness("", json!({}));
+        dispatcher.agent = Arc::new(EchoAgent);
+        let dispatcher = dispatcher.with_transcription(Arc::new(FakeTranscription));
+
+        let mut msg = cli_msg("", "sender");
+        msg.audio_paths = vec!["/tmp/voice.ogg".into()];
+        dispatcher.handle_turn(msg).await;
+
+        let out = sent.lock().unwrap();
+        assert_eq!(out.len(), 1, "one reply delivered");
+        assert!(
+            out[0].text.contains("hello from audio"),
+            "turn ran on the transcript, got: {:?}",
+            out[0].text
+        );
+    }
+
+    // With no backend configured, an audio message still runs (on its caption),
+    // never dropped.
+    #[tokio::test]
+    async fn inbound_audio_without_backend_uses_caption() {
+        let (mut dispatcher, _calls, sent) = harness("", json!({}));
+        dispatcher.agent = Arc::new(EchoAgent);
+        let mut msg = cli_msg("just a caption", "sender");
+        msg.audio_paths = vec!["/tmp/voice.ogg".into()];
+        dispatcher.handle_turn(msg).await;
+        let out = sent.lock().unwrap();
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].text, "just a caption");
+    }
+
     /// Agent stub: emits a fixed reply and counts how many turns it ran, so a
     /// test can assert the agent was (or was not) invoked.
     struct StubAgent {
@@ -396,6 +521,7 @@ mod tests {
             text: text.into(),
             content_parts: None,
             chat_type: Some("dm".into()),
+            audio_paths: Vec::new(),
         }
     }
 

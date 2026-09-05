@@ -397,6 +397,7 @@ mod tests {
             text: "   ".into(),
             content_parts: None,
             chat_type: None,
+            audio_paths: Vec::new(),
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(16);
         let run = tokio::spawn(async move { client.run_turn(&msg, &[], tx).await });

@@ -96,6 +96,7 @@ pub async fn post_message(
         text: req.text,
         content_parts: req.content_parts,
         chat_type: Some("dm".to_string()),
+        audio_paths: Vec::new(),
     };
 
     // Slash-command gating + built-ins, same policy as the push path.

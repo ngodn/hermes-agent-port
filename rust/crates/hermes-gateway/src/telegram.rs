@@ -60,6 +60,7 @@ pub fn extract_update(update: &Value) -> Option<ParsedUpdate> {
             text: text.to_string(),
             content_parts: None,
             chat_type,
+            audio_paths: Vec::new(),
         })
     });
 

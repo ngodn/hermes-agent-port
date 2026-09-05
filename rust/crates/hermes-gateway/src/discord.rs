@@ -76,6 +76,8 @@ pub fn parse_message_create(d: &Value) -> Option<Message> {
         text: content.to_string(),
         content_parts: None,
         chat_type: Some(chat_type.to_string()),
+        // Voice-note download is not wired yet; empty until the adapter does it.
+        audio_paths: Vec::new(),
     })
 }
 
