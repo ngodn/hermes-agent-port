@@ -1,0 +1,8081 @@
+[
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": null,
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": null,
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": null,
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": null,
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": null,
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "Fancy Lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "Fancy Lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": null,
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": null,
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": null,
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "lab",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "api_mode": "codex_responses",
+      "model": "legacy-model",
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom:fancy-lab",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": {
+      "name": "Fancy Lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "env-fixture",
+      "model": "default",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY",
+      "extra_body": {
+        "route": "named"
+      },
+      "extra_headers": {
+        "x-key": "header-fixture"
+      },
+      "key_cmd": "fixture-command",
+      "api_mode": "codex_responses",
+      "max_output_tokens": 256,
+      "capabilities": {
+        "vision": true
+      }
+    },
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "missing",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "missing",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "auto",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "auto",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": null,
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": null,
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": "lab",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": "lab",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      ]
+    },
+    "requested": "custom",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": false,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "other": {
+          "api": "https://other.example/v1",
+          "key_env": "OTHER_KEY"
+        },
+        "lab": {
+          "name": "Fancy Lab",
+          "base_url": "https://lab.example/v1",
+          "api_key": "inline-fixture",
+          "key_env": "LAB_KEY",
+          "enabled": true,
+          "default_model": "default",
+          "model": "legacy-model",
+          "transport": "responses",
+          "extra_body": {
+            "route": "named"
+          },
+          "extra_headers": {
+            "x-key": "header-fixture"
+          },
+          "max_tokens": 256,
+          "capabilities": {
+            "vision": true,
+            "bad": 1
+          },
+          "key_cmd": "fixture-command"
+        }
+      }
+    },
+    "requested": "custom",
+    "canonical": "builtin",
+    "env_key": "env-fixture",
+    "result": null,
+    "calls": [
+      "OTHER_KEY",
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": null,
+          "api_key_env": null,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": null,
+          "api_key_env": false,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": null,
+          "api_key_env": 0,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": null,
+          "api_key_env": "",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": null,
+          "api_key_env": "LAB_KEY",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": false,
+          "api_key_env": null,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": false,
+          "api_key_env": false,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": false,
+          "api_key_env": 0,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": false,
+          "api_key_env": "",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": false,
+          "api_key_env": "LAB_KEY",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": 0,
+          "api_key_env": null,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": 0,
+          "api_key_env": false,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": 0,
+          "api_key_env": 0,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": 0,
+          "api_key_env": "",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": 0,
+          "api_key_env": "LAB_KEY",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "",
+          "api_key_env": null,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "",
+          "api_key_env": false,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "",
+          "api_key_env": 0,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "",
+          "api_key_env": "",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "",
+          "api_key_env": "LAB_KEY",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "LAB_KEY",
+          "api_key_env": null,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "LAB_KEY",
+          "api_key_env": false,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "LAB_KEY",
+          "api_key_env": 0,
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "LAB_KEY",
+          "api_key_env": "",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "api": "https://lab.example/v1",
+          "key_env": "LAB_KEY",
+          "api_key_env": "LAB_KEY",
+          "api_key": " inline-fixture "
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "inline-fixture",
+      "model": "",
+      "provider_key": "lab",
+      "key_env": "LAB_KEY"
+    },
+    "calls": [
+      "LAB_KEY"
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": null,
+          "max_tokens": null
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": null,
+          "max_tokens": null
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": null,
+          "max_tokens": 512
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": null,
+          "max_tokens": 512
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": 512
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": false,
+          "max_tokens": null
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": false,
+          "max_tokens": null
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": false,
+          "max_tokens": 512
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": false,
+          "max_tokens": 512
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": 512
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": true,
+          "max_tokens": null
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": true,
+          "max_tokens": null
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": true
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": true,
+          "max_tokens": 512
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": true,
+          "max_tokens": 512
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": true
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": 0,
+          "max_tokens": null
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": 0,
+          "max_tokens": null
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": 0,
+          "max_tokens": 512
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": 0,
+          "max_tokens": 512
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": 512
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": -1,
+          "max_tokens": null
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": -1,
+          "max_tokens": null
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": -1,
+          "max_tokens": 512
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": -1,
+          "max_tokens": 512
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": 512
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": 256,
+          "max_tokens": null
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": 256,
+          "max_tokens": null
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": 256
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": 256,
+          "max_tokens": 512
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": 256,
+          "max_tokens": 512
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": 256
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": "256",
+          "max_tokens": null
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": "256",
+          "max_tokens": null
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab"
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": "256",
+          "max_tokens": 512
+        }
+      ]
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": ""
+    },
+    "calls": []
+  },
+  {
+    "config": {
+      "providers": {
+        "lab": {
+          "name": "lab",
+          "base_url": "https://lab.example/v1",
+          "max_output_tokens": "256",
+          "max_tokens": 512
+        }
+      }
+    },
+    "requested": "lab",
+    "canonical": "builtin",
+    "env_key": "",
+    "result": {
+      "name": "lab",
+      "base_url": "https://lab.example/v1",
+      "api_key": "",
+      "model": "",
+      "provider_key": "lab",
+      "max_output_tokens": 512
+    },
+    "calls": []
+  }
+]

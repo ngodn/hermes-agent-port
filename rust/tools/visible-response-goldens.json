@@ -1,0 +1,626 @@
+[
+  {
+    "input": "",
+    "expected": ""
+  },
+  {
+    "input": "hello",
+    "expected": "hello"
+  },
+  {
+    "input": "  hello\u001c",
+    "expected": "  hello\u001c"
+  },
+  {
+    "input": "<function>prose</function>",
+    "expected": "<function>prose"
+  },
+  {
+    "input": "Use <function name=\"x\">prose</function>",
+    "expected": "Use <function name=\"x\">prose"
+  },
+  {
+    "input": "Done. <function name=\"x\">hidden</function> answer",
+    "expected": "Done. answer"
+  },
+  {
+    "input": "<function name = \"x\">hidden\ntext</function>",
+    "expected": ""
+  },
+  {
+    "input": "<function name=\"x\">unfinished",
+    "expected": "<function name=\"x\">unfinished"
+  },
+  {
+    "input": "<function anonymous>keep</function>",
+    "expected": "<function anonymous>keep"
+  },
+  {
+    "input": "Done\narg <arg_key>x",
+    "expected": "Done"
+  },
+  {
+    "input": "Done\n<arg_value>private",
+    "expected": "Done"
+  },
+  {
+    "input": "literal <arg_key>x",
+    "expected": ""
+  },
+  {
+    "input": "\u001c<think>x</think>\u001fanswer",
+    "expected": "\u001c\u001fanswer"
+  },
+  {
+    "input": "<think>private\ntext</think>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <think>private</think> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<think>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <think>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <think> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</think>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<think id=\"x\">private</think>answer",
+    "expected": ""
+  },
+  {
+    "input": "<THINK>private\ntext</THINK>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <THINK>private</THINK> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<THINK>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <THINK>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <THINK> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</THINK>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<THINK id=\"x\">private</THINK>answer",
+    "expected": ""
+  },
+  {
+    "input": "<thinking>private\ntext</thinking>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <thinking>private</thinking> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<thinking>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <thinking>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <thinking> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</thinking>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<thinking id=\"x\">private</thinking>answer",
+    "expected": ""
+  },
+  {
+    "input": "<THINKING>private\ntext</THINKING>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <THINKING>private</THINKING> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<THINKING>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <THINKING>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <THINKING> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</THINKING>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<THINKING id=\"x\">private</THINKING>answer",
+    "expected": ""
+  },
+  {
+    "input": "<reasoning>private\ntext</reasoning>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <reasoning>private</reasoning> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<reasoning>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <reasoning>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <reasoning> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</reasoning>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<reasoning id=\"x\">private</reasoning>answer",
+    "expected": ""
+  },
+  {
+    "input": "<REASONING>private\ntext</REASONING>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <REASONING>private</REASONING> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<REASONING>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <REASONING>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <REASONING> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</REASONING>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<REASONING id=\"x\">private</REASONING>answer",
+    "expected": ""
+  },
+  {
+    "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <REASONING_SCRATCHPAD>private</REASONING_SCRATCHPAD> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<REASONING_SCRATCHPAD>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <REASONING_SCRATCHPAD>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <REASONING_SCRATCHPAD> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</REASONING_SCRATCHPAD>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<REASONING_SCRATCHPAD id=\"x\">private</REASONING_SCRATCHPAD>answer",
+    "expected": ""
+  },
+  {
+    "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <REASONING_SCRATCHPAD>private</REASONING_SCRATCHPAD> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<REASONING_SCRATCHPAD>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <REASONING_SCRATCHPAD>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <REASONING_SCRATCHPAD> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</REASONING_SCRATCHPAD>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<REASONING_SCRATCHPAD id=\"x\">private</REASONING_SCRATCHPAD>answer",
+    "expected": ""
+  },
+  {
+    "input": "<thought>private\ntext</thought>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <thought>private</thought> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<thought>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <thought>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <thought> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</thought>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<thought id=\"x\">private</thought>answer",
+    "expected": ""
+  },
+  {
+    "input": "<THOUGHT>private\ntext</THOUGHT>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <THOUGHT>private</THOUGHT> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<THOUGHT>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <THOUGHT>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <THOUGHT> in prose",
+    "expected": "Use in prose"
+  },
+  {
+    "input": "</THOUGHT>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<THOUGHT id=\"x\">private</THOUGHT>answer",
+    "expected": ""
+  },
+  {
+    "input": "<tool_call>private\ntext</tool_call>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <tool_call>private</tool_call> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<tool_call>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <tool_call>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <tool_call> in prose",
+    "expected": "Use <tool_call> in prose"
+  },
+  {
+    "input": "</tool_call>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<tool_call id=\"x\">private</tool_call>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<TOOL_CALL>private\ntext</TOOL_CALL>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <TOOL_CALL>private</TOOL_CALL> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<TOOL_CALL>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <TOOL_CALL>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <TOOL_CALL> in prose",
+    "expected": "Use <TOOL_CALL> in prose"
+  },
+  {
+    "input": "</TOOL_CALL>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<TOOL_CALL id=\"x\">private</TOOL_CALL>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<tool_calls>private\ntext</tool_calls>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <tool_calls>private</tool_calls> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<tool_calls>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <tool_calls>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <tool_calls> in prose",
+    "expected": "Use <tool_calls> in prose"
+  },
+  {
+    "input": "</tool_calls>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<tool_calls id=\"x\">private</tool_calls>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<TOOL_CALLS>private\ntext</TOOL_CALLS>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <TOOL_CALLS>private</TOOL_CALLS> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<TOOL_CALLS>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <TOOL_CALLS>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <TOOL_CALLS> in prose",
+    "expected": "Use <TOOL_CALLS> in prose"
+  },
+  {
+    "input": "</TOOL_CALLS>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<TOOL_CALLS id=\"x\">private</TOOL_CALLS>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<tool_result>private\ntext</tool_result>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <tool_result>private</tool_result> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<tool_result>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <tool_result>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <tool_result> in prose",
+    "expected": "Use <tool_result> in prose"
+  },
+  {
+    "input": "</tool_result>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<tool_result id=\"x\">private</tool_result>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<TOOL_RESULT>private\ntext</TOOL_RESULT>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <TOOL_RESULT>private</TOOL_RESULT> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<TOOL_RESULT>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <TOOL_RESULT>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <TOOL_RESULT> in prose",
+    "expected": "Use <TOOL_RESULT> in prose"
+  },
+  {
+    "input": "</TOOL_RESULT>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<TOOL_RESULT id=\"x\">private</TOOL_RESULT>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<function_call>private\ntext</function_call>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <function_call>private</function_call> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<function_call>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <function_call>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <function_call> in prose",
+    "expected": "Use <function_call> in prose"
+  },
+  {
+    "input": "</function_call>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<function_call id=\"x\">private</function_call>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<FUNCTION_CALL>private\ntext</FUNCTION_CALL>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <FUNCTION_CALL>private</FUNCTION_CALL> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<FUNCTION_CALL>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <FUNCTION_CALL>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <FUNCTION_CALL> in prose",
+    "expected": "Use <FUNCTION_CALL> in prose"
+  },
+  {
+    "input": "</FUNCTION_CALL>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<FUNCTION_CALL id=\"x\">private</FUNCTION_CALL>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<function_calls>private\ntext</function_calls>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <function_calls>private</function_calls> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<function_calls>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <function_calls>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <function_calls> in prose",
+    "expected": "Use <function_calls> in prose"
+  },
+  {
+    "input": "</function_calls>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<function_calls id=\"x\">private</function_calls>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<FUNCTION_CALLS>private\ntext</FUNCTION_CALLS>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "prefix <FUNCTION_CALLS>private</FUNCTION_CALLS> tail",
+    "expected": "prefix  tail"
+  },
+  {
+    "input": "<FUNCTION_CALLS>unclosed",
+    "expected": ""
+  },
+  {
+    "input": "answer\n  <FUNCTION_CALLS>unclosed",
+    "expected": "answer"
+  },
+  {
+    "input": "Use <FUNCTION_CALLS> in prose",
+    "expected": "Use <FUNCTION_CALLS> in prose"
+  },
+  {
+    "input": "</FUNCTION_CALLS>\u001canswer",
+    "expected": "answer"
+  },
+  {
+    "input": "<FUNCTION_CALLS id=\"x\">private</FUNCTION_CALLS>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<THİNK>private</THİNK>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<thınk>private</thınk>answer",
+    "expected": "answer"
+  },
+  {
+    "input": "<functİon name=\"x\">private</functİon>answer",
+    "expected": "answer"
+  }
+]

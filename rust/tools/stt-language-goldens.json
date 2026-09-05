@@ -1,0 +1,1022 @@
+[
+  {
+    "config": {
+      "openai": null,
+      "language": null
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": null
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": false
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": false
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": ""
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": ""
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": " en "
+    },
+    "env": null,
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": " en "
+    },
+    "env": "",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": null,
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": null
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": null
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": false
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": false
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": ""
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": ""
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": " en "
+    },
+    "env": null,
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": " en "
+    },
+    "env": "",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {},
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": null
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": null
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": false
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": false
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": ""
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": ""
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": " en "
+    },
+    "env": null,
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": " en "
+    },
+    "env": "",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": false,
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": null
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": null
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": false
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": false
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": ""
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": ""
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": " en "
+    },
+    "env": null,
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": " en "
+    },
+    "env": "",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": null
+      },
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": null
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": null
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": false
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": false
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": ""
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": ""
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": " en "
+    },
+    "env": null,
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": " en "
+    },
+    "env": "",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": true
+      },
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": null
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": null
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": false
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": false
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": ""
+    },
+    "env": null,
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": ""
+    },
+    "env": "",
+    "expected": null
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "zh"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": " en "
+    },
+    "env": null,
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": " en "
+    },
+    "env": "",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " "
+      },
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "en"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": null
+    },
+    "env": null,
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": null
+    },
+    "env": "",
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": false
+    },
+    "env": null,
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": false
+    },
+    "env": "",
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": ""
+    },
+    "env": null,
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": ""
+    },
+    "env": "",
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": " en "
+    },
+    "env": null,
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": " en "
+    },
+    "env": "",
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": " ms "
+      },
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "ms"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": null
+    },
+    "env": null,
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": null
+    },
+    "env": "",
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": false
+    },
+    "env": null,
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": false
+    },
+    "env": "",
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": ""
+    },
+    "env": null,
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": ""
+    },
+    "env": "",
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": " en "
+    },
+    "env": null,
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": " en "
+    },
+    "env": "",
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language_code": " ja "
+      },
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "ja"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": null
+    },
+    "env": null,
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": null
+    },
+    "env": "",
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": null
+    },
+    "env": " zh ",
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": false
+    },
+    "env": null,
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": false
+    },
+    "env": "",
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": false
+    },
+    "env": " zh ",
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": ""
+    },
+    "env": null,
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": ""
+    },
+    "env": "",
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": ""
+    },
+    "env": " zh ",
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": " en "
+    },
+    "env": null,
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": " en "
+    },
+    "env": "",
+    "expected": "de"
+  },
+  {
+    "config": {
+      "openai": {
+        "language": "\u001cde\u001f",
+        "language_code": "ja"
+      },
+      "language": " en "
+    },
+    "env": " zh ",
+    "expected": "de"
+  }
+]

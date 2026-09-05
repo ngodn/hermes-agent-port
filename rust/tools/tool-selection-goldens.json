@@ -1,0 +1,2594 @@
+[
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "local"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "local"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "local"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "local"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "openai"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "openai"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "openai"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "openai"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "false"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "false"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "false"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "false"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "stt",
+    "config": {
+      "stt": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "browser",
+    "config": {
+      "browser": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "cloud"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "web",
+    "config": {
+      "web": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": null,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "backup"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "local"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "local"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "local"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " local ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "local"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "openai"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "openai"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "openai"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": " OpenAI ",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "openai"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "false"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "false"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "false"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": false,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "false"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": 0,
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": [],
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": {},
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": null
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": false
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": true
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": "false"
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": " YES "
+      }
+    },
+    "expected": "nous"
+  },
+  {
+    "section": "tts",
+    "config": {
+      "tts": {
+        "provider": "\u001cNous\u001f",
+        "backend": "backup",
+        "cloud_provider": "cloud",
+        "use_gateway": []
+      }
+    },
+    "expected": "nous"
+  }
+]

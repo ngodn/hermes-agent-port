@@ -1,0 +1,5555 @@
+[
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": null
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": []
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {}
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {}
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {
+      "other": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {
+      "other": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {
+      "other": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "other": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "other": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {
+      "other": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "other": [],
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "other": [
+        1
+      ],
+      "openai-api": [
+        null
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "other": [],
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {
+      "openai-api": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {
+      "openai-api": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {
+      "openai-api": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": []
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [],
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {
+      "openai-api": "invalid"
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {
+      "openai-api": "invalid"
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {
+      "openai-api": "invalid"
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": "invalid"
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": "invalid"
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": "invalid"
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": "invalid",
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ],
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ],
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": null
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": []
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {}
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "other": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": []
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": "invalid"
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ],
+      "openai-api": [
+        {
+          "access_token": "fixture-key"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      {
+        "access_token": "fixture-key"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          {
+            "access_token": "fixture-key"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ],
+      "openai-api": [
+        null
+      ],
+      "other": [
+        1
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": [
+      null
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "openai-api": [
+          null
+        ],
+        "other": [
+          1
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": null,
+    "result": {
+      "custom:openai-api": [
+        {
+          "access_token": "custom-fixture"
+        }
+      ]
+    }
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "openai-api",
+    "result": []
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "custom:openai-api",
+    "result": [
+      {
+        "access_token": "custom-fixture"
+      }
+    ]
+  },
+  {
+    "profile": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "root": {
+      "credential_pool": {
+        "custom:openai-api": [
+          {
+            "access_token": "custom-fixture"
+          }
+        ]
+      }
+    },
+    "provider": "absent",
+    "result": []
+  }
+]

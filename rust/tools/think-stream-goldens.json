@@ -1,0 +1,9102 @@
+[
+  [
+    {
+      "input": "hello 世界",
+      "output": "hello 世界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "h",
+      "output": "h"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "l",
+      "output": "l"
+    },
+    {
+      "input": "l",
+      "output": "l"
+    },
+    {
+      "input": "o",
+      "output": "o"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "世",
+      "output": "世"
+    },
+    {
+      "input": "界",
+      "output": "界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "hello 世界",
+      "output": "hello 世界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "h",
+      "output": "h"
+    },
+    {
+      "input": "ello 世界",
+      "output": "ello 世界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "he",
+      "output": "he"
+    },
+    {
+      "input": "llo 世界",
+      "output": "llo 世界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "hel",
+      "output": "hel"
+    },
+    {
+      "input": "lo 世界",
+      "output": "lo 世界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "hell",
+      "output": "hell"
+    },
+    {
+      "input": "o 世界",
+      "output": "o 世界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "hello",
+      "output": "hello"
+    },
+    {
+      "input": " 世界",
+      "output": " 世界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "hello ",
+      "output": "hello "
+    },
+    {
+      "input": "世界",
+      "output": "世界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "hello 世",
+      "output": "hello 世"
+    },
+    {
+      "input": "界",
+      "output": "界"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "hello 世界",
+      "output": "hello 世界"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": "<"
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": "<"
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": "<"
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": "<"
+    }
+  ],
+  [
+    {
+      "input": "prose <think> mention",
+      "output": "prose <think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "p",
+      "output": "p"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": "o",
+      "output": "o"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": "<think>"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "m",
+      "output": "m"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "t",
+      "output": "t"
+    },
+    {
+      "input": "i",
+      "output": "i"
+    },
+    {
+      "input": "o",
+      "output": "o"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "prose <think> mention",
+      "output": "prose <think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "p",
+      "output": "p"
+    },
+    {
+      "input": "rose <think> mention",
+      "output": "rose <think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "pr",
+      "output": "pr"
+    },
+    {
+      "input": "ose <think> mention",
+      "output": "ose <think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "pro",
+      "output": "pro"
+    },
+    {
+      "input": "se <think> mention",
+      "output": "se <think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "pros",
+      "output": "pros"
+    },
+    {
+      "input": "e <think> mention",
+      "output": "e <think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose",
+      "output": "prose"
+    },
+    {
+      "input": " <think> mention",
+      "output": " <think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose ",
+      "output": "prose "
+    },
+    {
+      "input": "<think> mention",
+      "output": "<think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <",
+      "output": "prose "
+    },
+    {
+      "input": "think> mention",
+      "output": "<think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <t",
+      "output": "prose "
+    },
+    {
+      "input": "hink> mention",
+      "output": "<think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <th",
+      "output": "prose "
+    },
+    {
+      "input": "ink> mention",
+      "output": "<think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <thi",
+      "output": "prose "
+    },
+    {
+      "input": "nk> mention",
+      "output": "<think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <thin",
+      "output": "prose "
+    },
+    {
+      "input": "k> mention",
+      "output": "<think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think",
+      "output": "prose "
+    },
+    {
+      "input": "> mention",
+      "output": "<think> mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think>",
+      "output": "prose <think>"
+    },
+    {
+      "input": " mention",
+      "output": " mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think> ",
+      "output": "prose <think> "
+    },
+    {
+      "input": "mention",
+      "output": "mention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think> m",
+      "output": "prose <think> m"
+    },
+    {
+      "input": "ention",
+      "output": "ention"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think> me",
+      "output": "prose <think> me"
+    },
+    {
+      "input": "ntion",
+      "output": "ntion"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think> men",
+      "output": "prose <think> men"
+    },
+    {
+      "input": "tion",
+      "output": "tion"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think> ment",
+      "output": "prose <think> ment"
+    },
+    {
+      "input": "ion",
+      "output": "ion"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think> menti",
+      "output": "prose <think> menti"
+    },
+    {
+      "input": "on",
+      "output": "on"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think> mentio",
+      "output": "prose <think> mentio"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "prose <think> mention",
+      "output": "prose <think> mention"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</think> done",
+      "output": "x  done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x",
+      "output": "x"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": "<think>"
+    },
+    {
+      "input": "h",
+      "output": "h"
+    },
+    {
+      "input": "i",
+      "output": "i"
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "o",
+      "output": "o"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "x <think>hidden</think> done",
+      "output": "x  done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x",
+      "output": "x"
+    },
+    {
+      "input": " <think>hidden</think> done",
+      "output": "  done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x ",
+      "output": "x "
+    },
+    {
+      "input": "<think>hidden</think> done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <",
+      "output": "x "
+    },
+    {
+      "input": "think>hidden</think> done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <t",
+      "output": "x "
+    },
+    {
+      "input": "hink>hidden</think> done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <th",
+      "output": "x "
+    },
+    {
+      "input": "ink>hidden</think> done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <thi",
+      "output": "x "
+    },
+    {
+      "input": "nk>hidden</think> done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <thin",
+      "output": "x "
+    },
+    {
+      "input": "k>hidden</think> done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think",
+      "output": "x "
+    },
+    {
+      "input": ">hidden</think> done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>",
+      "output": "x <think>"
+    },
+    {
+      "input": "hidden</think> done",
+      "output": "hiddendone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>h",
+      "output": "x <think>h"
+    },
+    {
+      "input": "idden</think> done",
+      "output": "iddendone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hi",
+      "output": "x <think>hi"
+    },
+    {
+      "input": "dden</think> done",
+      "output": "ddendone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hid",
+      "output": "x <think>hid"
+    },
+    {
+      "input": "den</think> done",
+      "output": "dendone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidd",
+      "output": "x <think>hidd"
+    },
+    {
+      "input": "en</think> done",
+      "output": "endone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidde",
+      "output": "x <think>hidde"
+    },
+    {
+      "input": "n</think> done",
+      "output": "ndone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden",
+      "output": "x <think>hidden"
+    },
+    {
+      "input": "</think> done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden<",
+      "output": "x <think>hidden"
+    },
+    {
+      "input": "/think> done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</",
+      "output": "x <think>hidden"
+    },
+    {
+      "input": "think> done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</t",
+      "output": "x <think>hidden"
+    },
+    {
+      "input": "hink> done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</th",
+      "output": "x <think>hidden"
+    },
+    {
+      "input": "ink> done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</thi",
+      "output": "x <think>hidden"
+    },
+    {
+      "input": "nk> done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</thin",
+      "output": "x <think>hidden"
+    },
+    {
+      "input": "k> done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</think",
+      "output": "x <think>hidden"
+    },
+    {
+      "input": "> done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</think>",
+      "output": "x "
+    },
+    {
+      "input": " done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</think> ",
+      "output": "x  "
+    },
+    {
+      "input": "done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</think> d",
+      "output": "x  d"
+    },
+    {
+      "input": "one",
+      "output": "one"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</think> do",
+      "output": "x  do"
+    },
+    {
+      "input": "ne",
+      "output": "ne"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</think> don",
+      "output": "x  don"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x <think>hidden</think> done",
+      "output": "x  done"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</think>done",
+      "output": "x\n  done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x",
+      "output": "x"
+    },
+    {
+      "input": "\n",
+      "output": "\n"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": "<think>"
+    },
+    {
+      "input": "h",
+      "output": "h"
+    },
+    {
+      "input": "i",
+      "output": "i"
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "o",
+      "output": "o"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "x\n  <think>hidden</think>done",
+      "output": "x\n  done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x",
+      "output": "x"
+    },
+    {
+      "input": "\n  <think>hidden</think>done",
+      "output": "\n  done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n",
+      "output": "x\n"
+    },
+    {
+      "input": "  <think>hidden</think>done",
+      "output": "  done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n ",
+      "output": "x\n "
+    },
+    {
+      "input": " <think>hidden</think>done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  ",
+      "output": "x\n  "
+    },
+    {
+      "input": "<think>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <",
+      "output": "x\n  "
+    },
+    {
+      "input": "think>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <t",
+      "output": "x\n  "
+    },
+    {
+      "input": "hink>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <th",
+      "output": "x\n  "
+    },
+    {
+      "input": "ink>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <thi",
+      "output": "x\n  "
+    },
+    {
+      "input": "nk>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <thin",
+      "output": "x\n  "
+    },
+    {
+      "input": "k>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think",
+      "output": "x\n  "
+    },
+    {
+      "input": ">hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>",
+      "output": "x\n  "
+    },
+    {
+      "input": "hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>h",
+      "output": "x\n  "
+    },
+    {
+      "input": "idden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hi",
+      "output": "x\n  "
+    },
+    {
+      "input": "dden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hid",
+      "output": "x\n  "
+    },
+    {
+      "input": "den</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidd",
+      "output": "x\n  "
+    },
+    {
+      "input": "en</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidde",
+      "output": "x\n  "
+    },
+    {
+      "input": "n</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden",
+      "output": "x\n  "
+    },
+    {
+      "input": "</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden<",
+      "output": "x\n  "
+    },
+    {
+      "input": "/think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</",
+      "output": "x\n  "
+    },
+    {
+      "input": "think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</t",
+      "output": "x\n  "
+    },
+    {
+      "input": "hink>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</th",
+      "output": "x\n  "
+    },
+    {
+      "input": "ink>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</thi",
+      "output": "x\n  "
+    },
+    {
+      "input": "nk>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</thin",
+      "output": "x\n  "
+    },
+    {
+      "input": "k>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</think",
+      "output": "x\n  "
+    },
+    {
+      "input": ">done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</think>",
+      "output": "x\n  "
+    },
+    {
+      "input": "done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</think>d",
+      "output": "x\n  d"
+    },
+    {
+      "input": "one",
+      "output": "one"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</think>do",
+      "output": "x\n  do"
+    },
+    {
+      "input": "ne",
+      "output": "ne"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</think>don",
+      "output": "x\n  don"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x\n  <think>hidden</think>done",
+      "output": "x\n  done"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think>\n done",
+      "output": "xdone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x",
+      "output": "x"
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "\n",
+      "output": "\n"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "o",
+      "output": "o"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "x</think>\n done",
+      "output": "xdone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x",
+      "output": "x"
+    },
+    {
+      "input": "</think>\n done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x<",
+      "output": "x"
+    },
+    {
+      "input": "/think>\n done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</",
+      "output": "x"
+    },
+    {
+      "input": "think>\n done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</t",
+      "output": "x"
+    },
+    {
+      "input": "hink>\n done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</th",
+      "output": "x"
+    },
+    {
+      "input": "ink>\n done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</thi",
+      "output": "x"
+    },
+    {
+      "input": "nk>\n done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</thin",
+      "output": "x"
+    },
+    {
+      "input": "k>\n done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think",
+      "output": "x"
+    },
+    {
+      "input": ">\n done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think>",
+      "output": "x"
+    },
+    {
+      "input": "\n done",
+      "output": "\n done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think>\n",
+      "output": "x"
+    },
+    {
+      "input": " done",
+      "output": " done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think>\n ",
+      "output": "x"
+    },
+    {
+      "input": "done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think>\n d",
+      "output": "xd"
+    },
+    {
+      "input": "one",
+      "output": "one"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think>\n do",
+      "output": "xdo"
+    },
+    {
+      "input": "ne",
+      "output": "ne"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think>\n don",
+      "output": "xdon"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "x</think>\n done",
+      "output": "xdone"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "u",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "c",
+      "output": ""
+    },
+    {
+      "input": "l",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "s",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "d",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<think>unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "think>unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<t",
+      "output": ""
+    },
+    {
+      "input": "hink>unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<th",
+      "output": ""
+    },
+    {
+      "input": "ink>unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thi",
+      "output": ""
+    },
+    {
+      "input": "nk>unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thin",
+      "output": ""
+    },
+    {
+      "input": "k>unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think",
+      "output": ""
+    },
+    {
+      "input": ">unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>",
+      "output": ""
+    },
+    {
+      "input": "unclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>u",
+      "output": ""
+    },
+    {
+      "input": "nclosed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>un",
+      "output": ""
+    },
+    {
+      "input": "closed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>unc",
+      "output": ""
+    },
+    {
+      "input": "losed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>uncl",
+      "output": ""
+    },
+    {
+      "input": "osed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>unclo",
+      "output": ""
+    },
+    {
+      "input": "sed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>unclos",
+      "output": ""
+    },
+    {
+      "input": "ed",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>unclose",
+      "output": ""
+    },
+    {
+      "input": "d",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>unclosed",
+      "output": ""
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "T",
+      "output": ""
+    },
+    {
+      "input": "H",
+      "output": ""
+    },
+    {
+      "input": "I",
+      "output": ""
+    },
+    {
+      "input": "N",
+      "output": ""
+    },
+    {
+      "input": "K",
+      "output": ""
+    },
+    {
+      "input": "I",
+      "output": ""
+    },
+    {
+      "input": "N",
+      "output": ""
+    },
+    {
+      "input": "G",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "d",
+      "output": ""
+    },
+    {
+      "input": "d",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "H",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "N",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": "I",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "G",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": "a"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "w",
+      "output": "w"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<THINKING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "THINKING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<T",
+      "output": ""
+    },
+    {
+      "input": "HINKING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<TH",
+      "output": ""
+    },
+    {
+      "input": "INKING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THI",
+      "output": ""
+    },
+    {
+      "input": "NKING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THIN",
+      "output": ""
+    },
+    {
+      "input": "KING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINK",
+      "output": ""
+    },
+    {
+      "input": "ING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKI",
+      "output": ""
+    },
+    {
+      "input": "NG>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKIN",
+      "output": ""
+    },
+    {
+      "input": "G>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING",
+      "output": ""
+    },
+    {
+      "input": ">hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>",
+      "output": ""
+    },
+    {
+      "input": "hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>h",
+      "output": ""
+    },
+    {
+      "input": "idden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hi",
+      "output": ""
+    },
+    {
+      "input": "dden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hid",
+      "output": ""
+    },
+    {
+      "input": "den</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidd",
+      "output": ""
+    },
+    {
+      "input": "en</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidde",
+      "output": ""
+    },
+    {
+      "input": "n</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden",
+      "output": ""
+    },
+    {
+      "input": "</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden<",
+      "output": ""
+    },
+    {
+      "input": "/tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</",
+      "output": ""
+    },
+    {
+      "input": "tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</t",
+      "output": ""
+    },
+    {
+      "input": "HiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tH",
+      "output": ""
+    },
+    {
+      "input": "iNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHi",
+      "output": ""
+    },
+    {
+      "input": "NkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiN",
+      "output": ""
+    },
+    {
+      "input": "kInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNk",
+      "output": ""
+    },
+    {
+      "input": "InG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkI",
+      "output": ""
+    },
+    {
+      "input": "nG>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkIn",
+      "output": ""
+    },
+    {
+      "input": "G>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG",
+      "output": ""
+    },
+    {
+      "input": ">answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG>",
+      "output": ""
+    },
+    {
+      "input": "answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG>a",
+      "output": "a"
+    },
+    {
+      "input": "nswer",
+      "output": "nswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG>an",
+      "output": "an"
+    },
+    {
+      "input": "swer",
+      "output": "swer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG>ans",
+      "output": "ans"
+    },
+    {
+      "input": "wer",
+      "output": "wer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG>answ",
+      "output": "answ"
+    },
+    {
+      "input": "er",
+      "output": "er"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG>answe",
+      "output": "answe"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<THINKING>hidden</tHiNkInG>answer",
+      "output": "answer"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "u",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "d",
+      "output": ""
+    },
+    {
+      "input": "d",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "r",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": ""
+    },
+    {
+      "input": "s",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": "a"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "w",
+      "output": "w"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<thought>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "thought>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<t",
+      "output": ""
+    },
+    {
+      "input": "hought>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<th",
+      "output": ""
+    },
+    {
+      "input": "ought>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<tho",
+      "output": ""
+    },
+    {
+      "input": "ught>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thou",
+      "output": ""
+    },
+    {
+      "input": "ght>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thoug",
+      "output": ""
+    },
+    {
+      "input": "ht>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<though",
+      "output": ""
+    },
+    {
+      "input": "t>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought",
+      "output": ""
+    },
+    {
+      "input": ">hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>",
+      "output": ""
+    },
+    {
+      "input": "hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>h",
+      "output": ""
+    },
+    {
+      "input": "idden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hi",
+      "output": ""
+    },
+    {
+      "input": "dden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hid",
+      "output": ""
+    },
+    {
+      "input": "den</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidd",
+      "output": ""
+    },
+    {
+      "input": "en</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidde",
+      "output": ""
+    },
+    {
+      "input": "n</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden",
+      "output": ""
+    },
+    {
+      "input": "</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden<",
+      "output": ""
+    },
+    {
+      "input": "/reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</",
+      "output": ""
+    },
+    {
+      "input": "reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</r",
+      "output": ""
+    },
+    {
+      "input": "easoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</re",
+      "output": ""
+    },
+    {
+      "input": "asoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</rea",
+      "output": ""
+    },
+    {
+      "input": "soning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reas",
+      "output": ""
+    },
+    {
+      "input": "oning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reaso",
+      "output": ""
+    },
+    {
+      "input": "ning>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reason",
+      "output": ""
+    },
+    {
+      "input": "ing>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoni",
+      "output": ""
+    },
+    {
+      "input": "ng>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasonin",
+      "output": ""
+    },
+    {
+      "input": "g>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning",
+      "output": ""
+    },
+    {
+      "input": ">answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning>",
+      "output": ""
+    },
+    {
+      "input": "answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning>a",
+      "output": "a"
+    },
+    {
+      "input": "nswer",
+      "output": "nswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning>an",
+      "output": "an"
+    },
+    {
+      "input": "swer",
+      "output": "swer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning>ans",
+      "output": "ans"
+    },
+    {
+      "input": "wer",
+      "output": "wer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning>answ",
+      "output": "answ"
+    },
+    {
+      "input": "er",
+      "output": "er"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning>answe",
+      "output": "answe"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>hidden</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</think>done",
+      "output": "\u001cdone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c",
+      "output": "\u001c"
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": "<think>"
+    },
+    {
+      "input": "h",
+      "output": "h"
+    },
+    {
+      "input": "i",
+      "output": "i"
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "d",
+      "output": "d"
+    },
+    {
+      "input": "o",
+      "output": "o"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "\u001c<think>hidden</think>done",
+      "output": "\u001cdone"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c",
+      "output": "\u001c"
+    },
+    {
+      "input": "<think>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<",
+      "output": "\u001c"
+    },
+    {
+      "input": "think>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<t",
+      "output": "\u001c"
+    },
+    {
+      "input": "hink>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<th",
+      "output": "\u001c"
+    },
+    {
+      "input": "ink>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<thi",
+      "output": "\u001c"
+    },
+    {
+      "input": "nk>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<thin",
+      "output": "\u001c"
+    },
+    {
+      "input": "k>hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think",
+      "output": "\u001c"
+    },
+    {
+      "input": ">hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>",
+      "output": "\u001c"
+    },
+    {
+      "input": "hidden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>h",
+      "output": "\u001c"
+    },
+    {
+      "input": "idden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hi",
+      "output": "\u001c"
+    },
+    {
+      "input": "dden</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hid",
+      "output": "\u001c"
+    },
+    {
+      "input": "den</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidd",
+      "output": "\u001c"
+    },
+    {
+      "input": "en</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidde",
+      "output": "\u001c"
+    },
+    {
+      "input": "n</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden",
+      "output": "\u001c"
+    },
+    {
+      "input": "</think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden<",
+      "output": "\u001c"
+    },
+    {
+      "input": "/think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</",
+      "output": "\u001c"
+    },
+    {
+      "input": "think>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</t",
+      "output": "\u001c"
+    },
+    {
+      "input": "hink>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</th",
+      "output": "\u001c"
+    },
+    {
+      "input": "ink>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</thi",
+      "output": "\u001c"
+    },
+    {
+      "input": "nk>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</thin",
+      "output": "\u001c"
+    },
+    {
+      "input": "k>done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</think",
+      "output": "\u001c"
+    },
+    {
+      "input": ">done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</think>",
+      "output": "\u001c"
+    },
+    {
+      "input": "done",
+      "output": "done"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</think>d",
+      "output": "\u001cd"
+    },
+    {
+      "input": "one",
+      "output": "one"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</think>do",
+      "output": "\u001cdo"
+    },
+    {
+      "input": "ne",
+      "output": "ne"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</think>don",
+      "output": "\u001cdon"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "\u001c<think>hidden</think>done",
+      "output": "\u001cdone"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "x",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "u",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "y",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "u",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "z",
+      "output": "z"
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": "a"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "w",
+      "output": "w"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<think>x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "think>x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<t",
+      "output": ""
+    },
+    {
+      "input": "hink>x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<th",
+      "output": ""
+    },
+    {
+      "input": "ink>x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thi",
+      "output": ""
+    },
+    {
+      "input": "nk>x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thin",
+      "output": ""
+    },
+    {
+      "input": "k>x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think",
+      "output": ""
+    },
+    {
+      "input": ">x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>",
+      "output": ""
+    },
+    {
+      "input": "x<thought>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x",
+      "output": ""
+    },
+    {
+      "input": "<thought>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<",
+      "output": ""
+    },
+    {
+      "input": "thought>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<t",
+      "output": ""
+    },
+    {
+      "input": "hought>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<th",
+      "output": ""
+    },
+    {
+      "input": "ought>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<tho",
+      "output": ""
+    },
+    {
+      "input": "ught>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thou",
+      "output": ""
+    },
+    {
+      "input": "ght>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thoug",
+      "output": ""
+    },
+    {
+      "input": "ht>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<though",
+      "output": ""
+    },
+    {
+      "input": "t>y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought",
+      "output": ""
+    },
+    {
+      "input": ">y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>",
+      "output": ""
+    },
+    {
+      "input": "y</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y",
+      "output": ""
+    },
+    {
+      "input": "</thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y<",
+      "output": ""
+    },
+    {
+      "input": "/thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</",
+      "output": ""
+    },
+    {
+      "input": "thought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</t",
+      "output": ""
+    },
+    {
+      "input": "hought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</th",
+      "output": ""
+    },
+    {
+      "input": "ought>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</tho",
+      "output": ""
+    },
+    {
+      "input": "ught>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thou",
+      "output": ""
+    },
+    {
+      "input": "ght>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thoug",
+      "output": ""
+    },
+    {
+      "input": "ht>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</though",
+      "output": ""
+    },
+    {
+      "input": "t>z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought",
+      "output": ""
+    },
+    {
+      "input": ">z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>",
+      "output": ""
+    },
+    {
+      "input": "z</think>answer",
+      "output": "zanswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z",
+      "output": "z"
+    },
+    {
+      "input": "</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z<",
+      "output": "z"
+    },
+    {
+      "input": "/think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</",
+      "output": "z"
+    },
+    {
+      "input": "think>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</t",
+      "output": "z"
+    },
+    {
+      "input": "hink>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</th",
+      "output": "z"
+    },
+    {
+      "input": "ink>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</thi",
+      "output": "z"
+    },
+    {
+      "input": "nk>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</thin",
+      "output": "z"
+    },
+    {
+      "input": "k>answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think",
+      "output": "z"
+    },
+    {
+      "input": ">answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think>",
+      "output": ""
+    },
+    {
+      "input": "answer",
+      "output": "answer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think>a",
+      "output": "a"
+    },
+    {
+      "input": "nswer",
+      "output": "nswer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think>an",
+      "output": "an"
+    },
+    {
+      "input": "swer",
+      "output": "swer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think>ans",
+      "output": "ans"
+    },
+    {
+      "input": "wer",
+      "output": "wer"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think>answ",
+      "output": "answ"
+    },
+    {
+      "input": "er",
+      "output": "er"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think>answe",
+      "output": "answe"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>x<thought>y</thought>z</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "p",
+      "output": ""
+    },
+    {
+      "input": "r",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "v",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "\n",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "x",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": "a"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "w",
+      "output": "w"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<think>private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "think>private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<t",
+      "output": ""
+    },
+    {
+      "input": "hink>private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<th",
+      "output": ""
+    },
+    {
+      "input": "ink>private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thi",
+      "output": ""
+    },
+    {
+      "input": "nk>private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thin",
+      "output": ""
+    },
+    {
+      "input": "k>private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think",
+      "output": ""
+    },
+    {
+      "input": ">private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>",
+      "output": ""
+    },
+    {
+      "input": "private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>p",
+      "output": ""
+    },
+    {
+      "input": "rivate\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>pr",
+      "output": ""
+    },
+    {
+      "input": "ivate\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>pri",
+      "output": ""
+    },
+    {
+      "input": "vate\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>priv",
+      "output": ""
+    },
+    {
+      "input": "ate\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>priva",
+      "output": ""
+    },
+    {
+      "input": "te\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>privat",
+      "output": ""
+    },
+    {
+      "input": "e\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private",
+      "output": ""
+    },
+    {
+      "input": "\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\n",
+      "output": ""
+    },
+    {
+      "input": "text</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\nt",
+      "output": ""
+    },
+    {
+      "input": "ext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\nte",
+      "output": ""
+    },
+    {
+      "input": "xt</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntex",
+      "output": ""
+    },
+    {
+      "input": "t</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext",
+      "output": ""
+    },
+    {
+      "input": "</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext<",
+      "output": ""
+    },
+    {
+      "input": "/think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</",
+      "output": ""
+    },
+    {
+      "input": "think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</t",
+      "output": ""
+    },
+    {
+      "input": "hink>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</th",
+      "output": ""
+    },
+    {
+      "input": "ink>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</thi",
+      "output": ""
+    },
+    {
+      "input": "nk>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</thin",
+      "output": ""
+    },
+    {
+      "input": "k>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think",
+      "output": ""
+    },
+    {
+      "input": ">answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>",
+      "output": ""
+    },
+    {
+      "input": "answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>a",
+      "output": "a"
+    },
+    {
+      "input": "nswer 猫",
+      "output": "nswer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>an",
+      "output": "an"
+    },
+    {
+      "input": "swer 猫",
+      "output": "swer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>ans",
+      "output": "ans"
+    },
+    {
+      "input": "wer 猫",
+      "output": "wer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>answ",
+      "output": "answ"
+    },
+    {
+      "input": "er 猫",
+      "output": "er 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>answe",
+      "output": "answe"
+    },
+    {
+      "input": "r 猫",
+      "output": "r 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>answer",
+      "output": "answer"
+    },
+    {
+      "input": " 猫",
+      "output": " 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>answer ",
+      "output": "answer "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>private\ntext</think>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "p",
+      "output": ""
+    },
+    {
+      "input": "r",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "v",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "\n",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "x",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "k",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": "a"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "w",
+      "output": "w"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<thinking>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "thinking>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<t",
+      "output": ""
+    },
+    {
+      "input": "hinking>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<th",
+      "output": ""
+    },
+    {
+      "input": "inking>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thi",
+      "output": ""
+    },
+    {
+      "input": "nking>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thin",
+      "output": ""
+    },
+    {
+      "input": "king>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think",
+      "output": ""
+    },
+    {
+      "input": "ing>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinki",
+      "output": ""
+    },
+    {
+      "input": "ng>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinkin",
+      "output": ""
+    },
+    {
+      "input": "g>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking",
+      "output": ""
+    },
+    {
+      "input": ">private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>",
+      "output": ""
+    },
+    {
+      "input": "private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>p",
+      "output": ""
+    },
+    {
+      "input": "rivate\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>pr",
+      "output": ""
+    },
+    {
+      "input": "ivate\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>pri",
+      "output": ""
+    },
+    {
+      "input": "vate\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>priv",
+      "output": ""
+    },
+    {
+      "input": "ate\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>priva",
+      "output": ""
+    },
+    {
+      "input": "te\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>privat",
+      "output": ""
+    },
+    {
+      "input": "e\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private",
+      "output": ""
+    },
+    {
+      "input": "\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\n",
+      "output": ""
+    },
+    {
+      "input": "text</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\nt",
+      "output": ""
+    },
+    {
+      "input": "ext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\nte",
+      "output": ""
+    },
+    {
+      "input": "xt</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntex",
+      "output": ""
+    },
+    {
+      "input": "t</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext",
+      "output": ""
+    },
+    {
+      "input": "</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext<",
+      "output": ""
+    },
+    {
+      "input": "/thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</",
+      "output": ""
+    },
+    {
+      "input": "thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</t",
+      "output": ""
+    },
+    {
+      "input": "hinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</th",
+      "output": ""
+    },
+    {
+      "input": "inking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thi",
+      "output": ""
+    },
+    {
+      "input": "nking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thin",
+      "output": ""
+    },
+    {
+      "input": "king>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</think",
+      "output": ""
+    },
+    {
+      "input": "ing>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinki",
+      "output": ""
+    },
+    {
+      "input": "ng>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinkin",
+      "output": ""
+    },
+    {
+      "input": "g>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking",
+      "output": ""
+    },
+    {
+      "input": ">answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>",
+      "output": ""
+    },
+    {
+      "input": "answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>a",
+      "output": "a"
+    },
+    {
+      "input": "nswer 猫",
+      "output": "nswer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>an",
+      "output": "an"
+    },
+    {
+      "input": "swer 猫",
+      "output": "swer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>ans",
+      "output": "ans"
+    },
+    {
+      "input": "wer 猫",
+      "output": "wer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>answ",
+      "output": "answ"
+    },
+    {
+      "input": "er 猫",
+      "output": "er 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>answe",
+      "output": "answe"
+    },
+    {
+      "input": "r 猫",
+      "output": "r 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>answer",
+      "output": "answer"
+    },
+    {
+      "input": " 猫",
+      "output": " 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>answer ",
+      "output": "answer "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thinking>private\ntext</thinking>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "r",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": ""
+    },
+    {
+      "input": "s",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "p",
+      "output": ""
+    },
+    {
+      "input": "r",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "v",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "\n",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "x",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "r",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": ""
+    },
+    {
+      "input": "s",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "n",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": "a"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "w",
+      "output": "w"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<reasoning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "reasoning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<r",
+      "output": ""
+    },
+    {
+      "input": "easoning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<re",
+      "output": ""
+    },
+    {
+      "input": "asoning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<rea",
+      "output": ""
+    },
+    {
+      "input": "soning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reas",
+      "output": ""
+    },
+    {
+      "input": "oning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reaso",
+      "output": ""
+    },
+    {
+      "input": "ning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reason",
+      "output": ""
+    },
+    {
+      "input": "ing>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoni",
+      "output": ""
+    },
+    {
+      "input": "ng>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasonin",
+      "output": ""
+    },
+    {
+      "input": "g>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning",
+      "output": ""
+    },
+    {
+      "input": ">private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>",
+      "output": ""
+    },
+    {
+      "input": "private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>p",
+      "output": ""
+    },
+    {
+      "input": "rivate\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>pr",
+      "output": ""
+    },
+    {
+      "input": "ivate\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>pri",
+      "output": ""
+    },
+    {
+      "input": "vate\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>priv",
+      "output": ""
+    },
+    {
+      "input": "ate\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>priva",
+      "output": ""
+    },
+    {
+      "input": "te\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>privat",
+      "output": ""
+    },
+    {
+      "input": "e\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private",
+      "output": ""
+    },
+    {
+      "input": "\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\n",
+      "output": ""
+    },
+    {
+      "input": "text</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\nt",
+      "output": ""
+    },
+    {
+      "input": "ext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\nte",
+      "output": ""
+    },
+    {
+      "input": "xt</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntex",
+      "output": ""
+    },
+    {
+      "input": "t</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext",
+      "output": ""
+    },
+    {
+      "input": "</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext<",
+      "output": ""
+    },
+    {
+      "input": "/reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</",
+      "output": ""
+    },
+    {
+      "input": "reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</r",
+      "output": ""
+    },
+    {
+      "input": "easoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</re",
+      "output": ""
+    },
+    {
+      "input": "asoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</rea",
+      "output": ""
+    },
+    {
+      "input": "soning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reas",
+      "output": ""
+    },
+    {
+      "input": "oning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reaso",
+      "output": ""
+    },
+    {
+      "input": "ning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reason",
+      "output": ""
+    },
+    {
+      "input": "ing>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoni",
+      "output": ""
+    },
+    {
+      "input": "ng>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasonin",
+      "output": ""
+    },
+    {
+      "input": "g>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning",
+      "output": ""
+    },
+    {
+      "input": ">answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>",
+      "output": ""
+    },
+    {
+      "input": "answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>a",
+      "output": "a"
+    },
+    {
+      "input": "nswer 猫",
+      "output": "nswer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>an",
+      "output": "an"
+    },
+    {
+      "input": "swer 猫",
+      "output": "swer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>ans",
+      "output": "ans"
+    },
+    {
+      "input": "wer 猫",
+      "output": "wer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>answ",
+      "output": "answ"
+    },
+    {
+      "input": "er 猫",
+      "output": "er 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>answe",
+      "output": "answe"
+    },
+    {
+      "input": "r 猫",
+      "output": "r 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>answer",
+      "output": "answer"
+    },
+    {
+      "input": " 猫",
+      "output": " 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>answer ",
+      "output": "answer "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<reasoning>private\ntext</reasoning>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "u",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "p",
+      "output": ""
+    },
+    {
+      "input": "r",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "v",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "\n",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "x",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "o",
+      "output": ""
+    },
+    {
+      "input": "u",
+      "output": ""
+    },
+    {
+      "input": "g",
+      "output": ""
+    },
+    {
+      "input": "h",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": "a"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "w",
+      "output": "w"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<thought>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "thought>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<t",
+      "output": ""
+    },
+    {
+      "input": "hought>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<th",
+      "output": ""
+    },
+    {
+      "input": "ought>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<tho",
+      "output": ""
+    },
+    {
+      "input": "ught>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thou",
+      "output": ""
+    },
+    {
+      "input": "ght>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thoug",
+      "output": ""
+    },
+    {
+      "input": "ht>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<though",
+      "output": ""
+    },
+    {
+      "input": "t>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought",
+      "output": ""
+    },
+    {
+      "input": ">private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>",
+      "output": ""
+    },
+    {
+      "input": "private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>p",
+      "output": ""
+    },
+    {
+      "input": "rivate\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>pr",
+      "output": ""
+    },
+    {
+      "input": "ivate\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>pri",
+      "output": ""
+    },
+    {
+      "input": "vate\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>priv",
+      "output": ""
+    },
+    {
+      "input": "ate\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>priva",
+      "output": ""
+    },
+    {
+      "input": "te\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>privat",
+      "output": ""
+    },
+    {
+      "input": "e\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private",
+      "output": ""
+    },
+    {
+      "input": "\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\n",
+      "output": ""
+    },
+    {
+      "input": "text</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\nt",
+      "output": ""
+    },
+    {
+      "input": "ext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\nte",
+      "output": ""
+    },
+    {
+      "input": "xt</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntex",
+      "output": ""
+    },
+    {
+      "input": "t</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext",
+      "output": ""
+    },
+    {
+      "input": "</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext<",
+      "output": ""
+    },
+    {
+      "input": "/thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</",
+      "output": ""
+    },
+    {
+      "input": "thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</t",
+      "output": ""
+    },
+    {
+      "input": "hought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</th",
+      "output": ""
+    },
+    {
+      "input": "ought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</tho",
+      "output": ""
+    },
+    {
+      "input": "ught>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thou",
+      "output": ""
+    },
+    {
+      "input": "ght>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thoug",
+      "output": ""
+    },
+    {
+      "input": "ht>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</though",
+      "output": ""
+    },
+    {
+      "input": "t>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought",
+      "output": ""
+    },
+    {
+      "input": ">answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>",
+      "output": ""
+    },
+    {
+      "input": "answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>a",
+      "output": "a"
+    },
+    {
+      "input": "nswer 猫",
+      "output": "nswer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>an",
+      "output": "an"
+    },
+    {
+      "input": "swer 猫",
+      "output": "swer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>ans",
+      "output": "ans"
+    },
+    {
+      "input": "wer 猫",
+      "output": "wer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>answ",
+      "output": "answ"
+    },
+    {
+      "input": "er 猫",
+      "output": "er 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>answe",
+      "output": "answe"
+    },
+    {
+      "input": "r 猫",
+      "output": "r 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>answer",
+      "output": "answer"
+    },
+    {
+      "input": " 猫",
+      "output": " 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>answer ",
+      "output": "answer "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<thought>private\ntext</thought>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "R",
+      "output": ""
+    },
+    {
+      "input": "E",
+      "output": ""
+    },
+    {
+      "input": "A",
+      "output": ""
+    },
+    {
+      "input": "S",
+      "output": ""
+    },
+    {
+      "input": "O",
+      "output": ""
+    },
+    {
+      "input": "N",
+      "output": ""
+    },
+    {
+      "input": "I",
+      "output": ""
+    },
+    {
+      "input": "N",
+      "output": ""
+    },
+    {
+      "input": "G",
+      "output": ""
+    },
+    {
+      "input": "_",
+      "output": ""
+    },
+    {
+      "input": "S",
+      "output": ""
+    },
+    {
+      "input": "C",
+      "output": ""
+    },
+    {
+      "input": "R",
+      "output": ""
+    },
+    {
+      "input": "A",
+      "output": ""
+    },
+    {
+      "input": "T",
+      "output": ""
+    },
+    {
+      "input": "C",
+      "output": ""
+    },
+    {
+      "input": "H",
+      "output": ""
+    },
+    {
+      "input": "P",
+      "output": ""
+    },
+    {
+      "input": "A",
+      "output": ""
+    },
+    {
+      "input": "D",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "p",
+      "output": ""
+    },
+    {
+      "input": "r",
+      "output": ""
+    },
+    {
+      "input": "i",
+      "output": ""
+    },
+    {
+      "input": "v",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "\n",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "e",
+      "output": ""
+    },
+    {
+      "input": "x",
+      "output": ""
+    },
+    {
+      "input": "t",
+      "output": ""
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "/",
+      "output": ""
+    },
+    {
+      "input": "R",
+      "output": ""
+    },
+    {
+      "input": "E",
+      "output": ""
+    },
+    {
+      "input": "A",
+      "output": ""
+    },
+    {
+      "input": "S",
+      "output": ""
+    },
+    {
+      "input": "O",
+      "output": ""
+    },
+    {
+      "input": "N",
+      "output": ""
+    },
+    {
+      "input": "I",
+      "output": ""
+    },
+    {
+      "input": "N",
+      "output": ""
+    },
+    {
+      "input": "G",
+      "output": ""
+    },
+    {
+      "input": "_",
+      "output": ""
+    },
+    {
+      "input": "S",
+      "output": ""
+    },
+    {
+      "input": "C",
+      "output": ""
+    },
+    {
+      "input": "R",
+      "output": ""
+    },
+    {
+      "input": "A",
+      "output": ""
+    },
+    {
+      "input": "T",
+      "output": ""
+    },
+    {
+      "input": "C",
+      "output": ""
+    },
+    {
+      "input": "H",
+      "output": ""
+    },
+    {
+      "input": "P",
+      "output": ""
+    },
+    {
+      "input": "A",
+      "output": ""
+    },
+    {
+      "input": "D",
+      "output": ""
+    },
+    {
+      "input": ">",
+      "output": ""
+    },
+    {
+      "input": "a",
+      "output": "a"
+    },
+    {
+      "input": "n",
+      "output": "n"
+    },
+    {
+      "input": "s",
+      "output": "s"
+    },
+    {
+      "input": "w",
+      "output": "w"
+    },
+    {
+      "input": "e",
+      "output": "e"
+    },
+    {
+      "input": "r",
+      "output": "r"
+    },
+    {
+      "input": " ",
+      "output": " "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": "REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<R",
+      "output": ""
+    },
+    {
+      "input": "EASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<RE",
+      "output": ""
+    },
+    {
+      "input": "ASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REA",
+      "output": ""
+    },
+    {
+      "input": "SONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REAS",
+      "output": ""
+    },
+    {
+      "input": "ONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASO",
+      "output": ""
+    },
+    {
+      "input": "NING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASON",
+      "output": ""
+    },
+    {
+      "input": "ING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONI",
+      "output": ""
+    },
+    {
+      "input": "NG_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONIN",
+      "output": ""
+    },
+    {
+      "input": "G_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING",
+      "output": ""
+    },
+    {
+      "input": "_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_",
+      "output": ""
+    },
+    {
+      "input": "SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_S",
+      "output": ""
+    },
+    {
+      "input": "CRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SC",
+      "output": ""
+    },
+    {
+      "input": "RATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCR",
+      "output": ""
+    },
+    {
+      "input": "ATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRA",
+      "output": ""
+    },
+    {
+      "input": "TCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRAT",
+      "output": ""
+    },
+    {
+      "input": "CHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATC",
+      "output": ""
+    },
+    {
+      "input": "HPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCH",
+      "output": ""
+    },
+    {
+      "input": "PAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHP",
+      "output": ""
+    },
+    {
+      "input": "AD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPA",
+      "output": ""
+    },
+    {
+      "input": "D>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD",
+      "output": ""
+    },
+    {
+      "input": ">private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>",
+      "output": ""
+    },
+    {
+      "input": "private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>p",
+      "output": ""
+    },
+    {
+      "input": "rivate\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>pr",
+      "output": ""
+    },
+    {
+      "input": "ivate\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>pri",
+      "output": ""
+    },
+    {
+      "input": "vate\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>priv",
+      "output": ""
+    },
+    {
+      "input": "ate\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>priva",
+      "output": ""
+    },
+    {
+      "input": "te\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>privat",
+      "output": ""
+    },
+    {
+      "input": "e\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private",
+      "output": ""
+    },
+    {
+      "input": "\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\n",
+      "output": ""
+    },
+    {
+      "input": "text</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\nt",
+      "output": ""
+    },
+    {
+      "input": "ext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\nte",
+      "output": ""
+    },
+    {
+      "input": "xt</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntex",
+      "output": ""
+    },
+    {
+      "input": "t</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext",
+      "output": ""
+    },
+    {
+      "input": "</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext<",
+      "output": ""
+    },
+    {
+      "input": "/REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</",
+      "output": ""
+    },
+    {
+      "input": "REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</R",
+      "output": ""
+    },
+    {
+      "input": "EASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</RE",
+      "output": ""
+    },
+    {
+      "input": "ASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REA",
+      "output": ""
+    },
+    {
+      "input": "SONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REAS",
+      "output": ""
+    },
+    {
+      "input": "ONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASO",
+      "output": ""
+    },
+    {
+      "input": "NING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASON",
+      "output": ""
+    },
+    {
+      "input": "ING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONI",
+      "output": ""
+    },
+    {
+      "input": "NG_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONIN",
+      "output": ""
+    },
+    {
+      "input": "G_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING",
+      "output": ""
+    },
+    {
+      "input": "_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_",
+      "output": ""
+    },
+    {
+      "input": "SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_S",
+      "output": ""
+    },
+    {
+      "input": "CRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SC",
+      "output": ""
+    },
+    {
+      "input": "RATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCR",
+      "output": ""
+    },
+    {
+      "input": "ATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRA",
+      "output": ""
+    },
+    {
+      "input": "TCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRAT",
+      "output": ""
+    },
+    {
+      "input": "CHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATC",
+      "output": ""
+    },
+    {
+      "input": "HPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCH",
+      "output": ""
+    },
+    {
+      "input": "PAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHP",
+      "output": ""
+    },
+    {
+      "input": "AD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPA",
+      "output": ""
+    },
+    {
+      "input": "D>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD",
+      "output": ""
+    },
+    {
+      "input": ">answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>",
+      "output": ""
+    },
+    {
+      "input": "answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>a",
+      "output": "a"
+    },
+    {
+      "input": "nswer 猫",
+      "output": "nswer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>an",
+      "output": "an"
+    },
+    {
+      "input": "swer 猫",
+      "output": "swer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>ans",
+      "output": "ans"
+    },
+    {
+      "input": "wer 猫",
+      "output": "wer 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answ",
+      "output": "answ"
+    },
+    {
+      "input": "er 猫",
+      "output": "er 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answe",
+      "output": "answe"
+    },
+    {
+      "input": "r 猫",
+      "output": "r 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer",
+      "output": "answer"
+    },
+    {
+      "input": " 猫",
+      "output": " 猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer ",
+      "output": "answer "
+    },
+    {
+      "input": "猫",
+      "output": "猫"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<REASONING_SCRATCHPAD>private\ntext</REASONING_SCRATCHPAD>answer 猫",
+      "output": "answer 猫"
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "answer",
+      "output": "answer"
+    },
+    {
+      "input": "<",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": "<"
+    },
+    {
+      "input": "<think>",
+      "output": ""
+    },
+    {
+      "input": "private",
+      "output": ""
+    },
+    {
+      "input": "</think>next",
+      "output": "next"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "<think>",
+      "output": ""
+    },
+    {
+      "input": "private",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    },
+    {
+      "input": "next",
+      "output": "next"
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ],
+  [
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    },
+    {
+      "input": "",
+      "output": ""
+    },
+    {
+      "input": null,
+      "output": ""
+    }
+  ]
+]

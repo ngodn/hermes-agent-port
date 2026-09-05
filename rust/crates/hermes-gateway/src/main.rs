@@ -8,6 +8,8 @@ mod agent;
 mod agent_cache_pressure;
 mod api_server_run_idempotency;
 mod atomic_file;
+mod audio_process;
+mod auth_store;
 mod authz;
 mod browser_control_artifacts;
 mod browser_control_broker;
@@ -25,6 +27,10 @@ mod config_loader;
 mod config_schema;
 mod config_types;
 mod control_socket;
+mod credential_persistence;
+mod credential_pool;
+mod credential_sources;
+mod custom_provider_config;
 mod custom_request_config;
 mod cwd_placeholder;
 mod dead_targets;
@@ -73,6 +79,7 @@ mod models_dev;
 mod native_agent;
 mod native_image_content;
 mod native_tools;
+mod ogg_opus_duration;
 mod pairing;
 mod pending_messages;
 mod pending_stt;
@@ -124,14 +131,19 @@ mod sticker_cache;
 mod stream_consumer;
 mod systemd_notify;
 mod telegram;
+mod think_scrubber;
 mod threat_patterns;
 mod tool_arguments;
+mod tool_backend_selection;
+mod tool_credentials;
 mod tool_name_repair;
 mod tool_pairing;
 mod tool_result;
 mod transcription_enrichment;
+mod transcription_http;
 mod turn_lease;
 mod turn_limit;
+mod visible_response;
 mod vision_enrichment;
 mod wake;
 mod webhook_filters;
@@ -237,7 +249,8 @@ fn build_agent_client(
             (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone()).and_then(|client| {
                 let limit = turn_limit::gateway(user_config, std::env::var("HERMES_MAX_ITERATIONS").ok().as_deref())?;
                 let client = client.with_turn_limit(limit).with_max_concurrent_children(delegation_policy::max_children(user_config, std::env::var("DELEGATION_MAX_CONCURRENT_CHILDREN").ok().as_deref()));
-                match &profile { Some(profile) => client.with_provider_profile(profile), None => Ok(client) }
+                let client = match &profile { Some(profile) => client.with_provider_profile(profile)?, None => client };
+                client.with_extra_headers(&custom_provider_config::extra_headers(user_config, &base_url))
             }) {
                 Ok(mut c) => {
                     c = c.with_reasoning_config(reasoning_effort::resolve_config(user_config, model));
@@ -245,10 +258,17 @@ fn build_agent_client(
                         python_value::truthy(&user_config["model"]["reasoning_echo"])
                             || reasoning_replay::needs_echo(user_config["model"]["provider"].as_str().unwrap_or(""), model, &base_url),
                     );
-                    if let Some(extra) = custom_request_config::select_extra_body(user_config["model"]["provider"].as_str().unwrap_or(""), model, &base_url, &user_config["custom_providers"]) {
+                    let requested_provider = user_config["model"]["provider"].as_str().unwrap_or("");
+                    let named = custom_provider_config::named(user_config, requested_provider, profile.as_ref().map(|profile| profile.name.as_str()), |name| {
+                        std::env::var(name).ok().or_else(|| config_file::load_dotenv(&config_file::env_path()).remove(name)).unwrap_or_default()
+                    });
+                    let named_overrides = named.as_ref().and_then(|entry|entry["extra_body"].as_object()).filter(|body|!body.is_empty()).cloned();
+                    if let Some(extra) = named_overrides.or_else(|| custom_request_config::select_extra_body(requested_provider, model, &base_url, &custom_provider_config::compatible(user_config))) {
                         c = c.with_request_overrides(serde_json::Map::from_iter([("extra_body".into(), serde_json::Value::Object(extra))]));
                     }
-                    c = c.with_output_cap(native_agent::resolve_output_cap(&user_config["model"]["max_tokens"], std::env::var("HERMES_MAX_TOKENS").ok().as_deref(), None));
+                    // A saved provider supplies the fallback cap. Global and
+                    // environment limits retain the gateway's precedence.
+                    c = c.with_output_cap(native_agent::resolve_output_cap(&user_config["model"]["max_tokens"], std::env::var("HERMES_MAX_TOKENS").ok().as_deref(), named.as_ref().and_then(|entry| entry.get("max_output_tokens"))));
                     if config.agent_tools {
                         c = c.with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
                         tracing::info!(model, base_url, "using native agent client (tools enabled)");
@@ -824,10 +844,14 @@ mod startup_tests {
                 let calls = requests.lock().unwrap();
                 assert_eq!(calls.last().unwrap().0["authorization"], "Bearer rotated-generic-key");
             }
-            for tools in [false, true] {
+            for (tools, keyed) in [(false,false),(true,false),(false,true),(true,true)] {
                 config.agent_tools = tools;
                 config.llm_api_key = Some("fixture-key".into());
-                let selected = json!({"model": {"provider": "custom:lab"}, "custom_providers": [{"name": "lab", "base_url": config.llm_base_url.as_ref().unwrap(), "model": "fixture-model", "extra_body": {"temperature": 0.6, "custom_field": {"active": true}}}]});
+                let mut selected = if keyed {
+                    json!({"model":{"provider":"lab"},"providers":{"lab":{"api":config.llm_base_url.as_ref().unwrap(),"defaultModel":"fixture-model","extra_body":{"temperature":0.6,"custom_field":{"active":true}}}}})
+                } else { json!({"model": {"provider": "custom:lab"}, "custom_providers": [{"name": "lab", "base_url": config.llm_base_url.as_ref().unwrap(), "model": "fixture-model", "extra_body": {"temperature": 0.6, "custom_field": {"active": true}}}]}) };
+                let entry = if keyed { &mut selected["providers"]["lab"] } else { &mut selected["custom_providers"][0] };
+                entry["extra_headers"] = json!({"X-Route-Token":"header-fixture", "Authorization":"Bearer custom-fixture"});
                 let agent = build_agent_client(&config, &selected, Some("fixture-model"));
                 let (tx, mut rx) = tokio::sync::mpsc::channel(32);
                 agent.run_turn(&message, &history, tx).await.unwrap();
@@ -836,9 +860,60 @@ mod startup_tests {
                 let body = &calls.last().unwrap().1;
                 assert_eq!(body["temperature"], 0.6);
                 assert_eq!(body["custom_field"], json!({"active": true}));
+                assert_eq!(calls.last().unwrap().0["x-route-token"], "header-fixture");
+                assert_eq!(calls.last().unwrap().0["authorization"], "Bearer custom-fixture");
                 assert!(body.get("extra_body").is_none());
                 assert_eq!(body["messages"][0], json!({"role": "user", "content": "earlier"}));
             }
+            // An explicit endpoint override must not inherit the named entry's
+            // proxy credential when the configured route no longer matches.
+            for tools in [false, true] {
+                config.agent_tools = tools;
+                let selected = json!({"model":{"provider":"lab"},"providers":{"lab":{
+                    "api":"http://127.0.0.1:1/old-route",
+                    "extra_headers":{"X-Route-Token":"must-not-send", "Authorization":"Bearer must-not-send"}
+                }}});
+                let agent = build_agent_client(&config, &selected, Some("fixture-model"));
+                let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                agent.run_turn(&message, &history, tx).await.unwrap();
+                while rx.recv().await.is_some() {}
+                let calls = requests.lock().unwrap();
+                let headers = &calls.last().unwrap().0;
+                assert!(!headers.contains_key("x-route-token"));
+                assert_eq!(headers["authorization"], "Bearer fixture-key");
+            }
+            // Follow a named provider's fallback cap through client construction
+            // and both HTTP paths, including explicit zero and invalid env input.
+            for tools in [false, true] {
+                for (global, environment, expected) in [
+                    (json!(null), None, 256),
+                    (json!(128), None, 128),
+                    (json!(0), None, 0),
+                    (json!(128), Some("64"), 64),
+                    (json!(128), Some("invalid"), 256),
+                    (json!("128"), None, 256),
+                ] {
+                    match environment {
+                        Some(value) => std::env::set_var("HERMES_MAX_TOKENS", value),
+                        None => std::env::remove_var("HERMES_MAX_TOKENS"),
+                    }
+                    config.agent_tools = tools;
+                    let selected = json!({
+                        "model": {"provider": "lab", "max_tokens": global},
+                        "providers": {"lab": {
+                            "api": config.llm_base_url.as_ref().unwrap(),
+                            "max_output_tokens": 256, "max_tokens": 512
+                        }}
+                    });
+                    let agent = build_agent_client(&config, &selected, Some("fixture-model"));
+                    let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+                    agent.run_turn(&message, &history, tx).await.unwrap();
+                    while rx.recv().await.is_some() {}
+                    let calls = requests.lock().unwrap();
+                    assert_eq!(calls.last().unwrap().1["max_tokens"], expected);
+                }
+            }
+            std::env::remove_var("HERMES_MAX_TOKENS");
             for tools in [false, true] {
                 for (provider, flag, expected) in [
                     ("fw", json!(true), true), ("fw", json!(false), false),

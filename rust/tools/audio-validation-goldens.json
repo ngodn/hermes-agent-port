@@ -1,0 +1,324 @@
+[
+  {
+    "name": "voice.aac",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.aac",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.caf",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.caf",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.flac",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.flac",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.m4a",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.m4a",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.mp3",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.mp3",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.mp4",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.mp4",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.mpeg",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.mpeg",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.mpga",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.mpga",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.oga",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.oga",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.ogg",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.ogg",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.opus",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.opus",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.wav",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.wav",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.webm",
+    "kind": "file",
+    "size": 0,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.webm",
+    "kind": "file",
+    "size": 0,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.WAV",
+    "kind": "file",
+    "size": 1,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.WAV",
+    "kind": "file",
+    "size": 1,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.txt",
+    "kind": "file",
+    "size": 1,
+    "cap": false,
+    "error": "Unsupported format: .txt. Supported: .aac, .caf, .flac, .m4a, .mp3, .mp4, .mpeg, .mpga, .oga, .ogg, .opus, .wav, .webm"
+  },
+  {
+    "name": "voice.txt",
+    "kind": "file",
+    "size": 1,
+    "cap": true,
+    "error": "Unsupported format: .txt. Supported: .aac, .caf, .flac, .m4a, .mp3, .mp4, .mpeg, .mpga, .oga, .ogg, .opus, .wav, .webm"
+  },
+  {
+    "name": ".wav",
+    "kind": "file",
+    "size": 1,
+    "cap": false,
+    "error": "Unsupported format: . Supported: .aac, .caf, .flac, .m4a, .mp3, .mp4, .mpeg, .mpga, .oga, .ogg, .opus, .wav, .webm"
+  },
+  {
+    "name": ".wav",
+    "kind": "file",
+    "size": 1,
+    "cap": true,
+    "error": "Unsupported format: . Supported: .aac, .caf, .flac, .m4a, .mp3, .mp4, .mpeg, .mpga, .oga, .ogg, .opus, .wav, .webm"
+  },
+  {
+    "name": "voice.",
+    "kind": "file",
+    "size": 1,
+    "cap": false,
+    "error": "Unsupported format: . Supported: .aac, .caf, .flac, .m4a, .mp3, .mp4, .mpeg, .mpga, .oga, .ogg, .opus, .wav, .webm"
+  },
+  {
+    "name": "voice.",
+    "kind": "file",
+    "size": 1,
+    "cap": true,
+    "error": "Unsupported format: . Supported: .aac, .caf, .flac, .m4a, .mp3, .mp4, .mpeg, .mpga, .oga, .ogg, .opus, .wav, .webm"
+  },
+  {
+    "name": "voice.wav",
+    "kind": "missing",
+    "size": 0,
+    "cap": false,
+    "error": "Audio file not found: ${ROOT}/voice.wav"
+  },
+  {
+    "name": "voice.wav",
+    "kind": "missing",
+    "size": 0,
+    "cap": true,
+    "error": "Audio file not found: ${ROOT}/voice.wav"
+  },
+  {
+    "name": "voice.wav",
+    "kind": "directory",
+    "size": 0,
+    "cap": false,
+    "error": "Path is not a file: ${ROOT}/voice.wav"
+  },
+  {
+    "name": "voice.wav",
+    "kind": "directory",
+    "size": 0,
+    "cap": true,
+    "error": "Path is not a file: ${ROOT}/voice.wav"
+  },
+  {
+    "name": "voice.wav",
+    "kind": "symlink",
+    "size": 0,
+    "cap": false,
+    "error": "Path is a symbolic link: ${ROOT}/voice.wav"
+  },
+  {
+    "name": "voice.wav",
+    "kind": "symlink",
+    "size": 0,
+    "cap": true,
+    "error": "Path is a symbolic link: ${ROOT}/voice.wav"
+  },
+  {
+    "name": "voice.wav",
+    "kind": "file",
+    "size": 26214400,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.wav",
+    "kind": "file",
+    "size": 26214400,
+    "cap": true,
+    "error": null
+  },
+  {
+    "name": "voice.wav",
+    "kind": "file",
+    "size": 26214401,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.wav",
+    "kind": "file",
+    "size": 26214401,
+    "cap": true,
+    "error": "File too large: 25.0MB (max 25MB)"
+  },
+  {
+    "name": "voice.wav",
+    "kind": "file",
+    "size": 27262976,
+    "cap": false,
+    "error": null
+  },
+  {
+    "name": "voice.wav",
+    "kind": "file",
+    "size": 27262976,
+    "cap": true,
+    "error": "File too large: 26.0MB (max 25MB)"
+  }
+]

@@ -842,6 +842,20 @@ fn addr_is_local(addr: std::net::IpAddr) -> bool {
     }
 }
 
+/// The narrower STT credential gate uses Python private/loopback semantics
+/// without model discovery's CGNAT and permissive-hostname additions.
+pub(crate) fn addr_is_private_or_loopback(addr: std::net::IpAddr) -> bool {
+    match addr {
+        std::net::IpAddr::V4(address) => {
+            ipv4_is_private_py(u32::from(address)) || address.is_loopback()
+        }
+        std::net::IpAddr::V6(address) => address
+            .to_ipv4_mapped()
+            .map(|mapped| ipv4_is_private_py(u32::from(mapped)))
+            .unwrap_or_else(|| ipv6_is_private_py(u128::from(address)) || address.is_loopback()),
+    }
+}
+
 /// `(addr & mask) == (net & mask)` for a `prefix`-bit IPv4 network.
 fn v4_in(addr: u32, net_octets: [u8; 4], prefix: u32) -> bool {
     let net = u32::from_be_bytes(net_octets);

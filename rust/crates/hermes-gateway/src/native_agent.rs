@@ -255,7 +255,15 @@ impl NativeAgentClient {
                 profile.name
             )));
         }
-        for (name, value) in &profile.default_headers {
+        self = self.with_extra_headers(&profile.default_headers)?;
+        self.provider_profile = Some(profile.clone());
+        Ok(self)
+    }
+
+    /// Apply route-specific headers after profile defaults. Error messages must
+    /// never expose values, since these headers can carry proxy credentials.
+    pub fn with_extra_headers(mut self, headers: &serde_json::Map<String, Value>) -> Result<Self> {
+        for (name, value) in headers {
             let name = reqwest::header::HeaderName::from_bytes(name.as_bytes())
                 .map_err(|_| Error::Other("invalid provider header name".into()))?;
             let value = value
@@ -264,7 +272,6 @@ impl NativeAgentClient {
                 .ok_or_else(|| Error::Other("invalid provider header value".into()))?;
             self.provider_headers.insert(name, value);
         }
-        self.provider_profile = Some(profile.clone());
         Ok(self)
     }
 
@@ -534,6 +541,7 @@ where
 
     let mut buf = Vec::new();
     let mut done = false;
+    let mut scrubber = crate::think_scrubber::ThinkScrubber::default();
     while let Some(chunk) = stream.next().await {
         let chunk = chunk.map_err(|e| Error::Other(format!("native agent stream: {e}")))?;
         buf.extend_from_slice(&chunk);
@@ -541,7 +549,10 @@ where
             let line: Vec<u8> = buf.drain(..=nl).collect();
             match parse_sse_line(&String::from_utf8_lossy(&line)) {
                 SseEvent::Delta(text) => {
-                    let _ = events.send(StreamEvent::MessageChunk { text }).await;
+                    let text = scrubber.feed(&text);
+                    if !text.is_empty() {
+                        let _ = events.send(StreamEvent::MessageChunk { text }).await;
+                    }
                 }
                 SseEvent::Done => {
                     done = true;
@@ -557,8 +568,16 @@ where
     // Handle any final buffered line if the stream ended without a newline.
     if !done {
         if let SseEvent::Delta(text) = parse_sse_line(&String::from_utf8_lossy(&buf)) {
-            let _ = events.send(StreamEvent::MessageChunk { text }).await;
+            let text = scrubber.feed(&text);
+            if !text.is_empty() {
+                let _ = events.send(StreamEvent::MessageChunk { text }).await;
+            }
         }
+    }
+
+    let text = scrubber.flush();
+    if !text.is_empty() {
+        let _ = events.send(StreamEvent::MessageChunk { text }).await;
     }
 
     let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
@@ -959,6 +978,66 @@ mod tests {
             requests[2]["messages"][2], *first,
             "later tool iterations must not rewrite earlier results"
         );
+    }
+
+    #[tokio::test]
+    async fn empty_post_tool_response_recovers_over_http() {
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+        let captures = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = captures.clone();
+        let app = Router::new().route("/chat/completions", post(move |Json(body): Json<Value>| {
+            let mut requests = captured.lock().unwrap();
+            requests.push(body);
+            let message = match requests.len() {
+                1 => json!({"role":"assistant","content":"Checking.","tool_calls":[{"id":"clock","type":"function","function":{"name":"current_time","arguments":"{}"}}]}),
+                2 => json!({"role":"assistant","content":null}),
+                _ => json!({"role":"assistant","content":"<THINK>private reasoning</THINK> Recovered answer. <tool_call>private protocol</tool_call>"}),
+            };
+            async move { Json(json!({"choices":[{"message":message}]})) }
+        }));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let client =
+            super::NativeAgentClient::new("model", "test", format!("http://{address}")).unwrap();
+        let tools: Vec<Arc<dyn crate::native_tools::Tool>> =
+            vec![Arc::new(crate::native_tools::CurrentTimeTool)];
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+        crate::native_tools::run_tool_loop(&client, &tools, &[], "request", &tx, 5)
+            .await
+            .unwrap();
+        drop(tx);
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+        assert_eq!(answer, "Recovered answer.");
+        let requests = captures.lock().unwrap();
+        assert_eq!(requests.len(), 3);
+        let prior = requests[1]["messages"].as_array().unwrap();
+        let retried = requests[2]["messages"].as_array().unwrap();
+        assert_eq!(&retried[..prior.len()], prior);
+        assert_eq!(
+            retried[prior.len()],
+            json!({"role":"assistant","content":"(empty)"})
+        );
+        assert_eq!(retried[prior.len() + 1]["role"], "user");
+        assert!(retried
+            .iter()
+            .all(|m| m.get("_empty_recovery_synthetic").is_none()));
+        assert_eq!(requests[1]["tools"], requests[2]["tools"]);
     }
 
     #[tokio::test]
@@ -1419,6 +1498,67 @@ mod tests {
                     "https://hermes-agent.nousresearch.com"
                 );
                 assert_eq!(headers["x-title"], "Hermes Agent");
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn streaming_reasoning_is_suppressed_across_sse_and_network_splits() {
+        use hermes_core::StreamEvent;
+        for (deltas, expected) in [
+            (
+                vec![
+                    "<th",
+                    "ink>",
+                    "private 猫",
+                    "</thi",
+                    "nk>",
+                    "你好🙂",
+                    "</think> ",
+                    "answer",
+                ],
+                "你好🙂answer",
+            ),
+            (vec!["<think>", "unfinished private text"], ""),
+            (vec!["answer ", "<"], "answer <"),
+        ] {
+            for done in [true, false] {
+                let mut wire = deltas
+                    .iter()
+                    .map(|text| {
+                        format!(
+                            "data: {}\n\n",
+                            serde_json::json!({"choices":[{"delta":{"content":text}}]})
+                        )
+                    })
+                    .collect::<String>();
+                if done {
+                    wire.push_str("data: [DONE]\n\n");
+                } else {
+                    wire = wire.trim_end().to_owned();
+                }
+                // One byte per network chunk also splits every multibyte
+                // character. The scrubber sees only decoded content deltas.
+                let chunks: Vec<std::result::Result<axum::body::Bytes, std::io::Error>> = wire
+                    .bytes()
+                    .map(|byte| Ok(axum::body::Bytes::from(vec![byte])))
+                    .collect();
+                let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+                super::forward_sse(futures_util::stream::iter(chunks), &tx)
+                    .await
+                    .unwrap();
+                drop(tx);
+                let mut visible = String::new();
+                let mut stops = 0;
+                while let Some(event) = rx.recv().await {
+                    match event {
+                        StreamEvent::MessageChunk { text } => visible.push_str(&text),
+                        StreamEvent::MessageStop { final_: true } => stops += 1,
+                        _ => {}
+                    }
+                }
+                assert_eq!(visible, expected);
+                assert_eq!(stops, 1);
             }
         }
     }

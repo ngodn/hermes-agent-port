@@ -1,0 +1,382 @@
+[
+  {
+    "bytes": "bnVsbA==",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/bnVsbA==",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "W10=",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/W10=",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "MQ==",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/MQ==",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "ImludmFsaWQi",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/ImludmFsaWQi",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "e30=",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/e30=",
+    "result": {
+      "version": 1,
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJwcm92aWRlcnMiOiB7fX0=",
+    "result": {
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJwcm92aWRlcnMiOiB7fX0=",
+    "result": {
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJjcmVkZW50aWFsX3Bvb2wiOiB7fX0=",
+    "result": {
+      "credential_pool": {},
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJjcmVkZW50aWFsX3Bvb2wiOiB7fX0=",
+    "result": {
+      "credential_pool": {},
+      "providers": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJwcm92aWRlcnMiOiBudWxsLCAiY3JlZGVudGlhbF9wb29sIjoge319",
+    "result": {
+      "providers": null,
+      "credential_pool": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJwcm92aWRlcnMiOiBudWxsLCAiY3JlZGVudGlhbF9wb29sIjoge319",
+    "result": {
+      "providers": null,
+      "credential_pool": {}
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJwcm92aWRlcnMiOiBbXSwgInN5c3RlbXMiOiB7Im5vdXNfcG9ydGFsIjoge319fQ==",
+    "result": {
+      "version": 1,
+      "providers": {
+        "nous": {}
+      },
+      "active_provider": "nous"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJwcm92aWRlcnMiOiBbXSwgInN5c3RlbXMiOiB7Im5vdXNfcG9ydGFsIjoge319fQ==",
+    "result": {
+      "version": 1,
+      "providers": {
+        "nous": {}
+      },
+      "active_provider": "nous"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJzeXN0ZW1zIjoge319",
+    "result": {
+      "version": 1,
+      "providers": {},
+      "active_provider": null
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJzeXN0ZW1zIjoge319",
+    "result": {
+      "version": 1,
+      "providers": {},
+      "active_provider": null
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJzeXN0ZW1zIjogeyJub3VzX3BvcnRhbCI6IG51bGx9fQ==",
+    "result": {
+      "version": 1,
+      "providers": {
+        "nous": null
+      },
+      "active_provider": "nous"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJzeXN0ZW1zIjogeyJub3VzX3BvcnRhbCI6IG51bGx9fQ==",
+    "result": {
+      "version": 1,
+      "providers": {
+        "nous": null
+      },
+      "active_provider": "nous"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJzeXN0ZW1zIjogeyJub3VzX3BvcnRhbCI6IHsicG9ydGFsX2Jhc2VfdXJsIjogImh0dHBzOi8vYXBpLm5vdXNyZXNlYXJjaC5jb20ifX19",
+    "result": {
+      "version": 1,
+      "providers": {
+        "nous": {
+          "portal_base_url": "https://api.nousresearch.com"
+        }
+      },
+      "active_provider": "nous"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJzeXN0ZW1zIjogeyJub3VzX3BvcnRhbCI6IHsicG9ydGFsX2Jhc2VfdXJsIjogImh0dHBzOi8vYXBpLm5vdXNyZXNlYXJjaC5jb20ifX19",
+    "result": {
+      "version": 1,
+      "providers": {
+        "nous": {
+          "portal_base_url": "https://api.nousresearch.com"
+        }
+      },
+      "active_provider": "nous"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogbnVsbH19LCAiZXh0cmEiOiAicmV0YWluZWQifQ==",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": null
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogbnVsbH19LCAiZXh0cmEiOiAicmV0YWluZWQifQ==",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": null
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogIiJ9fSwgImV4dHJhIjogInJldGFpbmVkIn0=",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": ""
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogIiJ9fSwgImV4dHJhIjogInJldGFpbmVkIn0=",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": ""
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogIiBodHRwczovL0FQSS5OT1VTUkVTRUFSQ0guQ09NL3BhdGggIn19LCAiZXh0cmEiOiAicmV0YWluZWQifQ==",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": "https://portal.nousresearch.com"
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogIiBodHRwczovL0FQSS5OT1VTUkVTRUFSQ0guQ09NL3BhdGggIn19LCAiZXh0cmEiOiAicmV0YWluZWQifQ==",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": "https://portal.nousresearch.com"
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogImh0dHBzOi8vcG9ydGFsLm5vdXNyZXNlYXJjaC5jb20ifX0sICJleHRyYSI6ICJyZXRhaW5lZCJ9",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": "https://portal.nousresearch.com"
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogImh0dHBzOi8vcG9ydGFsLm5vdXNyZXNlYXJjaC5jb20ifX0sICJleHRyYSI6ICJyZXRhaW5lZCJ9",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": "https://portal.nousresearch.com"
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogImh0dHA6Ly9leGFtcGxlLmNvbSJ9fSwgImV4dHJhIjogInJldGFpbmVkIn0=",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": "http://example.com"
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogImh0dHA6Ly9leGFtcGxlLmNvbSJ9fSwgImV4dHJhIjogInJldGFpbmVkIn0=",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": "http://example.com"
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogZmFsc2V9fSwgImV4dHJhIjogInJldGFpbmVkIn0=",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": false
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "77u/eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogZmFsc2V9fSwgImV4dHJhIjogInJldGFpbmVkIn0=",
+    "result": {
+      "version": 9,
+      "providers": {
+        "nous": {
+          "portal_base_url": false
+        }
+      },
+      "extra": "retained"
+    },
+    "error": false
+  },
+  {
+    "bytes": "eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogN319LCAiZXh0cmEiOiAicmV0YWluZWQifQ==",
+    "result": null,
+    "error": true
+  },
+  {
+    "bytes": "77u/eyJ2ZXJzaW9uIjogOSwgInByb3ZpZGVycyI6IHsibm91cyI6IHsicG9ydGFsX2Jhc2VfdXJsIjogN319LCAiZXh0cmEiOiAicmV0YWluZWQifQ==",
+    "result": null,
+    "error": true
+  }
+]

@@ -1,0 +1,250 @@
+{
+  "format": [
+    {
+      "seconds": -10,
+      "expected": "0:00"
+    },
+    {
+      "seconds": -0.5,
+      "expected": "0:00"
+    },
+    {
+      "seconds": 0,
+      "expected": "0:00"
+    },
+    {
+      "seconds": 0.49,
+      "expected": "0:00"
+    },
+    {
+      "seconds": 0.5,
+      "expected": "0:00"
+    },
+    {
+      "seconds": 0.51,
+      "expected": "0:01"
+    },
+    {
+      "seconds": 1.5,
+      "expected": "0:02"
+    },
+    {
+      "seconds": 2.5,
+      "expected": "0:02"
+    },
+    {
+      "seconds": 59.5,
+      "expected": "1:00"
+    },
+    {
+      "seconds": 60,
+      "expected": "1:00"
+    },
+    {
+      "seconds": 60.5,
+      "expected": "1:00"
+    },
+    {
+      "seconds": 3599.5,
+      "expected": "1:00:00"
+    },
+    {
+      "seconds": 3600,
+      "expected": "1:00:00"
+    },
+    {
+      "seconds": 3661,
+      "expected": "1:01:01"
+    },
+    {
+      "seconds": 36000,
+      "expected": "10:00:00"
+    },
+    {
+      "seconds": 999999.5,
+      "expected": "277:46:40"
+    }
+  ],
+  "wav": [
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQAAAAA=",
+      "seconds": 0.0,
+      "bits": 0
+    },
+    {
+      "wav": "UklGRiYAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQIAAAA=",
+      "seconds": 6.25e-05,
+      "bits": 4544240110407887356
+    },
+    {
+      "wav": "UklGRqQ+AABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YYA+AAA=",
+      "seconds": 0.5,
+      "bits": 4602678819172646912
+    },
+    {
+      "wav": "UklGRqS7AABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YYC7AAA=",
+      "seconds": 1.5,
+      "bits": 4609434218613702656
+    },
+    {
+      "wav": "UklGRiTJHQBXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQDJHQA=",
+      "seconds": 61.0,
+      "bits": 4633781804099174400
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAIARKwAAJgJBAAGABgAZGF0YQAAAAA=",
+      "seconds": 0.0,
+      "bits": 0
+    },
+    {
+      "wav": "UklGRioAAABXQVZFZm10IBAAAAABAAIARKwAAJgJBAAGABgAZGF0YQYAAAA=",
+      "seconds": 2.2675736961451248e-05,
+      "bits": 4537313921397289335
+    },
+    {
+      "wav": "UklGRqS7AABXQVZFZm10IBAAAAABAAIARKwAAJgJBAAGABgAZGF0YYC7AAA=",
+      "seconds": 0.18140589569160998,
+      "bits": 4595703856484451790
+    },
+    {
+      "wav": "UklGRqQyAgBXQVZFZm10IBAAAAABAAIARKwAAJgJBAAGABgAZGF0YYAyAgA=",
+      "seconds": 0.54421768707483,
+      "bits": 4603077096690713691
+    },
+    {
+      "wav": "UklGRiRbWQBXQVZFZm10IBAAAAABAAIARKwAAJgJBAAGABgAZGF0YQBbWQA=",
+      "seconds": 22.131519274376416,
+      "bits": 4626922686554455432
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAAAAAAAAAAAABAAgAZGF0YQAAAAA=",
+      "seconds": 0.0,
+      "bits": 0
+    },
+    {
+      "wav": "UklGRiUAAABXQVZFZm10IBAAAAABAAEAAAAAAAAAAAABAAgAZGF0YQEAAAA=",
+      "seconds": 1.0,
+      "bits": 4607182418800017408
+    },
+    {
+      "wav": "UklGRmQfAABXQVZFZm10IBAAAAABAAEAAAAAAAAAAAABAAgAZGF0YUAfAAA=",
+      "seconds": 8000.0,
+      "bits": 4665518107723300864
+    },
+    {
+      "wav": "UklGRuRdAABXQVZFZm10IBAAAAABAAEAAAAAAAAAAAABAAgAZGF0YcBdAAA=",
+      "seconds": 24000.0,
+      "bits": 4672326283722489856
+    },
+    {
+      "wav": "UklGRqTkDgBXQVZFZm10IBAAAAABAAEAAAAAAAAAAAABAAgAZGF0YYDkDgA=",
+      "seconds": 976000.0,
+      "bits": 4696630988254478336
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAAAgD4AAAAAAAAAABAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAAAgD4AAAAAAAAAABAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAAAgD4AAAAAAAAAABAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAAAgD4AAAAAAAAAABAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAAAgD4AAAAAAAAAABAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAAAAAAAAAAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAAAAAAAAAAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAAAAAAAAAAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAAAAAAAAAAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAAAAAAAAAAAZGF0YQAAAAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACAAwAZGF0YQAAAAA=",
+      "seconds": 0.0,
+      "bits": 0
+    },
+    {
+      "wav": "UklGRiYAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACAAwAZGF0YQIAAAA=",
+      "seconds": 6.25e-05,
+      "bits": 4544240110407887356
+    },
+    {
+      "wav": "UklGRqQ+AABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACAAwAZGF0YYA+AAA=",
+      "seconds": 0.5,
+      "bits": 4602678819172646912
+    },
+    {
+      "wav": "UklGRqS7AABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACAAwAZGF0YYC7AAA=",
+      "seconds": 1.5,
+      "bits": 4609434218613702656
+    },
+    {
+      "wav": "UklGRiTJHQBXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACAAwAZGF0YQDJHQA=",
+      "seconds": 61.0,
+      "bits": 4633781804099174400
+    },
+    {
+      "wav": "Z2FyYmFnZQ==",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRhAAAABXQVZFZGF0YQQAAAAwMDAw",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRjIAAABXQVZFSlVOSwEAAAB4AGZtdCAQAAAAAQABAIA+AAAAfQAAAgAQAGRhdGEEAAAAMDAwMA==",
+      "seconds": 0.000125,
+      "bits": 4548743710035257852
+    },
+    {
+      "wav": "UklGRhIAAABXQVZFZm10IAUAAAABAAEAgAA=",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRigAAABXQVZFZm10IBAAAAADAAEAgD4AAAB9AAACABAAZGF0YQQAAAAwMDAw",
+      "seconds": null,
+      "bits": null
+    },
+    {
+      "wav": "UklGRkAAAABXQVZFZm10ICgAAAD+/wEAgD4AAAB9AAACABAAFgAQAAAAAAABAAAAAAAQAIAAAKoAOJtxZGF0YQQAAAAwMDAw",
+      "seconds": 0.000125,
+      "bits": 4548743710035257852
+    }
+  ]
+}

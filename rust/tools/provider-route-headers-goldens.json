@@ -1,0 +1,1772 @@
+{
+  "routes": [
+    {
+      "url": "",
+      "result": ""
+    },
+    {
+      "url": "relative",
+      "result": "relative"
+    },
+    {
+      "url": " https://EXAMPLE.com/v1",
+      "result": " https://EXAMPLE.com/v1"
+    },
+    {
+      "url": "https://example.com/v1\n",
+      "result": "https://example.com/v1\n"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com",
+      "result": "http://example.com"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com/",
+      "result": "http://example.com"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com/v1/",
+      "result": "http://example.com/v1"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com/v1//",
+      "result": "http://example.com/v1/"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com/V1",
+      "result": "http://example.com/V1"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com/v1/?",
+      "result": "http://example.com/v1/?"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com/v1?x=1#fragment",
+      "result": "http://example.com/v1?x=1"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com/a/../b",
+      "result": "http://example.com/a/../b"
+    },
+    {
+      "url": "HTTP://EXAMPLE.com/%2F",
+      "result": "http://example.com/%2F"
+    },
+    {
+      "url": "HTTP://example.com:80",
+      "result": "http://example.com"
+    },
+    {
+      "url": "HTTP://example.com:80/",
+      "result": "http://example.com"
+    },
+    {
+      "url": "HTTP://example.com:80/v1/",
+      "result": "http://example.com/v1"
+    },
+    {
+      "url": "HTTP://example.com:80/v1//",
+      "result": "http://example.com/v1/"
+    },
+    {
+      "url": "HTTP://example.com:80/V1",
+      "result": "http://example.com/V1"
+    },
+    {
+      "url": "HTTP://example.com:80/v1/?",
+      "result": "http://example.com/v1/?"
+    },
+    {
+      "url": "HTTP://example.com:80/v1?x=1#fragment",
+      "result": "http://example.com/v1?x=1"
+    },
+    {
+      "url": "HTTP://example.com:80/a/../b",
+      "result": "http://example.com/a/../b"
+    },
+    {
+      "url": "HTTP://example.com:80/%2F",
+      "result": "http://example.com/%2F"
+    },
+    {
+      "url": "HTTP://example.com:443",
+      "result": "http://example.com:443"
+    },
+    {
+      "url": "HTTP://example.com:443/",
+      "result": "http://example.com:443"
+    },
+    {
+      "url": "HTTP://example.com:443/v1/",
+      "result": "http://example.com:443/v1"
+    },
+    {
+      "url": "HTTP://example.com:443/v1//",
+      "result": "http://example.com:443/v1/"
+    },
+    {
+      "url": "HTTP://example.com:443/V1",
+      "result": "http://example.com:443/V1"
+    },
+    {
+      "url": "HTTP://example.com:443/v1/?",
+      "result": "http://example.com:443/v1/?"
+    },
+    {
+      "url": "HTTP://example.com:443/v1?x=1#fragment",
+      "result": "http://example.com:443/v1?x=1"
+    },
+    {
+      "url": "HTTP://example.com:443/a/../b",
+      "result": "http://example.com:443/a/../b"
+    },
+    {
+      "url": "HTTP://example.com:443/%2F",
+      "result": "http://example.com:443/%2F"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443",
+      "result": "http://User:Pass@example.com:443"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443/",
+      "result": "http://User:Pass@example.com:443"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443/v1/",
+      "result": "http://User:Pass@example.com:443/v1"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443/v1//",
+      "result": "http://User:Pass@example.com:443/v1/"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443/V1",
+      "result": "http://User:Pass@example.com:443/V1"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443/v1/?",
+      "result": "http://User:Pass@example.com:443/v1/?"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443/v1?x=1#fragment",
+      "result": "http://User:Pass@example.com:443/v1?x=1"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443/a/../b",
+      "result": "http://User:Pass@example.com:443/a/../b"
+    },
+    {
+      "url": "HTTP://User:Pass@EXAMPLE.com:00443/%2F",
+      "result": "http://User:Pass@example.com:443/%2F"
+    },
+    {
+      "url": "HTTP://example.com:",
+      "result": "http://example.com"
+    },
+    {
+      "url": "HTTP://example.com:/",
+      "result": "http://example.com"
+    },
+    {
+      "url": "HTTP://example.com:/v1/",
+      "result": "http://example.com/v1"
+    },
+    {
+      "url": "HTTP://example.com:/v1//",
+      "result": "http://example.com/v1/"
+    },
+    {
+      "url": "HTTP://example.com:/V1",
+      "result": "http://example.com/V1"
+    },
+    {
+      "url": "HTTP://example.com:/v1/?",
+      "result": "http://example.com/v1/?"
+    },
+    {
+      "url": "HTTP://example.com:/v1?x=1#fragment",
+      "result": "http://example.com/v1?x=1"
+    },
+    {
+      "url": "HTTP://example.com:/a/../b",
+      "result": "http://example.com/a/../b"
+    },
+    {
+      "url": "HTTP://example.com:/%2F",
+      "result": "http://example.com/%2F"
+    },
+    {
+      "url": "HTTP://example.com:65536",
+      "result": "HTTP://example.com:65536"
+    },
+    {
+      "url": "HTTP://example.com:65536/",
+      "result": "HTTP://example.com:65536/"
+    },
+    {
+      "url": "HTTP://example.com:65536/v1/",
+      "result": "HTTP://example.com:65536/v1/"
+    },
+    {
+      "url": "HTTP://example.com:65536/v1//",
+      "result": "HTTP://example.com:65536/v1//"
+    },
+    {
+      "url": "HTTP://example.com:65536/V1",
+      "result": "HTTP://example.com:65536/V1"
+    },
+    {
+      "url": "HTTP://example.com:65536/v1/?",
+      "result": "HTTP://example.com:65536/v1/?"
+    },
+    {
+      "url": "HTTP://example.com:65536/v1?x=1#fragment",
+      "result": "HTTP://example.com:65536/v1?x=1#fragment"
+    },
+    {
+      "url": "HTTP://example.com:65536/a/../b",
+      "result": "HTTP://example.com:65536/a/../b"
+    },
+    {
+      "url": "HTTP://example.com:65536/%2F",
+      "result": "HTTP://example.com:65536/%2F"
+    },
+    {
+      "url": "HTTP://example.com:bad",
+      "result": "HTTP://example.com:bad"
+    },
+    {
+      "url": "HTTP://example.com:bad/",
+      "result": "HTTP://example.com:bad/"
+    },
+    {
+      "url": "HTTP://example.com:bad/v1/",
+      "result": "HTTP://example.com:bad/v1/"
+    },
+    {
+      "url": "HTTP://example.com:bad/v1//",
+      "result": "HTTP://example.com:bad/v1//"
+    },
+    {
+      "url": "HTTP://example.com:bad/V1",
+      "result": "HTTP://example.com:bad/V1"
+    },
+    {
+      "url": "HTTP://example.com:bad/v1/?",
+      "result": "HTTP://example.com:bad/v1/?"
+    },
+    {
+      "url": "HTTP://example.com:bad/v1?x=1#fragment",
+      "result": "HTTP://example.com:bad/v1?x=1#fragment"
+    },
+    {
+      "url": "HTTP://example.com:bad/a/../b",
+      "result": "HTTP://example.com:bad/a/../b"
+    },
+    {
+      "url": "HTTP://example.com:bad/%2F",
+      "result": "HTTP://example.com:bad/%2F"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]",
+      "result": "http://[2001:db8::1]"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]/",
+      "result": "http://[2001:db8::1]"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]/v1/",
+      "result": "http://[2001:db8::1]/v1"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]/v1//",
+      "result": "http://[2001:db8::1]/v1/"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]/V1",
+      "result": "http://[2001:db8::1]/V1"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]/v1/?",
+      "result": "http://[2001:db8::1]/v1/?"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]/v1?x=1#fragment",
+      "result": "http://[2001:db8::1]/v1?x=1"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]/a/../b",
+      "result": "http://[2001:db8::1]/a/../b"
+    },
+    {
+      "url": "HTTP://[2001:DB8::1]/%2F",
+      "result": "http://[2001:db8::1]/%2F"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443",
+      "result": "http://[fe80::1%ETH0]:443"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443/",
+      "result": "http://[fe80::1%ETH0]:443"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443/v1/",
+      "result": "http://[fe80::1%ETH0]:443/v1"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443/v1//",
+      "result": "http://[fe80::1%ETH0]:443/v1/"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443/V1",
+      "result": "http://[fe80::1%ETH0]:443/V1"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443/v1/?",
+      "result": "http://[fe80::1%ETH0]:443/v1/?"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443/v1?x=1#fragment",
+      "result": "http://[fe80::1%ETH0]:443/v1?x=1"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443/a/../b",
+      "result": "http://[fe80::1%ETH0]:443/a/../b"
+    },
+    {
+      "url": "HTTP://[fe80::1%ETH0]:443/%2F",
+      "result": "http://[fe80::1%ETH0]:443/%2F"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com",
+      "result": "http://\u00e9xample.com"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com/",
+      "result": "http://\u00e9xample.com"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com/v1/",
+      "result": "http://\u00e9xample.com/v1"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com/v1//",
+      "result": "http://\u00e9xample.com/v1/"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com/V1",
+      "result": "http://\u00e9xample.com/V1"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com/v1/?",
+      "result": "http://\u00e9xample.com/v1/?"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com/v1?x=1#fragment",
+      "result": "http://\u00e9xample.com/v1?x=1"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com/a/../b",
+      "result": "http://\u00e9xample.com/a/../b"
+    },
+    {
+      "url": "HTTP://\u00e9XAMPLE.com/%2F",
+      "result": "http://\u00e9xample.com/%2F"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443",
+      "result": "HTTP://example.com\uff1a443"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443/",
+      "result": "HTTP://example.com\uff1a443/"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443/v1/",
+      "result": "HTTP://example.com\uff1a443/v1/"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443/v1//",
+      "result": "HTTP://example.com\uff1a443/v1//"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443/V1",
+      "result": "HTTP://example.com\uff1a443/V1"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443/v1/?",
+      "result": "HTTP://example.com\uff1a443/v1/?"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443/v1?x=1#fragment",
+      "result": "HTTP://example.com\uff1a443/v1?x=1#fragment"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443/a/../b",
+      "result": "HTTP://example.com\uff1a443/a/../b"
+    },
+    {
+      "url": "HTTP://example.com\uff1a443/%2F",
+      "result": "HTTP://example.com\uff1a443/%2F"
+    },
+    {
+      "url": "https://EXAMPLE.com",
+      "result": "https://example.com"
+    },
+    {
+      "url": "https://EXAMPLE.com/",
+      "result": "https://example.com"
+    },
+    {
+      "url": "https://EXAMPLE.com/v1/",
+      "result": "https://example.com/v1"
+    },
+    {
+      "url": "https://EXAMPLE.com/v1//",
+      "result": "https://example.com/v1/"
+    },
+    {
+      "url": "https://EXAMPLE.com/V1",
+      "result": "https://example.com/V1"
+    },
+    {
+      "url": "https://EXAMPLE.com/v1/?",
+      "result": "https://example.com/v1/?"
+    },
+    {
+      "url": "https://EXAMPLE.com/v1?x=1#fragment",
+      "result": "https://example.com/v1?x=1"
+    },
+    {
+      "url": "https://EXAMPLE.com/a/../b",
+      "result": "https://example.com/a/../b"
+    },
+    {
+      "url": "https://EXAMPLE.com/%2F",
+      "result": "https://example.com/%2F"
+    },
+    {
+      "url": "https://example.com:80",
+      "result": "https://example.com:80"
+    },
+    {
+      "url": "https://example.com:80/",
+      "result": "https://example.com:80"
+    },
+    {
+      "url": "https://example.com:80/v1/",
+      "result": "https://example.com:80/v1"
+    },
+    {
+      "url": "https://example.com:80/v1//",
+      "result": "https://example.com:80/v1/"
+    },
+    {
+      "url": "https://example.com:80/V1",
+      "result": "https://example.com:80/V1"
+    },
+    {
+      "url": "https://example.com:80/v1/?",
+      "result": "https://example.com:80/v1/?"
+    },
+    {
+      "url": "https://example.com:80/v1?x=1#fragment",
+      "result": "https://example.com:80/v1?x=1"
+    },
+    {
+      "url": "https://example.com:80/a/../b",
+      "result": "https://example.com:80/a/../b"
+    },
+    {
+      "url": "https://example.com:80/%2F",
+      "result": "https://example.com:80/%2F"
+    },
+    {
+      "url": "https://example.com:443",
+      "result": "https://example.com"
+    },
+    {
+      "url": "https://example.com:443/",
+      "result": "https://example.com"
+    },
+    {
+      "url": "https://example.com:443/v1/",
+      "result": "https://example.com/v1"
+    },
+    {
+      "url": "https://example.com:443/v1//",
+      "result": "https://example.com/v1/"
+    },
+    {
+      "url": "https://example.com:443/V1",
+      "result": "https://example.com/V1"
+    },
+    {
+      "url": "https://example.com:443/v1/?",
+      "result": "https://example.com/v1/?"
+    },
+    {
+      "url": "https://example.com:443/v1?x=1#fragment",
+      "result": "https://example.com/v1?x=1"
+    },
+    {
+      "url": "https://example.com:443/a/../b",
+      "result": "https://example.com/a/../b"
+    },
+    {
+      "url": "https://example.com:443/%2F",
+      "result": "https://example.com/%2F"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443",
+      "result": "https://User:Pass@example.com"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443/",
+      "result": "https://User:Pass@example.com"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443/v1/",
+      "result": "https://User:Pass@example.com/v1"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443/v1//",
+      "result": "https://User:Pass@example.com/v1/"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443/V1",
+      "result": "https://User:Pass@example.com/V1"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443/v1/?",
+      "result": "https://User:Pass@example.com/v1/?"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443/v1?x=1#fragment",
+      "result": "https://User:Pass@example.com/v1?x=1"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443/a/../b",
+      "result": "https://User:Pass@example.com/a/../b"
+    },
+    {
+      "url": "https://User:Pass@EXAMPLE.com:00443/%2F",
+      "result": "https://User:Pass@example.com/%2F"
+    },
+    {
+      "url": "https://example.com:",
+      "result": "https://example.com"
+    },
+    {
+      "url": "https://example.com:/",
+      "result": "https://example.com"
+    },
+    {
+      "url": "https://example.com:/v1/",
+      "result": "https://example.com/v1"
+    },
+    {
+      "url": "https://example.com:/v1//",
+      "result": "https://example.com/v1/"
+    },
+    {
+      "url": "https://example.com:/V1",
+      "result": "https://example.com/V1"
+    },
+    {
+      "url": "https://example.com:/v1/?",
+      "result": "https://example.com/v1/?"
+    },
+    {
+      "url": "https://example.com:/v1?x=1#fragment",
+      "result": "https://example.com/v1?x=1"
+    },
+    {
+      "url": "https://example.com:/a/../b",
+      "result": "https://example.com/a/../b"
+    },
+    {
+      "url": "https://example.com:/%2F",
+      "result": "https://example.com/%2F"
+    },
+    {
+      "url": "https://example.com:65536",
+      "result": "https://example.com:65536"
+    },
+    {
+      "url": "https://example.com:65536/",
+      "result": "https://example.com:65536/"
+    },
+    {
+      "url": "https://example.com:65536/v1/",
+      "result": "https://example.com:65536/v1/"
+    },
+    {
+      "url": "https://example.com:65536/v1//",
+      "result": "https://example.com:65536/v1//"
+    },
+    {
+      "url": "https://example.com:65536/V1",
+      "result": "https://example.com:65536/V1"
+    },
+    {
+      "url": "https://example.com:65536/v1/?",
+      "result": "https://example.com:65536/v1/?"
+    },
+    {
+      "url": "https://example.com:65536/v1?x=1#fragment",
+      "result": "https://example.com:65536/v1?x=1#fragment"
+    },
+    {
+      "url": "https://example.com:65536/a/../b",
+      "result": "https://example.com:65536/a/../b"
+    },
+    {
+      "url": "https://example.com:65536/%2F",
+      "result": "https://example.com:65536/%2F"
+    },
+    {
+      "url": "https://example.com:bad",
+      "result": "https://example.com:bad"
+    },
+    {
+      "url": "https://example.com:bad/",
+      "result": "https://example.com:bad/"
+    },
+    {
+      "url": "https://example.com:bad/v1/",
+      "result": "https://example.com:bad/v1/"
+    },
+    {
+      "url": "https://example.com:bad/v1//",
+      "result": "https://example.com:bad/v1//"
+    },
+    {
+      "url": "https://example.com:bad/V1",
+      "result": "https://example.com:bad/V1"
+    },
+    {
+      "url": "https://example.com:bad/v1/?",
+      "result": "https://example.com:bad/v1/?"
+    },
+    {
+      "url": "https://example.com:bad/v1?x=1#fragment",
+      "result": "https://example.com:bad/v1?x=1#fragment"
+    },
+    {
+      "url": "https://example.com:bad/a/../b",
+      "result": "https://example.com:bad/a/../b"
+    },
+    {
+      "url": "https://example.com:bad/%2F",
+      "result": "https://example.com:bad/%2F"
+    },
+    {
+      "url": "https://[2001:DB8::1]",
+      "result": "https://[2001:db8::1]"
+    },
+    {
+      "url": "https://[2001:DB8::1]/",
+      "result": "https://[2001:db8::1]"
+    },
+    {
+      "url": "https://[2001:DB8::1]/v1/",
+      "result": "https://[2001:db8::1]/v1"
+    },
+    {
+      "url": "https://[2001:DB8::1]/v1//",
+      "result": "https://[2001:db8::1]/v1/"
+    },
+    {
+      "url": "https://[2001:DB8::1]/V1",
+      "result": "https://[2001:db8::1]/V1"
+    },
+    {
+      "url": "https://[2001:DB8::1]/v1/?",
+      "result": "https://[2001:db8::1]/v1/?"
+    },
+    {
+      "url": "https://[2001:DB8::1]/v1?x=1#fragment",
+      "result": "https://[2001:db8::1]/v1?x=1"
+    },
+    {
+      "url": "https://[2001:DB8::1]/a/../b",
+      "result": "https://[2001:db8::1]/a/../b"
+    },
+    {
+      "url": "https://[2001:DB8::1]/%2F",
+      "result": "https://[2001:db8::1]/%2F"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443",
+      "result": "https://[fe80::1%ETH0]"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443/",
+      "result": "https://[fe80::1%ETH0]"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443/v1/",
+      "result": "https://[fe80::1%ETH0]/v1"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443/v1//",
+      "result": "https://[fe80::1%ETH0]/v1/"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443/V1",
+      "result": "https://[fe80::1%ETH0]/V1"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443/v1/?",
+      "result": "https://[fe80::1%ETH0]/v1/?"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443/v1?x=1#fragment",
+      "result": "https://[fe80::1%ETH0]/v1?x=1"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443/a/../b",
+      "result": "https://[fe80::1%ETH0]/a/../b"
+    },
+    {
+      "url": "https://[fe80::1%ETH0]:443/%2F",
+      "result": "https://[fe80::1%ETH0]/%2F"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com",
+      "result": "https://\u00e9xample.com"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com/",
+      "result": "https://\u00e9xample.com"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com/v1/",
+      "result": "https://\u00e9xample.com/v1"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com/v1//",
+      "result": "https://\u00e9xample.com/v1/"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com/V1",
+      "result": "https://\u00e9xample.com/V1"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com/v1/?",
+      "result": "https://\u00e9xample.com/v1/?"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com/v1?x=1#fragment",
+      "result": "https://\u00e9xample.com/v1?x=1"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com/a/../b",
+      "result": "https://\u00e9xample.com/a/../b"
+    },
+    {
+      "url": "https://\u00e9XAMPLE.com/%2F",
+      "result": "https://\u00e9xample.com/%2F"
+    },
+    {
+      "url": "https://example.com\uff1a443",
+      "result": "https://example.com\uff1a443"
+    },
+    {
+      "url": "https://example.com\uff1a443/",
+      "result": "https://example.com\uff1a443/"
+    },
+    {
+      "url": "https://example.com\uff1a443/v1/",
+      "result": "https://example.com\uff1a443/v1/"
+    },
+    {
+      "url": "https://example.com\uff1a443/v1//",
+      "result": "https://example.com\uff1a443/v1//"
+    },
+    {
+      "url": "https://example.com\uff1a443/V1",
+      "result": "https://example.com\uff1a443/V1"
+    },
+    {
+      "url": "https://example.com\uff1a443/v1/?",
+      "result": "https://example.com\uff1a443/v1/?"
+    },
+    {
+      "url": "https://example.com\uff1a443/v1?x=1#fragment",
+      "result": "https://example.com\uff1a443/v1?x=1#fragment"
+    },
+    {
+      "url": "https://example.com\uff1a443/a/../b",
+      "result": "https://example.com\uff1a443/a/../b"
+    },
+    {
+      "url": "https://example.com\uff1a443/%2F",
+      "result": "https://example.com\uff1a443/%2F"
+    },
+    {
+      "url": "custom://EXAMPLE.com",
+      "result": "custom://example.com"
+    },
+    {
+      "url": "custom://EXAMPLE.com/",
+      "result": "custom://example.com"
+    },
+    {
+      "url": "custom://EXAMPLE.com/v1/",
+      "result": "custom://example.com/v1"
+    },
+    {
+      "url": "custom://EXAMPLE.com/v1//",
+      "result": "custom://example.com/v1/"
+    },
+    {
+      "url": "custom://EXAMPLE.com/V1",
+      "result": "custom://example.com/V1"
+    },
+    {
+      "url": "custom://EXAMPLE.com/v1/?",
+      "result": "custom://example.com/v1/?"
+    },
+    {
+      "url": "custom://EXAMPLE.com/v1?x=1#fragment",
+      "result": "custom://example.com/v1?x=1"
+    },
+    {
+      "url": "custom://EXAMPLE.com/a/../b",
+      "result": "custom://example.com/a/../b"
+    },
+    {
+      "url": "custom://EXAMPLE.com/%2F",
+      "result": "custom://example.com/%2F"
+    },
+    {
+      "url": "custom://example.com:80",
+      "result": "custom://example.com:80"
+    },
+    {
+      "url": "custom://example.com:80/",
+      "result": "custom://example.com:80"
+    },
+    {
+      "url": "custom://example.com:80/v1/",
+      "result": "custom://example.com:80/v1"
+    },
+    {
+      "url": "custom://example.com:80/v1//",
+      "result": "custom://example.com:80/v1/"
+    },
+    {
+      "url": "custom://example.com:80/V1",
+      "result": "custom://example.com:80/V1"
+    },
+    {
+      "url": "custom://example.com:80/v1/?",
+      "result": "custom://example.com:80/v1/?"
+    },
+    {
+      "url": "custom://example.com:80/v1?x=1#fragment",
+      "result": "custom://example.com:80/v1?x=1"
+    },
+    {
+      "url": "custom://example.com:80/a/../b",
+      "result": "custom://example.com:80/a/../b"
+    },
+    {
+      "url": "custom://example.com:80/%2F",
+      "result": "custom://example.com:80/%2F"
+    },
+    {
+      "url": "custom://example.com:443",
+      "result": "custom://example.com:443"
+    },
+    {
+      "url": "custom://example.com:443/",
+      "result": "custom://example.com:443"
+    },
+    {
+      "url": "custom://example.com:443/v1/",
+      "result": "custom://example.com:443/v1"
+    },
+    {
+      "url": "custom://example.com:443/v1//",
+      "result": "custom://example.com:443/v1/"
+    },
+    {
+      "url": "custom://example.com:443/V1",
+      "result": "custom://example.com:443/V1"
+    },
+    {
+      "url": "custom://example.com:443/v1/?",
+      "result": "custom://example.com:443/v1/?"
+    },
+    {
+      "url": "custom://example.com:443/v1?x=1#fragment",
+      "result": "custom://example.com:443/v1?x=1"
+    },
+    {
+      "url": "custom://example.com:443/a/../b",
+      "result": "custom://example.com:443/a/../b"
+    },
+    {
+      "url": "custom://example.com:443/%2F",
+      "result": "custom://example.com:443/%2F"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443",
+      "result": "custom://User:Pass@example.com:443"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443/",
+      "result": "custom://User:Pass@example.com:443"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443/v1/",
+      "result": "custom://User:Pass@example.com:443/v1"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443/v1//",
+      "result": "custom://User:Pass@example.com:443/v1/"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443/V1",
+      "result": "custom://User:Pass@example.com:443/V1"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443/v1/?",
+      "result": "custom://User:Pass@example.com:443/v1/?"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443/v1?x=1#fragment",
+      "result": "custom://User:Pass@example.com:443/v1?x=1"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443/a/../b",
+      "result": "custom://User:Pass@example.com:443/a/../b"
+    },
+    {
+      "url": "custom://User:Pass@EXAMPLE.com:00443/%2F",
+      "result": "custom://User:Pass@example.com:443/%2F"
+    },
+    {
+      "url": "custom://example.com:",
+      "result": "custom://example.com"
+    },
+    {
+      "url": "custom://example.com:/",
+      "result": "custom://example.com"
+    },
+    {
+      "url": "custom://example.com:/v1/",
+      "result": "custom://example.com/v1"
+    },
+    {
+      "url": "custom://example.com:/v1//",
+      "result": "custom://example.com/v1/"
+    },
+    {
+      "url": "custom://example.com:/V1",
+      "result": "custom://example.com/V1"
+    },
+    {
+      "url": "custom://example.com:/v1/?",
+      "result": "custom://example.com/v1/?"
+    },
+    {
+      "url": "custom://example.com:/v1?x=1#fragment",
+      "result": "custom://example.com/v1?x=1"
+    },
+    {
+      "url": "custom://example.com:/a/../b",
+      "result": "custom://example.com/a/../b"
+    },
+    {
+      "url": "custom://example.com:/%2F",
+      "result": "custom://example.com/%2F"
+    },
+    {
+      "url": "custom://example.com:65536",
+      "result": "custom://example.com:65536"
+    },
+    {
+      "url": "custom://example.com:65536/",
+      "result": "custom://example.com:65536/"
+    },
+    {
+      "url": "custom://example.com:65536/v1/",
+      "result": "custom://example.com:65536/v1/"
+    },
+    {
+      "url": "custom://example.com:65536/v1//",
+      "result": "custom://example.com:65536/v1//"
+    },
+    {
+      "url": "custom://example.com:65536/V1",
+      "result": "custom://example.com:65536/V1"
+    },
+    {
+      "url": "custom://example.com:65536/v1/?",
+      "result": "custom://example.com:65536/v1/?"
+    },
+    {
+      "url": "custom://example.com:65536/v1?x=1#fragment",
+      "result": "custom://example.com:65536/v1?x=1#fragment"
+    },
+    {
+      "url": "custom://example.com:65536/a/../b",
+      "result": "custom://example.com:65536/a/../b"
+    },
+    {
+      "url": "custom://example.com:65536/%2F",
+      "result": "custom://example.com:65536/%2F"
+    },
+    {
+      "url": "custom://example.com:bad",
+      "result": "custom://example.com:bad"
+    },
+    {
+      "url": "custom://example.com:bad/",
+      "result": "custom://example.com:bad/"
+    },
+    {
+      "url": "custom://example.com:bad/v1/",
+      "result": "custom://example.com:bad/v1/"
+    },
+    {
+      "url": "custom://example.com:bad/v1//",
+      "result": "custom://example.com:bad/v1//"
+    },
+    {
+      "url": "custom://example.com:bad/V1",
+      "result": "custom://example.com:bad/V1"
+    },
+    {
+      "url": "custom://example.com:bad/v1/?",
+      "result": "custom://example.com:bad/v1/?"
+    },
+    {
+      "url": "custom://example.com:bad/v1?x=1#fragment",
+      "result": "custom://example.com:bad/v1?x=1#fragment"
+    },
+    {
+      "url": "custom://example.com:bad/a/../b",
+      "result": "custom://example.com:bad/a/../b"
+    },
+    {
+      "url": "custom://example.com:bad/%2F",
+      "result": "custom://example.com:bad/%2F"
+    },
+    {
+      "url": "custom://[2001:DB8::1]",
+      "result": "custom://[2001:db8::1]"
+    },
+    {
+      "url": "custom://[2001:DB8::1]/",
+      "result": "custom://[2001:db8::1]"
+    },
+    {
+      "url": "custom://[2001:DB8::1]/v1/",
+      "result": "custom://[2001:db8::1]/v1"
+    },
+    {
+      "url": "custom://[2001:DB8::1]/v1//",
+      "result": "custom://[2001:db8::1]/v1/"
+    },
+    {
+      "url": "custom://[2001:DB8::1]/V1",
+      "result": "custom://[2001:db8::1]/V1"
+    },
+    {
+      "url": "custom://[2001:DB8::1]/v1/?",
+      "result": "custom://[2001:db8::1]/v1/?"
+    },
+    {
+      "url": "custom://[2001:DB8::1]/v1?x=1#fragment",
+      "result": "custom://[2001:db8::1]/v1?x=1"
+    },
+    {
+      "url": "custom://[2001:DB8::1]/a/../b",
+      "result": "custom://[2001:db8::1]/a/../b"
+    },
+    {
+      "url": "custom://[2001:DB8::1]/%2F",
+      "result": "custom://[2001:db8::1]/%2F"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443",
+      "result": "custom://[fe80::1%ETH0]:443"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443/",
+      "result": "custom://[fe80::1%ETH0]:443"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443/v1/",
+      "result": "custom://[fe80::1%ETH0]:443/v1"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443/v1//",
+      "result": "custom://[fe80::1%ETH0]:443/v1/"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443/V1",
+      "result": "custom://[fe80::1%ETH0]:443/V1"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443/v1/?",
+      "result": "custom://[fe80::1%ETH0]:443/v1/?"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443/v1?x=1#fragment",
+      "result": "custom://[fe80::1%ETH0]:443/v1?x=1"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443/a/../b",
+      "result": "custom://[fe80::1%ETH0]:443/a/../b"
+    },
+    {
+      "url": "custom://[fe80::1%ETH0]:443/%2F",
+      "result": "custom://[fe80::1%ETH0]:443/%2F"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com",
+      "result": "custom://\u00e9xample.com"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com/",
+      "result": "custom://\u00e9xample.com"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com/v1/",
+      "result": "custom://\u00e9xample.com/v1"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com/v1//",
+      "result": "custom://\u00e9xample.com/v1/"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com/V1",
+      "result": "custom://\u00e9xample.com/V1"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com/v1/?",
+      "result": "custom://\u00e9xample.com/v1/?"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com/v1?x=1#fragment",
+      "result": "custom://\u00e9xample.com/v1?x=1"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com/a/../b",
+      "result": "custom://\u00e9xample.com/a/../b"
+    },
+    {
+      "url": "custom://\u00e9XAMPLE.com/%2F",
+      "result": "custom://\u00e9xample.com/%2F"
+    },
+    {
+      "url": "custom://example.com\uff1a443",
+      "result": "custom://example.com\uff1a443"
+    },
+    {
+      "url": "custom://example.com\uff1a443/",
+      "result": "custom://example.com\uff1a443/"
+    },
+    {
+      "url": "custom://example.com\uff1a443/v1/",
+      "result": "custom://example.com\uff1a443/v1/"
+    },
+    {
+      "url": "custom://example.com\uff1a443/v1//",
+      "result": "custom://example.com\uff1a443/v1//"
+    },
+    {
+      "url": "custom://example.com\uff1a443/V1",
+      "result": "custom://example.com\uff1a443/V1"
+    },
+    {
+      "url": "custom://example.com\uff1a443/v1/?",
+      "result": "custom://example.com\uff1a443/v1/?"
+    },
+    {
+      "url": "custom://example.com\uff1a443/v1?x=1#fragment",
+      "result": "custom://example.com\uff1a443/v1?x=1#fragment"
+    },
+    {
+      "url": "custom://example.com\uff1a443/a/../b",
+      "result": "custom://example.com\uff1a443/a/../b"
+    },
+    {
+      "url": "custom://example.com\uff1a443/%2F",
+      "result": "custom://example.com\uff1a443/%2F"
+    }
+  ],
+  "headers": [
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://EXAMPLE.com:443/v1/",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://example.com/v1",
+      "result": {
+        "X-Fixture": "token-fixture",
+        "X-Bool": "False"
+      }
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://EXAMPLE.com:443/v1/",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://example.com/v1",
+      "result": {
+        "X-Fixture": "token-fixture",
+        "X-Bool": "False"
+      }
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/v1//",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://example.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/v1//",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://example.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/V1",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://example.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/V1",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://example.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/v1?",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://example.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/v1?",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://example.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://EXAMPLE.com:443/v1/",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://EXAMPLE.com:443/v1/",
+      "result": {
+        "X-Fixture": "token-fixture",
+        "X-Bool": "False"
+      }
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://EXAMPLE.com:443/v1/",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://EXAMPLE.com:443/v1/",
+      "result": {
+        "X-Fixture": "token-fixture",
+        "X-Bool": "False"
+      }
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/v1//",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://EXAMPLE.com:443/v1/",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/v1//",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://EXAMPLE.com:443/v1/",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/V1",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://EXAMPLE.com:443/v1/",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/V1",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://EXAMPLE.com:443/v1/",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/v1?",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://EXAMPLE.com:443/v1/",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/v1?",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://EXAMPLE.com:443/v1/",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://EXAMPLE.com:443/v1/",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://other.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://EXAMPLE.com:443/v1/",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://other.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/v1//",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://other.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/v1//",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://other.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/V1",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://other.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/V1",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://other.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/v1?",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://other.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/v1?",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://other.com/v1",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://EXAMPLE.com:443/v1/",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://example.com/v1?",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://EXAMPLE.com:443/v1/",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://example.com/v1?",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/v1//",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://example.com/v1?",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/v1//",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://example.com/v1?",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/V1",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://example.com/v1?",
+      "result": {}
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/V1",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://example.com/v1?",
+      "result": {}
+    },
+    {
+      "config": {
+        "custom_providers": [
+          {
+            "name": "lab",
+            "base_url": "https://example.com/v1?",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        ]
+      },
+      "url": "https://example.com/v1?",
+      "result": {
+        "X-Fixture": "token-fixture",
+        "X-Bool": "False"
+      }
+    },
+    {
+      "config": {
+        "providers": {
+          "lab": {
+            "name": "lab",
+            "base_url": "https://example.com/v1?",
+            "extra_headers": {
+              "X-Fixture": "token-fixture",
+              "X-Bool": false,
+              "Drop": null
+            }
+          }
+        }
+      },
+      "url": "https://example.com/v1?",
+      "result": {
+        "X-Fixture": "token-fixture",
+        "X-Bool": "False"
+      }
+    }
+  ]
+}

@@ -70,7 +70,7 @@ fn fill_random(buf: &mut [u8]) -> bool {
 }
 
 /// A random 32-hex id from 16 CSPRNG bytes (the shape of `uuid4().hex`).
-fn mint_id() -> Option<String> {
+pub(crate) fn mint_id() -> Option<String> {
     let mut bytes = [0u8; 16];
     if !fill_random(&mut bytes) {
         return None;

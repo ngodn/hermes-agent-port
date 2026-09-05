@@ -375,6 +375,18 @@ fn invalid_tool_name(name: &str, valid_names: &[String]) -> String {
 /// malformed calls as paired error results lets the model correct its request.
 const INVALID_TOOL_ARGUMENTS: &str = "{\"error\": \"Invalid tool arguments\", \"message\": \"Tool arguments must be a valid JSON object; tool was not executed.\"}";
 
+const EMPTY_TOOL_RESPONSE_NUDGE: &str = "You just executed tool calls but returned an empty response. Please process the tool results above and continue with the task.";
+
+/// Inline thinking uses its own recovery path in Python. Do not spend the
+/// post-tool nudge on those responses, even when their visible text is empty.
+fn has_inline_thinking(text: &str) -> bool {
+    static PATTERN: std::sync::LazyLock<fancy_regex::Regex> = std::sync::LazyLock::new(|| {
+        fancy_regex::Regex::new(r"(?i)<th[iİı]nk>|<th[iİı]nk[iİı]ng>|<reason[iİı]ng>")
+            .expect("fixed inline thinking pattern")
+    });
+    PATTERN.is_match(text).unwrap_or(false)
+}
+
 /// Run the tool loop for one user message with structured content, streaming the outcome as events.
 /// `history` seeds the message list with prior turns (user/assistant/system).
 pub async fn run_tool_loop_with_content(
@@ -396,9 +408,37 @@ pub async fn run_tool_loop_with_content(
     let mut tool_index = 0_i64;
     let mut invalid_name_retries = 0;
     let mut invalid_json_retries = 0;
+    // A model can finish its answer while saving memory in the same batch.
+    // Keep that answer only until substantive work makes it stale.
+    let mut housekeeping_answer: Option<String> = None;
+    let mut post_tool_empty_retried = false;
     for _ in 0..max_iters {
         match model.step(&messages, &tool_specs).await? {
             Step::Final(text) => {
+                let visible_answer = crate::visible_response::answer(&text);
+                if visible_answer.is_none()
+                    && housekeeping_answer.is_none()
+                    && !post_tool_empty_retried
+                    && !has_inline_thinking(&text)
+                    && messages
+                        .iter()
+                        .rev()
+                        .take(5)
+                        .any(|message| message["role"] == "tool")
+                {
+                    post_tool_empty_retried = true;
+                    // Preserve the tool-result prefix and role order. These
+                    // private retry messages never enter persisted history.
+                    messages.push(json!({"role":"assistant", "content":"(empty)", "_empty_recovery_synthetic":true}));
+                    messages.push(json!({"role":"user", "content":EMPTY_TOOL_RESPONSE_NUDGE, "_empty_recovery_synthetic":true}));
+                    continue;
+                }
+                // Final delivery uses the same visible-text projection as
+                // Python. Never emit reasoning or protocol-only content when
+                // the remaining empty-response recovery paths are exhausted.
+                let text = visible_answer
+                    .or_else(|| housekeeping_answer.take())
+                    .unwrap_or_default();
                 if !text.is_empty() {
                     let _ = events.send(StreamEvent::MessageChunk { text }).await;
                 }
@@ -506,6 +546,23 @@ pub async fn run_tool_loop_with_content(
                         .is_some_and(is_tool_marker)
                 {
                     assistant_message["content"] = json!("");
+                }
+                if calls.iter().any(|call| valid_names.contains(&call.name)) {
+                    post_tool_empty_retried = false;
+                    let all_housekeeping = calls.iter().all(|call| {
+                        matches!(
+                            call.name.as_str(),
+                            "memory" | "todo_list" | "skill_manage" | "session_search"
+                        )
+                    });
+                    if !all_housekeeping {
+                        housekeeping_answer = None;
+                    } else if let Some(answer) = assistant_message["content"]
+                        .as_str()
+                        .and_then(crate::visible_response::answer)
+                    {
+                        housekeeping_answer = Some(answer);
+                    }
                 }
                 messages.push(assistant_message);
                 for call in calls {
@@ -682,6 +739,215 @@ mod tests {
     use super::*;
     use hermes_core::Error;
     use std::sync::Mutex;
+
+    #[tokio::test]
+    async fn final_delivery_matches_python_visible_response_cases() {
+        let rows: Value =
+            serde_json::from_str(include_str!("../../../tools/visible-response-goldens.json"))
+                .unwrap();
+        for row in rows.as_array().unwrap() {
+            let model = RecordingModel {
+                steps: Mutex::new(vec![Step::Final(row["input"].as_str().unwrap().into())].into()),
+                recorded_messages: Mutex::new(Vec::new()),
+            };
+            let (tx, rx) = mpsc::channel(4);
+            run_tool_loop(&model, &[], &[], "request", &tx, 3)
+                .await
+                .unwrap();
+            let emitted = collect(rx);
+            let answer: String = emitted
+                .iter()
+                .filter_map(|event| match event {
+                    StreamEvent::MessageChunk { text } => Some(text.as_str()),
+                    _ => None,
+                })
+                .collect();
+            assert_eq!(
+                answer,
+                row["expected"]
+                    .as_str()
+                    .unwrap()
+                    .trim_matches(crate::python_value::python_whitespace),
+                "{row}"
+            );
+            assert!(matches!(
+                emitted.last(),
+                Some(StreamEvent::MessageStop { final_: true })
+            ));
+            assert_eq!(model.recorded_messages.lock().unwrap().len(), 1);
+        }
+    }
+
+    #[tokio::test]
+    async fn post_tool_nudge_is_bounded_and_resets_after_new_tool_work() {
+        let call = || {
+            tool_step(vec![ToolCall {
+                id: "clock".into(),
+                name: "current_time".into(),
+                arguments: json!({}),
+            }])
+        };
+        for (steps, expected_requests, expected_nudges) in [
+            (vec![Step::Final(String::new())], 1, 0),
+            (
+                vec![call(), Step::Final("<think>private</think>".into())],
+                2,
+                0,
+            ),
+            (
+                vec![
+                    call(),
+                    Step::Final(String::new()),
+                    Step::Final(String::new()),
+                ],
+                3,
+                1,
+            ),
+            (
+                vec![
+                    call(),
+                    Step::Final(String::new()),
+                    call(),
+                    Step::Final(String::new()),
+                    Step::Final("Done.".into()),
+                ],
+                5,
+                2,
+            ),
+        ] {
+            let model = RecordingModel {
+                steps: Mutex::new(steps.into()),
+                recorded_messages: Mutex::new(Vec::new()),
+            };
+            let (tx, rx) = mpsc::channel(64);
+            run_tool_loop(&model, &[Arc::new(CurrentTimeTool)], &[], "work", &tx, 8)
+                .await
+                .unwrap();
+            let emitted = collect(rx);
+            assert_eq!(
+                emitted
+                    .iter()
+                    .filter(|event| matches!(event, StreamEvent::MessageStop { .. }))
+                    .count(),
+                1
+            );
+            let requests = model.recorded_messages.lock().unwrap();
+            assert_eq!(requests.len(), expected_requests);
+            let last = requests.last().unwrap();
+            assert_eq!(
+                last.iter()
+                    .filter(|m| m["content"] == EMPTY_TOOL_RESPONSE_NUDGE)
+                    .count(),
+                expected_nudges
+            );
+            for (index, message) in last.iter().enumerate() {
+                if message["content"] == EMPTY_TOOL_RESPONSE_NUDGE {
+                    assert_eq!(message["role"], "user");
+                    assert_eq!(last[index - 1]["role"], "assistant");
+                    assert_eq!(last[index - 1]["content"], "(empty)");
+                    assert_eq!(last[index - 2]["role"], "tool");
+                    assert_eq!(message["_empty_recovery_synthetic"], true);
+                }
+            }
+            // Every retry extends the already-sent prefix byte for byte.
+            for pair in requests.windows(2) {
+                assert_eq!(&pair[1][..pair[0].len()], pair[0]);
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn housekeeping_answer_recovery_preserves_replay_and_invalidates_stale_text() {
+        struct NamedTool(&'static str);
+        impl Tool for NamedTool {
+            fn spec(&self) -> ToolSpec {
+                ToolSpec {
+                    name: self.0.into(),
+                    description: "fixture".into(),
+                    parameters: json!({"type":"object"}),
+                }
+            }
+            fn call(&self, _: &Value) -> Result<String> {
+                Ok("saved".into())
+            }
+        }
+        // Empty housekeeping rounds retain the last answer, but substantive
+        // work must never return narration from an older housekeeping round.
+        for (rounds, final_text, expected) in [
+            (
+                vec![("memory", "<THINK>private</THINK> Done.")],
+                "",
+                "Done.",
+            ),
+            (
+                vec![("memory", "Done."), ("todo_list", "")],
+                "<thought>private</thought>",
+                "Done.",
+            ),
+            (
+                vec![("memory", "Old."), ("skill_manage", "New.")],
+                "",
+                "New.",
+            ),
+            (vec![("memory", "Old."), ("current_time", "")], "", ""),
+            (vec![("current_time", "Checking the time.")], "", ""),
+            (vec![("memory", "[memory]")], "", ""),
+            (vec![("memory", "<think>private")], "", ""),
+            (vec![("session_search", "Earlier.")], "Final.", "Final."),
+        ] {
+            let mut steps: Vec<Step> = rounds.iter().enumerate().map(|(index, (name, content))| {
+                parse_message_step(&json!({"role":"assistant", "content":content,
+                    "tool_calls":[{"id":format!("c{index}"),"function":{"name":name,"arguments":"{}"}}]}))
+            }).collect();
+            steps.push(Step::Final(final_text.into()));
+            let model = RecordingModel {
+                steps: Mutex::new(steps.into()),
+                recorded_messages: Mutex::new(Vec::new()),
+            };
+            let tools: Vec<Arc<dyn Tool>> = [
+                "memory",
+                "todo_list",
+                "skill_manage",
+                "session_search",
+                "current_time",
+            ]
+            .into_iter()
+            .map(|name| Arc::new(NamedTool(name)) as Arc<dyn Tool>)
+            .collect();
+            let (tx, rx) = mpsc::channel(64);
+            run_tool_loop(&model, &tools, &[], "work", &tx, 8)
+                .await
+                .unwrap();
+            let emitted = collect(rx);
+            let answer: String = emitted
+                .iter()
+                .filter_map(|event| match event {
+                    StreamEvent::MessageChunk { text } => Some(text.as_str()),
+                    _ => None,
+                })
+                .collect();
+            assert_eq!(answer, expected, "{rounds:?}");
+            assert!(matches!(
+                emitted.last(),
+                Some(StreamEvent::MessageStop { final_: true })
+            ));
+            let requests = model.recorded_messages.lock().unwrap();
+            let nudged = expected.is_empty() && !has_inline_thinking(final_text);
+            assert_eq!(requests.len(), rounds.len() + 1 + usize::from(nudged));
+            // Recovery emits a final answer without replacing the assistant's
+            // original tool-associated text or introducing a synthetic user.
+            let replay = &requests[rounds.len()];
+            assert_eq!(replay.iter().filter(|m| m["role"] == "user").count(), 1);
+            assert_eq!(
+                replay[1]["content"],
+                if is_tool_marker(rounds[0].1) {
+                    ""
+                } else {
+                    rounds[0].1
+                }
+            );
+        }
+    }
 
     #[tokio::test]
     async fn tool_marker_cleanup_matches_python_and_replay() {

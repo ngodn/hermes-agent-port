@@ -26,6 +26,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [progress-audit-2026-09-06.md](progress-audit-2026-09-06.md) | Full-port estimate with phase weights, current runtime evidence and remaining scope |
+| [stt-credential-resolution-plan.md](stt-credential-resolution-plan.md) | Strict selection gates, scoped credential dependencies and 100 source resolver cases |
+| [auth-store-verification.md](auth-store-verification.md) | Auth-store reads, legacy normalization and per-provider profile/root shadowing; pool selection remains |
+| [transcription-http-verification.md](transcription-http-verification.md) | Native multipart STT transport and gateway enrichment integration |
 | [tool-text-verification.md](tool-text-verification.md) | Tool-associated assistant text cleanup and remaining fallback scope |
 | [tool-name-repair-verification.md](tool-name-repair-verification.md) | Tool-name normalization and fuzzy recovery in native requests |
 | [tool-argument-verification.md](tool-argument-verification.md) | Argument rejection before native tool invocation |

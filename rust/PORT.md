@@ -1,11 +1,137 @@
 # Hermes Rust rewrite
 
-## Current handoff: 2026-09-05, Codex takeover
+## Takeover handoff: 2026-09-06, paused at the user's request
+
+The user requested a wrap-up so another agent can continue before Codex reaches
+its weekly quota. The full port is unfinished. Resume from the current working
+tree, including untracked sources, generators and fixtures. Do not reset it.
+
+**Overall estimate: about 28%, roughly 25-35%.** This is a subjective estimate of
+full native replacement, not a percentage of files, tests or lines translated.
+
+| Phase | Scope weight | Rough completion |
+| --- | ---: | ---: |
+| Gateway | 35% | 45% |
+| Tool runtime / RPC | 30% | 5% |
+| State / search | 15% | 35% |
+| Native agent core | 20% | 25% |
+
+Weighted result: 27.5%, rounded to 28%. Recent credential, transcription and
+request-policy work advances core foundations; much still needs runtime wiring.
+The earlier audit estimated core at 20% and overall at 27%. This adjustment is
+judgment, not a measured productivity gain. Do not inflate progress from the
+large differential fixture corpus. See the [scope audit](analysis/progress-audit-2026-09-06.md).
+
+### Exact checkpoint
+
+- Branch: `rust-rewrite`. Latest commit: `75aad17d8e` (after `55633f2f76` and
+  `2a48a28cfb`). Those were the previous commit/push checkpoint. Later work,
+  including this handoff, is uncommitted. No new commit or push was made during
+  wrap-up. Inspect `git status --short`, including `??` files, before staging.
+- Final validation: **1,238 workspace tests passed, two ignored by default**
+  (one passing core test and 1,237 passing gateway tests). Clippy with warnings
+  denied passed. The ignored tests are the Python bridge and optional FFmpeg
+  integration; the FFmpeg integration passed earlier, not rerun for this header
+  change. Logs: `/tmp/hermes-handoff-workspace.log` and
+  `/tmp/hermes-handoff-clippy.log`. Temporary logs are not durable evidence.
+- Latest completed slice: `custom_provider_config.rs` normalizes saved providers,
+  resolves named entries, and selects custom headers by the effective URL.
+  `main.rs` consumes request-body overrides, provider output limits and headers;
+  `native_agent.rs` applies headers to streaming and tool requests.
+- Latest source comparisons: 297 compatibility cases, 221 named-provider cases,
+  301 route identities and 32 header selections. Real HTTP tests cover matching
+  headers (four cases), endpoint-override isolation (two), and output limits
+  (twelve). Fixtures come from `gen_custom_provider_config_goldens.py`.
+- Other substantial uncommitted work includes streaming/final-text cleanup,
+  native transcription HTTP/audio processing, scoped secret selection, auth-store
+  reads, credential entry/persistence rules, source seeding and cooldowns. Read
+  [auth verification](analysis/auth-store-verification.md),
+  [STT plan](analysis/stt-credential-resolution-plan.md), and
+  [transcription verification](analysis/transcription-http-verification.md).
+
+### What the next agent should do
+
+1. Read this handoff, the analysis index and relevant verification documents,
+   then inspect current code and commits. Older sections below contain historic
+   qualifications; current code and this checkpoint take precedence.
+2. Continue full named-provider runtime resolution in
+   `hermes_cli/runtime_provider.py::_resolve_named_custom_runtime`: endpoint and
+   explicit model/key precedence, complete auth-provider canonicalization,
+   credential pool selection, command-issued tokens and API transport handling.
+   The named getter is ported; it is not the complete runtime resolver. Native
+   HTTP tests currently supply an explicit endpoint and key. Only native
+   Chat Completions is implemented; other transports remain work.
+3. Finish credential pool construction around the existing entry/source helpers:
+   singleton OAuth sources, provider-specific endpoint hooks, availability and
+   current-key selection, refresh, locking and persistence. Do not replace this
+   with "take the first stored key". Then construct real STT credentials from
+   the profile and connect transcription/vision to the gateway runner.
+4. Integrate rich inbound media, pending messages, session/image routing and
+   live capability resolution into Dispatcher and platform adapters. Tested
+   helpers with injected effects are not a completed gateway pipeline.
+5. Follow the full phase plan: remaining gateways/platforms and commands, native
+   terminal/file/browser tools, discovery/MCP/plugins/RPC, state parity, then
+   remaining prompt/memory/skills/compression/provider/delegation core work.
+   Startup still registers only `CurrentTimeTool`; the three live messaging
+   adapters are Telegram, Discord and Slack. Frontends remain TypeScript.
+
+### Working rules and method
+
+- Preserve the Python reference. Port its actual behavior, including coercion,
+  precedence, side effects and failure paths. Read source and relevant commit
+  intent before changing a contract. When context is missing, search transcripts
+  under `~/.claude/projects/-home-eins0fx-development-hermes-agent-port` selectively.
+- Keep cohesive Rust modules and useful comments explaining the contract or
+  non-obvious behavior. Tests stay inline in `#[cfg(test)] mod tests`; do not
+  create sibling `*_parity.rs` or `*_test.rs` files. Fixtures and Python generators
+  belong in `rust/tools/`. No em dashes or stock AI prose in comments/docs.
+- Generate differential cases by executing actual Python source functions or
+  extracted AST bodies. Stub only explicit I/O dependencies and record call
+  order when it matters. Do not rewrite the Python algorithm as the oracle or
+  weaken a failing case to make Rust pass. State malformed-input limitations.
+- Follow pure comparisons with actual consumers: temporary profile files,
+  SQLite or local HTTP servers as applicable. Check requests, execution effects
+  and user-visible results. A helper existing or compiling is not integration.
+- Protect byte-stable conversation prefixes, tool schemas and replay history.
+  Apply wire-only cleanup to fresh copies. Do not introduce mid-turn system
+  prompt changes or use synthetic messages outside the reference's rules.
+- Use synthetic credentials and temporary `HERMES_HOME`. Never read or print
+  real secrets for fixtures. Preserve scoped-secret boundaries and borrowed-key
+  sanitization. Use the transaction skill for new locking/transaction work.
+- Current Rust: stable 1.95.0, edition 2021. Oracle: mise Python 3.12.13. Query
+  installed managers again when resuming; do not assume the shell Python version.
+- Helpers: user requested Claude Opus 4.8 medium and Gemini 3.8 Flash high via
+  `rust/tools/claude.sh` and `rust/tools/agy.sh`. Both wrappers retain explicitly
+  authorized permission bypass. Preserve AGY's flock, assign bounded file
+  ownership, inspect helper output independently, and do not silently substitute
+  models. The coordinating agent owns integration and Cargo validation. See
+  [helper instructions](tools/README.md). Recheck quota availability if needed.
+- Keep build artifacts, raw helper transcripts and local logs ignored. Keep
+  Rust sources, synthetic fixtures, generators, task prompts and Markdown
+  evidence. Do not use broad ignore patterns that hide port work.
+- Run focused tests while iterating, then workspace tests, Clippy and formatting
+  at an integration checkpoint. Avoid concurrent Cargo builds. Tests that mutate
+  process environment must share `secret_scope::GLOBAL_TEST_LOCK` and restore it.
+  If that lock is poisoned, fix the first failing test rather than its cascade.
+
+```bash
+mise exec python@3.12.13 -- python rust/tools/gen_custom_provider_config_goldens.py --check
+cargo test --manifest-path rust/Cargo.toml --workspace
+cargo clippy --manifest-path rust/Cargo.toml --workspace --all-targets -- -D warnings
+cargo fmt --manifest-path rust/Cargo.toml --all -- --check
+git diff --check
+```
+
+## Detailed implementation inventory
 
 Read [the analysis index](analysis/INDEX.md) first when resuming. Codex owns
 integration and validation, with Claude Opus 4.8 (medium) and Gemini 3.8 Flash
 (high) as CLI helpers. Both wrappers use the user's requested permission bypass.
 Usage and reference-app findings are in [tools/README.md](tools/README.md).
+
+Current full-port scope estimate: **about 28%**, based on the handoff above and
+[runtime and scope audit](analysis/progress-audit-2026-09-06.md). This is a weighted
+engineering estimate, not test or module coverage.
 
 Commit history confirms two separate levels of completion:
 
@@ -23,6 +149,24 @@ Commit history confirms two separate levels of completion:
 | Native-image buffer consumption | Atomic take, scoped to one session | `session_registry.rs`, simultaneous-consumer and cross-session tests |
 | Sandbox cache-path mapping | Ported, including staging creation and legacy layout selection | `cache_paths.rs`, 224 mappings generated with real Python imports |
 | Sender and reply context | Ported, preserving prompt placement and shared-session policy | `inbound_text_context.rs`, 144 context cases and 30 metadata-normalization cases |
+| Native audio duration | WAV/Opus probing and formatted duration notes wired into HTTP-backed enrichment, with bounded ffprobe fallback | 16 Python formats, 36 WAV headers, 43 Mutagen files and enrichment/probe integration; [verification](analysis/transcription-http-verification.md) |
+| Audio upload validation | File-kind, supported-format and size validation wired before native STT upload | 46 Python filesystem cases and HTTP no-upload checks; [verification](analysis/transcription-http-verification.md) |
+| Raw tool-provider selection | Saved provider intent parsed without schema defaults and consumed by STT credential resolution | 216 Python cases and real config-file checks; [resolution plan](analysis/stt-credential-resolution-plan.md) |
+| STT credential selection | Lazy direct/managed selection and strict endpoint locality connected to HTTP client construction; live credential sources remain | 100 selection cases, 257 locality cases and four HTTP uploads; [resolution plan](analysis/stt-credential-resolution-plan.md) |
+| Voice-provider secret lookup | Config/scope/file precedence and plain/custom pool lookup policy connected to STT; pool storage and managed account effects remain | 576 Python cases and real scope/file/consumer checks; [resolution plan](analysis/stt-credential-resolution-plan.md) |
+| Auth-store and pool reads | File loading, legacy normalization and profile/root shadowing ported; pool hydration, selection and runtime consumption remain | 324 pool cases, 38 file cases and corruption/I/O checks; [verification](analysis/auth-store-verification.md) |
+| Credential cooldown policies | Billing/sole-key TTLs, reset deadlines and retry-message normalization ported; pool availability integration remains | 609 Python cases; [verification](analysis/auth-store-verification.md) |
+| Shared ISO timestamp parsing | Compact/calendar/week dates, arbitrary separators, fractional times/offsets consumed by gateway and credential deadline parsing | 1,572 CPython cases; local DST fold/gap handling remains; [verification](analysis/auth-store-verification.md) |
+| Credential entry model and disk boundary | Stored entries decode into runtime values and serialize with borrowed secrets removed; live-source rehydration and pool selection remain | 698 dataclass cases, 159 sanitizer cases and real store/cooldown checks; [verification](analysis/auth-store-verification.md) |
+| Credential source updates | Fingerprint-aware rehydration, token rotation, duplicate-source removal and disk-change detection implemented; source discovery and pool loader remain | 220 Python update cases and serialized-reference reload checks; [verification](analysis/auth-store-verification.md) |
+| Credential source maintenance | Stale-source pruning and Anthropic priority normalization implemented; discovery and pool availability integration remain | 380 Python cases and store/reload pruning checks; [verification](analysis/auth-store-verification.md) |
+| Credential environment discovery | Profile-file/scope reads, suppression gates, provider source order and upsert connected; full pool loader remains | 112 seeding cases, 47 helper cases and real profile/reload checks; [verification](analysis/auth-store-verification.md) |
+| Custom credential sources | Name/slug/legacy alias matching and custom/model-config seeding implemented; merged config normalization and pool loader remain | 78 Python cases and YAML-to-runtime-entry checks; [verification](analysis/auth-store-verification.md) |
+| Merged custom-provider configuration | Keyed/legacy normalization consumed by credential seeding and native request settings; full runtime resolution remains | 297 Python cases, real YAML and streaming/tool HTTP checks; [verification](analysis/auth-store-verification.md) |
+| Named custom-provider lookup | Keyed-first lookup, aliases, request-body settings and provider output limits consumed by native startup, including bare saved names; full endpoint/key/transport resolution remains | 221 Python cases, four request-body HTTP checks and twelve output-limit HTTP checks; [verification](analysis/auth-store-verification.md) |
+| Custom provider HTTP headers | Effective-route selection consumed by native streaming and tool requests; different endpoint overrides do not inherit saved headers | 301 Python route cases, 32 selections and six HTTP checks; [verification](analysis/auth-store-verification.md) |
+| STT language configuration | Provider/global/legacy language precedence connected to transport configuration | 108 Python cases, override checks and four HTTP uploads; [verification](analysis/transcription-http-verification.md) |
+| Transcription HTTP transport | Real multipart provider calls connected to the enrichment interface; full runner construction remains | Four model uploads, denied reads, HTTP errors and 15 Python text cases; [verification](analysis/transcription-http-verification.md) |
 | Transcription enrichment orchestration | Ported with an explicit provider boundary; live provider implementation remains | `transcription_enrichment.rs`, 38 Python scenarios plus recording-backend tests |
 | Vision enrichment and memory-context sanitizer | Ported with an explicit provider boundary; live vision provider remains | `vision_enrichment.rs`, 51 Python scenarios checking output and call order |
 | Attachment display names | Ported inside the existing media context module | `media_context.rs`, 14 source-executed cases |
@@ -56,6 +200,10 @@ Commit history confirms two separate levels of completion:
 | Malformed tool batches | Unchanged-history retries, third-attempt paired recovery, and immediate truncation stops integrated | Source-classified arguments and zero-execution batch regression; [verification](analysis/tool-argument-verification.md) |
 | Tool argument normalization | Blank and structured argument values normalized before the native execution guard | 21 source-loop cases plus execution comparisons; [verification](analysis/tool-argument-verification.md) |
 | Tool call validation | Invalid names and non-object arguments return paired errors without executing tools | 61 Python cases and native execution checks; [verification](analysis/tool-argument-verification.md) |
+| Empty post-tool retry | Bounded continuation nudge with inline-thinking exclusion and reset after new tool work | Four loop sequences and real HTTP recovery; [verification](analysis/tool-text-verification.md) |
+| Native streaming reasoning filter | Stateful upstream reasoning suppression connected to SSE delivery | 526 Python sequences and six byte-split SSE cases; [verification](analysis/tool-text-verification.md) |
+| Native final-answer cleanup | Reasoning and tool XML removed before non-streaming tool-loop delivery | 156 Python cases through the loop and HTTP response proof; [verification](analysis/tool-text-verification.md) |
+| Post-tool answer recovery | Housekeeping answers recovered after empty follow-ups; substantive work invalidates stale answers | 156 Python cleanup cases and eight native-loop sequences; [verification](analysis/tool-text-verification.md) |
 | Tool-template marker cleanup | Bare bracketed protocol markers removed from validated tool-batch replay | 17 Python cases through the native loop; [verification](analysis/tool-text-verification.md) |
 | Delegation batch cap | Config/env limit propagated to native filtering before duplicate suppression; delegation engine remains pending | 39 Python cases and execution/replay order regression; [verification](analysis/tool-pairing-verification.md) |
 | Duplicate execution suppression | Equivalent name/argument pairs run once per batch while distinct requests retain unique IDs | 24 Python cases and native execution/replay regressions; [verification](analysis/tool-pairing-verification.md) |
@@ -73,8 +221,9 @@ not end-to-end media delivery, model resolution, STT, or vision integration.
 The broader runner tier includes network calls and session mutation, despite
 the earlier map calling it pure. See [the source audit](analysis/tier2-source-audit.md).
 
-Current validation: 1199 workspace tests passed, one existing Python-bridge
-test ignored. Clippy with warnings denied and formatting pass. Rust tests live
+Current validation: 1238 workspace tests passed, two tests ignored by default
+(Python bridge and optional FFmpeg integration). The FFmpeg integration test was
+also explicitly run and passed. Clippy with warnings denied and formatting pass. Rust tests live
 inside their implementation files, following the user's layout preference.
 See [inbound verification](analysis/inbound-state-verification.md) and
 [routing verification](analysis/image-routing-verification.md) and
@@ -93,7 +242,9 @@ Next steps, in order:
    capability lookup. Managed local capability and cloud registry caching are implemented;
    follow the corrected [dependency plan](analysis/live-capability-plan.md).
 2. Connect transcription and vision orchestration to real provider adapters
-   behind their explicit I/O boundaries.
+   behind their explicit I/O boundaries. Native STT HTTP now exists; complete
+   its [strict credential-resolution dependencies](analysis/stt-credential-resolution-plan.md)
+   before constructing it from live profile settings.
 3. Integrate the pipeline and pending-message state into the richer runner event path with real
    adapter and model-runtime resolution. The Dispatcher accepts a
    core Message type carrying prepared content parts, but platform adapters

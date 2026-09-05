@@ -22,7 +22,7 @@ async-trait = "0.1"
 unicode-general-category = "1"
 # Match the Python 3.12 reference Unicode 15.0 normalization tables.
 unicode-normalization = "=0.1.22"
-reqwest.workspace = true
+reqwest = { workspace = true, features = ["multipart"] }
 serde_yaml_ng = "0.10"
 tokio-tungstenite = { version = "0.30", features = ["connect", "rustls-tls-webpki-roots"] }
 futures-util = "0.3"

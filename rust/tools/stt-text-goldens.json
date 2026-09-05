@@ -1,0 +1,62 @@
+[
+  {
+    "input": "",
+    "expected": ""
+  },
+  {
+    "input": " spoken words ",
+    "expected": "spoken words"
+  },
+  {
+    "input": "\u001chello\u001f",
+    "expected": "hello"
+  },
+  {
+    "input": "language en<asr_text>hello",
+    "expected": "hello"
+  },
+  {
+    "input": "language en <audio_language>English</audio_language><asr_text> hello\nworld ",
+    "expected": "hello\nworld"
+  },
+  {
+    "input": "LANGUAGE ms <ASR_TEXT>hai",
+    "expected": "hai"
+  },
+  {
+    "input": "language en-US<asr_text>hi",
+    "expected": "hi"
+  },
+  {
+    "input": "language en.US<asr_text>hi",
+    "expected": "hi"
+  },
+  {
+    "input": "language en<asr_text>",
+    "expected": ""
+  },
+  {
+    "input": "language en <audio_language>x<y</audio_language><asr_text>keep",
+    "expected": "language en <audio_language>x<y</audio_language><asr_text>keep"
+  },
+  {
+    "input": "language en words",
+    "expected": "language en words"
+  },
+  {
+    "input": "prefix language en<asr_text>keep",
+    "expected": "prefix language en<asr_text>keep"
+  },
+  {
+    "input": "language en<asr_text>hi</asr_text>",
+    "expected": "hi</asr_text>"
+  },
+  {
+    "input": "你好 猫",
+    "expected": "你好 猫"
+  },
+  {
+    "input": "language 猫<asr_text>hello",
+    "expected": "hello"
+  }
+]

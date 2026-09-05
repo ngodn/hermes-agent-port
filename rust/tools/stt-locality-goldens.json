@@ -1,0 +1,1030 @@
+[
+  {
+    "url": "http://localhost",
+    "expected": true
+  },
+  {
+    "url": "http://localhost:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://localhost",
+    "expected": true
+  },
+  {
+    "url": "https://localhost:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//localhost",
+    "expected": true
+  },
+  {
+    "url": "//localhost:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "localhost",
+    "expected": false
+  },
+  {
+    "url": "localhost:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://LOCALHOST",
+    "expected": true
+  },
+  {
+    "url": "http://LOCALHOST:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://LOCALHOST",
+    "expected": true
+  },
+  {
+    "url": "https://LOCALHOST:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//LOCALHOST",
+    "expected": true
+  },
+  {
+    "url": "//LOCALHOST:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "LOCALHOST",
+    "expected": false
+  },
+  {
+    "url": "LOCALHOST:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://localhost.",
+    "expected": false
+  },
+  {
+    "url": "http://localhost.:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://localhost.",
+    "expected": false
+  },
+  {
+    "url": "https://localhost.:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//localhost.",
+    "expected": false
+  },
+  {
+    "url": "//localhost.:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "localhost.",
+    "expected": false
+  },
+  {
+    "url": "localhost.:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://whisper",
+    "expected": false
+  },
+  {
+    "url": "http://whisper:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://whisper",
+    "expected": false
+  },
+  {
+    "url": "https://whisper:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//whisper",
+    "expected": false
+  },
+  {
+    "url": "//whisper:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "whisper",
+    "expected": false
+  },
+  {
+    "url": "whisper:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://server.local",
+    "expected": true
+  },
+  {
+    "url": "http://server.local:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://server.local",
+    "expected": true
+  },
+  {
+    "url": "https://server.local:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//server.local",
+    "expected": true
+  },
+  {
+    "url": "//server.local:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "server.local",
+    "expected": false
+  },
+  {
+    "url": "server.local:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://server.lan",
+    "expected": true
+  },
+  {
+    "url": "http://server.lan:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://server.lan",
+    "expected": true
+  },
+  {
+    "url": "https://server.lan:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//server.lan",
+    "expected": true
+  },
+  {
+    "url": "//server.lan:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "server.lan",
+    "expected": false
+  },
+  {
+    "url": "server.lan:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://server.internal",
+    "expected": true
+  },
+  {
+    "url": "http://server.internal:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://server.internal",
+    "expected": true
+  },
+  {
+    "url": "https://server.internal:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//server.internal",
+    "expected": true
+  },
+  {
+    "url": "//server.internal:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "server.internal",
+    "expected": false
+  },
+  {
+    "url": "server.internal:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://server.local.evil",
+    "expected": false
+  },
+  {
+    "url": "http://server.local.evil:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://server.local.evil",
+    "expected": false
+  },
+  {
+    "url": "https://server.local.evil:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//server.local.evil",
+    "expected": false
+  },
+  {
+    "url": "//server.local.evil:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "server.local.evil",
+    "expected": false
+  },
+  {
+    "url": "server.local.evil:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://10.0.0.1",
+    "expected": true
+  },
+  {
+    "url": "http://10.0.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://10.0.0.1",
+    "expected": true
+  },
+  {
+    "url": "https://10.0.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//10.0.0.1",
+    "expected": true
+  },
+  {
+    "url": "//10.0.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "10.0.0.1",
+    "expected": false
+  },
+  {
+    "url": "10.0.0.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://10.01.2.3",
+    "expected": false
+  },
+  {
+    "url": "http://10.01.2.3:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://10.01.2.3",
+    "expected": false
+  },
+  {
+    "url": "https://10.01.2.3:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//10.01.2.3",
+    "expected": false
+  },
+  {
+    "url": "//10.01.2.3:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "10.01.2.3",
+    "expected": false
+  },
+  {
+    "url": "10.01.2.3:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://127.1",
+    "expected": false
+  },
+  {
+    "url": "http://127.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://127.1",
+    "expected": false
+  },
+  {
+    "url": "https://127.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//127.1",
+    "expected": false
+  },
+  {
+    "url": "//127.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "127.1",
+    "expected": false
+  },
+  {
+    "url": "127.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://127.0.0.1",
+    "expected": true
+  },
+  {
+    "url": "http://127.0.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://127.0.0.1",
+    "expected": true
+  },
+  {
+    "url": "https://127.0.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//127.0.0.1",
+    "expected": true
+  },
+  {
+    "url": "//127.0.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "127.0.0.1",
+    "expected": false
+  },
+  {
+    "url": "127.0.0.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://169.254.1.1",
+    "expected": true
+  },
+  {
+    "url": "http://169.254.1.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://169.254.1.1",
+    "expected": true
+  },
+  {
+    "url": "https://169.254.1.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//169.254.1.1",
+    "expected": true
+  },
+  {
+    "url": "//169.254.1.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "169.254.1.1",
+    "expected": false
+  },
+  {
+    "url": "169.254.1.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://172.16.0.1",
+    "expected": true
+  },
+  {
+    "url": "http://172.16.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://172.16.0.1",
+    "expected": true
+  },
+  {
+    "url": "https://172.16.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//172.16.0.1",
+    "expected": true
+  },
+  {
+    "url": "//172.16.0.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "172.16.0.1",
+    "expected": false
+  },
+  {
+    "url": "172.16.0.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://172.32.0.1",
+    "expected": false
+  },
+  {
+    "url": "http://172.32.0.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://172.32.0.1",
+    "expected": false
+  },
+  {
+    "url": "https://172.32.0.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//172.32.0.1",
+    "expected": false
+  },
+  {
+    "url": "//172.32.0.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "172.32.0.1",
+    "expected": false
+  },
+  {
+    "url": "172.32.0.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://192.168.1.1",
+    "expected": true
+  },
+  {
+    "url": "http://192.168.1.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://192.168.1.1",
+    "expected": true
+  },
+  {
+    "url": "https://192.168.1.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//192.168.1.1",
+    "expected": true
+  },
+  {
+    "url": "//192.168.1.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "192.168.1.1",
+    "expected": false
+  },
+  {
+    "url": "192.168.1.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://192.0.0.9",
+    "expected": false
+  },
+  {
+    "url": "http://192.0.0.9:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://192.0.0.9",
+    "expected": false
+  },
+  {
+    "url": "https://192.0.0.9:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//192.0.0.9",
+    "expected": false
+  },
+  {
+    "url": "//192.0.0.9:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "192.0.0.9",
+    "expected": false
+  },
+  {
+    "url": "192.0.0.9:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://192.0.0.8",
+    "expected": true
+  },
+  {
+    "url": "http://192.0.0.8:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://192.0.0.8",
+    "expected": true
+  },
+  {
+    "url": "https://192.0.0.8:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//192.0.0.8",
+    "expected": true
+  },
+  {
+    "url": "//192.0.0.8:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "192.0.0.8",
+    "expected": false
+  },
+  {
+    "url": "192.0.0.8:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://100.64.1.2",
+    "expected": false
+  },
+  {
+    "url": "http://100.64.1.2:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://100.64.1.2",
+    "expected": false
+  },
+  {
+    "url": "https://100.64.1.2:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//100.64.1.2",
+    "expected": false
+  },
+  {
+    "url": "//100.64.1.2:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "100.64.1.2",
+    "expected": false
+  },
+  {
+    "url": "100.64.1.2:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://0.0.0.0",
+    "expected": true
+  },
+  {
+    "url": "http://0.0.0.0:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://0.0.0.0",
+    "expected": true
+  },
+  {
+    "url": "https://0.0.0.0:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//0.0.0.0",
+    "expected": true
+  },
+  {
+    "url": "//0.0.0.0:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "0.0.0.0",
+    "expected": false
+  },
+  {
+    "url": "0.0.0.0:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://8.8.8.8",
+    "expected": false
+  },
+  {
+    "url": "http://8.8.8.8:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://8.8.8.8",
+    "expected": false
+  },
+  {
+    "url": "https://8.8.8.8:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//8.8.8.8",
+    "expected": false
+  },
+  {
+    "url": "//8.8.8.8:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "8.8.8.8",
+    "expected": false
+  },
+  {
+    "url": "8.8.8.8:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://192.0.2.1",
+    "expected": true
+  },
+  {
+    "url": "http://192.0.2.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://192.0.2.1",
+    "expected": true
+  },
+  {
+    "url": "https://192.0.2.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//192.0.2.1",
+    "expected": true
+  },
+  {
+    "url": "//192.0.2.1:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "192.0.2.1",
+    "expected": false
+  },
+  {
+    "url": "192.0.2.1:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[::1]",
+    "expected": true
+  },
+  {
+    "url": "http://[::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://[::1]",
+    "expected": true
+  },
+  {
+    "url": "https://[::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//[::1]",
+    "expected": true
+  },
+  {
+    "url": "//[::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "[::1]",
+    "expected": false
+  },
+  {
+    "url": "[::1]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[::]",
+    "expected": true
+  },
+  {
+    "url": "http://[::]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://[::]",
+    "expected": true
+  },
+  {
+    "url": "https://[::]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//[::]",
+    "expected": true
+  },
+  {
+    "url": "//[::]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "[::]",
+    "expected": false
+  },
+  {
+    "url": "[::]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[fc00::1]",
+    "expected": true
+  },
+  {
+    "url": "http://[fc00::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://[fc00::1]",
+    "expected": true
+  },
+  {
+    "url": "https://[fc00::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//[fc00::1]",
+    "expected": true
+  },
+  {
+    "url": "//[fc00::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "[fc00::1]",
+    "expected": false
+  },
+  {
+    "url": "[fc00::1]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[fe80::1%eth0]",
+    "expected": true
+  },
+  {
+    "url": "http://[fe80::1%eth0]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://[fe80::1%eth0]",
+    "expected": true
+  },
+  {
+    "url": "https://[fe80::1%eth0]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//[fe80::1%eth0]",
+    "expected": true
+  },
+  {
+    "url": "//[fe80::1%eth0]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "[fe80::1%eth0]",
+    "expected": false
+  },
+  {
+    "url": "[fe80::1%eth0]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[::ffff:10.0.0.1]",
+    "expected": true
+  },
+  {
+    "url": "http://[::ffff:10.0.0.1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://[::ffff:10.0.0.1]",
+    "expected": true
+  },
+  {
+    "url": "https://[::ffff:10.0.0.1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//[::ffff:10.0.0.1]",
+    "expected": true
+  },
+  {
+    "url": "//[::ffff:10.0.0.1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "[::ffff:10.0.0.1]",
+    "expected": false
+  },
+  {
+    "url": "[::ffff:10.0.0.1]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[::ffff:100.64.1.2]",
+    "expected": false
+  },
+  {
+    "url": "http://[::ffff:100.64.1.2]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://[::ffff:100.64.1.2]",
+    "expected": false
+  },
+  {
+    "url": "https://[::ffff:100.64.1.2]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//[::ffff:100.64.1.2]",
+    "expected": false
+  },
+  {
+    "url": "//[::ffff:100.64.1.2]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "[::ffff:100.64.1.2]",
+    "expected": false
+  },
+  {
+    "url": "[::ffff:100.64.1.2]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[2001:4860:4860::8888]",
+    "expected": false
+  },
+  {
+    "url": "http://[2001:4860:4860::8888]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "https://[2001:4860:4860::8888]",
+    "expected": false
+  },
+  {
+    "url": "https://[2001:4860:4860::8888]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "//[2001:4860:4860::8888]",
+    "expected": false
+  },
+  {
+    "url": "//[2001:4860:4860::8888]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "[2001:4860:4860::8888]",
+    "expected": false
+  },
+  {
+    "url": "[2001:4860:4860::8888]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[2001:db8::1]",
+    "expected": true
+  },
+  {
+    "url": "http://[2001:db8::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://[2001:db8::1]",
+    "expected": true
+  },
+  {
+    "url": "https://[2001:db8::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//[2001:db8::1]",
+    "expected": true
+  },
+  {
+    "url": "//[2001:db8::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "[2001:db8::1]",
+    "expected": false
+  },
+  {
+    "url": "[2001:db8::1]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "http://[3fff::1]",
+    "expected": true
+  },
+  {
+    "url": "http://[3fff::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "https://[3fff::1]",
+    "expected": true
+  },
+  {
+    "url": "https://[3fff::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "//[3fff::1]",
+    "expected": true
+  },
+  {
+    "url": "//[3fff::1]:8000/v1",
+    "expected": true
+  },
+  {
+    "url": "[3fff::1]",
+    "expected": false
+  },
+  {
+    "url": "[3fff::1]:8000/v1",
+    "expected": false
+  },
+  {
+    "url": "",
+    "expected": false
+  },
+  {
+    "url": "http://",
+    "expected": false
+  },
+  {
+    "url": "http://[broken",
+    "expected": false
+  },
+  {
+    "url": "http://user:pass@localhost/v1",
+    "expected": true
+  },
+  {
+    "url": "http://remote/v1?url=http://localhost",
+    "expected": false
+  },
+  {
+    "url": "\u001chttp://localhost",
+    "expected": true
+  },
+  {
+    "url": "http://local\thost",
+    "expected": true
+  },
+  {
+    "url": "http://[fe80::1%]",
+    "expected": false
+  },
+  {
+    "url": "http://[fe80::1%a%b]",
+    "expected": false
+  }
+]

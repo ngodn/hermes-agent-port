@@ -49,24 +49,183 @@ fn naive_to_epoch(naive: NaiveDateTime, tz: Option<FixedOffset>) -> Option<f64> 
     }
 }
 
-/// Parse an ISO string the way Python `datetime.fromisoformat` does for the
-/// gateway's data: RFC3339 with `Z`/`±HH:MM`, the older `±HHMM` (no colon), or a
-/// naive value (assigned `tz`/local).
-fn parse_iso_string(text: &str, tz: Option<FixedOffset>) -> Option<f64> {
-    if let Ok(dt) = DateTime::parse_from_rfc3339(text) {
-        return Some(epoch_of(dt.with_timezone(&Utc)));
+/// Python's datetime grammar also permits compact/week dates, any single
+/// separator character, and fractional seconds in UTC offsets. Keep those
+/// rules here so credential deadlines and gateway timestamps agree.
+pub(crate) fn parse_iso_string(text: &str, tz: Option<FixedOffset>) -> Option<f64> {
+    let chars: Vec<char> = text.chars().collect();
+    let count = chars.len();
+    if count < 7 {
+        return None;
     }
-    for fmt in ["%Y-%m-%dT%H:%M:%S%.f%z", "%Y-%m-%dT%H:%M:%S%z"] {
-        if let Ok(dt) = DateTime::parse_from_str(text, fmt) {
-            return Some(epoch_of(dt.with_timezone(&Utc)));
+    // CPython resolves ambiguous numeric separators after an ISO week date
+    // before parsing either half. A byte split would break Unicode separators.
+    let split = if count == 7 {
+        7
+    } else if chars[4] == '-' {
+        if chars[5] == 'W' {
+            if count > 8 && chars[8] == '-' {
+                if count == 9 {
+                    return None;
+                }
+                if count > 10 && chars[10].is_ascii_digit() {
+                    8
+                } else {
+                    10
+                }
+            } else {
+                8
+            }
+        } else {
+            10
+        }
+    } else if chars[4] == 'W' {
+        let end = (7..count)
+            .find(|i| !chars[*i].is_ascii_digit())
+            .unwrap_or(count);
+        if end < 9 {
+            end
+        } else if end % 2 == 0 {
+            7
+        } else {
+            8
+        }
+    } else {
+        8
+    };
+    let date = iso_date(chars.get(..split)?)?;
+    if count == split {
+        return naive_to_epoch(date.and_hms_opt(0, 0, 0)?, tz);
+    }
+    let time = chars.get(split + 1..)?;
+    if time.is_empty() {
+        return None;
+    }
+    let offset_pos = time.iter().position(|c| matches!(c, '+' | '-' | 'Z'));
+    let components = iso_clock(&time[..offset_pos.unwrap_or(time.len())])?;
+    let naive =
+        date.and_hms_micro_opt(components[0], components[1], components[2], components[3])?;
+    let Some(offset_pos) = offset_pos else {
+        return naive_to_epoch(naive, tz);
+    };
+    let suffix = &time[offset_pos..];
+    let offset = if suffix == ['Z'] {
+        0
+    } else {
+        if !matches!(suffix[0], '+' | '-') {
+            return None;
+        }
+        let parts = iso_clock(&suffix[1..])?;
+        let seconds = (parts[0] * 3600 + parts[1] * 60 + parts[2]) as i64;
+        // CPython treats a zero h:m:s offset as UTC even with a fraction.
+        let micros = if seconds == 0 {
+            0
+        } else {
+            seconds * 1_000_000 + parts[3] as i64
+        };
+        if micros >= 86_400_000_000 {
+            return None;
+        }
+        if suffix[0] == '-' {
+            -micros
+        } else {
+            micros
+        }
+    };
+    Some((naive.and_utc().timestamp_micros() - offset) as f64 / 1_000_000.0)
+}
+
+fn iso_digits(chars: &[char]) -> Option<u32> {
+    if chars.is_empty() {
+        return None;
+    }
+    chars.iter().try_fold(0u32, |n, c| {
+        c.is_ascii_digit().then(|| n * 10 + *c as u32 - '0' as u32)
+    })
+}
+
+fn iso_date(chars: &[char]) -> Option<chrono::NaiveDate> {
+    use chrono::{Datelike, NaiveDate, Weekday};
+    let year = iso_digits(chars.get(..4)?)? as i32;
+    if !(1..=9999).contains(&year) {
+        return None;
+    }
+    let separated = chars.get(4) == Some(&'-');
+    let start = 4 + usize::from(separated);
+    let date = if chars.get(start) == Some(&'W') {
+        let week = iso_digits(chars.get(start + 1..start + 3)?)?;
+        let end = start + 3;
+        let day = if chars.len() == end {
+            1
+        } else {
+            if separated && chars.get(end) != Some(&'-') {
+                return None;
+            }
+            let pos = end + usize::from(separated);
+            if chars.len() != pos + 1 {
+                return None;
+            }
+            iso_digits(&chars[pos..])?
+        };
+        let weekday = *[
+            Weekday::Mon,
+            Weekday::Tue,
+            Weekday::Wed,
+            Weekday::Thu,
+            Weekday::Fri,
+            Weekday::Sat,
+            Weekday::Sun,
+        ]
+        .get(day.checked_sub(1)? as usize)?;
+        NaiveDate::from_isoywd_opt(year, week, weekday)?
+    } else {
+        let month = iso_digits(chars.get(start..start + 2)?)?;
+        let pos = start + 2;
+        if separated && chars.get(pos) != Some(&'-') {
+            return None;
+        }
+        let pos = pos + usize::from(separated);
+        if chars.len() != pos + 2 {
+            return None;
+        }
+        NaiveDate::from_ymd_opt(year, month, iso_digits(&chars[pos..])?)?
+    };
+    (date.year() <= 9999).then_some(date)
+}
+
+fn iso_clock(chars: &[char]) -> Option<[u32; 4]> {
+    let mut parts = [0; 4];
+    let mut pos = 0;
+    let mut separated = false;
+    for (component, part) in parts[..3].iter_mut().enumerate() {
+        *part = iso_digits(chars.get(pos..pos + 2)?)?;
+        pos += 2;
+        if pos == chars.len() {
+            return Some(parts);
+        }
+        if matches!(chars[pos], '.' | ',') {
+            break;
+        }
+        if component == 2 {
+            return None;
+        }
+        if component == 0 {
+            separated = chars[pos] == ':';
+        }
+        if separated {
+            if chars[pos] != ':' {
+                return None;
+            }
+            pos += 1;
         }
     }
-    for fmt in ["%Y-%m-%dT%H:%M:%S%.f", "%Y-%m-%dT%H:%M:%S"] {
-        if let Ok(naive) = NaiveDateTime::parse_from_str(text, fmt) {
-            return naive_to_epoch(naive, tz);
-        }
+    let fraction = chars.get(pos + 1..)?;
+    if fraction.is_empty() || !fraction.iter().all(char::is_ascii_digit) {
+        return None;
     }
-    None
+    let digits = fraction.len().min(6);
+    parts[3] = iso_digits(&fraction[..digits])? * 10u32.pow(6 - digits as u32);
+    Some(parts)
 }
 
 /// Coerce a timestamp-like value to Unix epoch seconds. Accepts epoch numbers,
@@ -215,6 +374,27 @@ fn parsed_epoch(text: &str, _end: usize, kind: PrefixKind, tz: Option<FixedOffse
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn iso_datetime_and_credential_deadlines_match_python() {
+        let rows: serde_json::Value =
+            serde_json::from_str(include_str!("../../../tools/iso-timestamp-goldens.json"))
+                .unwrap();
+        for row in rows.as_array().unwrap() {
+            let text = row["text"].as_str().unwrap();
+            assert_eq!(
+                super::parse_iso_string(text, chrono::FixedOffset::east_opt(0)),
+                row["result"].as_f64(),
+                "ISO: {text:?}"
+            );
+            if let Some(expected) = row.get("cooldown") {
+                assert_eq!(
+                    crate::credential_pool::absolute_timestamp(&serde_json::json!(text)),
+                    expected.as_f64(),
+                    "deadline: {text:?}"
+                );
+            }
+        }
+    }
     use super::*;
 
     #[test]

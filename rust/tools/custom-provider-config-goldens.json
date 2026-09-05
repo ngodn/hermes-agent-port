@@ -1,0 +1,6355 @@
+[
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off"
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "api_key": "key",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "apiKey": " key ",
+          "apiMode": "openai",
+          "defaultModel": " m "
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "provider_key": "example",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "provider_key": "example",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "provider_key": "example",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "provider_key": "example",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "api_key_env": " KEY ",
+          "keyEnv": "other",
+          "baseUrl": "https://camel.example/v1"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://camel.example/v1",
+        "key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "key_env": "KEY",
+        "api_key_env": "KEY"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "api_key": null,
+          "apiKey": "ignored",
+          "key_env": "",
+          "api_key_env": " KEY "
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "models": {
+          "one": {},
+          "two": {
+            "context_length": 123
+          },
+          "three": {
+            "vision": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "models": [
+            " one ",
+            {
+              "id": "two",
+              "context_length": 123
+            },
+            {
+              "id": null,
+              "name": "three",
+              "vision": true
+            },
+            null,
+            2
+          ]
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "models": {
+          "m": {
+            "vision": false
+          }
+        },
+        "models_discovered": true
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": true,
+            "__explicit_model_allowlist__": true,
+            "m": {
+              "vision": false
+            }
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "models": {
+            "__discovered_model_catalog__": 1
+          },
+          "models_discovered": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "extra_body": {
+          "routing": "fixture"
+        },
+        "extra_headers": {
+          "x-key": " secret ",
+          "x-flag": "True",
+          "x-number": "3"
+        }
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "extra_headers": {
+            "x-key": " secret ",
+            "x-flag": true,
+            "x-number": 3,
+            "drop": null
+          },
+          "extra_body": {
+            "routing": "fixture"
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "capabilities": {
+          "vision": true,
+          "audio": false
+        },
+        "context_length": true,
+        "rate_limit_delay": false
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "contextLength": true,
+          "rateLimitDelay": false,
+          "capabilities": {
+            "vision": true,
+            "audio": false,
+            "bad": 1
+          }
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "discover_models": false,
+        "ssl_ca_cert": "/tmp/test-ca.pem",
+        "ssl_verify": "false"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "ssl_verify": " false ",
+          "ssl_ca_cert": " /tmp/test-ca.pem ",
+          "discover_models": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "https://example.com/v1/",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "http://localhost:1234/v1",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "Example",
+        "base_url": "${ENDPOINT}/v1",
+        "api_mode": "codex_responses",
+        "model": "chosen"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": true,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": "off",
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": " Example ",
+          "api": "invalid",
+          "enabled": null,
+          "transport": "Responses",
+          "model": "chosen",
+          "default_model": "ignored",
+          "unknown": "dropped"
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "https://example.com/v1/",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "https://example.com/v1/",
+          "enabled": true,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "https://example.com/v1/",
+          "enabled": "off",
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "https://example.com/v1/",
+          "enabled": null,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "https://example.com/v1/"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "http://localhost:1234/v1",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "http://localhost:1234/v1",
+          "enabled": true,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "http://localhost:1234/v1",
+          "enabled": "off",
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "http://localhost:1234/v1",
+          "enabled": null,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "http://localhost:1234/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "${ENDPOINT}/v1",
+        "provider_key": "example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "${ENDPOINT}/v1",
+          "enabled": true,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "${ENDPOINT}/v1",
+          "enabled": "off",
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "${ENDPOINT}/v1",
+          "enabled": null,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": [
+      {
+        "name": "2070",
+        "base_url": "${ENDPOINT}/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "invalid",
+          "enabled": true,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "invalid",
+          "enabled": true,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "invalid",
+          "enabled": "off",
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "invalid",
+          "enabled": "off",
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "providers": {
+        "example": {
+          "api": "invalid",
+          "enabled": null,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "api": "invalid",
+          "enabled": null,
+          "name": 2070,
+          "api_key": 9,
+          "models": false
+        }
+      ]
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": null,
+      "providers": {
+        "first": {
+          "name": "Shared",
+          "api": "https://SHARED.example/v1/"
+        },
+        "second": {
+          "name": "Shared",
+          "api": "https://shared.example/v1",
+          "default_model": "other"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Shared",
+        "base_url": "https://SHARED.example/v1/",
+        "provider_key": "first"
+      },
+      {
+        "name": "Shared",
+        "base_url": "https://shared.example/v1",
+        "provider_key": "second",
+        "model": "other"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": [],
+      "providers": {
+        "first": {
+          "name": "Shared",
+          "api": "https://SHARED.example/v1/"
+        },
+        "second": {
+          "name": "Shared",
+          "api": "https://shared.example/v1",
+          "default_model": "other"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Shared",
+        "base_url": "https://SHARED.example/v1/",
+        "provider_key": "first"
+      },
+      {
+        "name": "Shared",
+        "base_url": "https://shared.example/v1",
+        "provider_key": "second",
+        "model": "other"
+      }
+    ]
+  },
+  {
+    "config": {
+      "custom_providers": {},
+      "providers": {
+        "first": {
+          "name": "Shared",
+          "api": "https://SHARED.example/v1/"
+        },
+        "second": {
+          "name": "Shared",
+          "api": "https://shared.example/v1",
+          "default_model": "other"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": "invalid",
+      "providers": {
+        "first": {
+          "name": "Shared",
+          "api": "https://SHARED.example/v1/"
+        },
+        "second": {
+          "name": "Shared",
+          "api": "https://shared.example/v1",
+          "default_model": "other"
+        }
+      }
+    },
+    "result": []
+  },
+  {
+    "config": {
+      "custom_providers": [
+        {
+          "name": "Shared",
+          "base_url": "https://shared.example/v1",
+          "extra_body": {
+            "winner": "legacy"
+          }
+        }
+      ],
+      "providers": {
+        "first": {
+          "name": "Shared",
+          "api": "https://SHARED.example/v1/"
+        },
+        "second": {
+          "name": "Shared",
+          "api": "https://shared.example/v1",
+          "default_model": "other"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Shared",
+        "base_url": "https://shared.example/v1",
+        "extra_body": {
+          "winner": "legacy"
+        }
+      },
+      {
+        "name": "Shared",
+        "base_url": "https://shared.example/v1",
+        "provider_key": "second",
+        "model": "other"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "": {
+          "name": "Lab",
+          "base_url": "https://lab.example/v1"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Lab",
+        "base_url": "https://lab.example/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        " ": {
+          "name": "Lab",
+          "base_url": "https://lab.example/v1"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Lab",
+        "base_url": "https://lab.example/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        "\u001c\t": {
+          "name": "Lab",
+          "base_url": "https://lab.example/v1"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Lab",
+        "base_url": "https://lab.example/v1"
+      }
+    ]
+  },
+  {
+    "config": {
+      "providers": {
+        " lab ": {
+          "name": "Lab",
+          "base_url": "https://lab.example/v1"
+        }
+      }
+    },
+    "result": [
+      {
+        "name": "Lab",
+        "base_url": "https://lab.example/v1",
+        "provider_key": "lab"
+      }
+    ]
+  }
+]
