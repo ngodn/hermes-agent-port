@@ -1,11 +1,15 @@
-/target
-analysis/*.agy.log
-analysis/*.claude.json
-analysis/*.claude.stderr
-analysis/takeover-*.log
+# Cargo output and rustfmt backup files.
+/target/
+**/*.rs.bk
 
-# Local validation output; durable findings live in analysis/*.md.
+# Raw helper transcripts stay local; retain task prompts and Markdown findings.
+analysis/*.claude.json
+analysis/*.claude.jsonl
+analysis/*.claude.stderr
+
+# Helper logs and local validation output.
 analysis/*.log
+
 # Synthetic public CA certificates used by inline HTTPS tests.
 !tools/tls-fixtures/ca.pem
 !tools/tls-fixtures/other-ca.pem
