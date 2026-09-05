@@ -78,6 +78,7 @@ mod secret_scope;
 mod session;
 mod session_db;
 mod session_db_recovery;
+mod session_registry;
 mod session_stall;
 mod session_state;
 mod shutdown_flush;
