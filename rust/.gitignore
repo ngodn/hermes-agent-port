@@ -1,2 +1,11 @@
 /target
 analysis/*.agy.log
+analysis/*.claude.json
+analysis/*.claude.stderr
+analysis/takeover-*.log
+
+# Local validation output; durable findings live in analysis/*.md.
+analysis/*.log
+# Synthetic public CA certificates used by inline HTTPS tests.
+!tools/tls-fixtures/ca.pem
+!tools/tls-fixtures/other-ca.pem
