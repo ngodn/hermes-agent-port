@@ -57,7 +57,7 @@ mod native_tools;
 mod pairing;
 mod platform;
 mod platform_base_types;
-// mod platform_helpers; // wired once its port agent reports (2 code-point tests failing)
+mod platform_helpers;
 mod profile_name;
 mod profile_routing;
 mod qqbot_common;
