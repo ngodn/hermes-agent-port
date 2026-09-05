@@ -87,6 +87,30 @@ backend). That is runner-integration work; verify it with a runner-level test,
 and note the deferred pieces still open: env/singleton/custom credential SEEDING
 (load_pool only reflects the persisted store), OAuth refresh, and lease ownership.
 
+UPDATE 2 (2026-09-06): the STT pipeline is now wired end to end in the runtime,
+verified at each hop:
+- `build_openai_transcription` / `build_openai_transcription_at` (`d1034ea7a0`):
+  the construction site that calls store_pool_callback with runner-resolved
+  auth.json paths; temp-profile tests cover store-hit, config-precedence, and
+  the honest unconfigured error.
+- Dispatcher enrichment hook + `Message.audio_paths` (`7c7f5ad4b0`): handle_turn
+  transcribes attached audio (via the ported enrich_message_with_transcription)
+  before the turn; dispatcher tests prove the turn runs on the transcript, and
+  that a missing backend falls back to the caption.
+- `build_gateway_transcription` + startup install (`6d3bf9acf5`): composes the
+  real HttpTranscriptionBackend (credential pool + audio_process duration +
+  file-read policy + gateway context) and installs it on the Dispatcher when STT
+  is configured. resolve_openai_stt_model ports DEFAULT_STT_MODEL, unit-tested.
+
+THE ONLY REMAINING PIECE for a live STT turn is per-adapter voice-note DOWNLOAD
+populating Message.audio_paths (telegram/discord/slack). That needs each
+platform's file-fetch plus an audio cache-write primitive (the base.py
+cache_audio_from_bytes seam, still deferred). The Dispatcher hook already
+consumes audio_paths, so once an adapter fills it, transcription runs. Still
+deferred across the credential layer: env/singleton/custom credential SEEDING
+(load_pool_from_store reflects only the persisted store), OAuth refresh, lease
+ownership, and the Nous managed-audio gateway.
+
 **Earlier next seam (now done): `load_pool(provider)` for the non-OAuth, non-custom path.**
 The building blocks exist (auth_store::read_pool, credential_sources::seed_from_env,
 credential_pool::{read_stored_entries, prune_stale_sources, normalize_priorities},
