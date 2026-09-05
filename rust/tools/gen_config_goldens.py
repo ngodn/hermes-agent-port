@@ -142,6 +142,10 @@ def main() -> int:
             failures.append((name, proc.stderr.strip()[-500:]))
             continue
         parsed = json.loads(proc.stdout)
+        # Keep the reference path relation without baking in this checkout.
+        prefix = str(home) + "/"
+        if parsed.get("sessions_dir", "").startswith(prefix):
+            parsed["sessions_dir"] = "${FIXTURE_HOME}/" + parsed["sessions_dir"][len(prefix):]
         (d / "expected.json").write_text(
             json.dumps(parsed, sort_keys=True, indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8",

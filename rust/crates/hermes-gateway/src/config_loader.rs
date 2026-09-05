@@ -1632,9 +1632,20 @@ mod golden_corpus {
                 continue;
             }
 
-            let expected: Value =
+            let mut expected: Value =
                 serde_json::from_str(&std::fs::read_to_string(&expected_path).unwrap())
                     .unwrap_or_else(|e| panic!("bad expected.json for {name}: {e}"));
+
+            // Resolve only the fixture's declared path token. This still checks
+            // that default sessions live under the supplied HERMES_HOME, while
+            // allowing the same corpus to run from any checkout location.
+            if let Some(relative) = expected["sessions_dir"]
+                .as_str()
+                .and_then(|path| path.strip_prefix("${FIXTURE_HOME}/"))
+            {
+                expected["sessions_dir"] =
+                    Value::String(home.join(relative).to_string_lossy().into_owned());
+            }
 
             let fixture_env: HashMap<String, String> =
                 match std::fs::read_to_string(dir.join("env.json")) {

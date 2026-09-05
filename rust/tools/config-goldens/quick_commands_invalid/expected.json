@@ -31,7 +31,7 @@
   ],
   "room_link_url": null,
   "session_store_max_age_days": 90,
-  "sessions_dir": "/home/eins0fx/development/hermes-agent-port/rust/tools/config-goldens/quick_commands_invalid/home/sessions",
+  "sessions_dir": "${FIXTURE_HOME}/sessions",
   "streaming": {
     "buffer_threshold": 24,
     "cursor": " ▉",
