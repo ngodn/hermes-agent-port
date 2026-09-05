@@ -82,6 +82,7 @@ mod session_stall;
 mod session_state;
 mod shutdown_flush;
 mod shutdown_forensics;
+mod shutdown_watchdog;
 mod signal_format;
 mod signal_rate_limit;
 mod slack;
