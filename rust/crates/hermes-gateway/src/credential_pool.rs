@@ -811,6 +811,30 @@ pub fn load_pool_from_store(
     Ok(pool)
 }
 
+/// A pool-lookup callback for the STT/TTS secret resolver, backed by the
+/// store-only [`load_pool_from_store`]. Mirrors tools/tool_backend_helpers.py:
+/// load the provider's pool, and if it has credentials return the peeked
+/// runtime key. A provider that needs deferred seeding (anthropic/custom:/
+/// single-use) makes load_pool_from_store return an error, which becomes
+/// `Ok(None)` here, matching Python's `except -> None` (the resolver then moves
+/// on). The resolver already passes both `provider` and `custom:provider`.
+pub fn store_pool_callback(
+    profile: std::path::PathBuf,
+    root: Option<std::path::PathBuf>,
+) -> impl FnMut(&str) -> anyhow::Result<Option<String>> {
+    move |provider_id: &str| match load_pool_from_store(
+        &profile,
+        root.as_deref(),
+        provider_id,
+        "fill_first",
+        None,
+    ) {
+        Ok(mut pool) if pool.has_credentials() => Ok(pool.peek_runtime_key()),
+        Ok(_) => Ok(None),
+        Err(_) => Ok(None),
+    }
+}
+
 /// Sink for persisting the pool after a mutation (clear-expired, prune,
 /// round-robin renumber). Mirrors Python `persist_pool_entries(provider,
 /// [to_dict...], removed_ids)`; the pool owns WHEN to persist, the sink owns HOW.

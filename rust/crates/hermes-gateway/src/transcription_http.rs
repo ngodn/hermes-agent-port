@@ -406,6 +406,68 @@ impl<B: TranscriptionBackend> TranscriptionBackend for HttpTranscriptionBackend<
 
 #[cfg(test)]
 mod tests {
+
+    // End-to-end: an STT credential constructed from the PROFILE credential
+    // store. No stt.openai.api_key, no base_url, and no env/scope key, so
+    // AudioCredentials::resolve falls through direct_key -> openai_audio_key ->
+    // provider_secret's pool branch -> store_pool_callback -> load_pool_from_store
+    // -> peek. Proves the ported credential chain resolves a stored key.
+    #[test]
+    fn stt_credential_resolves_from_profile_store() {
+        let _lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        let prev_mux = crate::secret_scope::is_multiplex_active();
+        crate::secret_scope::set_multiplex_active(false);
+        // Ensure no ambient key short-circuits the pool branch.
+        for var in ["VOICE_TOOLS_OPENAI_KEY", "OPENAI_API_KEY"] {
+            std::env::remove_var(var);
+        }
+
+        let dir = std::env::temp_dir().join(format!(
+            "hermes_stt_store_{}_{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        let profile = dir.join("auth.json");
+        std::fs::write(
+            &profile,
+            serde_json::to_string(&serde_json::json!({
+                "credential_pool": {
+                    "openai-api": [{
+                        "id": "stored0", "auth_type": "api_key", "source": "manual",
+                        "access_token": "sk-STORED", "priority": 0, "last_status": "ok"
+                    }]
+                }
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        // A dotenv path with no relevant keys.
+        let dotenv = dir.join(".env");
+        std::fs::write(&dotenv, "UNRELATED=1\n").unwrap();
+
+        let mut source = ProfileAudioCredentials {
+            dotenv_path: dotenv,
+            pool: crate::credential_pool::store_pool_callback(profile, None),
+            managed: || Ok(None),
+            unavailable: || None,
+        };
+        let creds = AudioCredentials::resolve(
+            &serde_json::json!({}),
+            &serde_json::json!({}),
+            "https://api.openai.com/v1",
+            &mut source,
+        )
+        .unwrap();
+        assert_eq!(creds.key, "sk-STORED");
+        assert_eq!(creds.base_url, "https://api.openai.com/v1");
+
+        crate::secret_scope::set_multiplex_active(prev_mux);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
     struct CredentialsFixture<'a> {
         row: &'a serde_json::Value,
         calls: Vec<&'static str>,
