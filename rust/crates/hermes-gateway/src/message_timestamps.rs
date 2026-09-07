@@ -53,6 +53,17 @@ fn naive_to_epoch(naive: NaiveDateTime, tz: Option<FixedOffset>) -> Option<f64> 
 /// separator character, and fractional seconds in UTC offsets. Keep those
 /// rules here so credential deadlines and gateway timestamps agree.
 pub(crate) fn parse_iso_string(text: &str, tz: Option<FixedOffset>) -> Option<f64> {
+    let (naive, offset) = parse_iso_components(text)?;
+    match offset {
+        None => naive_to_epoch(naive, tz),
+        Some(offset) => Some((naive.and_utc().timestamp_micros() - offset) as f64 / 1_000_000.0),
+    }
+}
+
+/// Preserve local wall time and an optional offset in microseconds. Persisted
+/// session timestamps need this distinction; an epoch float loses precision
+/// and whether Python parsed a naive or offset-aware datetime.
+pub(crate) fn parse_iso_components(text: &str) -> Option<(chrono::NaiveDateTime, Option<i64>)> {
     let chars: Vec<char> = text.chars().collect();
     let count = chars.len();
     if count < 7 {
@@ -95,7 +106,7 @@ pub(crate) fn parse_iso_string(text: &str, tz: Option<FixedOffset>) -> Option<f6
     };
     let date = iso_date(chars.get(..split)?)?;
     if count == split {
-        return naive_to_epoch(date.and_hms_opt(0, 0, 0)?, tz);
+        return Some((date.and_hms_opt(0, 0, 0)?, None));
     }
     let time = chars.get(split + 1..)?;
     if time.is_empty() {
@@ -106,7 +117,7 @@ pub(crate) fn parse_iso_string(text: &str, tz: Option<FixedOffset>) -> Option<f6
     let naive =
         date.and_hms_micro_opt(components[0], components[1], components[2], components[3])?;
     let Some(offset_pos) = offset_pos else {
-        return naive_to_epoch(naive, tz);
+        return Some((naive, None));
     };
     let suffix = &time[offset_pos..];
     let offset = if suffix == ['Z'] {
@@ -132,7 +143,7 @@ pub(crate) fn parse_iso_string(text: &str, tz: Option<FixedOffset>) -> Option<f6
             micros
         }
     };
-    Some((naive.and_utc().timestamp_micros() - offset) as f64 / 1_000_000.0)
+    Some((naive, Some(offset)))
 }
 
 fn iso_digits(chars: &[char]) -> Option<u32> {

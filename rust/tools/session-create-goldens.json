@@ -1,0 +1,5100 @@
+[
+  {
+    "name": "create_bare_session",
+    "description": "Create a bare session with minimal arguments; verify clock100 timestamp and null fields.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_bare",
+          "source": "cli"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_bare",
+          "source": "cli"
+        },
+        "result": "s_bare",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_bare",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "insert_session_row_direct",
+    "description": "Call _insert_session_row directly; verify it returns None while persisting the row.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "_insert_session_row",
+        "args": {
+          "session_id": "s_row",
+          "source": "cli",
+          "model": "claude-3"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "_insert_session_row",
+        "args": {
+          "session_id": "s_row",
+          "source": "cli",
+          "model": "claude-3"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_row",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": "claude-3",
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "create_session_with_full_metadata",
+    "description": "Create session with all explicit metadata columns populated.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_full",
+          "source": "slack",
+          "user_id": "u1",
+          "session_key": "agent:main:slack:dm:C1",
+          "chat_id": "C1",
+          "chat_type": "dm",
+          "thread_id": "T1",
+          "display_name": "Main Channel",
+          "origin_json": "{\"team\": \"T1\"}",
+          "model": "gpt-4o",
+          "cwd": "/home/user/proj",
+          "git_repo_root": "/home/user/proj",
+          "profile_name": "main"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_full",
+          "source": "slack",
+          "user_id": "u1",
+          "session_key": "agent:main:slack:dm:C1",
+          "chat_id": "C1",
+          "chat_type": "dm",
+          "thread_id": "T1",
+          "display_name": "Main Channel",
+          "origin_json": "{\"team\": \"T1\"}",
+          "model": "gpt-4o",
+          "cwd": "/home/user/proj",
+          "git_repo_root": "/home/user/proj",
+          "profile_name": "main"
+        },
+        "result": "s_full",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_full",
+            "source": "slack",
+            "user_id": "u1",
+            "session_key": "agent:main:slack:dm:C1",
+            "chat_id": "C1",
+            "chat_type": "dm",
+            "thread_id": "T1",
+            "display_name": "Main Channel",
+            "origin_json": "{\"team\": \"T1\"}",
+            "model": "gpt-4o",
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/home/user/proj",
+            "git_branch": null,
+            "git_repo_root": "/home/user/proj",
+            "profile_name": "main",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "create_session_explicit_empty_strings",
+    "description": "Explicit empty strings for cwd, display_name, origin_json, model are preserved as non-null empty strings.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_empty_str",
+          "source": "slack",
+          "cwd": "",
+          "display_name": "",
+          "origin_json": "",
+          "model": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_empty_str",
+          "source": "slack",
+          "cwd": "",
+          "display_name": "",
+          "origin_json": "",
+          "model": ""
+        },
+        "result": "s_empty_str",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_empty_str",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "",
+            "origin_json": "",
+            "model": "",
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "create_session_whitespace_profile_name_falls_back_to_owner",
+    "description": "Whitespace profile name falls back to injected store owner.",
+    "owner_profile": "work",
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_ws_profile",
+          "source": "cli",
+          "profile_name": "   "
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_ws_profile",
+          "source": "cli",
+          "profile_name": "   "
+        },
+        "result": "s_ws_profile",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_ws_profile",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "create_session_empty_profile_name_no_owner",
+    "description": "Empty profile name with no store owner sets profile_name to None.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_no_owner",
+          "source": "cli",
+          "profile_name": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_no_owner",
+          "source": "cli",
+          "profile_name": ""
+        },
+        "result": "s_no_owner",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_no_owner",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "create_session_explicit_empty_dict_model_config",
+    "description": "Explicit empty dict for model_config evaluates falsy and stores None.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_empty_cfg",
+          "source": "cli",
+          "model_config": {}
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_empty_cfg",
+          "source": "cli",
+          "model_config": {}
+        },
+        "result": "s_empty_cfg",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_empty_cfg",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "create_session_explicit_empty_system_prompt",
+    "description": "Explicit empty system prompt hashes empty string and stores in system_prompts table.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_empty_prompt",
+          "source": "cli",
+          "system_prompt": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_empty_prompt",
+          "source": "cli",
+          "system_prompt": ""
+        },
+        "result": "s_empty_prompt",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_empty_prompt",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "prompt": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "enrich_bare_session_with_model_and_config",
+    "description": "Enrich bare session with model and model_config on conflict.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_enrich",
+          "source": "gateway",
+          "user_id": "u_gateway"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_enrich",
+          "source": "agent",
+          "model": "claude-3-5",
+          "model_config": {
+            "temperature": 0.5
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_enrich",
+          "source": "gateway",
+          "user_id": "u_gateway"
+        },
+        "result": "s_enrich",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_enrich",
+            "source": "gateway",
+            "user_id": "u_gateway",
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_enrich",
+          "source": "agent",
+          "model": "claude-3-5",
+          "model_config": {
+            "temperature": 0.5
+          }
+        },
+        "result": "s_enrich",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_enrich",
+            "source": "gateway",
+            "user_id": "u_gateway",
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": "claude-3-5",
+            "model_config": {
+              "temperature": 0.5
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "enrich_preserves_existing_model_on_conflict",
+    "description": "Enrichment preserves existing model on conflict.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_model",
+          "source": "cli",
+          "model": "existing_model"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_model",
+          "source": "cli",
+          "model": "new_model"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_model",
+          "source": "cli",
+          "model": "existing_model"
+        },
+        "result": "s_model",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_model",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": "existing_model",
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_model",
+          "source": "cli",
+          "model": "new_model"
+        },
+        "result": "s_model",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_model",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": "existing_model",
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "enrich_does_not_overwrite_source_or_user_id",
+    "description": "Enrichment preserves immutable source, user_id, and started_at.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_immut",
+        "source": "web",
+        "user_id": "u_orig",
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 25.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_immut",
+          "source": "cli",
+          "user_id": "u_new"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_immut",
+          "source": "cli",
+          "user_id": "u_new"
+        },
+        "result": "s_immut",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_immut",
+            "source": "web",
+            "user_id": "u_orig",
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 25.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "enrich_fills_null_peer_and_origin_fields",
+    "description": "Enrichment fills null peer and origin fields on existing row.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_peer",
+          "source": "slack"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_peer",
+          "source": "slack",
+          "chat_id": "C99",
+          "chat_type": "channel",
+          "thread_id": "T88",
+          "display_name": "General",
+          "origin_json": "{\"team\":\"T99\"}"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_peer",
+          "source": "slack"
+        },
+        "result": "s_peer",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_peer",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_peer",
+          "source": "slack",
+          "chat_id": "C99",
+          "chat_type": "channel",
+          "thread_id": "T88",
+          "display_name": "General",
+          "origin_json": "{\"team\":\"T99\"}"
+        },
+        "result": "s_peer",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_peer",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": "C99",
+            "chat_type": "channel",
+            "thread_id": "T88",
+            "display_name": "General",
+            "origin_json": "{\"team\":\"T99\"}",
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "enrich_preserves_existing_peer_and_origin_fields",
+    "description": "Enrichment preserves existing peer and origin fields on existing row.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_peer_exist",
+          "source": "slack",
+          "chat_id": "C1",
+          "chat_type": "dm",
+          "thread_id": "T1",
+          "display_name": "D1",
+          "origin_json": "{\"team\":\"T1\"}"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_peer_exist",
+          "source": "slack",
+          "chat_id": "C2",
+          "chat_type": "group",
+          "thread_id": "T2",
+          "display_name": "D2",
+          "origin_json": "{\"team\":\"T2\"}"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_peer_exist",
+          "source": "slack",
+          "chat_id": "C1",
+          "chat_type": "dm",
+          "thread_id": "T1",
+          "display_name": "D1",
+          "origin_json": "{\"team\":\"T1\"}"
+        },
+        "result": "s_peer_exist",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_peer_exist",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": "C1",
+            "chat_type": "dm",
+            "thread_id": "T1",
+            "display_name": "D1",
+            "origin_json": "{\"team\":\"T1\"}",
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_peer_exist",
+          "source": "slack",
+          "chat_id": "C2",
+          "chat_type": "group",
+          "thread_id": "T2",
+          "display_name": "D2",
+          "origin_json": "{\"team\":\"T2\"}"
+        },
+        "result": "s_peer_exist",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_peer_exist",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": "C1",
+            "chat_type": "dm",
+            "thread_id": "T1",
+            "display_name": "D1",
+            "origin_json": "{\"team\":\"T1\"}",
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "enrich_fills_null_cwd_and_git_repo_root",
+    "description": "Enrichment fills null cwd and git_repo_root on existing row.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_cwd",
+          "source": "cli"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_cwd",
+          "source": "cli",
+          "cwd": "/workspace/repo",
+          "git_repo_root": "/workspace/repo"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_cwd",
+          "source": "cli"
+        },
+        "result": "s_cwd",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_cwd",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_cwd",
+          "source": "cli",
+          "cwd": "/workspace/repo",
+          "git_repo_root": "/workspace/repo"
+        },
+        "result": "s_cwd",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_cwd",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/workspace/repo",
+            "git_branch": null,
+            "git_repo_root": "/workspace/repo",
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "enrich_preserves_existing_cwd_and_git_repo_root",
+    "description": "Enrichment preserves existing cwd and git_repo_root.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_cwd_exist",
+          "source": "cli",
+          "cwd": "/orig/path",
+          "git_repo_root": "/orig/repo"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_cwd_exist",
+          "source": "cli",
+          "cwd": "/new/path",
+          "git_repo_root": "/new/repo"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_cwd_exist",
+          "source": "cli",
+          "cwd": "/orig/path",
+          "git_repo_root": "/orig/repo"
+        },
+        "result": "s_cwd_exist",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_cwd_exist",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/orig/path",
+            "git_branch": null,
+            "git_repo_root": "/orig/repo",
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_cwd_exist",
+          "source": "cli",
+          "cwd": "/new/path",
+          "git_repo_root": "/new/repo"
+        },
+        "result": "s_cwd_exist",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_cwd_exist",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/orig/path",
+            "git_branch": null,
+            "git_repo_root": "/orig/repo",
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "enrich_multistep_progressive",
+    "description": "Three sequential calls progressively enrich bare session to fully populated row.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_multi",
+          "source": "gateway"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_multi",
+          "source": "agent",
+          "model": "model_1"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_multi",
+          "source": "agent",
+          "model_config": {
+            "temp": 0.2
+          },
+          "system_prompt": "instructions"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_multi",
+          "source": "gateway"
+        },
+        "result": "s_multi",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_multi",
+            "source": "gateway",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_multi",
+          "source": "agent",
+          "model": "model_1"
+        },
+        "result": "s_multi",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_multi",
+            "source": "gateway",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": "model_1",
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_multi",
+          "source": "agent",
+          "model_config": {
+            "temp": 0.2
+          },
+          "system_prompt": "instructions"
+        },
+        "result": "s_multi",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_multi",
+            "source": "gateway",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": "model_1",
+            "model_config": {
+              "temp": 0.2
+            },
+            "system_prompt": null,
+            "system_prompt_hash": "238fa28a94976c7da14563bc873c2729bd5cd325389085bb4c6dd0de28923590",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "238fa28a94976c7da14563bc873c2729bd5cd325389085bb4c6dd0de28923590",
+            "prompt": "instructions"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "reset_only_config_merged_with_real_config",
+    "description": "Reset-only config with _reset_from marker merges with incoming real model config.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_reset",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": {
+          "_reset_from": "parent_123"
+        },
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset",
+          "source": "cli",
+          "model_config": {
+            "temperature": 0.7,
+            "max_tokens": 500
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset",
+          "source": "cli",
+          "model_config": {
+            "temperature": 0.7,
+            "max_tokens": 500
+          }
+        },
+        "result": "s_reset",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_reset",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": {
+              "temperature": 0.7,
+              "max_tokens": 500,
+              "_reset_from": "parent_123"
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "reset_only_config_with_extra_keys_not_merged",
+    "description": "Config with _reset_from and additional keys is not treated as reset-only stub.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_reset_extra",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": {
+          "_reset_from": "p",
+          "temperature": 0.1
+        },
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_extra",
+          "source": "cli",
+          "model_config": {
+            "temperature": 0.9,
+            "max_tokens": 100
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_extra",
+          "source": "cli",
+          "model_config": {
+            "temperature": 0.9,
+            "max_tokens": 100
+          }
+        },
+        "result": "s_reset_extra",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_reset_extra",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": {
+              "_reset_from": "p",
+              "temperature": 0.1
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "reset_only_config_second_call_has_no_config",
+    "description": "Reset stub remains unchanged when second call passes no model config.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_reset_none",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": {
+          "_reset_from": "p"
+        },
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_none",
+          "source": "cli",
+          "model": "new_model"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_none",
+          "source": "cli",
+          "model": "new_model"
+        },
+        "result": "s_reset_none",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_reset_none",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": "new_model",
+            "model_config": {
+              "_reset_from": "p"
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "reset_only_config_overwrites_reset_from_in_excluded",
+    "description": "Reset stub overwrites _reset_from in incoming excluded config.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_reset_override",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": {
+          "_reset_from": "orig_parent"
+        },
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_override",
+          "source": "cli",
+          "model_config": {
+            "_reset_from": "incoming_parent",
+            "temperature": 0.5
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_override",
+          "source": "cli",
+          "model_config": {
+            "_reset_from": "incoming_parent",
+            "temperature": 0.5
+          }
+        },
+        "result": "s_reset_override",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_reset_override",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": {
+              "_reset_from": "orig_parent",
+              "temperature": 0.5
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "reset_only_config_nested_object_enrichment",
+    "description": "Reset stub merges with complex nested object in excluded config.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_reset_nested",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": {
+          "_reset_from": "p"
+        },
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_nested",
+          "source": "cli",
+          "model_config": {
+            "provider_options": {
+              "stream": true
+            }
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_nested",
+          "source": "cli",
+          "model_config": {
+            "provider_options": {
+              "stream": true
+            }
+          }
+        },
+        "result": "s_reset_nested",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_reset_nested",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": {
+              "provider_options": {
+                "stream": true
+              },
+              "_reset_from": "p"
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "reset_only_config_multiple_enrichments_idempotent",
+    "description": "Multiple enrichments on reset stub: first merges, second keeps merged config.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_reset_idem",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": {
+          "_reset_from": "p"
+        },
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_idem",
+          "source": "cli",
+          "model_config": {
+            "temp": 0.5
+          }
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_idem",
+          "source": "cli",
+          "model_config": {
+            "temp": 0.9
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_idem",
+          "source": "cli",
+          "model_config": {
+            "temp": 0.5
+          }
+        },
+        "result": "s_reset_idem",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_reset_idem",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": {
+              "temp": 0.5,
+              "_reset_from": "p"
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_idem",
+          "source": "cli",
+          "model_config": {
+            "temp": 0.9
+          }
+        },
+        "result": "s_reset_idem",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_reset_idem",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": {
+              "temp": 0.5,
+              "_reset_from": "p"
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "reset_only_config_on_null_initial_config",
+    "description": "Incoming config with _reset_from on null initial config is inserted directly.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_reset_null",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_null",
+          "source": "cli",
+          "model_config": {
+            "_reset_from": "p"
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_reset_null",
+          "source": "cli",
+          "model_config": {
+            "_reset_from": "p"
+          }
+        },
+        "result": "s_reset_null",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_reset_null",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": {
+              "_reset_from": "p"
+            },
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "prompt_stored_and_deduplicated",
+    "description": "Sessions with identical system prompt share deduplicated row in system_prompts.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_p1",
+          "source": "cli",
+          "system_prompt": "shared prompt"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_p2",
+          "source": "cli",
+          "system_prompt": "shared prompt"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_p1",
+          "source": "cli",
+          "system_prompt": "shared prompt"
+        },
+        "result": "s_p1",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_p1",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "0e1ab746bcb33530132016fbba93af32825525dffad0c55c09204c6b512d8226",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "0e1ab746bcb33530132016fbba93af32825525dffad0c55c09204c6b512d8226",
+            "prompt": "shared prompt"
+          }
+        ]
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_p2",
+          "source": "cli",
+          "system_prompt": "shared prompt"
+        },
+        "result": "s_p2",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_p1",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "0e1ab746bcb33530132016fbba93af32825525dffad0c55c09204c6b512d8226",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "s_p2",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "0e1ab746bcb33530132016fbba93af32825525dffad0c55c09204c6b512d8226",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "0e1ab746bcb33530132016fbba93af32825525dffad0c55c09204c6b512d8226",
+            "prompt": "shared prompt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "prompt_gc_unreferenced_prompt_deleted",
+    "description": "Creation with system prompt cleans up unreferenced orphan prompts.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [
+      {
+        "hash": "orphan_hash",
+        "prompt": "orphan prompt"
+      }
+    ],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_gc",
+          "source": "cli",
+          "system_prompt": "active prompt"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_gc",
+          "source": "cli",
+          "system_prompt": "active prompt"
+        },
+        "result": "s_gc",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_gc",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "3eb916c352d25386ab5bf60d72fe5cd2babe48f1dc18be1c5c4526fad72d54bc",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "3eb916c352d25386ab5bf60d72fe5cd2babe48f1dc18be1c5c4526fad72d54bc",
+            "prompt": "active prompt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "prompt_gc_not_triggered_when_system_prompt_none",
+    "description": "Creation without system prompt does not trigger unreferenced prompt cleanup.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [
+      {
+        "hash": "orphan_hash",
+        "prompt": "orphan prompt"
+      }
+    ],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_nogc",
+          "source": "cli",
+          "system_prompt": null
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_nogc",
+          "source": "cli",
+          "system_prompt": null
+        },
+        "result": "s_nogc",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_nogc",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "orphan_hash",
+            "prompt": "orphan prompt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "prompt_enrichment_fills_null_prompt",
+    "description": "Enriching null prompt on existing session stores hash and prompt.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_enrich_p",
+          "source": "cli",
+          "system_prompt": null
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_enrich_p",
+          "source": "cli",
+          "system_prompt": "enriched prompt"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_enrich_p",
+          "source": "cli",
+          "system_prompt": null
+        },
+        "result": "s_enrich_p",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_enrich_p",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_enrich_p",
+          "source": "cli",
+          "system_prompt": "enriched prompt"
+        },
+        "result": "s_enrich_p",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_enrich_p",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "3350eeddfa6aea38addcde59cbc38fcbcd203df32c40d42c207a73b5c689b9c5",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "3350eeddfa6aea38addcde59cbc38fcbcd203df32c40d42c207a73b5c689b9c5",
+            "prompt": "enriched prompt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "prompt_enrichment_does_not_overwrite_existing_prompt",
+    "description": "Enrichment does not overwrite existing prompt; second prompt is GC-ed.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_keep_p",
+          "source": "cli",
+          "system_prompt": "prompt 1"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_keep_p",
+          "source": "cli",
+          "system_prompt": "prompt 2"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_keep_p",
+          "source": "cli",
+          "system_prompt": "prompt 1"
+        },
+        "result": "s_keep_p",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_keep_p",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "7e5b8ad56422e58bca8c8272a62ab32bb2721fc72d0a13e765a175c028432069",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "7e5b8ad56422e58bca8c8272a62ab32bb2721fc72d0a13e765a175c028432069",
+            "prompt": "prompt 1"
+          }
+        ]
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_keep_p",
+          "source": "cli",
+          "system_prompt": "prompt 2"
+        },
+        "result": "s_keep_p",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_keep_p",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "7e5b8ad56422e58bca8c8272a62ab32bb2721fc72d0a13e765a175c028432069",
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "7e5b8ad56422e58bca8c8272a62ab32bb2721fc72d0a13e765a175c028432069",
+            "prompt": "prompt 1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "prompt_legacy_text_cleared_when_hash_enriched",
+    "description": "Enriching prompt on legacy session with system_prompt text clears text and sets hash.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_legacy_p",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": "old legacy text",
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_legacy_p",
+          "source": "cli",
+          "system_prompt": "new prompt"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_legacy_p",
+          "source": "cli",
+          "system_prompt": "new prompt"
+        },
+        "result": "s_legacy_p",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_legacy_p",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": "c8e794dbda1ae17d4b49d82f31eae032220a555087a8b2693c0f83f84c32d9e2",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "c8e794dbda1ae17d4b49d82f31eae032220a555087a8b2693c0f83f84c32d9e2",
+            "prompt": "new prompt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "prompt_rollback_on_malformed_model_config",
+    "description": "Malformed JSON in session model_config causes transaction rollback; orphan prompt is not stored.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_broken",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": "broken_json_string",
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_broken",
+          "source": "cli",
+          "system_prompt": "rollback_prompt",
+          "model_config": {
+            "temp": 0.5
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_broken",
+          "source": "cli",
+          "system_prompt": "rollback_prompt",
+          "model_config": {
+            "temp": 0.5
+          }
+        },
+        "result": null,
+        "error": "OperationalError",
+        "sessions": [
+          {
+            "id": "s_broken",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": "broken_json_string",
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "prompt_rollback_preserves_initial_prompts",
+    "description": "Transaction rollback preserves pre-existing valid system prompts.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s_broken2",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": "invalid",
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [
+      {
+        "hash": "good_hash",
+        "prompt": "valid prompt"
+      }
+    ],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_broken2",
+          "source": "cli",
+          "system_prompt": "bad_prompt",
+          "model_config": {
+            "temp": 0.5
+          }
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_broken2",
+          "source": "cli",
+          "system_prompt": "bad_prompt",
+          "model_config": {
+            "temp": 0.5
+          }
+        },
+        "result": null,
+        "error": "OperationalError",
+        "sessions": [
+          {
+            "id": "s_broken2",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": "invalid",
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": [
+          {
+            "hash": "good_hash",
+            "prompt": "valid prompt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "parent_context_inheritance_cwd_repo_branch",
+    "description": "Child session inherits cwd, git_repo_root, git_branch, and profile_name from parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_ctx",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": "/repo/dir",
+        "git_branch": "feature-1",
+        "git_repo_root": "/repo",
+        "profile_name": "team",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ctx",
+          "source": "cli",
+          "parent_session_id": "p_ctx"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ctx",
+          "source": "cli",
+          "parent_session_id": "p_ctx"
+        },
+        "result": "c_ctx",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_ctx",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_ctx",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/repo/dir",
+            "git_branch": "feature-1",
+            "git_repo_root": "/repo",
+            "profile_name": "team",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_ctx",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/repo/dir",
+            "git_branch": "feature-1",
+            "git_repo_root": "/repo",
+            "profile_name": "team",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "parent_context_does_not_overwrite_child_explicit_values",
+    "description": "Child session retains its explicit cwd and git_repo_root over parent values.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_ctx2",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": "/parent/dir",
+        "git_branch": null,
+        "git_repo_root": "/parent/repo",
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ctx2",
+          "source": "cli",
+          "parent_session_id": "p_ctx2",
+          "cwd": "/child/dir",
+          "git_repo_root": "/child/repo"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ctx2",
+          "source": "cli",
+          "parent_session_id": "p_ctx2",
+          "cwd": "/child/dir",
+          "git_repo_root": "/child/repo"
+        },
+        "result": "c_ctx2",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_ctx2",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_ctx2",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/child/dir",
+            "git_branch": null,
+            "git_repo_root": "/child/repo",
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_ctx2",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/parent/dir",
+            "git_branch": null,
+            "git_repo_root": "/parent/repo",
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "parent_context_child_explicit_empty_string_not_overwritten",
+    "description": "Child session with explicit empty string for cwd does not inherit parent cwd.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_ctx3",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": "/parent/dir",
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ctx3",
+          "source": "cli",
+          "parent_session_id": "p_ctx3",
+          "cwd": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ctx3",
+          "source": "cli",
+          "parent_session_id": "p_ctx3",
+          "cwd": ""
+        },
+        "result": "c_ctx3",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_ctx3",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_ctx3",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_ctx3",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/parent/dir",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "parent_context_missing_parent",
+    "description": "Child session with nonexistent parent session id creates safely without error.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_missing_p",
+          "source": "cli",
+          "parent_session_id": "nonexistent_parent"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_missing_p",
+          "source": "cli",
+          "parent_session_id": "nonexistent_parent"
+        },
+        "result": "c_missing_p",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_missing_p",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "nonexistent_parent",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "parent_context_partial_parent_nulls",
+    "description": "Child inherits only non-null parent context fields when some parent fields are null.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_partial",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": "/parent/dir",
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_partial",
+          "source": "cli",
+          "parent_session_id": "p_partial"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_partial",
+          "source": "cli",
+          "parent_session_id": "p_partial"
+        },
+        "result": "c_partial",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_partial",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_partial",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/parent/dir",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_partial",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/parent/dir",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "parent_context_linear_chain_inheritance",
+    "description": "Context inheritance propagates through linear parent-child-grandchild chain.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_root",
+          "source": "cli",
+          "cwd": "/root",
+          "profile_name": "prof"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_child",
+          "source": "cli",
+          "parent_session_id": "s_root"
+        }
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_grandchild",
+          "source": "cli",
+          "parent_session_id": "s_child"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_root",
+          "source": "cli",
+          "cwd": "/root",
+          "profile_name": "prof"
+        },
+        "result": "s_root",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_root",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/root",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "prof",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_child",
+          "source": "cli",
+          "parent_session_id": "s_root"
+        },
+        "result": "s_child",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_child",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "s_root",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/root",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "prof",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "s_root",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/root",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "prof",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      },
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "s_grandchild",
+          "source": "cli",
+          "parent_session_id": "s_child"
+        },
+        "result": "s_grandchild",
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_child",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "s_root",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/root",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "prof",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "s_grandchild",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "s_child",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/root",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "prof",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "s_root",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/root",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "prof",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "parent_context_parent_has_different_source",
+    "description": "Child inherits parent context across different source types.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_slack",
+        "source": "slack",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": "/slack/repo",
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "prof1",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_subagent",
+          "source": "subagent",
+          "parent_session_id": "p_slack"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_subagent",
+          "source": "subagent",
+          "parent_session_id": "p_slack"
+        },
+        "result": "c_subagent",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_subagent",
+            "source": "subagent",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_slack",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/slack/repo",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "prof1",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_slack",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/slack/repo",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "prof1",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "profile_inheritance_same_namespace",
+    "description": "Child inherits profile when session key namespaces match.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_ns1",
+        "source": "cli",
+        "user_id": null,
+        "session_key": "agent:work:slack:dm:C1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ns1",
+          "source": "slack",
+          "session_key": "agent:work:telegram:group:G1",
+          "parent_session_id": "p_ns1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ns1",
+          "source": "slack",
+          "session_key": "agent:work:telegram:group:G1",
+          "parent_session_id": "p_ns1"
+        },
+        "result": "c_ns1",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_ns1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "agent:work:telegram:group:G1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_ns1",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_ns1",
+            "source": "cli",
+            "user_id": null,
+            "session_key": "agent:work:slack:dm:C1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "profile_inheritance_different_namespace_fenced",
+    "description": "Profile inheritance is fenced when session key namespaces differ.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_ns2",
+        "source": "cli",
+        "user_id": null,
+        "session_key": "agent:work:slack:dm:C1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ns2",
+          "source": "slack",
+          "session_key": "agent:personal:slack:dm:C1",
+          "parent_session_id": "p_ns2"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_ns2",
+          "source": "slack",
+          "session_key": "agent:personal:slack:dm:C1",
+          "parent_session_id": "p_ns2"
+        },
+        "result": "c_ns2",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_ns2",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "agent:personal:slack:dm:C1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_ns2",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_ns2",
+            "source": "cli",
+            "user_id": null,
+            "session_key": "agent:work:slack:dm:C1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "profile_inheritance_parent_keyless",
+    "description": "Child inherits profile when parent is keyless.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_nokey",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_from_nokey",
+          "source": "slack",
+          "session_key": "agent:work:slack:dm:C1",
+          "parent_session_id": "p_nokey"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_from_nokey",
+          "source": "slack",
+          "session_key": "agent:work:slack:dm:C1",
+          "parent_session_id": "p_nokey"
+        },
+        "result": "c_from_nokey",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_from_nokey",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "agent:work:slack:dm:C1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_nokey",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_nokey",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "profile_inheritance_child_keyless",
+    "description": "Child inherits profile when child is keyless.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_haskey",
+        "source": "cli",
+        "user_id": null,
+        "session_key": "agent:work:slack:dm:C1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_nokey",
+          "source": "subagent",
+          "session_key": null,
+          "parent_session_id": "p_haskey"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_nokey",
+          "source": "subagent",
+          "session_key": null,
+          "parent_session_id": "p_haskey"
+        },
+        "result": "c_nokey",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_nokey",
+            "source": "subagent",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_haskey",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_haskey",
+            "source": "cli",
+            "user_id": null,
+            "session_key": "agent:work:slack:dm:C1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "profile_inheritance_both_keyless",
+    "description": "Child inherits profile when both parent and child are keyless.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_both_nokey",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_both_nokey",
+          "source": "cli",
+          "session_key": null,
+          "parent_session_id": "p_both_nokey"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_both_nokey",
+          "source": "cli",
+          "session_key": null,
+          "parent_session_id": "p_both_nokey"
+        },
+        "result": "c_both_nokey",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_both_nokey",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_both_nokey",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_both_nokey",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "profile_inheritance_child_has_explicit_profile",
+    "description": "Child with explicit profile_name does not inherit parent profile.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_prof",
+        "source": "cli",
+        "user_id": null,
+        "session_key": "agent:work:slack:dm:C1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_prof",
+          "source": "slack",
+          "session_key": "agent:work:slack:dm:C2",
+          "parent_session_id": "p_prof",
+          "profile_name": "override"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_prof",
+          "source": "slack",
+          "session_key": "agent:work:slack:dm:C2",
+          "parent_session_id": "p_prof",
+          "profile_name": "override"
+        },
+        "result": "c_prof",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_prof",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "agent:work:slack:dm:C2",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_prof",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "override",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_prof",
+            "source": "cli",
+            "user_id": null,
+            "session_key": "agent:work:slack:dm:C1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "profile_inheritance_with_injected_store_owner",
+    "description": "Injected store owner populates child profile; coalesce preserves store owner.",
+    "owner_profile": "default",
+    "initial_sessions": [
+      {
+        "id": "p_store",
+        "source": "cli",
+        "user_id": null,
+        "session_key": "agent:work:slack:dm:C1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_store",
+          "source": "slack",
+          "session_key": "agent:work:slack:dm:C2",
+          "parent_session_id": "p_store"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_store",
+          "source": "slack",
+          "session_key": "agent:work:slack:dm:C2",
+          "parent_session_id": "p_store"
+        },
+        "result": "c_store",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_store",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "agent:work:slack:dm:C2",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_store",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "default",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_store",
+            "source": "cli",
+            "user_id": null,
+            "session_key": "agent:work:slack:dm:C1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "live_parent_delegate_does_not_inherit_routing",
+    "description": "Live parent delegate does not inherit routing fields.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_live",
+        "source": "slack",
+        "user_id": "U1",
+        "session_key": "agent:work:slack:dm:C",
+        "chat_id": "C1",
+        "chat_type": "dm",
+        "thread_id": "T1",
+        "display_name": "Live Chat",
+        "origin_json": "{\"team\":\"T1\"}",
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "cwd": "/work",
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_live_delegate",
+          "source": "subagent",
+          "parent_session_id": "p_live"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_live_delegate",
+          "source": "subagent",
+          "parent_session_id": "p_live"
+        },
+        "result": "c_live_delegate",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_live_delegate",
+            "source": "subagent",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_live",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/work",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_live",
+            "source": "slack",
+            "user_id": "U1",
+            "session_key": "agent:work:slack:dm:C",
+            "chat_id": "C1",
+            "chat_type": "dm",
+            "thread_id": "T1",
+            "display_name": "Live Chat",
+            "origin_json": "{\"team\":\"T1\"}",
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/work",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "compression_fork_inherits_full_routing",
+    "description": "Compression fork inherits all routing and origin fields from compressed parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_comp",
+        "source": "slack",
+        "user_id": "U1",
+        "session_key": "agent:work:slack:dm:C",
+        "chat_id": "C1",
+        "chat_type": "dm",
+        "thread_id": "T1",
+        "display_name": "Comp Chat",
+        "origin_json": "{\"team\":\"T1\"}",
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "compression",
+        "cwd": "/work",
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": "work",
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_comp_fork",
+          "source": "slack",
+          "parent_session_id": "p_comp"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_comp_fork",
+          "source": "slack",
+          "parent_session_id": "p_comp"
+        },
+        "result": "c_comp_fork",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_comp_fork",
+            "source": "slack",
+            "user_id": "U1",
+            "session_key": "agent:work:slack:dm:C",
+            "chat_id": "C1",
+            "chat_type": "dm",
+            "thread_id": "T1",
+            "display_name": "Comp Chat",
+            "origin_json": "{\"team\":\"T1\"}",
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_comp",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": "/work",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_comp",
+            "source": "slack",
+            "user_id": "U1",
+            "session_key": "agent:work:slack:dm:C",
+            "chat_id": "C1",
+            "chat_type": "dm",
+            "thread_id": "T1",
+            "display_name": "Comp Chat",
+            "origin_json": "{\"team\":\"T1\"}",
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "compression",
+            "cwd": "/work",
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": "work",
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "compression_fork_child_explicit_routing_not_overwritten",
+    "description": "Compression fork preserves child explicit routing fields over parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_comp2",
+        "source": "cli",
+        "user_id": "p_user",
+        "session_key": "p_key",
+        "chat_id": "p_chat",
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "compression",
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_comp2",
+          "source": "slack",
+          "parent_session_id": "p_comp2",
+          "session_key": "c_key",
+          "user_id": "c_user"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_comp2",
+          "source": "slack",
+          "parent_session_id": "p_comp2",
+          "session_key": "c_key",
+          "user_id": "c_user"
+        },
+        "result": "c_comp2",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_comp2",
+            "source": "slack",
+            "user_id": "c_user",
+            "session_key": "c_key",
+            "chat_id": "p_chat",
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_comp2",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_comp2",
+            "source": "cli",
+            "user_id": "p_user",
+            "session_key": "p_key",
+            "chat_id": "p_chat",
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "compression",
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "other_ended_parent_does_not_inherit_routing",
+    "description": "Parent ended with user_exit does not pass routing fields to child.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_exit",
+        "source": "cli",
+        "user_id": "p_user",
+        "session_key": "p_key",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "user_exit",
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_from_exit",
+          "source": "slack",
+          "parent_session_id": "p_exit"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_from_exit",
+          "source": "slack",
+          "parent_session_id": "p_exit"
+        },
+        "result": "c_from_exit",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_from_exit",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_exit",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_exit",
+            "source": "cli",
+            "user_id": "p_user",
+            "session_key": "p_key",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "user_exit",
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "reset_ended_parent_does_not_inherit_routing",
+    "description": "Parent ended with reset does not pass routing fields to child.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_reset_end",
+        "source": "cli",
+        "user_id": "p_user",
+        "session_key": "p_key",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "reset",
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_from_reset",
+          "source": "slack",
+          "parent_session_id": "p_reset_end"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_from_reset",
+          "source": "slack",
+          "parent_session_id": "p_reset_end"
+        },
+        "result": "c_from_reset",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_from_reset",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_reset_end",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_reset_end",
+            "source": "cli",
+            "user_id": "p_user",
+            "session_key": "p_key",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "reset",
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "compression_fork_with_partial_parent_routing",
+    "description": "Compression fork with partial nulls on parent routing fields.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_comp_part",
+        "source": "cli",
+        "user_id": "U1",
+        "session_key": "K1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "compression",
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_comp_part",
+          "source": "slack",
+          "parent_session_id": "p_comp_part"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_comp_part",
+          "source": "slack",
+          "parent_session_id": "p_comp_part"
+        },
+        "result": "c_comp_part",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_comp_part",
+            "source": "slack",
+            "user_id": "U1",
+            "session_key": "K1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_comp_part",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_comp_part",
+            "source": "cli",
+            "user_id": "U1",
+            "session_key": "K1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "compression",
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  },
+  {
+    "name": "compression_fork_explicit_empty_string_not_overwritten",
+    "description": "Compression fork does not overwrite child explicit empty strings for origin fields.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p_comp_empty",
+        "source": "cli",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Parent Display",
+        "origin_json": "{\"p\": 1}",
+        "model": null,
+        "model_config": null,
+        "system_prompt": null,
+        "system_prompt_hash": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "compression",
+        "cwd": null,
+        "git_branch": null,
+        "git_repo_root": null,
+        "profile_name": null,
+        "expiry_finalized": 0
+      }
+    ],
+    "initial_prompts": [],
+    "operations": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_comp_empty",
+          "source": "slack",
+          "parent_session_id": "p_comp_empty",
+          "display_name": "",
+          "origin_json": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "create_session",
+        "args": {
+          "session_id": "c_comp_empty",
+          "source": "slack",
+          "parent_session_id": "p_comp_empty",
+          "display_name": "",
+          "origin_json": ""
+        },
+        "result": "c_comp_empty",
+        "error": null,
+        "sessions": [
+          {
+            "id": "c_comp_empty",
+            "source": "slack",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "",
+            "origin_json": "",
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": "p_comp_empty",
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          },
+          {
+            "id": "p_comp_empty",
+            "source": "cli",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Parent Display",
+            "origin_json": "{\"p\": 1}",
+            "model": null,
+            "model_config": null,
+            "system_prompt": null,
+            "system_prompt_hash": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "compression",
+            "cwd": null,
+            "git_branch": null,
+            "git_repo_root": null,
+            "profile_name": null,
+            "expiry_finalized": 0
+          }
+        ],
+        "system_prompts": []
+      }
+    ]
+  }
+]

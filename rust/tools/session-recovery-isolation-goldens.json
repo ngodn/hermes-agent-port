@@ -1,0 +1,2918 @@
+{
+  "profiles": [
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": null,
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": null,
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": null,
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": null,
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "legacy",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "legacy",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "legacy",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "legacy",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": "agent:",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": 12,
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": 12,
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": 12,
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:main:slack:x",
+      "recovered": 12,
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": null,
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": null,
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": null,
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": null,
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "legacy",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "legacy",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "legacy",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "legacy",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:",
+      "multiplex": true,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": "agent:",
+      "multiplex": true,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": 12,
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": 12,
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": 12,
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent:work:slack:x",
+      "recovered": 12,
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": null,
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": null,
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": null,
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": null,
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "legacy",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "legacy",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "legacy",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "legacy",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:main:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:work:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:other:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": "agent:",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": 12,
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": 12,
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": 12,
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "agent::slack:x",
+      "recovered": 12,
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": null,
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": null,
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": null,
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": null,
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "legacy",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "legacy",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "legacy",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "legacy",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:main:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:main:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:main:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:main:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:work:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:work:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:work:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:work:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:other:slack:x",
+      "multiplex": false,
+      "active": "default",
+      "result": false
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:other:slack:x",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:other:slack:x",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:other:slack:x",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:",
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:",
+      "multiplex": false,
+      "active": "work",
+      "result": false
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:",
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": "agent:",
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": 12,
+      "multiplex": false,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": 12,
+      "multiplex": false,
+      "active": "work",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": 12,
+      "multiplex": true,
+      "active": "default",
+      "result": true
+    },
+    {
+      "requested": "legacy",
+      "recovered": 12,
+      "multiplex": true,
+      "active": "work",
+      "result": true
+    }
+  ],
+  "scopes": [
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": null,
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "bad",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "null",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "[]",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{}",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": null,
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "bad",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "null",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "[]",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{}",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "slack",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": false
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": null
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": ""
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "dm",
+        "scope_id": "T1"
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": null
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": ""
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "group",
+        "scope_id": "T1"
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": null
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": ""
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": null,
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "bad",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "null",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "[]",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":null,\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": "{\"scope_id\":\"T2\",\"guild_id\":\"T1\"}",
+      "result": true
+    },
+    {
+      "source": {
+        "platform": "discord",
+        "chat_id": "C",
+        "chat_type": "thread",
+        "scope_id": "T1"
+      },
+      "origin": {
+        "scope_id": "T1"
+      },
+      "result": true
+    }
+  ]
+}

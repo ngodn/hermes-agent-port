@@ -1,0 +1,2018 @@
+[
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "im",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "mpim",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": ""
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": null,
+    "target": null
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "1"
+    },
+    "selected": "1",
+    "target": "1"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": true,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": false,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": null,
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": null
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": true
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": false
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  },
+  {
+    "extra": {
+      "reply_in_thread": "false",
+      "dm_top_level_threads_as_sessions": "off"
+    },
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "ts": "1",
+      "thread_ts": "0"
+    },
+    "selected": "0",
+    "target": "0"
+  }
+]

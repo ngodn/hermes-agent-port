@@ -1,0 +1,2861 @@
+[
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "auto",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": null,
+    "expected": [
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": [],
+    "expected": [
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {},
+    "expected": [
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": [
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "coding",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": null,
+    "expected": [
+      ""
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": [],
+    "expected": [
+      ""
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {},
+    "expected": [
+      ""
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": [
+      ""
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": null,
+    "expected": [
+      "custom"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": [],
+    "expected": [
+      "custom"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {},
+    "expected": [
+      "custom"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": [
+      "custom"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "focus",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": [
+      "custom",
+      "z_first",
+      "candidate",
+      "coding"
+    ]
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": null,
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "coding",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": null,
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": [],
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {},
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": "invalid"
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": null
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": false
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": true
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": -1
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 0.0
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": 1.5
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "FALSE"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": " off\u001c"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "yes"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": "unknown"
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": []
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  },
+  {
+    "mode": "on",
+    "toolset": "custom",
+    "raw_config": {
+      "mcp_servers": {
+        "z_first": {},
+        "candidate": {
+          "enabled": {}
+        },
+        "bad": false,
+        "coding": {}
+      }
+    },
+    "expected": null
+  }
+]

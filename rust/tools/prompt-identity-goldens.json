@@ -1,0 +1,214 @@
+{
+  "profiles": [
+    {
+      "profile": "default",
+      "home": "/hermes",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: default. Other profiles (if any) live under /hermes/profiles/<name>/. Each profile has its own skills/, plugins/, cron/, and memories/ that affect a different session than this one. Do not modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "default",
+      "home": "/hermes",
+      "root": "/default root",
+      "expected": "Active Hermes profile: default. Other profiles (if any) live under /default root/profiles/<name>/. Each profile has its own skills/, plugins/, cron/, and memories/ that affect a different session than this one. Do not modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "default",
+      "home": "/hermes/profiles/red",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: default. Other profiles (if any) live under /hermes/profiles/<name>/. Each profile has its own skills/, plugins/, cron/, and memories/ that affect a different session than this one. Do not modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "default",
+      "home": "/hermes/profiles/red",
+      "root": "/default root",
+      "expected": "Active Hermes profile: default. Other profiles (if any) live under /default root/profiles/<name>/. Each profile has its own skills/, plugins/, cron/, and memories/ that affect a different session than this one. Do not modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "default",
+      "home": "/\u81ea\u5b9a\u4e49 home",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: default. Other profiles (if any) live under /hermes/profiles/<name>/. Each profile has its own skills/, plugins/, cron/, and memories/ that affect a different session than this one. Do not modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "default",
+      "home": "/\u81ea\u5b9a\u4e49 home",
+      "root": "/default root",
+      "expected": "Active Hermes profile: default. Other profiles (if any) live under /default root/profiles/<name>/. Each profile has its own skills/, plugins/, cron/, and memories/ that affect a different session than this one. Do not modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "red",
+      "home": "/hermes",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: red. This session reads and writes /hermes/. The default profile's data lives at /hermes/skills/, /hermes/plugins/, /hermes/cron/, /hermes/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "red",
+      "home": "/hermes",
+      "root": "/default root",
+      "expected": "Active Hermes profile: red. This session reads and writes /hermes/. The default profile's data lives at /default root/skills/, /default root/plugins/, /default root/cron/, /default root/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "red",
+      "home": "/hermes/profiles/red",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: red. This session reads and writes /hermes/profiles/red/. The default profile's data lives at /hermes/skills/, /hermes/plugins/, /hermes/cron/, /hermes/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "red",
+      "home": "/hermes/profiles/red",
+      "root": "/default root",
+      "expected": "Active Hermes profile: red. This session reads and writes /hermes/profiles/red/. The default profile's data lives at /default root/skills/, /default root/plugins/, /default root/cron/, /default root/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "red",
+      "home": "/\u81ea\u5b9a\u4e49 home",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: red. This session reads and writes /\u81ea\u5b9a\u4e49 home/. The default profile's data lives at /hermes/skills/, /hermes/plugins/, /hermes/cron/, /hermes/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "red",
+      "home": "/\u81ea\u5b9a\u4e49 home",
+      "root": "/default root",
+      "expected": "Active Hermes profile: red. This session reads and writes /\u81ea\u5b9a\u4e49 home/. The default profile's data lives at /default root/skills/, /default root/plugins/, /default root/cron/, /default root/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "custom",
+      "home": "/hermes",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: custom. This session reads and writes /hermes/. The default profile's data lives at /hermes/skills/, /hermes/plugins/, /hermes/cron/, /hermes/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "custom",
+      "home": "/hermes",
+      "root": "/default root",
+      "expected": "Active Hermes profile: custom. This session reads and writes /hermes/. The default profile's data lives at /default root/skills/, /default root/plugins/, /default root/cron/, /default root/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "custom",
+      "home": "/hermes/profiles/red",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: custom. This session reads and writes /hermes/profiles/red/. The default profile's data lives at /hermes/skills/, /hermes/plugins/, /hermes/cron/, /hermes/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "custom",
+      "home": "/hermes/profiles/red",
+      "root": "/default root",
+      "expected": "Active Hermes profile: custom. This session reads and writes /hermes/profiles/red/. The default profile's data lives at /default root/skills/, /default root/plugins/, /default root/cron/, /default root/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "custom",
+      "home": "/\u81ea\u5b9a\u4e49 home",
+      "root": "/hermes",
+      "expected": "Active Hermes profile: custom. This session reads and writes /\u81ea\u5b9a\u4e49 home/. The default profile's data lives at /hermes/skills/, /hermes/plugins/, /hermes/cron/, /hermes/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    },
+    {
+      "profile": "custom",
+      "home": "/\u81ea\u5b9a\u4e49 home",
+      "root": "/default root",
+      "expected": "Active Hermes profile: custom. This session reads and writes /\u81ea\u5b9a\u4e49 home/. The default profile's data lives at /default root/skills/, /default root/plugins/, /default root/cron/, /default root/memories/ \u2014 those belong to a different session run from a different shell. Do NOT modify another profile's skills/plugins/cron/memories unless the user explicitly directs you to."
+    }
+  ],
+  "providers": [
+    {
+      "provider": "alibaba",
+      "model": "",
+      "expected": "You are powered by the model named . The exact model ID is . When asked what model you are, always answer based on this information, not on any model name returned by the API."
+    },
+    {
+      "provider": "alibaba",
+      "model": "qwen",
+      "expected": "You are powered by the model named qwen. The exact model ID is qwen. When asked what model you are, always answer based on this information, not on any model name returned by the API."
+    },
+    {
+      "provider": "alibaba",
+      "model": "org/qwen",
+      "expected": "You are powered by the model named qwen. The exact model ID is org/qwen. When asked what model you are, always answer based on this information, not on any model name returned by the API."
+    },
+    {
+      "provider": "alibaba",
+      "model": "org/nested/qwen",
+      "expected": "You are powered by the model named qwen. The exact model ID is org/nested/qwen. When asked what model you are, always answer based on this information, not on any model name returned by the API."
+    },
+    {
+      "provider": "alibaba",
+      "model": "org/",
+      "expected": "You are powered by the model named . The exact model ID is org/. When asked what model you are, always answer based on this information, not on any model name returned by the API."
+    },
+    {
+      "provider": "Alibaba",
+      "model": "",
+      "expected": null
+    },
+    {
+      "provider": "Alibaba",
+      "model": "qwen",
+      "expected": null
+    },
+    {
+      "provider": "Alibaba",
+      "model": "org/qwen",
+      "expected": null
+    },
+    {
+      "provider": "Alibaba",
+      "model": "org/nested/qwen",
+      "expected": null
+    },
+    {
+      "provider": "Alibaba",
+      "model": "org/",
+      "expected": null
+    },
+    {
+      "provider": "openai",
+      "model": "",
+      "expected": null
+    },
+    {
+      "provider": "openai",
+      "model": "qwen",
+      "expected": null
+    },
+    {
+      "provider": "openai",
+      "model": "org/qwen",
+      "expected": null
+    },
+    {
+      "provider": "openai",
+      "model": "org/nested/qwen",
+      "expected": null
+    },
+    {
+      "provider": "openai",
+      "model": "org/",
+      "expected": null
+    },
+    {
+      "provider": "",
+      "model": "",
+      "expected": null
+    },
+    {
+      "provider": "",
+      "model": "qwen",
+      "expected": null
+    },
+    {
+      "provider": "",
+      "model": "org/qwen",
+      "expected": null
+    },
+    {
+      "provider": "",
+      "model": "org/nested/qwen",
+      "expected": null
+    },
+    {
+      "provider": "",
+      "model": "org/",
+      "expected": null
+    }
+  ]
+}

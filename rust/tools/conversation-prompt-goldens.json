@@ -1,0 +1,267 @@
+[
+  {
+    "name": "first-turn-ignores-row",
+    "history": false,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+    },
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 0,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "missing-row",
+    "history": true,
+    "row": null,
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "null-prompt",
+    "history": true,
+    "row": {
+      "system_prompt": null
+    },
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "empty-prompt",
+    "history": true,
+    "row": {
+      "system_prompt": ""
+    },
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "valid-reuse",
+    "history": true,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+    },
+    "expected": {
+      "prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli",
+      "reads": 1,
+      "writes": [],
+      "builds": [],
+      "restored": [
+        "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+      ],
+      "reconstructed": [
+        null
+      ]
+    }
+  },
+  {
+    "name": "stale-model",
+    "history": true,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+    },
+    "model": "model-b",
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "stale-provider",
+    "history": true,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+    },
+    "provider": "provider-b",
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "stale-platform",
+    "history": true,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+    },
+    "platform": "telegram",
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "stale-cwd",
+    "history": true,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+    },
+    "cwd": "/elsewhere",
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "capability-stale",
+    "history": true,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+    },
+    "capability_stale": true,
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "bot-legacy-upgrade",
+    "history": true,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli",
+      "title": "Bot Chat"
+    },
+    "legacy_upgrade": true,
+    "expected": {
+      "prompt": "fresh prompt",
+      "reads": 1,
+      "writes": [
+        [
+          "session-1",
+          "fresh prompt"
+        ]
+      ],
+      "builds": [
+        null
+      ],
+      "restored": [],
+      "reconstructed": []
+    }
+  },
+  {
+    "name": "ordinary-legacy-reuses",
+    "history": true,
+    "row": {
+      "system_prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli",
+      "title": "ordinary"
+    },
+    "legacy_upgrade": true,
+    "expected": {
+      "prompt": "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli",
+      "reads": 1,
+      "writes": [],
+      "builds": [],
+      "restored": [
+        "User home directory: /home/u\nCurrent working directory: /work\nModel: model-a\nProvider: provider-a\nPlatform: cli"
+      ],
+      "reconstructed": [
+        null
+      ]
+    }
+  }
+]

@@ -591,7 +591,7 @@ fn py_json_dumps_str_list(items: &[String]) -> String {
     out
 }
 
-fn py_json_quote(s: &str) -> String {
+pub(crate) fn py_json_quote(s: &str) -> String {
     let mut out = String::from("\"");
     for ch in s.chars() {
         match ch {

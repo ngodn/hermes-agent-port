@@ -1,0 +1,5850 @@
+[
+  {
+    "name": "noop_empty_session_id_on_existing_session",
+    "description": "Empty session_id early returns without modifying existing session.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "",
+          "session_key": "k2",
+          "source": "slack"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "",
+          "session_key": "k2",
+          "source": "slack"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "noop_none_session_id_on_existing_session",
+    "description": "None session_id early returns without modifying existing session.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": null,
+          "session_key": "k2",
+          "source": "slack"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": null,
+          "session_key": "k2",
+          "source": "slack"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "noop_empty_session_key_on_existing_session",
+    "description": "Empty session_key early returns without modifying existing session.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "session_key": "",
+          "source": "slack"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "session_key": "",
+          "source": "slack"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "noop_none_session_key_on_existing_session",
+    "description": "None session_key early returns without modifying existing session.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "session_key": null,
+          "source": "slack"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "session_key": null,
+          "source": "slack"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "noop_both_empty_on_existing_session",
+    "description": "Empty session_id and empty session_key early returns without modifications.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "",
+          "session_key": "",
+          "source": "slack"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "",
+          "session_key": "",
+          "source": "slack"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "noop_empty_session_id_missing_row",
+    "description": "Empty session_id does not trigger self-healing insert on missing row.",
+    "owner_profile": "default",
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "",
+          "session_key": "k1",
+          "source": "telegram"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "",
+          "session_key": "k1",
+          "source": "telegram"
+        },
+        "result": null,
+        "error": null,
+        "sessions": []
+      }
+    ]
+  },
+  {
+    "name": "noop_empty_session_key_missing_row",
+    "description": "Empty session_key does not trigger self-healing insert on missing row.",
+    "owner_profile": "default",
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_missing",
+          "session_key": "",
+          "source": "telegram"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_missing",
+          "session_key": "",
+          "source": "telegram"
+        },
+        "result": null,
+        "error": null,
+        "sessions": []
+      }
+    ]
+  },
+  {
+    "name": "noop_empty_session_id_set_expiry_finalized",
+    "description": "Empty session_id in set_expiry_finalized early returns.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "",
+          "finalized": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "",
+          "finalized": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "noop_none_session_id_set_expiry_finalized",
+    "description": "None session_id in set_expiry_finalized early returns.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": null,
+          "finalized": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": null,
+          "finalized": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "refresh_full_identity_single_row",
+    "description": "Refresh updates all routing identity fields on existing session row.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": "u0",
+        "session_key": "k0",
+        "chat_id": "c0",
+        "chat_type": "dm",
+        "thread_id": null,
+        "display_name": "Old Name",
+        "origin_json": "{\"team\": \"old\"}",
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "user_id": "u1",
+          "session_key": "k1",
+          "chat_id": "c1",
+          "chat_type": "channel",
+          "thread_id": "t1",
+          "display_name": "New Name",
+          "origin_json": "{\"team\": \"new\"}"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "user_id": "u1",
+          "session_key": "k1",
+          "chat_id": "c1",
+          "chat_type": "channel",
+          "thread_id": "t1",
+          "display_name": "New Name",
+          "origin_json": "{\"team\": \"new\"}"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "slack",
+            "user_id": "u1",
+            "session_key": "k1",
+            "chat_id": "c1",
+            "chat_type": "channel",
+            "thread_id": "t1",
+            "display_name": "New Name",
+            "origin_json": "{\"team\": \"new\"}",
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "refresh_clear_optional_fields_to_none",
+    "description": "Explicit None overwrites nullable routing fields to null.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": "u1",
+        "session_key": "k1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": "t1",
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "user_id": null,
+          "chat_id": null,
+          "chat_type": null,
+          "thread_id": null
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "user_id": null,
+          "chat_id": null,
+          "chat_type": null,
+          "thread_id": null
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "refresh_leaves_unrelated_session_intact",
+    "description": "Peer update on target session does not alter other sessions.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": "u1",
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "s2",
+        "source": "telegram",
+        "user_id": "u2",
+        "session_key": "k2",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1_updated",
+          "user_id": "u1_updated"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1_updated",
+          "user_id": "u1_updated"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": "u1_updated",
+            "session_key": "k1_updated",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "s2",
+            "source": "telegram",
+            "user_id": "u2",
+            "session_key": "k2",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "refresh_preserves_non_routing_columns",
+    "description": "Peer update preserves model, model_config, timestamps, and ownership.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p0",
+        "started_at": 42.0,
+        "ended_at": 55.0,
+        "end_reason": "compression",
+        "model_config": {
+          "temp": 0.5,
+          "model": "gemini"
+        },
+        "profile_name": "prof_a"
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "discord",
+          "session_key": "k1_new",
+          "user_id": "u_new"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "discord",
+          "session_key": "k1_new",
+          "user_id": "u_new"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "discord",
+            "user_id": "u_new",
+            "session_key": "k1_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p0",
+            "started_at": 42.0,
+            "ended_at": 55.0,
+            "end_reason": "compression",
+            "model_config": {
+              "temp": 0.5,
+              "model": "gemini"
+            },
+            "profile_name": "prof_a"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "refresh_sequential_two_updates",
+    "description": "Sequential peer updates record incremental routing evolution.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": "c0",
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "chat_id": "c1",
+          "display_name": "Step 1"
+        }
+      },
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k2",
+          "chat_id": "c2",
+          "thread_id": "t2",
+          "display_name": "Step 2"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "chat_id": "c1",
+          "display_name": "Step 1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": "c1",
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Step 1",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      },
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k2",
+          "chat_id": "c2",
+          "thread_id": "t2",
+          "display_name": "Step 2"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k2",
+            "chat_id": "c2",
+            "chat_type": null,
+            "thread_id": "t2",
+            "display_name": "Step 2",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "refresh_empty_source_string_persisted",
+    "description": "Empty string source is accepted and stored by SQLite update.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "",
+          "session_key": "k1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "",
+          "session_key": "k1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "display_null_leaves_existing_display_untouched",
+    "description": "Passing display_name=None preserves existing display_name via COALESCE.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Existing Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": null
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": null
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Existing Display",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "display_empty_overwrites_existing_display",
+    "description": "Passing empty display_name overwrites existing string with empty string.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Existing Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": ""
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "display_value_overwrites_existing_display",
+    "description": "Passing new display_name string replaces existing display_name.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Existing Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": "Updated Display"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": "Updated Display"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Updated Display",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "origin_null_leaves_existing_origin_untouched",
+    "description": "Passing origin_json=None preserves existing origin_json via COALESCE.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": "{\"team\": \"T1\"}",
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "origin_json": null
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "origin_json": null
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": "{\"team\": \"T1\"}",
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "origin_empty_overwrites_existing_origin",
+    "description": "Passing empty origin_json overwrites existing JSON with empty string.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": "{\"team\": \"T1\"}",
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "origin_json": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "origin_json": ""
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": "",
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "origin_value_overwrites_existing_origin",
+    "description": "Passing new origin_json string replaces existing origin_json.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": "{\"team\": \"T1\"}",
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "origin_json": "{\"team\": \"T2\"}"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "origin_json": "{\"team\": \"T2\"}"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": "{\"team\": \"T2\"}",
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "display_and_origin_null_on_initial_null",
+    "description": "Passing None for null display and origin leaves both as null.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": null,
+          "origin_json": null
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": null,
+          "origin_json": null
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "display_and_origin_empty_from_initial_null",
+    "description": "Passing empty strings for null display and origin updates both to empty.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": "",
+          "origin_json": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": "",
+          "origin_json": ""
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "",
+            "origin_json": "",
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "display_and_origin_mixed_null_and_empty",
+    "description": "None display preserves existing while empty origin overwrites existing.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Preserved",
+        "origin_json": "{\"k\": 1}",
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": null,
+          "origin_json": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": null,
+          "origin_json": ""
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Preserved",
+            "origin_json": "",
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "self_heal_stamps_owner_profile_and_started_at",
+    "description": "Self-healing insert populates profile_name from harness and time=100.",
+    "owner_profile": "prod_profile",
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1",
+          "user_id": "u1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1",
+          "user_id": "u1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_heal",
+            "source": "telegram",
+            "user_id": "u1",
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": "prod_profile"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "self_heal_stamps_none_owner_profile",
+    "description": "Self-healing insert leaves profile_name null when owner_profile is None.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_heal",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "self_heal_stamps_empty_owner_profile",
+    "description": "Self-healing insert stores empty string profile_name when owner is empty.",
+    "owner_profile": "",
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_heal",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "self_heal_populates_all_identity_fields",
+    "description": "Self-healing insert populates all supplied routing identity columns.",
+    "owner_profile": "dev_profile",
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "discord",
+          "user_id": "u1",
+          "session_key": "k1",
+          "chat_id": "c1",
+          "chat_type": "guild",
+          "thread_id": "t1",
+          "display_name": "Guild Channel",
+          "origin_json": "{\"guild\": \"123\"}"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "discord",
+          "user_id": "u1",
+          "session_key": "k1",
+          "chat_id": "c1",
+          "chat_type": "guild",
+          "thread_id": "t1",
+          "display_name": "Guild Channel",
+          "origin_json": "{\"guild\": \"123\"}"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_heal",
+            "source": "discord",
+            "user_id": "u1",
+            "session_key": "k1",
+            "chat_id": "c1",
+            "chat_type": "guild",
+            "thread_id": "t1",
+            "display_name": "Guild Channel",
+            "origin_json": "{\"guild\": \"123\"}",
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": "dev_profile"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "self_heal_with_none_display_and_origin",
+    "description": "Self-healing insert handles None display_name and origin_json.",
+    "owner_profile": "dev_profile",
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": null,
+          "origin_json": null
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1",
+          "display_name": null,
+          "origin_json": null
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s_heal",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k1",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 100.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": "dev_profile"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "self_heal_skipped_when_compression_ancestors_true",
+    "description": "Self-healing insert does not run when include_compression_ancestors is True.",
+    "owner_profile": "dev_profile",
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s_heal",
+          "source": "telegram",
+          "session_key": "k1",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": []
+      }
+    ]
+  },
+  {
+    "name": "self_heal_does_not_overwrite_existing_row_profile",
+    "description": "Existing row update does not overwrite original profile_name or started_at.",
+    "owner_profile": "new_profile",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": "original_profile"
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k_updated"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "telegram",
+          "session_key": "k_updated"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_updated",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": "original_profile"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compression_ancestor_false_updates_only_target",
+    "description": "include_compression_ancestors=False updates child but leaves compression parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": false
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": false
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compression_ancestor_true_updates_parent",
+    "description": "include_compression_ancestors=True updates both child and compression parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compression_ancestor_two_level_chain",
+    "description": "Lineage traversal updates two consecutive compression ancestors.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p0",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p0",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p0",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p0",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compression_ancestor_three_level_chain",
+    "description": "Lineage traversal updates three consecutive compression ancestors.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p0",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p0",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "p2",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p2",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p2",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p0",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p0",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p2",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compression_ancestor_preserves_display_coalesce_per_row",
+    "description": "Lineage update with None display preserves distinct display names across rows.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Parent Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Child Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "display_name": null,
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "display_name": null,
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Child Display",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Parent Display",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compression_ancestor_empty_display_overwrites_all_in_lineage",
+    "description": "Lineage update with empty display overwrites display across child and parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Parent Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Child Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "display_name": "",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "display_name": "",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compression_ancestor_new_display_overwrites_all_in_lineage",
+    "description": "Lineage update with string display unifies display name across lineage.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Parent Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": "Child Display",
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "display_name": "Unified Display",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "display_name": "Unified Display",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Unified Display",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": "Unified Display",
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compression_ancestor_leaves_sibling_session_intact",
+    "description": "Lineage traversal does not affect sibling sessions of target child.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c2",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_sibling",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "c2",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_sibling",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_parent_end_reason_ended",
+    "description": "Lineage traversal stops when parent end_reason is ended.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "ended",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "ended",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_parent_end_reason_session_reset",
+    "description": "Lineage traversal stops when parent end_reason is session_reset.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "session_reset",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "session_reset",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_parent_end_reason_none",
+    "description": "Lineage traversal stops when parent end_reason is null.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_parent_end_reason_timeout",
+    "description": "Lineage traversal stops when parent end_reason is timeout.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "timeout",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "timeout",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_intermediate_non_compression",
+    "description": "Non-compression intermediate parent blocks traversal to grandparent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p0",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p0",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "ended",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p0",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p0",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "ended",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_child_branched_from",
+    "description": "Child with _branched_from marker stops traversal to compression parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {
+          "_branched_from": "s_other"
+        },
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_branched_from": "s_other"
+            },
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_child_delegate_from",
+    "description": "Child with _delegate_from marker stops traversal to compression parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {
+          "_delegate_from": "s_agent"
+        },
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_delegate_from": "s_agent"
+            },
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_child_source_tool",
+    "description": "Child with source=tool stops traversal to compression parent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "tool",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_parent_branched_from_stops_grandparent",
+    "description": "Parent with _branched_from stops traversal before reaching grandparent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p0",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p0",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": {
+          "_branched_from": "fork_session"
+        },
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {},
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {},
+            "profile_name": null
+          },
+          {
+            "id": "p0",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p0",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": {
+              "_branched_from": "fork_session"
+            },
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_parent_delegate_from_stops_grandparent",
+    "description": "Parent with _delegate_from stops traversal before reaching grandparent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p0",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p0",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": {
+          "_delegate_from": "delegate_agent"
+        },
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {},
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {},
+            "profile_name": null
+          },
+          {
+            "id": "p0",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p0",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": {
+              "_delegate_from": "delegate_agent"
+            },
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_stop_parent_tool_source_stops_grandparent",
+    "description": "Parent with source=tool stops traversal before reaching grandparent.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p0",
+        "source": "slack",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "p1",
+        "source": "tool",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p0",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "slack",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "telegram",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "telegram",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p0",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p0",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "boundary_null_branch_and_delegate_values_do_not_stop",
+    "description": "Explicit null values for branch and delegate do not stop lineage traversal.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {
+          "_branched_from": null,
+          "_delegate_from": null
+        },
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_branched_from": null,
+              "_delegate_from": null
+            },
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "cyclic_lineage_two_nodes",
+    "description": "Mutual cycle between two compression nodes deduplicates cleanly.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "s2",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "s2",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "s1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "s2",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "s2",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "s1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "cyclic_lineage_self_reference",
+    "description": "Self-referencing parent pointer deduplicates cleanly without loop.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "s1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "s1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "cyclic_lineage_three_node_cycle",
+    "description": "Three-node circular compression cycle deduplicates cleanly.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "s2",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "s2",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "s3",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "s3",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "s1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "s2",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "s2",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "s3",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "s3",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "s1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "cyclic_lineage_cycle_with_tail_child",
+    "description": "Child pointing into cyclic ancestor loop updates child and loop nodes.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "r1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "r2",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "r2",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "r1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "r1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "r1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "r1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "r2",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "r2",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "r1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "malformed_child_json_rolls_back_ancestor_update",
+    "description": "Malformed child model_config rolls back entire lineage update transaction.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": "{bad_json",
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": "OperationalError",
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": "{bad_json",
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "malformed_child_json_succeeds_when_ancestors_false",
+    "description": "Non-lineage update succeeds on session with malformed model_config.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": "{bad_json",
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": false
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": false
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": "{bad_json",
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "malformed_intermediate_json_rolls_back",
+    "description": "Malformed JSON in intermediate ancestor rolls back entire transaction.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p0",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p0",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": "[unterminated array",
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {},
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": "OperationalError",
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {},
+            "profile_name": null
+          },
+          {
+            "id": "p0",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_old",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p0",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": "[unterminated array",
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "malformed_unrelated_session_json_ignored",
+    "description": "Malformed JSON in unrelated session does not block valid lineage update.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": "compression",
+        "model_config": null,
+        "profile_name": null
+      },
+      {
+        "id": "c1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_old",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {},
+        "profile_name": null
+      },
+      {
+        "id": "s_other",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k_other",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": "{invalid_json",
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "c1",
+          "source": "slack",
+          "session_key": "k_new",
+          "include_compression_ancestors": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {},
+            "profile_name": null
+          },
+          {
+            "id": "p1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k_new",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": "compression",
+            "model_config": null,
+            "profile_name": null
+          },
+          {
+            "id": "s_other",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": "k_other",
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": "{invalid_json",
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "expiry_set_finalized_true_default",
+    "description": "Default finalized argument sets expiry_finalized flag to 1.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 1,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "expiry_set_finalized_true_explicit",
+    "description": "Explicit finalized=True sets expiry_finalized flag to 1.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 1,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "expiry_set_finalized_false",
+    "description": "finalized=False clears expiry_finalized flag to 0.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 1,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": false
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": false
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "expiry_toggle_sequence",
+    "description": "Sequential expiry calls toggle expiry_finalized between 1 and 0.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": true
+        }
+      },
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": false
+        }
+      },
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 1,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      },
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": false
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      },
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "telegram",
+            "user_id": null,
+            "session_key": null,
+            "chat_id": null,
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 1,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "expiry_missing_session_noop",
+    "description": "Calling set_expiry_finalized on missing session is a safe no-op.",
+    "owner_profile": null,
+    "initial_sessions": [],
+    "operations": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s_missing",
+          "finalized": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s_missing",
+          "finalized": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": []
+      }
+    ]
+  },
+  {
+    "name": "expiry_combined_with_peer_record",
+    "description": "Sequential peer record and expiry finalization update row coherently.",
+    "owner_profile": null,
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "user_id": null,
+        "session_key": "k1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "display_name": null,
+        "origin_json": null,
+        "expiry_finalized": 0,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null,
+        "profile_name": null
+      }
+    ],
+    "operations": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k2",
+          "chat_id": "c2"
+        }
+      },
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": true
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "record_gateway_session_peer",
+        "args": {
+          "session_id": "s1",
+          "source": "slack",
+          "session_key": "k2",
+          "chat_id": "c2"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k2",
+            "chat_id": "c2",
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 0,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      },
+      {
+        "op": "set_expiry_finalized",
+        "args": {
+          "session_id": "s1",
+          "finalized": true
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "slack",
+            "user_id": null,
+            "session_key": "k2",
+            "chat_id": "c2",
+            "chat_type": null,
+            "thread_id": null,
+            "display_name": null,
+            "origin_json": null,
+            "expiry_finalized": 1,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null,
+            "profile_name": null
+          }
+        ]
+      }
+    ]
+  }
+]

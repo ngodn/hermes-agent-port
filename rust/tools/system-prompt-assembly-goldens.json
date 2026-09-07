@@ -1,0 +1,3245 @@
+{
+  "tiers": [
+    {
+      "sections": [
+        [],
+        [],
+        []
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": ""
+    },
+    {
+      "sections": [
+        [],
+        [],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": ""
+    },
+    {
+      "sections": [
+        [],
+        [],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [],
+        [],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": "context"
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [],
+        [
+          ""
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": ""
+    },
+    {
+      "sections": [
+        [],
+        [
+          ""
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": ""
+    },
+    {
+      "sections": [
+        [],
+        [
+          ""
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [],
+        [
+          ""
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": "context"
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "",
+        "context": "identity\n\nexact\n interior",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "identity\n\nexact\n interior",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "identity\n\nexact\n interior",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "identity\n\nexact\n interior",
+        "volatile": "context"
+      },
+      "joined": "identity\n\nexact\n interior\n\ncontext"
+    },
+    {
+      "sections": [
+        [],
+        [
+          "\t \n",
+          " context "
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "",
+        "context": "context",
+        "volatile": ""
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "context",
+        "volatile": ""
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "context",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "context\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "context",
+        "volatile": "context"
+      },
+      "joined": "context\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [],
+        []
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": ""
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": ""
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": "context"
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          ""
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": ""
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          ""
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": ""
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          ""
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          ""
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "",
+        "volatile": "context"
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "",
+        "context": "identity\n\nexact\n interior",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "identity\n\nexact\n interior",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "identity\n\nexact\n interior",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "identity\n\nexact\n interior",
+        "volatile": "context"
+      },
+      "joined": "identity\n\nexact\n interior\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "",
+        "context": "context",
+        "volatile": ""
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "context",
+        "volatile": ""
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "context",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "context\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          ""
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "",
+        "context": "context",
+        "volatile": "context"
+      },
+      "joined": "context\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [],
+        []
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "",
+        "volatile": "context"
+      },
+      "joined": "identity\n\nexact\n interior\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          ""
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          ""
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          ""
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          ""
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "",
+        "volatile": "context"
+      },
+      "joined": "identity\n\nexact\n interior\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "identity\n\nexact\n interior",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "identity\n\nexact\n interior",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "identity\n\nexact\n interior",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior\n\nidentity\n\nexact\n interior\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "identity\n\nexact\n interior",
+        "volatile": "context"
+      },
+      "joined": "identity\n\nexact\n interior\n\nidentity\n\nexact\n interior\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "context",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "context",
+        "volatile": ""
+      },
+      "joined": "identity\n\nexact\n interior\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "context",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "identity\n\nexact\n interior\n\ncontext\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "identity\n\nexact\n interior",
+        "context": "context",
+        "volatile": "context"
+      },
+      "joined": "identity\n\nexact\n interior\n\ncontext\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [],
+        []
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "context\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "",
+        "volatile": "context"
+      },
+      "joined": "context\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          ""
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          ""
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "",
+        "volatile": ""
+      },
+      "joined": "context"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          ""
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "context\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          ""
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "",
+        "volatile": "context"
+      },
+      "joined": "context\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "identity\n\nexact\n interior",
+        "volatile": ""
+      },
+      "joined": "context\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "identity\n\nexact\n interior",
+        "volatile": ""
+      },
+      "joined": "context\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "identity\n\nexact\n interior",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "context\n\nidentity\n\nexact\n interior\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "identity\n\nexact\n interior",
+        "volatile": "context"
+      },
+      "joined": "context\n\nidentity\n\nexact\n interior\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        []
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "context",
+        "volatile": ""
+      },
+      "joined": "context\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          ""
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "context",
+        "volatile": ""
+      },
+      "joined": "context\n\ncontext"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\u001c identity \u00a0",
+          "",
+          "  exact\n interior  "
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "context",
+        "volatile": "identity\n\nexact\n interior"
+      },
+      "joined": "context\n\ncontext\n\nidentity\n\nexact\n interior"
+    },
+    {
+      "sections": [
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\t \n",
+          " context "
+        ],
+        [
+          "\t \n",
+          " context "
+        ]
+      ],
+      "parts": {
+        "stable": "context",
+        "context": "context",
+        "volatile": "context"
+      },
+      "joined": "context\n\ncontext\n\ncontext"
+    }
+  ],
+  "gates": [
+    {
+      "setting": null,
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": null,
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": null,
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": null,
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": true,
+      "model": "",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "llama",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": true,
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": false,
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": false,
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": 0,
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": 0,
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 0,
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": 1,
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": 1,
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": 1,
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "auto",
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "auto",
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "auto",
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "TRUE",
+      "model": "",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "llama",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "TRUE",
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "never",
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "never",
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "yes",
+      "model": "",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "llama",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "yes",
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "off",
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "off",
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": " true ",
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": " true ",
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": " true ",
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "unknown",
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": "unknown",
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": "unknown",
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [],
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "llama",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        ""
+      ],
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "GPT",
+        null,
+        3
+      ],
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "gpt-5",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "gpt-5",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "gpt-5",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "Qwen3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "Qwen3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "Qwen3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "Gemini-3",
+      "defaults": [],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "Gemini-3",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "Gemini-3",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": true
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "llama",
+      "defaults": [],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "llama",
+      "defaults": [
+        "gpt",
+        "qwen"
+      ],
+      "enabled": false
+    },
+    {
+      "setting": [
+        "qwen",
+        "gemini"
+      ],
+      "model": "llama",
+      "defaults": [
+        "GPT"
+      ],
+      "enabled": false
+    }
+  ]
+}

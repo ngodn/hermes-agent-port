@@ -26,6 +26,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [async-conversation-prompt-map-agy.md](async-conversation-prompt-map-agy.md) | Gemini map of the async construction seam, prompt ordering and lock boundary |
+| [async-conversation-prompt-map-claude.md](async-conversation-prompt-map-claude.md) | Claude review of single-flight initialization, persistence ordering and retry behavior |
+| [progress-audit-2026-09-07.md](progress-audit-2026-09-07.md) | Current 33% weighted full-port estimate, verified runtime boundaries and historical comparison |
+| [slack-audio-verification.md](slack-audio-verification.md) | Private audio downloads, video-labeled voice clips, token/URL boundaries and remaining files.info resolution |
+| [discord-audio-verification.md](discord-audio-verification.md) | Gateway audio-only messages, ordered CDN downloads, shared bounded cache and remaining SDK fallback gaps |
+| [telegram-audio-verification.md](telegram-audio-verification.md) | Telegram download/cache to real HTTP STT and Dispatcher agent-turn proof; remaining adapter scope |
 | [progress-audit-2026-09-06.md](progress-audit-2026-09-06.md) | Full-port estimate with phase weights, current runtime evidence and remaining scope |
 | [stt-credential-resolution-plan.md](stt-credential-resolution-plan.md) | Strict selection gates, scoped credential dependencies and 100 source resolver cases |
 | [auth-store-verification.md](auth-store-verification.md) | Auth-store reads, legacy normalization and per-provider profile/root shadowing; pool selection remains |
@@ -128,6 +134,8 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [gemini-thinking-verification.md](gemini-thinking-verification.md) | Pre-hook effort normalization and native Gemini output-headroom integration |
 | [gemini-thinking-goldens.json](../tools/gemini-thinking-goldens.json) | 64 config/cap cases executed from Python |
 | [wire-reasoning-goldens.json](../tools/wire-reasoning-goldens.json) | 51 pre-hook normalization comparisons |
+
+| [session-entry-verification.md](session-entry-verification.md) | Persisted entry codec, 124 Python comparisons and integration limits |
 
 Raw local helper outputs: `port-inbound-media.claude.json` and `.stderr`,
 `inbound-media-review.claude.json` and `.stderr`, `tier2-source-audit.agy.log`.

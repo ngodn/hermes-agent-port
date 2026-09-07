@@ -1,0 +1,81 @@
+[
+  {
+    "name": "empty",
+    "files": {},
+    "links": {},
+    "single": false,
+    "full": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "short": "sha256:e3b0c44298fc1c14"
+  },
+  {
+    "name": "single",
+    "files": {
+      "data": "00ff0d0a"
+    },
+    "links": {},
+    "single": true,
+    "full": "sha256:e9489f37fb3051e9efa1dc916004d7274e7b63975e3209708947267f2393a9be",
+    "short": "sha256:e9489f37fb3051e9"
+  },
+  {
+    "name": "names",
+    "files": {
+      "Z.md": "7a",
+      "a.md": "61",
+      "nested/x": "00ff"
+    },
+    "links": {},
+    "single": false,
+    "full": "sha256:d67be28d05f13cad66f4288bb0ca998e17badeb20bd1be93b36a99d17e7bfc34",
+    "short": "sha256:d67be28d05f13cad"
+  },
+  {
+    "name": "swapped",
+    "files": {
+      "Z.md": "61",
+      "a.md": "7a",
+      "nested/x": "00ff"
+    },
+    "links": {},
+    "single": false,
+    "full": "sha256:16afb43afdf2ba16db7cab32155c958a857d97c73542b3d7e6846db6c5c93b94",
+    "short": "sha256:16afb43afdf2ba16"
+  },
+  {
+    "name": "ignored",
+    "files": {
+      ".skillignore": "2a0a",
+      "SKILL.md": "6869",
+      "notes": "ff"
+    },
+    "links": {},
+    "single": false,
+    "full": "sha256:1ef6f36c8281cf6b99504a489f0ad63e10a6f35b109a85d91f0533bf98564867",
+    "short": "sha256:1ef6f36c8281cf6b"
+  },
+  {
+    "name": "unicode",
+    "files": {
+      "\u00e9.txt": "c3a9",
+      "nested/\u6587": "0a"
+    },
+    "links": {},
+    "single": false,
+    "full": "sha256:e28b0c0f76c2f1d32aa4c36fb1c26190cbdcc1287d2ac6e4710eedcc3e650458",
+    "short": "sha256:e28b0c0f76c2f1d3"
+  },
+  {
+    "name": "links",
+    "files": {
+      "data": "00ff"
+    },
+    "links": {
+      "alias": "data",
+      "missing": "absent",
+      "directory": "."
+    },
+    "single": false,
+    "full": "sha256:fb58e4b6e7136630edd8fef50a6223d07dab4121b0145fa4148afd69a083b5cf",
+    "short": "sha256:fb58e4b6e7136630"
+  }
+]

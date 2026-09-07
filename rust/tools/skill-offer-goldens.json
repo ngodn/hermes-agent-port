@@ -1,0 +1,8682 @@
+[
+  {
+    "value": null,
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": null,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": false,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 0,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": 1,
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " ",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {},
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      ""
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": [
+      " "
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": false,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": " MACOS ",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "windows",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "linux",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "android",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": "termux",
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "linux",
+      "windows"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": true,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "future"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "kanban",
+      "docker"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "kanban",
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": false,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "s6"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "s6"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      "docker",
+      "future"
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": [
+      "docker"
+    ]
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      null
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": [
+      false
+    ],
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "linux",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "linux",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "linux",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "linux",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "android",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "android",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "android",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "android",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "android",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "android",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "android",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "android",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "darwin",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "darwin",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "darwin",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "darwin",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "win32",
+    "termux": false,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "win32",
+    "termux": false,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "win32",
+    "termux": true,
+    "active": [],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "kanban"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "docker"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  },
+  {
+    "value": {
+      "linux": true
+    },
+    "host": "win32",
+    "termux": true,
+    "active": [
+      "s6"
+    ],
+    "platform": false,
+    "environment": true,
+    "calls": []
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "sql": "CREATE TABLE gateway_routing (scope TEXT, session_key TEXT, entry_json TEXT, updated_at REAL, PRIMARY KEY (session_key));INSERT INTO gateway_routing VALUES ('p', 'key', 'old', 10);",
+    "rows": [
+      [
+        "p",
+        "key",
+        "old",
+        10.0
+      ]
+    ]
+  },
+  {
+    "sql": "CREATE TABLE gateway_routing (scope TEXT, session_key TEXT, entry_json TEXT, updated_at REAL);INSERT INTO gateway_routing VALUES ('p', 'key', 'old', 10);INSERT INTO gateway_routing VALUES ('p', 'key', 'new', 20), (NULL, 'other', 'legacy', 5);",
+    "rows": [
+      [
+        "",
+        "other",
+        "legacy",
+        5.0
+      ],
+      [
+        "p",
+        "key",
+        "new",
+        20.0
+      ]
+    ]
+  },
+  {
+    "sql": "CREATE TABLE gateway_routing (scope TEXT, session_key TEXT, entry_json TEXT, updated_at REAL, PRIMARY KEY (scope, session_key));INSERT INTO gateway_routing VALUES ('p', 'key', 'old', 10);",
+    "rows": [
+      [
+        "p",
+        "key",
+        "old",
+        10.0
+      ]
+    ]
+  }
+]

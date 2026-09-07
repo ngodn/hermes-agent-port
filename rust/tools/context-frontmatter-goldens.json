@@ -1,0 +1,482 @@
+[
+  {
+    "input": "plain",
+    "expected": "plain"
+  },
+  {
+    "input": "plain\n---",
+    "expected": "plain\n---"
+  },
+  {
+    "input": "plain\n---\n",
+    "expected": "plain\n---\n"
+  },
+  {
+    "input": "plain\n---\n\nbody",
+    "expected": "plain\n---\n\nbody"
+  },
+  {
+    "input": "plain\n----tail",
+    "expected": "plain\n----tail"
+  },
+  {
+    "input": "plain\n---\r\nbody",
+    "expected": "plain\n---\r\nbody"
+  },
+  {
+    "input": "---",
+    "expected": "---"
+  },
+  {
+    "input": "---\n---",
+    "expected": "---\n---"
+  },
+  {
+    "input": "---\n---\n",
+    "expected": "---\n---\n"
+  },
+  {
+    "input": "---\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "---\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "---\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "---\nx: y",
+    "expected": "---\nx: y"
+  },
+  {
+    "input": "---\nx: y\n---",
+    "expected": "---\nx: y\n---"
+  },
+  {
+    "input": "---\nx: y\n---\n",
+    "expected": "---\nx: y\n---\n"
+  },
+  {
+    "input": "---\nx: y\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "---\nx: y\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "---\nx: y\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "---\r\nx: y",
+    "expected": "---\r\nx: y"
+  },
+  {
+    "input": "---\r\nx: y\n---",
+    "expected": "---\r\nx: y\n---"
+  },
+  {
+    "input": "---\r\nx: y\n---\n",
+    "expected": "---\r\nx: y\n---\n"
+  },
+  {
+    "input": "---\r\nx: y\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "---\r\nx: y\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "---\r\nx: y\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "----\n\u4e2d\u6587",
+    "expected": "----\n\u4e2d\u6587"
+  },
+  {
+    "input": "----\n\u4e2d\u6587\n---",
+    "expected": "----\n\u4e2d\u6587\n---"
+  },
+  {
+    "input": "----\n\u4e2d\u6587\n---\n",
+    "expected": "----\n\u4e2d\u6587\n---\n"
+  },
+  {
+    "input": "----\n\u4e2d\u6587\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "----\n\u4e2d\u6587\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "----\n\u4e2d\u6587\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "\ufeffplain",
+    "expected": "plain"
+  },
+  {
+    "input": "\ufeffplain\n---",
+    "expected": "plain\n---"
+  },
+  {
+    "input": "\ufeffplain\n---\n",
+    "expected": "plain\n---\n"
+  },
+  {
+    "input": "\ufeffplain\n---\n\nbody",
+    "expected": "plain\n---\n\nbody"
+  },
+  {
+    "input": "\ufeffplain\n----tail",
+    "expected": "plain\n----tail"
+  },
+  {
+    "input": "\ufeffplain\n---\r\nbody",
+    "expected": "plain\n---\r\nbody"
+  },
+  {
+    "input": "\ufeff---",
+    "expected": "---"
+  },
+  {
+    "input": "\ufeff---\n---",
+    "expected": "---\n---"
+  },
+  {
+    "input": "\ufeff---\n---\n",
+    "expected": "---\n---\n"
+  },
+  {
+    "input": "\ufeff---\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "\ufeff---\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "\ufeff---\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "\ufeff---\nx: y",
+    "expected": "---\nx: y"
+  },
+  {
+    "input": "\ufeff---\nx: y\n---",
+    "expected": "---\nx: y\n---"
+  },
+  {
+    "input": "\ufeff---\nx: y\n---\n",
+    "expected": "---\nx: y\n---\n"
+  },
+  {
+    "input": "\ufeff---\nx: y\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "\ufeff---\nx: y\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "\ufeff---\nx: y\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "\ufeff---\r\nx: y",
+    "expected": "---\r\nx: y"
+  },
+  {
+    "input": "\ufeff---\r\nx: y\n---",
+    "expected": "---\r\nx: y\n---"
+  },
+  {
+    "input": "\ufeff---\r\nx: y\n---\n",
+    "expected": "---\r\nx: y\n---\n"
+  },
+  {
+    "input": "\ufeff---\r\nx: y\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "\ufeff---\r\nx: y\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "\ufeff---\r\nx: y\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "\ufeff----\n\u4e2d\u6587",
+    "expected": "----\n\u4e2d\u6587"
+  },
+  {
+    "input": "\ufeff----\n\u4e2d\u6587\n---",
+    "expected": "----\n\u4e2d\u6587\n---"
+  },
+  {
+    "input": "\ufeff----\n\u4e2d\u6587\n---\n",
+    "expected": "----\n\u4e2d\u6587\n---\n"
+  },
+  {
+    "input": "\ufeff----\n\u4e2d\u6587\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "\ufeff----\n\u4e2d\u6587\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "\ufeff----\n\u4e2d\u6587\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "\ufeff\ufeffplain",
+    "expected": "plain"
+  },
+  {
+    "input": "\ufeff\ufeffplain\n---",
+    "expected": "plain\n---"
+  },
+  {
+    "input": "\ufeff\ufeffplain\n---\n",
+    "expected": "plain\n---\n"
+  },
+  {
+    "input": "\ufeff\ufeffplain\n---\n\nbody",
+    "expected": "plain\n---\n\nbody"
+  },
+  {
+    "input": "\ufeff\ufeffplain\n----tail",
+    "expected": "plain\n----tail"
+  },
+  {
+    "input": "\ufeff\ufeffplain\n---\r\nbody",
+    "expected": "plain\n---\r\nbody"
+  },
+  {
+    "input": "\ufeff\ufeff---",
+    "expected": "---"
+  },
+  {
+    "input": "\ufeff\ufeff---\n---",
+    "expected": "---\n---"
+  },
+  {
+    "input": "\ufeff\ufeff---\n---\n",
+    "expected": "---\n---\n"
+  },
+  {
+    "input": "\ufeff\ufeff---\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "\ufeff\ufeff---\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "\ufeff\ufeff---\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "\ufeff\ufeff---\nx: y",
+    "expected": "---\nx: y"
+  },
+  {
+    "input": "\ufeff\ufeff---\nx: y\n---",
+    "expected": "---\nx: y\n---"
+  },
+  {
+    "input": "\ufeff\ufeff---\nx: y\n---\n",
+    "expected": "---\nx: y\n---\n"
+  },
+  {
+    "input": "\ufeff\ufeff---\nx: y\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "\ufeff\ufeff---\nx: y\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "\ufeff\ufeff---\nx: y\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "\ufeff\ufeff---\r\nx: y",
+    "expected": "---\r\nx: y"
+  },
+  {
+    "input": "\ufeff\ufeff---\r\nx: y\n---",
+    "expected": "---\r\nx: y\n---"
+  },
+  {
+    "input": "\ufeff\ufeff---\r\nx: y\n---\n",
+    "expected": "---\r\nx: y\n---\n"
+  },
+  {
+    "input": "\ufeff\ufeff---\r\nx: y\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "\ufeff\ufeff---\r\nx: y\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "\ufeff\ufeff---\r\nx: y\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": "\ufeff\ufeff----\n\u4e2d\u6587",
+    "expected": "----\n\u4e2d\u6587"
+  },
+  {
+    "input": "\ufeff\ufeff----\n\u4e2d\u6587\n---",
+    "expected": "----\n\u4e2d\u6587\n---"
+  },
+  {
+    "input": "\ufeff\ufeff----\n\u4e2d\u6587\n---\n",
+    "expected": "----\n\u4e2d\u6587\n---\n"
+  },
+  {
+    "input": "\ufeff\ufeff----\n\u4e2d\u6587\n---\n\nbody",
+    "expected": "body"
+  },
+  {
+    "input": "\ufeff\ufeff----\n\u4e2d\u6587\n----tail",
+    "expected": "-tail"
+  },
+  {
+    "input": "\ufeff\ufeff----\n\u4e2d\u6587\n---\r\nbody",
+    "expected": "\r\nbody"
+  },
+  {
+    "input": " plain",
+    "expected": " plain"
+  },
+  {
+    "input": " plain\n---",
+    "expected": " plain\n---"
+  },
+  {
+    "input": " plain\n---\n",
+    "expected": " plain\n---\n"
+  },
+  {
+    "input": " plain\n---\n\nbody",
+    "expected": " plain\n---\n\nbody"
+  },
+  {
+    "input": " plain\n----tail",
+    "expected": " plain\n----tail"
+  },
+  {
+    "input": " plain\n---\r\nbody",
+    "expected": " plain\n---\r\nbody"
+  },
+  {
+    "input": " ---",
+    "expected": " ---"
+  },
+  {
+    "input": " ---\n---",
+    "expected": " ---\n---"
+  },
+  {
+    "input": " ---\n---\n",
+    "expected": " ---\n---\n"
+  },
+  {
+    "input": " ---\n---\n\nbody",
+    "expected": " ---\n---\n\nbody"
+  },
+  {
+    "input": " ---\n----tail",
+    "expected": " ---\n----tail"
+  },
+  {
+    "input": " ---\n---\r\nbody",
+    "expected": " ---\n---\r\nbody"
+  },
+  {
+    "input": " ---\nx: y",
+    "expected": " ---\nx: y"
+  },
+  {
+    "input": " ---\nx: y\n---",
+    "expected": " ---\nx: y\n---"
+  },
+  {
+    "input": " ---\nx: y\n---\n",
+    "expected": " ---\nx: y\n---\n"
+  },
+  {
+    "input": " ---\nx: y\n---\n\nbody",
+    "expected": " ---\nx: y\n---\n\nbody"
+  },
+  {
+    "input": " ---\nx: y\n----tail",
+    "expected": " ---\nx: y\n----tail"
+  },
+  {
+    "input": " ---\nx: y\n---\r\nbody",
+    "expected": " ---\nx: y\n---\r\nbody"
+  },
+  {
+    "input": " ---\r\nx: y",
+    "expected": " ---\r\nx: y"
+  },
+  {
+    "input": " ---\r\nx: y\n---",
+    "expected": " ---\r\nx: y\n---"
+  },
+  {
+    "input": " ---\r\nx: y\n---\n",
+    "expected": " ---\r\nx: y\n---\n"
+  },
+  {
+    "input": " ---\r\nx: y\n---\n\nbody",
+    "expected": " ---\r\nx: y\n---\n\nbody"
+  },
+  {
+    "input": " ---\r\nx: y\n----tail",
+    "expected": " ---\r\nx: y\n----tail"
+  },
+  {
+    "input": " ---\r\nx: y\n---\r\nbody",
+    "expected": " ---\r\nx: y\n---\r\nbody"
+  },
+  {
+    "input": " ----\n\u4e2d\u6587",
+    "expected": " ----\n\u4e2d\u6587"
+  },
+  {
+    "input": " ----\n\u4e2d\u6587\n---",
+    "expected": " ----\n\u4e2d\u6587\n---"
+  },
+  {
+    "input": " ----\n\u4e2d\u6587\n---\n",
+    "expected": " ----\n\u4e2d\u6587\n---\n"
+  },
+  {
+    "input": " ----\n\u4e2d\u6587\n---\n\nbody",
+    "expected": " ----\n\u4e2d\u6587\n---\n\nbody"
+  },
+  {
+    "input": " ----\n\u4e2d\u6587\n----tail",
+    "expected": " ----\n\u4e2d\u6587\n----tail"
+  },
+  {
+    "input": " ----\n\u4e2d\u6587\n---\r\nbody",
+    "expected": " ----\n\u4e2d\u6587\n---\r\nbody"
+  }
+]

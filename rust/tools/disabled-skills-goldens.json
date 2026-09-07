@@ -1,0 +1,1590 @@
+[
+  {
+    "config": {},
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {}
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": []
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "skill-a"
+        ]
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-a"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "skill-z",
+          "skill-a",
+          "skill-m"
+        ]
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-a",
+      "skill-m",
+      "skill-z"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "skill-a",
+          "skill-a",
+          "skill-b"
+        ]
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-a",
+      "skill-b"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "skill-solo"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-solo"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "  skill-trimmed  "
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-trimmed"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": ""
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "   \t\n  "
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "skill with internal spaces"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill with internal spaces"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "{\"skill\": 1}"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "{\"skill\": 1}"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "('skill-a', 'skill-b')"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "('skill-a', 'skill-b')"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "\u00a0skill-nobrk\u00a0"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-nobrk"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "hermes-agent"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "hermes-agent"
+        ]
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "hermes-agent",
+          "custom-skill",
+          "another-skill"
+        ]
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "another-skill",
+      "custom-skill"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "  hermes-agent  "
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "Hermes-Agent"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "Hermes-Agent"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "HERMES-AGENT"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "HERMES-AGENT"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "hermes_agent"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "hermes_agent"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "hermes-agent-extra"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "hermes-agent-extra"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": "hermes-agent"
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": "HERMES-AGENT"
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "HERMES-AGENT"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "hermes-agent",
+          "global-kept"
+        ],
+        "platform_disabled": {
+          "cli": [
+            "hermes-agent",
+            "platform-kept"
+          ]
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "global-kept",
+      "platform-kept"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\"skill-1\", \"skill-2\"]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-1",
+      "skill-2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['skill-1', 'skill-2']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-1",
+      "skill-2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['skill-1', \"skill-2\"]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-1",
+      "skill-2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['skill-1', 'skill-2',]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-1",
+      "skill-2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[   ]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['  skill-1  ', '  skill-2  ']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-1",
+      "skill-2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['skill-1', '', '   ', 'skill-2']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-1",
+      "skill-2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['hermes-agent', 'skill-1']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['Hermes-Agent', 'skill-1']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "Hermes-Agent",
+      "skill-1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\"skill\" \"-concat\"]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-concat"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['skill-a', # comment\n'skill-b']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-a",
+      "skill-b"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['skill-\\x61']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-a"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[True, False, None]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "False",
+      "None",
+      "True"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[true, false, null]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "[true, false, null]"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[10, 20]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "10",
+      "20"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\"skill-a\", \"skill-b\""
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "[\"skill-a\", \"skill-b\""
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[skill-a]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "[skill-a]"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\"skill-a\"] trailing"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "[\"skill-a\"] trailing"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\"foo\" + \"bar\"]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "[\"foo\" + \"bar\"]"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\"skill-1\nskill-2\"]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "[\"skill-1\nskill-2\"]"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "['''skill-triple''']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill-triple"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[(1, 2), 'skill-a']"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "(1, 2)",
+      "skill-a"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\n  'line-a',\n  'line-b'\n]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "line-a",
+      "line-b"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\n# just a comment\n]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": "[\"skill\\\"escaped\"]"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "skill\"escaped"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1",
+          "g2"
+        ],
+        "platform_disabled": {
+          "cli": [
+            "p1",
+            "p2"
+          ]
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1",
+      "g2",
+      "p1",
+      "p2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "shared",
+          "g1"
+        ],
+        "platform_disabled": {
+          "cli": [
+            "shared",
+            "p1"
+          ]
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1",
+      "p1",
+      "shared"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": {}
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [],
+        "platform_disabled": {
+          "cli": [
+            "p1",
+            "p2"
+          ]
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "p1",
+      "p2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "telegram": [
+            "tele-skill"
+          ],
+          "discord": [
+            "disc-skill"
+          ]
+        }
+      }
+    },
+    "platform": "telegram",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "tele-skill"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "telegram": [
+            "tele-skill"
+          ],
+          "discord": [
+            "disc-skill"
+          ]
+        }
+      }
+    },
+    "platform": "discord",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "disc-skill"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": "scalar-platform"
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "scalar-platform"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": "[\"json-p1\", \"json-p2\"]"
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "json-p1",
+      "json-p2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": "['py-p1', 'py-p2']"
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "py-p1",
+      "py-p2"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": {
+          "cli": null
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": {
+          "cli": []
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": {
+          "telegram": [
+            "t1"
+          ]
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "telegram": [
+            "tele-skill"
+          ]
+        }
+      }
+    },
+    "platform": "Telegram",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "Telegram": [
+            "tele-skill"
+          ]
+        }
+      }
+    },
+    "platform": "telegram",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "TELEGRAM": [
+            "tele-skill"
+          ]
+        }
+      }
+    },
+    "platform": "TELEGRAM",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "tele-skill"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "DiscordBot": [
+            "disc-skill"
+          ]
+        }
+      }
+    },
+    "platform": "DiscordBot",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "disc-skill"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "telegram": [
+            "tele-skill"
+          ]
+        }
+      }
+    },
+    "platform": " telegram ",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          " telegram ": [
+            "tele-skill"
+          ]
+        }
+      }
+    },
+    "platform": " telegram ",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "tele-skill"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "   ": [
+            "space-skill"
+          ]
+        }
+      }
+    },
+    "platform": "   ",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "space-skill"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": [
+            "cli-skill"
+          ]
+        }
+      }
+    },
+    "platform": "   ",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "arg_p": [
+            "p_arg"
+          ],
+          "env_p": [
+            "p_env"
+          ],
+          "sess_p": [
+            "p_sess"
+          ]
+        }
+      }
+    },
+    "platform": "arg_p",
+    "env_platform": "env_p",
+    "session_platform": "sess_p",
+    "expected": [
+      "p_arg"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "env_p": [
+            "p_env"
+          ],
+          "sess_p": [
+            "p_sess"
+          ]
+        }
+      }
+    },
+    "platform": null,
+    "env_platform": "env_p",
+    "session_platform": "sess_p",
+    "expected": [
+      "p_env"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "env_p": [
+            "p_env"
+          ],
+          "sess_p": [
+            "p_sess"
+          ]
+        }
+      }
+    },
+    "platform": "",
+    "env_platform": "env_p",
+    "session_platform": "sess_p",
+    "expected": [
+      "p_env"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "sess_p": [
+            "p_sess"
+          ]
+        }
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": "sess_p",
+    "expected": [
+      "p_sess"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "sess_p": [
+            "p_sess"
+          ]
+        }
+      }
+    },
+    "platform": null,
+    "env_platform": "",
+    "session_platform": "sess_p",
+    "expected": [
+      "p_sess"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "sess_p": [
+            "p_sess"
+          ]
+        }
+      }
+    },
+    "platform": "",
+    "env_platform": "",
+    "session_platform": "sess_p",
+    "expected": [
+      "p_sess"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": {
+          "cli": [
+            "p1"
+          ]
+        }
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": {
+          "": [
+            "empty-skill"
+          ],
+          "cli": [
+            "p1"
+          ]
+        }
+      }
+    },
+    "platform": "",
+    "env_platform": "",
+    "session_platform": "",
+    "expected": [
+      "g1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          " telegram ": [
+            "t_space"
+          ],
+          "discord": [
+            "d"
+          ]
+        }
+      }
+    },
+    "platform": null,
+    "env_platform": " telegram ",
+    "session_platform": "discord",
+    "expected": [
+      "t_space"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          " discord ": [
+            "d_space"
+          ]
+        }
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": " discord ",
+    "expected": [
+      "d_space"
+    ]
+  },
+  {
+    "config": null,
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": false,
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": [],
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": "",
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": true,
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  },
+  {
+    "config": 123,
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  },
+  {
+    "config": "bad_config",
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  },
+  {
+    "config": [
+      "item1",
+      "item2"
+    ],
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  },
+  {
+    "config": {
+      "skills": null
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": 42
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": "invalid_skills"
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": [
+        "bad_list"
+      ]
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": null
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": 123
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": true
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": {
+          "nested": "dict"
+        }
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "1",
+      "2",
+      "3"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          null,
+          true,
+          false,
+          "custom-skill"
+        ]
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "False",
+      "None",
+      "True",
+      "custom-skill"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          {
+            "key": "val"
+          }
+        ]
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "{'key': 'val'}"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": null
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": "not_a_dict"
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": 999
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": [
+          "bad_list"
+        ]
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "g1"
+        ],
+        "platform_disabled": "not_a_dict"
+      }
+    },
+    "platform": null,
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "g1"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": 456
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": {
+            "nested": "dict"
+          }
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": []
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": [
+            100,
+            "skill-p",
+            "hermes-agent"
+          ]
+        }
+      }
+    },
+    "platform": "cli",
+    "env_platform": null,
+    "session_platform": null,
+    "expected": [
+      "100",
+      "skill-p"
+    ]
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": [
+            "p1"
+          ]
+        }
+      }
+    },
+    "platform": [
+      "cli"
+    ],
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  },
+  {
+    "config": {
+      "skills": {
+        "platform_disabled": {
+          "cli": [
+            "p1"
+          ]
+        }
+      }
+    },
+    "platform": {
+      "name": "cli"
+    },
+    "env_platform": null,
+    "session_platform": null,
+    "expected": "error"
+  }
+]

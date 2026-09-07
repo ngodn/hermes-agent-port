@@ -1,0 +1,1274 @@
+[
+  {
+    "extra": null,
+    "legacy": null,
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": null,
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": null,
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": null,
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": null,
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": null,
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "*",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "*",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": null,
+    "legacy": "*",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": null,
+    "legacy": "*",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": null,
+    "legacy": "*",
+    "channel": "C3",
+    "result": true
+  },
+  {
+    "extra": null,
+    "legacy": "*",
+    "channel": "C9",
+    "result": true
+  },
+  {
+    "extra": null,
+    "legacy": "C3",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "C3",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "C3",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "C3",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": null,
+    "legacy": "C3",
+    "channel": "C3",
+    "result": true
+  },
+  {
+    "extra": null,
+    "legacy": "C3",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": null,
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": null,
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": null,
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": null,
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": null,
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": null,
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "*",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "*",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "*",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "*",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "*",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "*",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "C3",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "C3",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "C3",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "C3",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "C3",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [],
+    "legacy": "C3",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": null,
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": null,
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": null,
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": null,
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": null,
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": null,
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "*",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "*",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "*",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "*",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "*",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "*",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "C3",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "C3",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "C3",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "C3",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "C3",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "C3",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": null,
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": null,
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": null,
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": null,
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": null,
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": null,
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "*",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "*",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "*",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "*",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "*",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "*",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "C3",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "C3",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "C3",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "C3",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "C3",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": [
+      "C1,C2"
+    ],
+    "legacy": "C3",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": "*",
+    "legacy": null,
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": "*",
+    "legacy": null,
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": null,
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": null,
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": null,
+    "channel": "C3",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": null,
+    "channel": "C9",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": "*",
+    "legacy": "",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "",
+    "channel": "C3",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "",
+    "channel": "C9",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "*",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": "*",
+    "legacy": "*",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "*",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "*",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "*",
+    "channel": "C3",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "*",
+    "channel": "C9",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "C3",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": "*",
+    "legacy": "C3",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "C3",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "C3",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "C3",
+    "channel": "C3",
+    "result": true
+  },
+  {
+    "extra": "*",
+    "legacy": "C3",
+    "channel": "C9",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": null,
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": null,
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": null,
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": null,
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": null,
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": null,
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "*",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "*",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "*",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "*",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "*",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "*",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "C3",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "C3",
+    "channel": "C1",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "C3",
+    "channel": "C1:123.4",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "C3",
+    "channel": "C2",
+    "result": true
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "C3",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": " C1, C2 ",
+    "legacy": "C3",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": null,
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": null,
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": null,
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": null,
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": null,
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": null,
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "*",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "*",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "*",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "*",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "*",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "*",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "C3",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "C3",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "C3",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "C3",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "C3",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": true,
+    "legacy": "C3",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": null,
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": null,
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": null,
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": null,
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": null,
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": null,
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "*",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "*",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "*",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "*",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "*",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "*",
+    "channel": "C9",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "C3",
+    "channel": "",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "C3",
+    "channel": "C1",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "C3",
+    "channel": "C1:123.4",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "C3",
+    "channel": "C2",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "C3",
+    "channel": "C3",
+    "result": false
+  },
+  {
+    "extra": 123,
+    "legacy": "C3",
+    "channel": "C9",
+    "result": false
+  }
+]

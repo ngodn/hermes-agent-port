@@ -1,0 +1,986 @@
+{
+  "messages": [
+    {
+      "event": {
+        "text": "",
+        "blocks": []
+      },
+      "routing": "",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@BOT>",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "hello",
+        "blocks": []
+      },
+      "routing": "hello",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "hello",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "hello\n<@BOT>",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "hello",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "hello",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER> hi",
+        "blocks": []
+      },
+      "routing": "<@OTHER> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER> hi\n<@BOT>",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "\u001c<@OTHER|Name> hi",
+        "blocks": []
+      },
+      "routing": "\u001c<@OTHER|Name> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "\u001c<@OTHER|Name> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER|Name> hi\n<@BOT>",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "\u001c<@OTHER|Name> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "\u001c<@OTHER|Name> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@BOT> hi",
+        "blocks": []
+      },
+      "routing": "<@BOT> hi",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@BOT> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@BOT> hi",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@BOT> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@BOT> hi",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@BOTX> hi",
+        "blocks": []
+      },
+      "routing": "<@BOTX> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@BOTX> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@BOTX> hi\n<@BOT>",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@BOTX> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@BOTX> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@BOT|Hermes> hi",
+        "blocks": []
+      },
+      "routing": "<@OTHER> <@BOT|Hermes> hi",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@BOT|Hermes> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER> <@BOT|Hermes> hi\n<@BOT>",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@BOT|Hermes> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER> <@BOT|Hermes> hi",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "ask <@OTHER>",
+        "blocks": []
+      },
+      "routing": "ask <@OTHER>",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "ask <@OTHER>",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "ask <@OTHER>\n<@BOT>",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "ask <@OTHER>",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "ask <@OTHER>",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<!here> hi",
+        "blocks": []
+      },
+      "routing": "<!here> hi",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<!here> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<!here> hi\n<@BOT>",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<!here> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<!here> hi",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@> hi",
+        "blocks": []
+      },
+      "routing": "<@> hi",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@> hi\n<@BOT>",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@> hi",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER name> hi",
+        "blocks": []
+      },
+      "routing": "<@OTHER name> hi",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER name> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER name> hi\n<@BOT>",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER name> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER name> hi",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER|a>b> hi",
+        "blocks": []
+      },
+      "routing": "<@OTHER|a>b> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER|a>b> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER|a>b> hi\n<@BOT>",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER|a>b> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER|a>b> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER",
+        "blocks": []
+      },
+      "routing": "<@OTHER",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER\n<@BOT>",
+      "addressed": false,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER",
+      "addressed": false,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER|> hi",
+        "blocks": []
+      },
+      "routing": "<@OTHER|> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER|> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER|> hi\n<@BOT>",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER|> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER|> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@PRIMARY> hi",
+        "blocks": []
+      },
+      "routing": "<@OTHER> <@PRIMARY> hi",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@PRIMARY> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER> <@PRIMARY> hi\n<@BOT>",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@PRIMARY> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER> <@PRIMARY> hi",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@BOTX> hi",
+        "blocks": []
+      },
+      "routing": "<@OTHER> <@BOTX> hi",
+      "addressed": true,
+      "mentions_self": false
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@BOTX> hi",
+        "blocks": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER> <@BOTX> hi\n<@BOT>",
+      "addressed": true,
+      "mentions_self": true
+    },
+    {
+      "event": {
+        "text": "<@OTHER> <@BOTX> hi",
+        "blocks": [
+          {
+            "type": "rich_text_quote",
+            "elements": [
+              {
+                "type": "user",
+                "user_id": "BOT"
+              }
+            ]
+          }
+        ]
+      },
+      "routing": "<@OTHER> <@BOTX> hi",
+      "addressed": true,
+      "mentions_self": false
+    }
+  ],
+  "configs": [
+    {
+      "extra": null,
+      "legacy": null,
+      "result": false
+    },
+    {
+      "extra": null,
+      "legacy": "",
+      "result": false
+    },
+    {
+      "extra": null,
+      "legacy": "true",
+      "result": true
+    },
+    {
+      "extra": null,
+      "legacy": " true ",
+      "result": false
+    },
+    {
+      "extra": false,
+      "legacy": null,
+      "result": false
+    },
+    {
+      "extra": false,
+      "legacy": "",
+      "result": false
+    },
+    {
+      "extra": false,
+      "legacy": "true",
+      "result": false
+    },
+    {
+      "extra": false,
+      "legacy": " true ",
+      "result": false
+    },
+    {
+      "extra": true,
+      "legacy": null,
+      "result": true
+    },
+    {
+      "extra": true,
+      "legacy": "",
+      "result": true
+    },
+    {
+      "extra": true,
+      "legacy": "true",
+      "result": true
+    },
+    {
+      "extra": true,
+      "legacy": " true ",
+      "result": true
+    },
+    {
+      "extra": 0,
+      "legacy": null,
+      "result": false
+    },
+    {
+      "extra": 0,
+      "legacy": "",
+      "result": false
+    },
+    {
+      "extra": 0,
+      "legacy": "true",
+      "result": false
+    },
+    {
+      "extra": 0,
+      "legacy": " true ",
+      "result": false
+    },
+    {
+      "extra": 2,
+      "legacy": null,
+      "result": true
+    },
+    {
+      "extra": 2,
+      "legacy": "",
+      "result": true
+    },
+    {
+      "extra": 2,
+      "legacy": "true",
+      "result": true
+    },
+    {
+      "extra": 2,
+      "legacy": " true ",
+      "result": true
+    },
+    {
+      "extra": [],
+      "legacy": null,
+      "result": false
+    },
+    {
+      "extra": [],
+      "legacy": "",
+      "result": false
+    },
+    {
+      "extra": [],
+      "legacy": "true",
+      "result": false
+    },
+    {
+      "extra": [],
+      "legacy": " true ",
+      "result": false
+    },
+    {
+      "extra": [
+        1
+      ],
+      "legacy": null,
+      "result": true
+    },
+    {
+      "extra": [
+        1
+      ],
+      "legacy": "",
+      "result": true
+    },
+    {
+      "extra": [
+        1
+      ],
+      "legacy": "true",
+      "result": true
+    },
+    {
+      "extra": [
+        1
+      ],
+      "legacy": " true ",
+      "result": true
+    },
+    {
+      "extra": "true",
+      "legacy": null,
+      "result": true
+    },
+    {
+      "extra": "true",
+      "legacy": "",
+      "result": true
+    },
+    {
+      "extra": "true",
+      "legacy": "true",
+      "result": true
+    },
+    {
+      "extra": "true",
+      "legacy": " true ",
+      "result": true
+    },
+    {
+      "extra": " true ",
+      "legacy": null,
+      "result": false
+    },
+    {
+      "extra": " true ",
+      "legacy": "",
+      "result": false
+    },
+    {
+      "extra": " true ",
+      "legacy": "true",
+      "result": false
+    },
+    {
+      "extra": " true ",
+      "legacy": " true ",
+      "result": false
+    },
+    {
+      "extra": "OFF",
+      "legacy": null,
+      "result": false
+    },
+    {
+      "extra": "OFF",
+      "legacy": "",
+      "result": false
+    },
+    {
+      "extra": "OFF",
+      "legacy": "true",
+      "result": false
+    },
+    {
+      "extra": "OFF",
+      "legacy": " true ",
+      "result": false
+    },
+    {
+      "extra": "yes",
+      "legacy": null,
+      "result": true
+    },
+    {
+      "extra": "yes",
+      "legacy": "",
+      "result": true
+    },
+    {
+      "extra": "yes",
+      "legacy": "true",
+      "result": true
+    },
+    {
+      "extra": "yes",
+      "legacy": " true ",
+      "result": true
+    }
+  ]
+}

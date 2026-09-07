@@ -1,0 +1,1460 @@
+[
+  {
+    "platform": "",
+    "default": "",
+    "overrides": null,
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": false,
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": [],
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": "bad",
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {},
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": null,
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": false,
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": [],
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": "bad",
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {},
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": null,
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": false,
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": [],
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": "bad",
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {},
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": null,
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": false,
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": [],
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": "bad",
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {},
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": "extra"
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": "replacement\n\nextra"
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": "extra"
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "telegram",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": "replacement"
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": null,
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": false,
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": [],
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": "bad",
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {},
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": "default \n\nextra"
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": "replacement\n\nextra"
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": "default \n\nextra"
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "telegram",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": "replacement"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": null,
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": false,
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": [],
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": "bad",
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {},
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": "default\n\n\nextra"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": "replacement\n\nextra"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": "default\n\n\nextra"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "telegram",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": "replacement"
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": null,
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": false,
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": [],
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": "bad",
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {},
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": "",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": ""
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": null,
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": false,
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": [],
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": "bad",
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {},
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": " default ",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": " default "
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": null,
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": false,
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": [],
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": "bad",
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {},
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": null,
+      "": null
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": false,
+      "": false
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": 0,
+      "": 0
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": [],
+      "": []
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {},
+      "": {}
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": "",
+      "": ""
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": " \u001c ",
+      "": " \u001c "
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": " extra ",
+      "": " extra "
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": " extra "
+      },
+      "": {
+        "replace": " replacement ",
+        "append": " extra "
+      }
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": "",
+        "append": " extra "
+      },
+      "": {
+        "replace": "",
+        "append": " extra "
+      }
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": false,
+        "append": []
+      },
+      "": {
+        "replace": false,
+        "append": []
+      }
+    },
+    "expected": "\u001c default\n"
+  },
+  {
+    "platform": "discord",
+    "default": "\u001c default\n",
+    "overrides": {
+      "telegram": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      },
+      "": {
+        "replace": " replacement ",
+        "append": "\u00a0"
+      }
+    },
+    "expected": "\u001c default\n"
+  }
+]

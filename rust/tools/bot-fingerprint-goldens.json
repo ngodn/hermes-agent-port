@@ -1,0 +1,244 @@
+[
+  {
+    "config": null,
+    "files": {},
+    "expected": "3bb3d91b02a9"
+  },
+  {
+    "config": {},
+    "files": {},
+    "expected": "8a34bbff4d61"
+  },
+  {
+    "config": {},
+    "files": {
+      "SOUL.md": "# Bot Soul\nYou are Hermes, an AI assistant.\n"
+    },
+    "expected": "514b01217d7b"
+  },
+  {
+    "config": {},
+    "files": {
+      "SOUL.md": "# 🤖 Persona\nこんにちは 世界！\n\nCafé au lait & emojis: 🌟🚀\n"
+    },
+    "expected": "674ef1c3783d"
+  },
+  {
+    "config": {},
+    "files": {
+      "skills/weather/SKILL.md": "---\nname: weather\ndescription: Get weather\n---\n"
+    },
+    "expected": "827534b4888b"
+  },
+  {
+    "config": {},
+    "files": {
+      "skills/cloud/aws/s3/SKILL.md": "---\nname: s3\n---\n",
+      "skills/dev/git/commit/SKILL.md": "---\nname: commit\n---\n"
+    },
+    "expected": "da3c07527e73"
+  },
+  {
+    "config": {},
+    "files": {
+      "skills/alpha/SKILL.md": "---\nname: alpha\n---\n",
+      "skills/tools/editor/SKILL.md": "---\nname: editor\n---\n",
+      "skills/tools/editor/README.md": "# Readme\nNot a skill file\n",
+      "skills/ignored_dir/notes.txt": "Informational notes only\n"
+    },
+    "expected": "21d2ce8d8348"
+  },
+  {
+    "config": {},
+    "files": {
+      "profile.yaml": "ui_meta:\n  hermes-bots:\n    title: Primary Agent\ndescription: Core system assistant\n"
+    },
+    "expected": "9d4c6cecbaea"
+  },
+  {
+    "config": {},
+    "files": {
+      "profiles/researcher/profile.yaml": "ui_meta:\n  hermes-bots:\n    title: Research Buddy\ndescription: Deep research and literature review\n"
+    },
+    "expected": "087c476c9738"
+  },
+  {
+    "config": {},
+    "files": {
+      "profiles/coder/profile.yaml": "ui_meta:\n  hermes-bots:\n    title: Code Specialist\n",
+      "profiles/reviewer/profile.yaml": "description: Code reviewer without bot title\n",
+      "profiles/bot_plain/profile.yaml": "ui_meta:\n  hermes-bots: {}\n"
+    },
+    "expected": "34575f239f38"
+  },
+  {
+    "config": {},
+    "files": {
+      "profiles/analyst/profile.yaml": "ui_meta:\n  hermes-bots:\n    title: \"  Data   Analyst  \"\ndescription: \"  Analyzes   financial\n\n  reports  and data.  \"\n"
+    },
+    "expected": "8389bf5977df"
+  },
+  {
+    "config": {},
+    "files": {
+      "config.yaml": "bot_peers:\n  spark:\n    url: http://spark.lan:8377\n  homelab:\n    url: http://homelab.lan:8377\n"
+    },
+    "expected": "1344c40ffae9"
+  },
+  {
+    "config": {},
+    "files": {
+      "config.yaml": "bot_peers:\n  \"\": {}\n  \"   \": {}\n  cluster_a:\n    url: http://cluster\n"
+    },
+    "expected": "751140cc80e2"
+  },
+  {
+    "config": {},
+    "files": {
+      "bot_relay/roster.json": "{\"updated_at\": 1700000000, \"agents\": [{\"connection_id\": \"remote-node-1\", \"profile\": \"assistant\", \"handle\": \"assistant\", \"title\": \"Remote Assistant\", \"description\": \"Cloud worker\"}, {\"connection_id\": \"remote-node-2\", \"profile\": \"scraper\", \"handle\": \"scraper\", \"title\": \"Web Scraper\", \"description\": \"Fetches data\"}]}"
+    },
+    "expected": "44220444b862"
+  },
+  {
+    "config": {},
+    "files": {
+      "bot_relay/roster.json": "{\"agents\": [null, {\"bad\": \"row\"}, {\"connection_id\": \"conn1\", \"profile\": \"agent_valid\", \"title\": \"\\u30a8\\u30fc\\u30b8\\u30a7\\u30f3\\u30c8 1\", \"description\": \"\\u65e5\\u672c\\u8a9e\"}, {\"connection_id\": \"bad/id\", \"profile\": \"agent2\", \"title\": \"Invalid handle/conn\"}]}"
+    },
+    "expected": "1741d02653d8"
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": 123
+      },
+      "tools": {
+        "enabled_toolsets": [
+          "coding"
+        ]
+      }
+    },
+    "files": {},
+    "expected": "3bb3d91b02a9"
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "Web",
+          "BASH"
+        ]
+      },
+      "tools": {
+        "enabled_toolsets": 42
+      }
+    },
+    "files": {},
+    "expected": "cc12c4306cd0"
+  },
+  {
+    "config": {
+      "skills": "not_a_dict",
+      "tools": {
+        "enabled_toolsets": [
+          "web",
+          "bash",
+          "cli"
+        ]
+      }
+    },
+    "files": {},
+    "expected": "839b9043855f"
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "telemetry"
+        ]
+      },
+      "tools": {
+        "enabled_toolsets": [
+          "fs"
+        ]
+      },
+      "mcp_servers": "invalid_servers_type"
+    },
+    "files": {},
+    "expected": "f540f1f41978"
+  },
+  {
+    "config": {
+      "mcp_servers": {
+        "weather_service": {
+          "url": "https://api.weather.example/v1",
+          "timeout": 12.5,
+          "threshold": 0.001,
+          "location": "東京 (Tokyo)",
+          "temperature_unit": "摂氏 (Celsius)",
+          "icon": "🌤️"
+        }
+      }
+    },
+    "files": {},
+    "expected": "02e4da05ef51"
+  },
+  {
+    "config": {
+      "mcp_servers": {
+        "calc": {
+          "pi": 3.141592653589793,
+          "zero": 0.0,
+          "negative": -12.75,
+          "enabled": true,
+          "labels": [
+            "München",
+            "São Paulo",
+            "北京"
+          ],
+          "nested": {
+            "ratio": 0.0015,
+            "note": "naïve café"
+          }
+        }
+      }
+    },
+    "files": {},
+    "expected": "565062a53c1f"
+  },
+  {
+    "config": {
+      "skills": {
+        "disabled": [
+          "Legacy_Skill",
+          "Alpha_Test"
+        ]
+      },
+      "tools": {
+        "enabled_toolsets": [
+          "web",
+          "developer"
+        ]
+      },
+      "mcp_servers": {
+        "custom_mcp": {
+          "command": "/usr/local/bin/mcp-server",
+          "score": 99.9,
+          "metadata": {
+            "author": "François",
+            "version": 2.1
+          }
+        }
+      }
+    },
+    "files": {
+      "SOUL.md": "# Full Persona\nActive capability test.\n",
+      "skills/infra/terraform/SKILL.md": "---\nname: terraform\n---\n",
+      "skills/dev/lint/SKILL.md": "---\nname: lint\n---\n",
+      "profile.yaml": "ui_meta:\n  hermes-bots:\n    title: Lead Bot\ndescription: Team leader\n",
+      "profiles/subordinate/profile.yaml": "ui_meta:\n  hermes-bots:\n    title: Assistant\ndescription: Helper\n",
+      "config.yaml": "bot_peers:\n  gateway_east: {}\n  gateway_west: {}\n",
+      "bot_relay/roster.json": "{\"agents\": [{\"connection_id\": \"gw1\", \"profile\": \"agent_alpha\", \"title\": \"Alpha Agent\", \"description\": \"Worker on GW1\"}]}"
+    },
+    "expected": "ba0078b7f658"
+  }
+]

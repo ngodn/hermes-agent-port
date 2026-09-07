@@ -10,7 +10,8 @@
 //! - `getUpdates` with `offset` + `timeout`; advance `offset` to
 //!   `max(update_id) + 1`. Envelope: `{"ok":true,"result":[Update,...]}`.
 //! - Update: `update_id`, optional `message`. Message: `message_id`, `from.id`,
-//!   `chat.id`, optional `text`.
+//!   `chat.id`, text or voice/audio plus optional caption.
+//! - Audio: `getFile`, bounded download, profile cache, then Dispatcher STT.
 //! - `sendMessage` with `chat_id` + `text`.
 
 use std::time::Duration;
@@ -24,23 +25,25 @@ use tracing::{debug, warn};
 use crate::platform::PlatformAdapter;
 
 /// A parsed Telegram update: the id (to advance the poll offset) and, when the
-/// update carried a text message, the mapped [`Message`].
+/// update carried a supported text/audio message, the mapped [`Message`].
 #[derive(Debug, PartialEq)]
 pub struct ParsedUpdate {
     pub update_id: i64,
     pub message: Option<Message>,
 }
 
-/// Extract the update id and (if a text message) a [`Message`] from one raw
+/// Extract the update id and a supported [`Message`] from one raw
 /// Telegram Update object. Returns `None` only when there is no `update_id`
 /// (a malformed update we cannot use to advance the offset).
 pub fn extract_update(update: &Value) -> Option<ParsedUpdate> {
     let update_id = update.get("update_id").and_then(Value::as_i64)?;
 
-    // Only plain text messages become turns for now. Edited messages, channel
+    // Plain text and voice/audio become turns. Edited messages, channel
     // posts, callbacks etc. still advance the offset but produce no Message.
     let message = update.get("message").and_then(|m| {
-        let text = m.get("text").and_then(Value::as_str)?;
+        let text = m.get("text").and_then(Value::as_str).or_else(|| {
+            audio_attachment(m).map(|_| m.get("caption").and_then(Value::as_str).unwrap_or(""))
+        })?;
         let chat = m.get("chat");
         let chat_id = chat.and_then(|c| c.get("id")).and_then(Value::as_i64)?;
         let chat_type = chat
@@ -54,6 +57,7 @@ pub fn extract_update(update: &Value) -> Option<ParsedUpdate> {
             // Channel posts have no `from`; fall back to the chat id.
             .unwrap_or(chat_id);
         Some(Message {
+            resolved_session_id: None,
             platform: Platform::Telegram,
             channel_id: chat_id.to_string(),
             sender_id: sender_id.to_string(),
@@ -61,6 +65,10 @@ pub fn extract_update(update: &Value) -> Option<ParsedUpdate> {
             content_parts: None,
             chat_type,
             audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
         })
     });
 
@@ -73,6 +81,17 @@ pub struct TelegramAdapter {
     api_base: String,
     poll_timeout: Duration,
     client: reqwest::Client,
+    audio_home: std::path::PathBuf,
+    audio_limit: i64,
+}
+
+fn audio_attachment(message: &Value) -> Option<(&str, &'static str)> {
+    for (field, ext) in [("voice", ".ogg"), ("audio", ".mp3")] {
+        if let Some(id) = message[field]["file_id"].as_str() {
+            return Some((id, ext));
+        }
+    }
+    None
 }
 
 impl TelegramAdapter {
@@ -80,6 +99,7 @@ impl TelegramAdapter {
         let client = reqwest::Client::builder()
             // getUpdates blocks up to poll_timeout; give the request headroom.
             .timeout(Duration::from_secs(60))
+            .redirect(reqwest::redirect::Policy::none())
             .build()
             .map_err(|e| Error::Other(format!("telegram: build http client: {e}")))?;
         Ok(Self {
@@ -87,7 +107,76 @@ impl TelegramAdapter {
             api_base: "https://api.telegram.org".to_string(),
             poll_timeout: Duration::from_secs(30),
             client,
+            audio_home: crate::config_file::hermes_home(),
+            audio_limit: 128 * 1024 * 1024,
         })
+    }
+
+    pub fn with_audio_cache(mut self, home: std::path::PathBuf, config: &Value) -> Self {
+        self.audio_home = home;
+        self.audio_limit = crate::audio_process::inbound_limit(config);
+        self
+    }
+
+    /// Download before handing the message to Dispatcher. Keep token-bearing
+    /// API URLs out of diagnostics, including reqwest's embedded request URL.
+    async fn prepare_update(&self, raw: &Value) -> Result<Option<ParsedUpdate>> {
+        let Some(mut parsed) = extract_update(raw) else {
+            return Ok(None);
+        };
+        if let (Some(message), Some((id, ext))) =
+            (&mut parsed.message, audio_attachment(&raw["message"]))
+        {
+            let result = self.download_audio(id, ext).await;
+            match result {
+                Ok(path) => message
+                    .audio_paths
+                    .push(path.to_string_lossy().into_owned()),
+                Err(_) => {
+                    warn!("telegram audio download failed");
+                    if !message.text.is_empty() {
+                        message.text.push('\n');
+                    }
+                    message
+                        .text
+                        .push_str("[Audio attachment could not be downloaded.]");
+                }
+            }
+        }
+        Ok(Some(parsed))
+    }
+
+    async fn download_audio(&self, id: &str, ext: &str) -> anyhow::Result<std::path::PathBuf> {
+        let envelope: Value = self
+            .client
+            .post(self.method_url("getFile"))
+            .json(&serde_json::json!({"file_id":id}))
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await?;
+        anyhow::ensure!(envelope["ok"] == true, "Telegram file unavailable");
+        let path = envelope["result"]["file_path"]
+            .as_str()
+            .ok_or_else(|| anyhow::anyhow!("missing file path"))?;
+        // The API supplies a relative path. Reject traversal and URL delimiters
+        // before placing it after the token-bearing download prefix.
+        anyhow::ensure!(
+            !path.starts_with('/')
+                && !path.contains(['?', '#', '\\', '%'])
+                && path.split('/').all(|part| !matches!(part, ".." | "." | "")),
+            "invalid file path"
+        );
+        let url = format!("{}/file/bot{}/{path}", self.api_base, self.token);
+        let response = self.client.get(url).send().await?;
+        crate::audio_process::cache_audio_response(
+            &self.audio_home,
+            response,
+            ext,
+            self.audio_limit,
+        )
+        .await
     }
 
     /// Override the API base (for tests or a proxy).
@@ -150,7 +239,7 @@ impl PlatformAdapter for TelegramAdapter {
             match self.get_updates(offset).await {
                 Ok(updates) => {
                     for raw in &updates {
-                        let Some(parsed) = extract_update(raw) else {
+                        let Some(parsed) = self.prepare_update(raw).await? else {
                             continue;
                         };
                         // Confirm this update by moving the offset past it.
@@ -207,6 +296,177 @@ impl PlatformAdapter for TelegramAdapter {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    struct RecordingAgent(mpsc::Sender<String>);
+    #[async_trait]
+    impl crate::agent::AgentClient for RecordingAgent {
+        async fn run_turn(
+            &self,
+            msg: &Message,
+            _: &[crate::session_db::HistoryMessage],
+            _: mpsc::Sender<hermes_core::StreamEvent>,
+        ) -> Result<()> {
+            self.0.send(msg.text.clone()).await.unwrap();
+            Ok(())
+        }
+    }
+
+    struct LocalAudioContext;
+    #[async_trait]
+    impl crate::transcription_enrichment::TranscriptionBackend for LocalAudioContext {
+        fn absolute_path(&self, path: &str) -> String {
+            path.into()
+        }
+        async fn probe_duration(&self, _: &str) -> Option<String> {
+            None
+        }
+        async fn transcribe(&self, _: &str) -> anyhow::Result<Value> {
+            unreachable!("HTTP backend owns transcription")
+        }
+        async fn local_fallback(&self, _: &str) -> anyhow::Result<Value> {
+            Ok(json!({"success":false}))
+        }
+        fn agent_visible_path(&self, path: &str) -> String {
+            path.into()
+        }
+    }
+
+    #[tokio::test]
+    async fn voice_download_populates_cached_audio_and_preserves_failed_caption() {
+        use axum::{
+            routing::{get, post},
+            Json, Router,
+        };
+        let app = Router::new()
+            .route(
+                "/botfixture/getFile",
+                post(|Json(body): Json<Value>| async move {
+                    let path = if body["file_id"] == "bad" {
+                        "../escape"
+                    } else {
+                        "voice/clip.oga"
+                    };
+                    Json(json!({"ok":true,"result":{"file_path":path}}))
+                }),
+            )
+            .route(
+                "/file/botfixture/voice/clip.oga",
+                get(|| async { b"OggSfixture".to_vec() }),
+            )
+            .route(
+                "/audio/transcriptions",
+                post(|body: axum::body::Bytes| async move {
+                    assert!(body.windows(11).any(|part| part == b"OggSfixture"));
+                    "spoken fixture transcript"
+                }),
+            );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base = format!("http://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        });
+        let home = std::env::temp_dir().join(format!(
+            "hermes-telegram-audio-{}",
+            crate::install_identity::mint_id().unwrap()
+        ));
+        // Existing legacy cache must remain the selected profile layout.
+        tokio::fs::create_dir_all(home.join("audio_cache"))
+            .await
+            .unwrap();
+        tokio::fs::write(home.join("audio_cache/existing.ogg"), b"OggSold")
+            .await
+            .unwrap();
+        let adapter = TelegramAdapter::new("fixture")
+            .unwrap()
+            .with_api_base(base.clone())
+            .with_audio_cache(home.clone(), &json!({}));
+        for field in ["voice", "audio"] {
+            let mut raw = json!({"update_id":3,"message":{"chat":{"id":42},"caption":"caption"}});
+            raw["message"][field] = json!({"file_id":"clip"});
+            let message = adapter
+                .prepare_update(&raw)
+                .await
+                .unwrap()
+                .unwrap()
+                .message
+                .unwrap();
+            assert_eq!(message.text, "caption");
+            assert_eq!(message.audio_paths.len(), 1);
+            let path = std::path::Path::new(&message.audio_paths[0]);
+            assert_eq!(path.parent().unwrap(), home.join("audio_cache"));
+            assert_eq!(path.extension().unwrap(), "ogg");
+            assert_eq!(tokio::fs::read(path).await.unwrap(), b"OggSfixture");
+            // Exercise the actual downloaded bytes through HTTP STT and the
+            // Dispatcher queue. Only the final model is a recording boundary.
+            let transport = crate::transcription_http::TranscriptionHttp::new(
+                &base,
+                "fixture-key".into(),
+                "openai".into(),
+                "whisper-1".into(),
+                "whisper-1",
+                None,
+                None,
+            )
+            .unwrap();
+            let backend = crate::transcription_http::HttpTranscriptionBackend {
+                transport,
+                read_policy: crate::file_read_safety::FileReadPolicy {
+                    home: home.clone(),
+                    cwd: home.clone(),
+                    hermes_home: home.clone(),
+                    hermes_root: home.clone(),
+                },
+                context: LocalAudioContext,
+            };
+            let (seen_tx, mut seen_rx) = mpsc::channel(1);
+            let dispatcher = std::sync::Arc::new(
+                crate::dispatch::Dispatcher::new(
+                    std::sync::Arc::new(RecordingAgent(seen_tx)),
+                    std::sync::Arc::new(json!({})),
+                    None,
+                )
+                .with_transcription(std::sync::Arc::new(backend)),
+            );
+            let (in_tx, in_rx) = mpsc::channel(1);
+            let worker = tokio::spawn(dispatcher.run(in_rx));
+            in_tx.send(message).await.unwrap();
+            let text = tokio::time::timeout(Duration::from_secs(10), seen_rx.recv())
+                .await
+                .unwrap()
+                .unwrap();
+            assert!(text.contains("spoken fixture transcript"), "{text}");
+            assert!(text.contains("caption"));
+            drop(in_tx);
+            worker.await.unwrap();
+            raw["message"][field]["file_id"] = json!("bad");
+            let message = adapter
+                .prepare_update(&raw)
+                .await
+                .unwrap()
+                .unwrap()
+                .message
+                .unwrap();
+            assert!(message.audio_paths.is_empty());
+            assert!(message.text.starts_with("caption\n"));
+            assert!(!message.text.contains("fixture"));
+        }
+        let adapter = adapter.with_audio_cache(
+            home.clone(),
+            &json!({"gateway":{"max_inbound_media_bytes":3}}),
+        );
+        let raw = json!({"update_id":4,"message":{"chat":{"id":42},"voice":{"file_id":"clip"}}});
+        let message = adapter
+            .prepare_update(&raw)
+            .await
+            .unwrap()
+            .unwrap()
+            .message
+            .unwrap();
+        assert!(message.audio_paths.is_empty());
+        assert!(message.text.contains("could not be downloaded"));
+        server.abort();
+        tokio::fs::remove_dir_all(home).await.unwrap();
+    }
 
     #[test]
     fn extracts_text_message() {

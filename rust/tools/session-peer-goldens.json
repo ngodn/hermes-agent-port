@@ -1,0 +1,4798 @@
+[
+  {
+    "name": "exact_key_single_active",
+    "description": "Exact session_key matches a single active session with messages.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "user1",
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": "chat1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": "user1",
+        "chat_id": "chat1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1050.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "exact_key_beats_newer_fallback_candidate",
+    "description": "Exact session_key candidate wins over newer fallback candidate with higher message count.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "user1",
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": "chat1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_exact",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": "user1",
+        "chat_id": "chat1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_fallback",
+        "source": "telegram",
+        "session_key": "other_key",
+        "user_id": "user1",
+        "chat_id": "chat1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 10,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_exact"
+  },
+  {
+    "name": "exact_key_beats_newer_fallback_even_if_exact_is_empty",
+    "description": "Exact key candidate is selected even if empty, preventing fallback from running.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "user1",
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": "chat1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_exact_empty",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": "user1",
+        "chat_id": "chat1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_fallback_active",
+        "source": "telegram",
+        "session_key": "other_key",
+        "user_id": "user1",
+        "chat_id": "chat1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 5,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_exact_empty"
+  },
+  {
+    "name": "exact_key_ignores_peer_tuple_mismatches_on_row",
+    "description": "Exact key query succeeds when session_key matches even if row peer tuple differs from lookup.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "user1",
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": "chat1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": "different_user",
+        "chat_id": "different_chat",
+        "chat_type": "group",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1050.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "exact_key_source_must_match",
+    "description": "Exact key query filters on both session_key and source matching lookup arguments.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "shared_key",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_slack",
+        "source": "slack",
+        "session_key": "shared_key",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_telegram",
+        "source": "telegram",
+        "session_key": "shared_key",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_telegram"
+  },
+  {
+    "name": "exact_key_ignores_owner_profile_fencing",
+    "description": "Exact key query matches row regardless of profile_name because profile fencing is fallback only.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "user1",
+      "session_key": "agent:bot2:telegram:dm:user1",
+      "chat_id": "chat1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_bot2",
+        "source": "telegram",
+        "session_key": "agent:bot2:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": "bot2",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1050.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_bot2"
+  },
+  {
+    "name": "exact_key_two_active_candidates_recency_order",
+    "description": "When multiple exact key candidates exist with messages, the newest activity wins.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_old",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_new",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_new"
+  },
+  {
+    "name": "exact_key_prefers_last_activity_over_started_at",
+    "description": "Ranking prefers recent last_activity_at over started_at in exact key query.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_early_start_late_activity",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 500.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2500.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_late_start_early_activity",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1500.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1800.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_early_start_late_activity"
+  },
+  {
+    "name": "exact_key_falls_back_to_started_at_when_activity_null",
+    "description": "When last_activity_at is null, started_at is used for recency ordering in exact key query.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s2",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1200.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s2"
+  },
+  {
+    "name": "exact_key_system_prompt_direct",
+    "description": "Direct system_prompt column is retained when system_prompt_hash is null.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": "direct prompt text",
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "exact_key_system_prompt_resolved_from_hash",
+    "description": "system_prompts table join resolves prompt from system_prompt_hash.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [
+      {
+        "hash": "hash_abc",
+        "prompt": "resolved prompt from table"
+      }
+    ],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": "hash_abc"
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "exact_key_system_prompt_hash_overrides_direct",
+    "description": "COALESCE resolves hash prompt over inline direct prompt when both exist.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [
+      {
+        "hash": "hash_abc",
+        "prompt": "hash prompt wins"
+      }
+    ],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": "inline prompt loses",
+        "system_prompt_hash": "hash_abc"
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "exact_key_has_messages_beats_newer_empty",
+    "description": "Exact key candidate with messages beats newer empty exact key candidate.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_has_msgs",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 2,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_empty",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_has_msgs"
+  },
+  {
+    "name": "exact_key_empty_row_returned_if_only_candidate",
+    "description": "An empty exact key row is returned rather than null when no other candidate exists.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_empty",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_empty"
+  },
+  {
+    "name": "exact_key_multiple_empty_rows_ordered_by_recency",
+    "description": "When all exact key candidates are empty, the newest activity wins.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_empty_old",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_empty_new",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_empty_new"
+  },
+  {
+    "name": "exact_key_message_count_positive_without_message_rows",
+    "description": "message_count positive counts as message-bearing without rows in messages table.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 5,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_empty",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "exact_key_messages_table_row_without_message_count",
+    "description": "EXISTS in messages table marks row as message-bearing even with message_count 0.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_empty",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [
+      {
+        "session_id": "s1",
+        "role": "user",
+        "content": "hello",
+        "timestamp": 1000.0
+      }
+    ],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "exact_key_message_count_null_with_messages_row",
+    "description": "NULL message_count with existing message row treats session as message-bearing.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": null,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_empty",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [
+      {
+        "session_id": "s1",
+        "role": "user",
+        "content": "hello",
+        "timestamp": 1000.0
+      }
+    ],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "exact_key_message_count_null_without_messages_row_is_empty",
+    "description": "NULL message_count without message rows is treated as empty but returned for exact key.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": null,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_requires_messages_message_count_positive",
+    "description": "Fallback candidate with positive message_count satisfies message requirement.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_requires_messages_from_messages_table",
+    "description": "Fallback candidate with row in messages table satisfies message requirement.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [
+      {
+        "session_id": "s1",
+        "role": "user",
+        "content": "hello",
+        "timestamp": 1000.0
+      }
+    ],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_rejects_empty_row_message_count_zero",
+    "description": "Fallback query strictly rejects empty candidate row with message_count 0.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "fallback_rejects_empty_row_message_count_null",
+    "description": "Fallback query strictly rejects candidate with NULL message_count and no messages.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": null,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "fallback_empty_row_newer_message_bearing_older",
+    "description": "Fallback query filters out newer empty row and returns older message-bearing row.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_has_msg",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_empty",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_has_msg"
+  },
+  {
+    "name": "fallback_all_candidates_empty_returns_null",
+    "description": "When all fallback candidates have message_count 0, fallback returns null.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s2",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "fallback_messages_for_other_session_do_not_count",
+    "description": "Messages associated with a different session do not satisfy message check for target.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_other",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u2",
+        "chat_id": "c2",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [
+      {
+        "session_id": "s_other",
+        "role": "user",
+        "content": "message for other session",
+        "timestamp": 1000.0
+      }
+    ],
+    "expected_session_id": null
+  },
+  {
+    "name": "recoverable_active_session_ended_at_null",
+    "description": "Active session with ended_at null is eligible for recovery.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "recoverable_reason_agent_close",
+    "description": "Accidental closure from agent_close is recoverable.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "agent_close",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "recoverable_reason_ws_orphan_reap",
+    "description": "Accidental closure from ws_orphan_reap is recoverable.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "ws_orphan_reap",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "recoverable_reason_superseded_by_resume",
+    "description": "Accidental closure from superseded_by_resume is recoverable.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "superseded_by_resume",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "recoverable_reason_startup_orphan_reap",
+    "description": "Accidental closure from startup_orphan_reap is recoverable.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "startup_orphan_reap",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "non_recoverable_reason_session_reset",
+    "description": "Intentional session_reset closure cannot be recovered.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "non_recoverable_reason_session_switch",
+    "description": "Intentional session_switch closure cannot be recovered.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "session_switch",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "non_recoverable_reason_idle",
+    "description": "Intentional idle timeout closure cannot be recovered.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "idle",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "non_recoverable_reason_daily",
+    "description": "Intentional daily boundary closure cannot be recovered.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "daily",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "non_recoverable_reason_suspended",
+    "description": "Suspended session closure cannot be recovered.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "suspended",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "non_recoverable_reason_resume_pending_expired",
+    "description": "Expired resume pending closure cannot be recovered.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "resume_pending_expired",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "non_recoverable_reason_compression",
+    "description": "Compressed parent session is non-recoverable.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "compression",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "non_recoverable_reason_branched",
+    "description": "Branched parent session is non-recoverable.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "branched",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "non_recoverable_reason_unknown",
+    "description": "Arbitrary unknown end reason is non-recoverable.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1200.0,
+        "end_reason": "unexpected_crash",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "recoverable_older_beats_non_recoverable_newer_in_exact_key",
+    "description": "Older recoverable session is selected when newer session has non-recoverable end reason.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_rec",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "agent_close",
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_non_rec",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1600.0,
+        "end_reason": "compression",
+        "last_activity_at": 1500.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_rec"
+  },
+  {
+    "name": "recoverable_in_peer_fallback",
+    "description": "Fallback candidate ended with ws_orphan_reap is eligible and recovered.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "ws_orphan_reap",
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_exact_newer_fences_older_candidate",
+    "description": "Newer session_reset row fences recovery of older candidate for the same key.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b_reset",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1100.0,
+        "ended_at": 1200.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_exact_older_does_not_fence_newer_candidate",
+    "description": "Older session_reset row does not fence candidate whose activity is newer than reset ended_at.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b_reset",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 800.0,
+        "ended_at": 900.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_exact_equal_timestamp_does_not_fence",
+    "description": "Strict inequality in SQL means ended_at equal to activity timestamp does not fence candidate.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 500.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b_reset",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 500.0,
+        "ended_at": 1000.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_exact_strictly_greater_timestamp_fences",
+    "description": "ended_at strictly greater than candidate activity timestamp fences the candidate.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 500.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b_reset",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 500.0,
+        "ended_at": 1000.0001,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_uses_started_at_when_activity_null_fenced",
+    "description": "When last_activity_at is null, COALESCE falls back to started_at for reset fence comparison.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b_reset",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 500.0,
+        "ended_at": 1001.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_uses_started_at_when_activity_null_not_fenced",
+    "description": "When candidate started_at is newer than reset ended_at, candidate is not fenced.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b_reset",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 500.0,
+        "ended_at": 999.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_reason_session_switch_fences",
+    "description": "session_switch end_reason fences older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "session_switch",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_reason_idle_fences",
+    "description": "idle end_reason fences older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "idle",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_reason_daily_fences",
+    "description": "daily end_reason fences older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "daily",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_reason_suspended_fences",
+    "description": "suspended end_reason fences older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "suspended",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_reason_resume_pending_expired_fences",
+    "description": "resume_pending_expired end_reason fences older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "resume_pending_expired",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_reason_agent_close_does_not_fence",
+    "description": "agent_close is not in reset reasons and does not fence older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "agent_close",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_reason_ws_orphan_reap_does_not_fence",
+    "description": "ws_orphan_reap is not in reset reasons and does not fence older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "ws_orphan_reap",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_reason_compression_does_not_fence",
+    "description": "compression is not in reset reasons and does not fence older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "compression",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_reason_unknown_does_not_fence",
+    "description": "Unknown end reason does not fence older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "crash",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_open_session_does_not_fence",
+    "description": "Row with ended_at NULL cannot act as reset boundary even if end_reason is set.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1100.0,
+        "ended_at": null,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_different_key_does_not_fence_exact_query",
+    "description": "In exact key query, reset row with different key does not fence candidate.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": "k2",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_different_source_does_not_fence_exact_query",
+    "description": "Reset boundary on different source does not fence exact key candidate.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "slack",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_fallback_fences_by_peer_tuple",
+    "description": "In fallback query, reset boundary matching the peer tuple fences older candidates.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "reset_boundary_fallback_different_chat_does_not_fence",
+    "description": "Reset boundary for different chat does not fence fallback candidate.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c2",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_fallback_different_user_does_not_fence",
+    "description": "Reset boundary for different user in group chat does not fence fallback candidate.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u2",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "reset_boundary_fallback_different_thread_does_not_fence",
+    "description": "Reset boundary on different thread does not fence fallback candidate.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": "t1"
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": "t1",
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": "t2",
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1100.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 0,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_disabled_when_chat_id_is_none",
+    "description": "When exact key misses and chat_id is None, fallback is disabled and returns null.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": null,
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": null,
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "fallback_disabled_when_chat_type_is_none",
+    "description": "When exact key misses and chat_type is None, fallback is disabled and returns null.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "fallback_disabled_when_both_chat_id_and_chat_type_none",
+    "description": "When exact key misses and both chat_id and chat_type are None, returns null.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "lookup_session_key_none_returns_none_immediately",
+    "description": "Lookup with session_key None returns null immediately before executing any SQL.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": null,
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "lookup_session_key_empty_string_returns_none_immediately",
+    "description": "Lookup with empty string session_key returns null immediately before executing any SQL.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "fallback_enabled_when_chat_id_and_chat_type_present",
+    "description": "Fallback runs and succeeds when both chat_id and chat_type are non-None.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_recovers_candidate_with_null_session_key",
+    "description": "Fallback recovers a session row that never received a session_key.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_recovers_candidate_with_different_session_key",
+    "description": "Fallback recovers a session row whose persisted session_key does not match lookup key.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_new",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k_old",
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_matches_with_thread_id_present",
+    "description": "Fallback query matches thread_id when present on both row and lookup.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": "t1"
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": "t1",
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_matches_with_thread_id_null",
+    "description": "Fallback query matches when thread_id is null on both row and lookup.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "peer_mismatch_source",
+    "description": "Fallback fails when source does not match.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "slack",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "peer_mismatch_user_id",
+    "description": "Fallback fails when user_id does not match.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u2",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "peer_mismatch_chat_id",
+    "description": "Fallback fails when chat_id does not match.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c2",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "peer_mismatch_chat_type",
+    "description": "Fallback fails when chat_type does not match.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "peer_mismatch_thread_id_values",
+    "description": "Fallback fails when thread_id values differ.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": "t2"
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": "t1",
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "peer_mismatch_thread_id_lookup_present_row_null",
+    "description": "Fallback fails when lookup specifies thread_id but row has null thread_id.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": "t1"
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "peer_mismatch_thread_id_lookup_null_row_present",
+    "description": "Fallback fails when row specifies thread_id but lookup has null thread_id.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": "t1",
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "peer_match_user_id_null_and_empty_string",
+    "description": "COALESCE treats NULL and empty string as equivalent for user_id.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": null,
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "peer_match_user_id_both_null",
+    "description": "Fallback matches when user_id is null on both row and lookup.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": null,
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "peer_match_thread_id_null_and_empty_string",
+    "description": "COALESCE treats NULL and empty string as equivalent for thread_id.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": ""
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "peer_fallback_selects_newest_activity_among_matching",
+    "description": "When multiple fallback candidates match, newest activity wins.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_old",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_new",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_new"
+  },
+  {
+    "name": "peer_fallback_activity_beats_started_at",
+    "description": "Fallback ranking prefers recent activity over started_at.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_early_start",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 100.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2500.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_late_start",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1500.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1800.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_early_start"
+  },
+  {
+    "name": "peer_fallback_falls_back_to_started_at_when_activity_null",
+    "description": "Fallback ranking uses started_at when last_activity_at is null.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s2",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1200.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s2"
+  },
+  {
+    "name": "peer_fallback_mixed_activity_and_started_at",
+    "description": "started_at of 1100 beats last_activity_at of 900 in COALESCE ranking.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_activity",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 100.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 900.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_started",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1100.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_started"
+  },
+  {
+    "name": "profile_fence_owner_none_adopts_null_profile",
+    "description": "Store outside profile tree (owner None) adopts row with null profile.",
+    "owner_profile": null,
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "profile_fence_owner_none_adopts_named_profile",
+    "description": "Store outside profile tree (owner None) adopts row with named profile.",
+    "owner_profile": null,
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot2",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "profile_fence_owner_default_adopts_matching_default",
+    "description": "Store owned by default adopts row with profile_name default.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "default",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "profile_fence_owner_default_adopts_null_profile",
+    "description": "Store owned by default adopts legacy row with null profile_name.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "profile_fence_owner_default_rejects_sibling_profile",
+    "description": "Store owned by default rejects sibling profile row.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot2",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "profile_fence_owner_bot2_adopts_matching_bot2",
+    "description": "Store owned by bot2 adopts row with profile_name bot2.",
+    "owner_profile": "bot2",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot2",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "profile_fence_owner_bot2_adopts_null_profile",
+    "description": "Store owned by bot2 adopts legacy row with null profile_name.",
+    "owner_profile": "bot2",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "profile_fence_owner_bot2_rejects_default_profile",
+    "description": "Store owned by bot2 rejects default profile row.",
+    "owner_profile": "bot2",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "default",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "profile_fence_owner_bot2_rejects_bot3_profile",
+    "description": "Store owned by bot2 rejects third-party sibling profile row.",
+    "owner_profile": "bot2",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot3",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "profile_fence_sibling_newer_own_older_own_wins",
+    "description": "Sibling profile row is newer but fenced out; older own row wins.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_own",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "default",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_sibling",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot2",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_own"
+  },
+  {
+    "name": "profile_fence_sibling_newer_legacy_null_older_legacy_wins",
+    "description": "Sibling profile row is newer but fenced out; older legacy null profile row wins.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_legacy",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_sibling",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot2",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_legacy"
+  },
+  {
+    "name": "profile_fence_only_sibling_exists_fails_closed",
+    "description": "When only a sibling row exists, fallback fails closed and returns null.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_sibling",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot2",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "incident_82616_zombie_beats_unkeyed_before_heal",
+    "description": "Before peer heal stamps session_key, exact query resolves to zombie predecessor.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "user1",
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": "user1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_zombie",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 4,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_real",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "user1",
+        "chat_id": "user1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 3000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 5000.0,
+        "message_count": 8,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_zombie"
+  },
+  {
+    "name": "incident_82616_healed_real_session_beats_zombie",
+    "description": "After peer heal stamps session_key, newer activity on real session beats zombie row.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "user1",
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": "user1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_zombie",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 4,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_real",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": "user1",
+        "chat_id": "user1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 3000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 5000.0,
+        "message_count": 8,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_real"
+  },
+  {
+    "name": "incident_68539_reset_row_blocks_cross_conversation_leak",
+    "description": "session_reset row prevents recovery from resurrecting pre-reset conversation context.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "user1",
+      "session_key": "agent:main:telegram:dm:user1",
+      "chat_id": "user1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_old",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": "user1",
+        "chat_id": "user1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 5,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_reset",
+        "source": "telegram",
+        "session_key": "agent:main:telegram:dm:user1",
+        "user_id": "user1",
+        "chat_id": "user1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1500.0,
+        "ended_at": 1600.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": null
+  },
+  {
+    "name": "incident_74285_telegram_dm_sibling_bot_isolation",
+    "description": "Telegram DM with identical user and chat ID isolates sibling bot in fallback recovery.",
+    "owner_profile": "bot1",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "42",
+      "session_key": "agent:bot1:telegram:dm:42",
+      "chat_id": "42",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_bot2",
+        "source": "telegram",
+        "session_key": "agent:bot2:telegram:dm:42",
+        "user_id": "42",
+        "chat_id": "42",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot2",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 2000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "s_bot1",
+        "source": "telegram",
+        "session_key": "agent:bot1:telegram:dm:42:old",
+        "user_id": "42",
+        "chat_id": "42",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": "bot1",
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_bot1"
+  },
+  {
+    "name": "incident_ws_orphan_reap_clean_recovery",
+    "description": "Reconnect after ws_orphan_reap successfully recovers the active conversation.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k1",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1010.0,
+        "end_reason": "ws_orphan_reap",
+        "last_activity_at": 1000.0,
+        "message_count": 3,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "incident_startup_orphan_reap_clean_recovery",
+    "description": "Boot-time orphan sweep row is recovered cleanly on next user turn.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k1",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1010.0,
+        "end_reason": "startup_orphan_reap",
+        "last_activity_at": 1000.0,
+        "message_count": 3,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "incident_superseded_by_resume_recovery",
+    "description": "Session closed with superseded_by_resume is recoverable.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k1",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1010.0,
+        "end_reason": "superseded_by_resume",
+        "last_activity_at": 1000.0,
+        "message_count": 2,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "incident_agent_close_bug_recovery",
+    "description": "Older gateway cleanup agent_close bug does not prevent resuming conversation.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k1",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 1010.0,
+        "end_reason": "agent_close",
+        "last_activity_at": 1000.0,
+        "message_count": 4,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_reset_boundary_preserves_unrelated_chat",
+    "description": "Reset boundary for chat2 does not fence fallback candidate for chat1.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_chat1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 2,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b_chat2",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c2",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 2000.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_chat1"
+  },
+  {
+    "name": "fallback_reset_boundary_preserves_unrelated_thread",
+    "description": "Reset boundary on thread2 does not fence fallback candidate on thread1.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "group",
+      "thread_id": "t1"
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s_thread1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": "t1",
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": 1000.0,
+        "message_count": 2,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      },
+      {
+        "id": "b_thread2",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "group",
+        "thread_id": "t2",
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": 2000.0,
+        "end_reason": "session_reset",
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": null
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s_thread1"
+  },
+  {
+    "name": "system_prompt_direct_unaffected_when_system_prompts_empty",
+    "description": "If system_prompt_hash misses in system_prompts table, COALESCE falls back to s.system_prompt.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": null,
+      "session_key": "k1",
+      "chat_id": null,
+      "chat_type": null,
+      "thread_id": null
+    },
+    "system_prompts": [],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": "k1",
+        "user_id": null,
+        "chat_id": null,
+        "chat_type": null,
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": "standalone prompt",
+        "system_prompt_hash": "nonexistent_hash"
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  },
+  {
+    "name": "fallback_system_prompt_resolved_from_hash",
+    "description": "Peer fallback query also joins system_prompts table and resolves system_prompt.",
+    "owner_profile": "default",
+    "lookup": {
+      "source": "telegram",
+      "user_id": "u1",
+      "session_key": "k_miss",
+      "chat_id": "c1",
+      "chat_type": "dm",
+      "thread_id": null
+    },
+    "system_prompts": [
+      {
+        "hash": "h_fallback",
+        "prompt": "fallback prompt text"
+      }
+    ],
+    "sessions": [
+      {
+        "id": "s1",
+        "source": "telegram",
+        "session_key": null,
+        "user_id": "u1",
+        "chat_id": "c1",
+        "chat_type": "dm",
+        "thread_id": null,
+        "profile_name": null,
+        "started_at": 1000.0,
+        "ended_at": null,
+        "end_reason": null,
+        "last_activity_at": null,
+        "message_count": 1,
+        "system_prompt": null,
+        "system_prompt_hash": "h_fallback"
+      }
+    ],
+    "messages": [],
+    "expected_session_id": "s1"
+  }
+]

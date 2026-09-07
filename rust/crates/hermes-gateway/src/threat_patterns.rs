@@ -259,7 +259,7 @@ struct CompiledPattern {
 /// (see `python_value::python_whitespace`). In `fancy_regex`, `\s` maps only to
 /// Unicode `White_Space`, so we expand `\s` to `[\s\x1c-\x1f]` (or `\s\x1c-\x1f`
 /// within character classes) to match Python `\s` byte-for-byte.
-fn python_regex_to_fancy(pattern: &str) -> String {
+pub(crate) fn python_regex_to_fancy(pattern: &str) -> String {
     let mut out = String::from("(?i)");
     let mut in_class = false;
     let chars: Vec<char> = pattern.chars().collect();

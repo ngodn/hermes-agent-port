@@ -1,6 +1,83 @@
 //! Python scalar coercions shared by configuration and catalog ports.
 use serde_json::{json, Value};
 
+/// Python str.splitlines(), including Unicode separators and a single CRLF
+/// boundary. Returned slices omit terminators and the empty final tail.
+pub(crate) fn split_lines(text: &str) -> Vec<&str> {
+    let mut lines = Vec::new();
+    let mut start = 0;
+    let mut chars = text.char_indices().peekable();
+    while let Some((index, ch)) = chars.next() {
+        if matches!(
+            ch,
+            '\n' | '\r'
+                | '\u{b}'
+                | '\u{c}'
+                | '\u{1c}'
+                | '\u{1d}'
+                | '\u{1e}'
+                | '\u{85}'
+                | '\u{2028}'
+                | '\u{2029}'
+        ) {
+            lines.push(&text[start..index]);
+            start = index + ch.len_utf8();
+            if ch == '\r' && chars.peek().is_some_and(|(_, next)| *next == '\n') {
+                let (index, _) = chars.next().unwrap();
+                start = index + 1;
+            }
+        }
+    }
+    if start < text.len() {
+        lines.push(&text[start..]);
+    }
+    lines
+}
+
+/// Python's container equality compares numeric values across bool/int/float
+/// types. Keep integers exact: converting both operands to f64 would equate
+/// different routing metadata values above 2^53 and discard real outage edits.
+pub(crate) fn python_equal(left: &Value, right: &Value) -> bool {
+    fn integer(value: &Value) -> Option<i128> {
+        match value {
+            Value::Bool(v) => Some(i128::from(*v)),
+            Value::Number(n) => n
+                .as_i64()
+                .map(i128::from)
+                .or_else(|| n.as_u64().map(i128::from)),
+            _ => None,
+        }
+    }
+    fn integer_float(integer: i128, float: f64) -> bool {
+        // JSON integers here are bounded by i64/u64. Convert the float only
+        // within that combined range, avoiding saturating casts at the edges.
+        (-9_223_372_036_854_775_808.0..18_446_744_073_709_551_616.0).contains(&float)
+            && float.fract() == 0.0
+            && float as i128 == integer
+    }
+    if matches!(left, Value::Bool(_) | Value::Number(_))
+        && matches!(right, Value::Bool(_) | Value::Number(_))
+    {
+        return match (integer(left), integer(right)) {
+            (Some(a), Some(b)) => a == b,
+            (Some(a), None) => right.as_f64().is_some_and(|b| integer_float(a, b)),
+            (None, Some(b)) => left.as_f64().is_some_and(|a| integer_float(b, a)),
+            (None, None) => left.as_f64() == right.as_f64(),
+        };
+    }
+    match (left, right) {
+        (Value::Array(a), Value::Array(b)) => {
+            a.len() == b.len() && a.iter().zip(b).all(|(a, b)| python_equal(a, b))
+        }
+        (Value::Object(a), Value::Object(b)) => {
+            a.len() == b.len()
+                && a.iter()
+                    .all(|(k, a)| b.get(k).is_some_and(|b| python_equal(a, b)))
+        }
+        _ => left == right,
+    }
+}
+
 pub(crate) fn truthy(value: &Value) -> bool {
     match value {
         Value::Null => false,
@@ -79,6 +156,35 @@ pub(crate) fn python_number(value: &serde_json::Number) -> String {
         format!("{mantissa}e{exponent:+03}")
     } else {
         rendered
+    }
+}
+
+/// Python json.dumps defaults with sort_keys=True, including ASCII escaping
+/// and spaces after separators. Used for byte-identical capability hashes.
+pub(crate) fn sorted_json(value: &Value) -> String {
+    match value {
+        Value::String(text) => crate::platform_helpers::py_json_quote(text),
+        Value::Number(number) => python_number(number),
+        Value::Array(items) => format!(
+            "[{}]",
+            items.iter().map(sorted_json).collect::<Vec<_>>().join(", ")
+        ),
+        Value::Object(map) => {
+            let mut keys: Vec<_> = map.keys().collect();
+            keys.sort();
+            format!(
+                "{{{}}}",
+                keys.into_iter()
+                    .map(|key| format!(
+                        "{}: {}",
+                        crate::platform_helpers::py_json_quote(key),
+                        sorted_json(&map[key])
+                    ))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )
+        }
+        _ => value.to_string(),
     }
 }
 

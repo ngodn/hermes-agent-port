@@ -1,0 +1,471 @@
+[
+  {
+    "id": "local_linux_standard",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "other",
+          "system": "Linux",
+          "release": "6.8.0-generic"
+        },
+        "user_home": "/home/alice",
+        "cwd": "/home/alice/project"
+      }
+    },
+    "expected": "Host: Linux (6.8.0-generic)\nUser home directory: /home/alice\nCurrent working directory: /home/alice/project"
+  },
+  {
+    "id": "local_linux_no_cwd",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "other",
+          "system": "Linux",
+          "release": "6.8.0-generic"
+        },
+        "user_home": "/home/bob",
+        "cwd": null
+      }
+    },
+    "expected": "Host: Linux (6.8.0-generic)\nUser home directory: /home/bob"
+  },
+  {
+    "id": "local_macos_standard",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "mac_os",
+          "version": "14.4.1"
+        },
+        "user_home": "/Users/alice",
+        "cwd": "/Users/alice/repo"
+      }
+    },
+    "expected": "Host: macOS (14.4.1)\nUser home directory: /Users/alice\nCurrent working directory: /Users/alice/repo"
+  },
+  {
+    "id": "local_macos_release_fallback",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "mac_os",
+          "version": "23.4.0"
+        },
+        "user_home": "/Users/alice",
+        "cwd": "/Users/alice/repo"
+      }
+    },
+    "expected": "Host: macOS (23.4.0)\nUser home directory: /Users/alice\nCurrent working directory: /Users/alice/repo"
+  },
+  {
+    "id": "local_windows_11",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "windows",
+          "marketing_version": "11"
+        },
+        "user_home": "C:\\Users\\alice",
+        "cwd": "C:\\Users\\alice\\project"
+      }
+    },
+    "expected": "Host: Windows (11)\nUser home directory: C:\\Users\\alice\nCurrent working directory: C:\\Users\\alice\\project\nNote: on Windows, the machine hostname (e.g. from `hostname` or uname) is NOT the username. Use the 'User home directory' above to construct paths under C:\\Users\\<user>\\, never the hostname.\n\nShell: on this Windows host your `terminal` tool runs commands through bash (git-bash / MSYS), NOT PowerShell or cmd.exe. Use POSIX shell syntax (`ls`, `$HOME`, `&&`, `|`, single-quoted strings) inside terminal calls. MSYS-style paths like `/c/Users/<user>/...` work alongside native `C:\\Users\\<user>\\...` paths. PowerShell builtins (`Get-ChildItem`, `$env:FOO`, `Select-String`) will NOT work \u2014 use their POSIX equivalents (`ls`, `$FOO`, `grep`). Path arguments for NATIVE Windows programs (git, rg, node, python, ...) are NOT translated: MSYS path conversion is disabled here, so `git -C /c/Users/x` or `node /tmp/a.js` fails with 'cannot change to'/'not found' even though `cd /c/Users/x` (a bash builtin) works. Pass `C:/Users/x`-style forward-slash native paths to native tools, and prefer `$LOCALAPPDATA/Temp` over `/tmp` for scratch files a native tool must read. When answering prompts in a pty background process, use process(submit) \u2014 never process(write) with a bare trailing newline: Enter on a Windows PTY is a carriage return, and a lone `\\n` is not delivered as a line terminator, so the child's prompt silently never returns. When a CLI offers a non-interactive path (flags, `--with-token`, config files, an OAuth device flow polled with curl), prefer it over driving prompts."
+  },
+  {
+    "id": "local_windows_10",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "windows",
+          "marketing_version": "10"
+        },
+        "user_home": "C:\\Users\\alice",
+        "cwd": "C:\\Users\\alice\\project"
+      }
+    },
+    "expected": "Host: Windows (10)\nUser home directory: C:\\Users\\alice\nCurrent working directory: C:\\Users\\alice\\project\nNote: on Windows, the machine hostname (e.g. from `hostname` or uname) is NOT the username. Use the 'User home directory' above to construct paths under C:\\Users\\<user>\\, never the hostname.\n\nShell: on this Windows host your `terminal` tool runs commands through bash (git-bash / MSYS), NOT PowerShell or cmd.exe. Use POSIX shell syntax (`ls`, `$HOME`, `&&`, `|`, single-quoted strings) inside terminal calls. MSYS-style paths like `/c/Users/<user>/...` work alongside native `C:\\Users\\<user>\\...` paths. PowerShell builtins (`Get-ChildItem`, `$env:FOO`, `Select-String`) will NOT work \u2014 use their POSIX equivalents (`ls`, `$FOO`, `grep`). Path arguments for NATIVE Windows programs (git, rg, node, python, ...) are NOT translated: MSYS path conversion is disabled here, so `git -C /c/Users/x` or `node /tmp/a.js` fails with 'cannot change to'/'not found' even though `cd /c/Users/x` (a bash builtin) works. Pass `C:/Users/x`-style forward-slash native paths to native tools, and prefer `$LOCALAPPDATA/Temp` over `/tmp` for scratch files a native tool must read. When answering prompts in a pty background process, use process(submit) \u2014 never process(write) with a bare trailing newline: Enter on a Windows PTY is a carriage return, and a lone `\\n` is not delivered as a line terminator, so the child's prompt silently never returns. When a CLI offers a non-interactive path (flags, `--with-token`, config files, an OAuth device flow polled with curl), prefer it over driving prompts."
+  },
+  {
+    "id": "local_windows_no_cwd",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "windows",
+          "marketing_version": "11"
+        },
+        "user_home": "C:\\Users\\alice",
+        "cwd": null
+      }
+    },
+    "expected": "Host: Windows (11)\nUser home directory: C:\\Users\\alice\nNote: on Windows, the machine hostname (e.g. from `hostname` or uname) is NOT the username. Use the 'User home directory' above to construct paths under C:\\Users\\<user>\\, never the hostname.\n\nShell: on this Windows host your `terminal` tool runs commands through bash (git-bash / MSYS), NOT PowerShell or cmd.exe. Use POSIX shell syntax (`ls`, `$HOME`, `&&`, `|`, single-quoted strings) inside terminal calls. MSYS-style paths like `/c/Users/<user>/...` work alongside native `C:\\Users\\<user>\\...` paths. PowerShell builtins (`Get-ChildItem`, `$env:FOO`, `Select-String`) will NOT work \u2014 use their POSIX equivalents (`ls`, `$FOO`, `grep`). Path arguments for NATIVE Windows programs (git, rg, node, python, ...) are NOT translated: MSYS path conversion is disabled here, so `git -C /c/Users/x` or `node /tmp/a.js` fails with 'cannot change to'/'not found' even though `cd /c/Users/x` (a bash builtin) works. Pass `C:/Users/x`-style forward-slash native paths to native tools, and prefer `$LOCALAPPDATA/Temp` over `/tmp` for scratch files a native tool must read. When answering prompts in a pty background process, use process(submit) \u2014 never process(write) with a bare trailing newline: Enter on a Windows PTY is a carriage return, and a lone `\\n` is not delivered as a line terminator, so the child's prompt silently never returns. When a CLI offers a non-interactive path (flags, `--with-token`, config files, an OAuth device flow polled with curl), prefer it over driving prompts."
+  },
+  {
+    "id": "local_wsl",
+    "inputs": {
+      "backend": "local",
+      "is_wsl": true,
+      "local_host": {
+        "platform": {
+          "type": "wsl"
+        },
+        "user_home": "/home/alice",
+        "cwd": "/home/alice/project"
+      }
+    },
+    "expected": "Host: WSL (Windows Subsystem for Linux)\nUser home directory: /home/alice\nCurrent working directory: /home/alice/project\n\nYou are running inside WSL (Windows Subsystem for Linux). The Windows host filesystem is mounted under /mnt/ \u2014 /mnt/c/ is the C: drive, /mnt/d/ is D:, etc. The user's Windows files are typically at /mnt/c/Users/<username>/Desktop/, Documents/, Downloads/, etc. When the user references Windows paths or desktop files, translate to the /mnt/c/ equivalent. You can list /mnt/c/Users/ to discover the Windows username if needed."
+  },
+  {
+    "id": "local_other_freebsd",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "other",
+          "system": "FreeBSD",
+          "release": "14.0-RELEASE"
+        },
+        "user_home": "/usr/home/alice",
+        "cwd": "/usr/home/alice/code"
+      }
+    },
+    "expected": "Host: FreeBSD (14.0-RELEASE)\nUser home directory: /usr/home/alice\nCurrent working directory: /usr/home/alice/code"
+  },
+  {
+    "id": "remote_docker_probe_success",
+    "inputs": {
+      "backend": "docker",
+      "remote_probe": {
+        "type": "formatted",
+        "data": "  OS: Linux 6.6.0\n  User: root\n  Home: /root\n  Working directory: /workspace"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside this docker environment \u2014 NOT on the machine where Hermes itself is running. The host OS, home, and cwd of the Hermes process are irrelevant; only the following backend state matters:\n  OS: Linux 6.6.0\n  User: root\n  Home: /root\n  Working directory: /workspace"
+  },
+  {
+    "id": "remote_docker_probe_fallback",
+    "inputs": {
+      "backend": "docker",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Docker container (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_singularity_fallback",
+    "inputs": {
+      "backend": "singularity",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: singularity. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Singularity container (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_modal_fallback",
+    "inputs": {
+      "backend": "modal",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: modal. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Modal sandbox (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_managed_modal_fallback",
+    "inputs": {
+      "backend": "managed_modal",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: managed_modal. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a managed Modal sandbox (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_daytona_fallback",
+    "inputs": {
+      "backend": "daytona",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: daytona. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Daytona workspace (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_vercel_sandbox_fallback",
+    "inputs": {
+      "backend": "vercel_sandbox",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: vercel_sandbox. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Vercel sandbox (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_ssh_fallback",
+    "inputs": {
+      "backend": "ssh",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: ssh. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a remote host reached over SSH (likely Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_ssh_probe_success",
+    "inputs": {
+      "backend": "ssh",
+      "remote_probe": {
+        "type": "formatted",
+        "data": "  OS: Ubuntu 24.04\n  User: dev\n  Home: /home/dev\n  Working directory: /srv/app"
+      }
+    },
+    "expected": "Terminal backend: ssh. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside this ssh environment \u2014 NOT on the machine where Hermes itself is running. The host OS, home, and cwd of the Hermes process are irrelevant; only the following backend state matters:\n  OS: Ubuntu 24.04\n  User: dev\n  Home: /home/dev\n  Working directory: /srv/app"
+  },
+  {
+    "id": "remote_custom_plugin_fallback",
+    "inputs": {
+      "backend": "k8s_pod",
+      "is_remote": true,
+      "fallback_description": "a Kubernetes pod (Linux)",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: k8s_pod. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Kubernetes pod (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_unknown_fallback_default",
+    "inputs": {
+      "backend": "custom_box",
+      "is_remote": true,
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: custom_box. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a custom_box environment (likely Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "remote_docker_on_wsl_host",
+    "inputs": {
+      "backend": "docker",
+      "is_wsl": true,
+      "remote_probe": {
+        "type": "formatted",
+        "data": "  OS: Linux 6.6.0\n  User: root\n  Home: /root\n  Working directory: /workspace"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside this docker environment \u2014 NOT on the machine where Hermes itself is running. The host OS, home, and cwd of the Hermes process are irrelevant; only the following backend state matters:\n  OS: Linux 6.6.0\n  User: root\n  Home: /root\n  Working directory: /workspace\n\nYou are running inside WSL (Windows Subsystem for Linux). The Windows host filesystem is mounted under /mnt/ \u2014 /mnt/c/ is the C: drive, /mnt/d/ is D:, etc. The user's Windows files are typically at /mnt/c/Users/<username>/Desktop/, Documents/, Downloads/, etc. When the user references Windows paths or desktop files, translate to the /mnt/c/ equivalent. You can list /mnt/c/Users/ to discover the Windows username if needed."
+  },
+  {
+    "id": "remote_docker_fallback_on_wsl_host",
+    "inputs": {
+      "backend": "docker",
+      "is_wsl": true,
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Docker container (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`.\n\nYou are running inside WSL (Windows Subsystem for Linux). The Windows host filesystem is mounted under /mnt/ \u2014 /mnt/c/ is the C: drive, /mnt/d/ is D:, etc. The user's Windows files are typically at /mnt/c/Users/<username>/Desktop/, Documents/, Downloads/, etc. When the user references Windows paths or desktop files, translate to the /mnt/c/ equivalent. You can list /mnt/c/Users/ to discover the Windows username if needed."
+  },
+  {
+    "id": "local_linux_with_extra_env",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "other",
+          "system": "Linux",
+          "release": "6.8.0-generic"
+        },
+        "user_home": "/home/alice",
+        "cwd": "/home/alice/project"
+      },
+      "extra_hint": "Corporate proxy configured at 10.0.0.1:8080"
+    },
+    "expected": "Host: Linux (6.8.0-generic)\nUser home directory: /home/alice\nCurrent working directory: /home/alice/project\n\nCorporate proxy configured at 10.0.0.1:8080"
+  },
+  {
+    "id": "local_linux_with_extra_config",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "other",
+          "system": "Linux",
+          "release": "6.8.0-generic"
+        },
+        "user_home": "/home/alice",
+        "cwd": "/home/alice/project"
+      },
+      "extra_hint": "Sandbox memory limit 8GB"
+    },
+    "expected": "Host: Linux (6.8.0-generic)\nUser home directory: /home/alice\nCurrent working directory: /home/alice/project\n\nSandbox memory limit 8GB"
+  },
+  {
+    "id": "local_linux_extra_whitespace_trimmed",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "other",
+          "system": "Linux",
+          "release": "6.8.0-generic"
+        },
+        "user_home": "/home/alice",
+        "cwd": "/home/alice/project"
+      },
+      "extra_hint": "  Padded extra hint with trailing newline\n"
+    },
+    "expected": "Host: Linux (6.8.0-generic)\nUser home directory: /home/alice\nCurrent working directory: /home/alice/project\n\nPadded extra hint with trailing newline"
+  },
+  {
+    "id": "remote_docker_with_extra_hint",
+    "inputs": {
+      "backend": "docker",
+      "remote_probe": {
+        "type": "formatted",
+        "data": "  OS: Linux 6.6.0\n  User: root\n  Home: /root\n  Working directory: /workspace"
+      },
+      "extra_hint": "Container runs with read-only rootfs."
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside this docker environment \u2014 NOT on the machine where Hermes itself is running. The host OS, home, and cwd of the Hermes process are irrelevant; only the following backend state matters:\n  OS: Linux 6.6.0\n  User: root\n  Home: /root\n  Working directory: /workspace\n\nContainer runs with read-only rootfs."
+  },
+  {
+    "id": "backend_case_and_whitespace",
+    "inputs": {
+      "backend": "  DOCKER  ",
+      "remote_probe": {
+        "type": "formatted",
+        "data": "  OS: Linux\n  User: root\n  Home: /root\n  Working directory: /workspace"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside this docker environment \u2014 NOT on the machine where Hermes itself is running. The host OS, home, and cwd of the Hermes process are irrelevant; only the following backend state matters:\n  OS: Linux\n  User: root\n  Home: /root\n  Working directory: /workspace"
+  },
+  {
+    "id": "backend_empty_defaults_to_local",
+    "inputs": {
+      "backend": "",
+      "local_host": {
+        "platform": {
+          "type": "other",
+          "system": "Linux",
+          "release": "6.8.0-generic"
+        },
+        "user_home": "/home/user",
+        "cwd": "/home/user"
+      }
+    },
+    "expected": "Host: Linux (6.8.0-generic)\nUser home directory: /home/user\nCurrent working directory: /home/user"
+  },
+  {
+    "id": "backend_whitespace_only_defaults_to_local",
+    "inputs": {
+      "backend": "   ",
+      "local_host": {
+        "platform": {
+          "type": "other",
+          "system": "Linux",
+          "release": "6.8.0-generic"
+        },
+        "user_home": "/home/user",
+        "cwd": "/home/user"
+      }
+    },
+    "expected": "Host: Linux (6.8.0-generic)\nUser home directory: /home/user\nCurrent working directory: /home/user"
+  },
+  {
+    "id": "probe_partial_user_home_only",
+    "inputs": {
+      "backend": "docker",
+      "remote_probe": {
+        "type": "formatted",
+        "data": "  User: deploy\n  Home: /home/deploy"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside this docker environment \u2014 NOT on the machine where Hermes itself is running. The host OS, home, and cwd of the Hermes process are irrelevant; only the following backend state matters:\n  User: deploy\n  Home: /home/deploy"
+  },
+  {
+    "id": "probe_partial_os_no_kernel",
+    "inputs": {
+      "backend": "docker",
+      "remote_probe": {
+        "type": "formatted",
+        "data": "  OS: Linux\n  User: root\n  Home: /root\n  Working directory: /app"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside this docker environment \u2014 NOT on the machine where Hermes itself is running. The host OS, home, and cwd of the Hermes process are irrelevant; only the following backend state matters:\n  OS: Linux\n  User: root\n  Home: /root\n  Working directory: /app"
+  },
+  {
+    "id": "local_windows_11_with_extra_hint",
+    "inputs": {
+      "backend": "local",
+      "local_host": {
+        "platform": {
+          "type": "windows",
+          "marketing_version": "11"
+        },
+        "user_home": "C:\\Users\\alice",
+        "cwd": "C:\\Users\\alice\\project"
+      },
+      "extra_hint": "Windows developer mode enabled."
+    },
+    "expected": "Host: Windows (11)\nUser home directory: C:\\Users\\alice\nCurrent working directory: C:\\Users\\alice\\project\nNote: on Windows, the machine hostname (e.g. from `hostname` or uname) is NOT the username. Use the 'User home directory' above to construct paths under C:\\Users\\<user>\\, never the hostname.\n\nShell: on this Windows host your `terminal` tool runs commands through bash (git-bash / MSYS), NOT PowerShell or cmd.exe. Use POSIX shell syntax (`ls`, `$HOME`, `&&`, `|`, single-quoted strings) inside terminal calls. MSYS-style paths like `/c/Users/<user>/...` work alongside native `C:\\Users\\<user>\\...` paths. PowerShell builtins (`Get-ChildItem`, `$env:FOO`, `Select-String`) will NOT work \u2014 use their POSIX equivalents (`ls`, `$FOO`, `grep`). Path arguments for NATIVE Windows programs (git, rg, node, python, ...) are NOT translated: MSYS path conversion is disabled here, so `git -C /c/Users/x` or `node /tmp/a.js` fails with 'cannot change to'/'not found' even though `cd /c/Users/x` (a bash builtin) works. Pass `C:/Users/x`-style forward-slash native paths to native tools, and prefer `$LOCALAPPDATA/Temp` over `/tmp` for scratch files a native tool must read. When answering prompts in a pty background process, use process(submit) \u2014 never process(write) with a bare trailing newline: Enter on a Windows PTY is a carriage return, and a lone `\\n` is not delivered as a line terminator, so the child's prompt silently never returns. When a CLI offers a non-interactive path (flags, `--with-token`, config files, an OAuth device flow polled with curl), prefer it over driving prompts.\n\nWindows developer mode enabled."
+  },
+  {
+    "id": "precedence_32",
+    "inputs": {
+      "backend": "docker",
+      "is_remote": false,
+      "fallback_description": "plugin description",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Docker container (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "precedence_33",
+    "inputs": {
+      "backend": "\u001cDOCKER\u001c",
+      "is_remote": false,
+      "fallback_description": "plugin description",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: docker. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a Docker container (Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "precedence_34",
+    "inputs": {
+      "backend": "custom",
+      "is_remote": true,
+      "fallback_description": "",
+      "remote_probe": {
+        "type": "failed"
+      }
+    },
+    "expected": "Terminal backend: custom. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside a custom environment (likely Linux) \u2014 NOT on the machine where Hermes itself runs. The backend probe didn't respond at prompt-build time, so the sandbox's current user, $HOME, and working directory are unknown from here. If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
+  },
+  {
+    "id": "precedence_35",
+    "inputs": {
+      "backend": "ssh",
+      "is_remote": false,
+      "fallback_description": null,
+      "remote_probe": {
+        "type": "formatted",
+        "data": " \n"
+      }
+    },
+    "expected": "Terminal backend: ssh. Your `terminal`, `read_file`, `write_file`, `patch`, and `search_files` tools all operate inside this ssh environment \u2014 NOT on the machine where Hermes itself is running. The host OS, home, and cwd of the Hermes process are irrelevant; only the following backend state matters:\n \n"
+  }
+]

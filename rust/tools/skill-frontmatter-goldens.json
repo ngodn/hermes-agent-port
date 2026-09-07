@@ -1,0 +1,895 @@
+[
+  {
+    "input": "plain text without frontmatter",
+    "frontmatter": {},
+    "body": "plain text without frontmatter"
+  },
+  {
+    "input": "# Skill Heading\n\nBody content in markdown.\n",
+    "frontmatter": {},
+    "body": "# Skill Heading\n\nBody content in markdown.\n"
+  },
+  {
+    "input": "name: not-frontmatter\ndescription: missing fence",
+    "frontmatter": {},
+    "body": "name: not-frontmatter\ndescription: missing fence"
+  },
+  {
+    "input": "---\nname: minimal\n---\nbody",
+    "frontmatter": {
+      "name": "minimal"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: minimal_with_trailing_newline\n---\nbody\n",
+    "frontmatter": {
+      "name": "minimal_with_trailing_newline"
+    },
+    "body": "body\n"
+  },
+  {
+    "input": "---\n---\nbody",
+    "frontmatter": {},
+    "body": "body"
+  },
+  {
+    "input": "---\n---\n",
+    "frontmatter": {},
+    "body": ""
+  },
+  {
+    "input": "---\n---",
+    "frontmatter": {},
+    "body": "---\n---"
+  },
+  {
+    "input": "---",
+    "frontmatter": {},
+    "body": "---"
+  },
+  {
+    "input": "------",
+    "frontmatter": {},
+    "body": "------"
+  },
+  {
+    "input": "",
+    "frontmatter": {},
+    "body": ""
+  },
+  {
+    "input": "   \n\t\n",
+    "frontmatter": {},
+    "body": "   \n\t\n"
+  },
+  {
+    "input": "---\nname: no_closing_fence\nbody continues here",
+    "frontmatter": {},
+    "body": "---\nname: no_closing_fence\nbody continues here"
+  },
+  {
+    "input": "---\nname: no_body\n---\n",
+    "frontmatter": {
+      "name": "no_body"
+    },
+    "body": ""
+  },
+  {
+    "input": "---\nname: only_dashes_in_body\n---\n---",
+    "frontmatter": {
+      "name": "only_dashes_in_body"
+    },
+    "body": "---"
+  },
+  {
+    "input": "---\nname: horizontal_rules\n---\nSection 1\n---\nSection 2\n---\n",
+    "frontmatter": {
+      "name": "horizontal_rules"
+    },
+    "body": "Section 1\n---\nSection 2\n---\n"
+  },
+  {
+    "input": "---\nname: codeblock\n---\n```yaml\n---\ninside: codeblock\n---\n```\n",
+    "frontmatter": {
+      "name": "codeblock"
+    },
+    "body": "```yaml\n---\ninside: codeblock\n---\n```\n"
+  },
+  {
+    "input": "--- \nname: trailing_space_open\n---\nbody",
+    "frontmatter": {
+      "name": "trailing_space_open"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---   \nname: trailing_spaces_open\n---\nbody",
+    "frontmatter": {
+      "name": "trailing_spaces_open"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\t\nname: trailing_tab_open\n---\nbody",
+    "frontmatter": {
+      "name": "trailing_tab_open"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\t \nname: trailing_mixed_open\n---\nbody",
+    "frontmatter": {
+      "name": "trailing_mixed_open"
+    },
+    "body": "body"
+  },
+  {
+    "input": " ---\nname: leading_space_open\n---\nbody",
+    "frontmatter": {},
+    "body": " ---\nname: leading_space_open\n---\nbody"
+  },
+  {
+    "input": "  ---\nname: leading_spaces_open\n---\nbody",
+    "frontmatter": {},
+    "body": "  ---\nname: leading_spaces_open\n---\nbody"
+  },
+  {
+    "input": "\t---\nname: leading_tab_open\n---\nbody",
+    "frontmatter": {},
+    "body": "\t---\nname: leading_tab_open\n---\nbody"
+  },
+  {
+    "input": "\n---\nname: leading_newline_open\n---\nbody",
+    "frontmatter": {},
+    "body": "\n---\nname: leading_newline_open\n---\nbody"
+  },
+  {
+    "input": "---\nname: trailing_space_close\n--- \nbody",
+    "frontmatter": {
+      "name": "trailing_space_close"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: trailing_spaces_close\n---   \nbody",
+    "frontmatter": {
+      "name": "trailing_spaces_close"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: trailing_tab_close\n---\t\nbody",
+    "frontmatter": {
+      "name": "trailing_tab_close"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: trailing_mixed_close\n---\t \nbody",
+    "frontmatter": {
+      "name": "trailing_mixed_close"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: extra_dash_open\n---\nbody",
+    "frontmatter": {
+      "name": "extra_dash_open"
+    },
+    "body": "body"
+  },
+  {
+    "input": "----\nname: extra_dash_open_4\n---\nbody",
+    "frontmatter": {
+      "name": "extra_dash_open_4"
+    },
+    "body": "body"
+  },
+  {
+    "input": "-----\nname: extra_dash_open_5\n---\nbody",
+    "frontmatter": {
+      "name": "extra_dash_open_5"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: extra_dash_close_4\n----\nbody",
+    "frontmatter": {},
+    "body": "---\nname: extra_dash_close_4\n----\nbody"
+  },
+  {
+    "input": "---\nname: trailing_chars_close\n---tail\nbody",
+    "frontmatter": {},
+    "body": "---\nname: trailing_chars_close\n---tail\nbody"
+  },
+  {
+    "input": "---\nname: greedy_whitespace\n---\n\n\nbody",
+    "frontmatter": {
+      "name": "greedy_whitespace"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: greedy_spaces_lines\n---\n  \n\t\n\nbody",
+    "frontmatter": {
+      "name": "greedy_spaces_lines"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\r\nname: crlf_pure\r\n---\r\nbody\r\n",
+    "frontmatter": {
+      "name": "crlf_pure"
+    },
+    "body": "body\r\n"
+  },
+  {
+    "input": "---\r\nname: crlf_empty_body\r\n---\r\n",
+    "frontmatter": {
+      "name": "crlf_empty_body"
+    },
+    "body": ""
+  },
+  {
+    "input": "---\r\n---\r\n",
+    "frontmatter": {},
+    "body": ""
+  },
+  {
+    "input": "---\r\n---\r\nbody\r\n",
+    "frontmatter": {},
+    "body": "body\r\n"
+  },
+  {
+    "input": "---\r\nname: crlf_no_close_newline\r\n---",
+    "frontmatter": {},
+    "body": "---\r\nname: crlf_no_close_newline\r\n---"
+  },
+  {
+    "input": "---\r\nname: crlf_open_lf_close\n---\nbody",
+    "frontmatter": {
+      "name": "crlf_open_lf_close"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: lf_open_crlf_close\r\n---\r\nbody",
+    "frontmatter": {
+      "name": "lf_open_crlf_close"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\r\nname: crlf_spaces_close\r\n---  \r\nbody\r\n",
+    "frontmatter": {
+      "name": "crlf_spaces_close"
+    },
+    "body": "body\r\n"
+  },
+  {
+    "input": "---\r\nname: crlf_tabs_close\r\n---\t\r\nbody\r\n",
+    "frontmatter": {
+      "name": "crlf_tabs_close"
+    },
+    "body": "body\r\n"
+  },
+  {
+    "input": "---\r\nname: crlf_multiline\r\ndescription: line1\r\nline2\r\n---\r\nbody\r\n",
+    "frontmatter": {
+      "name": "crlf_multiline",
+      "description": "line1"
+    },
+    "body": "body\r\n"
+  },
+  {
+    "input": "---\r\nname: crlf_blank_lines_greedy\r\n---\r\n\r\n\r\nbody\r\n",
+    "frontmatter": {
+      "name": "crlf_blank_lines_greedy"
+    },
+    "body": "body\r\n"
+  },
+  {
+    "input": "---\r\nname: crlf_mixed_newlines\ndescription: line1\r\n---\nbody\r\n",
+    "frontmatter": {
+      "name": "crlf_mixed_newlines",
+      "description": "line1"
+    },
+    "body": "body\r\n"
+  },
+  {
+    "input": "\ufeff---\nname: bom_basic\n---\nbody",
+    "frontmatter": {
+      "name": "bom_basic"
+    },
+    "body": "body"
+  },
+  {
+    "input": "\ufeff---\r\nname: bom_crlf\r\n---\r\nbody\r\n",
+    "frontmatter": {
+      "name": "bom_crlf"
+    },
+    "body": "body\r\n"
+  },
+  {
+    "input": "\ufeff\ufeff---\nname: double_bom\n---\nbody",
+    "frontmatter": {},
+    "body": "\ufeff---\nname: double_bom\n---\nbody"
+  },
+  {
+    "input": "\ufeff\ufeff\ufeff---\nname: triple_bom\n---\nbody",
+    "frontmatter": {},
+    "body": "\ufeff\ufeff---\nname: triple_bom\n---\nbody"
+  },
+  {
+    "input": "\ufeff# Heading\nPlain markdown with BOM",
+    "frontmatter": {},
+    "body": "# Heading\nPlain markdown with BOM"
+  },
+  {
+    "input": "\ufeff",
+    "frontmatter": {},
+    "body": ""
+  },
+  {
+    "input": "\ufeff---",
+    "frontmatter": {},
+    "body": "---"
+  },
+  {
+    "input": "---\n\ufeffname: bom_in_key\n---\nbody",
+    "frontmatter": {
+      "name": "bom_in_key"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: \ufeffbom_in_val\n---\nbody",
+    "frontmatter": {
+      "name": "\ufeffbom_in_val"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: test\n\ufeff---\nbody",
+    "frontmatter": {},
+    "body": "---\nname: test\n\ufeff---\nbody"
+  },
+  {
+    "input": "---\nname: test\n---\n\ufeffbody_with_bom",
+    "frontmatter": {
+      "name": "test"
+    },
+    "body": "\ufeffbody_with_bom"
+  },
+  {
+    "input": "---\nname: tab_indent\n\tdescription: has tab\n---\nbody",
+    "frontmatter": {
+      "name": "tab_indent",
+      "description": "has tab"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: \"unclosed double quote\nauthor: alice\n---\nbody",
+    "frontmatter": {
+      "name": "\"unclosed double quote",
+      "author": "alice"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: 'unclosed single quote\nauthor: bob\n---\nbody",
+    "frontmatter": {
+      "name": "'unclosed single quote",
+      "author": "bob"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: bad_bracket\ntags: [unclosed, list\nauthor: charlie\n---\nbody",
+    "frontmatter": {
+      "name": "bad_bracket",
+      "tags": "[unclosed, list",
+      "author": "charlie"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: bad_brace\nconfig: {unclosed: brace\nauthor: dave\n---\nbody",
+    "frontmatter": {
+      "name": "bad_brace",
+      "config": "{unclosed: brace",
+      "author": "dave"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n[syntax_error\nname: colon_no_space\nauthor:eve\n---\nbody",
+    "frontmatter": {
+      "name": "colon_no_space",
+      "author": "eve"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n[syntax_error\nurl: https://example.com:8080/path\n---\nbody",
+    "frontmatter": {
+      "url": "https://example.com:8080/path"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n[syntax_error\nname: fallback_with_comments\n# comment line\nkey: value\n---\nbody",
+    "frontmatter": {
+      "name": "fallback_with_comments",
+      "key": "value"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n[syntax_error\nname: empty_val\nempty:\n---\nbody",
+    "frontmatter": {
+      "name": "empty_val",
+      "empty": ""
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n[syntax_error\n: empty_key\nname: valid\n---\nbody",
+    "frontmatter": {
+      "": "empty_key",
+      "name": "valid"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n[syntax_error\n  padded_key  :  padded_val  \n---\nbody",
+    "frontmatter": {
+      "padded_key": "padded_val"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n[syntax_error\nno colon line here\nname: parsed\n---\nbody",
+    "frontmatter": {
+      "name": "parsed"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n[syntax_error\nkey: first\nkey: second\n---\nbody",
+    "frontmatter": {
+      "key": "second"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\n- item1\n- item2\n---\nbody",
+    "frontmatter": {},
+    "body": "body"
+  },
+  {
+    "input": "---\njust a scalar string\n---\nbody",
+    "frontmatter": {},
+    "body": "body"
+  },
+  {
+    "input": "---\n42\n---\nbody",
+    "frontmatter": {},
+    "body": "body"
+  },
+  {
+    "input": "---\n3.1415\n---\nbody",
+    "frontmatter": {},
+    "body": "body"
+  },
+  {
+    "input": "---\ntrue\n---\nbody",
+    "frontmatter": {},
+    "body": "body"
+  },
+  {
+    "input": "---\nnull\n---\nbody",
+    "frontmatter": {},
+    "body": "body"
+  },
+  {
+    "input": "---\n   \t  \n---\nbody",
+    "frontmatter": {},
+    "body": "body"
+  },
+  {
+    "input": "---\nname: hermes_skill\ndescription: Skill metadata\nmetadata:\n  hermes:\n    fallback_for_toolsets:\n      - browser\n      - code\n    requires_tools:\n      - bash\n      - web_search\n    session_platforms:\n      - linux\n      - macos\n    priority: 10\n    config:\n      active: true\n      retries: 3\n---\nbody",
+    "frontmatter": {
+      "name": "hermes_skill",
+      "description": "Skill metadata",
+      "metadata": {
+        "hermes": {
+          "fallback_for_toolsets": [
+            "browser",
+            "code"
+          ],
+          "requires_tools": [
+            "bash",
+            "web_search"
+          ],
+          "session_platforms": [
+            "linux",
+            "macos"
+          ],
+          "priority": 10,
+          "config": {
+            "active": true,
+            "retries": 3
+          }
+        }
+      }
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: catalog\nitems:\n  - id: 1\n    label: first\n  - id: 2\n    label: second\n---\nbody",
+    "frontmatter": {
+      "name": "catalog",
+      "items": [
+        {
+          "id": 1,
+          "label": "first"
+        },
+        {
+          "id": 2,
+          "label": "second"
+        }
+      ]
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nlevel1:\n  level2:\n    level3:\n      level4:\n        leaf: deep\n---\nbody",
+    "frontmatter": {
+      "level1": {
+        "level2": {
+          "level3": {
+            "level4": {
+              "leaf": "deep"
+            }
+          }
+        }
+      }
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: flow_style\nplatforms: [linux, macos, win32]\nsettings: {enabled: true, timeout: 30}\n---\nbody",
+    "frontmatter": {
+      "name": "flow_style",
+      "platforms": [
+        "linux",
+        "macos",
+        "win32"
+      ],
+      "settings": {
+        "enabled": true,
+        "timeout": 30
+      }
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: complex\ntags: [a, b, c]\nruntimes:\n  - name: node\n    versions: [18, 20]\n  - name: python\n    versions: [3.11, 3.12]\n---\nbody",
+    "frontmatter": {
+      "name": "complex",
+      "tags": [
+        "a",
+        "b",
+        "c"
+      ],
+      "runtimes": [
+        {
+          "name": "node",
+          "versions": [
+            18,
+            20
+          ]
+        },
+        {
+          "name": "python",
+          "versions": [
+            3.11,
+            3.12
+          ]
+        }
+      ]
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: first\nname: second\nkey: original\nkey: final\n---\nbody",
+    "frontmatter": {
+      "name": "second",
+      "key": "final"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nmetadata:\n  attr: val1\n  attr: val2\n---\nbody",
+    "frontmatter": {
+      "metadata": {
+        "attr": "val2"
+      }
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\ntools: [bash]\ntools: [edit, git]\n---\nbody",
+    "frontmatter": {
+      "tools": [
+        "edit",
+        "git"
+      ]
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\ndefault_desc: &desc Standard description\nskill1:\n  name: one\n  desc: *desc\nskill2:\n  name: two\n  desc: *desc\n---\nbody",
+    "frontmatter": {
+      "default_desc": "Standard description",
+      "skill1": {
+        "name": "one",
+        "desc": "Standard description"
+      },
+      "skill2": {
+        "name": "two",
+        "desc": "Standard description"
+      }
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nbase_tools: &tools\n  - bash\n  - edit\nskill_tools: *tools\n---\nbody",
+    "frontmatter": {
+      "base_tools": [
+        "bash",
+        "edit"
+      ],
+      "skill_tools": [
+        "bash",
+        "edit"
+      ]
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nbase_config: &base\n  retries: 3\n  timeout: 30\n  env: prod\ncustom:\n  <<: *base\n  timeout: 60\n  extra: true\n---\nbody",
+    "frontmatter": {
+      "base_config": {
+        "retries": 3,
+        "timeout": 30,
+        "env": "prod"
+      },
+      "custom": {
+        "retries": 3,
+        "timeout": 60,
+        "env": "prod",
+        "extra": true
+      }
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nbase_a: &base_a\n  key_a: 1\n  shared: from_a\nbase_b: &base_b\n  key_b: 2\n  shared: from_b\nmerged:\n  <<: [*base_a, *base_b]\n  final_key: 3\n---\nbody",
+    "frontmatter": {
+      "base_a": {
+        "key_a": 1,
+        "shared": "from_a"
+      },
+      "base_b": {
+        "key_b": 2,
+        "shared": "from_b"
+      },
+      "merged": {
+        "key_b": 2,
+        "shared": "from_a",
+        "key_a": 1,
+        "final_key": 3
+      }
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nsettings: &settings\n  debug: false\napp:\n  config:\n    <<: *settings\n    port: 8080\n---\nbody",
+    "frontmatter": {
+      "settings": {
+        "debug": false
+      },
+      "app": {
+        "config": {
+          "debug": false,
+          "port": 8080
+        }
+      }
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nbool_true: true\nbool_True: True\nbool_TRUE: TRUE\nbool_false: false\nbool_False: False\nbool_FALSE: FALSE\nbool_yes: yes\nbool_Yes: Yes\nbool_YES: YES\nbool_no: no\nbool_No: No\nbool_NO: NO\nbool_on: on\nbool_On: On\nbool_ON: ON\nbool_off: off\nbool_Off: Off\nbool_OFF: OFF\nstr_y: y\nstr_Y: Y\nstr_n: n\nstr_N: N\n---\nbody",
+    "frontmatter": {
+      "bool_true": true,
+      "bool_True": true,
+      "bool_TRUE": true,
+      "bool_false": false,
+      "bool_False": false,
+      "bool_FALSE": false,
+      "bool_yes": true,
+      "bool_Yes": true,
+      "bool_YES": true,
+      "bool_no": false,
+      "bool_No": false,
+      "bool_NO": false,
+      "bool_on": true,
+      "bool_On": true,
+      "bool_ON": true,
+      "bool_off": false,
+      "bool_Off": false,
+      "bool_OFF": false,
+      "str_y": "y",
+      "str_Y": "Y",
+      "str_n": "n",
+      "str_N": "N"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nq_true: 'true'\nq_True: 'True'\nq_false: 'false'\nq_False: 'False'\nq_yes: 'yes'\nq_Yes: 'Yes'\nq_no: 'no'\nq_No: 'No'\nq_on: 'on'\nq_On: 'On'\nq_off: 'off'\nq_Off: 'Off'\nq_y: 'y'\nq_n: 'n'\ndq_true: \"true\"\ndq_false: \"false\"\ndq_yes: \"yes\"\ndq_no: \"no\"\ndq_on: \"on\"\ndq_off: \"off\"\n---\nbody",
+    "frontmatter": {
+      "q_true": "true",
+      "q_True": "True",
+      "q_false": "false",
+      "q_False": "False",
+      "q_yes": "yes",
+      "q_Yes": "Yes",
+      "q_no": "no",
+      "q_No": "No",
+      "q_on": "on",
+      "q_On": "On",
+      "q_off": "off",
+      "q_Off": "Off",
+      "q_y": "y",
+      "q_n": "n",
+      "dq_true": "true",
+      "dq_false": "false",
+      "dq_yes": "yes",
+      "dq_no": "no",
+      "dq_on": "on",
+      "dq_off": "off"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nval_null: null\nval_Null: Null\nval_NULL: NULL\nval_tilde: ~\nq_null: 'null'\nq_tilde: '~'\n---\nbody",
+    "frontmatter": {
+      "val_null": null,
+      "val_Null": null,
+      "val_NULL": null,
+      "val_tilde": null,
+      "q_null": "null",
+      "q_tilde": "~"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nnum_int: 42\nnum_neg_int: -42\nnum_zero: 0\nnum_float: 3.14159\nnum_neg_float: -0.005\nnum_exp_pos: 1.5e+3\nnum_exp_neg: 2.5e-3\nnum_oct_11: 077\nnum_hex_lower: 0x2a\nnum_hex_upper: 0X2A\nnum_bin: 0b1010\n---\nbody",
+    "frontmatter": {
+      "num_int": 42,
+      "num_neg_int": -42,
+      "num_zero": 0,
+      "num_float": 3.14159,
+      "num_neg_float": -0.005,
+      "num_exp_pos": 1500.0,
+      "num_exp_neg": 0.0025,
+      "num_oct_11": 63,
+      "num_hex_lower": 42,
+      "num_hex_upper": "0X2A",
+      "num_bin": 10
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nq_int: '42'\nq_neg_int: '-42'\nq_zero: '0'\nq_float: '3.14159'\nq_neg_float: '-0.005'\nq_exp: '1.5e+3'\nq_oct: '077'\nq_hex: '0x2a'\nq_bin: '0b1010'\n---\nbody",
+    "frontmatter": {
+      "q_int": "42",
+      "q_neg_int": "-42",
+      "q_zero": "0",
+      "q_float": "3.14159",
+      "q_neg_float": "-0.005",
+      "q_exp": "1.5e+3",
+      "q_oct": "077",
+      "q_hex": "0x2a",
+      "q_bin": "0b1010"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\ntagged_scalar: !custom_tag scalar_value\n---\nbody",
+    "frontmatter": {
+      "tagged_scalar": "!custom_tag scalar_value"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\ntagged_double: !!unknown_type some_string\n---\nbody",
+    "frontmatter": {
+      "tagged_double": "!!unknown_type some_string"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\ntagged_map: !component\n  width: 100\n  height: 200\n---\nbody",
+    "frontmatter": {
+      "tagged_map": "!component",
+      "width": "100",
+      "height": "200"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\ntagged_seq: !items\n  - item_one\n  - item_two\n---\nbody",
+    "frontmatter": {
+      "tagged_seq": "!items"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: skill_with_tag\ntagged_val: !unknown_type hello\nauthor: alice\n---\nbody",
+    "frontmatter": {
+      "name": "skill_with_tag",
+      "tagged_val": "!unknown_type hello",
+      "author": "alice"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\ntagged_verbatim: !<tag:example.com,2026:special> my_value\n---\nbody",
+    "frontmatter": {
+      "tagged_verbatim": "!<tag:example.com,2026:special> my_value"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\ntagged_int: !my_int 42\ntagged_bool: !my_bool true\n---\nbody",
+    "frontmatter": {
+      "tagged_int": "!my_int 42",
+      "tagged_bool": "!my_bool true"
+    },
+    "body": "body"
+  },
+  {
+    "input": "---\nname: multi_fence\n---\nbody part 1\n---\nbody part 2\n---\nbody part 3\n",
+    "frontmatter": {
+      "name": "multi_fence"
+    },
+    "body": "body part 1\n---\nbody part 2\n---\nbody part 3\n"
+  },
+  {
+    "input": "---\nname: trailing_dashes_in_body\n---\nline 1\n---",
+    "frontmatter": {
+      "name": "trailing_dashes_in_body"
+    },
+    "body": "line 1\n---"
+  },
+  {
+    "input": "---\nname: fence_with_spaces_and_crlf\n---  \r\nbody\r\n",
+    "frontmatter": {
+      "name": "fence_with_spaces_and_crlf"
+    },
+    "body": "body\r\n"
+  },
+  {
+    "input": "---\r\nname: fence_crlf_multiple\r\n---\r\nbody 1\r\n---\r\nbody 2\r\n",
+    "frontmatter": {
+      "name": "fence_crlf_multiple"
+    },
+    "body": "body 1\r\n---\r\nbody 2\r\n"
+  }
+]

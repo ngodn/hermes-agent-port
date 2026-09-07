@@ -1,0 +1,227 @@
+[
+  {
+    "stored": "",
+    "current": "abcdef123456",
+    "expected": false
+  },
+  {
+    "stored": "",
+    "current": "000000000000",
+    "expected": false
+  },
+  {
+    "stored": "",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "",
+    "current": "",
+    "expected": false
+  },
+  {
+    "stored": "",
+    "current": null,
+    "expected": false
+  },
+  {
+    "stored": "ordinary prompt",
+    "current": "abcdef123456",
+    "expected": false
+  },
+  {
+    "stored": "ordinary prompt",
+    "current": "000000000000",
+    "expected": false
+  },
+  {
+    "stored": "ordinary prompt",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "ordinary prompt",
+    "current": "",
+    "expected": false
+  },
+  {
+    "stored": "ordinary prompt",
+    "current": null,
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: unavailable",
+    "current": "abcdef123456",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: unavailable",
+    "current": "000000000000",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: unavailable",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: unavailable",
+    "current": "",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: unavailable",
+    "current": null,
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: ABCDEF123456",
+    "current": "abcdef123456",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: ABCDEF123456",
+    "current": "000000000000",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: ABCDEF123456",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: ABCDEF123456",
+    "current": "",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: ABCDEF123456",
+    "current": null,
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef123456",
+    "current": "abcdef123456",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef123456",
+    "current": "000000000000",
+    "expected": true
+  },
+  {
+    "stored": "Capability epoch: abcdef123456",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef123456",
+    "current": "",
+    "expected": true
+  },
+  {
+    "stored": "Capability epoch: abcdef123456",
+    "current": null,
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef1234567",
+    "current": "abcdef123456",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef1234567",
+    "current": "000000000000",
+    "expected": true
+  },
+  {
+    "stored": "Capability epoch: abcdef1234567",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef1234567",
+    "current": "",
+    "expected": true
+  },
+  {
+    "stored": "Capability epoch: abcdef1234567",
+    "current": null,
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef12345",
+    "current": "abcdef123456",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef12345",
+    "current": "000000000000",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef12345",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef12345",
+    "current": "",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef12345",
+    "current": null,
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef123456\nCapability epoch: 000000000000",
+    "current": "abcdef123456",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef123456\nCapability epoch: 000000000000",
+    "current": "000000000000",
+    "expected": true
+  },
+  {
+    "stored": "Capability epoch: abcdef123456\nCapability epoch: 000000000000",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "Capability epoch: abcdef123456\nCapability epoch: 000000000000",
+    "current": "",
+    "expected": true
+  },
+  {
+    "stored": "Capability epoch: abcdef123456\nCapability epoch: 000000000000",
+    "current": null,
+    "expected": false
+  },
+  {
+    "stored": "prefix Capability epoch: 000000000000 suffix",
+    "current": "abcdef123456",
+    "expected": true
+  },
+  {
+    "stored": "prefix Capability epoch: 000000000000 suffix",
+    "current": "000000000000",
+    "expected": false
+  },
+  {
+    "stored": "prefix Capability epoch: 000000000000 suffix",
+    "current": "unavailable",
+    "expected": false
+  },
+  {
+    "stored": "prefix Capability epoch: 000000000000 suffix",
+    "current": "",
+    "expected": true
+  },
+  {
+    "stored": "prefix Capability epoch: 000000000000 suffix",
+    "current": null,
+    "expected": false
+  }
+]

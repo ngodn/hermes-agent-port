@@ -1,0 +1,4597 @@
+{
+  "generator": "rust/tools/gen_skill_structure_goldens.py",
+  "description": "Golden reference cases for tools/skills_guard.py _check_structure",
+  "version": "1.0",
+  "placeholder": "<TEMP_DIR>",
+  "schema": {
+    "case": {
+      "name": "Unique identifier string for the test case",
+      "category": "Classification category for grouping related scenarios",
+      "description": "Explanatory description of what the test case exercises",
+      "files": "List of file definitions: {path: str, content: Optional[str], size: int, executable: bool}",
+      "symlinks": "List of symlink definitions: {path: str, relative_path: str, target: str}",
+      "ignore_file_contents": "Optional string with .skillignore rules (or null)",
+      "clawhubignore_contents": "Optional string with .clawhubignore rules (or null)",
+      "expected_findings": "List of Finding dicts from Python _check_structure",
+      "expected": "Alias for expected_findings",
+      "ordering_normalized": "Boolean indicating that deterministic sort order was applied"
+    },
+    "file_item": {
+      "path": "Relative path of file within the skill directory",
+      "content": "Text content of the file (null if synthetic sized file)",
+      "size": "Size in bytes",
+      "executable": "Boolean flag indicating whether executable mode bit 0o111 was set"
+    },
+    "symlink_item": {
+      "path": "Relative path of symlink within the skill directory",
+      "relative_path": "Alias for path",
+      "target": "Target destination of the symbolic link"
+    },
+    "finding": {
+      "pattern_id": "Rule identifier (e.g. symlink_escape, binary_file, unexpected_executable, oversized_file, too_many_files, oversized_skill)",
+      "severity": "Severity level (critical, high, medium, low)",
+      "category": "Finding category (traversal, structural)",
+      "file": "Relative path of the flagged file, or '(directory)' for skill-level limits",
+      "line": "Line number (0 for all structural checks)",
+      "match": "Matched snippet or size string (with temporary root normalized to <TEMP_DIR>)",
+      "description": "Explanatory finding description from skills_guard.py"
+    },
+    "ordering": {
+      "per_file": "Sorted alphabetically by relative path, then by Python source pattern order on the same file",
+      "directory": "Evaluated at end of traversal in Python source order (too_many_files, then oversized_skill)"
+    }
+  },
+  "exclusions": [
+    "Non-UTF8 filesystem path bytes: All paths in skill packages are valid UTF-8 strings.",
+    "OS-specific access control lists (Windows ACLs, macOS extended attributes): Only POSIX mode bits (0o111) are tested.",
+    "Live virtual filesystem nodes (/proc, /dev, /sys) as symlink targets.",
+    "Hardlink directory loops (prevented by modern POSIX operating systems).",
+    "Multi-gigabyte file allocation: Large files use precise sparse sizing rather than multi-GB allocations."
+  ],
+  "constants": {
+    "max_file_count": 50,
+    "max_single_file_kb": 256,
+    "max_total_size_kb": 5120,
+    "suspicious_binary_extensions": [
+      ".app",
+      ".bin",
+      ".com",
+      ".dat",
+      ".deb",
+      ".dll",
+      ".dmg",
+      ".dylib",
+      ".exe",
+      ".msi",
+      ".rpm",
+      ".so"
+    ],
+    "always_ignored_names": [
+      ".clawhubignore",
+      ".skillignore"
+    ],
+    "never_ignorable": [
+      "SKILL.md"
+    ]
+  },
+  "ordering_normalization": {
+    "rule": "Per-file findings are sorted alphabetically by relative path, then by Python source pattern evaluation order; directory findings follow at the end in Python source evaluation order.",
+    "source_order": [
+      "symlink_escape",
+      "broken_symlink",
+      "oversized_file",
+      "binary_file",
+      "unexpected_executable",
+      "too_many_files",
+      "oversized_skill"
+    ]
+  },
+  "total_cases": 59,
+  "cases": [
+    {
+      "name": "clean-minimal",
+      "category": "clean_baseline",
+      "description": "Minimal valid skill containing only root SKILL.md",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "---\nname: minimal\n---\n# Minimal Skill\n",
+          "size": 38,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "clean-standard-hierarchy",
+      "category": "clean_baseline",
+      "description": "Standard skill package with README, references, assets, and executable Python helper",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Standard Skill\n",
+          "size": 17,
+          "executable": false
+        },
+        {
+          "path": "README.md",
+          "content": "# Documentation\n",
+          "size": 16,
+          "executable": false
+        },
+        {
+          "path": "references/guide.md",
+          "content": "# Reference Guide\n",
+          "size": 18,
+          "executable": false
+        },
+        {
+          "path": "assets/config.json",
+          "content": "{\"active\": true}\n",
+          "size": 17,
+          "executable": false
+        },
+        {
+          "path": "scripts/helper.py",
+          "content": "print('ok')\n",
+          "size": 12,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "clean-all-allowed-scripts",
+      "category": "clean_baseline",
+      "description": "All recognized script extensions (.sh, .bash, .py, .rb, .pl) with executable permission",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Script Collection\n",
+          "size": 20,
+          "executable": false
+        },
+        {
+          "path": "scripts/run.sh",
+          "content": "#!/bin/sh\necho 1\n",
+          "size": 17,
+          "executable": true
+        },
+        {
+          "path": "scripts/tool.bash",
+          "content": "#!/bin/bash\necho 2\n",
+          "size": 19,
+          "executable": true
+        },
+        {
+          "path": "scripts/main.py",
+          "content": "print(3)\n",
+          "size": 9,
+          "executable": true
+        },
+        {
+          "path": "scripts/task.rb",
+          "content": "puts 4\n",
+          "size": 7,
+          "executable": true
+        },
+        {
+          "path": "scripts/parse.pl",
+          "content": "print 5;\n",
+          "size": 9,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-escape-parent",
+      "category": "symlink_escapes",
+      "description": "Symlink pointing to parent directory outside skill root",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Escape Test\n",
+          "size": 14,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "escape_parent",
+          "relative_path": "escape_parent",
+          "target": ".."
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "escape_parent",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "escape_parent",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-escape-outside-dir",
+      "category": "symlink_escapes",
+      "description": "Symlink pointing to file in external sibling directory outside skill root",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Escape Test\n",
+          "size": 14,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "leak_secret",
+          "relative_path": "leak_secret",
+          "target": "../outside/secret.txt"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "leak_secret",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/outside/secret.txt",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "leak_secret",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/outside/secret.txt",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-escape-nested-relative",
+      "category": "symlink_escapes",
+      "description": "Deeply nested symlink traversing multiple levels outside skill root",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Escape Test\n",
+          "size": 14,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "sub/deep/leak",
+          "relative_path": "sub/deep/leak",
+          "target": "../../../outside/target.txt"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "sub/deep/leak",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/outside/target.txt",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "sub/deep/leak",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/outside/target.txt",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-escape-sibling-prefix-confusion",
+      "category": "symlink_escapes",
+      "description": "Symlink resolving to sibling directory sharing path prefix (regression defense)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Escape Test\n",
+          "size": 14,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "backdoor_link",
+          "relative_path": "backdoor_link",
+          "target": "../skill-backdoor/malicious.py"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "backdoor_link",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/skill-backdoor/malicious.py",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "backdoor_link",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/skill-backdoor/malicious.py",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-internal-valid-file",
+      "category": "symlink_internal",
+      "description": "Symlink resolving to existing file within skill directory",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "real_script.py",
+          "content": "print('hello')\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "alias.py",
+          "relative_path": "alias.py",
+          "target": "real_script.py"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-internal-valid-nested",
+      "category": "symlink_internal",
+      "description": "Symlink in nested subdirectory resolving to sibling directory within skill",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "scripts/engine.py",
+          "content": "print('engine')\n",
+          "size": 16,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "tools/engine_link.py",
+          "relative_path": "tools/engine_link.py",
+          "target": "../scripts/engine.py"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-internal-valid-dir",
+      "category": "symlink_internal",
+      "description": "Directory symlink pointing to another directory within skill",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "scripts/sub/task.py",
+          "content": "print('task')\n",
+          "size": 14,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "bin",
+          "relative_path": "bin",
+          "target": "scripts/sub"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-broken-target-inside",
+      "category": "symlink_broken",
+      "description": "Broken symlink whose target does not exist but is located within skill directory",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "broken_internal",
+          "relative_path": "broken_internal",
+          "target": "missing_file.txt"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-broken-target-outside",
+      "category": "symlink_broken",
+      "description": "Broken symlink whose missing target resolves outside skill directory",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "broken_outside",
+          "relative_path": "broken_outside",
+          "target": "../missing_outside.txt"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "broken_outside",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/missing_outside.txt",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "broken_outside",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/missing_outside.txt",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-broken-nested-outside",
+      "category": "symlink_broken",
+      "description": "Nested broken symlink traversing upward to missing external path",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "nested/broken_leak",
+          "relative_path": "nested/broken_leak",
+          "target": "../../missing_root.txt"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "nested/broken_leak",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/missing_root.txt",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "symlink_escape",
+          "severity": "critical",
+          "category": "traversal",
+          "file": "nested/broken_leak",
+          "line": 0,
+          "match": "symlink -> <TEMP_DIR>/missing_root.txt",
+          "description": "symlink points outside the skill directory"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "symlink-broken-through-file",
+      "category": "symlink_broken",
+      "description": "Symlink whose path component treats a regular file as a directory",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "regular.txt",
+          "content": "just text\n",
+          "size": 10,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "broken_notdir",
+          "relative_path": "broken_notdir",
+          "target": "regular.txt/subfile"
+        }
+      ],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-exe",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .exe detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "payload.exe",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "payload.exe",
+          "line": 0,
+          "match": "binary: .exe",
+          "description": "binary/executable file (.exe) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "payload.exe",
+          "line": 0,
+          "match": "binary: .exe",
+          "description": "binary/executable file (.exe) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-dll",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .dll detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "library.dll",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "library.dll",
+          "line": 0,
+          "match": "binary: .dll",
+          "description": "binary/executable file (.dll) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "library.dll",
+          "line": 0,
+          "match": "binary: .dll",
+          "description": "binary/executable file (.dll) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-so",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .so detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "driver.so",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "driver.so",
+          "line": 0,
+          "match": "binary: .so",
+          "description": "binary/executable file (.so) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "driver.so",
+          "line": 0,
+          "match": "binary: .so",
+          "description": "binary/executable file (.so) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-dylib",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .dylib detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "lib.dylib",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "lib.dylib",
+          "line": 0,
+          "match": "binary: .dylib",
+          "description": "binary/executable file (.dylib) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "lib.dylib",
+          "line": 0,
+          "match": "binary: .dylib",
+          "description": "binary/executable file (.dylib) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-bin",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .bin detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "firmware.bin",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "firmware.bin",
+          "line": 0,
+          "match": "binary: .bin",
+          "description": "binary/executable file (.bin) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "firmware.bin",
+          "line": 0,
+          "match": "binary: .bin",
+          "description": "binary/executable file (.bin) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-dat",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .dat detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "weights.dat",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "weights.dat",
+          "line": 0,
+          "match": "binary: .dat",
+          "description": "binary/executable file (.dat) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "weights.dat",
+          "line": 0,
+          "match": "binary: .dat",
+          "description": "binary/executable file (.dat) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-com",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .com detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "command.com",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "command.com",
+          "line": 0,
+          "match": "binary: .com",
+          "description": "binary/executable file (.com) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "command.com",
+          "line": 0,
+          "match": "binary: .com",
+          "description": "binary/executable file (.com) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-msi",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .msi detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "installer.msi",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "installer.msi",
+          "line": 0,
+          "match": "binary: .msi",
+          "description": "binary/executable file (.msi) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "installer.msi",
+          "line": 0,
+          "match": "binary: .msi",
+          "description": "binary/executable file (.msi) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-dmg",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .dmg detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "disk.dmg",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "disk.dmg",
+          "line": 0,
+          "match": "binary: .dmg",
+          "description": "binary/executable file (.dmg) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "disk.dmg",
+          "line": 0,
+          "match": "binary: .dmg",
+          "description": "binary/executable file (.dmg) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-app",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .app detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "application.app",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "application.app",
+          "line": 0,
+          "match": "binary: .app",
+          "description": "binary/executable file (.app) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "application.app",
+          "line": 0,
+          "match": "binary: .app",
+          "description": "binary/executable file (.app) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-deb",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .deb detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "package.deb",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "package.deb",
+          "line": 0,
+          "match": "binary: .deb",
+          "description": "binary/executable file (.deb) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "package.deb",
+          "line": 0,
+          "match": "binary: .deb",
+          "description": "binary/executable file (.deb) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-rpm",
+      "category": "binary_suffixes",
+      "description": "Suspicious binary extension .rpm detected in skill package",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "package.rpm",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "package.rpm",
+          "line": 0,
+          "match": "binary: .rpm",
+          "description": "binary/executable file (.rpm) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "package.rpm",
+          "line": 0,
+          "match": "binary: .rpm",
+          "description": "binary/executable file (.rpm) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-uppercase",
+      "category": "binary_suffixes",
+      "description": "Uppercase binary extension .EXE normalized and detected case-insensitively",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "MALWARE.EXE",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "MALWARE.EXE",
+          "line": 0,
+          "match": "binary: .exe",
+          "description": "binary/executable file (.exe) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "MALWARE.EXE",
+          "line": 0,
+          "match": "binary: .exe",
+          "description": "binary/executable file (.exe) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-suffix-mixedcase",
+      "category": "binary_suffixes",
+      "description": "Mixed case binary extension .So normalized and detected case-insensitively",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "Module.So",
+          "content": "binary content\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "Module.So",
+          "line": 0,
+          "match": "binary: .so",
+          "description": "binary/executable file (.so) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "Module.So",
+          "line": 0,
+          "match": "binary: .so",
+          "description": "binary/executable file (.so) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-benign-zip",
+      "category": "binary_suffixes",
+      "description": "Benign zip archive not present in SUSPICIOUS_BINARY_EXTENSIONS",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "bundle.zip",
+          "content": "zip archive content\n",
+          "size": 20,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "binary-benign-png",
+      "category": "binary_suffixes",
+      "description": "Benign image file not present in SUSPICIOUS_BINARY_EXTENSIONS",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "assets/diagram.png",
+          "content": "png bytes\n",
+          "size": 10,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-markdown",
+      "category": "executable_modes",
+      "description": "SKILL.md with unexpected executable bit set (0o755)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Executable Doc\n",
+          "size": 17,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "SKILL.md",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "SKILL.md",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-text",
+      "category": "executable_modes",
+      "description": "Text file (.txt) with unexpected executable bit set (0o755)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "notes.txt",
+          "content": "plain notes\n",
+          "size": 12,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "notes.txt",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "notes.txt",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-json",
+      "category": "executable_modes",
+      "description": "JSON configuration file (.json) with unexpected executable bit set (0o755)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "config.json",
+          "content": "{\"key\": \"val\"}\n",
+          "size": 15,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "config.json",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "config.json",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-yaml",
+      "category": "executable_modes",
+      "description": "YAML configuration file (.yaml) with unexpected executable bit set (0o755)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "params.yaml",
+          "content": "port: 8080\n",
+          "size": 11,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "params.yaml",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "params.yaml",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-extensionless",
+      "category": "executable_modes",
+      "description": "Extensionless file with unexpected executable bit set (0o755)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "runner",
+          "content": "#!/usr/bin/env custom\nrun\n",
+          "size": 26,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "runner",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "runner",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-binary-with-exec",
+      "category": "executable_modes",
+      "description": "Binary executable (.exe) with executable bit set, triggering both rules",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "bad.exe",
+          "content": "binary code\n",
+          "size": 12,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "bad.exe",
+          "line": 0,
+          "match": "binary: .exe",
+          "description": "binary/executable file (.exe) should not be in a skill"
+        },
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "bad.exe",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "bad.exe",
+          "line": 0,
+          "match": "binary: .exe",
+          "description": "binary/executable file (.exe) should not be in a skill"
+        },
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "bad.exe",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-user-bit-only",
+      "category": "executable_modes",
+      "description": "Non-script file with user-only executable bit (mode 0o700)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "user_exec.txt",
+          "content": "text\n",
+          "size": 5,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "user_exec.txt",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "user_exec.txt",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-group-bit-only",
+      "category": "executable_modes",
+      "description": "Non-script file with group-only executable bit (mode 0o654)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "group_exec.txt",
+          "content": "text\n",
+          "size": 5,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "group_exec.txt",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "group_exec.txt",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-other-bit-only",
+      "category": "executable_modes",
+      "description": "Non-script file with other-only executable bit (mode 0o645)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "other_exec.txt",
+          "content": "text\n",
+          "size": 5,
+          "executable": true
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "other_exec.txt",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "other_exec.txt",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "exec-mode-non-exec-clean",
+      "category": "executable_modes",
+      "description": "Non-script file with standard non-executable mode (0o644)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "clean.txt",
+          "content": "plain text\n",
+          "size": 11,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-file-count-exact-50",
+      "category": "thresholds",
+      "description": "Skill directory with exactly MAX_FILE_COUNT (50) files remains within limits",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "file_00.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_01.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_02.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_03.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_04.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_05.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_06.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_07.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_08.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_09.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_10.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_11.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_12.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_13.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_14.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_15.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_16.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_17.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_18.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_19.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_20.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_21.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_22.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_23.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_24.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_25.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_26.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_27.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_28.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_29.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_30.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_31.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_32.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_33.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_34.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_35.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_36.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_37.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_38.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_39.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_40.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_41.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_42.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_43.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_44.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_45.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_46.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_47.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_48.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-file-count-exceeded-51",
+      "category": "thresholds",
+      "description": "Skill directory with 51 files exceeds MAX_FILE_COUNT limit of 50",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "file_00.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_01.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_02.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_03.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_04.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_05.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_06.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_07.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_08.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_09.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_10.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_11.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_12.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_13.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_14.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_15.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_16.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_17.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_18.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_19.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_20.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_21.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_22.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_23.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_24.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_25.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_26.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_27.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_28.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_29.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_30.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_31.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_32.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_33.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_34.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_35.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_36.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_37.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_38.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_39.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_40.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_41.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_42.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_43.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_44.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_45.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_46.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_47.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_48.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_49.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "too_many_files",
+          "severity": "medium",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "51 files",
+          "description": "skill has 51 files (limit: 50)"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "too_many_files",
+          "severity": "medium",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "51 files",
+          "description": "skill has 51 files (limit: 50)"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-file-count-large-55",
+      "category": "thresholds",
+      "description": "Skill directory with 55 files exceeds MAX_FILE_COUNT limit of 50",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "file_00.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_01.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_02.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_03.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_04.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_05.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_06.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_07.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_08.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_09.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_10.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_11.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_12.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_13.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_14.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_15.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_16.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_17.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_18.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_19.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_20.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_21.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_22.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_23.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_24.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_25.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_26.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_27.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_28.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_29.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_30.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_31.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_32.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_33.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_34.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_35.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_36.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_37.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_38.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_39.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_40.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_41.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_42.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_43.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_44.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_45.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_46.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_47.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_48.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_49.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_50.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_51.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_52.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        },
+        {
+          "path": "file_53.txt",
+          "content": "x\n",
+          "size": 2,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "too_many_files",
+          "severity": "medium",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "55 files",
+          "description": "skill has 55 files (limit: 50)"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "too_many_files",
+          "severity": "medium",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "55 files",
+          "description": "skill has 55 files (limit: 50)"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-single-file-exact-256kb",
+      "category": "thresholds",
+      "description": "Single file with exact size 256KB (262144 bytes) does not exceed limit",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "exact_limit.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-single-file-exceeded-257kb",
+      "category": "thresholds",
+      "description": "Single file with size 257KB exceeds MAX_SINGLE_FILE_KB limit of 256KB",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "over_limit.txt",
+          "content": null,
+          "size": 263168,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "oversized_file",
+          "severity": "medium",
+          "category": "structural",
+          "file": "over_limit.txt",
+          "line": 0,
+          "match": "257KB",
+          "description": "file is 257KB (limit: 256KB)"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "oversized_file",
+          "severity": "medium",
+          "category": "structural",
+          "file": "over_limit.txt",
+          "line": 0,
+          "match": "257KB",
+          "description": "file is 257KB (limit: 256KB)"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-single-file-large-300kb",
+      "category": "thresholds",
+      "description": "Single file with size 300KB exceeds MAX_SINGLE_FILE_KB limit of 256KB",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "big_data.txt",
+          "content": null,
+          "size": 307200,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "oversized_file",
+          "severity": "medium",
+          "category": "structural",
+          "file": "big_data.txt",
+          "line": 0,
+          "match": "300KB",
+          "description": "file is 300KB (limit: 256KB)"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "oversized_file",
+          "severity": "medium",
+          "category": "structural",
+          "file": "big_data.txt",
+          "line": 0,
+          "match": "300KB",
+          "description": "file is 300KB (limit: 256KB)"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-total-size-exact-5120kb",
+      "category": "thresholds",
+      "description": "Total directory size exactly 5120KB does not trigger oversized_skill finding",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "part_00.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_01.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_02.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_03.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_04.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_05.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_06.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_07.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_08.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_09.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_10.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_11.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_12.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_13.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_14.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_15.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_16.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_17.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_18.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        },
+        {
+          "path": "part_19.txt",
+          "content": null,
+          "size": 262144,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "oversized_skill",
+          "severity": "low",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "5120KB total",
+          "description": "skill is 5120KB total (limit: 5120KB)"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "oversized_skill",
+          "severity": "low",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "5120KB total",
+          "description": "skill is 5120KB total (limit: 5120KB)"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-total-size-exceeded-5250kb",
+      "category": "thresholds",
+      "description": "Total directory size 5250KB exceeds MAX_TOTAL_SIZE_KB limit of 5120KB",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "chunk_00.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_01.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_02.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_03.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_04.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_05.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_06.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_07.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_08.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_09.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_10.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_11.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_12.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_13.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_14.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_15.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_16.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_17.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_18.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_19.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        },
+        {
+          "path": "chunk_20.txt",
+          "content": null,
+          "size": 256000,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "oversized_skill",
+          "severity": "low",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "5250KB total",
+          "description": "skill is 5250KB total (limit: 5120KB)"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "oversized_skill",
+          "severity": "low",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "5250KB total",
+          "description": "skill is 5250KB total (limit: 5120KB)"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "threshold-multiple-limits-hit",
+      "category": "thresholds",
+      "description": "Skill exceeding file count (52), single file size (300KB), and total size (5300KB)",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "huge.txt",
+          "content": null,
+          "size": 307200,
+          "executable": false
+        },
+        {
+          "path": "data_00.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_01.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_02.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_03.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_04.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_05.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_06.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_07.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_08.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_09.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_10.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_11.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_12.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_13.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_14.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_15.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_16.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_17.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_18.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_19.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_20.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_21.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_22.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_23.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_24.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_25.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_26.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_27.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_28.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_29.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_30.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_31.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_32.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_33.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_34.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_35.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_36.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_37.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_38.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_39.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_40.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_41.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_42.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_43.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_44.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_45.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_46.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_47.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_48.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        },
+        {
+          "path": "data_49.txt",
+          "content": null,
+          "size": 102400,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "oversized_file",
+          "severity": "medium",
+          "category": "structural",
+          "file": "huge.txt",
+          "line": 0,
+          "match": "300KB",
+          "description": "file is 300KB (limit: 256KB)"
+        },
+        {
+          "pattern_id": "too_many_files",
+          "severity": "medium",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "52 files",
+          "description": "skill has 52 files (limit: 50)"
+        },
+        {
+          "pattern_id": "oversized_skill",
+          "severity": "low",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "5300KB total",
+          "description": "skill is 5300KB total (limit: 5120KB)"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "oversized_file",
+          "severity": "medium",
+          "category": "structural",
+          "file": "huge.txt",
+          "line": 0,
+          "match": "300KB",
+          "description": "file is 300KB (limit: 256KB)"
+        },
+        {
+          "pattern_id": "too_many_files",
+          "severity": "medium",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "52 files",
+          "description": "skill has 52 files (limit: 50)"
+        },
+        {
+          "pattern_id": "oversized_skill",
+          "severity": "low",
+          "category": "structural",
+          "file": "(directory)",
+          "line": 0,
+          "match": "5300KB total",
+          "description": "skill is 5300KB total (limit: 5120KB)"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-root-skill-md-wildcard",
+      "category": "root_skill_md_protection",
+      "description": "Wildcard pattern * in .skillignore ignores other files but never root SKILL.md",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Protected Root Skill\n",
+          "size": 23,
+          "executable": false
+        },
+        {
+          "path": "other.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "malware.exe",
+          "content": "ignored binary\n",
+          "size": 15,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": "*\n",
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-root-skill-md-explicit",
+      "category": "root_skill_md_protection",
+      "description": "Explicit SKILL.md and /SKILL.md in .skillignore cannot un-scan root SKILL.md",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Protected Root Skill\n",
+          "size": 23,
+          "executable": false
+        },
+        {
+          "path": "doc.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": "SKILL.md\n/SKILL.md\n*.txt\n",
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-root-skill-md-executable-flagged",
+      "category": "root_skill_md_protection",
+      "description": "Executable root SKILL.md under ignore * still flags unexpected_executable",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Executable Protected Root\n",
+          "size": 28,
+          "executable": true
+        },
+        {
+          "path": "script.sh",
+          "content": "echo ignored\n",
+          "size": 13,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": "*\n",
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "SKILL.md",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "unexpected_executable",
+          "severity": "medium",
+          "category": "structural",
+          "file": "SKILL.md",
+          "line": 0,
+          "match": "executable bit set",
+          "description": "file has executable permission but is not a recognized script type"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-nested-skill-md-never-ignored",
+      "category": "root_skill_md_protection",
+      "description": "Nested SKILL.md files are also protected from ignore rules by base name rule",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Root Skill\n",
+          "size": 13,
+          "executable": false
+        },
+        {
+          "path": "sub/SKILL.md",
+          "content": "# Nested Skill\n",
+          "size": 15,
+          "executable": false
+        },
+        {
+          "path": "sub/other.txt",
+          "content": "ignored text\n",
+          "size": 13,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": "*\n",
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-tree-directory-with-threats",
+      "category": "ignored_trees",
+      "description": "Entire ignored directory tree exempts files, binaries, sizes, and escaping symlinks",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_00.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_01.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_02.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_03.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_04.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_05.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_06.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_07.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_08.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_09.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_10.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_11.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_12.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_13.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_14.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_15.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_16.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_17.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_18.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_19.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_20.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_21.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_22.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_23.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_24.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_25.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_26.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_27.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_28.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_29.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_30.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_31.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_32.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_33.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_34.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_35.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_36.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_37.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_38.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_39.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_40.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_41.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_42.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_43.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_44.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_45.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_46.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_47.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_48.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_49.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_50.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_51.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_52.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_53.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/f_54.txt",
+          "content": "ignored\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/bad.exe",
+          "content": "binary\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "ignored_dir/big.dat",
+          "content": null,
+          "size": 409600,
+          "executable": false
+        }
+      ],
+      "symlinks": [
+        {
+          "path": "ignored_dir/escape_link",
+          "relative_path": "ignored_dir/escape_link",
+          "target": "../../outside"
+        }
+      ],
+      "ignore_file_contents": "ignored_dir/\n",
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-tree-clawhubignore-compatibility",
+      "category": "ignored_trees",
+      "description": "Compatibility with .clawhubignore file excluding directory trees",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_00.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_01.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_02.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_03.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_04.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_05.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_06.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_07.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_08.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_09.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_10.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_11.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_12.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_13.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_14.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_15.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_16.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_17.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_18.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_19.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_20.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_21.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_22.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_23.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_24.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_25.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_26.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_27.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_28.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_29.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_30.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_31.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_32.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_33.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_34.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_35.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_36.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_37.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_38.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_39.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_40.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_41.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_42.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_43.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_44.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_45.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_46.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_47.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_48.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_49.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_50.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_51.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_52.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_53.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        },
+        {
+          "path": "vendor/v_54.txt",
+          "content": "vendor\n",
+          "size": 7,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": null,
+      "clawhubignore_contents": "vendor/\n",
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-glob-patterns",
+      "category": "ignored_trees",
+      "description": "Glob patterns (*.tmp, *.bin) correctly ignore matching binary and temporary files",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "scratch.tmp",
+          "content": "temp data\n",
+          "size": 10,
+          "executable": false
+        },
+        {
+          "path": "payload.bin",
+          "content": "binary data\n",
+          "size": 12,
+          "executable": false
+        },
+        {
+          "path": "valid.txt",
+          "content": "kept\n",
+          "size": 5,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": "*.tmp\n*.bin\n",
+      "clawhubignore_contents": null,
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-anchored-slash",
+      "category": "ignored_trees",
+      "description": "Leading slash /anchored.bin ignores root file but does not ignore nested file",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "root_only.bin",
+          "content": "ignored at root\n",
+          "size": 16,
+          "executable": false
+        },
+        {
+          "path": "sub/root_only.bin",
+          "content": "not ignored in sub\n",
+          "size": 19,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": "/root_only.bin\n",
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "sub/root_only.bin",
+          "line": 0,
+          "match": "binary: .bin",
+          "description": "binary/executable file (.bin) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "sub/root_only.bin",
+          "line": 0,
+          "match": "binary: .bin",
+          "description": "binary/executable file (.bin) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-files-themselves-excluded",
+      "category": "ignored_trees",
+      "description": ".skillignore and .clawhubignore are always excluded from file counts and checks",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "main.py",
+          "content": "print('ok')\n",
+          "size": 12,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": "# Hermetic ignore\n",
+      "clawhubignore_contents": "# Clawhub ignore\n",
+      "expected_findings": [],
+      "expected": [],
+      "ordering_normalized": true
+    },
+    {
+      "name": "ignore-unignored-files-flagged",
+      "category": "ignored_trees",
+      "description": "Ignored docs directory exempts docs, but unignored src/malware.exe is detected",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Skill\n",
+          "size": 8,
+          "executable": false
+        },
+        {
+          "path": "docs/notes.txt",
+          "content": "doc\n",
+          "size": 4,
+          "executable": false
+        },
+        {
+          "path": "docs/old.exe",
+          "content": "ignored binary\n",
+          "size": 15,
+          "executable": false
+        },
+        {
+          "path": "src/malware.exe",
+          "content": "active binary\n",
+          "size": 14,
+          "executable": false
+        }
+      ],
+      "symlinks": [],
+      "ignore_file_contents": "docs/\n",
+      "clawhubignore_contents": null,
+      "expected_findings": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "src/malware.exe",
+          "line": 0,
+          "match": "binary: .exe",
+          "description": "binary/executable file (.exe) should not be in a skill"
+        }
+      ],
+      "expected": [
+        {
+          "pattern_id": "binary_file",
+          "severity": "critical",
+          "category": "structural",
+          "file": "src/malware.exe",
+          "line": 0,
+          "match": "binary: .exe",
+          "description": "binary/executable file (.exe) should not be in a skill"
+        }
+      ],
+      "ordering_normalized": true
+    }
+  ]
+}

@@ -283,6 +283,17 @@ impl Default for GatewayConfig {
 }
 
 impl GatewayConfig {
+    /// Platform overrides win over conversation-type overrides and defaults.
+    pub fn get_reset_policy(
+        &self,
+        platform: Option<Platform>,
+        session_type: Option<&str>,
+    ) -> &SessionResetPolicy {
+        platform
+            .and_then(|p| self.reset_by_platform.get(&p))
+            .or_else(|| session_type.and_then(|kind| self.reset_by_type.get(kind)))
+            .unwrap_or(&self.default_reset_policy)
+    }
     /// Port of `__post_init__`.
     ///
     /// Python normalizes two fields after the dataclass assigns them:
@@ -623,6 +634,35 @@ impl GatewayConfig {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn reset_policy_uses_platform_then_type_then_default() {
+        let mut config = GatewayConfig::default();
+        config.default_reset_policy.mode = json!("none");
+        config.reset_by_type.insert(
+            "group".into(),
+            SessionResetPolicy {
+                mode: json!("idle"),
+                ..Default::default()
+            },
+        );
+        config.reset_by_platform.insert(
+            Platform::Slack,
+            SessionResetPolicy {
+                mode: json!("daily"),
+                ..Default::default()
+            },
+        );
+        assert_eq!(
+            config
+                .get_reset_policy(Some(Platform::Slack), Some("group"))
+                .mode,
+            "daily"
+        );
+        assert_eq!(config.get_reset_policy(None, Some("group")).mode, "idle");
+        assert_eq!(config.get_reset_policy(None, Some("dm")).mode, "none");
+        assert_eq!(config.get_reset_policy(None, None).mode, "none");
+    }
     use serde_json::json;
 
     // --- _has_usable_api_server_key ----------------------------------------

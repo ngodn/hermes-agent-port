@@ -1,0 +1,748 @@
+[
+  {
+    "static": {
+      "terminal": {
+        "tools": [
+          "terminal",
+          "process_manage"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {},
+    "aliases": [],
+    "platforms": [],
+    "core": [
+      "read_file"
+    ],
+    "name": "terminal",
+    "include_registry": true,
+    "expected": [
+      "process_manage",
+      "terminal"
+    ]
+  },
+  {
+    "static": {
+      "debugging": {
+        "tools": [
+          "gdb"
+        ],
+        "includes": [
+          "file_tools",
+          "web_tools"
+        ]
+      },
+      "file_tools": {
+        "tools": [
+          "read_file",
+          "write_file"
+        ],
+        "includes": []
+      },
+      "web_tools": {
+        "tools": [
+          "web_search"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {},
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "debugging",
+    "include_registry": true,
+    "expected": [
+      "gdb",
+      "read_file",
+      "web_search",
+      "write_file"
+    ]
+  },
+  {
+    "static": {
+      "cycle_a": {
+        "tools": [
+          "tool_a"
+        ],
+        "includes": [
+          "cycle_b"
+        ]
+      },
+      "cycle_b": {
+        "tools": [
+          "tool_b"
+        ],
+        "includes": [
+          "cycle_a"
+        ]
+      }
+    },
+    "registry": {},
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "cycle_a",
+    "include_registry": true,
+    "expected": [
+      "tool_a",
+      "tool_b"
+    ]
+  },
+  {
+    "static": {
+      "cycle_x": {
+        "tools": [
+          "tool_x"
+        ],
+        "includes": [
+          "cycle_y"
+        ]
+      },
+      "cycle_y": {
+        "tools": [
+          "tool_y"
+        ],
+        "includes": [
+          "cycle_z"
+        ]
+      },
+      "cycle_z": {
+        "tools": [
+          "tool_z"
+        ],
+        "includes": [
+          "cycle_x",
+          "leaf_d"
+        ]
+      },
+      "leaf_d": {
+        "tools": [
+          "tool_d"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {},
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "cycle_x",
+    "include_registry": true,
+    "expected": [
+      "tool_d",
+      "tool_x",
+      "tool_y",
+      "tool_z"
+    ]
+  },
+  {
+    "static": {
+      "self_loop": {
+        "tools": [
+          "tool_self"
+        ],
+        "includes": [
+          "self_loop"
+        ]
+      }
+    },
+    "registry": {},
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "self_loop",
+    "include_registry": true,
+    "expected": [
+      "tool_self"
+    ]
+  },
+  {
+    "static": {
+      "top": {
+        "tools": [
+          "t_top"
+        ],
+        "includes": [
+          "left",
+          "right"
+        ]
+      },
+      "left": {
+        "tools": [
+          "t_left"
+        ],
+        "includes": [
+          "bottom"
+        ]
+      },
+      "right": {
+        "tools": [
+          "t_right"
+        ],
+        "includes": [
+          "bottom"
+        ]
+      },
+      "bottom": {
+        "tools": [
+          "t_bottom"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {},
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "top",
+    "include_registry": true,
+    "expected": [
+      "t_bottom",
+      "t_left",
+      "t_right",
+      "t_top"
+    ]
+  },
+  {
+    "static": {
+      "diamond_root": {
+        "tools": [
+          "t_root"
+        ],
+        "includes": [
+          "branch_a",
+          "branch_b"
+        ]
+      },
+      "branch_a": {
+        "tools": [
+          "t_a"
+        ],
+        "includes": [
+          "base"
+        ]
+      },
+      "branch_b": {
+        "tools": [
+          "t_b"
+        ],
+        "includes": [
+          "base"
+        ]
+      },
+      "base": {
+        "tools": [
+          "t_base"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "base": [
+        "reg_base_extra"
+      ],
+      "branch_a": [
+        "reg_a_extra"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "diamond_root",
+    "include_registry": true,
+    "expected": [
+      "reg_a_extra",
+      "reg_base_extra",
+      "t_a",
+      "t_b",
+      "t_base",
+      "t_root"
+    ]
+  },
+  {
+    "static": {
+      "ts_alpha": {
+        "tools": [
+          "alpha_1",
+          "alpha_2"
+        ],
+        "includes": []
+      },
+      "ts_beta": {
+        "tools": [
+          "beta_1"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "plugin_gamma": [
+        "gamma_tool"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "all",
+    "include_registry": true,
+    "expected": [
+      "alpha_1",
+      "alpha_2",
+      "beta_1",
+      "gamma_tool"
+    ]
+  },
+  {
+    "static": {
+      "ts_alpha": {
+        "tools": [
+          "alpha_1",
+          "alpha_2"
+        ],
+        "includes": []
+      },
+      "ts_beta": {
+        "tools": [
+          "beta_1"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "plugin_gamma": [
+        "gamma_tool"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "*",
+    "include_registry": true,
+    "expected": [
+      "alpha_1",
+      "alpha_2",
+      "beta_1",
+      "gamma_tool"
+    ]
+  },
+  {
+    "static": {
+      "ts_static1": {
+        "tools": [
+          "s1_tool"
+        ],
+        "includes": []
+      },
+      "ts_static2": {
+        "tools": [
+          "s2_tool"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "ts_static1": [
+        "reg_s1_tool"
+      ],
+      "plugin_extra": [
+        "plug_tool"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "all",
+    "include_registry": false,
+    "expected": [
+      "s1_tool",
+      "s2_tool"
+    ]
+  },
+  {
+    "static": {
+      "code": {
+        "tools": [
+          "format",
+          "lint"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "code": [
+        "typecheck",
+        "refactor"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "code",
+    "include_registry": true,
+    "expected": [
+      "format",
+      "lint",
+      "refactor",
+      "typecheck"
+    ]
+  },
+  {
+    "static": {
+      "code": {
+        "tools": [
+          "format",
+          "lint"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "code": [
+        "typecheck",
+        "refactor"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "code",
+    "include_registry": false,
+    "expected": [
+      "format",
+      "lint"
+    ]
+  },
+  {
+    "static": {},
+    "registry": {
+      "docker_tools": [
+        "docker_build",
+        "docker_run"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "docker_tools",
+    "include_registry": true,
+    "expected": [
+      "docker_build",
+      "docker_run"
+    ]
+  },
+  {
+    "static": {},
+    "registry": {
+      "mcp_github": [
+        "gh_issue_list",
+        "gh_pr_create"
+      ]
+    },
+    "aliases": [
+      [
+        "github",
+        "mcp_github"
+      ]
+    ],
+    "platforms": [],
+    "core": [],
+    "name": "github",
+    "include_registry": true,
+    "expected": [
+      "gh_issue_list",
+      "gh_pr_create"
+    ]
+  },
+  {
+    "static": {
+      "git": {
+        "tools": [
+          "git_commit"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "mcp_git_plugin": [
+        "mcp_push"
+      ]
+    },
+    "aliases": [
+      [
+        "git",
+        "mcp_git_plugin"
+      ]
+    ],
+    "platforms": [],
+    "core": [],
+    "name": "git",
+    "include_registry": true,
+    "expected": [
+      "git_commit"
+    ]
+  },
+  {
+    "static": {
+      "git": {
+        "tools": [
+          "git_commit"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "mcp_git_plugin": [
+        "mcp_push"
+      ]
+    },
+    "aliases": [
+      [
+        "git",
+        "mcp_git_plugin"
+      ]
+    ],
+    "platforms": [],
+    "core": [],
+    "name": "all",
+    "include_registry": true,
+    "expected": [
+      "git_commit",
+      "mcp_push"
+    ]
+  },
+  {
+    "static": {},
+    "registry": {
+      "postgres_canonical": [
+        "pg_query",
+        "pg_schema"
+      ]
+    },
+    "aliases": [
+      [
+        "pg_primary",
+        "postgres_canonical"
+      ],
+      [
+        "pg_secondary",
+        "postgres_canonical"
+      ]
+    ],
+    "platforms": [],
+    "core": [],
+    "name": "all",
+    "include_registry": true,
+    "expected": [
+      "pg_query",
+      "pg_schema"
+    ]
+  },
+  {
+    "static": {
+      "db_alias1": {
+        "tools": [
+          "static_db_tool"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "db_canonical": [
+        "pg_query"
+      ]
+    },
+    "aliases": [
+      [
+        "db_alias1",
+        "db_canonical"
+      ],
+      [
+        "db_alias2",
+        "db_canonical"
+      ]
+    ],
+    "platforms": [],
+    "core": [],
+    "name": "all",
+    "include_registry": true,
+    "expected": [
+      "pg_query",
+      "static_db_tool"
+    ]
+  },
+  {
+    "static": {},
+    "registry": {
+      "slackbot": [
+        "slack_post_msg",
+        "slack_upload"
+      ]
+    },
+    "aliases": [],
+    "platforms": [
+      "slackbot"
+    ],
+    "core": [
+      "terminal",
+      "web_search"
+    ],
+    "name": "hermes-slackbot",
+    "include_registry": true,
+    "expected": [
+      "slack_post_msg",
+      "slack_upload",
+      "terminal",
+      "web_search"
+    ]
+  },
+  {
+    "static": {},
+    "registry": {
+      "slackbot": [
+        "slack_post_msg"
+      ]
+    },
+    "aliases": [],
+    "platforms": [
+      "slackbot"
+    ],
+    "core": [
+      "terminal",
+      "web_search"
+    ],
+    "name": "hermes-slackbot",
+    "include_registry": false,
+    "expected": []
+  },
+  {
+    "static": {},
+    "registry": {},
+    "aliases": [],
+    "platforms": [
+      "other_plat"
+    ],
+    "core": [
+      "core_tool"
+    ],
+    "name": "hermes-unregistered",
+    "include_registry": true,
+    "expected": []
+  },
+  {
+    "static": {
+      "bundle": {
+        "tools": [
+          "b_tool"
+        ],
+        "includes": [
+          "sub_bundle"
+        ]
+      },
+      "sub_bundle": {
+        "tools": [
+          "sub_tool"
+        ],
+        "includes": []
+      }
+    },
+    "registry": null,
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "bundle",
+    "include_registry": true,
+    "expected": [
+      "b_tool",
+      "sub_tool"
+    ]
+  },
+  {
+    "static": {},
+    "registry": null,
+    "aliases": [],
+    "platforms": [
+      "customplat"
+    ],
+    "core": [
+      "core_files",
+      "core_terminal"
+    ],
+    "name": "hermes-customplat",
+    "include_registry": true,
+    "expected": [
+      "core_files",
+      "core_terminal"
+    ]
+  },
+  {
+    "static": {},
+    "registry": {
+      "plugin_ts": [
+        "p_tool"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "plugin_ts",
+    "include_registry": false,
+    "expected": []
+  },
+  {
+    "static": {
+      "lvl1": {
+        "tools": [
+          "t1"
+        ],
+        "includes": [
+          "lvl2"
+        ]
+      },
+      "lvl2": {
+        "tools": [
+          "t2"
+        ],
+        "includes": [
+          "lvl3"
+        ]
+      },
+      "lvl3": {
+        "tools": [
+          "t3"
+        ],
+        "includes": [
+          "lvl4"
+        ]
+      },
+      "lvl4": {
+        "tools": [
+          "t4"
+        ],
+        "includes": []
+      }
+    },
+    "registry": {
+      "lvl2": [
+        "t2_reg"
+      ],
+      "lvl4": [
+        "t4_reg"
+      ]
+    },
+    "aliases": [],
+    "platforms": [],
+    "core": [],
+    "name": "lvl1",
+    "include_registry": true,
+    "expected": [
+      "t1",
+      "t2",
+      "t2_reg",
+      "t3",
+      "t4",
+      "t4_reg"
+    ]
+  }
+]

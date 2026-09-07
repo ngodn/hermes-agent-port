@@ -1,0 +1,446 @@
+[
+  {
+    "files": {
+      "skill_alpha/SKILL.md": "Alpha skill",
+      "skill_beta/SKILL.md": "Beta skill",
+      "skill_gamma/SKILL.md": "Gamma skill"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "skill_alpha/SKILL.md",
+      "skill_beta/SKILL.md",
+      "skill_gamma/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "valid_skill/SKILL.md": "valid",
+      ".git/SKILL.md": "git",
+      ".git/hooks/SKILL.md": "git hook",
+      ".github/workflows/SKILL.md": "github",
+      ".venv/bin/SKILL.md": "venv",
+      "venv/lib/SKILL.md": "venv",
+      "node_modules/pkg/SKILL.md": "node",
+      "__pycache__/SKILL.md": "pycache"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "valid_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "main_skill/SKILL.md": "main",
+      "main_skill/.archive/old/SKILL.md": "archive",
+      "main_skill/.curator_backups/bak/SKILL.md": "curator",
+      "main_skill/site-packages/pkg/SKILL.md": "site-packages",
+      "main_skill/.pytest_cache/v/SKILL.md": "pytest",
+      "main_skill/.mypy_cache/cache/SKILL.md": "mypy",
+      "main_skill/.ruff_cache/cache/SKILL.md": "ruff",
+      "main_skill/.tox/env/SKILL.md": "tox",
+      "main_skill/.nox/env/SKILL.md": "nox",
+      "main_skill/.hub/SKILL.md": "hub"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "main_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "my_skill/SKILL.md": "my skill",
+      "my_skill/references/ref_skill/SKILL.md": "ref",
+      "my_skill/templates/tmpl_skill/SKILL.md": "tmpl",
+      "my_skill/assets/asset_skill/SKILL.md": "asset",
+      "my_skill/scripts/script_skill/SKILL.md": "script"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "my_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "category/references/ref_skill/SKILL.md": "ref",
+      "category/templates/tmpl_skill/SKILL.md": "tmpl",
+      "category/assets/asset_skill/SKILL.md": "asset",
+      "category/scripts/script_skill/SKILL.md": "script",
+      "category/README.md": "category readme without SKILL.md"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "category/assets/asset_skill/SKILL.md",
+      "category/references/ref_skill/SKILL.md",
+      "category/scripts/script_skill/SKILL.md",
+      "category/templates/tmpl_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "composite_skill/SKILL.md": "composite",
+      "composite_skill/references/archived/SKILL.md": "archived",
+      "composite_skill/sub_skills/helper/SKILL.md": "helper",
+      "composite_skill/nested_category/tool/SKILL.md": "tool"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "composite_skill/SKILL.md",
+      "composite_skill/nested_category/tool/SKILL.md",
+      "composite_skill/sub_skills/helper/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "top_skill/SKILL.md": "top",
+      "top_skill/docs/references/nested_doc_skill/SKILL.md": "nested",
+      "top_skill/references/direct_ref/SKILL.md": "direct"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "top_skill/SKILL.md",
+      "top_skill/docs/references/nested_doc_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "a/b/c/d/deep_skill/SKILL.md": "deep",
+      "x/y/another_skill/SKILL.md": "another"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "a/b/c/d/deep_skill/SKILL.md",
+      "x/y/another_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "empty_skill_dir/placeholder.txt": "placeholder",
+      "docs/guide.md": "not a skill",
+      "valid/SKILL.md": "valid"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "valid/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      ".visible/SKILL.md": "visible",
+      ".custom_skills/my_custom/SKILL.md": "custom",
+      ".experiments/exp_one/SKILL.md": "exp",
+      ".git/hidden/SKILL.md": "excluded git"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      ".custom_skills/my_custom/SKILL.md",
+      ".experiments/exp_one/SKILL.md",
+      ".visible/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "parent_skill/SKILL.md": "parent",
+      "parent_skill/.private_extension/SKILL.md": "extension"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "parent_skill/.private_extension/SKILL.md",
+      "parent_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "_org/org_one/skill_a/SKILL.md": "org a",
+      "_org/org_two/skill_b/SKILL.md": "org b",
+      "personal/skill_c/SKILL.md": "personal c"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "personal/skill_c/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "_org/.active_org": "",
+      "_org/org_one/skill_a/SKILL.md": "org a",
+      "personal/skill_c/SKILL.md": "personal c"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "personal/skill_c/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "_org/.active_org": "   \n\t  ",
+      "_org/org_one/skill_a/SKILL.md": "org a",
+      "personal/skill_c/SKILL.md": "personal c"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "personal/skill_c/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "_org/.active_org": "active_team\n",
+      "_org/active_team/team_skill/SKILL.md": "active",
+      "_org/other_team/other_skill/SKILL.md": "inactive",
+      "local/local_skill/SKILL.md": "local"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "_org/active_team/team_skill/SKILL.md",
+      "local/local_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "_org/.active_org": "  org_trimmed  \n",
+      "_org/org_trimmed/skill_t/SKILL.md": "trimmed",
+      "_org/org_other/skill_o/SKILL.md": "other"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "_org/org_trimmed/skill_t/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "_org/.active_org": "stale_org_99\n",
+      "_org/current_org/skill_curr/SKILL.md": "current",
+      "_org/old_org/skill_old/SKILL.md": "old",
+      "shared/skill_s/SKILL.md": "shared"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "shared/skill_s/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "_org/.active_org": "corp_org",
+      "_org/corp_org/skill_main/SKILL.md": "main",
+      "_org/corp_org/skill_main/references/archived/SKILL.md": "ref",
+      "_org/corp_org/skill_main/scripts/helper/SKILL.md": "script",
+      "_org/corp_org/category_no_skill/references/good/SKILL.md": "good"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "_org/corp_org/category_no_skill/references/good/SKILL.md",
+      "_org/corp_org/skill_main/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "real_dir/actual_skill/SKILL.md": "actual"
+    },
+    "symlinks": {
+      "linked_dir": "real_dir"
+    },
+    "filename": "SKILL.md",
+    "expected": [
+      "linked_dir/actual_skill/SKILL.md",
+      "real_dir/actual_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "shared_packages/tool_skill/SKILL.md": "shared"
+    },
+    "symlinks": {
+      "collections/dev/sym_tool": "../../shared_packages/tool_skill"
+    },
+    "filename": "SKILL.md",
+    "expected": [
+      "collections/dev/sym_tool/SKILL.md",
+      "shared_packages/tool_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "real_store/pkg/SKILL.md": "real"
+    },
+    "symlinks": {
+      "my_skill/node_modules": "../real_store"
+    },
+    "filename": "SKILL.md",
+    "expected": [
+      "real_store/pkg/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "normal_skill/SKILL.md": "normal"
+    },
+    "symlinks": {
+      "broken_skill/SKILL.md": "nonexistent_target_file.md"
+    },
+    "filename": "SKILL.md",
+    "expected": [
+      "broken_skill/SKILL.md",
+      "normal_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "valid_skill/SKILL.md": "valid"
+    },
+    "symlinks": {
+      "broken_file_skill/OTHER.md": "nonexistent.md",
+      "broken_dir_parent/broken_dir": "nonexistent_dir"
+    },
+    "filename": "SKILL.md",
+    "expected": [
+      "valid_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "pseudo_skill/SKILL.md/documentation.txt": "not a skill markdown file",
+      "real_skill/SKILL.md": "real"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "real_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "container/SKILL.md/SKILL.md": "nested skill file",
+      "container/other/SKILL.md": "other"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "container/SKILL.md/SKILL.md",
+      "container/other/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "pkg_dir/SKILL.md/readme.txt": "readme",
+      "pkg_dir/references/ref_skill/SKILL.md": "ref",
+      "pkg_dir/scripts/scr_skill/SKILL.md": "scr"
+    },
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": [
+      "pkg_dir/references/ref_skill/SKILL.md",
+      "pkg_dir/scripts/scr_skill/SKILL.md"
+    ]
+  },
+  {
+    "files": {
+      "skill_x/SKILL.md": "skill content",
+      "skill_x/DESCRIPTION.md": "description content",
+      "skill_y/DESCRIPTION.md": "y description",
+      "skill_z/SKILL.md": "z skill without description"
+    },
+    "symlinks": {},
+    "filename": "DESCRIPTION.md",
+    "expected": [
+      "skill_x/DESCRIPTION.md",
+      "skill_y/DESCRIPTION.md"
+    ]
+  },
+  {
+    "files": {
+      "skill_with_both/SKILL.md": "skill",
+      "skill_with_both/DESCRIPTION.md": "desc",
+      "skill_with_both/references/DESCRIPTION.md": "pruned ref desc",
+      "skill_with_both/assets/DESCRIPTION.md": "pruned asset desc"
+    },
+    "symlinks": {},
+    "filename": "DESCRIPTION.md",
+    "expected": [
+      "skill_with_both/DESCRIPTION.md"
+    ]
+  },
+  {
+    "files": {
+      "category_pkg/DESCRIPTION.md": "cat desc",
+      "category_pkg/references/DESCRIPTION.md": "ref desc not pruned",
+      "category_pkg/templates/DESCRIPTION.md": "tmpl desc not pruned"
+    },
+    "symlinks": {},
+    "filename": "DESCRIPTION.md",
+    "expected": [
+      "category_pkg/DESCRIPTION.md",
+      "category_pkg/references/DESCRIPTION.md",
+      "category_pkg/templates/DESCRIPTION.md"
+    ]
+  },
+  {
+    "files": {
+      "_org/.active_org": "my_org\n",
+      "_org/my_org/skill_one/DESCRIPTION.md": "org desc",
+      "_org/stale_org/skill_two/DESCRIPTION.md": "stale org desc",
+      "local/DESCRIPTION.md": "local desc"
+    },
+    "symlinks": {
+      "local/broken_link_dir/DESCRIPTION.md": "missing_target.md"
+    },
+    "filename": "DESCRIPTION.md",
+    "expected": [
+      "_org/my_org/skill_one/DESCRIPTION.md",
+      "local/DESCRIPTION.md",
+      "local/broken_link_dir/DESCRIPTION.md"
+    ]
+  },
+  {
+    "files": {
+      "skills/coding/python/SKILL.md": "python skill",
+      "skills/coding/python/references/old/SKILL.md": "pruned ref",
+      "skills/coding/python/.git/SKILL.md": "pruned git",
+      "skills/coding/python/.hidden_nonexcluded/SKILL.md": "hidden nonexcluded",
+      "skills/devops/SKILL.md": "devops skill",
+      "skills/devops/templates/starter/SKILL.md": "pruned template",
+      "skills/devops/submodules/extra/SKILL.md": "submodule skill",
+      "_org/.active_org": "acme\n",
+      "_org/acme/cloud_tool/SKILL.md": "acme skill",
+      "_org/acme/cloud_tool/scripts/nested/SKILL.md": "pruned script",
+      "_org/legacy/old_tool/SKILL.md": "stale org pruned"
+    },
+    "symlinks": {
+      "skills/shortcuts/py": "../coding/python",
+      "skills/broken_link/SKILL.md": "missing.md"
+    },
+    "filename": "SKILL.md",
+    "expected": [
+      "_org/acme/cloud_tool/SKILL.md",
+      "skills/broken_link/SKILL.md",
+      "skills/coding/python/.hidden_nonexcluded/SKILL.md",
+      "skills/coding/python/SKILL.md",
+      "skills/devops/SKILL.md",
+      "skills/devops/submodules/extra/SKILL.md",
+      "skills/shortcuts/py/.hidden_nonexcluded/SKILL.md",
+      "skills/shortcuts/py/SKILL.md"
+    ]
+  },
+  {
+    "files": {},
+    "symlinks": {},
+    "filename": "SKILL.md",
+    "expected": []
+  }
+]

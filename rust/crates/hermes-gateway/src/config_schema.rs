@@ -320,15 +320,14 @@ pub fn coerce_optional_positive_int(value: &Value) -> Option<i64> {
                 i
             } else if let Some(u) = n.as_u64() {
                 u as i64
-            } else if let Some(f) = n.as_f64() {
+            } else {
+                let f = n.as_f64()?;
                 // Python: a float must be integer-valued, else ValueError.
                 if f.is_finite() && f.fract() == 0.0 {
                     f as i64
                 } else {
                     return None;
                 }
-            } else {
-                return None;
             }
         }
         Value::String(s) => match s.trim().parse::<i64>() {

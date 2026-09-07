@@ -1,0 +1,148 @@
+[
+  {
+    "op": "save",
+    "scope": "a",
+    "key": "same",
+    "value": "first",
+    "expected": {
+      "": {},
+      "a": {
+        "same": "first"
+      },
+      "b": {}
+    }
+  },
+  {
+    "op": "save",
+    "scope": "b",
+    "key": "same",
+    "value": "other",
+    "expected": {
+      "": {},
+      "a": {
+        "same": "first"
+      },
+      "b": {
+        "same": "other"
+      }
+    }
+  },
+  {
+    "op": "save",
+    "scope": "a",
+    "key": "same",
+    "value": "updated",
+    "expected": {
+      "": {},
+      "a": {
+        "same": "updated"
+      },
+      "b": {
+        "same": "other"
+      }
+    }
+  },
+  {
+    "op": "save",
+    "scope": "a",
+    "key": "",
+    "value": "ignored",
+    "expected": {
+      "": {},
+      "a": {
+        "same": "updated"
+      },
+      "b": {
+        "same": "other"
+      }
+    }
+  },
+  {
+    "op": "save",
+    "scope": "a",
+    "key": "same",
+    "value": "",
+    "expected": {
+      "": {},
+      "a": {
+        "same": "updated"
+      },
+      "b": {
+        "same": "other"
+      }
+    }
+  },
+  {
+    "op": "replace",
+    "scope": "a",
+    "entries": {
+      "new": "raw-json",
+      "": "ignored",
+      "empty": ""
+    },
+    "expected": {
+      "": {},
+      "a": {
+        "new": "raw-json"
+      },
+      "b": {
+        "same": "other"
+      }
+    }
+  },
+  {
+    "op": "delete",
+    "scope": "b",
+    "keys": [
+      "missing",
+      "same",
+      "same"
+    ],
+    "expected": {
+      "": {},
+      "a": {
+        "new": "raw-json"
+      },
+      "b": {}
+    }
+  },
+  {
+    "op": "save",
+    "scope": "",
+    "key": "unicode-\u96ea",
+    "value": "{}",
+    "expected": {
+      "": {
+        "unicode-\u96ea": "{}"
+      },
+      "a": {
+        "new": "raw-json"
+      },
+      "b": {}
+    }
+  },
+  {
+    "op": "replace",
+    "scope": "a",
+    "entries": {},
+    "expected": {
+      "": {
+        "unicode-\u96ea": "{}"
+      },
+      "a": {},
+      "b": {}
+    }
+  },
+  {
+    "op": "delete",
+    "scope": "",
+    "keys": [],
+    "expected": {
+      "": {
+        "unicode-\u96ea": "{}"
+      },
+      "a": {},
+      "b": {}
+    }
+  }
+]

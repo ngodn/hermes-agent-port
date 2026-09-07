@@ -5,7 +5,7 @@
 # Usage: rust/tools/agy.sh <prompt-file>
 #
 # SINGLE-FLIGHT AUTH GATE (do not remove).
-# agy caches a Google login in ~/.gemini/oauth_creds.json. The access token
+# agy caches its Google login through the OS keyring. The access token
 # expires roughly hourly, and Google ROTATES the refresh token on every refresh.
 # So if two agy processes start at once against a cold token, both try to
 # refresh, the first one wins, and the second is left holding a refresh token
@@ -34,10 +34,21 @@ LOCK=/tmp/hermes-agy.lock
 # Long enough for a full analysis run to finish and release the lock.
 LOCK_WAIT_SECONDS=${AGY_LOCK_WAIT_SECONDS:-3600}
 
+# Use the desktop user's keyring, as dgnrt does. An agent host can inject a
+# private D-Bus session whose Secret Service does not contain the agy login.
+# Leave the existing address alone on machines without a desktop user bus.
+AGY_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+if [[ -S "$AGY_RUNTIME_DIR/bus" ]]; then
+  export DBUS_SESSION_BUS_ADDRESS="unix:path=$AGY_RUNTIME_DIR/bus"
+fi
+# Match dgnrt's unattended mode: never pop a login window from a helper task.
+# This suppresses browser launching; it cannot renew a revoked login.
+export BROWSER=true
+
 cd "$REPO"
 exec flock --wait "$LOCK_WAIT_SECONDS" "$LOCK" \
   agy -p "$TASK_PROMPT" \
       --model "$MODEL" \
       --output-format text \
       --dangerously-skip-permissions \
-      --print-timeout 15m
+      --print-timeout 15m </dev/null

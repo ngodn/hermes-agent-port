@@ -1,0 +1,1046 @@
+[
+  {
+    "text": "!",
+    "result": "!"
+  },
+  {
+    "text": "!nice work",
+    "result": "!nice work"
+  },
+  {
+    "text": "!/help",
+    "result": "!/help"
+  },
+  {
+    "text": "!unknown",
+    "result": "!unknown"
+  },
+  {
+    "text": "hello!",
+    "result": "hello!"
+  },
+  {
+    "text": " !help",
+    "result": " !help"
+  },
+  {
+    "text": "! help",
+    "result": "/ help"
+  },
+  {
+    "text": "!HELP@bot args",
+    "result": "/HELP@bot args"
+  },
+  {
+    "text": "!help\u001carg",
+    "result": "/help\u001carg"
+  },
+  {
+    "text": "!start argument",
+    "result": "/start argument"
+  },
+  {
+    "text": "!START@bot argument",
+    "result": "/START@bot argument"
+  },
+  {
+    "text": "!new argument",
+    "result": "/new argument"
+  },
+  {
+    "text": "!NEW@bot argument",
+    "result": "/NEW@bot argument"
+  },
+  {
+    "text": "!reset argument",
+    "result": "/reset argument"
+  },
+  {
+    "text": "!RESET@bot argument",
+    "result": "/RESET@bot argument"
+  },
+  {
+    "text": "!topic argument",
+    "result": "/topic argument"
+  },
+  {
+    "text": "!TOPIC@bot argument",
+    "result": "/TOPIC@bot argument"
+  },
+  {
+    "text": "!clear argument",
+    "result": "!clear argument"
+  },
+  {
+    "text": "!CLEAR@bot argument",
+    "result": "!CLEAR@bot argument"
+  },
+  {
+    "text": "!redraw argument",
+    "result": "!redraw argument"
+  },
+  {
+    "text": "!REDRAW@bot argument",
+    "result": "!REDRAW@bot argument"
+  },
+  {
+    "text": "!history argument",
+    "result": "!history argument"
+  },
+  {
+    "text": "!HISTORY@bot argument",
+    "result": "!HISTORY@bot argument"
+  },
+  {
+    "text": "!save argument",
+    "result": "/save argument"
+  },
+  {
+    "text": "!SAVE@bot argument",
+    "result": "/SAVE@bot argument"
+  },
+  {
+    "text": "!retry argument",
+    "result": "/retry argument"
+  },
+  {
+    "text": "!RETRY@bot argument",
+    "result": "/RETRY@bot argument"
+  },
+  {
+    "text": "!prompt argument",
+    "result": "!prompt argument"
+  },
+  {
+    "text": "!PROMPT@bot argument",
+    "result": "!PROMPT@bot argument"
+  },
+  {
+    "text": "!compose argument",
+    "result": "!compose argument"
+  },
+  {
+    "text": "!COMPOSE@bot argument",
+    "result": "!COMPOSE@bot argument"
+  },
+  {
+    "text": "!undo argument",
+    "result": "/undo argument"
+  },
+  {
+    "text": "!UNDO@bot argument",
+    "result": "/UNDO@bot argument"
+  },
+  {
+    "text": "!title argument",
+    "result": "/title argument"
+  },
+  {
+    "text": "!TITLE@bot argument",
+    "result": "/TITLE@bot argument"
+  },
+  {
+    "text": "!handoff argument",
+    "result": "!handoff argument"
+  },
+  {
+    "text": "!HANDOFF@bot argument",
+    "result": "!HANDOFF@bot argument"
+  },
+  {
+    "text": "!branch argument",
+    "result": "/branch argument"
+  },
+  {
+    "text": "!BRANCH@bot argument",
+    "result": "/BRANCH@bot argument"
+  },
+  {
+    "text": "!fork argument",
+    "result": "/fork argument"
+  },
+  {
+    "text": "!FORK@bot argument",
+    "result": "/FORK@bot argument"
+  },
+  {
+    "text": "!worktree argument",
+    "result": "!worktree argument"
+  },
+  {
+    "text": "!WORKTREE@bot argument",
+    "result": "!WORKTREE@bot argument"
+  },
+  {
+    "text": "!compress argument",
+    "result": "/compress argument"
+  },
+  {
+    "text": "!COMPRESS@bot argument",
+    "result": "/COMPRESS@bot argument"
+  },
+  {
+    "text": "!compact argument",
+    "result": "/compact argument"
+  },
+  {
+    "text": "!COMPACT@bot argument",
+    "result": "/COMPACT@bot argument"
+  },
+  {
+    "text": "!rollback argument",
+    "result": "/rollback argument"
+  },
+  {
+    "text": "!ROLLBACK@bot argument",
+    "result": "/ROLLBACK@bot argument"
+  },
+  {
+    "text": "!snapshot argument",
+    "result": "!snapshot argument"
+  },
+  {
+    "text": "!SNAPSHOT@bot argument",
+    "result": "!SNAPSHOT@bot argument"
+  },
+  {
+    "text": "!snap argument",
+    "result": "!snap argument"
+  },
+  {
+    "text": "!SNAP@bot argument",
+    "result": "!SNAP@bot argument"
+  },
+  {
+    "text": "!export argument",
+    "result": "!export argument"
+  },
+  {
+    "text": "!EXPORT@bot argument",
+    "result": "!EXPORT@bot argument"
+  },
+  {
+    "text": "!import argument",
+    "result": "!import argument"
+  },
+  {
+    "text": "!IMPORT@bot argument",
+    "result": "!IMPORT@bot argument"
+  },
+  {
+    "text": "!stop argument",
+    "result": "/stop argument"
+  },
+  {
+    "text": "!STOP@bot argument",
+    "result": "/STOP@bot argument"
+  },
+  {
+    "text": "!pause argument",
+    "result": "/pause argument"
+  },
+  {
+    "text": "!PAUSE@bot argument",
+    "result": "/PAUSE@bot argument"
+  },
+  {
+    "text": "!approve argument",
+    "result": "/approve argument"
+  },
+  {
+    "text": "!APPROVE@bot argument",
+    "result": "/APPROVE@bot argument"
+  },
+  {
+    "text": "!deny argument",
+    "result": "/deny argument"
+  },
+  {
+    "text": "!DENY@bot argument",
+    "result": "/DENY@bot argument"
+  },
+  {
+    "text": "!bg argument",
+    "result": "/bg argument"
+  },
+  {
+    "text": "!BG@bot argument",
+    "result": "/BG@bot argument"
+  },
+  {
+    "text": "!btw argument",
+    "result": "/btw argument"
+  },
+  {
+    "text": "!BTW@bot argument",
+    "result": "/BTW@bot argument"
+  },
+  {
+    "text": "!agents argument",
+    "result": "/agents argument"
+  },
+  {
+    "text": "!AGENTS@bot argument",
+    "result": "/AGENTS@bot argument"
+  },
+  {
+    "text": "!tasks argument",
+    "result": "/tasks argument"
+  },
+  {
+    "text": "!TASKS@bot argument",
+    "result": "/TASKS@bot argument"
+  },
+  {
+    "text": "!journey argument",
+    "result": "!journey argument"
+  },
+  {
+    "text": "!JOURNEY@bot argument",
+    "result": "!JOURNEY@bot argument"
+  },
+  {
+    "text": "!learning argument",
+    "result": "!learning argument"
+  },
+  {
+    "text": "!LEARNING@bot argument",
+    "result": "!LEARNING@bot argument"
+  },
+  {
+    "text": "!memory-graph argument",
+    "result": "!memory-graph argument"
+  },
+  {
+    "text": "!MEMORY-GRAPH@bot argument",
+    "result": "!MEMORY-GRAPH@bot argument"
+  },
+  {
+    "text": "!queue argument",
+    "result": "/queue argument"
+  },
+  {
+    "text": "!QUEUE@bot argument",
+    "result": "/QUEUE@bot argument"
+  },
+  {
+    "text": "!q argument",
+    "result": "/q argument"
+  },
+  {
+    "text": "!Q@bot argument",
+    "result": "/Q@bot argument"
+  },
+  {
+    "text": "!steer argument",
+    "result": "/steer argument"
+  },
+  {
+    "text": "!STEER@bot argument",
+    "result": "/STEER@bot argument"
+  },
+  {
+    "text": "!goal argument",
+    "result": "/goal argument"
+  },
+  {
+    "text": "!GOAL@bot argument",
+    "result": "/GOAL@bot argument"
+  },
+  {
+    "text": "!heartbeat argument",
+    "result": "/heartbeat argument"
+  },
+  {
+    "text": "!HEARTBEAT@bot argument",
+    "result": "/HEARTBEAT@bot argument"
+  },
+  {
+    "text": "!hb argument",
+    "result": "/hb argument"
+  },
+  {
+    "text": "!HB@bot argument",
+    "result": "/HB@bot argument"
+  },
+  {
+    "text": "!refine argument",
+    "result": "/refine argument"
+  },
+  {
+    "text": "!REFINE@bot argument",
+    "result": "/REFINE@bot argument"
+  },
+  {
+    "text": "!review argument",
+    "result": "/review argument"
+  },
+  {
+    "text": "!REVIEW@bot argument",
+    "result": "/REVIEW@bot argument"
+  },
+  {
+    "text": "!loop argument",
+    "result": "/loop argument"
+  },
+  {
+    "text": "!LOOP@bot argument",
+    "result": "/LOOP@bot argument"
+  },
+  {
+    "text": "!proactive argument",
+    "result": "/proactive argument"
+  },
+  {
+    "text": "!PROACTIVE@bot argument",
+    "result": "/PROACTIVE@bot argument"
+  },
+  {
+    "text": "!plan argument",
+    "result": "/plan argument"
+  },
+  {
+    "text": "!PLAN@bot argument",
+    "result": "/PLAN@bot argument"
+  },
+  {
+    "text": "!moa argument",
+    "result": "/moa argument"
+  },
+  {
+    "text": "!MOA@bot argument",
+    "result": "/MOA@bot argument"
+  },
+  {
+    "text": "!subgoal argument",
+    "result": "/subgoal argument"
+  },
+  {
+    "text": "!SUBGOAL@bot argument",
+    "result": "/SUBGOAL@bot argument"
+  },
+  {
+    "text": "!status argument",
+    "result": "/status argument"
+  },
+  {
+    "text": "!STATUS@bot argument",
+    "result": "/STATUS@bot argument"
+  },
+  {
+    "text": "!egress argument",
+    "result": "/egress argument"
+  },
+  {
+    "text": "!EGRESS@bot argument",
+    "result": "/EGRESS@bot argument"
+  },
+  {
+    "text": "!context argument",
+    "result": "/context argument"
+  },
+  {
+    "text": "!CONTEXT@bot argument",
+    "result": "/CONTEXT@bot argument"
+  },
+  {
+    "text": "!ctx argument",
+    "result": "/ctx argument"
+  },
+  {
+    "text": "!CTX@bot argument",
+    "result": "/CTX@bot argument"
+  },
+  {
+    "text": "!whoami argument",
+    "result": "/whoami argument"
+  },
+  {
+    "text": "!WHOAMI@bot argument",
+    "result": "/WHOAMI@bot argument"
+  },
+  {
+    "text": "!profile argument",
+    "result": "/profile argument"
+  },
+  {
+    "text": "!PROFILE@bot argument",
+    "result": "/PROFILE@bot argument"
+  },
+  {
+    "text": "!sethome argument",
+    "result": "/sethome argument"
+  },
+  {
+    "text": "!SETHOME@bot argument",
+    "result": "/SETHOME@bot argument"
+  },
+  {
+    "text": "!set-home argument",
+    "result": "/set-home argument"
+  },
+  {
+    "text": "!SET-HOME@bot argument",
+    "result": "/SET-HOME@bot argument"
+  },
+  {
+    "text": "!resume argument",
+    "result": "/resume argument"
+  },
+  {
+    "text": "!RESUME@bot argument",
+    "result": "/RESUME@bot argument"
+  },
+  {
+    "text": "!sessions argument",
+    "result": "/sessions argument"
+  },
+  {
+    "text": "!SESSIONS@bot argument",
+    "result": "/SESSIONS@bot argument"
+  },
+  {
+    "text": "!config argument",
+    "result": "!config argument"
+  },
+  {
+    "text": "!CONFIG@bot argument",
+    "result": "!CONFIG@bot argument"
+  },
+  {
+    "text": "!model argument",
+    "result": "/model argument"
+  },
+  {
+    "text": "!MODEL@bot argument",
+    "result": "/MODEL@bot argument"
+  },
+  {
+    "text": "!codex-runtime argument",
+    "result": "/codex-runtime argument"
+  },
+  {
+    "text": "!CODEX-RUNTIME@bot argument",
+    "result": "/CODEX-RUNTIME@bot argument"
+  },
+  {
+    "text": "!codex_runtime argument",
+    "result": "/codex_runtime argument"
+  },
+  {
+    "text": "!CODEX_RUNTIME@bot argument",
+    "result": "/CODEX_RUNTIME@bot argument"
+  },
+  {
+    "text": "!personality argument",
+    "result": "/personality argument"
+  },
+  {
+    "text": "!PERSONALITY@bot argument",
+    "result": "/PERSONALITY@bot argument"
+  },
+  {
+    "text": "!statusbar argument",
+    "result": "!statusbar argument"
+  },
+  {
+    "text": "!STATUSBAR@bot argument",
+    "result": "!STATUSBAR@bot argument"
+  },
+  {
+    "text": "!sb argument",
+    "result": "!sb argument"
+  },
+  {
+    "text": "!SB@bot argument",
+    "result": "!SB@bot argument"
+  },
+  {
+    "text": "!battery argument",
+    "result": "!battery argument"
+  },
+  {
+    "text": "!BATTERY@bot argument",
+    "result": "!BATTERY@bot argument"
+  },
+  {
+    "text": "!timestamps argument",
+    "result": "!timestamps argument"
+  },
+  {
+    "text": "!TIMESTAMPS@bot argument",
+    "result": "!TIMESTAMPS@bot argument"
+  },
+  {
+    "text": "!ts argument",
+    "result": "!ts argument"
+  },
+  {
+    "text": "!TS@bot argument",
+    "result": "!TS@bot argument"
+  },
+  {
+    "text": "!diff argument",
+    "result": "/diff argument"
+  },
+  {
+    "text": "!DIFF@bot argument",
+    "result": "/DIFF@bot argument"
+  },
+  {
+    "text": "!verbose argument",
+    "result": "/verbose argument"
+  },
+  {
+    "text": "!VERBOSE@bot argument",
+    "result": "/VERBOSE@bot argument"
+  },
+  {
+    "text": "!focus argument",
+    "result": "!focus argument"
+  },
+  {
+    "text": "!FOCUS@bot argument",
+    "result": "!FOCUS@bot argument"
+  },
+  {
+    "text": "!footer argument",
+    "result": "/footer argument"
+  },
+  {
+    "text": "!FOOTER@bot argument",
+    "result": "/FOOTER@bot argument"
+  },
+  {
+    "text": "!yolo argument",
+    "result": "/yolo argument"
+  },
+  {
+    "text": "!YOLO@bot argument",
+    "result": "/YOLO@bot argument"
+  },
+  {
+    "text": "!approvals argument",
+    "result": "/approvals argument"
+  },
+  {
+    "text": "!APPROVALS@bot argument",
+    "result": "/APPROVALS@bot argument"
+  },
+  {
+    "text": "!reasoning argument",
+    "result": "/reasoning argument"
+  },
+  {
+    "text": "!REASONING@bot argument",
+    "result": "/REASONING@bot argument"
+  },
+  {
+    "text": "!fast argument",
+    "result": "/fast argument"
+  },
+  {
+    "text": "!FAST@bot argument",
+    "result": "/FAST@bot argument"
+  },
+  {
+    "text": "!skin argument",
+    "result": "!skin argument"
+  },
+  {
+    "text": "!SKIN@bot argument",
+    "result": "!SKIN@bot argument"
+  },
+  {
+    "text": "!indicator argument",
+    "result": "!indicator argument"
+  },
+  {
+    "text": "!INDICATOR@bot argument",
+    "result": "!INDICATOR@bot argument"
+  },
+  {
+    "text": "!voice argument",
+    "result": "/voice argument"
+  },
+  {
+    "text": "!VOICE@bot argument",
+    "result": "/VOICE@bot argument"
+  },
+  {
+    "text": "!wake argument",
+    "result": "!wake argument"
+  },
+  {
+    "text": "!WAKE@bot argument",
+    "result": "!WAKE@bot argument"
+  },
+  {
+    "text": "!busy argument",
+    "result": "/busy argument"
+  },
+  {
+    "text": "!BUSY@bot argument",
+    "result": "/BUSY@bot argument"
+  },
+  {
+    "text": "!tools argument",
+    "result": "!tools argument"
+  },
+  {
+    "text": "!TOOLS@bot argument",
+    "result": "!TOOLS@bot argument"
+  },
+  {
+    "text": "!toolsets argument",
+    "result": "!toolsets argument"
+  },
+  {
+    "text": "!TOOLSETS@bot argument",
+    "result": "!TOOLSETS@bot argument"
+  },
+  {
+    "text": "!skills argument",
+    "result": "/skills argument"
+  },
+  {
+    "text": "!SKILLS@bot argument",
+    "result": "/SKILLS@bot argument"
+  },
+  {
+    "text": "!memory argument",
+    "result": "/memory argument"
+  },
+  {
+    "text": "!MEMORY@bot argument",
+    "result": "/MEMORY@bot argument"
+  },
+  {
+    "text": "!bundles argument",
+    "result": "/bundles argument"
+  },
+  {
+    "text": "!BUNDLES@bot argument",
+    "result": "/BUNDLES@bot argument"
+  },
+  {
+    "text": "!pet argument",
+    "result": "!pet argument"
+  },
+  {
+    "text": "!PET@bot argument",
+    "result": "!PET@bot argument"
+  },
+  {
+    "text": "!hatch argument",
+    "result": "!hatch argument"
+  },
+  {
+    "text": "!HATCH@bot argument",
+    "result": "!HATCH@bot argument"
+  },
+  {
+    "text": "!generate-pet argument",
+    "result": "!generate-pet argument"
+  },
+  {
+    "text": "!GENERATE-PET@bot argument",
+    "result": "!GENERATE-PET@bot argument"
+  },
+  {
+    "text": "!learn argument",
+    "result": "/learn argument"
+  },
+  {
+    "text": "!LEARN@bot argument",
+    "result": "/LEARN@bot argument"
+  },
+  {
+    "text": "!init argument",
+    "result": "/init argument"
+  },
+  {
+    "text": "!INIT@bot argument",
+    "result": "/INIT@bot argument"
+  },
+  {
+    "text": "!cron argument",
+    "result": "!cron argument"
+  },
+  {
+    "text": "!CRON@bot argument",
+    "result": "!CRON@bot argument"
+  },
+  {
+    "text": "!suggestions argument",
+    "result": "/suggestions argument"
+  },
+  {
+    "text": "!SUGGESTIONS@bot argument",
+    "result": "/SUGGESTIONS@bot argument"
+  },
+  {
+    "text": "!suggest argument",
+    "result": "/suggest argument"
+  },
+  {
+    "text": "!SUGGEST@bot argument",
+    "result": "/SUGGEST@bot argument"
+  },
+  {
+    "text": "!blueprint argument",
+    "result": "/blueprint argument"
+  },
+  {
+    "text": "!BLUEPRINT@bot argument",
+    "result": "/BLUEPRINT@bot argument"
+  },
+  {
+    "text": "!bp argument",
+    "result": "/bp argument"
+  },
+  {
+    "text": "!BP@bot argument",
+    "result": "/BP@bot argument"
+  },
+  {
+    "text": "!curator argument",
+    "result": "/curator argument"
+  },
+  {
+    "text": "!CURATOR@bot argument",
+    "result": "/CURATOR@bot argument"
+  },
+  {
+    "text": "!kanban argument",
+    "result": "/kanban argument"
+  },
+  {
+    "text": "!KANBAN@bot argument",
+    "result": "/KANBAN@bot argument"
+  },
+  {
+    "text": "!reload argument",
+    "result": "!reload argument"
+  },
+  {
+    "text": "!RELOAD@bot argument",
+    "result": "!RELOAD@bot argument"
+  },
+  {
+    "text": "!reload-mcp argument",
+    "result": "/reload-mcp argument"
+  },
+  {
+    "text": "!RELOAD-MCP@bot argument",
+    "result": "/RELOAD-MCP@bot argument"
+  },
+  {
+    "text": "!reload_mcp argument",
+    "result": "/reload_mcp argument"
+  },
+  {
+    "text": "!RELOAD_MCP@bot argument",
+    "result": "/RELOAD_MCP@bot argument"
+  },
+  {
+    "text": "!reload-skills argument",
+    "result": "/reload-skills argument"
+  },
+  {
+    "text": "!RELOAD-SKILLS@bot argument",
+    "result": "/RELOAD-SKILLS@bot argument"
+  },
+  {
+    "text": "!reload_skills argument",
+    "result": "/reload_skills argument"
+  },
+  {
+    "text": "!RELOAD_SKILLS@bot argument",
+    "result": "/RELOAD_SKILLS@bot argument"
+  },
+  {
+    "text": "!browser argument",
+    "result": "!browser argument"
+  },
+  {
+    "text": "!BROWSER@bot argument",
+    "result": "!BROWSER@bot argument"
+  },
+  {
+    "text": "!plugins argument",
+    "result": "!plugins argument"
+  },
+  {
+    "text": "!PLUGINS@bot argument",
+    "result": "!PLUGINS@bot argument"
+  },
+  {
+    "text": "!commands argument",
+    "result": "/commands argument"
+  },
+  {
+    "text": "!COMMANDS@bot argument",
+    "result": "/COMMANDS@bot argument"
+  },
+  {
+    "text": "!help argument",
+    "result": "/help argument"
+  },
+  {
+    "text": "!HELP@bot argument",
+    "result": "/HELP@bot argument"
+  },
+  {
+    "text": "!palette argument",
+    "result": "!palette argument"
+  },
+  {
+    "text": "!PALETTE@bot argument",
+    "result": "!PALETTE@bot argument"
+  },
+  {
+    "text": "!restart argument",
+    "result": "/restart argument"
+  },
+  {
+    "text": "!RESTART@bot argument",
+    "result": "/RESTART@bot argument"
+  },
+  {
+    "text": "!usage argument",
+    "result": "/usage argument"
+  },
+  {
+    "text": "!USAGE@bot argument",
+    "result": "/USAGE@bot argument"
+  },
+  {
+    "text": "!subscription argument",
+    "result": "!subscription argument"
+  },
+  {
+    "text": "!SUBSCRIPTION@bot argument",
+    "result": "!SUBSCRIPTION@bot argument"
+  },
+  {
+    "text": "!upgrade argument",
+    "result": "!upgrade argument"
+  },
+  {
+    "text": "!UPGRADE@bot argument",
+    "result": "!UPGRADE@bot argument"
+  },
+  {
+    "text": "!topup argument",
+    "result": "/topup argument"
+  },
+  {
+    "text": "!TOPUP@bot argument",
+    "result": "/TOPUP@bot argument"
+  },
+  {
+    "text": "!insights argument",
+    "result": "/insights argument"
+  },
+  {
+    "text": "!INSIGHTS@bot argument",
+    "result": "/INSIGHTS@bot argument"
+  },
+  {
+    "text": "!platforms argument",
+    "result": "!platforms argument"
+  },
+  {
+    "text": "!PLATFORMS@bot argument",
+    "result": "!PLATFORMS@bot argument"
+  },
+  {
+    "text": "!gateway argument",
+    "result": "!gateway argument"
+  },
+  {
+    "text": "!GATEWAY@bot argument",
+    "result": "!GATEWAY@bot argument"
+  },
+  {
+    "text": "!platform argument",
+    "result": "/platform argument"
+  },
+  {
+    "text": "!PLATFORM@bot argument",
+    "result": "/PLATFORM@bot argument"
+  },
+  {
+    "text": "!copy argument",
+    "result": "!copy argument"
+  },
+  {
+    "text": "!COPY@bot argument",
+    "result": "!COPY@bot argument"
+  },
+  {
+    "text": "!paste argument",
+    "result": "!paste argument"
+  },
+  {
+    "text": "!PASTE@bot argument",
+    "result": "!PASTE@bot argument"
+  },
+  {
+    "text": "!image argument",
+    "result": "!image argument"
+  },
+  {
+    "text": "!IMAGE@bot argument",
+    "result": "!IMAGE@bot argument"
+  },
+  {
+    "text": "!update argument",
+    "result": "/update argument"
+  },
+  {
+    "text": "!UPDATE@bot argument",
+    "result": "/UPDATE@bot argument"
+  },
+  {
+    "text": "!version argument",
+    "result": "/version argument"
+  },
+  {
+    "text": "!VERSION@bot argument",
+    "result": "/VERSION@bot argument"
+  },
+  {
+    "text": "!v argument",
+    "result": "/v argument"
+  },
+  {
+    "text": "!V@bot argument",
+    "result": "/V@bot argument"
+  },
+  {
+    "text": "!debug argument",
+    "result": "/debug argument"
+  },
+  {
+    "text": "!DEBUG@bot argument",
+    "result": "/DEBUG@bot argument"
+  },
+  {
+    "text": "!quit argument",
+    "result": "!quit argument"
+  },
+  {
+    "text": "!QUIT@bot argument",
+    "result": "!QUIT@bot argument"
+  },
+  {
+    "text": "!exit argument",
+    "result": "!exit argument"
+  },
+  {
+    "text": "!EXIT@bot argument",
+    "result": "!EXIT@bot argument"
+  }
+]

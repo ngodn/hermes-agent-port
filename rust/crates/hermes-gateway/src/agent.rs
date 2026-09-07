@@ -31,6 +31,23 @@ use tokio::process::Command;
 use tokio::sync::mpsc;
 use tracing::warn;
 
+/// Selected internal session context. Keeping the actual store avoids reopening
+/// a guessed state.db path when a caller uses a custom database location.
+#[derive(Clone, Copy, Default)]
+pub struct TurnContext<'a> {
+    pub home: Option<&'a std::path::Path>,
+    pub database: Option<&'a crate::session_db::SessionDb>,
+}
+
+impl<'a> TurnContext<'a> {
+    pub fn from_database(database: Option<&'a crate::session_db::SessionDb>) -> Self {
+        Self {
+            home: database.and_then(|db| db.profile_home()),
+            database,
+        }
+    }
+}
+
 /// Drives a single agent turn for an inbound message, streaming events out.
 ///
 /// `history` is the session's prior messages (oldest first, excluding the
@@ -40,6 +57,19 @@ use tracing::warn;
 /// `= true`, and the caller then neither loads nor persists history for it.
 #[async_trait]
 pub trait AgentClient: Send + Sync {
+    /// Internal routing context from the selected history store, never ingress
+    /// payload. Existing backends keep their own profile/history semantics.
+    async fn run_turn_with_context(
+        &self,
+        context: TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+        events: mpsc::Sender<StreamEvent>,
+    ) -> Result<()> {
+        let _ = context;
+        self.run_turn(msg, history, events).await
+    }
+
     /// Whether prepared model content can cross this backend's input boundary.
     fn supports_structured_content(&self) -> bool {
         false
@@ -391,6 +421,7 @@ mod tests {
 
         let client = SubprocessAgentClient::new("python3", repo_root);
         let msg = Message {
+            resolved_session_id: None,
             platform: Platform::Cli,
             channel_id: "t".into(),
             sender_id: "t".into(),
@@ -398,6 +429,10 @@ mod tests {
             content_parts: None,
             chat_type: None,
             audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(16);
         let run = tokio::spawn(async move { client.run_turn(&msg, &[], tx).await });

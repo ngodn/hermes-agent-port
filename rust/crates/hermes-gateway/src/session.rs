@@ -260,7 +260,7 @@ pub fn is_shared_multi_user_session(
     if source.chat_type_or_dm() == "dm" {
         return false;
     }
-    if source.thread_id.is_some() {
+    if source.thread_id.as_ref().is_some_and(|s| !s.is_empty()) {
         return !thread_sessions_per_user;
     }
     !group_sessions_per_user
@@ -274,6 +274,34 @@ fn session_key_namespace(profile: Option<&str>) -> String {
         Some(p) if p.is_empty() || p == "default" => "agent:main".to_string(),
         Some(p) => format!("agent:{p}"),
     }
+}
+
+pub type ProfileKeyResolver<'a> = dyn FnMut() -> anyhow::Result<serde_json::Value> + 'a;
+
+/// BasePlatformAdapter profile selection: stamped source, credential owner,
+/// then the store resolver. Keep the selected spelling, including whitespace.
+pub fn resolve_key_profile(
+    source: Option<&serde_json::Value>,
+    owner: Option<&serde_json::Value>,
+    resolver: Option<&mut ProfileKeyResolver<'_>>,
+) -> Option<String> {
+    let valid = |value: &serde_json::Value| {
+        value
+            .as_str()
+            .filter(|s| {
+                !s.trim_matches(crate::python_value::python_whitespace)
+                    .is_empty()
+            })
+            .map(str::to_owned)
+    };
+    for candidate in [source, owner].into_iter().flatten() {
+        if let Some(profile) = valid(candidate) {
+            return Some(profile);
+        }
+    }
+    resolver
+        .and_then(|resolve| resolve().ok())
+        .and_then(|value| valid(&value))
 }
 
 fn canonical_wa(id: &str) -> String {
@@ -313,7 +341,7 @@ pub fn build_session_key(
         }
         if !dm_chat_id.is_empty() {
             parts.push(dm_chat_id);
-            if let Some(tid) = &source.thread_id {
+            if let Some(tid) = source.thread_id.as_ref().filter(|s| !s.is_empty()) {
                 parts.push(tid.clone());
             }
             return parts.join(":");
@@ -323,7 +351,8 @@ pub fn build_session_key(
         let mut participant = source
             .user_id_alt
             .clone()
-            .or_else(|| source.user_id.clone());
+            .filter(|s| !s.is_empty())
+            .or_else(|| source.user_id.clone().filter(|s| !s.is_empty()));
         if let Some(p) = &participant {
             if platform == "whatsapp" {
                 participant = Some(canonical_wa(p));
@@ -331,12 +360,12 @@ pub fn build_session_key(
         }
         if let Some(p) = participant.filter(|p| !p.is_empty()) {
             parts.push(p);
-            if let Some(tid) = &source.thread_id {
+            if let Some(tid) = source.thread_id.as_ref().filter(|s| !s.is_empty()) {
                 parts.push(tid.clone());
             }
             return parts.join(":");
         }
-        if let Some(tid) = &source.thread_id {
+        if let Some(tid) = source.thread_id.as_ref().filter(|s| !s.is_empty()) {
             parts.push(tid.clone());
         }
         return parts.join(":");
@@ -346,7 +375,8 @@ pub fn build_session_key(
     let mut participant_id = source
         .user_id_alt
         .clone()
-        .or_else(|| source.user_id.clone());
+        .filter(|s| !s.is_empty())
+        .or_else(|| source.user_id.clone().filter(|s| !s.is_empty()));
     if let Some(p) = &participant_id {
         if platform == "whatsapp" {
             participant_id = Some(canonical_wa(p));
@@ -359,9 +389,20 @@ pub fn build_session_key(
     let effective_thread_id = source
         .thread_id
         .clone()
-        .or_else(|| source.prospective_thread_id.clone());
+        .filter(|s| !s.is_empty())
+        .or_else(|| {
+            source
+                .prospective_thread_id
+                .clone()
+                .filter(|s| !s.is_empty())
+        });
     let mut chat_type_slot = source.chat_type_or_dm().to_string();
-    if source.prospective_thread_id.is_some() && source.thread_id.is_none() {
+    if source
+        .prospective_thread_id
+        .as_ref()
+        .is_some_and(|s| !s.is_empty())
+        && source.thread_id.as_ref().is_none_or(|s| s.is_empty())
+    {
         chat_type_slot = "thread".to_string();
     }
 
@@ -403,7 +444,7 @@ pub fn sanitize_model_override(over: Option<&Value>) -> Option<Value> {
                 Value::Null => continue,
                 Value::String(s) if s.is_empty() => continue,
                 Value::String(s) => s.clone(),
-                other => other.to_string(),
+                other => crate::python_value::python_repr(other),
             };
             cleaned.insert(key.to_string(), json!(s));
         }
@@ -418,6 +459,68 @@ pub fn sanitize_model_override(over: Option<&Value>) -> Option<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn profile_resolution_uses_source_owner_then_store() {
+        use serde_json::json;
+        let mut calls = 0;
+        let mut resolve = || {
+            calls += 1;
+            Ok(json!("store"))
+        };
+        assert_eq!(
+            resolve_key_profile(
+                Some(&json!(" source ")),
+                Some(&json!("owner")),
+                Some(&mut resolve)
+            )
+            .as_deref(),
+            Some(" source ")
+        );
+        assert_eq!(
+            resolve_key_profile(
+                Some(&json!("\u{001c}")),
+                Some(&json!("owner")),
+                Some(&mut resolve)
+            )
+            .as_deref(),
+            Some("owner")
+        );
+        assert_eq!(
+            resolve_key_profile(Some(&json!(42)), Some(&json!(false)), Some(&mut resolve))
+                .as_deref(),
+            Some("store")
+        );
+        assert_eq!(calls, 1);
+        let mut invalid = || Ok(json!({"profile":"not a string"}));
+        assert_eq!(resolve_key_profile(None, None, Some(&mut invalid)), None);
+        let mut failed = || anyhow::bail!("store unavailable");
+        assert_eq!(resolve_key_profile(None, None, Some(&mut failed)), None);
+        assert_eq!(resolve_key_profile(None, None, None), None);
+    }
+
+    #[test]
+    fn empty_identifiers_use_the_same_fallbacks_as_missing_identifiers() {
+        let mut source = SessionSource::new("slack", "");
+        source.thread_id = Some(String::new());
+        source.user_id_alt = Some(String::new());
+        source.user_id = Some("user".into());
+        assert_eq!(
+            build_session_key(&source, true, false, None),
+            "agent:main:slack:dm:user"
+        );
+        source.chat_type = "group".into();
+        source.chat_id = "channel".into();
+        assert_eq!(
+            build_session_key(&source, true, false, None),
+            "agent:main:slack:group:channel:user"
+        );
+        source.prospective_thread_id = Some("root".into());
+        assert_eq!(
+            build_session_key(&source, true, false, None),
+            "agent:main:slack:thread:channel:root"
+        );
+    }
 
     #[test]
     fn hashing_and_safety() {

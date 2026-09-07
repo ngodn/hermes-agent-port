@@ -1,0 +1,2045 @@
+[
+  {
+    "input": "\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\n",
+    "expected": {
+      "branch": {
+        "head": "main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\r\n",
+    "expected": {
+      "branch": {
+        "head": "main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\u2028",
+    "expected": {
+      "branch": {
+        "head": "main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\n? another",
+    "expected": {
+      "branch": {
+        "head": "main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\r\n? another",
+    "expected": {
+      "branch": {
+        "head": "main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head main\u2028? another",
+    "expected": {
+      "branch": {
+        "head": "main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\n",
+    "expected": {
+      "branch": {
+        "head": "(detached)"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\r\n",
+    "expected": {
+      "branch": {
+        "head": "(detached)"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\u2028",
+    "expected": {
+      "branch": {
+        "head": "(detached)"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\n? another",
+    "expected": {
+      "branch": {
+        "head": "(detached)"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\r\n? another",
+    "expected": {
+      "branch": {
+        "head": "(detached)"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head (detached)\u2028? another",
+    "expected": {
+      "branch": {
+        "head": "(detached)"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \n",
+    "expected": {
+      "branch": {
+        "head": "name with spaces  "
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \r\n",
+    "expected": {
+      "branch": {
+        "head": "name with spaces  "
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \u2028",
+    "expected": {
+      "branch": {
+        "head": "name with spaces  "
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \n? another",
+    "expected": {
+      "branch": {
+        "head": "name with spaces  "
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \r\n? another",
+    "expected": {
+      "branch": {
+        "head": "name with spaces  "
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head name with spaces  \u2028? another",
+    "expected": {
+      "branch": {
+        "head": "name with spaces  "
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\n",
+    "expected": {
+      "branch": {
+        "head": "branch.head"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\r\n",
+    "expected": {
+      "branch": {
+        "head": "branch.head"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\u2028",
+    "expected": {
+      "branch": {
+        "head": "branch.head"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\n? another",
+    "expected": {
+      "branch": {
+        "head": "branch.head"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\r\n? another",
+    "expected": {
+      "branch": {
+        "head": "branch.head"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.head\u2028? another",
+    "expected": {
+      "branch": {
+        "head": "branch.head"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\n",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\r\n",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\u2028",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\n? another",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\r\n? another",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.upstream origin/main\u2028? another",
+    "expected": {
+      "branch": {
+        "upstream": "origin/main"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\n",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\r\n",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\u2028",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\n? another",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\r\n? another",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab +2 -3\u2028? another",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\n",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\r\n",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\u2028",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3",
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\n? another",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\r\n? another",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab ++2 --3\u2028? another",
+    "expected": {
+      "branch": {
+        "ahead": "2",
+        "behind": "3"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "# branch.ab\n",
+    "error": true
+  },
+  {
+    "input": "# branch.ab\r\n",
+    "error": true
+  },
+  {
+    "input": "# branch.ab\u2028",
+    "error": true
+  },
+  {
+    "input": "# branch.ab\n# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "# branch.ab\r\n# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "# branch.ab\u2028# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "# branch.ab\n? another",
+    "error": true
+  },
+  {
+    "input": "# branch.ab\r\n? another",
+    "error": true
+  },
+  {
+    "input": "# branch.ab\u2028? another",
+    "error": true
+  },
+  {
+    "input": "1 MM ignored fields\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 MM ignored fields\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 MM ignored fields\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 MM ignored fields\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 MM ignored fields\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 MM ignored fields\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 MM ignored fields\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 MM ignored fields\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 MM ignored fields\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .M ignored fields\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "2 R. rename\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 .\n",
+    "error": true
+  },
+  {
+    "input": "1 .\r\n",
+    "error": true
+  },
+  {
+    "input": "1 .\u2028",
+    "error": true
+  },
+  {
+    "input": "1 .\n# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "1 .\r\n# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "1 .\u2028# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "1 .\n? another",
+    "error": true
+  },
+  {
+    "input": "1 .\r\n? another",
+    "error": true
+  },
+  {
+    "input": "1 .\u2028? another",
+    "error": true
+  },
+  {
+    "input": "1 \n",
+    "error": true
+  },
+  {
+    "input": "1 \r\n",
+    "error": true
+  },
+  {
+    "input": "1 \u2028",
+    "error": true
+  },
+  {
+    "input": "1 \n# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "1 \r\n# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "1 \u2028# branch.head replaced",
+    "error": true
+  },
+  {
+    "input": "1 \n? another",
+    "error": true
+  },
+  {
+    "input": "1 \r\n? another",
+    "error": true
+  },
+  {
+    "input": "1 \u2028? another",
+    "error": true
+  },
+  {
+    "input": "u UU conflict\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "u UU conflict\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "u UU conflict\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "u UU conflict\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "u UU conflict\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "u UU conflict\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "u UU conflict\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "u UU conflict\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "u UU conflict\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 1
+      }
+    }
+  },
+  {
+    "input": "? untracked\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "? untracked\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "? untracked\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "? untracked\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "? untracked\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "? untracked\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "? untracked\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 2,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "? untracked\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 2,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "? untracked\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 2,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "! ignored\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1\tMM ignored\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 0,
+        "modified": 0,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\r\n",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\u2028",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\r\n# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\u2028# branch.head replaced",
+    "expected": {
+      "branch": {
+        "head": "replaced"
+      },
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 0,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\r\n? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  },
+  {
+    "input": "1 \u00a0MM ignored\u2028? another",
+    "expected": {
+      "branch": {},
+      "counts": {
+        "staged": 1,
+        "modified": 1,
+        "untracked": 1,
+        "conflicts": 0
+      }
+    }
+  }
+]

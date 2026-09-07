@@ -1,0 +1,775 @@
+{
+  "processes": [
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": -100.0,
+      "limit": null,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": -100.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": -100.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": -100.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": -100.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 0.0,
+      "limit": null,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 0.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 0.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 0.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 0.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 99.0,
+      "limit": null,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 99.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 99.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 99.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 99.0,
+      "limit": 100.0,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 100.0,
+      "limit": null,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 100.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 100.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 100.0,
+      "limit": 1.0,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 100.0,
+      "limit": 100.0,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 101.0,
+      "limit": null,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 101.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 101.0,
+      "limit": 0.0,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 101.0,
+      "limit": 1.0,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": false,
+      "started": 101.0,
+      "limit": 100.0,
+      "result": true
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": -100.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": -100.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": -100.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": -100.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": -100.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 0.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 0.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 0.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 0.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 0.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 99.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 99.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 99.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 99.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 99.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 100.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 100.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 100.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 100.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 100.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 101.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 101.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 101.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 101.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "key",
+      "exited": true,
+      "started": 101.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": -100.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": -100.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": -100.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": -100.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": -100.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 0.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 0.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 0.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 0.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 0.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 99.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 99.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 99.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 99.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 99.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 100.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 100.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 100.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 100.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 100.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 101.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 101.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 101.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 101.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": false,
+      "started": 101.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": -100.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": -100.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": -100.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": -100.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": -100.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 0.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 0.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 0.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 0.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 0.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 99.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 99.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 99.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 99.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 99.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 100.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 100.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 100.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 100.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 100.0,
+      "limit": 100.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 101.0,
+      "limit": null,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 101.0,
+      "limit": -1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 101.0,
+      "limit": 0.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 101.0,
+      "limit": 1.0,
+      "result": false
+    },
+    {
+      "process_session": "other",
+      "exited": true,
+      "started": 101.0,
+      "limit": 100.0,
+      "result": false
+    }
+  ],
+  "settings": [
+    {
+      "hours": null,
+      "result": null,
+      "error": false
+    },
+    {
+      "hours": false,
+      "result": null,
+      "error": false
+    },
+    {
+      "hours": true,
+      "result": 3600,
+      "error": false
+    },
+    {
+      "hours": 0,
+      "result": null,
+      "error": false
+    },
+    {
+      "hours": -1,
+      "result": null,
+      "error": false
+    },
+    {
+      "hours": 0.5,
+      "result": 1800.0,
+      "error": false
+    },
+    {
+      "hours": 24,
+      "result": 86400,
+      "error": false
+    },
+    {
+      "hours": "",
+      "result": null,
+      "error": false
+    },
+    {
+      "hours": "24",
+      "result": null,
+      "error": true
+    },
+    {
+      "hours": [],
+      "result": null,
+      "error": false
+    },
+    {
+      "hours": [
+        1
+      ],
+      "result": null,
+      "error": true
+    },
+    {
+      "hours": {},
+      "result": null,
+      "error": false
+    },
+    {
+      "hours": {
+        "x": 1
+      },
+      "result": null,
+      "error": true
+    }
+  ]
+}

@@ -36,6 +36,10 @@ data/
 # `data/` pattern above would otherwise swallow it.
 !hermes_cli/data/
 !hermes_cli/data/plugin_index.json
+# Compiled Rust command metadata is source data, not a runtime cache.
+!rust/crates/hermes-gateway/data/
+rust/crates/hermes-gateway/data/*
+!rust/crates/hermes-gateway/data/commands.json
 .pytest_cache/
 test_durations.json
 .pytest-cache/

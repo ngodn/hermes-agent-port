@@ -1,0 +1,586 @@
+[
+  {
+    "env": null,
+    "config": null,
+    "expected": null
+  },
+  {
+    "env": null,
+    "config": [],
+    "expected": null
+  },
+  {
+    "env": null,
+    "config": "bad",
+    "expected": null
+  },
+  {
+    "env": null,
+    "config": {},
+    "expected": null
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": true
+    },
+    "expected": null
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": []
+    },
+    "expected": null
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": null
+    },
+    "expected": null
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": null
+      }
+    },
+    "expected": "None"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": false
+      }
+    },
+    "expected": "False"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": true
+      }
+    },
+    "expected": "True"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": 0
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": 1.25
+      }
+    },
+    "expected": "1.25"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": ""
+      }
+    },
+    "expected": null
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": " text\u001c"
+      }
+    },
+    "expected": "text"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": []
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": [
+          "a",
+          null,
+          true
+        ]
+      }
+    },
+    "expected": "['a', None, True]"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": {}
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "env": null,
+    "config": {
+      "agent": {
+        "environment_hint": {
+          "x": "y"
+        }
+      }
+    },
+    "expected": "{'x': 'y'}"
+  },
+  {
+    "env": "",
+    "config": null,
+    "expected": null
+  },
+  {
+    "env": "",
+    "config": [],
+    "expected": null
+  },
+  {
+    "env": "",
+    "config": "bad",
+    "expected": null
+  },
+  {
+    "env": "",
+    "config": {},
+    "expected": null
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": true
+    },
+    "expected": null
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": []
+    },
+    "expected": null
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": null
+    },
+    "expected": null
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": null
+      }
+    },
+    "expected": "None"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": false
+      }
+    },
+    "expected": "False"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": true
+      }
+    },
+    "expected": "True"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": 0
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": 1.25
+      }
+    },
+    "expected": "1.25"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": ""
+      }
+    },
+    "expected": null
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": " text\u001c"
+      }
+    },
+    "expected": "text"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": []
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": [
+          "a",
+          null,
+          true
+        ]
+      }
+    },
+    "expected": "['a', None, True]"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": {}
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "env": "",
+    "config": {
+      "agent": {
+        "environment_hint": {
+          "x": "y"
+        }
+      }
+    },
+    "expected": "{'x': 'y'}"
+  },
+  {
+    "env": " \u001c",
+    "config": null,
+    "expected": null
+  },
+  {
+    "env": " \u001c",
+    "config": [],
+    "expected": null
+  },
+  {
+    "env": " \u001c",
+    "config": "bad",
+    "expected": null
+  },
+  {
+    "env": " \u001c",
+    "config": {},
+    "expected": null
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": true
+    },
+    "expected": null
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": []
+    },
+    "expected": null
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": null
+    },
+    "expected": null
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": null
+      }
+    },
+    "expected": "None"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": false
+      }
+    },
+    "expected": "False"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": true
+      }
+    },
+    "expected": "True"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": 0
+      }
+    },
+    "expected": "0"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": 1.25
+      }
+    },
+    "expected": "1.25"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": ""
+      }
+    },
+    "expected": null
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": " text\u001c"
+      }
+    },
+    "expected": "text"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": []
+      }
+    },
+    "expected": "[]"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": [
+          "a",
+          null,
+          true
+        ]
+      }
+    },
+    "expected": "['a', None, True]"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": {}
+      }
+    },
+    "expected": "{}"
+  },
+  {
+    "env": " \u001c",
+    "config": {
+      "agent": {
+        "environment_hint": {
+          "x": "y"
+        }
+      }
+    },
+    "expected": "{'x': 'y'}"
+  },
+  {
+    "env": " env hint ",
+    "config": null,
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": [],
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": "bad",
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {},
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": true
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": []
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": null
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": null
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": false
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": true
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": 0
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": 1.25
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": ""
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": " text\u001c"
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": []
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": [
+          "a",
+          null,
+          true
+        ]
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": {}
+      }
+    },
+    "expected": "env hint"
+  },
+  {
+    "env": " env hint ",
+    "config": {
+      "agent": {
+        "environment_hint": {
+          "x": "y"
+        }
+      }
+    },
+    "expected": "env hint"
+  }
+]

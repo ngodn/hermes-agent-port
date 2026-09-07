@@ -1,0 +1,922 @@
+[
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": []
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ]
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ]
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": []
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ]
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ]
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "bot_id": "B1"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_id": "B1"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_id": "B1"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "bot_id": "B1"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_id": "B1"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_id": "B1"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "bot_id": null
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_id": null
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_id": null
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "bot_id": null
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_id": null
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_id": null
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "bot_profile": {
+        "id": "B1"
+      }
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_profile": {
+        "id": "B1"
+      }
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_profile": {
+        "id": "B1"
+      }
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "bot_profile": {
+        "id": "B1"
+      }
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_profile": {
+        "id": "B1"
+      }
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "bot_profile": {
+        "id": "B1"
+      }
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "subtype": "bot_message"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "subtype": "bot_message"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "subtype": "bot_message"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "subtype": "bot_message"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "subtype": "bot_message"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "subtype": "bot_message"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "user_profile": {
+        "is_bot": true
+      }
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "user_profile": {
+        "is_bot": true
+      }
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "user_profile": {
+        "is_bot": true
+      }
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "user_profile": {
+        "is_bot": true
+      }
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "user_profile": {
+        "is_bot": true
+      }
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "user_profile": {
+        "is_bot": true
+      }
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "app_id": "A1"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "app_id": "A1"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "app_id": "A1"
+    },
+    "allowed": [],
+    "bot": true,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "app_id": "A1"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "app_id": "A1"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "app_id": "A1"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "app_id": "A1",
+      "client_msg_id": "human"
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "app_id": "A1",
+      "client_msg_id": "human"
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "app_id": "A1",
+      "client_msg_id": "human"
+    },
+    "allowed": [],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [],
+      "app_id": "A1",
+      "client_msg_id": "human"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": false
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_section",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "app_id": "A1",
+      "client_msg_id": "human"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": true
+  },
+  {
+    "event": {
+      "user": "PEER",
+      "text": "caption",
+      "blocks": [
+        {
+          "type": "rich_text_quote",
+          "elements": [
+            {
+              "type": "user",
+              "user_id": "BOT"
+            }
+          ]
+        }
+      ],
+      "app_id": "A1",
+      "client_msg_id": "human"
+    },
+    "allowed": [
+      "PEER"
+    ],
+    "bot": false,
+    "mentioned": false
+  }
+]

@@ -1,0 +1,4888 @@
+[
+  {
+    "name": "first_end_wins_compression_then_reset",
+    "description": "Compression ended session ignores subsequent reset attempt.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "compression"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "compression"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "compression",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "compression",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "first_end_wins_reset_then_compression",
+    "description": "Reset ended session ignores subsequent compression end attempt.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "compression"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "compression"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "first_end_wins_reset_then_reset",
+    "description": "Second reset call no-ops and does not increment generation again.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "first_end_wins_accidental_then_plain_end",
+    "description": "Plain end_session cannot overwrite an accidental end reason.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "agent_close"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "agent_close"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "agent_close",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "agent_close",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "first_end_wins_user_exit_then_reset",
+    "description": "User exit end reason is preserved against subsequent reset calls.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "user_exit"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "user_exit"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "user_exit",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "user_exit",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "promote_live_session_default_reason",
+    "description": "Promoting live session sets session_reset and increments generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "promote_live_session_reason_idle",
+    "description": "Promoting live session with idle reason sets idle and increments generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "idle"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "idle"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "idle",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "promote_live_session_reason_daily",
+    "description": "Promoting live session with daily reason sets daily and increments generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "daily"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "daily"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "daily",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "promote_live_session_reason_suspended",
+    "description": "Promoting live session with suspended reason sets suspended and increments generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "suspended"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "suspended"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "suspended",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "promote_live_session_reason_resume_pending_expired",
+    "description": "Promoting live session with resume_pending_expired sets reason and increments generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "resume_pending_expired"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "resume_pending_expired"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "resume_pending_expired",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "promote_accidental_agent_close",
+    "description": "Promote overwrites accidental agent_close end reason with session_reset.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "agent_close",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "promote_accidental_ws_orphan_reap",
+    "description": "Promote overwrites accidental ws_orphan_reap with session_reset.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "ws_orphan_reap",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "promote_accidental_superseded_by_resume",
+    "description": "Promote overwrites accidental superseded_by_resume with session_reset.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "superseded_by_resume",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "promote_accidental_startup_orphan_reap",
+    "description": "Promote overwrites accidental startup_orphan_reap with daily reset reason.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "startup_orphan_reap",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "daily"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "daily"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "daily",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "preserve_explicit_compression",
+    "description": "Explicit compression boundary is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "compression",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "compression",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_explicit_session_reset",
+    "description": "Explicit session_reset boundary is preserved against promote with different reason.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "idle"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "idle"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_explicit_session_switch",
+    "description": "Explicit session_switch boundary is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_switch",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "session_switch",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_explicit_idle",
+    "description": "Explicit idle boundary is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "idle",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "idle",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_explicit_daily",
+    "description": "Explicit daily boundary is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "daily",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "daily",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_explicit_suspended",
+    "description": "Explicit suspended boundary is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "suspended",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "suspended",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_explicit_resume_pending_expired",
+    "description": "Explicit resume_pending_expired boundary is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "resume_pending_expired",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "resume_pending_expired",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_other_user_exit",
+    "description": "Non-recoverable user_exit reason is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "user_exit",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "user_exit",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_other_archived",
+    "description": "Non-recoverable archived reason is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "archived",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "archived",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "preserve_other_branched",
+    "description": "Non-recoverable branched reason is preserved against promote.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "branched",
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "branched",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "missing_session_end",
+    "description": "Ending nonexistent session is a silent no-op.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "missing_session",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "missing_session",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "missing_session_promote",
+    "description": "Promoting nonexistent session returns False without modifications.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "missing_session"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "missing_session"
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "missing_session_reopen",
+    "description": "Reopening nonexistent session is a silent no-op.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "missing_session"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "missing_session"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "empty_session_id_promote",
+    "description": "Promoting empty session id returns False early.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": ""
+        },
+        "result": false,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "empty_session_id_end",
+    "description": "Ending empty session id affects no rows.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "empty_session_id_reopen",
+    "description": "Reopening empty session id affects no rows.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": ""
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": ""
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "reopen_live_session_noop",
+    "description": "Reopening an already live session is safe and leaves it live.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_null_session_key",
+    "description": "Unkeyed session reset does not increment conversation generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_empty_session_key",
+    "description": "Empty session key string does not increment conversation generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_whitespace_session_key",
+    "description": "Whitespace-only session key does not increment conversation generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "   ",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "   ",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_empty_source",
+    "description": "Empty source string does not increment conversation generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_whitespace_source",
+    "description": "Whitespace-only source string does not increment conversation generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "  \t  ",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "  \t  ",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_non_reset_reason_compression",
+    "description": "Compression end reason does not increment conversation generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "compression"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "compression"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "compression",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_non_reset_reason_agent_close",
+    "description": "Accidental agent_close reason does not increment conversation generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "agent_close"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "agent_close"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "agent_close",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_non_reset_reason_user_exit",
+    "description": "User exit reason does not increment conversation generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "user_exit"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "user_exit"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "user_exit",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "generation_increments_reason_session_reset",
+    "description": "Keyed session_reset reason increments conversation generation to 1.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "generation_increments_reason_session_switch",
+    "description": "Keyed session_switch reason increments conversation generation to 1.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_switch"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_switch"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_switch",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "generation_increments_reason_idle",
+    "description": "Keyed idle reset reason increments conversation generation to 1.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "idle"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "idle"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "idle",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "generation_increments_reason_daily",
+    "description": "Keyed daily reset reason increments conversation generation to 1.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "daily"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "daily"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "daily",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "generation_increments_reason_suspended",
+    "description": "Keyed suspended reset reason increments conversation generation to 1.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "suspended"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "suspended"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "suspended",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "generation_increments_reason_resume_pending_expired",
+    "description": "Keyed resume_pending_expired increments conversation generation to 1.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "resume_pending_expired"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "resume_pending_expired"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "resume_pending_expired",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "generation_increments_existing_counter",
+    "description": "Reset increment updates existing conversation generation count from 4 to 5.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [
+      {
+        "source": "cli",
+        "session_key": "k1",
+        "generation": 4
+      }
+    ],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "generation_independent_by_source_and_key",
+    "description": "Generations are tracked independently per source and session_key pair.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      },
+      {
+        "id": "s2",
+        "source": "slack",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      },
+      {
+        "id": "s3",
+        "source": "cli",
+        "session_key": "k2",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s2",
+          "end_reason": "session_reset"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s3",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          },
+          {
+            "id": "s2",
+            "source": "slack",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "s3",
+            "source": "cli",
+            "session_key": "k2",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s2",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          },
+          {
+            "id": "s2",
+            "source": "slack",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          },
+          {
+            "id": "s3",
+            "source": "cli",
+            "session_key": "k2",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          },
+          {
+            "source": "slack",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s3",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          },
+          {
+            "id": "s2",
+            "source": "slack",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          },
+          {
+            "id": "s3",
+            "source": "cli",
+            "session_key": "k2",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          },
+          {
+            "source": "cli",
+            "session_key": "k2",
+            "generation": 1
+          },
+          {
+            "source": "slack",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "generation_promote_unregistered_reason_no_increment",
+    "description": "Promote with unregistered reason succeeds on live row but does not bump generation.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "unregistered_custom"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "unregistered_custom"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "unregistered_custom",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "repeated_end_reopen_cycle",
+    "description": "Session ended, reopened, and re-ended increments generation on each reset.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 2
+          }
+        ]
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 2
+          }
+        ]
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "repeated_promote_reopen_cycle",
+    "description": "Repeated promote and reopen cycles advance generation sequentially.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "daily"
+        }
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        }
+      },
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "idle"
+        }
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        }
+      },
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "session_reset"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "daily"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "daily",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "idle"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "idle",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 2
+          }
+        ]
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 2
+          }
+        ]
+      },
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "session_reset"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "repeated_mixed_end_promote_cycle",
+    "description": "Mixed cycle with accidental close does not bump until promoted.",
+    "initial_sessions": [
+      {
+        "id": "s1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        }
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "agent_close"
+        }
+      },
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "suspended"
+        }
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        }
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_switch"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_reset"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "agent_close"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "agent_close",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 1
+          }
+        ]
+      },
+      {
+        "op": "promote_to_session_reset",
+        "args": {
+          "session_id": "s1",
+          "reason": "suspended"
+        },
+        "result": true,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "suspended",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 2
+          }
+        ]
+      },
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "s1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 2
+          }
+        ]
+      },
+      {
+        "op": "end_session",
+        "args": {
+          "session_id": "s1",
+          "end_reason": "session_switch"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "s1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 100.0,
+            "end_reason": "session_switch",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": [
+          {
+            "source": "cli",
+            "session_key": "k1",
+            "generation": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_stamped_same_key_null_config",
+    "description": "Legacy child with same key and null config receives _reset_from marker on parent reopen.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_stamped_same_key_existing_config",
+    "description": "Legacy child preserves existing JSON config keys when _reset_from marker is added.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {
+          "temperature": 0.5,
+          "tags": [
+            "quick"
+          ]
+        }
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "temperature": 0.5,
+              "tags": [
+                "quick"
+              ],
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_not_stamped_different_key",
+    "description": "Child with different session_key is not stamped on parent reopen.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k2",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k2",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_not_stamped_child_key_empty",
+    "description": "Child with empty session_key is not stamped on parent reopen.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_not_stamped_child_key_null",
+    "description": "Child with null session_key is not stamped on parent reopen.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": null,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": null,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_not_stamped_parent_key_empty",
+    "description": "Empty session_key on parent and child does not satisfy child.session_key != empty.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_not_stamped_parent_key_null",
+    "description": "Null session_key on parent does not match child key.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": null,
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": null,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": null,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": null,
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "existing_marker_preserved",
+    "description": "Existing _reset_from marker in child model_config is not overwritten.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {
+          "_reset_from": "prior_parent",
+          "extra": 42
+        }
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "prior_parent",
+              "extra": 42
+            }
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_not_stamped_parent_compression",
+    "description": "Child is not stamped when parent ended with compression instead of reset.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "compression",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_not_stamped_parent_agent_close",
+    "description": "Child is not stamped when parent ended with accidental agent_close.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "agent_close",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_stamped_parent_reason_session_switch",
+    "description": "Child is stamped when parent ended with session_switch.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_switch",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_stamped_parent_reason_idle",
+    "description": "Child is stamped when parent ended with idle.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "idle",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_stamped_parent_reason_daily",
+    "description": "Child is stamped when parent ended with daily.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "daily",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_stamped_parent_reason_suspended",
+    "description": "Child is stamped when parent ended with suspended.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "suspended",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "legacy_child_stamped_parent_reason_resume_pending_expired",
+    "description": "Child is stamped when parent ended with resume_pending_expired.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "resume_pending_expired",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "multiple_children_mixed_filtering",
+    "description": "Only matching unmarked child with identical key is stamped among mixed children.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      },
+      {
+        "id": "c2",
+        "source": "cli",
+        "session_key": "k2",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      },
+      {
+        "id": "c3",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": {
+          "_reset_from": "old_p"
+        }
+      },
+      {
+        "id": "c4",
+        "source": "cli",
+        "session_key": "",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      },
+      {
+        "id": "c5",
+        "source": "cli",
+        "session_key": null,
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      },
+      {
+        "id": "c6",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p2",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "c2",
+            "source": "cli",
+            "session_key": "k2",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "c3",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "old_p"
+            }
+          },
+          {
+            "id": "c4",
+            "source": "cli",
+            "session_key": "",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "c5",
+            "source": "cli",
+            "session_key": null,
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "c6",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p2",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "malformed_json_rollback_single_child",
+    "description": "Malformed JSON in matching child model_config rolls back parent reopen.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": "{not valid json"
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": "OperationalError",
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": "{not valid json"
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "malformed_json_rollback_atomicity_multiple_children",
+    "description": "Transaction rollback ensures valid sibling child is not partially stamped.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      },
+      {
+        "id": "c2",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": "[unterminated array"
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": "OperationalError",
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          },
+          {
+            "id": "c2",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": "[unterminated array"
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": 50.0,
+            "end_reason": "session_reset",
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  },
+  {
+    "name": "malformed_json_unrelated_session_not_blocking",
+    "description": "Malformed JSON in an unrelated session does not block reopening parent.",
+    "initial_sessions": [
+      {
+        "id": "p1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": null,
+        "started_at": 10.0,
+        "ended_at": 50.0,
+        "end_reason": "session_reset",
+        "model_config": null
+      },
+      {
+        "id": "c1",
+        "source": "cli",
+        "session_key": "k1",
+        "parent_session_id": "p1",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": null
+      },
+      {
+        "id": "c_other",
+        "source": "cli",
+        "session_key": "k_other",
+        "parent_session_id": "p_other",
+        "started_at": 10.0,
+        "ended_at": null,
+        "end_reason": null,
+        "model_config": "{broken json"
+      }
+    ],
+    "initial_generations": [],
+    "operations": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "op": "reopen_session",
+        "args": {
+          "session_id": "p1"
+        },
+        "result": null,
+        "error": null,
+        "sessions": [
+          {
+            "id": "c1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": "p1",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": {
+              "_reset_from": "p1"
+            }
+          },
+          {
+            "id": "c_other",
+            "source": "cli",
+            "session_key": "k_other",
+            "parent_session_id": "p_other",
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": "{broken json"
+          },
+          {
+            "id": "p1",
+            "source": "cli",
+            "session_key": "k1",
+            "parent_session_id": null,
+            "started_at": 10.0,
+            "ended_at": null,
+            "end_reason": null,
+            "model_config": null
+          }
+        ],
+        "conversation_generations": []
+      }
+    ]
+  }
+]

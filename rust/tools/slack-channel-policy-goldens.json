@@ -1,0 +1,290 @@
+[
+  {
+    "extra": null,
+    "legacy": null,
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": null,
+    "legacy": "",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": null,
+    "legacy": "true",
+    "disabled": true,
+    "allowed": [
+      "true"
+    ]
+  },
+  {
+    "extra": null,
+    "legacy": "C3",
+    "disabled": false,
+    "allowed": [
+      "C3"
+    ]
+  },
+  {
+    "extra": false,
+    "legacy": null,
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": false,
+    "legacy": "",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": false,
+    "legacy": "true",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": false,
+    "legacy": "C3",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": true,
+    "legacy": null,
+    "disabled": true,
+    "allowed": []
+  },
+  {
+    "extra": true,
+    "legacy": "",
+    "disabled": true,
+    "allowed": []
+  },
+  {
+    "extra": true,
+    "legacy": "true",
+    "disabled": true,
+    "allowed": []
+  },
+  {
+    "extra": true,
+    "legacy": "C3",
+    "disabled": true,
+    "allowed": []
+  },
+  {
+    "extra": 0,
+    "legacy": null,
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": 0,
+    "legacy": "",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": 0,
+    "legacy": "true",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": 0,
+    "legacy": "C3",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": 2,
+    "legacy": null,
+    "disabled": true,
+    "allowed": []
+  },
+  {
+    "extra": 2,
+    "legacy": "",
+    "disabled": true,
+    "allowed": []
+  },
+  {
+    "extra": 2,
+    "legacy": "true",
+    "disabled": true,
+    "allowed": []
+  },
+  {
+    "extra": 2,
+    "legacy": "C3",
+    "disabled": true,
+    "allowed": []
+  },
+  {
+    "extra": [],
+    "legacy": null,
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": [],
+    "legacy": "",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": [],
+    "legacy": "true",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": [],
+    "legacy": "C3",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": null,
+    "disabled": true,
+    "allowed": [
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "",
+    "disabled": true,
+    "allowed": [
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "true",
+    "disabled": true,
+    "allowed": [
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "extra": [
+      "C1",
+      " C2 "
+    ],
+    "legacy": "C3",
+    "disabled": true,
+    "allowed": [
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "extra": "",
+    "legacy": null,
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": "",
+    "legacy": "",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": "",
+    "legacy": "true",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": "",
+    "legacy": "C3",
+    "disabled": false,
+    "allowed": []
+  },
+  {
+    "extra": " on ",
+    "legacy": null,
+    "disabled": true,
+    "allowed": [
+      "on"
+    ]
+  },
+  {
+    "extra": " on ",
+    "legacy": "",
+    "disabled": true,
+    "allowed": [
+      "on"
+    ]
+  },
+  {
+    "extra": " on ",
+    "legacy": "true",
+    "disabled": true,
+    "allowed": [
+      "on"
+    ]
+  },
+  {
+    "extra": " on ",
+    "legacy": "C3",
+    "disabled": true,
+    "allowed": [
+      "on"
+    ]
+  },
+  {
+    "extra": "C1,C2",
+    "legacy": null,
+    "disabled": false,
+    "allowed": [
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "extra": "C1,C2",
+    "legacy": "",
+    "disabled": false,
+    "allowed": [
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "extra": "C1,C2",
+    "legacy": "true",
+    "disabled": false,
+    "allowed": [
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "extra": "C1,C2",
+    "legacy": "C3",
+    "disabled": false,
+    "allowed": [
+      "C1",
+      "C2"
+    ]
+  }
+]

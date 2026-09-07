@@ -22,6 +22,104 @@ const ENCODE_ARGS: &[&str] = &[
     "+faststart",
 ];
 
+/// Shared inbound container rules from tools/audio_container.py. Audio-context
+/// MP4 brands use m4a regardless of whether the brand normally denotes video.
+pub fn sniff_audio_ext(data: &[u8], fallback: &str) -> String {
+    let ext = if data.len() >= 8 && &data[4..8] == b"ftyp" {
+        ".m4a"
+    } else if data.starts_with(b"OggS") {
+        ".ogg"
+    } else if data.starts_with(b"fLaC") {
+        ".flac"
+    } else if data.len() >= 12 && data.starts_with(b"RIFF") && &data[8..12] == b"WAVE" {
+        ".wav"
+    } else if data.starts_with(b"ID3") {
+        ".mp3"
+    } else if data.len() >= 2 && data[0] == 255 && data[1] & 0xe0 == 0xe0 {
+        if data[1] & 0xf6 == 0xf0 {
+            ".aac"
+        } else {
+            ".mp3"
+        }
+    } else if data.starts_with(b"\x1a\x45\xdf\xa3") {
+        ".webm"
+    } else {
+        return if fallback.starts_with('.') {
+            fallback.into()
+        } else {
+            format!(".{fallback}")
+        };
+    };
+    ext.into()
+}
+
+/// Resolve once per download. Preserve the Python implementation's negative
+/// limit behavior (reject all sizes), despite its docstring saying disabled.
+pub fn inbound_limit(config: &serde_json::Value) -> i64 {
+    crate::python_value::integer(&config["gateway"]["max_inbound_media_bytes"])
+        .and_then(|v| v.as_i64())
+        .unwrap_or(128 * 1024 * 1024)
+}
+
+pub fn validate_inbound_size(size: usize, limit: i64) -> Result<()> {
+    anyhow::ensure!(
+        limit == 0 || (limit > 0 && size as u128 <= limit as u128),
+        "Inbound audio payload is too large ({size} bytes > {limit} bytes)"
+    );
+    Ok(())
+}
+
+/// Read attachment responses incrementally. Authentication and allowed remote
+/// destinations remain adapter-owned; the shared cache never adds credentials.
+pub async fn cache_audio_response(
+    home: &Path,
+    response: reqwest::Response,
+    fallback: &str,
+    limit: i64,
+) -> Result<PathBuf> {
+    let bytes = read_inbound_response(response, limit).await?;
+    cache_audio(home, &bytes, fallback, limit).await
+}
+
+/// Bound media bodies while streaming, including responses without a length.
+/// The adapter must validate the destination before attaching credentials.
+pub async fn read_inbound_response(response: reqwest::Response, limit: i64) -> Result<Vec<u8>> {
+    let mut response = response.error_for_status()?;
+    anyhow::ensure!(
+        response.status().is_success(),
+        "media download did not return a successful response"
+    );
+    if let Some(size) = response.content_length() {
+        validate_inbound_size(usize::try_from(size)?, limit)?;
+    }
+    let mut bytes = Vec::new();
+    while let Some(chunk) = response.chunk().await? {
+        validate_inbound_size(
+            bytes
+                .len()
+                .checked_add(chunk.len())
+                .context("media size overflow")?,
+            limit,
+        )?;
+        bytes.extend_from_slice(&chunk);
+    }
+    Ok(bytes)
+}
+
+/// Store in the active profile's current or legacy cache layout. Callers pass
+/// trusted fallback extensions, never filenames supplied by remote senders.
+pub async fn cache_audio(home: &Path, data: &[u8], fallback: &str, limit: i64) -> Result<PathBuf> {
+    validate_inbound_size(data.len(), limit)?;
+    let ext = sniff_audio_ext(data, fallback);
+    anyhow::ensure!(!ext.contains(['/', '\\']), "invalid audio cache extension");
+    let directory = crate::config_file::get_hermes_dir("cache/audio", "audio_cache", Some(home));
+    tokio::fs::create_dir_all(&directory).await?;
+    let id = crate::install_identity::mint_id().context("audio cache identity unavailable")?;
+    let path = directory.join(format!("audio_{}{ext}", &id[..12]));
+    tokio::fs::write(&path, data).await?;
+    Ok(path)
+}
+
 /// The converted file owns its private work directory for the entire upload.
 /// Cancellation or an HTTP error drops the same guard as successful completion.
 pub struct ConvertedAudio {
@@ -296,6 +394,28 @@ async fn transcode_with(ffmpeg: &Path, path: &str) -> Result<ConvertedAudio> {
 
 #[cfg(all(test, unix))]
 mod tests {
+    #[test]
+    fn cache_extensions_match_python() {
+        let rows: serde_json::Value =
+            serde_json::from_str(include_str!("../../../tools/audio-cache-goldens.json")).unwrap();
+        for row in rows.as_array().unwrap() {
+            let bytes: Vec<u8> = row["data"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_u64().unwrap() as u8)
+                .collect();
+            assert_eq!(
+                super::sniff_audio_ext(&bytes, row["fallback"].as_str().unwrap()),
+                row["result"],
+                "{row}"
+            );
+        }
+        assert!(super::validate_inbound_size(0, -1).is_err());
+        assert!(super::validate_inbound_size(5, 4).is_err());
+        assert!(super::validate_inbound_size(4, 4).is_ok());
+        assert!(super::validate_inbound_size(5, 0).is_ok());
+    }
     use super::*;
     use std::os::unix::fs::PermissionsExt;
 

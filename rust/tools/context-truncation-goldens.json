@@ -1,0 +1,1058 @@
+[
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": null,
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": "",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": null,
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": "",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": null,
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": "",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": null,
+    "expected": "a\n\n[...truncated SOUL.md: kept 1+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": "",
+    "expected": "a\n\n[...truncated SOUL.md: kept 1+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "a\n\n[...truncated SOUL.md: kept 1+0 of 3 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\nabc",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 3 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": null,
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": "",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": null,
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": "",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": null,
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": "",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": null,
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": "",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": null,
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": "",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": null,
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": "",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": null,
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": "",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": null,
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": "",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "abc",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "abc",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": null,
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": "",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": null,
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": "",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": null,
+    "expected": "\ud83d\ude80\n\n[...truncated SOUL.md: kept 1+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": "",
+    "expected": "\ud83d\ude80\n\n[...truncated SOUL.md: kept 1+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80\n\n[...truncated SOUL.md: kept 1+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": null,
+    "expected": "\ud83d\ude80e\n\n[...truncated SOUL.md: kept 2+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 4 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": "",
+    "expected": "\ud83d\ude80e\n\n[...truncated SOUL.md: kept 2+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 4 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80e\n\n[...truncated SOUL.md: kept 2+0 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 4 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": null,
+    "expected": "\ud83d\ude80e\u0301\n\n[...truncated SOUL.md: kept 3+1 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 5 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": "",
+    "expected": "\ud83d\ude80e\u0301\n\n[...truncated SOUL.md: kept 3+1 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 5 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80e\u0301\n\n[...truncated SOUL.md: kept 3+1 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\nd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 5 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": null,
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\n\n[...truncated SOUL.md: kept 6+1 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 9 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": "",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\n\n[...truncated SOUL.md: kept 6+1 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 9 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\n\n[...truncated SOUL.md: kept 6+1 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\nd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 9 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": null,
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\n\n[...truncated SOUL.md: kept 7+2 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nnd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 10 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": "",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\n\n[...truncated SOUL.md: kept 7+2 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\nnd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 10 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\n\n[...truncated SOUL.md: kept 7+2 of 11 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\nnd",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 11 chars exceeds limit of 10 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": null,
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": "",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": null,
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": "",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": null,
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": "",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": null,
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": "",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\ud83d\ude80e\u0301\n\u4e2d\u6587\r\nend",
+    "warning": null
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": null,
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": "",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 0,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 0 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": null,
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": "",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 1,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "\n\n[...truncated SOUL.md: kept 0+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 1 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": null,
+    "expected": "0\n\n[...truncated SOUL.md: kept 1+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": "",
+    "expected": "0\n\n[...truncated SOUL.md: kept 1+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 2,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "0\n\n[...truncated SOUL.md: kept 1+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 2 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": null,
+    "expected": "01\n\n[...truncated SOUL.md: kept 2+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 4 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": "",
+    "expected": "01\n\n[...truncated SOUL.md: kept 2+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 4 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 4,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "01\n\n[...truncated SOUL.md: kept 2+0 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 4 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": null,
+    "expected": "012\n\n[...truncated SOUL.md: kept 3+1 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n9",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 5 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": "",
+    "expected": "012\n\n[...truncated SOUL.md: kept 3+1 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n9",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 5 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 5,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "012\n\n[...truncated SOUL.md: kept 3+1 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n9",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 5 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": null,
+    "expected": "012345\n\n[...truncated SOUL.md: kept 6+1 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n9",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 9 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": "",
+    "expected": "012345\n\n[...truncated SOUL.md: kept 6+1 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n9",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 9 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 9,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "012345\n\n[...truncated SOUL.md: kept 6+1 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n9",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 9 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": null,
+    "expected": "0123456\n\n[...truncated SOUL.md: kept 7+2 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n89",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 10 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": "",
+    "expected": "0123456\n\n[...truncated SOUL.md: kept 7+2 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n89",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 10 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 10,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "0123456\n\n[...truncated SOUL.md: kept 7+2 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n89",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 10 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": null,
+    "expected": "0123456\n\n[...truncated SOUL.md: kept 7+2 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n89",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 11 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": "",
+    "expected": "0123456\n\n[...truncated SOUL.md: kept 7+2 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n89",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 11 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 11,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "0123456\n\n[...truncated SOUL.md: kept 7+2 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n89",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 11 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": null,
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678\n\n[...truncated SOUL.md: kept 69+19 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n1234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 99 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": "",
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678\n\n[...truncated SOUL.md: kept 69+19 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: SOUL.md]\n\n1234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 99 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 99,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678\n\n[...truncated SOUL.md: kept 69+19 of 120 chars. The middle is omitted \u2014 if you need the full instructions, read the complete file with the read_file tool: /profiles/red/SOUL.md]\n\n1234567890123456789",
+    "warning": "\u26a0\ufe0f  Context file SOUL.md TRUNCATED: 120 chars exceeds limit of 99 \u2014 trim the file, pin a larger context_file_max_chars, or use a larger-context model!"
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": null,
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": null
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": "",
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": null
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 120,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": null
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": null,
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": null
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": "",
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": null
+  },
+  {
+    "content": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "filename": "SOUL.md",
+    "max_chars": 200,
+    "read_path": "/profiles/red/SOUL.md",
+    "expected": "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+    "warning": null
+  }
+]

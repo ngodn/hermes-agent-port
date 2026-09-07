@@ -202,6 +202,9 @@ pub struct NativeAgentClient {
     output_cap: Option<Value>,
     request_overrides: serde_json::Map<String, Value>,
     cache_scope: Option<String>,
+    /// Already assembled conversation prompt. Clones share the same immutable
+    /// bytes, including across tool rounds; construction never reads files here.
+    system_prompt: Option<std::sync::Arc<str>>,
     turn_limit: usize,
     max_concurrent_children: usize,
     /// When non-empty, turns run through the tool-calling loop (non-streaming);
@@ -231,10 +234,19 @@ impl NativeAgentClient {
             output_cap: None,
             request_overrides: Default::default(),
             cache_scope: None,
+            system_prompt: None,
             turn_limit: crate::turn_limit::UNLIMITED,
             max_concurrent_children: 10,
             tools: Vec::new(),
         })
+    }
+
+    /// Install the assembled prompt when constructing a conversation client.
+    /// Prompt assembly and persisted-session restoration belong to the caller;
+    /// this client keeps the supplied bytes unchanged throughout its lifetime.
+    pub fn with_system_prompt(mut self, prompt: impl Into<String>) -> Self {
+        self.system_prompt = Some(std::sync::Arc::from(prompt.into()));
+        self
     }
 
     /// Attach a base profile during client construction. Unsupported transports
@@ -450,12 +462,19 @@ impl AgentClient for NativeAgentClient {
         // This matches the identity used by begin_turn/end_turn today. Scope
         // lives in this clone for the whole turn, never in shared client state.
         let mut turn_client = self.clone();
-        turn_client.cache_scope = Some(crate::session_db::session_id_for(
-            msg.platform,
-            &msg.channel_id,
-        ));
+        turn_client.cache_scope = Some(crate::session_db::message_session_id(msg));
         let client = &turn_client;
         let content = msg.model_content();
+        let prompted_history = client.system_prompt.as_ref().map(|prompt| {
+            let mut messages = Vec::with_capacity(history.len() + 1);
+            messages.push(crate::session_db::HistoryMessage {
+                role: "system".into(),
+                content: prompt.to_string(),
+            });
+            messages.extend_from_slice(history);
+            messages
+        });
+        let history = prompted_history.as_deref().unwrap_or(history);
 
         // Tool-capable turns run the loop (non-streaming); plain turns stream.
         if !client.tools.is_empty() {
@@ -1350,6 +1369,9 @@ mod tests {
                 .count(),
             28
         );
+        let prompted = client
+            .clone()
+            .with_system_prompt("identity\n\nworkspace\n\nconversation metadata");
         let disabled = client.with_request_overrides(
             json!({"extra_body": {"prompt_cache_key": ""}})
                 .as_object()
@@ -1361,6 +1383,57 @@ mod tests {
             .await
             .unwrap();
         assert!(calls.lock().unwrap()[9].get("prompt_cache_key").is_none());
+
+        let (tx, _rx) = tokio::sync::mpsc::channel(64);
+        let prior = vec![
+            crate::session_db::HistoryMessage {
+                role: "user".into(),
+                content: "earlier".into(),
+            },
+            crate::session_db::HistoryMessage {
+                role: "assistant".into(),
+                content: "answer".into(),
+            },
+        ];
+        for text in ["first", "second"] {
+            prompted
+                .run_turn(&message("prompted", text), &prior, tx.clone())
+                .await
+                .unwrap();
+        }
+        let tool_prompted = prompted
+            .clone()
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        tool_prompted
+            .run_turn(&message("prompted", "clock"), &prior, tx)
+            .await
+            .unwrap();
+        let captured = calls.lock().unwrap();
+        assert_eq!(captured.len(), 14);
+        for request in &captured[10..] {
+            let messages = request["messages"].as_array().unwrap();
+            assert_eq!(
+                messages[0],
+                json!({"role":"system","content":"identity\n\nworkspace\n\nconversation metadata"})
+            );
+            assert_eq!(
+                messages
+                    .iter()
+                    .filter(|message| message["role"] == "system")
+                    .count(),
+                1
+            );
+            assert_eq!(messages[1]["content"], "earlier");
+        }
+        assert_eq!(
+            captured[10]["prompt_cache_key"],
+            captured[11]["prompt_cache_key"]
+        );
+        assert_eq!(
+            captured[12]["prompt_cache_key"],
+            captured[13]["prompt_cache_key"]
+        );
+        assert_eq!(prior[0].role, "user");
     }
 
     #[test]

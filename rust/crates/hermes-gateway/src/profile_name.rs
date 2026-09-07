@@ -85,9 +85,111 @@ pub fn validate_profile_name(name: &str) -> Result<(), ProfileNameError> {
     Ok(())
 }
 
+/// Infer the running profile from its home, as get_active_profile_name does.
+/// The sticky active_profile file selects a launch profile elsewhere; it must
+/// not override the home of an already running gateway. Missing path tails
+/// remain resolvable, so a provisioned state.db is not required for identity.
+pub fn active_profile_name(
+    home: &std::path::Path,
+    root: &std::path::Path,
+) -> std::io::Result<String> {
+    let resolve = |path: &std::path::Path| -> std::io::Result<std::path::PathBuf> {
+        let absolute = if path.is_absolute() {
+            path.to_path_buf()
+        } else {
+            std::env::current_dir()?.join(path)
+        };
+        let text = absolute.to_str().ok_or_else(|| {
+            std::io::Error::new(std::io::ErrorKind::InvalidData, "non-Unicode profile path")
+        })?;
+        crate::file_read_safety::realpath_abs(text.to_owned())
+    };
+    let home = resolve(home)?;
+    if home == resolve(root)? {
+        return Ok("default".into());
+    }
+    let profiles = resolve(&root.join("profiles"))?;
+    if let Ok(relative) = home.strip_prefix(profiles) {
+        if relative.components().count() == 1 {
+            if let Some(name) = relative.to_str() {
+                // Python's regex '$' accepts one terminal newline. Inference
+                // checks only the ID syntax, not the provisioning reserved list.
+                if is_valid_profile_id(name.strip_suffix('\n').unwrap_or(name)) {
+                    return Ok(name.into());
+                }
+            }
+        }
+    }
+    Ok("custom".into())
+}
+
+/// Prompt identity for an explicit agent home, from _profile_name_for_home.
+/// Unlike ambient profile inference, this accepts any first path component
+/// below profiles (including nested homes), and calls unrelated homes default.
+pub fn agent_profile_name(home: &std::path::Path, root: &std::path::Path) -> String {
+    let resolve = |path: &std::path::Path| -> Option<std::path::PathBuf> {
+        let absolute = if path.is_absolute() {
+            path.to_owned()
+        } else {
+            std::env::current_dir().ok()?.join(path)
+        };
+        crate::file_read_safety::realpath_abs(absolute.to_str()?.to_owned()).ok()
+    };
+    let name = || -> Option<String> {
+        let home = resolve(home)?;
+        let profiles = resolve(&root.join("profiles"))?;
+        let relative = home.strip_prefix(profiles).ok()?;
+        relative
+            .components()
+            .next()?
+            .as_os_str()
+            .to_str()
+            .map(str::to_owned)
+    };
+    name().unwrap_or_else(|| "default".into())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn active_identity_comes_from_home_without_provisioning_or_normalization() {
+        let root =
+            std::env::temp_dir().join(format!("hermes-profile-inference-{}", std::process::id()));
+        for (relative, expected) in [
+            ("", "default"),
+            ("profiles/work", "work"),
+            ("profiles/Work", "custom"),
+            ("profiles/python", "python"),
+            ("profiles/work/nested", "custom"),
+            ("elsewhere", "custom"),
+            ("profiles/work\n", "work\n"),
+            ("profiles/work\n\n", "custom"),
+            ("profiles/work/../other", "other"),
+        ] {
+            assert_eq!(
+                active_profile_name(&root.join(relative), &root).unwrap(),
+                expected
+            );
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn active_identity_resolves_symlinks_before_parent_components() {
+        let root =
+            std::env::temp_dir().join(format!("hermes-profile-links-{}", std::process::id()));
+        std::fs::create_dir_all(root.join("profiles/work/nested")).unwrap();
+        std::os::unix::fs::symlink(root.join("profiles/work/nested"), root.join("alias")).unwrap();
+        assert_eq!(
+            active_profile_name(&root.join("alias/.."), &root).unwrap(),
+            "work"
+        );
+        std::os::unix::fs::symlink("loop", root.join("loop")).unwrap();
+        assert!(active_profile_name(&root.join("loop"), &root).is_err());
+        std::fs::remove_dir_all(root).unwrap();
+    }
 
     #[test]
     fn normalize_default_and_case() {

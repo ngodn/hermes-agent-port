@@ -109,12 +109,11 @@ pub fn select_extra_body(
     let provider_norm = strip(provider).to_lowercase();
     let provider_key_filter: String = if provider_norm == "custom" {
         String::new()
-    } else if let Some(rest) = provider_norm.strip_prefix("custom:") {
+    } else {
+        let rest = provider_norm.strip_prefix("custom:")?;
         // `split(":", 1)[1].strip()`: everything after the first colon, then
         // whitespace-stripped. Already lowercased with the whole string above.
         strip(rest).to_string()
-    } else {
-        return None;
     };
 
     let target_url = normalized_base_url_str(base_url);

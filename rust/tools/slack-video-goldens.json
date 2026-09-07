@@ -1,0 +1,1154 @@
+[
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/mp4",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "",
+      "subtype": ""
+    },
+    "result": ".webm"
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": ".webm"
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": ".webm"
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": ".webm"
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": ".webm"
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/webm",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-matroska",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "",
+      "subtype": ""
+    },
+    "result": ".avi"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": ".avi"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": ".avi"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": ".avi"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": ".avi"
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/x-msvideo",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": ".mp4"
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/unknown",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": ".mkv"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": ".mov"
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "video/quicktime; codecs=x",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "Video/mp4",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "clip.MOV",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "clip.MOV",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": ".mov",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": ".mov",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "...webm",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "...webm",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "/a.b/clip",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "/a.b/clip",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "clip.mkv",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "clip.mkv",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "clip.unsupported",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "clip.unsupported",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "audio_message123.mp4",
+      "subtype": ""
+    },
+    "result": null
+  },
+  {
+    "file": {
+      "mimetype": "audio/mp4",
+      "name": "audio_message123.mp4",
+      "subtype": "slack_audio"
+    },
+    "result": null
+  }
+]

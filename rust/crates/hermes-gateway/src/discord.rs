@@ -51,15 +51,19 @@ pub fn heartbeat_payload(seq: Option<i64>) -> Value {
 /// Map a Discord MESSAGE_CREATE `d` payload to a [`Message`].
 ///
 /// Returns `None` for messages from bots (avoids reply loops on the bot's own
-/// posts) and for empty content. `chat_type` is "group" when a `guild_id` is
+/// posts) and empty messages without audio. `chat_type` is "group" when a `guild_id` is
 /// present (a server channel) and "dm" otherwise, so access scope resolves.
 pub fn parse_message_create(d: &Value) -> Option<Message> {
     let author = d.get("author")?;
     if author.get("bot").and_then(Value::as_bool).unwrap_or(false) {
         return None;
     }
-    let content = d.get("content").and_then(Value::as_str)?;
-    if content.is_empty() {
+    let content = d.get("content").and_then(Value::as_str).unwrap_or("");
+    if content.is_empty()
+        && !d["attachments"]
+            .as_array()
+            .is_some_and(|items| items.iter().any(|item| audio_extension(item).is_some()))
+    {
         return None;
     }
     let channel_id = d.get("channel_id").and_then(Value::as_str)?.to_string();
@@ -70,15 +74,53 @@ pub fn parse_message_create(d: &Value) -> Option<Message> {
         "dm"
     };
     Some(Message {
+        resolved_session_id: None,
         platform: Platform::Discord,
         channel_id,
         sender_id,
         text: content.to_string(),
         content_parts: None,
         chat_type: Some(chat_type.to_string()),
-        // Voice-note download is not wired yet; empty until the adapter does it.
+        // Filled by prepare_message before Dispatcher receives this event.
         audio_paths: Vec::new(),
+        video_paths: Vec::new(),
+        workspace_id: None,
+        message_id: None,
+        thread_id: None,
     })
+}
+
+fn audio_extension(attachment: &Value) -> Option<&'static str> {
+    let content_type = attachment["content_type"].as_str()?;
+    let subtype = content_type
+        .strip_prefix("audio/")?
+        .rsplit('/')
+        .next()?
+        .split(';')
+        .next()?;
+    Some(match subtype {
+        "ogg" => ".ogg",
+        "mp3" => ".mp3",
+        "wav" => ".wav",
+        "webm" => ".webm",
+        "m4a" => ".m4a",
+        _ => ".ogg",
+    })
+}
+
+fn attachment_url(raw: &str) -> anyhow::Result<reqwest::Url> {
+    let url = reqwest::Url::parse(raw)?;
+    anyhow::ensure!(
+        matches!(url.scheme(), "https" | "http")
+            && matches!(
+                url.host_str(),
+                Some("cdn.discordapp.com" | "media.discordapp.net")
+            )
+            && url.username().is_empty()
+            && url.password().is_none(),
+        "unsupported Discord attachment URL"
+    );
+    Ok(url)
 }
 
 /// Discord Gateway adapter.
@@ -87,6 +129,9 @@ pub struct DiscordAdapter {
     gateway_url: String,
     api_base: String,
     client: reqwest::Client,
+    media_client: reqwest::Client,
+    audio_home: std::path::PathBuf,
+    audio_limit: i64,
 }
 
 impl DiscordAdapter {
@@ -100,7 +145,62 @@ impl DiscordAdapter {
             gateway_url: GATEWAY_URL.to_string(),
             api_base: API_BASE.to_string(),
             client,
+            media_client: reqwest::Client::builder()
+                .timeout(Duration::from_secs(30))
+                .redirect(reqwest::redirect::Policy::none())
+                .build()
+                .map_err(|_| Error::Other("discord: build media client".into()))?,
+            audio_home: crate::config_file::hermes_home(),
+            audio_limit: 128 * 1024 * 1024,
         })
+    }
+
+    pub fn with_audio_cache(mut self, home: std::path::PathBuf, config: &Value) -> Self {
+        self.audio_home = home;
+        self.audio_limit = crate::audio_process::inbound_limit(config);
+        self
+    }
+
+    async fn prepare_message(&self, event: &Value) -> Option<Message> {
+        let mut message = parse_message_create(event)?;
+        for attachment in event["attachments"].as_array().into_iter().flatten() {
+            let Some(ext) = audio_extension(attachment) else {
+                continue;
+            };
+            let result: anyhow::Result<std::path::PathBuf> = async {
+                let url = attachment_url(
+                    attachment["url"]
+                        .as_str()
+                        .ok_or_else(|| anyhow::anyhow!("missing attachment URL"))?,
+                )?;
+                // Signed CDN URLs are sufficient. Never attach the bot token to
+                // media requests or expose signed URLs in error output.
+                let response = self.media_client.get(url).send().await?;
+                crate::audio_process::cache_audio_response(
+                    &self.audio_home,
+                    response,
+                    ext,
+                    self.audio_limit,
+                )
+                .await
+            }
+            .await;
+            match result {
+                Ok(path) => message
+                    .audio_paths
+                    .push(path.to_string_lossy().into_owned()),
+                Err(_) => {
+                    warn!("discord audio attachment download failed");
+                    if !message.text.is_empty() {
+                        message.text.push('\n');
+                    }
+                    message
+                        .text
+                        .push_str("[Audio attachment could not be downloaded.]");
+                }
+            }
+        }
+        Some(message)
     }
 
     /// One connect + run cycle. Returns on close/error so the caller reconnects.
@@ -194,7 +294,7 @@ impl DiscordAdapter {
             match op {
                 // Dispatch.
                 0 if payload.get("t").and_then(Value::as_str) == Some("MESSAGE_CREATE") => {
-                    if let Some(msg) = payload.get("d").and_then(parse_message_create) {
+                    if let Some(msg) = self.prepare_message(&payload["d"]).await {
                         if inbound.send(msg).await.is_err() {
                             debug!("discord: inbound channel closed, stopping");
                             return Ok(());
@@ -270,6 +370,131 @@ impl PlatformAdapter for DiscordAdapter {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn audio_classification_matches_python() {
+        let rows: Value =
+            serde_json::from_str(include_str!("../../../tools/discord-audio-goldens.json"))
+                .unwrap();
+        for row in rows.as_array().unwrap() {
+            let attachment = json!({"content_type":row["content_type"]});
+            assert_eq!(json!(audio_extension(&attachment)), row["result"], "{row}");
+        }
+        assert!(audio_extension(&json!({})).is_none());
+        assert!(audio_extension(&json!({"content_type":null})).is_none());
+    }
+
+    #[tokio::test]
+    async fn gateway_audio_downloads_are_ordered_bounded_and_unauthenticated() {
+        use axum::{
+            body::{Body, Bytes},
+            http::HeaderMap,
+            routing::get,
+            Router,
+        };
+        let calls = Arc::new(std::sync::Mutex::new(Vec::new()));
+        let recorded = calls.clone();
+        let app = Router::new()
+            .route(
+                "/clip",
+                get(move |headers: HeaderMap| {
+                    recorded.lock().unwrap().push(headers);
+                    async {
+                        Body::from_stream(futures_util::stream::iter([
+                            Ok::<_, std::io::Error>(Bytes::from_static(b"OggS")),
+                            Ok(Bytes::from_static(b"fixture")),
+                        ]))
+                    }
+                }),
+            )
+            .route(
+                "/redirect",
+                get(|| async {
+                    (
+                        axum::http::StatusCode::FOUND,
+                        [("location", "http://example.com/private")],
+                    )
+                }),
+            );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        });
+        let home = std::env::temp_dir().join(format!(
+            "hermes-discord-audio-{}",
+            crate::install_identity::mint_id().unwrap()
+        ));
+        let mut adapter = DiscordAdapter::new("never-send-this-token")
+            .unwrap()
+            .with_audio_cache(home.clone(), &json!({}));
+        adapter.media_client = reqwest::Client::builder()
+            .no_proxy()
+            .resolve("cdn.discordapp.com", address)
+            .redirect(reqwest::redirect::Policy::none())
+            .build()
+            .unwrap();
+        let clip = format!(
+            "http://cdn.discordapp.com:{}/clip?signature=fixture",
+            address.port()
+        );
+        let event = json!({"author":{"id":"user"}, "channel_id":"channel", "content":"", "attachments":[
+            {"content_type":"audio/ogg", "url":clip},
+            {"content_type":"image/png", "url":"http://must-not-fetch.invalid/image"},
+            {"content_type":"audio/mpeg", "url":clip}
+        ]});
+        let payload = json!({"op":0,"s":7,"t":"MESSAGE_CREATE","d":event});
+        let mut frames = futures_util::stream::iter([Ok(WsMessage::text(payload.to_string()))]);
+        let (out, _out_rx) = mpsc::channel(2);
+        let (inbound, mut messages) = mpsc::channel(2);
+        let sequence = AtomicI64::new(-1);
+        let ended = adapter
+            .read_loop(&mut frames, &sequence, &out, &inbound)
+            .await
+            .unwrap_err();
+        assert!(ended.to_string().contains("gateway stream ended"));
+        let message = messages.recv().await.unwrap();
+        assert_eq!(sequence.load(Ordering::SeqCst), 7);
+        assert!(message.text.is_empty());
+        assert_eq!(message.audio_paths.len(), 2);
+        assert_ne!(message.audio_paths[0], message.audio_paths[1]);
+        for path in &message.audio_paths {
+            assert!(path.ends_with(".ogg"));
+            assert_eq!(tokio::fs::read(path).await.unwrap(), b"OggSfixture");
+        }
+        assert_eq!(calls.lock().unwrap().len(), 2);
+        assert!(calls
+            .lock()
+            .unwrap()
+            .iter()
+            .all(|h| !h.contains_key("authorization")));
+        // Bot messages must be filtered before any attachment network work.
+        let mut bot = event.clone();
+        bot["author"]["bot"] = json!(true);
+        assert!(adapter.prepare_message(&bot).await.is_none());
+        assert_eq!(calls.lock().unwrap().len(), 2);
+        adapter.audio_limit = 5;
+        let capped = adapter.prepare_message(&event).await.unwrap();
+        assert!(capped.audio_paths.is_empty());
+        assert!(capped.text.contains("could not be downloaded"));
+        let mut bad = event.clone();
+        bad["content"] = json!("keep caption");
+        bad["attachments"] = json!([{"content_type":"audio/ogg", "url":format!("http://cdn.discordapp.com:{}/redirect", address.port())}]);
+        let redirected = adapter.prepare_message(&bad).await.unwrap();
+        assert!(redirected.audio_paths.is_empty());
+        assert!(redirected.text.starts_with("keep caption\n"));
+        assert!(!redirected.text.contains("signature"));
+        for url in [
+            "https://cdn.discordapp.com.evil.invalid/clip",
+            "https://evil.invalid/clip",
+            "https://user@cdn.discordapp.com/clip",
+            "file:///etc/passwd",
+        ] {
+            assert!(attachment_url(url).is_err());
+        }
+        server.abort();
+        tokio::fs::remove_dir_all(home).await.unwrap();
+    }
 
     #[test]
     fn intents_include_guild_dm_and_content() {

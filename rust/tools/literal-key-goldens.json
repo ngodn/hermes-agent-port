@@ -1,0 +1,4706 @@
+[
+  {
+    "source": "[{True: 'first', True: 'last'}]",
+    "expected": [
+      "{True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 1: 'last'}]",
+    "expected": [
+      "{True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', False: 'last'}]",
+    "expected": [
+      "{True: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 0: 'last'}]",
+    "expected": [
+      "{True: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{True: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 0j: 'last'}]",
+    "expected": [
+      "{True: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 2: 'last'}]",
+    "expected": [
+      "{True: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{True: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{True: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{True: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{True: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{True: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{True: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{True: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', '1': 'last'}]",
+    "expected": [
+      "{True: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', (True,): 'last'}]",
+    "expected": [
+      "{True: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{True: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{True: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', -1j: 'last'}]",
+    "expected": [
+      "{True: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', -0j: 'last'}]",
+    "expected": [
+      "{True: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{True: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{True: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{True: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{True: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{True: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{True: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{True: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', True: 'last'}]",
+    "expected": [
+      "{1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 1: 'last'}]",
+    "expected": [
+      "{1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', False: 'last'}]",
+    "expected": [
+      "{1: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 0: 'last'}]",
+    "expected": [
+      "{1: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{1: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 0j: 'last'}]",
+    "expected": [
+      "{1: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 2: 'last'}]",
+    "expected": [
+      "{1: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{1: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{1: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{1: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{1: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{1: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{1: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{1: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', '1': 'last'}]",
+    "expected": [
+      "{1: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', (True,): 'last'}]",
+    "expected": [
+      "{1: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{1: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{1: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', -1j: 'last'}]",
+    "expected": [
+      "{1: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', -0j: 'last'}]",
+    "expected": [
+      "{1: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{1: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{1: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{1: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{1: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{1: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{1: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', True: 'last'}]",
+    "expected": [
+      "{1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 1: 'last'}]",
+    "expected": [
+      "{1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', False: 'last'}]",
+    "expected": [
+      "{1.0: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 0: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{1.0: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 0j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 2: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{1.0: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', '1': 'last'}]",
+    "expected": [
+      "{1.0: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', (True,): 'last'}]",
+    "expected": [
+      "{1.0: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{1.0: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{1.0: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', -1j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', -0j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1.0: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{1.0: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', True: 'last'}]",
+    "expected": [
+      "{(1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 1: 'last'}]",
+    "expected": [
+      "{(1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{(1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', False: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 0: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 2: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', '1': 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1+0j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{(1+0j): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', True: 'last'}]",
+    "expected": [
+      "{False: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 1: 'last'}]",
+    "expected": [
+      "{False: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{False: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{False: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', False: 'last'}]",
+    "expected": [
+      "{False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 0: 'last'}]",
+    "expected": [
+      "{False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 0j: 'last'}]",
+    "expected": [
+      "{False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 2: 'last'}]",
+    "expected": [
+      "{False: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{False: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{False: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{False: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{False: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{False: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{False: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{False: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', '1': 'last'}]",
+    "expected": [
+      "{False: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', (True,): 'last'}]",
+    "expected": [
+      "{False: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{False: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{False: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', -1j: 'last'}]",
+    "expected": [
+      "{False: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', -0j: 'last'}]",
+    "expected": [
+      "{False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{False: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{False: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{False: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{False: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{False: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{False: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{False: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', True: 'last'}]",
+    "expected": [
+      "{0: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 1: 'last'}]",
+    "expected": [
+      "{0: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{0: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{0: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', False: 'last'}]",
+    "expected": [
+      "{0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 0: 'last'}]",
+    "expected": [
+      "{0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 0j: 'last'}]",
+    "expected": [
+      "{0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 2: 'last'}]",
+    "expected": [
+      "{0: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{0: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{0: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{0: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{0: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{0: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{0: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{0: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', '1': 'last'}]",
+    "expected": [
+      "{0: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', (True,): 'last'}]",
+    "expected": [
+      "{0: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{0: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{0: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', -1j: 'last'}]",
+    "expected": [
+      "{0: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', -0j: 'last'}]",
+    "expected": [
+      "{0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{0: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{0: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{0: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{0: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{0: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{0: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', True: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 1: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', False: 'last'}]",
+    "expected": [
+      "{-0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 0: 'last'}]",
+    "expected": [
+      "{-0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{-0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 0j: 'last'}]",
+    "expected": [
+      "{-0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 2: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', '1': 'last'}]",
+    "expected": [
+      "{-0.0: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', (True,): 'last'}]",
+    "expected": [
+      "{-0.0: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{-0.0: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{-0.0: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', -1j: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', -0j: 'last'}]",
+    "expected": [
+      "{-0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{-0.0: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', True: 'last'}]",
+    "expected": [
+      "{0j: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 1: 'last'}]",
+    "expected": [
+      "{0j: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{0j: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{0j: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', False: 'last'}]",
+    "expected": [
+      "{0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 0: 'last'}]",
+    "expected": [
+      "{0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 2: 'last'}]",
+    "expected": [
+      "{0j: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{0j: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{0j: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{0j: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{0j: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{0j: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{0j: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{0j: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', '1': 'last'}]",
+    "expected": [
+      "{0j: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{0j: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{0j: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{0j: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{0j: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{0j: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{0j: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{0j: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{0j: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{0j: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{0j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{0j: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', True: 'last'}]",
+    "expected": [
+      "{2: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 1: 'last'}]",
+    "expected": [
+      "{2: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{2: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{2: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', False: 'last'}]",
+    "expected": [
+      "{2: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 0: 'last'}]",
+    "expected": [
+      "{2: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{2: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 0j: 'last'}]",
+    "expected": [
+      "{2: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 2: 'last'}]",
+    "expected": [
+      "{2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{2: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{2: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{2: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{2: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{2: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{2: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{2: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', '1': 'last'}]",
+    "expected": [
+      "{2: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', (True,): 'last'}]",
+    "expected": [
+      "{2: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{2: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{2: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', -1j: 'last'}]",
+    "expected": [
+      "{2: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', -0j: 'last'}]",
+    "expected": [
+      "{2: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{2: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{2: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{2: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{2: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{2: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{2: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', True: 'last'}]",
+    "expected": [
+      "{2.5: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 1: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', False: 'last'}]",
+    "expected": [
+      "{2.5: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 0: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{2.5: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 0j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 2: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{2.5: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', '1': 'last'}]",
+    "expected": [
+      "{2.5: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', (True,): 'last'}]",
+    "expected": [
+      "{2.5: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{2.5: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{2.5: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', -1j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', -0j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{2.5: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{2.5: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', True: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 1: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', False: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 0: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 0j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 2: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', '1': 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', (True,): 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', -1j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', -0j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{9007199254740992: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', True: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 1: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', False: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 0: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 0j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 2: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', '1': 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', (True,): 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', -1j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', -0j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740993: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{9007199254740993: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', True: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 1: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', False: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 0: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 0j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 2: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', '1': 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', (True,): 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', -1j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', -0j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{9007199254740992.0: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{9007199254740992.0: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', True: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 1: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', False: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 0: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 0j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 2: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', '1': 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', (True,): 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', -1j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', -0j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{10000000000000000000000000000000000000000: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{10000000000000000000000000000000000000000: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', True: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 1: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', False: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 0: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 0j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 2: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', '1': 'last'}]",
+    "expected": [
+      "{1e+40: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', (True,): 'last'}]",
+    "expected": [
+      "{1e+40: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{1e+40: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{1e+40: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', -1j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', -0j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{1e+40: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', True: 'last'}]",
+    "expected": [
+      "{inf: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 1: 'last'}]",
+    "expected": [
+      "{inf: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{inf: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{inf: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', False: 'last'}]",
+    "expected": [
+      "{inf: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 0: 'last'}]",
+    "expected": [
+      "{inf: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{inf: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 0j: 'last'}]",
+    "expected": [
+      "{inf: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 2: 'last'}]",
+    "expected": [
+      "{inf: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{inf: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{inf: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{inf: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{inf: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{inf: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{inf: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', '1': 'last'}]",
+    "expected": [
+      "{inf: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', (True,): 'last'}]",
+    "expected": [
+      "{inf: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{inf: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{inf: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', -1j: 'last'}]",
+    "expected": [
+      "{inf: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', -0j: 'last'}]",
+    "expected": [
+      "{inf: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{inf: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{inf: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{inf: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{inf: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{inf: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{inf: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', True: 'last'}]",
+    "expected": [
+      "{'1': 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 1: 'last'}]",
+    "expected": [
+      "{'1': 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 1.0: 'last'}]",
+    "expected": [
+      "{'1': 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{'1': 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', False: 'last'}]",
+    "expected": [
+      "{'1': 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 0: 'last'}]",
+    "expected": [
+      "{'1': 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', -0.0: 'last'}]",
+    "expected": [
+      "{'1': 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 0j: 'last'}]",
+    "expected": [
+      "{'1': 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 2: 'last'}]",
+    "expected": [
+      "{'1': 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 2.5: 'last'}]",
+    "expected": [
+      "{'1': 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{'1': 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{'1': 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{'1': 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{'1': 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 1e40: 'last'}]",
+    "expected": [
+      "{'1': 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 1e309: 'last'}]",
+    "expected": [
+      "{'1': 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', '1': 'last'}]",
+    "expected": [
+      "{'1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', (True,): 'last'}]",
+    "expected": [
+      "{'1': 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{'1': 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{'1': 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', -1j: 'last'}]",
+    "expected": [
+      "{'1': 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', -0j: 'last'}]",
+    "expected": [
+      "{'1': 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{'1': 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{'1': 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{'1': 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{'1': 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{'1': 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{'1': 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{'1': 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', True: 'last'}]",
+    "expected": [
+      "{(True,): 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 1: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 1.0: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', False: 'last'}]",
+    "expected": [
+      "{(True,): 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 0: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', -0.0: 'last'}]",
+    "expected": [
+      "{(True,): 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 0j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 2: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 2.5: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 1e40: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 1e309: 'last'}]",
+    "expected": [
+      "{(True,): 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', '1': 'last'}]",
+    "expected": [
+      "{(True,): 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', (True,): 'last'}]",
+    "expected": [
+      "{(True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{(True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{(True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', -1j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', -0j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(True,): 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{(True,): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', True: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 1: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 1.0: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', False: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 0: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', -0.0: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 0j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 2: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 2.5: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 1e40: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 1e309: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', '1': 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', (True,): 'last'}]",
+    "expected": [
+      "{(1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{(1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{(1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', -1j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', -0j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1.0,): 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{(1.0,): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', True: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 1: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 1.0: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', False: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 0: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', -0.0: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 0j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 2: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 2.5: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 1e40: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 1e309: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', '1': 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', (True,): 'last'}]",
+    "expected": [
+      "{((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', -1j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', -0j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{(1+0j,): 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{((1+0j),): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', True: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 1: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', False: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 0: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 2: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', '1': 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', True: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 1: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', False: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 0: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 2: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', '1': 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{(-0-0j): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', True: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 1: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', False: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 0: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 2: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', '1': 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e40j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{1e+40j: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', True: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 1: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', False: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 0: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 2: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', '1': 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e-8j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{1e-08j: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', True: 'last'}]",
+    "expected": [
+      "{infj: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 1: 'last'}]",
+    "expected": [
+      "{infj: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{infj: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{infj: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', False: 'last'}]",
+    "expected": [
+      "{infj: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 0: 'last'}]",
+    "expected": [
+      "{infj: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{infj: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{infj: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 2: 'last'}]",
+    "expected": [
+      "{infj: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{infj: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{infj: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{infj: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{infj: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{infj: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{infj: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{infj: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', '1': 'last'}]",
+    "expected": [
+      "{infj: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{infj: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{infj: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{infj: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{infj: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{infj: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{infj: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{infj: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{infj: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{infj: 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{1e309j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{infj: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', True: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 1: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', False: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 0: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 2: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', '1': 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-1e309j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{(-0-infj): 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', True: 'last'}]",
+    "expected": [
+      "{1j: 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 1: 'last'}]",
+    "expected": [
+      "{1j: 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{1j: 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{1j: 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', False: 'last'}]",
+    "expected": [
+      "{1j: 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 0: 'last'}]",
+    "expected": [
+      "{1j: 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{1j: 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{1j: 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 2: 'last'}]",
+    "expected": [
+      "{1j: 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{1j: 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{1j: 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{1j: 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{1j: 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{1j: 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{1j: 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{1j: 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', '1': 'last'}]",
+    "expected": [
+      "{1j: 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{1j: 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{1j: 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{1j: 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{1j: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{1j: 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{1j: 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{1j: 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{1j: 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{1j: 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0+1j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{1j: 'first', (-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', True: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', True: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 1: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 1.0: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 1+0j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (1+0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', False: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', False: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 0: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', -0.0: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', -0.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 0j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 0j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 2: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 2: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 2.5: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 2.5: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 9007199254740992: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 9007199254740992: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 9007199254740993: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 9007199254740993: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 9007199254740992.0: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 9007199254740992.0: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 10000000000000000000000000000000000000000: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 10000000000000000000000000000000000000000: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 1e40: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1e+40: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 1e309: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', inf: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', '1': 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', '1': 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', (True,): 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (True,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', (1.0,): 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (1.0,): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', (1+0j,): 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', ((1+0j),): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', -1j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', -0j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (-0-0j): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 1e40j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1e+40j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 1e-8j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1e-08j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', 1e309j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', infj: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', -1e309j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', (-0-infj): 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', -0.0+1j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'first', 1j: 'last'}"
+    ]
+  },
+  {
+    "source": "[{-0.0-1j: 'first', -0.0-1j: 'last'}]",
+    "expected": [
+      "{(-0-1j): 'last'}"
+    ]
+  }
+]

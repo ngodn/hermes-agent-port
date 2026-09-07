@@ -28,6 +28,88 @@ use std::time::Instant;
 const INITIAL_RETRY_DELAY_SECONDS: f64 = 1.0;
 const MAX_RETRY_DELAY_SECONDS: f64 = 60.0;
 
+/// Resolve session ownership separately from the fixed routing-index store.
+/// The caller supplies the current ambient home for legacy/default keys; named
+/// keys remain profile-owned even when a background task has no profile scope.
+pub struct SessionDatabases {
+    root: PathBuf,
+    routing_home: PathBuf,
+    multiplex: bool,
+    homes: Mutex<HashMap<String, PathBuf>>,
+    handles: RecoverableHandleCache<std::sync::Arc<crate::session_db::SessionDb>>,
+}
+
+impl SessionDatabases {
+    pub fn new(root: PathBuf, routing_home: PathBuf, multiplex: bool) -> Self {
+        Self {
+            root,
+            routing_home,
+            multiplex,
+            homes: Mutex::new(HashMap::new()),
+            handles: RecoverableHandleCache::new(),
+        }
+    }
+
+    pub fn for_key(
+        &self,
+        key: &str,
+        ambient_home: &Path,
+    ) -> Option<std::sync::Arc<crate::session_db::SessionDb>> {
+        let home = self.home_for_key(key, ambient_home)?;
+        self.open(&home)
+    }
+
+    pub fn routing(&self) -> Option<std::sync::Arc<crate::session_db::SessionDb>> {
+        self.open(&self.routing_home)
+    }
+
+    fn open(&self, home: &Path) -> Option<std::sync::Arc<crate::session_db::SessionDb>> {
+        let path = home.join("state.db");
+        self.handles
+            .get(
+                &path,
+                || crate::session_db::SessionDb::open_shared(path.clone()),
+                false,
+                None,
+                None,
+            )
+            .ok()
+            .flatten()
+    }
+
+    fn home_for_key(&self, key: &str, ambient_home: &Path) -> Option<PathBuf> {
+        let profile = self
+            .multiplex
+            .then(|| crate::session_routing::profile_from_key(key))
+            .flatten()
+            .filter(|p| *p != "default");
+        let Some(profile) = profile else {
+            return Some(ambient_home.to_path_buf());
+        };
+        if let Some(home) = self.homes.lock().unwrap().get(profile) {
+            return Some(home.clone());
+        }
+        // Python profile_exists/get_profile_dir normalize here, independently
+        // of validation at the profile provisioning and inbound routing edges.
+        let canonical = crate::profile_name::normalize_profile_name(profile).ok()?;
+        let home = if canonical == "default" {
+            self.root.clone()
+        } else {
+            let home = self.root.join("profiles").join(&canonical);
+            let marker = home.parent()?.join(".deleted").join(home.file_name()?);
+            if !home.is_dir() || marker.exists() {
+                return None;
+            }
+            home
+        };
+        self.homes
+            .lock()
+            .unwrap()
+            .insert(profile.to_owned(), home.clone());
+        Some(home)
+    }
+}
+
 /// Per-path failure bookkeeping for a not-yet-open handle.
 #[derive(Debug, Default, Clone)]
 struct Unavailable {
@@ -341,6 +423,95 @@ pub fn global_session_store_health() -> String {
 mod tests {
     use super::*;
     use std::sync::Arc;
+
+    #[test]
+    fn session_databases_follow_owner_and_keep_routing_store_fixed() {
+        let root = std::env::temp_dir().join(format!(
+            "hermes-db-owner-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let work = root.join("profiles/work");
+        std::fs::create_dir_all(&work).unwrap();
+        let stores = SessionDatabases::new(root.clone(), root.clone(), true);
+        let routing = stores.routing().unwrap();
+        let scoped = stores.for_key("agent:work:telegram:dm:C", &root).unwrap();
+        assert!(!Arc::ptr_eq(&routing, &scoped));
+        assert!(Arc::ptr_eq(
+            &scoped,
+            &stores.for_key("agent:main:telegram:dm:C", &work).unwrap()
+        ));
+        assert!(Arc::ptr_eq(&routing, &stores.routing().unwrap()));
+        assert!(Arc::ptr_eq(
+            &scoped,
+            &stores.for_key("agent:Work:telegram:dm:C", &root).unwrap()
+        ));
+        scoped
+            .ensure_session("only-work", "telegram", None, None, None)
+            .unwrap();
+        assert!(routing.get_session("only-work").unwrap().is_none());
+        assert!(scoped.get_session("only-work").unwrap().is_some());
+        let single = SessionDatabases::new(root.clone(), root.clone(), false);
+        assert_eq!(
+            single.home_for_key("agent:work:x", &root),
+            Some(root.clone())
+        );
+        assert_eq!(stores.home_for_key("other:key", &work), Some(work.clone()));
+        assert_eq!(stores.home_for_key("agent::x", &work), Some(work));
+        drop(single);
+        drop(scoped);
+        drop(routing);
+        drop(stores);
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn profile_misses_are_not_cached_and_failed_opens_retry() {
+        let root = std::env::temp_dir().join(format!(
+            "hermes-db-enroll-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let home = root.join("profiles/new");
+        let clock = Arc::new(Mutex::new(0.0));
+        let observed = clock.clone();
+        let mut stores = SessionDatabases::new(root.clone(), root.clone(), true);
+        stores.handles = RecoverableHandleCache::with_config(
+            Box::new(move || *observed.lock().unwrap()),
+            1.0,
+            60.0,
+        );
+        assert!(stores.for_key("agent:new:x", &root).is_none());
+        assert!(
+            !root.exists(),
+            "missing profile must not create an ambient database"
+        );
+        std::fs::create_dir_all(&home).unwrap();
+        let marker = root.join("profiles/.deleted/new");
+        std::fs::create_dir_all(marker.parent().unwrap()).unwrap();
+        std::fs::write(&marker, "deleted").unwrap();
+        assert!(stores.for_key("agent:new:x", &root).is_none());
+        std::fs::remove_file(marker).unwrap();
+        // A directory in place of SQLite's file forces a real open failure.
+        let path = home.join("state.db");
+        std::fs::create_dir(&path).unwrap();
+        assert!(stores.for_key("agent:new:x", &root).is_none());
+        std::fs::remove_dir(&path).unwrap();
+        assert!(stores.for_key("agent:new:x", &root).is_none());
+        *clock.lock().unwrap() = 1.0;
+        let db = stores.for_key("agent:new:x", &root).unwrap();
+        assert!(path.is_file());
+        assert!(!root.join("state.db").exists());
+        drop(db);
+        drop(stores);
+        std::fs::remove_dir_all(root).unwrap();
+    }
 
     /// A test clock whose value we can advance by hand.
     #[derive(Clone)]

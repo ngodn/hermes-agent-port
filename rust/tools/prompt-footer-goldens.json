@@ -1,0 +1,1922 @@
+[
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": ""
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": ""
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": ""
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": ""
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": ""
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": ""
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "",
+      "offset": "",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (UTC, UTC+00:00)"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (UTC, UTC+00:00)\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (UTC, UTC+00:00)"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (UTC, UTC+00:00)\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": null,
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (UTC, UTC+00:00)"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (UTC, UTC+00:00)\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (UTC, UTC+00:00)"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (UTC, UTC+00:00)\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (UTC, UTC+00:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: UTC, UTC+00:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "UTC",
+      "abbreviation": "UTC",
+      "offset": "+0000",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: UTC, UTC+00:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (Asia/Kuala_Lumpur, MYT, UTC+08:00)"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (Asia/Kuala_Lumpur, MYT, UTC+08:00)"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (Asia/Kuala_Lumpur, MYT, UTC+08:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "Asia/Kuala_Lumpur",
+      "abbreviation": "MYT",
+      "offset": "+0800",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: Asia/Kuala_Lumpur, MYT, UTC+08:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (America/New_York, EDT, UTC-04:00)"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (America/New_York, EDT, UTC-04:00)\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (America/New_York, EDT, UTC-04:00)"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Monday, September 07, 2026 (America/New_York, EDT, UTC-04:00)\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (America/New_York, EDT, UTC-04:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (America/New_York, EDT, UTC-04:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (America/New_York, EDT, UTC-04:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 06, 2026 (America/New_York, EDT, UTC-04:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2026-09-06",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (America/New_York, EDT, UTC-04:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (America/New_York, EDT, UTC-04:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (America/New_York, EDT, UTC-04:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time."
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": false,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Conversation started: Sunday, September 07, 2025 (America/New_York, EDT, UTC-04:00)\nToday's date (as of the last context rebuild): Monday, September 07, 2026 \u2014 trust this over the start date for what day it is now; query tools for exact time.\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": false,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "",
+      "model": "",
+      "provider": "",
+      "platform": ""
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00"
+  },
+  {
+    "input": {
+      "now_date": "2026-09-07",
+      "start_date": "2025-09-07",
+      "iana": "America/New_York",
+      "abbreviation": "EDT",
+      "offset": "-0400",
+      "timeless": true,
+      "pass_session_id": true,
+      "session_id": "session",
+      "model": "provider/model",
+      "provider": "provider",
+      "platform": "tui"
+    },
+    "expected": "Timezone: America/New_York, EDT, UTC-04:00\nSession ID: session\nModel: provider/model\nProvider: provider\nPlatform: tui"
+  }
+]

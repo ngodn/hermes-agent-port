@@ -148,6 +148,7 @@ mod tests {
 
     fn msg(text: &str, sender: &str, chat_type: &str) -> Message {
         Message {
+            resolved_session_id: None,
             platform: Platform::Telegram,
             channel_id: "c".into(),
             sender_id: sender.into(),
@@ -155,6 +156,10 @@ mod tests {
             content_parts: None,
             chat_type: Some(chat_type.into()),
             audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
         }
     }
 

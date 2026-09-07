@@ -5,7 +5,7 @@
 //! finished startup and can accept traffic. [`AppState`] is the shared handle
 //! every route gets; it also carries the [`AgentClient`] used to run turns.
 
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::Arc;
 
 use axum::extract::State;
@@ -28,6 +28,10 @@ pub struct AppState {
     pub configured_model: Option<String>,
     /// Conversation-history store; None when it could not be opened.
     pub session_db: Option<Arc<crate::session_db::SessionDb>>,
+    /// One coordinator and lease registry shared by HTTP and push ingress.
+    pub session_store: Option<(Arc<crate::session_store::SessionStore>, f64)>,
+    pub turn_leases: Arc<crate::turn_lease::SessionTurnLeaseRegistry>,
+    pub turn_generation: Arc<AtomicU64>,
 }
 
 impl AppState {
@@ -43,6 +47,9 @@ impl AppState {
             user_config,
             configured_model,
             session_db,
+            session_store: None,
+            turn_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+            turn_generation: Arc::new(AtomicU64::new(0)),
         }
     }
 

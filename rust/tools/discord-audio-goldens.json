@@ -1,0 +1,66 @@
+[
+  {
+    "content_type": "",
+    "result": null
+  },
+  {
+    "content_type": "audio/",
+    "result": ".ogg"
+  },
+  {
+    "content_type": "audio/ogg",
+    "result": ".ogg"
+  },
+  {
+    "content_type": "audio/mp3",
+    "result": ".mp3"
+  },
+  {
+    "content_type": "audio/mpeg",
+    "result": ".ogg"
+  },
+  {
+    "content_type": "audio/aac",
+    "result": ".ogg"
+  },
+  {
+    "content_type": "audio/wav",
+    "result": ".wav"
+  },
+  {
+    "content_type": "audio/webm",
+    "result": ".webm"
+  },
+  {
+    "content_type": "audio/m4a",
+    "result": ".m4a"
+  },
+  {
+    "content_type": "audio/opus",
+    "result": ".ogg"
+  },
+  {
+    "content_type": "audio/ogg; codecs=opus",
+    "result": ".ogg"
+  },
+  {
+    "content_type": "audio/OGG",
+    "result": ".ogg"
+  },
+  {
+    "content_type": "Audio/ogg",
+    "result": null
+  },
+  {
+    "content_type": "video/ogg",
+    "result": null
+  },
+  {
+    "content_type": "application/ogg",
+    "result": null
+  },
+  {
+    "content_type": "audio/x/ogg",
+    "result": ".ogg"
+  }
+]

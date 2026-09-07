@@ -26,6 +26,7 @@ use crate::slash::{self, SlashDecision};
 use crate::turn_lease::SessionTurnLeaseRegistry;
 
 /// Owns the inbound channel and routes turns to the agent and back out.
+#[derive(Clone)]
 pub struct Dispatcher {
     agent: Arc<dyn AgentClient>,
     /// Adapters keyed by platform, used for outbound delivery.
@@ -34,7 +35,7 @@ pub struct Dispatcher {
     /// session never interleave their transcript flushes (see turn_lease).
     lease: Arc<SessionTurnLeaseRegistry>,
     /// Monotonic per-turn generation, for lease ownership diagnostics.
-    generation: AtomicU64,
+    generation: Arc<AtomicU64>,
     /// User config, for slash-command gating.
     user_config: Arc<Value>,
     /// Confirmed-unreachable delivery targets: skip sends to them, clear on
@@ -42,6 +43,7 @@ pub struct Dispatcher {
     dead_targets: Arc<DeadTargetRegistry>,
     /// Conversation-history store for stateless backends (None = stateless).
     session_db: Option<Arc<crate::session_db::SessionDb>>,
+    session_store: Option<(Arc<crate::session_store::SessionStore>, f64)>,
     /// Durable delivery-obligation ledger (None = disabled / unavailable).
     delivery_ledger: Option<Arc<crate::delivery_ledger::DeliveryLedger>>,
     /// Inbound-audio transcription backend (None = STT not configured; audio
@@ -87,13 +89,36 @@ impl Dispatcher {
             agent,
             adapters: HashMap::new(),
             lease: Arc::new(SessionTurnLeaseRegistry::default()),
-            generation: AtomicU64::new(0),
+            generation: Arc::new(AtomicU64::new(0)),
             user_config,
             dead_targets,
             session_db,
+            session_store: None,
             delivery_ledger,
             transcription: None,
         }
+    }
+
+    /// Share turn ownership across every ingress serving the same transcripts.
+    pub fn with_turn_leases(
+        mut self,
+        leases: Arc<SessionTurnLeaseRegistry>,
+        generation: Arc<AtomicU64>,
+    ) -> Self {
+        self.lease = leases;
+        self.generation = generation;
+        self
+    }
+
+    /// Use durable session routing for backends whose history the gateway owns.
+    /// Freshness is supplied from the selected gateway configuration.
+    pub fn with_session_store(
+        mut self,
+        store: Arc<crate::session_store::SessionStore>,
+        freshness_seconds: f64,
+    ) -> Self {
+        self.session_store = Some((store, freshness_seconds));
+        self
     }
 
     /// Install the inbound-audio transcription backend. When set, a message
@@ -140,7 +165,7 @@ impl Dispatcher {
         // Durably record the obligation before attempting the send, so a crash
         // between here and the platform ACK can be recovered on restart.
         let obligation = self.delivery_ledger.as_ref().map(|ledger| {
-            let session_id = crate::session_db::session_id_for(to.platform, &to.channel_id);
+            let session_id = crate::session_db::message_session_id(to);
             let now_ns = std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .map(|d| d.as_nanos())
@@ -164,6 +189,7 @@ impl Dispatcher {
         });
 
         let out = Message {
+            resolved_session_id: to.resolved_session_id.clone(),
             platform: to.platform,
             channel_id: to.channel_id.clone(),
             sender_id: to.sender_id.clone(),
@@ -171,6 +197,10 @@ impl Dispatcher {
             content_parts: None,
             chat_type: to.chat_type.clone(),
             audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: to.workspace_id.clone(),
+            message_id: to.message_id.clone(),
+            thread_id: to.thread_id.clone(),
         };
         match adapter.send(&out).await {
             Ok(()) => {
@@ -241,6 +271,17 @@ impl Dispatcher {
             SlashDecision::NotSlash => {}
         }
 
+        // Video context belongs to the model turn, after slash policy has seen
+        // the original caption. Native adapters cache on the agent's filesystem.
+        for path in &msg.video_paths {
+            let display = crate::media_context::attachment_display_name(path);
+            let note = crate::media_context::build_video_context_note(&display, path);
+            msg.text = format!("{note}\n\n{}", msg.text);
+            if let Some(parts) = &mut msg.content_parts {
+                parts.insert(0, hermes_core::ContentPart::Text { text: note });
+            }
+        }
+
         if msg.content_parts.is_some() && !self.agent.supports_structured_content() {
             self.deliver(
                 &msg,
@@ -250,11 +291,67 @@ impl Dispatcher {
             return;
         }
 
+        let manages = self.agent.manages_history();
+        let mut turn_db = self.session_db.clone();
+        let mut routing_key = None;
+        if !manages {
+            if let Some((store, freshness)) = &self.session_store {
+                let store = store.clone();
+                let freshness = *freshness;
+                let mut source = crate::session::SessionSource::new(
+                    if msg.platform == Platform::Cli {
+                        "local".to_owned()
+                    } else {
+                        format!("{:?}", msg.platform).to_lowercase()
+                    },
+                    &msg.channel_id,
+                );
+                source.user_id = Some(msg.sender_id.clone());
+                source.chat_type = match msg.chat_type.as_deref() {
+                    Some("private" | "dm") | None => "dm".into(),
+                    Some(kind) => kind.to_owned(),
+                };
+                source.scope_id = msg.workspace_id.clone();
+                source.thread_id = msg.thread_id.clone();
+                source.message_id = msg.message_id.clone();
+                let legacy_id = crate::session_db::message_session_id(&msg);
+                let legacy_source = format!("{:?}", msg.platform).to_lowercase();
+                let resolved = tokio::task::spawn_blocking(move || {
+                    let entry = store.get_or_create_with_legacy(
+                        &source,
+                        Some((&legacy_id, &legacy_source)),
+                        false,
+                        true,
+                        freshness,
+                        |_| Ok(false),
+                    )?;
+                    let db = store.database_for_key(&entry.session_key);
+                    Ok::<_, Arc<anyhow::Error>>((entry, db))
+                })
+                .await;
+                match resolved {
+                    Ok(Ok((entry, db))) => {
+                        msg.resolved_session_id = Some(entry.session_id);
+                        routing_key = Some(entry.session_key);
+                        turn_db = db;
+                    }
+                    Ok(Err(error)) => {
+                        warn!(%error, "could not resolve session for inbound turn");
+                        return;
+                    }
+                    Err(error) => {
+                        warn!(%error, "session resolver worker failed");
+                        return;
+                    }
+                }
+            }
+        }
+
         // Serialize using the same identity as persisted history and cache routing.
         // Full session resolution (switch_session/tip-walk) remains separate.
         // A held lease means a same-session turn is in flight; fail closed on
         // timeout rather than run two turns unserialized on one transcript.
-        let session_id = crate::session_db::session_id_for(msg.platform, &msg.channel_id);
+        let session_id = crate::session_db::message_session_id(&msg);
         let generation = self.generation.fetch_add(1, Ordering::Relaxed);
         let _lease = match self
             .lease
@@ -268,19 +365,49 @@ impl Dispatcher {
             }
         };
 
+        // An admitted turn outlives cancellation of its ingress waiter. Keep
+        // its configured adapters and shared state alive through persistence
+        // and delivery, rather than detaching only the inner agent task.
+        let owner = self.clone();
+        if let Err(error) = tokio::spawn(async move {
+            owner
+                .run_admitted_turn(msg, turn_db, manages, routing_key, _lease)
+                .await;
+        })
+        .await
+        {
+            error!(%error, "push turn owner failed");
+        }
+    }
+
+    async fn run_admitted_turn(
+        &self,
+        msg: Message,
+        turn_db: Option<Arc<crate::session_db::SessionDb>>,
+        manages: bool,
+        routing_key: Option<String>,
+        _lease: Option<crate::turn_lease::TurnLeaseToken>,
+    ) {
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
 
         // Load prior history + record the inbound message for stateless backends.
-        let manages = self.agent.manages_history();
         let source = format!("{:?}", msg.platform).to_lowercase();
-        let history =
-            crate::session_db::begin_turn(self.session_db.as_deref(), manages, &msg, &source);
+        let history = crate::session_db::begin_turn(turn_db.as_deref(), manages, &msg, &source);
 
         // Run the agent turn; it streams events into `tx`.
         let agent = Arc::clone(&self.agent);
+        let agent_db = turn_db.clone();
         let msg_for_agent = msg.clone();
-        let agent_task =
-            tokio::spawn(async move { agent.run_turn(&msg_for_agent, &history, tx).await });
+        let agent_task = tokio::spawn(async move {
+            agent
+                .run_turn_with_context(
+                    crate::agent::TurnContext::from_database(agent_db.as_deref()),
+                    &msg_for_agent,
+                    &history,
+                    tx,
+                )
+                .await
+        });
 
         // Accumulate assistant text and deliver it back to the source platform.
         // Streaming partial deliveries (native drafts, edit-in-place) and tool
@@ -316,7 +443,15 @@ impl Dispatcher {
 
         // Record the assistant reply for stateless backends (before the silence
         // gate: a silence marker is still part of the transcript history).
-        crate::session_db::end_turn(self.session_db.as_deref(), manages, &msg, &reply);
+        crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        if let (Some(key), Some((store, _))) = (routing_key, &self.session_store) {
+            let store = store.clone();
+            match tokio::task::spawn_blocking(move || store.update_session(&key, None, true)).await
+            {
+                Ok(Ok(())) => {}
+                error => warn!(?error, "session activity update failed"),
+            }
+        }
 
         // Suppress delivery for intentional-silence markers and empty turns.
         if reply.is_empty() || crate::response_filters::is_intentional_silence_response(&reply) {
@@ -329,6 +464,174 @@ impl Dispatcher {
 
 #[cfg(test)]
 mod tests {
+    #[tokio::test]
+    async fn cancelled_push_waiter_keeps_history_and_delivery_owned() {
+        struct FinishingAgent {
+            entered: tokio::sync::Notify,
+            finish: tokio::sync::Notify,
+        }
+        #[async_trait]
+        impl crate::agent::AgentClient for FinishingAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                tx.send(StreamEvent::MessageChunk {
+                    text: "completed answer".into(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                self.entered.notify_one();
+                self.finish.notified().await;
+                Ok(())
+            }
+        }
+        let path = std::env::temp_dir().join(format!(
+            "hermes-push-cancel-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let db = Arc::new(crate::session_db::SessionDb::open(path.join("state.db")).unwrap());
+        let agent = Arc::new(FinishingAgent {
+            entered: tokio::sync::Notify::new(),
+            finish: tokio::sync::Notify::new(),
+        });
+        let (mut dispatcher, _, sent) = harness("unused", json!({}));
+        dispatcher.agent = agent.clone();
+        dispatcher.session_db = Some(db.clone());
+        let waiter = dispatcher.clone();
+        let task = tokio::spawn(async move {
+            waiter.handle_turn(cli_msg("question", "U")).await;
+        });
+        tokio::time::timeout(std::time::Duration::from_secs(5), agent.entered.notified())
+            .await
+            .unwrap();
+        task.abort();
+        assert!(task.await.unwrap_err().is_cancelled());
+        assert!(dispatcher
+            .lease
+            .acquire(
+                "cli:chan",
+                "next-route",
+                2,
+                Some(std::time::Duration::from_millis(50))
+            )
+            .await
+            .is_err());
+        agent.finish.notify_one();
+        let next = dispatcher
+            .lease
+            .acquire("cli:chan", "next-route", 3, None)
+            .await
+            .unwrap();
+        let history = db.load_history("cli:chan", 0).unwrap();
+        assert_eq!(history.len(), 2);
+        assert_eq!(history[1].content, "completed answer");
+        assert_eq!(sent.lock().unwrap()[0].text, "completed answer");
+        drop(next);
+        drop(dispatcher);
+        drop(db);
+        std::fs::remove_dir_all(path).unwrap();
+    }
+
+    #[tokio::test]
+    async fn coordinated_dispatch_resumes_durable_history_after_store_restart() {
+        struct HistoryAgent {
+            seen: Arc<Mutex<Vec<(String, usize)>>>,
+        }
+        #[async_trait]
+        impl crate::agent::AgentClient for HistoryAgent {
+            async fn run_turn_with_context(
+                &self,
+                context: crate::agent::TurnContext<'_>,
+                msg: &Message,
+                history: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                assert!(context
+                    .home
+                    .expect("resolved profile home")
+                    .join("state.db")
+                    .is_file());
+                self.run_turn(msg, history, tx).await
+            }
+
+            async fn run_turn(
+                &self,
+                msg: &Message,
+                history: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                self.seen.lock().unwrap().push((
+                    msg.resolved_session_id
+                        .clone()
+                        .expect("coordinator must assign identity"),
+                    history.len(),
+                ));
+                tx.send(StreamEvent::MessageChunk {
+                    text: "answer".into(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+        let home = std::env::temp_dir().join(format!(
+            "hermes-dispatch-store-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let config = crate::config_gateway::GatewayConfig {
+            sessions_dir: home.join("sessions"),
+            ..Default::default()
+        };
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        for text in ["first", "second"] {
+            let store = Arc::new(
+                crate::session_store::SessionStore::open(
+                    config.clone(),
+                    home.clone(),
+                    home.clone(),
+                    "default".into(),
+                    |_| Ok(false),
+                )
+                .unwrap(),
+            );
+            let (mut dispatcher, _, sent) = harness("", json!({}));
+            dispatcher.agent = Arc::new(HistoryAgent { seen: seen.clone() });
+            let dispatcher = dispatcher.with_session_store(store, 3600.0);
+            dispatcher.handle_turn(cli_msg(text, "user")).await;
+            let replies = sent.lock().unwrap();
+            assert_eq!(replies.len(), 1);
+            assert_eq!(replies[0].text, "answer");
+            assert!(replies[0].resolved_session_id.is_some());
+        }
+        let seen = seen.lock().unwrap();
+        assert_eq!(seen.len(), 2);
+        assert_eq!(seen[0].0, seen[1].0);
+        assert_eq!((seen[0].1, seen[1].1), (0, 2));
+        let db = crate::session_db::SessionDb::open_shared(home.join("state.db")).unwrap();
+        assert_eq!(db.load_history(&seen[0].0, 10).unwrap().len(), 4);
+        assert!(db.get_session("cli:chan").unwrap().is_none());
+        drop(seen);
+        drop(db);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
     #[tokio::test]
     async fn same_channel_id_on_different_platforms_can_run_concurrently() {
         struct GateAgent {
@@ -432,6 +735,29 @@ mod tests {
         }
     }
 
+    #[tokio::test]
+    async fn video_context_reaches_agent_without_hiding_commands() {
+        let (mut dispatcher, _calls, sent) = harness("", json!({}));
+        dispatcher.agent = Arc::new(EchoAgent);
+        let mut msg = cli_msg("describe this", "sender");
+        msg.video_paths = vec!["/tmp/video_fixture.mp4".into()];
+        msg.message_id = Some("child".into());
+        msg.thread_id = Some("root".into());
+        dispatcher.handle_turn(msg.clone()).await;
+        {
+            let out = sent.lock().unwrap();
+            assert_eq!(out[0].message_id.as_deref(), Some("child"));
+            assert_eq!(out[0].thread_id.as_deref(), Some("root"));
+            assert!(out[0].text.contains("/tmp/video_fixture.mp4"));
+            assert!(out[0].text.ends_with("\n\ndescribe this"));
+        }
+        msg.text = "/help".into();
+        dispatcher.handle_turn(msg).await;
+        let out = sent.lock().unwrap();
+        assert_eq!(out.len(), 2);
+        assert!(!out[1].text.contains("video_fixture"));
+    }
+
     // A message carrying audio is transcribed before the turn: the agent (and
     // thus the outbound reply that echoes it) sees the transcript, not the
     // empty caption.
@@ -515,6 +841,7 @@ mod tests {
 
     fn cli_msg(text: &str, sender: &str) -> Message {
         Message {
+            resolved_session_id: None,
             platform: Platform::Cli,
             channel_id: "chan".into(),
             sender_id: sender.into(),
@@ -522,6 +849,10 @@ mod tests {
             content_parts: None,
             chat_type: Some("dm".into()),
             audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
         }
     }
 

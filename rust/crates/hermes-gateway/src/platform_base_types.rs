@@ -251,10 +251,7 @@ impl MessageEvent {
         let parts = split_whitespace_maxsplit1(command_text);
         // `parts` is never empty here (text starts with '/'), but mirror the
         // Python `parts[0][1:] if parts else None` guard for total fidelity.
-        let first = match parts.first() {
-            Some(f) => *f,
-            None => return None,
-        };
+        let first = *parts.first()?;
         // Drop the leading '/' (first char) and lowercase.
         let mut raw: String = first.chars().skip(1).collect::<String>().to_lowercase();
         if !raw.is_empty() && raw.contains('@') {

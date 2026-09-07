@@ -166,6 +166,7 @@ mod tests {
         // Use printf as a trivial stand-in agent CLI: it prints its argument.
         let client = CliAgentClient::new("printf", vec!["%s".to_string()], None);
         let msg = Message {
+            resolved_session_id: None,
             platform: hermes_core::Platform::Cli,
             channel_id: "c".into(),
             sender_id: "u".into(),
@@ -173,6 +174,10 @@ mod tests {
             content_parts: None,
             chat_type: None,
             audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
         };
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(8);
         client.run_turn(&msg, &[], tx).await.unwrap();
@@ -194,6 +199,7 @@ mod tests {
         // `false` exits 1 with no output.
         let client = CliAgentClient::new("false", vec![], None);
         let msg = Message {
+            resolved_session_id: None,
             platform: hermes_core::Platform::Cli,
             channel_id: "c".into(),
             sender_id: "u".into(),
@@ -201,6 +207,10 @@ mod tests {
             content_parts: None,
             chat_type: None,
             audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
         };
         let (tx, _rx) = mpsc::channel::<StreamEvent>(8);
         assert!(client.run_turn(&msg, &[], tx).await.is_err());

@@ -1,0 +1,100 @@
+[
+  {
+    "rows": [],
+    "normalized": [],
+    "expected": "## Messaging other agents\nThis install runs Bot Mode: each Hermes profile is an agent teammate with one canonical \"Bot Chat\" conversation, and you have the `message_agent` tool to DM any of them. It is FIRE-AND-FORGET: it delivers your message with your attribution prefixed automatically and returns an acknowledgement immediately \u2014 it never returns the reply. Send it, finish your turn, and the reply arrives later as a background-process completion notification that wakes you; relay it to the user then, attributed to that agent. COMPOSE every message yourself \u2014 say what YOU need from that agent; never forward the user's words verbatim, and never reveal private 1:1 chat content. When the user says \"ask <name>\" or \"tell <name> ...\", that is a handoff: pick the right teammate from the roster below, message them with message_agent, and report back naming which agent replied. Message ONE clearly relevant teammate; don't fan out to several unless the user explicitly asked.\nWhen YOU receive a \"Message from \ud83e\udd16 <name> (@<handle>):\" message, a teammate agent is talking to you (not the user): address them, reply concisely via message_agent to their handle, and if it is a pure FYI with nothing to add, staying silent is fine \u2014 never ping-pong acknowledgements.\nYou are `@hermes`. Your teammates (live roster; roles from their profiles):\n- (no teammates yet)\n\nTeammates on OTHER machines: this install also has peer gateways registered (`alpha`, `beta`). Message an agent on a peer the same way \u2014 message_agent with target \"<peer>/<agent-name>\" (or \"<peer>\" alone for the peer's main agent). Run `hermes peer list` for the live peer list."
+  },
+  {
+    "rows": [
+      null,
+      {},
+      {
+        "profile": "bad/name",
+        "connection_id": "a"
+      }
+    ],
+    "normalized": [],
+    "expected": "## Messaging other agents\nThis install runs Bot Mode: each Hermes profile is an agent teammate with one canonical \"Bot Chat\" conversation, and you have the `message_agent` tool to DM any of them. It is FIRE-AND-FORGET: it delivers your message with your attribution prefixed automatically and returns an acknowledgement immediately \u2014 it never returns the reply. Send it, finish your turn, and the reply arrives later as a background-process completion notification that wakes you; relay it to the user then, attributed to that agent. COMPOSE every message yourself \u2014 say what YOU need from that agent; never forward the user's words verbatim, and never reveal private 1:1 chat content. When the user says \"ask <name>\" or \"tell <name> ...\", that is a handoff: pick the right teammate from the roster below, message them with message_agent, and report back naming which agent replied. Message ONE clearly relevant teammate; don't fan out to several unless the user explicitly asked.\nWhen YOU receive a \"Message from \ud83e\udd16 <name> (@<handle>):\" message, a teammate agent is talking to you (not the user): address them, reply concisely via message_agent to their handle, and if it is a pure FYI with nothing to add, staying silent is fine \u2014 never ping-pong acknowledgements.\nYou are `@hermes`. Your teammates (live roster; roles from their profiles):\n- (no teammates yet)\n\nTeammates on OTHER machines: this install also has peer gateways registered (`alpha`, `beta`). Message an agent on a peer the same way \u2014 message_agent with target \"<peer>/<agent-name>\" (or \"<peer>\" alone for the peer's main agent). Run `hermes peer list` for the live peer list."
+  },
+  {
+    "rows": [
+      {
+        "profile": "default",
+        "connection_id": "a",
+        "online": false
+      }
+    ],
+    "normalized": [
+      {
+        "profile": "default",
+        "handle": "hermes",
+        "connection_id": "a",
+        "connection_label": "",
+        "title": "",
+        "description": "",
+        "online": false
+      }
+    ],
+    "expected": "## Messaging other agents\nThis install runs Bot Mode: each Hermes profile is an agent teammate with one canonical \"Bot Chat\" conversation, and you have the `message_agent` tool to DM any of them. It is FIRE-AND-FORGET: it delivers your message with your attribution prefixed automatically and returns an acknowledgement immediately \u2014 it never returns the reply. Send it, finish your turn, and the reply arrives later as a background-process completion notification that wakes you; relay it to the user then, attributed to that agent. COMPOSE every message yourself \u2014 say what YOU need from that agent; never forward the user's words verbatim, and never reveal private 1:1 chat content. When the user says \"ask <name>\" or \"tell <name> ...\", that is a handoff: pick the right teammate from the roster below, message them with message_agent, and report back naming which agent replied. Message ONE clearly relevant teammate; don't fan out to several unless the user explicitly asked.\nWhen YOU receive a \"Message from \ud83e\udd16 <name> (@<handle>):\" message, a teammate agent is talking to you (not the user): address them, reply concisely via message_agent to their handle, and if it is a pure FYI with nothing to add, staying silent is fine \u2014 never ping-pong acknowledgements.\nYou are `@hermes`. Your teammates (live roster; roles from their profiles):\n- (no teammates yet)\n\nTeammates on OTHER connected machines (reachable through the Desktop relay \u2014 message them with message_agent exactly like local teammates; replies arrive as completion notifications the same way):\n- `@hermes` \u2014 on a\n\nTeammates on OTHER machines: this install also has peer gateways registered (`alpha`, `beta`). Message an agent on a peer the same way \u2014 message_agent with target \"<peer>/<agent-name>\" (or \"<peer>\" alone for the peer's main agent). Run `hermes peer list` for the live peer list."
+  },
+  {
+    "rows": [
+      {
+        "profile": "worker",
+        "handle": "@Same",
+        "connection_id": "a",
+        "title": "A",
+        "description": "line\n two"
+      },
+      {
+        "profile": "other",
+        "handle": "same",
+        "connection_id": "b",
+        "connection_label": "Laptop"
+      }
+    ],
+    "normalized": [
+      {
+        "profile": "worker",
+        "handle": "Same",
+        "connection_id": "a",
+        "connection_label": "",
+        "title": "A",
+        "description": "line two"
+      },
+      {
+        "profile": "other",
+        "handle": "same",
+        "connection_id": "b",
+        "connection_label": "Laptop",
+        "title": "",
+        "description": ""
+      }
+    ],
+    "expected": "## Messaging other agents\nThis install runs Bot Mode: each Hermes profile is an agent teammate with one canonical \"Bot Chat\" conversation, and you have the `message_agent` tool to DM any of them. It is FIRE-AND-FORGET: it delivers your message with your attribution prefixed automatically and returns an acknowledgement immediately \u2014 it never returns the reply. Send it, finish your turn, and the reply arrives later as a background-process completion notification that wakes you; relay it to the user then, attributed to that agent. COMPOSE every message yourself \u2014 say what YOU need from that agent; never forward the user's words verbatim, and never reveal private 1:1 chat content. When the user says \"ask <name>\" or \"tell <name> ...\", that is a handoff: pick the right teammate from the roster below, message them with message_agent, and report back naming which agent replied. Message ONE clearly relevant teammate; don't fan out to several unless the user explicitly asked.\nWhen YOU receive a \"Message from \ud83e\udd16 <name> (@<handle>):\" message, a teammate agent is talking to you (not the user): address them, reply concisely via message_agent to their handle, and if it is a pure FYI with nothing to add, staying silent is fine \u2014 never ping-pong acknowledgements.\nYou are `@hermes`. Your teammates (live roster; roles from their profiles):\n- (no teammates yet)\n\nTeammates on OTHER connected machines (reachable through the Desktop relay \u2014 message them with message_agent exactly like local teammates; replies arrive as completion notifications the same way):\n- `@Same@a` \u2014 on a \u2014 A \u2014 line two\n- `@same@b` \u2014 on Laptop\n\nTeammates on OTHER machines: this install also has peer gateways registered (`alpha`, `beta`). Message an agent on a peer the same way \u2014 message_agent with target \"<peer>/<agent-name>\" (or \"<peer>\" alone for the peer's main agent). Run `hermes peer list` for the live peer list."
+  },
+  {
+    "rows": [
+      {
+        "profile": 123,
+        "connection_id": true,
+        "title": [
+          1,
+          2
+        ],
+        "description": "\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9"
+      }
+    ],
+    "normalized": [
+      {
+        "profile": "123",
+        "handle": "123",
+        "connection_id": "True",
+        "connection_label": "",
+        "title": "[1, 2]",
+        "description": "\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9"
+      }
+    ],
+    "expected": "## Messaging other agents\nThis install runs Bot Mode: each Hermes profile is an agent teammate with one canonical \"Bot Chat\" conversation, and you have the `message_agent` tool to DM any of them. It is FIRE-AND-FORGET: it delivers your message with your attribution prefixed automatically and returns an acknowledgement immediately \u2014 it never returns the reply. Send it, finish your turn, and the reply arrives later as a background-process completion notification that wakes you; relay it to the user then, attributed to that agent. COMPOSE every message yourself \u2014 say what YOU need from that agent; never forward the user's words verbatim, and never reveal private 1:1 chat content. When the user says \"ask <name>\" or \"tell <name> ...\", that is a handoff: pick the right teammate from the roster below, message them with message_agent, and report back naming which agent replied. Message ONE clearly relevant teammate; don't fan out to several unless the user explicitly asked.\nWhen YOU receive a \"Message from \ud83e\udd16 <name> (@<handle>):\" message, a teammate agent is talking to you (not the user): address them, reply concisely via message_agent to their handle, and if it is a pure FYI with nothing to add, staying silent is fine \u2014 never ping-pong acknowledgements.\nYou are `@hermes`. Your teammates (live roster; roles from their profiles):\n- (no teammates yet)\n\nTeammates on OTHER connected machines (reachable through the Desktop relay \u2014 message them with message_agent exactly like local teammates; replies arrive as completion notifications the same way):\n- `@123` \u2014 on True \u2014 [1, 2] \u2014 \u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\n\nTeammates on OTHER machines: this install also has peer gateways registered (`alpha`, `beta`). Message an agent on a peer the same way \u2014 message_agent with target \"<peer>/<agent-name>\" (or \"<peer>\" alone for the peer's main agent). Run `hermes peer list` for the live peer list."
+  }
+]

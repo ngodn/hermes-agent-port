@@ -1,0 +1,3746 @@
+[
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "D1",
+      "channel_type": "im",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:D1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "G1",
+      "channel_type": "mpim",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:dm:T1:G1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:C1:123.4:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:C1:123.4:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:C1:123.4:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": ""
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": false,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": false,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:123.4"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": null,
+    "result": "agent:main:slack:group:T1:C1:123.4:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "default",
+    "result": "agent:main:slack:group:T1:C1:123.4:U1"
+  },
+  {
+    "event": {
+      "channel": "C1",
+      "channel_type": "channel",
+      "thread_ts": "123.4",
+      "user": "U1"
+    },
+    "team": "T1",
+    "group": true,
+    "per_thread": true,
+    "profile": "coder",
+    "result": "agent:coder:slack:group:T1:C1:123.4:U1"
+  }
+]

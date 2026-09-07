@@ -226,12 +226,22 @@ pub fn resolve_provider_api_key(
     base_url: &str,
     dotenv: &HashMap<String, String>,
 ) -> Option<String> {
+    resolve_provider_api_key_with_env(base_url, dotenv, |name| std::env::var(name).ok())
+}
+
+/// Generic provider fallback with an explicit environment boundary, so a
+/// multiplexed caller can supply get_secret instead of process credentials.
+pub fn resolve_provider_api_key_with_env(
+    base_url: &str,
+    dotenv: &HashMap<String, String>,
+    mut environment: impl FnMut(&str) -> Option<String>,
+) -> Option<String> {
     for name in key_names_for(base_url) {
         let value = dotenv
             .get(name)
             .filter(|value| !value.is_empty())
             .cloned()
-            .or_else(|| std::env::var(name).ok());
+            .or_else(|| environment(name));
         if let Some(value) = value {
             let value = value.trim_matches(crate::python_value::python_whitespace);
             if !value.is_empty() {
@@ -245,8 +255,8 @@ pub fn resolve_provider_api_key(
 /// Resolve the declared keys of a bundled API-key profile. A selected provider
 /// never borrows another provider's generic fallback key. Dotenv wins per name
 /// so a saved rotation supersedes a stale shell export, as in Python auth.
-/// Credential pools and per-turn secret scopes are handled by the bridge until
-/// those runtime subsystems are ported.
+/// Scoped callers pass their authoritative prepared map and get_secret as the
+/// environment callback. Credential pool rotation remains separate runtime work.
 pub fn resolve_profile_api_key(
     profile: &crate::provider_registry::ProviderProfile,
     dotenv: &HashMap<String, String>,

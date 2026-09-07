@@ -1,0 +1,2328 @@
+[
+  {
+    "relative_path": "SKILL.md",
+    "frontmatter": {},
+    "description": "Root skill with default name",
+    "provenance": null,
+    "expected": {
+      "skill_name": "skills",
+      "category": "general",
+      "frontmatter_name": "skills",
+      "description": "Root skill with default name",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "DESCRIPTION.md",
+    "frontmatter": {
+      "name": "root-desc"
+    },
+    "description": "Root skill with description file",
+    "provenance": null,
+    "expected": {
+      "skill_name": "skills",
+      "category": "general",
+      "frontmatter_name": "root-desc",
+      "description": "Root skill with description file",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "custom.md",
+    "frontmatter": {
+      "name": "custom-root"
+    },
+    "description": "Root skill with custom filename",
+    "provenance": null,
+    "expected": {
+      "skill_name": "skills",
+      "category": "general",
+      "frontmatter_name": "custom-root",
+      "description": "Root skill with custom filename",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "my-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "Flat single-level directory skill",
+    "provenance": null,
+    "expected": {
+      "skill_name": "my-skill",
+      "category": "my-skill",
+      "frontmatter_name": "my-skill",
+      "description": "Flat single-level directory skill",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general-helper/SKILL.md",
+    "frontmatter": {
+      "name": "helper"
+    },
+    "description": "Flat helper skill with custom name",
+    "provenance": null,
+    "expected": {
+      "skill_name": "general-helper",
+      "category": "general-helper",
+      "frontmatter_name": "helper",
+      "description": "Flat helper skill with custom name",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "coding/git-helper/SKILL.md",
+    "frontmatter": {
+      "name": "git-helper"
+    },
+    "description": "Standard category and skill directory",
+    "provenance": null,
+    "expected": {
+      "skill_name": "git-helper",
+      "category": "coding",
+      "frontmatter_name": "git-helper",
+      "description": "Standard category and skill directory",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "web/search/SKILL.md",
+    "frontmatter": {},
+    "description": "Web search skill with inferred name",
+    "provenance": null,
+    "expected": {
+      "skill_name": "search",
+      "category": "web",
+      "frontmatter_name": "search",
+      "description": "Web search skill with inferred name",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "data/analyzer/SKILL.md",
+    "frontmatter": {
+      "name": "data-tool"
+    },
+    "description": "Data analysis skill",
+    "provenance": null,
+    "expected": {
+      "skill_name": "analyzer",
+      "category": "data",
+      "frontmatter_name": "data-tool",
+      "description": "Data analysis skill",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "tools/network/http/fetcher/SKILL.md",
+    "frontmatter": {},
+    "description": "Nested category path with 3 category levels",
+    "provenance": null,
+    "expected": {
+      "skill_name": "fetcher",
+      "category": "tools/network/http",
+      "frontmatter_name": "fetcher",
+      "description": "Nested category path with 3 category levels",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "cloud/aws/s3/downloader/SKILL.md",
+    "frontmatter": {
+      "name": "s3-get"
+    },
+    "description": "Deeply nested cloud tool",
+    "provenance": null,
+    "expected": {
+      "skill_name": "downloader",
+      "category": "cloud/aws/s3",
+      "frontmatter_name": "s3-get",
+      "description": "Deeply nested cloud tool",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "a/b/c/d/e/deep-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "Five-level deep category path",
+    "provenance": null,
+    "expected": {
+      "skill_name": "deep-skill",
+      "category": "a/b/c/d/e",
+      "frontmatter_name": "deep-skill",
+      "description": "Five-level deep category path",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "my category/skill name/SKILL.md",
+    "frontmatter": {},
+    "description": "Path components with spaces",
+    "provenance": null,
+    "expected": {
+      "skill_name": "skill name",
+      "category": "my category",
+      "frontmatter_name": "skill name",
+      "description": "Path components with spaces",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/SKILL.md",
+    "frontmatter": {},
+    "description": "Direct child of _org directory without org_id",
+    "provenance": null,
+    "expected": {
+      "skill_name": "_org",
+      "category": "_org",
+      "frontmatter_name": "_org",
+      "description": "Direct child of _org directory without org_id",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "category/_org/sub/SKILL.md",
+    "frontmatter": {},
+    "description": "Path with _org as a subcategory component",
+    "provenance": null,
+    "expected": {
+      "skill_name": "sub",
+      "category": "category/_org",
+      "frontmatter_name": "sub",
+      "description": "Path with _org as a subcategory component",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "not_org/org_1/my-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "Category containing org in directory name",
+    "provenance": null,
+    "expected": {
+      "skill_name": "my-skill",
+      "category": "not_org/org_1",
+      "frontmatter_name": "my-skill",
+      "description": "Category containing org in directory name",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/acme-corp/SKILL.md",
+    "frontmatter": {},
+    "description": "Org root skill",
+    "provenance": null,
+    "expected": {
+      "skill_name": "acme-corp",
+      "category": "general",
+      "frontmatter_name": "acme-corp",
+      "description": "Org root skill",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "acme-corp",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/acme-corp/team-tool/SKILL.md",
+    "frontmatter": {},
+    "description": "Org flat skill",
+    "provenance": null,
+    "expected": {
+      "skill_name": "team-tool",
+      "category": "team-tool",
+      "frontmatter_name": "team-tool",
+      "description": "Org flat skill",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "acme-corp",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/acme-corp/devops/deployer/SKILL.md",
+    "frontmatter": {},
+    "description": "Org category skill",
+    "provenance": null,
+    "expected": {
+      "skill_name": "deployer",
+      "category": "devops",
+      "frontmatter_name": "deployer",
+      "description": "Org category skill",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "acme-corp",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/acme-corp/infra/cloud/aws/backup/SKILL.md",
+    "frontmatter": {},
+    "description": "Org nested category skill",
+    "provenance": null,
+    "expected": {
+      "skill_name": "backup",
+      "category": "infra/cloud/aws",
+      "frontmatter_name": "backup",
+      "description": "Org nested category skill",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "acme-corp",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/company-xyz/dept/team/project/service/SKILL.md",
+    "frontmatter": {},
+    "description": "Org deeply nested service skill",
+    "provenance": null,
+    "expected": {
+      "skill_name": "service",
+      "category": "dept/team/project",
+      "frontmatter_name": "service",
+      "description": "Org deeply nested service skill",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "company-xyz",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/my-org.team_1/tools/SKILL.md",
+    "frontmatter": {},
+    "description": "Org ID with hyphen, dot, and underscore",
+    "provenance": "{\"author_device\": \"box-1\"}",
+    "expected": {
+      "skill_name": "tools",
+      "category": "tools",
+      "frontmatter_name": "tools",
+      "description": "Org ID with hyphen, dot, and underscore",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "my-org.team_1",
+      "org_author": "box-1"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/runner/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with absent provenance file",
+    "provenance": null,
+    "expected": {
+      "skill_name": "runner",
+      "category": "tools",
+      "frontmatter_name": "runner",
+      "description": "Org skill with absent provenance file",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p1/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with empty provenance file",
+    "provenance": "",
+    "expected": {
+      "skill_name": "p1",
+      "category": "tools",
+      "frontmatter_name": "p1",
+      "description": "Org skill with empty provenance file",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p2/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with broken JSON syntax",
+    "provenance": "{invalid json syntax",
+    "expected": {
+      "skill_name": "p2",
+      "category": "tools",
+      "frontmatter_name": "p2",
+      "description": "Org skill with broken JSON syntax",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p3/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with JSON array provenance",
+    "provenance": "[1, 2, 3]",
+    "expected": {
+      "skill_name": "p3",
+      "category": "tools",
+      "frontmatter_name": "p3",
+      "description": "Org skill with JSON array provenance",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p4/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with JSON integer provenance",
+    "provenance": "12345",
+    "expected": {
+      "skill_name": "p4",
+      "category": "tools",
+      "frontmatter_name": "p4",
+      "description": "Org skill with JSON integer provenance",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p5/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with JSON string provenance",
+    "provenance": "\"author_device\"",
+    "expected": {
+      "skill_name": "p5",
+      "category": "tools",
+      "frontmatter_name": "p5",
+      "description": "Org skill with JSON string provenance",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p6/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with JSON boolean provenance",
+    "provenance": "true",
+    "expected": {
+      "skill_name": "p6",
+      "category": "tools",
+      "frontmatter_name": "p6",
+      "description": "Org skill with JSON boolean provenance",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p7/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with empty object provenance",
+    "provenance": "{}",
+    "expected": {
+      "skill_name": "p7",
+      "category": "tools",
+      "frontmatter_name": "p7",
+      "description": "Org skill with empty object provenance",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p8/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with author_device only",
+    "provenance": "{\"author_device\": \"macbook-pro\"}",
+    "expected": {
+      "skill_name": "p8",
+      "category": "tools",
+      "frontmatter_name": "p8",
+      "description": "Org skill with author_device only",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": "macbook-pro"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p9/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with author_user_id only",
+    "provenance": "{\"author_user_id\": \"usr_alice\"}",
+    "expected": {
+      "skill_name": "p9",
+      "category": "tools",
+      "frontmatter_name": "p9",
+      "description": "Org skill with author_user_id only",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": "usr_alice"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p10/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with both author_device and author_user_id",
+    "provenance": "{\"author_device\": \"dev-box-9\", \"author_user_id\": \"usr_bob\"}",
+    "expected": {
+      "skill_name": "p10",
+      "category": "tools",
+      "frontmatter_name": "p10",
+      "description": "Org skill with both author_device and author_user_id",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": "dev-box-9"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p11/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with empty author_device and valid author_user_id",
+    "provenance": "{\"author_device\": \"\", \"author_user_id\": \"usr_carol\"}",
+    "expected": {
+      "skill_name": "p11",
+      "category": "tools",
+      "frontmatter_name": "p11",
+      "description": "Org skill with empty author_device and valid author_user_id",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": "usr_carol"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p12/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with null author_device and valid author_user_id",
+    "provenance": "{\"author_device\": null, \"author_user_id\": \"usr_dave\"}",
+    "expected": {
+      "skill_name": "p12",
+      "category": "tools",
+      "frontmatter_name": "p12",
+      "description": "Org skill with null author_device and valid author_user_id",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": "usr_dave"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p13/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with null author_device and null author_user_id",
+    "provenance": "{\"author_device\": null, \"author_user_id\": null}",
+    "expected": {
+      "skill_name": "p13",
+      "category": "tools",
+      "frontmatter_name": "p13",
+      "description": "Org skill with null author_device and null author_user_id",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p14/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with integer author_device and author_user_id",
+    "provenance": "{\"author_device\": 101, \"author_user_id\": 202}",
+    "expected": {
+      "skill_name": "p14",
+      "category": "tools",
+      "frontmatter_name": "p14",
+      "description": "Org skill with integer author_device and author_user_id",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": "101"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p15/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with boolean author_device and author_user_id",
+    "provenance": "{\"author_device\": false, \"author_user_id\": true}",
+    "expected": {
+      "skill_name": "p15",
+      "category": "tools",
+      "frontmatter_name": "p15",
+      "description": "Org skill with boolean author_device and author_user_id",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": "True"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prov-org/tools/p16/SKILL.md",
+    "frontmatter": {},
+    "description": "Org skill with extra provenance metadata fields",
+    "provenance": "{\"author_device\": \"ci-runner-1\", \"author_user_id\": \"usr_ci\", \"version\": 2}",
+    "expected": {
+      "skill_name": "p16",
+      "category": "tools",
+      "frontmatter_name": "p16",
+      "description": "Org skill with extra provenance metadata fields",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "prov-org",
+      "org_author": "ci-runner-1"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "tools/search/SKILL.md",
+    "frontmatter": {},
+    "description": "Non-org skill with provenance file present in mirror",
+    "provenance": "{\"author_device\": \"ignored-box\"}",
+    "expected": {
+      "skill_name": "search",
+      "category": "tools",
+      "frontmatter_name": "search",
+      "description": "Non-org skill with provenance file present in mirror",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "Frontmatter without name key",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "named-skill",
+      "description": "Frontmatter without name key",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": "named-skill"
+    },
+    "description": "Frontmatter name matching directory name",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "named-skill",
+      "description": "Frontmatter name matching directory name",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": "custom-display-name"
+    },
+    "description": "Frontmatter name differing from directory name",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "custom-display-name",
+      "description": "Frontmatter name differing from directory name",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": ""
+    },
+    "description": "Frontmatter name as empty string",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "",
+      "description": "Frontmatter name as empty string",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": "  padded name  "
+    },
+    "description": "Frontmatter name with whitespace padding",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "  padded name  ",
+      "description": "Frontmatter name with whitespace padding",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": 42
+    },
+    "description": "Frontmatter name as integer scalar",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "42",
+      "description": "Frontmatter name as integer scalar",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": 3.1415
+    },
+    "description": "Frontmatter name as float scalar",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "3.1415",
+      "description": "Frontmatter name as float scalar",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": true
+    },
+    "description": "Frontmatter name as boolean True",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "True",
+      "description": "Frontmatter name as boolean True",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": false
+    },
+    "description": "Frontmatter name as boolean False",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "False",
+      "description": "Frontmatter name as boolean False",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": null
+    },
+    "description": "Frontmatter name explicitly None",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "None",
+      "description": "Frontmatter name explicitly None",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": [
+        "item1",
+        "item2"
+      ]
+    },
+    "description": "Frontmatter name as list",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "['item1', 'item2']",
+      "description": "Frontmatter name as list",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": {
+        "key": "value"
+      }
+    },
+    "description": "Frontmatter name as dict",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "{'key': 'value'}",
+      "description": "Frontmatter name as dict",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/named-skill/SKILL.md",
+    "frontmatter": {
+      "name": "\u65e5\u672c\u8a9e\u30b9\u30ad\u30eb \ud83d\ude80"
+    },
+    "description": "Frontmatter name with unicode characters",
+    "provenance": null,
+    "expected": {
+      "skill_name": "named-skill",
+      "category": "general",
+      "frontmatter_name": "\u65e5\u672c\u8a9e\u30b9\u30ad\u30eb \ud83d\ude80",
+      "description": "Frontmatter name with unicode characters",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "Platforms field omitted",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field omitted",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": null
+    },
+    "description": "Platforms field explicitly None",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field explicitly None",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": []
+    },
+    "description": "Platforms field as empty list",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field as empty list",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": "linux"
+    },
+    "description": "Platforms field as single string scalar",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field as single string scalar",
+      "platforms": [
+        "linux"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": "  macos  "
+    },
+    "description": "Platforms field as single string with whitespace",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field as single string with whitespace",
+      "platforms": [
+        "macos"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": [
+        "linux",
+        "darwin",
+        "win32"
+      ]
+    },
+    "description": "Platforms field as list of platform strings",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field as list of platform strings",
+      "platforms": [
+        "linux",
+        "darwin",
+        "win32"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": [
+        " linux ",
+        "",
+        "  ",
+        "darwin",
+        "\t"
+      ]
+    },
+    "description": "Platforms list with empty and whitespace elements",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms list with empty and whitespace elements",
+      "platforms": [
+        "linux",
+        "darwin"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": [
+        "linux",
+        1,
+        true,
+        null,
+        2.5,
+        ""
+      ]
+    },
+    "description": "Platforms list with mixed scalar types",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms list with mixed scalar types",
+      "platforms": [
+        "linux",
+        "1",
+        "True",
+        "None",
+        "2.5"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": 0
+    },
+    "description": "Platforms field as falsy integer 0",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field as falsy integer 0",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": false
+    },
+    "description": "Platforms field as falsy boolean False",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field as falsy boolean False",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": ""
+    },
+    "description": "Platforms field as falsy empty string",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field as falsy empty string",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/plat-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": {
+        "linux": true,
+        "win32": false
+      }
+    },
+    "description": "Platforms field as dict",
+    "provenance": null,
+    "expected": {
+      "skill_name": "plat-skill",
+      "category": "general",
+      "frontmatter_name": "plat-skill",
+      "description": "Platforms field as dict",
+      "platforms": [
+        "linux",
+        "win32"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "Frontmatter without metadata",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Frontmatter without metadata",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": null
+    },
+    "description": "Metadata field explicitly None",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Metadata field explicitly None",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": "malformed string"
+    },
+    "description": "Metadata field as string scalar",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Metadata field as string scalar",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": 123
+    },
+    "description": "Metadata field as integer scalar",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Metadata field as integer scalar",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": []
+    },
+    "description": "Metadata field as list",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Metadata field as list",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {}
+    },
+    "description": "Metadata field as empty dict",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Metadata field as empty dict",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "hermes": null
+      }
+    },
+    "description": "Hermes section in metadata explicitly None",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Hermes section in metadata explicitly None",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "hermes": "bad string"
+      }
+    },
+    "description": "Hermes section in metadata as string",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Hermes section in metadata as string",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "hermes": {}
+      }
+    },
+    "description": "Hermes section in metadata as empty dict",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Hermes section in metadata as empty dict",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "hermes": {
+          "fallback_for_toolsets": [
+            "legacy_browser"
+          ],
+          "requires_toolsets": [
+            "terminal",
+            "developer"
+          ],
+          "fallback_for_tools": [
+            "old_patch"
+          ],
+          "requires_tools": [
+            "git",
+            "curl"
+          ],
+          "session_platforms": [
+            "telegram",
+            "discord"
+          ]
+        }
+      }
+    },
+    "description": "Full conditions defined in hermes metadata",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Full conditions defined in hermes metadata",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [
+          "legacy_browser"
+        ],
+        "requires_toolsets": [
+          "terminal",
+          "developer"
+        ],
+        "fallback_for_tools": [
+          "old_patch"
+        ],
+        "requires_tools": [
+          "git",
+          "curl"
+        ],
+        "session_platforms": [
+          "telegram",
+          "discord"
+        ]
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "hermes": {
+          "requires_tools": [
+            "git"
+          ]
+        }
+      }
+    },
+    "description": "Partial conditions with requires_tools only",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Partial conditions with requires_tools only",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [
+          "git"
+        ],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "hermes": {
+          "fallback_for_toolsets": [
+            "browser"
+          ]
+        }
+      }
+    },
+    "description": "Partial conditions with fallback_for_toolsets only",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Partial conditions with fallback_for_toolsets only",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [
+          "browser"
+        ],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "hermes": {
+          "session_platforms": [
+            "msteams",
+            "slack"
+          ]
+        }
+      }
+    },
+    "description": "Partial conditions with session_platforms only",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Partial conditions with session_platforms only",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": [
+          "msteams",
+          "slack"
+        ]
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "hermes": {
+          "requires_tools": "terminal",
+          "fallback_for_toolsets": 42,
+          "requires_toolsets": null,
+          "session_platforms": true
+        }
+      }
+    },
+    "description": "Hermes condition fields with non-list scalar values",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Hermes condition fields with non-list scalar values",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": 42,
+        "requires_toolsets": null,
+        "fallback_for_tools": [],
+        "requires_tools": "terminal",
+        "session_platforms": true
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/cond-skill/SKILL.md",
+    "frontmatter": {
+      "metadata": {
+        "author": "alice",
+        "version": "1.0",
+        "hermes": {
+          "requires_tools": [
+            "docker"
+          ]
+        }
+      }
+    },
+    "description": "Metadata containing extra non-hermes keys",
+    "provenance": null,
+    "expected": {
+      "skill_name": "cond-skill",
+      "category": "general",
+      "frontmatter_name": "cond-skill",
+      "description": "Metadata containing extra non-hermes keys",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [
+          "docker"
+        ],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/extra-keys/SKILL.md",
+    "frontmatter": {
+      "name": "clean-skill",
+      "author": "someone",
+      "version": "2.0",
+      "tags": [
+        "search"
+      ]
+    },
+    "description": "Skill with extra frontmatter keys",
+    "provenance": null,
+    "expected": {
+      "skill_name": "extra-keys",
+      "category": "general",
+      "frontmatter_name": "clean-skill",
+      "description": "Skill with extra frontmatter keys",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/desc-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "Standard single-line description",
+    "provenance": null,
+    "expected": {
+      "skill_name": "desc-skill",
+      "category": "general",
+      "frontmatter_name": "desc-skill",
+      "description": "Standard single-line description",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/desc-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "",
+    "provenance": null,
+    "expected": {
+      "skill_name": "desc-skill",
+      "category": "general",
+      "frontmatter_name": "desc-skill",
+      "description": "",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/desc-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "   ",
+    "provenance": null,
+    "expected": {
+      "skill_name": "desc-skill",
+      "category": "general",
+      "frontmatter_name": "desc-skill",
+      "description": "   ",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/desc-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "Line 1\nLine 2\nLine 3",
+    "provenance": null,
+    "expected": {
+      "skill_name": "desc-skill",
+      "category": "general",
+      "frontmatter_name": "desc-skill",
+      "description": "Line 1\nLine 2\nLine 3",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/desc-skill/SKILL.md",
+    "frontmatter": {},
+    "description": "\u65e5\u672c\u8a9e\u306e\u8aac\u660e \ud83d\ude80 Caf\u00e9 r\u00e9sum\u00e9",
+    "provenance": null,
+    "expected": {
+      "skill_name": "desc-skill",
+      "category": "general",
+      "frontmatter_name": "desc-skill",
+      "description": "\u65e5\u672c\u8a9e\u306e\u8aac\u660e \ud83d\ude80 Caf\u00e9 r\u00e9sum\u00e9",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/desc-skill/SKILL.md",
+    "frontmatter": {},
+    "description": null,
+    "provenance": null,
+    "expected": {
+      "skill_name": "desc-skill",
+      "category": "general",
+      "frontmatter_name": "desc-skill",
+      "description": null,
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/desc-skill/SKILL.md",
+    "frontmatter": {},
+    "description": true,
+    "provenance": null,
+    "expected": {
+      "skill_name": "desc-skill",
+      "category": "general",
+      "frontmatter_name": "desc-skill",
+      "description": true,
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/prod-org/deploy/kubernetes/SKILL.md",
+    "frontmatter": {
+      "name": "k8s-deploy",
+      "platforms": [
+        "linux",
+        "darwin"
+      ],
+      "metadata": {
+        "hermes": {
+          "requires_tools": [
+            "kubectl",
+            "helm"
+          ],
+          "session_platforms": [
+            "cli"
+          ]
+        }
+      }
+    },
+    "description": "Production Kubernetes deployment automation",
+    "provenance": "{\"author_device\": \"ci-bot-01\", \"author_user_id\": \"usr_ci\"}",
+    "expected": {
+      "skill_name": "kubernetes",
+      "category": "deploy",
+      "frontmatter_name": "k8s-deploy",
+      "description": "Production Kubernetes deployment automation",
+      "platforms": [
+        "linux",
+        "darwin"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [
+          "kubectl",
+          "helm"
+        ],
+        "session_platforms": [
+          "cli"
+        ]
+      },
+      "org_id": "prod-org",
+      "org_author": "ci-bot-01"
+    },
+    "error": null
+  },
+  {
+    "relative_path": "SKILL.md",
+    "frontmatter": {
+      "name": "root-override",
+      "platforms": [
+        "win32"
+      ],
+      "metadata": {
+        "hermes": {
+          "fallback_for_tools": [
+            "old_tool"
+          ]
+        }
+      }
+    },
+    "description": "Root level skill with complete metadata",
+    "provenance": null,
+    "expected": {
+      "skill_name": "skills",
+      "category": "general",
+      "frontmatter_name": "root-override",
+      "description": "Root level skill with complete metadata",
+      "platforms": [
+        "win32"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [
+          "old_tool"
+        ],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "_org/acme-corp/SKILL.md",
+    "frontmatter": {
+      "name": "org-entrypoint"
+    },
+    "description": "Org root skill with broken provenance",
+    "provenance": "{unclosed json",
+    "expected": {
+      "skill_name": "acme-corp",
+      "category": "general",
+      "frontmatter_name": "org-entrypoint",
+      "description": "Org root skill with broken provenance",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      },
+      "org_id": "acme-corp",
+      "org_author": ""
+    },
+    "error": null
+  },
+  {
+    "relative_path": "dev/tools/search/engine/SKILL.md",
+    "frontmatter": {
+      "name": "\u30a8\u30f3\u30b8\u30f3",
+      "platforms": [
+        "linux"
+      ],
+      "metadata": {
+        "author": "developer",
+        "hermes": {
+          "session_platforms": [
+            "cli",
+            "telegram"
+          ]
+        }
+      }
+    },
+    "description": "Multi-level search engine skill with unicode name",
+    "provenance": null,
+    "expected": {
+      "skill_name": "engine",
+      "category": "dev/tools/search",
+      "frontmatter_name": "\u30a8\u30f3\u30b8\u30f3",
+      "description": "Multi-level search engine skill with unicode name",
+      "platforms": [
+        "linux"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": [
+          "cli",
+          "telegram"
+        ]
+      }
+    },
+    "error": null
+  },
+  {
+    "relative_path": "general/err-skill/SKILL.md",
+    "frontmatter": null,
+    "description": "Frontmatter is None",
+    "provenance": null,
+    "expected": null,
+    "error": "AttributeError"
+  },
+  {
+    "relative_path": "general/err-skill/SKILL.md",
+    "frontmatter": "not a dict",
+    "description": "Frontmatter is string scalar",
+    "provenance": null,
+    "expected": null,
+    "error": "AttributeError"
+  },
+  {
+    "relative_path": "general/err-skill/SKILL.md",
+    "frontmatter": 999,
+    "description": "Frontmatter is integer scalar",
+    "provenance": null,
+    "expected": null,
+    "error": "AttributeError"
+  },
+  {
+    "relative_path": "general/err-skill/SKILL.md",
+    "frontmatter": [
+      1,
+      2,
+      3
+    ],
+    "description": "Frontmatter is list",
+    "provenance": null,
+    "expected": null,
+    "error": "AttributeError"
+  },
+  {
+    "relative_path": "general/err-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": 123
+    },
+    "description": "Platforms is truthy integer scalar",
+    "provenance": null,
+    "expected": null,
+    "error": "TypeError"
+  },
+  {
+    "relative_path": "general/err-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": true
+    },
+    "description": "Platforms is boolean True",
+    "provenance": null,
+    "expected": null,
+    "error": "TypeError"
+  },
+  {
+    "relative_path": "general/err-skill/SKILL.md",
+    "frontmatter": {
+      "platforms": 3.14
+    },
+    "description": "Platforms is float scalar",
+    "provenance": null,
+    "expected": null,
+    "error": "TypeError"
+  },
+  {
+    "relative_path": "/outside/SKILL.md",
+    "frontmatter": {},
+    "description": "Absolute path outside skills_dir",
+    "provenance": null,
+    "expected": null,
+    "error": "ValueError"
+  },
+  {
+    "relative_path": "/tmp/abs/nested/SKILL.md",
+    "frontmatter": {},
+    "description": "Another absolute path outside skills_dir",
+    "provenance": null,
+    "expected": null,
+    "error": "ValueError"
+  }
+]

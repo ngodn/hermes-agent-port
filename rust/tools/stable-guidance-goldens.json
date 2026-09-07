@@ -1,0 +1,2450 @@
+[
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "c4d903d0664a18a3f2ff7e3ebe4e0088db5b4a3ee49636914d373fc9873ee0ff"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "208f93a342f1181d64b57dab85224f8a7774bb2a7bb2f47f0f03fb4cc0a63763"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "c4d903d0664a18a3f2ff7e3ebe4e0088db5b4a3ee49636914d373fc9873ee0ff"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "208f93a342f1181d64b57dab85224f8a7774bb2a7bb2f47f0f03fb4cc0a63763"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "c4d903d0664a18a3f2ff7e3ebe4e0088db5b4a3ee49636914d373fc9873ee0ff"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "208f93a342f1181d64b57dab85224f8a7774bb2a7bb2f47f0f03fb4cc0a63763"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "882329d698022b1bf7539ce9880e8c5ee6dd0bd1260b3e1513b5211c3adec8b6"
+  },
+  {
+    "tools": [],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "afb4fa8dd9481a82376732f8589628718e495bb067ed02e0c364bf12a9e8c31d"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0dc13c8b94a7cc1b9ac227ef99deb4f0d79b5218af6c50ba8c7c8e3b8ba3f5d8"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "8370f8cf381450d39da6a6971e6f14abb63f86c7b0a4ba8a2681c1754574256c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "2922a843c78d56f67141557702112c3feff7bdcfc4a90113cdfe9422242356b5"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "6283bca7778f0a4fd95f0c685989919df6efa492df25583f6d77cea16e9a63bc"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0dc13c8b94a7cc1b9ac227ef99deb4f0d79b5218af6c50ba8c7c8e3b8ba3f5d8"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "8370f8cf381450d39da6a6971e6f14abb63f86c7b0a4ba8a2681c1754574256c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0dc13c8b94a7cc1b9ac227ef99deb4f0d79b5218af6c50ba8c7c8e3b8ba3f5d8"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "8370f8cf381450d39da6a6971e6f14abb63f86c7b0a4ba8a2681c1754574256c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0dc13c8b94a7cc1b9ac227ef99deb4f0d79b5218af6c50ba8c7c8e3b8ba3f5d8"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "8370f8cf381450d39da6a6971e6f14abb63f86c7b0a4ba8a2681c1754574256c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "f64bce07a3f806d0b5522643d92aedf752a471af3d8bfde78cefb282e158f04e"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "33c734c5efe5d348eb59703bdc6ae4f5ec1f89b7e304f57dacd329173773983e"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "cc978db3012d1a2d58574c0db6c4f30bd133ec5a01032b4e453d4dce3de638cd"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "c5f8f93db0fdbebf29460b28382e7a08a03b832bc52ec0c0f3f8496bc80def29"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "d568a8661d21914e8734516711765acb48bb86617393aa3aa2629465eaa3ac61"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "a38263d7e97c850b1533eb4cebdcfc563677d4746694e93b310537897ef2a181"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cf74e7eb373d83cb4a30f059530c2609982c6ec5c1302ec61ce707187cc68586"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "df19dda35428ea0abc9ed25e8164137ccc61ffd1a3d19330bfdd5229704097d4"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "15a3f32a1bfd805c7e0eebbbe5f650d8bfa64d454ba8557c001608ef991e23ce"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cf74e7eb373d83cb4a30f059530c2609982c6ec5c1302ec61ce707187cc68586"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cf74e7eb373d83cb4a30f059530c2609982c6ec5c1302ec61ce707187cc68586"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cf74e7eb373d83cb4a30f059530c2609982c6ec5c1302ec61ce707187cc68586"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "fbabf77667d4f519f1318763d93f8d6b3834fd7da6da94caa99bdb73e560218b"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "70002b01d8f65997b67bae9525e8d7edc6095a2d679a45f552dc6ad27fdb49c0"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "cc978db3012d1a2d58574c0db6c4f30bd133ec5a01032b4e453d4dce3de638cd"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "c5f8f93db0fdbebf29460b28382e7a08a03b832bc52ec0c0f3f8496bc80def29"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cf74e7eb373d83cb4a30f059530c2609982c6ec5c1302ec61ce707187cc68586"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "f32259ea1be3e52ba1f1a4bc8a66828c4635b8b1bed4656c8fac343816a2354e"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "6b42da371d3da594711d35cc56ab4be6b221c8928738c58b2d025484c6d53f90"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "325c90844256c2f1194d2b40e988a99246793d4196267156ac1c233d44ad1b8d"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "00ff004eaf392004fa79604b3412e1f4b990877cba193526923456adff50d477"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "f32259ea1be3e52ba1f1a4bc8a66828c4635b8b1bed4656c8fac343816a2354e"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "6b42da371d3da594711d35cc56ab4be6b221c8928738c58b2d025484c6d53f90"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "f32259ea1be3e52ba1f1a4bc8a66828c4635b8b1bed4656c8fac343816a2354e"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "6b42da371d3da594711d35cc56ab4be6b221c8928738c58b2d025484c6d53f90"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "f32259ea1be3e52ba1f1a4bc8a66828c4635b8b1bed4656c8fac343816a2354e"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "6b42da371d3da594711d35cc56ab4be6b221c8928738c58b2d025484c6d53f90"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "a7d8e6961edce0eb580f00bd9243710b49b354589d8b618525df9ace4c1d246e"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "4d49dd162d68e6b8645de3e0ad47a1d1204aadfeca461fa2fb6ca478a14c3b3c"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "cc978db3012d1a2d58574c0db6c4f30bd133ec5a01032b4e453d4dce3de638cd"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "c5f8f93db0fdbebf29460b28382e7a08a03b832bc52ec0c0f3f8496bc80def29"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "d568a8661d21914e8734516711765acb48bb86617393aa3aa2629465eaa3ac61"
+  },
+  {
+    "tools": [
+      "terminal"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "a38263d7e97c850b1533eb4cebdcfc563677d4746694e93b310537897ef2a181"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "7c53a7a263561bcf26f795e56afb2f4d46442f7ccdb0dfb2c681b8343c78a3ab"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "505637da7b50cefc36d683f556709bc7ed30ef4cc1314bf027bb2303d769c3bc"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "53ae3a3df8e31ea5528bc4a7cc4fd60bad9ec9cfff812e01019e75e1bb8614f0"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "ccc6e7551c865eb7956397fc18baeeab195bffe6c437ba9dfbafa21284df2151"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "fc66fdb366cecb15620703bd0a58f462246d88827266b33c3d3e31a6f47c5d40"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cc4d9ffb36f8f3664176ca3cf97c03fe99462aed1c360332513b73d039d8498a"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "f98d145515e27fce02dbcac49e3851bd8fea17b9e2ecfdb99fe56900633396d9"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "560fe02dd39cb3d95b65c2b9253a7c66c76d5a6b714c4f24fc83be415a27f8fb"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "f5fc413310a46b9c47db57c47781ef92fd398f5688e394fa71064e8a007a65f6"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "716df53e903a490b638f244dde0e2078364d54251e4d70b856264c1b2ccb78a1"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "c96ec1368110071a7306d7f9d938635e9fc675bcb13ab9892835c9c3a8102a2e"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "4b1318c9bb22aace161bfc91229d16e887b96142e3a0defb38814c69ea721efe"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "c6199627c7a4ba4a09d166431e2cf7e79f91030a0c8f6105e5e542ec8ab75f07"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "748f09b8ec2f353f9947d457549d3d6654a5349a852bb8eeaa70edd470af525a"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "e2e1b094f89a021b78b90aceb530477b173c434bb044dd5a829e064a50f53c98"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "d50ba8676841c98e30c98fdde30cc178f70d5e0a03385097005f9e84a85804c5"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "2cd0c2f0c3a00b3ec30f0d06cb08c081b8f9c9fa6fcf75eea80164befa103c36"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "a5afb670fa64cfc59086d6c54cb4e01012fc3d3e21424433884aad1089be772c"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "30e61ba9460f568a9389b283ff7ae3a4a903ffb66e1fab5259c6a42b7d5f2793"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "3776bd34d13845d8ed14d7fb36f9169f6980d0b5dd13aaf3bf0ff3398ffb70b6"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0f4087f8e6142324d348ace8c3459224d2e364b5260db60b419d57d5e98c8fae"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "f53c5a52de5bff00f77781d9adcbfa8b59ab89b99295374ba9b404cffee6e6f1"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "87654a3acb3c3c2fe3be1433ef6ad7cf291bb239c5bba99e8b73a9f09fef4ce2"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "1cab095f139d3920b430768d16c5260022ae8fb70cc62707eacdb95f741dc114"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "b355a11bf0545ea186f285952cc6d2f0d432d6e5b0e153a944ef1974b405c7a3"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "45ceff46ad2a01b833ee31d36693ee6eccbf7239e51099c104ab5242ca045a2d"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "a2a7534ecdc758549814d62e5a11820c5bb67220a75eef9c3d3af4f53a82a0e0"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "e2a5331d55ca21d2bc520fb3e1c279f752df55233563895a04793319dd52c609"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "c6199627c7a4ba4a09d166431e2cf7e79f91030a0c8f6105e5e542ec8ab75f07"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "748f09b8ec2f353f9947d457549d3d6654a5349a852bb8eeaa70edd470af525a"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "2cd0c2f0c3a00b3ec30f0d06cb08c081b8f9c9fa6fcf75eea80164befa103c36"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "a5afb670fa64cfc59086d6c54cb4e01012fc3d3e21424433884aad1089be772c"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "28330cb192c5fd8917311febfcba1e6f3a077d9a94f28d05f21d3bfc4996e967"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "8acd12fb087f5f98bce46704f5810667cf648cfef44c80ab3635921fb153f6a9"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "d98b9ee1fe4a561911adf7047ac12810ba65622dffbd86a8d7067f89c18947fc"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "7b59823a3514477a79040c868b18ec61eb849f017ffa5fb590ec5b3a09d59da8"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "858761cebf526d2d6c281297d8dcb763707691c67ca2d38ed83b7d83bdd16a1d"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "c5440c4e47865d68dfaece01db155aea30c4956a6e5df730b81fb9acfb791330"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "cf092d4f724dd5b4c1fad689422b4cd6a1002563690a51ea18cfbd870fd12396"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "94f7e56dc1094ef2cca3d20d365ee14c6f9e482fb2682e3d8656e7905a491561"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "686466e10c127b05cfd795224403529c458ad7a34f957e565c6b62ab00babcd0"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "0fbb803d2ba6974cd786286bbe8a2b0b00b6d7f2946506ef7af4f655d834d4c7"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "22616fc7253f7ff6856881837ff4384725e60d716b9ef8941d9291606f3ddd20"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "59240824e81495ece8eab7045dc83fa08f9751a765804b94ebe9ee60466ace67"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "c6199627c7a4ba4a09d166431e2cf7e79f91030a0c8f6105e5e542ec8ab75f07"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "748f09b8ec2f353f9947d457549d3d6654a5349a852bb8eeaa70edd470af525a"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "e2e1b094f89a021b78b90aceb530477b173c434bb044dd5a829e064a50f53c98"
+  },
+  {
+    "tools": [
+      "memory",
+      "session_search",
+      "skill_manage",
+      "kanban_show"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "d50ba8676841c98e30c98fdde30cc178f70d5e0a03385097005f9e84a85804c5"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0dc13c8b94a7cc1b9ac227ef99deb4f0d79b5218af6c50ba8c7c8e3b8ba3f5d8"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "fb9d0c99218069b7cebc9805615d39eecababff148af144fba681a72071e4089"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "2922a843c78d56f67141557702112c3feff7bdcfc4a90113cdfe9422242356b5"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "ab9a7a3be47205890b4d394f7a6cfadd2683c4d893e30a68eac98afaa3e0828f"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0dc13c8b94a7cc1b9ac227ef99deb4f0d79b5218af6c50ba8c7c8e3b8ba3f5d8"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "fb9d0c99218069b7cebc9805615d39eecababff148af144fba681a72071e4089"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0dc13c8b94a7cc1b9ac227ef99deb4f0d79b5218af6c50ba8c7c8e3b8ba3f5d8"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "fb9d0c99218069b7cebc9805615d39eecababff148af144fba681a72071e4089"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "0dc13c8b94a7cc1b9ac227ef99deb4f0d79b5218af6c50ba8c7c8e3b8ba3f5d8"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "fb9d0c99218069b7cebc9805615d39eecababff148af144fba681a72071e4089"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "f64bce07a3f806d0b5522643d92aedf752a471af3d8bfde78cefb282e158f04e"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "754f40a66ab9a6524e3d4cb6de4b8e8fa978d30fdd3cd106baf899190b6efd2b"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "cf06d0bb8359db00c755236dda314422e8fc35b4f9c3bedb69ea1ef017fea00b"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "76825cfdef8cc6f90794e410a674757cfb78261c7aaaeed374db1ee79e99ae59"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "d568a8661d21914e8734516711765acb48bb86617393aa3aa2629465eaa3ac61"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "llama",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "29d206f2ad43d11cc848d022fac875cb1a583376cfdd217dc8db1383021b0978"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cbcd40bf8485eff508968a8de9eeb94e21ce015df0fd44600e9e0febeec5d2c5"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "df19dda35428ea0abc9ed25e8164137ccc61ffd1a3d19330bfdd5229704097d4"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "c900bb786c773b8fae6910f7f26f040dbda18b37b1aaabc97fbf8c8d0d925ca6"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cbcd40bf8485eff508968a8de9eeb94e21ce015df0fd44600e9e0febeec5d2c5"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cbcd40bf8485eff508968a8de9eeb94e21ce015df0fd44600e9e0febeec5d2c5"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cbcd40bf8485eff508968a8de9eeb94e21ce015df0fd44600e9e0febeec5d2c5"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "fbabf77667d4f519f1318763d93f8d6b3834fd7da6da94caa99bdb73e560218b"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "70155eeac275189fb5115f9f83de3ff04359752f20a6e5e4ce69a12dd21e34eb"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "cf06d0bb8359db00c755236dda314422e8fc35b4f9c3bedb69ea1ef017fea00b"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "76825cfdef8cc6f90794e410a674757cfb78261c7aaaeed374db1ee79e99ae59"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "8a63d061e173fb57a448e87fd3ca643ed11e8a81c906c8912bb29bc9e260aa9c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gemini-3",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "cbcd40bf8485eff508968a8de9eeb94e21ce015df0fd44600e9e0febeec5d2c5"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {},
+    "soul": null,
+    "skills_index": "",
+    "sha256": "1d68652557b513d69f256904e75db9d116834e9d5c628c4ca82d315c0de8670c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {},
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "e78a4b9526c94ff36035fdc0f38008fa5f27607f80e2242179763c693228360e"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "71e89235919ec7292216f8df2c041aec4c178919a022feced99988dd21f771f4"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_task_completion_guidance": false,
+      "_parallel_tool_call_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "1cf494f56f5efbb997096103b8714e1f1f37ab525de36bcbd2f64725c54a2fe4"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "1d68652557b513d69f256904e75db9d116834e9d5c628c4ca82d315c0de8670c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "e78a4b9526c94ff36035fdc0f38008fa5f27607f80e2242179763c693228360e"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "1d68652557b513d69f256904e75db9d116834e9d5c628c4ca82d315c0de8670c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_memory_enabled": false,
+      "_user_profile_enabled": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "e78a4b9526c94ff36035fdc0f38008fa5f27607f80e2242179763c693228360e"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "1d68652557b513d69f256904e75db9d116834e9d5c628c4ca82d315c0de8670c"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": ""
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "e78a4b9526c94ff36035fdc0f38008fa5f27607f80e2242179763c693228360e"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "b1a273ea92975bdc95b0f903dd8c6dd604818ce1a2fee69f7282109049d255d2"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_kanban_worker_guidance": " custom worker guidance "
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "a692e5ce6058fbbed37d999ad30b70d749b9693b5ee30fc8207eafec35689a51"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "cf06d0bb8359db00c755236dda314422e8fc35b4f9c3bedb69ea1ef017fea00b"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": false,
+      "_execution_guidance": true
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "76825cfdef8cc6f90794e410a674757cfb78261c7aaaeed374db1ee79e99ae59"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": null,
+    "skills_index": "",
+    "sha256": "d568a8661d21914e8734516711765acb48bb86617393aa3aa2629465eaa3ac61"
+  },
+  {
+    "tools": [
+      "skill_view",
+      "web_search"
+    ],
+    "model": "gpt-5",
+    "settings": {
+      "_tool_use_enforcement": true,
+      "_execution_guidance": false
+    },
+    "soul": " scoped soul ",
+    "skills_index": "- hermes-agent: reference",
+    "sha256": "29d206f2ad43d11cc848d022fac875cb1a583376cfdd217dc8db1383021b0978"
+  }
+]

@@ -47,6 +47,10 @@ pub struct ImageUrl {
 /// context is layered on later in the port.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Message {
+    /// Assigned by the session store. Transport input cannot select durable
+    /// history, and this internal identity is never included in platform output.
+    #[serde(skip)]
+    pub resolved_session_id: Option<String>,
     pub platform: Platform,
     /// Opaque per-platform conversation id (chat id, channel id, ...).
     pub channel_id: String,
@@ -67,6 +71,19 @@ pub struct Message {
     /// becomes the user turn. Adapters that do not download audio leave it empty.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub audio_paths: Vec<String>,
+    /// Cached inbound videos. The dispatcher adds path context after command
+    /// handling; videos are never sent through the voice transcription path.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub video_paths: Vec<String>,
+    /// Workspace identity for platforms with workspace-local conversation IDs.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub workspace_id: Option<String>,
+    /// Original inbound message ID, retained when constructing a reply.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message_id: Option<String>,
+    /// Selected conversation thread. Distinct from the message being answered.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub thread_id: Option<String>,
 }
 
 impl Message {
@@ -90,6 +107,8 @@ mod tests {
         let old = json!({"platform":"cli", "channel_id":"c", "sender_id":"s", "text":"caption"});
         let mut msg: Message = serde_json::from_value(old).unwrap();
         assert_eq!(msg.model_content(), "caption");
+        assert!(msg.video_paths.is_empty());
+        msg.video_paths.push("/cache/video_fixture.mp4".into());
         assert!(serde_json::to_value(&msg)
             .unwrap()
             .get("content_parts")
@@ -98,5 +117,6 @@ mod tests {
         msg.content_parts = Some(serde_json::from_value(parts.clone()).unwrap());
         let decoded: Message = serde_json::from_value(serde_json::to_value(&msg).unwrap()).unwrap();
         assert_eq!(decoded.model_content(), parts);
+        assert_eq!(decoded.video_paths, msg.video_paths);
     }
 }

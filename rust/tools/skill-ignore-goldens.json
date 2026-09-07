@@ -1,0 +1,3946 @@
+{
+  "globs": [
+    {
+      "pattern": "*",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "c",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "x",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "y",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "z",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "-",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "!",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "]",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "?",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "^",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "&",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "~",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "|",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "\\",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "abc",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "axybzc",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "\n",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "a/b",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": ".hidden",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "nested/file.md",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "file.MD",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "docs/a/b",
+      "expected": true
+    },
+    {
+      "pattern": "*",
+      "text": "\u754c\u9762",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "c",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "x",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "y",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "z",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "-",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "!",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "]",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "?",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "^",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "&",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "~",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "|",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "\\",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "?",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "?",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "?",
+      "text": "\n",
+      "expected": true
+    },
+    {
+      "pattern": "?",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "?",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "?",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "?",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "?",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "?",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "abc",
+      "expected": true
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "axybzc",
+      "expected": true
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "a*b*c",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "**a**",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "abc",
+      "expected": true
+    },
+    {
+      "pattern": "**a**",
+      "text": "axybzc",
+      "expected": true
+    },
+    {
+      "pattern": "**a**",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "a/b",
+      "expected": true
+    },
+    {
+      "pattern": "**a**",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "**a**",
+      "text": "docs/a/b",
+      "expected": true
+    },
+    {
+      "pattern": "**a**",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "nested/file.md",
+      "expected": true
+    },
+    {
+      "pattern": "*.md",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "*.md",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "c",
+      "expected": true
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "x",
+      "expected": true
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "y",
+      "expected": true
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "z",
+      "expected": true
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a-z]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[z-a]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "c",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "x",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "y",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "z",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "-",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "!",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "]",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "?",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "^",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "&",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "~",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "|",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "\\",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "\n",
+      "expected": true
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!z-a]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a--b]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "c",
+      "expected": true
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "-",
+      "expected": true
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a-b-c]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[--a]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "-",
+      "expected": true
+    },
+    {
+      "pattern": "[--a]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "[--a]",
+      "text": "]",
+      "expected": true
+    },
+    {
+      "pattern": "[--a]",
+      "text": "?",
+      "expected": true
+    },
+    {
+      "pattern": "[--a]",
+      "text": "^",
+      "expected": true
+    },
+    {
+      "pattern": "[--a]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "\\",
+      "expected": true
+    },
+    {
+      "pattern": "[--a]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[--a]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "]",
+      "expected": true
+    },
+    {
+      "pattern": "[]]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[]]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "c",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "x",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "y",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "z",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "-",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "!",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "?",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "^",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "&",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "~",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "|",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "\\",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "\n",
+      "expected": true
+    },
+    {
+      "pattern": "[!]]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!]]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "[",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "?",
+      "expected": true
+    },
+    {
+      "pattern": "[?]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[?]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "[[]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[[]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "x",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "y",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "z",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "-",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "!",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "]",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "?",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "^",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "&",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "~",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "|",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "\\",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "\n",
+      "expected": true
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!a-c]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "&",
+      "expected": true
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a&&b]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "~",
+      "expected": true
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "|",
+      "expected": true
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a~|b]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "\\",
+      "expected": true
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[a\\b]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "a",
+      "expected": true
+    },
+    {
+      "pattern": "[^a]",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "^",
+      "expected": true
+    },
+    {
+      "pattern": "[^a]",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[^a]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "b",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "c",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "x",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "y",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "z",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "-",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "!",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "[",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "]",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "?",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "^",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "&",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "~",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "|",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "\\",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "\n",
+      "expected": true
+    },
+    {
+      "pattern": "[!a]",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "[!a]",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "docs/*",
+      "text": "docs/a/b",
+      "expected": true
+    },
+    {
+      "pattern": "docs/*",
+      "text": "\u754c\u9762",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "a",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "b",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "c",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "x",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "y",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "z",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "-",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "!",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "[",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "]",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "?",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "^",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "&",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "~",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "|",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "\\",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "abc",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "axybzc",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "\n",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "a/b",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": ".hidden",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "nested/file.md",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "file.MD",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "docs/a/b",
+      "expected": false
+    },
+    {
+      "pattern": "\u754c?",
+      "text": "\u754c\u9762",
+      "expected": true
+    }
+  ],
+  "ignores": [
+    {
+      "rules": "*",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "rules": "/docs/",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "docs/",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "/notes.md",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "notes.md",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "*.txt",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "rules": "cache",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "cache/",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "/cache",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "literal/",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "# comment\n\n",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "*.md\u2028/docs/",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "[!R]*.md",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "rules": "!notes.md",
+      "compat_rules": "README.md\n",
+      "paths": [
+        "SKILL.md",
+        "nested/SKILL.md",
+        ".skillignore",
+        "a/.clawhubignore",
+        "docs",
+        "docs/plans/a.md",
+        "nested/docs/a.md",
+        "notes.md",
+        "a/notes.md",
+        "a/cache/file",
+        "cache/file",
+        "literal/file",
+        "a/literal/file",
+        "a/file.txt",
+        "a//./file.txt",
+        "README.md"
+      ],
+      "expected": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    }
+  ]
+}

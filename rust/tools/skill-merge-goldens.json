@@ -1,0 +1,1193 @@
+[
+  {
+    "name": "project_overrides_personal_and_org_collision",
+    "project_entries": [
+      {
+        "frontmatter_name": "deploy",
+        "description": "Repo deploy",
+        "category": "ops"
+      }
+    ],
+    "visible_entries": [
+      {
+        "frontmatter_name": "deploy",
+        "description": "Personal deploy",
+        "category": "ops"
+      },
+      {
+        "frontmatter_name": "deploy",
+        "description": "Org deploy",
+        "category": "ops",
+        "org_id": "corp",
+        "org_author": "alice"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "ops": [
+        [
+          "deploy",
+          "[project] Repo deploy"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  ops:\n    - deploy: [project] Repo deploy\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "project_overrides_personal_only",
+    "project_entries": [
+      {
+        "frontmatter_name": "build",
+        "description": "Repo build",
+        "category": "dev"
+      }
+    ],
+    "visible_entries": [
+      {
+        "frontmatter_name": "build",
+        "description": "Local build",
+        "category": "dev"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "dev": [
+        [
+          "build",
+          "[project] Repo build"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  dev:\n    - build: [project] Repo build\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "project_overrides_org_only",
+    "project_entries": [
+      {
+        "frontmatter_name": "lint",
+        "description": "Repo lint",
+        "category": "dev"
+      }
+    ],
+    "visible_entries": [
+      {
+        "frontmatter_name": "lint",
+        "description": "Org lint",
+        "org_id": "corp",
+        "org_author": "carol"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "dev": [
+        [
+          "lint",
+          "[project] Repo lint"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  dev:\n    - lint: [project] Repo lint\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "project_overrides_partial_mixed",
+    "project_entries": [
+      {
+        "frontmatter_name": "review",
+        "description": "Project review",
+        "category": "qa"
+      }
+    ],
+    "visible_entries": [
+      {
+        "frontmatter_name": "review",
+        "description": "Personal review",
+        "category": "qa"
+      },
+      {
+        "frontmatter_name": "review",
+        "description": "Org review",
+        "org_id": "team",
+        "org_author": "alice"
+      },
+      {
+        "frontmatter_name": "test",
+        "description": "Personal test",
+        "category": "qa"
+      },
+      {
+        "frontmatter_name": "test",
+        "description": "Org test",
+        "org_id": "team",
+        "org_author": "bob"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "qa": [
+        [
+          "review",
+          "[project] Project review"
+        ],
+        [
+          "test",
+          "[name collision \u2014 also exists in your org; load via category path] Personal test"
+        ]
+      ],
+      "org:team": [
+        [
+          "test",
+          "[name collision \u2014 also exists personally; load via category path] [org-shared: by bob] Org test"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  org:team:\n    - test: [name collision \u2014 also exists personally; load via category path] [org-shared: by bob] Org test\n  qa:\n    - review: [project] Project review\n    - test: [name collision \u2014 also exists in your org; load via category path] Personal test\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "exact_collision_text_both_with_descriptions",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "format",
+        "description": "Format python files",
+        "category": "coding"
+      },
+      {
+        "frontmatter_name": "format",
+        "description": "Company format rules",
+        "org_id": "acme",
+        "org_author": "dave"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "coding": [
+        [
+          "format",
+          "[name collision \u2014 also exists in your org; load via category path] Format python files"
+        ]
+      ],
+      "org:acme": [
+        [
+          "format",
+          "[name collision \u2014 also exists personally; load via category path] [org-shared: by dave] Company format rules"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  coding:\n    - format: [name collision \u2014 also exists in your org; load via category path] Format python files\n  org:acme:\n    - format: [name collision \u2014 also exists personally; load via category path] [org-shared: by dave] Company format rules\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "exact_collision_text_empty_descriptions",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "blank",
+        "description": "",
+        "category": "general"
+      },
+      {
+        "frontmatter_name": "blank",
+        "description": "",
+        "org_id": "acme",
+        "org_author": ""
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "general": [
+        [
+          "blank",
+          "[name collision \u2014 also exists in your org; load via category path]"
+        ]
+      ],
+      "org:acme": [
+        [
+          "blank",
+          "[name collision \u2014 also exists personally; load via category path] [org-shared]"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - blank: [name collision \u2014 also exists in your org; load via category path]\n  org:acme:\n    - blank: [name collision \u2014 also exists personally; load via category path] [org-shared]\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "exact_collision_text_none_descriptions",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "none_desc",
+        "description": null,
+        "category": "general"
+      },
+      {
+        "frontmatter_name": "none_desc",
+        "description": null,
+        "org_id": "acme",
+        "org_author": null
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "general": [
+        [
+          "none_desc",
+          "[name collision \u2014 also exists in your org; load via category path] None"
+        ]
+      ],
+      "org:acme": [
+        [
+          "none_desc",
+          "[name collision \u2014 also exists personally; load via category path] [org-shared] None"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - none_desc: [name collision \u2014 also exists in your org; load via category path] None\n  org:acme:\n    - none_desc: [name collision \u2014 also exists personally; load via category path] [org-shared] None\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "org_author_tag_present",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "deploy_prod",
+        "description": "Production deploy",
+        "org_id": "infra",
+        "org_author": "sre-lead"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "org:infra": [
+        [
+          "deploy_prod",
+          "[org-shared: by sre-lead] Production deploy"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  org:infra:\n    - deploy_prod: [org-shared: by sre-lead] Production deploy\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "org_author_tag_empty_string",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "deploy_staging",
+        "description": "Staging deploy",
+        "org_id": "infra",
+        "org_author": ""
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "org:infra": [
+        [
+          "deploy_staging",
+          "[org-shared] Staging deploy"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  org:infra:\n    - deploy_staging: [org-shared] Staging deploy\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "org_author_tag_none",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "deploy_dev",
+        "description": "Dev deploy",
+        "org_id": "infra",
+        "org_author": null
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "org:infra": [
+        [
+          "deploy_dev",
+          "[org-shared] Dev deploy"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  org:infra:\n    - deploy_dev: [org-shared] Dev deploy\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "org_author_tag_missing_key",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "audit",
+        "description": "Audit tool",
+        "org_id": "security"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "org:security": [
+        [
+          "audit",
+          "[org-shared] Audit tool"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  org:security:\n    - audit: [org-shared] Audit tool\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "multiple_orgs_same_skill_name_no_collision",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "playbook",
+        "description": "Org A playbook",
+        "org_id": "orgA",
+        "org_author": "alice"
+      },
+      {
+        "frontmatter_name": "playbook",
+        "description": "Org B playbook",
+        "org_id": "orgB",
+        "org_author": "bob"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "org:orgA": [
+        [
+          "playbook",
+          "[org-shared: by alice] Org A playbook"
+        ]
+      ],
+      "org:orgB": [
+        [
+          "playbook",
+          "[org-shared: by bob] Org B playbook"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  org:orgA:\n    - playbook: [org-shared: by alice] Org A playbook\n  org:orgB:\n    - playbook: [org-shared: by bob] Org B playbook\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "duplicate_personal_same_category",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "helper",
+        "description": "First helper",
+        "category": "util"
+      },
+      {
+        "frontmatter_name": "helper",
+        "description": "Second helper",
+        "category": "util"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "util": [
+        [
+          "helper",
+          "First helper"
+        ],
+        [
+          "helper",
+          "Second helper"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  util:\n    - helper: First helper\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "duplicate_personal_different_categories",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "clean",
+        "description": "Clean files",
+        "category": "filesystem"
+      },
+      {
+        "frontmatter_name": "clean",
+        "description": "Clean git repo",
+        "category": "git"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "filesystem": [
+        [
+          "clean",
+          "Clean files"
+        ]
+      ],
+      "git": [
+        [
+          "clean",
+          "Clean git repo"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  filesystem:\n    - clean: Clean files\n  git:\n    - clean: Clean git repo\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "duplicate_project_entries_first_wins",
+    "project_entries": [
+      {
+        "frontmatter_name": "migrate",
+        "description": "Primary migration",
+        "category": "db"
+      },
+      {
+        "frontmatter_name": "migrate",
+        "description": "Secondary migration",
+        "category": "db"
+      }
+    ],
+    "visible_entries": [],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "db": [
+        [
+          "migrate",
+          "[project] Primary migration"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  db:\n    - migrate: [project] Primary migration\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "duplicate_across_project_and_external",
+    "project_entries": [
+      {
+        "frontmatter_name": "bundle",
+        "description": "Project bundle",
+        "category": "build"
+      }
+    ],
+    "visible_entries": [],
+    "external_entries": [
+      {
+        "frontmatter_name": "bundle",
+        "description": "External bundle",
+        "category": "build"
+      }
+    ],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "build": [
+        [
+          "bundle",
+          "[project] Project bundle"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  build:\n    - bundle: [project] Project bundle\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "duplicate_across_personal_and_external",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "search",
+        "description": "Personal search",
+        "category": "web"
+      }
+    ],
+    "external_entries": [
+      {
+        "frontmatter_name": "search",
+        "description": "External search",
+        "category": "web"
+      }
+    ],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "web": [
+        [
+          "search",
+          "Personal search"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  web:\n    - search: Personal search\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "duplicate_across_org_and_external",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "telemetry",
+        "description": "Org telemetry",
+        "org_id": "ops",
+        "org_author": "eva"
+      }
+    ],
+    "external_entries": [
+      {
+        "frontmatter_name": "telemetry",
+        "description": "External telemetry",
+        "category": "monitoring"
+      }
+    ],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "org:ops": [
+        [
+          "telemetry",
+          "[org-shared: by eva] Org telemetry"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  org:ops:\n    - telemetry: [org-shared: by eva] Org telemetry\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "external_first_wins_multiple_externals",
+    "project_entries": [],
+    "visible_entries": [],
+    "external_entries": [
+      {
+        "frontmatter_name": "ext_helper",
+        "description": "First external helper",
+        "category": "ext"
+      },
+      {
+        "frontmatter_name": "ext_helper",
+        "description": "Second external helper",
+        "category": "ext"
+      }
+    ],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "ext": [
+        [
+          "ext_helper",
+          "First external helper"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  ext:\n    - ext_helper: First external helper\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "external_unique_skills_added",
+    "project_entries": [],
+    "visible_entries": [],
+    "external_entries": [
+      {
+        "frontmatter_name": "ext_one",
+        "description": "First external",
+        "category": "ext1"
+      },
+      {
+        "frontmatter_name": "ext_two",
+        "description": "Second external",
+        "category": "ext2"
+      }
+    ],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "ext1": [
+        [
+          "ext_one",
+          "First external"
+        ]
+      ],
+      "ext2": [
+        [
+          "ext_two",
+          "Second external"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  ext1:\n    - ext_one: First external\n  ext2:\n    - ext_two: Second external\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "missing_frontmatter_name_fallback_to_skill_name",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "skill_name": "fallback_tool",
+        "description": "Inferred name",
+        "category": "util"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "util": [
+        [
+          "fallback_tool",
+          "Inferred name"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  util:\n    - fallback_tool: Inferred name\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "empty_frontmatter_name_fallback_to_skill_name",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "",
+        "skill_name": "backup_tool",
+        "description": "Backup tool desc",
+        "category": "util"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "util": [
+        [
+          "backup_tool",
+          "Backup tool desc"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  util:\n    - backup_tool: Backup tool desc\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "missing_category_defaults_to_general",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "uncategorized",
+        "description": "No category"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "general": [
+        [
+          "uncategorized",
+          "No category"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - uncategorized: No category\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "empty_category_defaults_to_general",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "empty_cat",
+        "description": "Empty cat",
+        "category": ""
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "general": [
+        [
+          "empty_cat",
+          "Empty cat"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - empty_cat: Empty cat\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "missing_description_in_personal",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "nodesc",
+        "category": "general"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "general": [
+        [
+          "nodesc",
+          ""
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - nodesc\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "falsy_org_id_treated_as_personal",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "local_thing",
+        "description": "Not org",
+        "org_id": "",
+        "org_author": "someone",
+        "category": "misc"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "misc": [
+        [
+          "local_thing",
+          "Not org"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  misc:\n    - local_thing: Not org\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "empty_entry_dict",
+    "project_entries": [],
+    "visible_entries": [
+      {}
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "general": [
+        [
+          "",
+          ""
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - \n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "demoted_compact_categories_rendering",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "music_play",
+        "description": "Play track",
+        "category": "music"
+      },
+      {
+        "frontmatter_name": "code_edit",
+        "description": "Edit code",
+        "category": "coding"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [
+      "music"
+    ],
+    "available_tools": null,
+    "skills_by_category": {
+      "music": [
+        [
+          "music_play",
+          "Play track"
+        ]
+      ],
+      "coding": [
+        [
+          "code_edit",
+          "Edit code"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  coding:\n    - code_edit: Edit code\n  music [names only]: music_play\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task.\n(Categories marked [names only] are outside the current coding context, so their descriptions are omitted \u2014 the skills work normally and load with skill_view(name) as usual.)"
+  },
+  {
+    "name": "hierarchical_compact_categories_rendering",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "tweet",
+        "description": "Post tweet",
+        "category": "social/twitter"
+      },
+      {
+        "frontmatter_name": "debug",
+        "description": "Debug code",
+        "category": "coding"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [
+      "social"
+    ],
+    "available_tools": null,
+    "skills_by_category": {
+      "social/twitter": [
+        [
+          "tweet",
+          "Post tweet"
+        ]
+      ],
+      "coding": [
+        [
+          "debug",
+          "Debug code"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  coding:\n    - debug: Debug code\n  social/twitter [names only]: tweet\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task.\n(Categories marked [names only] are outside the current coding context, so their descriptions are omitted \u2014 the skills work normally and load with skill_view(name) as usual.)"
+  },
+  {
+    "name": "available_tools_without_web_search",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "sh",
+        "description": "Shell helper",
+        "category": "general"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": [
+      "terminal"
+    ],
+    "skills_by_category": {
+      "general": [
+        [
+          "sh",
+          "Shell helper"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - sh: Shell helper\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "available_tools_with_web_search",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "sh",
+        "description": "Shell helper",
+        "category": "general"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": [
+      "terminal",
+      "web_search"
+    ],
+    "skills_by_category": {
+      "general": [
+        [
+          "sh",
+          "Shell helper"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - sh: Shell helper\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "available_tools_none",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "sh",
+        "description": "Shell helper",
+        "category": "general"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "general": [
+        [
+          "sh",
+          "Shell helper"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - sh: Shell helper\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "category_descriptions_rendering",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "git_commit",
+        "description": "Commit changes",
+        "category": "git"
+      },
+      {
+        "frontmatter_name": "misc_tool",
+        "description": "Misc tool",
+        "category": "misc"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {
+      "git": "Git version control operations"
+    },
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "git": [
+        [
+          "git_commit",
+          "Commit changes"
+        ]
+      ],
+      "misc": [
+        [
+          "misc_tool",
+          "Misc tool"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  git: Git version control operations\n    - git_commit: Commit changes\n  misc:\n    - misc_tool: Misc tool\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "empty_everything_renders_empty_string",
+    "project_entries": [],
+    "visible_entries": [],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {},
+    "rendered": ""
+  },
+  {
+    "name": "unicode_skill_name_and_category",
+    "project_entries": [],
+    "visible_entries": [
+      {
+        "frontmatter_name": "git_commit_crab",
+        "description": "Unicode test Cafe",
+        "category": "tools/cafe"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {
+      "tools/cafe": "Unicode Cafe tools"
+    },
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "tools/cafe": [
+        [
+          "git_commit_crab",
+          "Unicode test Cafe"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  tools/cafe: Unicode Cafe tools\n    - git_commit_crab: Unicode test Cafe\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "whitespace_handling_in_descriptions",
+    "project_entries": [
+      {
+        "frontmatter_name": "proj_padded",
+        "description": "   proj spaced   ",
+        "category": "general"
+      }
+    ],
+    "visible_entries": [
+      {
+        "frontmatter_name": "padded",
+        "description": "   spaced out   ",
+        "category": "general"
+      },
+      {
+        "frontmatter_name": "org_padded",
+        "description": "   org spaced   ",
+        "org_id": "corp",
+        "org_author": "alice"
+      }
+    ],
+    "external_entries": [],
+    "category_descriptions": {},
+    "compact_categories": [],
+    "available_tools": null,
+    "skills_by_category": {
+      "general": [
+        [
+          "proj_padded",
+          "[project]    proj spaced"
+        ],
+        [
+          "padded",
+          "   spaced out   "
+        ]
+      ],
+      "org:corp": [
+        [
+          "org_padded",
+          "[org-shared: by alice]    org spaced"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  general:\n    - padded:    spaced out   \n    - proj_padded: [project]    proj spaced\n  org:corp:\n    - org_padded: [org-shared: by alice]    org spaced\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task."
+  },
+  {
+    "name": "comprehensive_all_sources_combined",
+    "project_entries": [
+      {
+        "frontmatter_name": "deploy",
+        "description": "Project deploy",
+        "category": "ops"
+      }
+    ],
+    "visible_entries": [
+      {
+        "frontmatter_name": "deploy",
+        "description": "Personal deploy",
+        "category": "ops"
+      },
+      {
+        "frontmatter_name": "monitor",
+        "description": "Personal monitor",
+        "category": "monitoring"
+      },
+      {
+        "frontmatter_name": "monitor",
+        "description": "Org monitor",
+        "org_id": "corp",
+        "org_author": "sre"
+      },
+      {
+        "frontmatter_name": "policy",
+        "description": "Security policy",
+        "org_id": "sec"
+      },
+      {
+        "frontmatter_name": "notes",
+        "description": "Take notes",
+        "category": "note-taking"
+      }
+    ],
+    "external_entries": [
+      {
+        "frontmatter_name": "notes",
+        "description": "External notes (should be skipped)",
+        "category": "note-taking"
+      },
+      {
+        "frontmatter_name": "ext_scanner",
+        "description": "External scanner",
+        "category": "sec_tools"
+      },
+      {
+        "frontmatter_name": "ext_scanner",
+        "description": "External scanner dupe (should be skipped)",
+        "category": "sec_tools"
+      }
+    ],
+    "category_descriptions": {
+      "ops": "Operations and deployments",
+      "sec_tools": "External security tools"
+    },
+    "compact_categories": [
+      "note-taking"
+    ],
+    "available_tools": [
+      "terminal"
+    ],
+    "skills_by_category": {
+      "ops": [
+        [
+          "deploy",
+          "[project] Project deploy"
+        ]
+      ],
+      "monitoring": [
+        [
+          "monitor",
+          "[name collision \u2014 also exists in your org; load via category path] Personal monitor"
+        ]
+      ],
+      "org:corp": [
+        [
+          "monitor",
+          "[name collision \u2014 also exists personally; load via category path] [org-shared: by sre] Org monitor"
+        ]
+      ],
+      "org:sec": [
+        [
+          "policy",
+          "[org-shared] Security policy"
+        ]
+      ],
+      "note-taking": [
+        [
+          "notes",
+          "Take notes"
+        ]
+      ],
+      "sec_tools": [
+        [
+          "ext_scanner",
+          "External scanner"
+        ]
+      ]
+    },
+    "rendered": "## Skills\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading \u2014 it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge \u2014 API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing \u2014 load them even for tasks you already know how to do, because the skill defines how it should be done here.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  monitoring:\n    - monitor: [name collision \u2014 also exists in your org; load via category path] Personal monitor\n  note-taking [names only]: notes\n  ops: Operations and deployments\n    - deploy: [project] Project deploy\n  org:corp:\n    - monitor: [name collision \u2014 also exists personally; load via category path] [org-shared: by sre] Org monitor\n  org:sec:\n    - policy: [org-shared] Security policy\n  sec_tools: External security tools\n    - ext_scanner: External scanner\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task.\n(Categories marked [names only] are outside the current coding context, so their descriptions are omitted \u2014 the skills work normally and load with skill_view(name) as usual.)"
+  }
+]

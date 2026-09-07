@@ -1,0 +1,1090 @@
+[
+  {
+    "config": [],
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": "bad",
+    "error": true
+  },
+  {
+    "config": {
+      "agent": null
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": true
+    },
+    "error": true
+  },
+  {
+    "config": {
+      "agent": "bad"
+    },
+    "error": true
+  },
+  {
+    "config": {
+      "agent": []
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": null,
+        "coding_instructions": null
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": null,
+        "coding_instructions": false
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": null,
+        "coding_instructions": 0
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": null,
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "auto",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": null,
+        "coding_instructions": []
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": null,
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "auto",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": null,
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "auto",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": false,
+        "coding_instructions": null
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": false,
+        "coding_instructions": false
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": false,
+        "coding_instructions": 0
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": false,
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "off",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": false,
+        "coding_instructions": []
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": false,
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "off",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": false,
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "off",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": true,
+        "coding_instructions": null
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": true,
+        "coding_instructions": false
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": true,
+        "coding_instructions": 0
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": true,
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "on",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": true,
+        "coding_instructions": []
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": true,
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "on",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": true,
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "on",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 0,
+        "coding_instructions": null
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 0,
+        "coding_instructions": false
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 0,
+        "coding_instructions": 0
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 0,
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "off",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 0,
+        "coding_instructions": []
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 0,
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "off",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 0,
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "off",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1,
+        "coding_instructions": null
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1,
+        "coding_instructions": false
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1,
+        "coding_instructions": 0
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1,
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "on",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1,
+        "coding_instructions": []
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1,
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "on",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1,
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "on",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1.0,
+        "coding_instructions": null
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1.0,
+        "coding_instructions": false
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1.0,
+        "coding_instructions": 0
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1.0,
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "auto",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1.0,
+        "coding_instructions": []
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1.0,
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "auto",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": 1.0,
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "auto",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "focus",
+        "coding_instructions": null
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "focus",
+        "coding_instructions": false
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "focus",
+        "coding_instructions": 0
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "focus",
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "focus",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "focus",
+        "coding_instructions": []
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "focus",
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "focus",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "focus",
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "focus",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": " STRICT\u001c",
+        "coding_instructions": null
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": " STRICT\u001c",
+        "coding_instructions": false
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": " STRICT\u001c",
+        "coding_instructions": 0
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": " STRICT\u001c",
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "focus",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": " STRICT\u001c",
+        "coding_instructions": []
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": " STRICT\u001c",
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "focus",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": " STRICT\u001c",
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "focus",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "lean",
+        "coding_instructions": null
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "lean",
+        "coding_instructions": false
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "lean",
+        "coding_instructions": 0
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "lean",
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "focus",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "lean",
+        "coding_instructions": []
+      }
+    },
+    "mode": "focus",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "lean",
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "focus",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "lean",
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "focus",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "always",
+        "coding_instructions": null
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "always",
+        "coding_instructions": false
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "always",
+        "coding_instructions": 0
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "always",
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "on",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "always",
+        "coding_instructions": []
+      }
+    },
+    "mode": "on",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "always",
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "on",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "always",
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "on",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "never",
+        "coding_instructions": null
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "never",
+        "coding_instructions": false
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "never",
+        "coding_instructions": 0
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "never",
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "off",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "never",
+        "coding_instructions": []
+      }
+    },
+    "mode": "off",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "never",
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "off",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "never",
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "off",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "auto",
+        "coding_instructions": null
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "auto",
+        "coding_instructions": false
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "auto",
+        "coding_instructions": 0
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "auto",
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "auto",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "auto",
+        "coding_instructions": []
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "auto",
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "auto",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "auto",
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "auto",
+    "instructions": "{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "invalid",
+        "coding_instructions": null
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "invalid",
+        "coding_instructions": false
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "invalid",
+        "coding_instructions": 0
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "invalid",
+        "coding_instructions": " text\u001c"
+      }
+    },
+    "mode": "auto",
+    "instructions": "text"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "invalid",
+        "coding_instructions": []
+      }
+    },
+    "mode": "auto",
+    "instructions": ""
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "invalid",
+        "coding_instructions": [
+          " a ",
+          " ",
+          null,
+          false,
+          0,
+          {
+            "x": "y"
+          }
+        ]
+      }
+    },
+    "mode": "auto",
+    "instructions": "a\nNone\nFalse\n0\n{'x': 'y'}"
+  },
+  {
+    "config": {
+      "agent": {
+        "coding_context": "invalid",
+        "coding_instructions": {
+          "x": "y"
+        }
+      }
+    },
+    "mode": "auto",
+    "instructions": "{'x': 'y'}"
+  }
+]

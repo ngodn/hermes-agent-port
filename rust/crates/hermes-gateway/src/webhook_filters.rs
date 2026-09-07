@@ -270,6 +270,10 @@ fn user_home() -> Option<PathBuf> {
 /// with the environment value; leave the literal text when the variable is
 /// unset or the `${` is unterminated. `name` is ASCII `[A-Za-z0-9_]+`.
 fn expandvars(s: &str) -> String {
+    expandvars_with(s, |name| std::env::var(name).ok())
+}
+
+pub(crate) fn expandvars_with(s: &str, mut lookup: impl FnMut(&str) -> Option<String>) -> String {
     if !s.contains('$') {
         return s.to_string();
     }
@@ -290,9 +294,9 @@ fn expandvars(s: &str) -> String {
             // ${name}
             if let Some(close) = s[i + 2..].find('}') {
                 let name = &s[i + 2..i + 2 + close];
-                match std::env::var(name) {
-                    Ok(val) => out.push_str(&val),
-                    Err(_) => out.push_str(&s[i..i + 2 + close + 1]),
+                match lookup(name) {
+                    Some(val) => out.push_str(&val),
+                    None => out.push_str(&s[i..i + 2 + close + 1]),
                 }
                 i = i + 2 + close + 1;
             } else {
@@ -309,9 +313,9 @@ fn expandvars(s: &str) -> String {
         }
         if j > i + 1 {
             let name = &s[i + 1..j];
-            match std::env::var(name) {
-                Ok(val) => out.push_str(&val),
-                Err(_) => out.push_str(&s[i..j]),
+            match lookup(name) {
+                Some(val) => out.push_str(&val),
+                None => out.push_str(&s[i..j]),
             }
             i = j;
         } else {
@@ -593,10 +597,7 @@ impl WebhookRouteProcessor {
                 }
                 _ => return None,
             };
-            match next {
-                Some(v) => value = v,
-                None => return None,
-            }
+            value = next?;
         }
         Some(value)
     }

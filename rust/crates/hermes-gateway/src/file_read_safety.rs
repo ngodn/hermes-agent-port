@@ -220,35 +220,40 @@ impl FileReadPolicy {
     /// Port of `os.path.expanduser` as `pathlib` applies it: only a leading `~`
     /// is expanded, and only the first path component is inspected.
     fn expanduser(&self, path: &str) -> io::Result<String> {
-        if !path.starts_with('~') {
-            return Ok(path.to_string());
+        expand_user(path, &self.home)
+    }
+}
+
+/// Expand a leading home component without resolving symlinks or relative paths.
+pub(crate) fn expand_user(path: &str, home: &Path) -> io::Result<String> {
+    if !path.starts_with('~') {
+        return Ok(path.to_string());
+    }
+    // Index of the first '/' after the leading '~' (or end of string).
+    let i = match path[1..].find('/') {
+        Some(rel) => 1 + rel,
+        None => path.len(),
+    };
+    let tail = &path[i..];
+    let userhome: String = if i == 1 {
+        // "~" or "~/...": use the caller's captured home.
+        home.to_string_lossy().into_owned()
+    } else {
+        // Path.expanduser raises when os.path.expanduser cannot resolve a
+        // named user. Keep that error for the outer best-effort wrapper.
+        match getpwnam_home(&path[1..i]) {
+            Some(h) => h,
+            None => return Err(io::Error::other("could not determine home directory")),
         }
-        // Index of the first '/' after the leading '~' (or end of string).
-        let i = match path[1..].find('/') {
-            Some(rel) => 1 + rel,
-            None => path.len(),
-        };
-        let tail = &path[i..];
-        let userhome: String = if i == 1 {
-            // "~" or "~/...": use this policy's home.
-            self.home.to_string_lossy().into_owned()
-        } else {
-            // Path.expanduser raises when os.path.expanduser cannot resolve a
-            // named user. Keep that error for the outer best-effort wrapper.
-            match getpwnam_home(&path[1..i]) {
-                Some(h) => h,
-                None => return Err(io::Error::other("could not determine home directory")),
-            }
-        };
-        // posixpath: userhome = userhome.rstrip('/') or '/'; result or '/'.
-        let trimmed = userhome.trim_end_matches('/');
-        let base = if trimmed.is_empty() { "/" } else { trimmed };
-        let combined = format!("{base}{tail}");
-        if combined.is_empty() {
-            Ok("/".to_string())
-        } else {
-            Ok(combined)
-        }
+    };
+    // posixpath strips trailing slashes before appending the tail, then uses
+    // '/' only when the entire result is empty (including HOME='/').
+    let trimmed = userhome.trim_end_matches('/');
+    let combined = format!("{trimmed}{tail}");
+    if combined.is_empty() {
+        Ok("/".to_string())
+    } else {
+        Ok(combined)
     }
 }
 
@@ -337,7 +342,7 @@ fn to_abs(path: &str, cwd: &Path) -> String {
 /// components, resolving symlink ancestors before applying `..`, keeping
 /// nonexistent tails. Python 3.11/3.12 pathlib raises on a symlink loop even
 /// though its underlying posixpath helper returns a partial path.
-fn realpath_abs(abs: String) -> io::Result<PathBuf> {
+pub(crate) fn realpath_abs(abs: String) -> io::Result<PathBuf> {
     let mut seen: HashMap<String, Option<String>> = HashMap::new();
     let (p, ok) = join_realpath(String::new(), abs, &mut seen)?;
     if !ok {

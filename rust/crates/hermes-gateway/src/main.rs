@@ -11,6 +11,7 @@ mod atomic_file;
 mod audio_process;
 mod auth_store;
 mod authz;
+mod bot_mode;
 mod browser_control_artifacts;
 mod browser_control_broker;
 mod cache_paths;
@@ -19,6 +20,10 @@ mod channel_directory;
 mod chat_message_projection;
 mod cli_agent;
 mod code_skew;
+mod coding_context;
+mod coding_project_facts;
+mod coding_prompt;
+mod command_catalog;
 mod config;
 mod config_env_overrides;
 mod config_file;
@@ -26,7 +31,10 @@ mod config_gateway;
 mod config_loader;
 mod config_schema;
 mod config_types;
+mod context_files;
 mod control_socket;
+mod conversation_agent;
+mod conversation_prompt;
 mod credential_persistence;
 mod credential_pool;
 mod credential_sources;
@@ -42,8 +50,11 @@ mod disk_status;
 mod dispatch;
 mod display_config;
 mod drain_control;
+mod environment_probe;
+mod environment_prompt;
 mod file_read_safety;
 mod gemini_thinking;
+mod git_probe;
 mod health;
 mod hooks;
 mod hosted_room_execution_policy;
@@ -69,6 +80,7 @@ mod media_context;
 mod media_policy;
 mod media_repair;
 mod memory_monitor;
+mod memory_snapshot;
 mod memory_status;
 mod message;
 mod message_repair;
@@ -86,10 +98,13 @@ mod pending_stt;
 mod platform;
 mod platform_base_types;
 mod platform_helpers;
+mod plugin_prompt;
 mod profile_name;
 mod profile_routing;
 mod prompt_cache;
+mod prompt_footer;
 mod provider_registry;
+mod python_literal;
 mod python_value;
 mod qqbot_common;
 mod qqbot_crypto;
@@ -107,28 +122,41 @@ mod restart;
 mod restart_loop_guard;
 mod retry_utils;
 mod rich_sent_store;
+mod runtime_clock;
+mod runtime_cwd;
 mod runtime_footer;
 mod scale_to_zero;
 mod secret_scope;
 mod session;
 mod session_db;
 mod session_db_recovery;
+mod session_entry;
 mod session_image_routing;
 mod session_registry;
+mod session_reset;
+mod session_routing;
 mod session_stall;
 mod session_state;
+mod session_store;
 mod shutdown_flush;
 mod shutdown_forensics;
 mod shutdown_watchdog;
 mod signal_format;
 mod signal_rate_limit;
+mod skill_discovery;
+mod skill_loader;
+mod skill_yaml;
+mod skills_guard;
+mod skills_index;
 mod slack;
+mod slack_blocks;
 mod slash;
 mod slash_access;
 mod status;
 mod status_phrases;
 mod sticker_cache;
 mod stream_consumer;
+mod system_prompt;
 mod systemd_notify;
 mod telegram;
 mod think_scrubber;
@@ -139,6 +167,7 @@ mod tool_credentials;
 mod tool_name_repair;
 mod tool_pairing;
 mod tool_result;
+mod toolset_resolution;
 mod transcription_enrichment;
 mod transcription_http;
 mod turn_lease;
@@ -176,6 +205,29 @@ fn build_agent_client(
     user_config: &serde_json::Value,
     model: Option<&str>,
 ) -> Arc<dyn AgentClient> {
+    build_agent_client_for_home(
+        config,
+        user_config,
+        model,
+        &config_file::hermes_home(),
+        None,
+    )
+    .unwrap_or_else(|error| {
+        tracing::warn!(%error, "agent initialization failed; using existing subprocess fallback");
+        build_subprocess_agent(config)
+    })
+}
+
+/// Build against the selected conversation profile without changing ambient
+/// HERMES_HOME. Each native client captures one credentials/config snapshot;
+/// concurrent profiles must never reread another profile's .env mid-build.
+fn build_agent_client_for_home(
+    config: &Config,
+    user_config: &serde_json::Value,
+    model: Option<&str>,
+    home: &std::path::Path,
+    system_prompt: Option<String>,
+) -> anyhow::Result<Arc<dyn AgentClient>> {
     // Highest precedence: a CLI backend (Claude Code / Antigravity / any print-
     // mode LLM CLI). Turns run via that CLI, no Python and no HTTP key needed.
     if let Some(program) = config.agent_cli.clone() {
@@ -191,10 +243,26 @@ fn build_agent_client(
             Some(f) => Some(f.to_string()),
         };
         tracing::info!(program, "using CLI-backend agent client");
-        return Arc::new(cli_agent::CliAgentClient::new(program, extra, prompt_flag));
+        return Ok(Arc::new(cli_agent::CliAgentClient::new(
+            program,
+            extra,
+            prompt_flag,
+        )));
     }
 
     if config.agent_native {
+        let scope = secret_scope::current_secret_scope();
+        anyhow::ensure!(
+            !secret_scope::is_multiplex_active() || scope.is_some(),
+            "native profile construction requires a secret scope"
+        );
+        // Prepared scopes include hydrated external sources and are authoritative
+        // over a second file read. Missing multiplexed keys must stay missing.
+        let dotenv = scope
+            .as_deref()
+            .cloned()
+            .unwrap_or_else(|| config_file::load_dotenv(&home.join(".env")));
+        let environment = |name: &str| secret_scope::get_secret(name, None).ok().flatten();
         let profiles = provider_registry::ProviderRegistry::default();
         profiles.register_bundled_base_profiles(env!("CARGO_PKG_VERSION"));
         profiles.register_upstage();
@@ -225,7 +293,7 @@ fn build_agent_client(
                         .env_vars
                         .iter()
                         .find(|name| name.ends_with("_URL"))
-                        .and_then(|name| std::env::var(name).ok())
+                        .and_then(|name| environment(name))
                         .map(|value| value.trim().to_owned())
                         .filter(|value| !value.is_empty())
                 })
@@ -235,61 +303,198 @@ fn build_agent_client(
 
         // Explicit native credentials win. Registered profiles use their own
         // declared key names; generic configurations retain the legacy lookup.
-        let key = config.llm_api_key.clone().or_else(|| {
-            let dotenv = config_file::load_dotenv(&config_file::env_path());
-            match &profile {
-                Some(profile) => config_file::resolve_profile_api_key(profile, &dotenv, |name| {
-                    std::env::var(name).ok()
-                }),
-                None => config_file::resolve_provider_api_key(&base_url, &dotenv),
-            }
+        let key = config.llm_api_key.clone().or_else(|| match &profile {
+            Some(profile) => config_file::resolve_profile_api_key(profile, &dotenv, environment),
+            None => config_file::resolve_provider_api_key_with_env(&base_url, &dotenv, environment),
         });
 
         match (key, model) {
-            (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone()).and_then(|client| {
-                let limit = turn_limit::gateway(user_config, std::env::var("HERMES_MAX_ITERATIONS").ok().as_deref())?;
-                let client = client.with_turn_limit(limit).with_max_concurrent_children(delegation_policy::max_children(user_config, std::env::var("DELEGATION_MAX_CONCURRENT_CHILDREN").ok().as_deref()));
-                let client = match &profile { Some(profile) => client.with_provider_profile(profile)?, None => client };
-                client.with_extra_headers(&custom_provider_config::extra_headers(user_config, &base_url))
-            }) {
+            (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone())
+                .and_then(|client| {
+                    let limit = turn_limit::gateway(
+                        user_config,
+                        environment("HERMES_MAX_ITERATIONS").as_deref(),
+                    )?;
+                    let client = client.with_turn_limit(limit).with_max_concurrent_children(
+                        delegation_policy::max_children(
+                            user_config,
+                            environment("DELEGATION_MAX_CONCURRENT_CHILDREN").as_deref(),
+                        ),
+                    );
+                    let client = match &profile {
+                        Some(profile) => client.with_provider_profile(profile)?,
+                        None => client,
+                    };
+                    client.with_extra_headers(&custom_provider_config::extra_headers(
+                        user_config,
+                        &base_url,
+                    ))
+                }) {
                 Ok(mut c) => {
-                    c = c.with_reasoning_config(reasoning_effort::resolve_config(user_config, model));
+                    c = c.with_reasoning_config(reasoning_effort::resolve_config(
+                        user_config,
+                        model,
+                    ));
                     c = c.with_reasoning_echo(
                         python_value::truthy(&user_config["model"]["reasoning_echo"])
-                            || reasoning_replay::needs_echo(user_config["model"]["provider"].as_str().unwrap_or(""), model, &base_url),
+                            || reasoning_replay::needs_echo(
+                                user_config["model"]["provider"].as_str().unwrap_or(""),
+                                model,
+                                &base_url,
+                            ),
                     );
-                    let requested_provider = user_config["model"]["provider"].as_str().unwrap_or("");
-                    let named = custom_provider_config::named(user_config, requested_provider, profile.as_ref().map(|profile| profile.name.as_str()), |name| {
-                        std::env::var(name).ok().or_else(|| config_file::load_dotenv(&config_file::env_path()).remove(name)).unwrap_or_default()
-                    });
-                    let named_overrides = named.as_ref().and_then(|entry|entry["extra_body"].as_object()).filter(|body|!body.is_empty()).cloned();
-                    if let Some(extra) = named_overrides.or_else(|| custom_request_config::select_extra_body(requested_provider, model, &base_url, &custom_provider_config::compatible(user_config))) {
-                        c = c.with_request_overrides(serde_json::Map::from_iter([("extra_body".into(), serde_json::Value::Object(extra))]));
+                    let requested_provider =
+                        user_config["model"]["provider"].as_str().unwrap_or("");
+                    let named = custom_provider_config::named(
+                        user_config,
+                        requested_provider,
+                        profile.as_ref().map(|profile| profile.name.as_str()),
+                        |name| {
+                            environment(name)
+                                .or_else(|| dotenv.get(name).cloned())
+                                .unwrap_or_default()
+                        },
+                    );
+                    let named_overrides = named
+                        .as_ref()
+                        .and_then(|entry| entry["extra_body"].as_object())
+                        .filter(|body| !body.is_empty())
+                        .cloned();
+                    if let Some(extra) = named_overrides.or_else(|| {
+                        custom_request_config::select_extra_body(
+                            requested_provider,
+                            model,
+                            &base_url,
+                            &custom_provider_config::compatible(user_config),
+                        )
+                    }) {
+                        c = c.with_request_overrides(serde_json::Map::from_iter([(
+                            "extra_body".into(),
+                            serde_json::Value::Object(extra),
+                        )]));
                     }
                     // A saved provider supplies the fallback cap. Global and
                     // environment limits retain the gateway's precedence.
-                    c = c.with_output_cap(native_agent::resolve_output_cap(&user_config["model"]["max_tokens"], std::env::var("HERMES_MAX_TOKENS").ok().as_deref(), named.as_ref().and_then(|entry| entry.get("max_output_tokens"))));
+                    c = c.with_output_cap(native_agent::resolve_output_cap(
+                        &user_config["model"]["max_tokens"],
+                        environment("HERMES_MAX_TOKENS").as_deref(),
+                        named
+                            .as_ref()
+                            .and_then(|entry| entry.get("max_output_tokens")),
+                    ));
                     if config.agent_tools {
                         c = c.with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
-                        tracing::info!(model, base_url, "using native agent client (tools enabled)");
+                        tracing::info!(
+                            model,
+                            base_url,
+                            "using native agent client (tools enabled)"
+                        );
                     } else {
                         tracing::info!(model, base_url, "using native agent client");
                     }
-                    return Arc::new(c);
+                    if let Some(prompt) = system_prompt {
+                        c = c.with_system_prompt(prompt);
+                    }
+                    return Ok(Arc::new(c));
                 }
                 Err(err) => {
-                    tracing::error!(%err, "native agent init failed; falling back to subprocess")
+                    return Err(anyhow::anyhow!("native agent initialization failed: {err}"));
                 }
             },
-            (None, _) => tracing::warn!(
-                base_url,
-                "HERMES_AGENT_NATIVE set but no API key found (env or .env) for this provider; falling back to subprocess"
-            ),
-            (_, None) => tracing::warn!(
-                "HERMES_AGENT_NATIVE set but no model resolved; falling back to subprocess"
-            ),
+            (None, _) => anyhow::bail!("no API key resolved for native provider"),
+            (_, None) => anyhow::bail!("no model resolved for native provider"),
         }
     }
+    Ok(build_subprocess_agent(config))
+}
+
+async fn build_conversation_client(
+    config: &Config,
+    initializer: &conversation_prompt::Initializer,
+    home: &std::path::Path,
+    message: &hermes_core::Message,
+    history: &[session_db::HistoryMessage],
+    database: Option<&session_db::SessionDb>,
+) -> anyhow::Result<Arc<dyn AgentClient>> {
+    let selected = config_file::load_config_from(&home.join("config.yaml"));
+    let model = config
+        .agent_model
+        .clone()
+        .or_else(|| {
+            selected
+                .get("model")
+                .and_then(|value| value.get("default").or_else(|| value.get("model")))
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_owned)
+        })
+        .ok_or_else(|| anyhow::anyhow!("no model resolved for native provider"))?;
+    let provider = selected["model"]["provider"]
+        .as_str()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or("openrouter")
+        .to_owned();
+    let platform = format!("{:?}", message.platform).to_lowercase();
+    let session_id = session_db::message_session_id(message);
+    let metadata_row = database.and_then(|database| {
+        database
+            .get_session(&session_id)
+            .map_err(|error| {
+                tracing::warn!(%error, %session_id, "Session metadata read failed before prompt construction");
+                error
+            })
+            .ok()
+            .flatten()
+    });
+    let session_cwd = metadata_row
+        .as_ref()
+        .and_then(|row| row.get("cwd"))
+        .and_then(serde_json::Value::as_str);
+    let runtime_cwd = initializer.runtime_cwd(home, session_cwd)?;
+    let tools = if config.agent_tools {
+        vec!["current_time".to_owned()]
+    } else {
+        Vec::new()
+    };
+    let bot = initializer.bot_inputs(home, Some(&selected));
+    let resolution = conversation_prompt::restore_or_build(
+        database.map(|database| database as &dyn conversation_prompt::PromptStore),
+        &session_id,
+        &conversation_prompt::RestoreInputs {
+            has_history: !history.is_empty(),
+            runtime: system_prompt::PromptRuntime {
+                model: &model,
+                provider: &provider,
+                platform: &platform,
+                cwd: &runtime_cwd,
+            },
+            capability_stale: false,
+            legacy_bot_upgrade: false,
+            bot: Some(bot),
+        },
+        |snapshot| {
+            initializer.build_fresh(conversation_prompt::FreshPromptInputs {
+                home,
+                config: &selected,
+                model: &model,
+                provider: &provider,
+                platform: &platform,
+                session_id: &session_id,
+                tools: &tools,
+                snapshot,
+            })
+        },
+    )
+    .await?;
+    build_agent_client_for_home(
+        config,
+        &selected,
+        Some(&model),
+        home,
+        Some(resolution.prompt),
+    )
+}
+
+fn build_subprocess_agent(config: &Config) -> Arc<dyn AgentClient> {
     let mut agent =
         SubprocessAgentClient::new(config.agent_python.clone(), config.agent_cwd.clone());
     if let Some(model) = &config.agent_model {
@@ -313,7 +518,11 @@ fn start_push_path(
         state.agent.clone(),
         state.user_config.clone(),
         state.session_db.clone(),
-    );
+    )
+    .with_turn_leases(state.turn_leases.clone(), state.turn_generation.clone());
+    if let Some((store, freshness)) = &state.session_store {
+        dispatcher = dispatcher.with_session_store(store.clone(), *freshness);
+    }
     // Install the inbound-audio transcription backend when STT is configured, so
     // a downloaded voice note is transcribed before its turn. None (no key
     // resolvable) leaves audio untranscribed rather than failing the turn.
@@ -432,18 +641,71 @@ async fn main() -> anyhow::Result<()> {
     // Choose the agent backend. Native (in-Rust LLM) is opt-in and needs a key +
     // a model; otherwise fall back to the Python subprocess bridge (default).
     let agent = build_agent_client(&config, &user_config, configured_model.as_deref());
+    let agent: Arc<dyn AgentClient> =
+        if config.agent_native && config.agent_cli.is_none() && !agent.manages_history() {
+            let captured = config.clone();
+            let prompt_initializer = Arc::new(conversation_prompt::Initializer::capture(
+                config_file::hermes_root(),
+                config.agent_cwd.clone(),
+            )?);
+            Arc::new(conversation_agent::ConversationAgent::new(
+                agent,
+                move |home, message, history, database| {
+                    let home = home.to_owned();
+                    let captured = captured.clone();
+                    let message = message.clone();
+                    let history = history.to_vec();
+                    let prompt_initializer = prompt_initializer.clone();
+                    Box::pin(async move {
+                        build_conversation_client(
+                            &captured,
+                            &prompt_initializer,
+                            &home,
+                            &message,
+                            &history,
+                            database,
+                        )
+                        .await
+                    })
+                },
+            ))
+        } else {
+            agent
+        };
 
     // Conversation-history store. Backends that manage their own history (the
     // Python bridge) ignore it; native/CLI backends use it for multi-turn.
-    let session_db = match session_db::SessionDb::open_default() {
-        Ok(db) => Some(Arc::new(db)),
-        Err(err) => {
-            tracing::warn!(%err, "session store unavailable; turns will be stateless");
-            None
-        }
-    };
+    let session_db =
+        match session_db::SessionDb::open_shared(config_file::hermes_home().join("state.db")) {
+            Ok(db) => Some(db),
+            Err(err) => {
+                tracing::warn!(%err, "session store unavailable; turns will be stateless");
+                None
+            }
+        };
 
-    let state = AppState::new(agent, user_config, configured_model, session_db);
+    let mut state = AppState::new(agent, user_config, configured_model, session_db);
+    if !state.agent.manages_history() {
+        let home = config_file::hermes_home();
+        let root = config_file::hermes_root();
+        let freshness = session_reset::configured_freshness_seconds(
+            &state.user_config,
+            std::env::var("HERMES_AUTO_CONTINUE_FRESHNESS")
+                .ok()
+                .as_deref(),
+        );
+        let store = tokio::task::spawn_blocking(move || {
+            let profile = profile_name::active_profile_name(&home, &root)
+                .unwrap_or_else(|_| "default".into());
+            let gateway_config = config_loader::load_gateway_config_from(&home);
+            // The native tool runtime has no process registry yet. This is
+            // Python's missing-registry case; wire its liveness probe when
+            // background process execution becomes available.
+            session_store::SessionStore::open(gateway_config, root, home, profile, |_| Ok(false))
+        })
+        .await??;
+        state.session_store = Some((Arc::new(store), freshness));
+    }
 
     // Recover any messages a prior gateway life flushed to disk before it died
     // (data-loss guard, #72680). Only when we own the profile (singleton), so
@@ -508,7 +770,7 @@ async fn main() -> anyhow::Result<()> {
         match telegram::TelegramAdapter::new(token) {
             Ok(tg) => start_push_path(
                 hermes_core::Platform::Telegram,
-                Arc::new(tg),
+                Arc::new(tg.with_audio_cache(config_file::hermes_home(), &state.user_config)),
                 &state,
                 shutdown.clone(),
             ),
@@ -519,7 +781,7 @@ async fn main() -> anyhow::Result<()> {
         match discord::DiscordAdapter::new(token) {
             Ok(dc) => start_push_path(
                 hermes_core::Platform::Discord,
-                Arc::new(dc),
+                Arc::new(dc.with_audio_cache(config_file::hermes_home(), &state.user_config)),
                 &state,
                 shutdown.clone(),
             ),
@@ -533,7 +795,7 @@ async fn main() -> anyhow::Result<()> {
         (Some(app), Some(bot)) => match slack::SlackAdapter::new(app, bot) {
             Ok(sl) => start_push_path(
                 hermes_core::Platform::Slack,
-                Arc::new(sl),
+                Arc::new(sl.with_audio_cache(config_file::hermes_home(), &state.user_config)),
                 &state,
                 shutdown.clone(),
             ),
@@ -639,6 +901,150 @@ mod startup_tests {
             agent_cli_prompt_flag: None,
             agent_tools: false,
         }
+    }
+
+    #[tokio::test]
+    async fn conversation_prompt_is_persisted_before_model_io_and_reused_verbatim() {
+        use axum::{extract::State, response::IntoResponse, routing::post, Json, Router};
+
+        type ModelState = (
+            Arc<session_db::SessionDb>,
+            Arc<std::sync::Mutex<Vec<Value>>>,
+        );
+        async fn model(
+            State((database, requests)): State<ModelState>,
+            Json(body): Json<Value>,
+        ) -> impl IntoResponse {
+            let row = database.get_session("session-one").unwrap().unwrap();
+            assert!(row["system_prompt"]
+                .as_str()
+                .is_some_and(|text| !text.is_empty()));
+            requests.lock().unwrap().push(body);
+            (
+                [("content-type", "text/event-stream")],
+                "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\ndata: [DONE]\n\n",
+            )
+        }
+
+        struct TempDir(std::path::PathBuf);
+        impl Drop for TempDir {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home =
+            TempDir(std::env::temp_dir().join(format!("hermes-conversation-prompt-{nonce}")));
+        std::fs::create_dir_all(&home.0).unwrap();
+        std::fs::write(home.0.join("SOUL.md"), "Frozen test identity").unwrap();
+        std::fs::write(
+            home.0.join("config.yaml"),
+            "model:\n  default: fixture-model\n  provider: openrouter\n",
+        )
+        .unwrap();
+        let database = session_db::SessionDb::open_shared(home.0.join("state.db")).unwrap();
+        database
+            .create_session(
+                "session-one",
+                &session_db::SessionCreate {
+                    peer: session_db::GatewayPeer {
+                        source: "cli",
+                        session_key: Some("route-one"),
+                        chat_id: Some("chat"),
+                        chat_type: Some("dm"),
+                        ..Default::default()
+                    },
+                    cwd: home.0.to_str(),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        database
+            .append_message("session-one", "user", "earlier")
+            .unwrap();
+        let history = database.load_history("session-one", 0).unwrap();
+
+        let requests = Arc::new(std::sync::Mutex::new(Vec::new()));
+        let app = Router::new()
+            .route("/chat/completions", post(model))
+            .with_state((database.clone(), requests.clone()));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+
+        let mut config = native_config();
+        config.agent_model = Some("fixture-model".into());
+        config.llm_base_url = Some(base_url);
+        config.agent_cwd = home.0.clone();
+        let mut message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"next"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("session-one".into());
+
+        let initializer =
+            conversation_prompt::Initializer::capture(home.0.clone(), home.0.clone()).unwrap();
+        let first = build_conversation_client(
+            &config,
+            &initializer,
+            &home.0,
+            &message,
+            &history,
+            Some(&database),
+        )
+        .await
+        .unwrap();
+        let stored = database.get_session("session-one").unwrap().unwrap()["system_prompt"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        assert!(stored.contains("Frozen test identity"));
+        assert!(stored.contains("Model: fixture-model"));
+        assert!(stored.contains("Provider: openrouter"));
+        assert!(stored.contains("Platform: cli"));
+
+        let run = |client: Arc<dyn AgentClient>| {
+            let message = message.clone();
+            let history = history.clone();
+            async move {
+                let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+                client.run_turn(&message, &history, sender).await.unwrap();
+                while receiver.recv().await.is_some() {}
+            }
+        };
+        run(first).await;
+
+        // A new process-level initializer must restore the stored bytes without
+        // consulting changed prompt sources for this continuing conversation.
+        std::fs::write(home.0.join("SOUL.md"), "Changed identity must not appear").unwrap();
+        let second_initializer =
+            conversation_prompt::Initializer::capture(home.0.clone(), home.0.clone()).unwrap();
+        let second = build_conversation_client(
+            &config,
+            &second_initializer,
+            &home.0,
+            &message,
+            &history,
+            Some(&database),
+        )
+        .await
+        .unwrap();
+        run(second).await;
+
+        let requests = requests.lock().unwrap();
+        assert_eq!(requests.len(), 2);
+        for request in requests.iter() {
+            assert_eq!(request["messages"][0]["role"], "system");
+            assert_eq!(request["messages"][0]["content"], stored);
+            assert!(!request["messages"][0]["content"]
+                .as_str()
+                .unwrap()
+                .contains("Changed identity"));
+        }
+        server.abort();
     }
 
     #[test]
@@ -959,6 +1365,62 @@ mod startup_tests {
                     assert_eq!(calls.last().unwrap().1["max_tokens"], expected, "{selected}");
                 }
             }
+            // Two routed homes build independent clients without rewriting
+            // ambient HERMES_HOME or borrowing its saved credential file.
+            let red = home.0.join("profiles/red");
+            let blue = home.0.join("profiles/blue");
+            for (path, key) in [(&red, "red-profile-key"), (&blue, "blue-profile-key")] {
+                std::fs::create_dir_all(path).unwrap();
+                std::fs::write(path.join(".env"), format!("FIREWORKS_API_KEY={key}\n")).unwrap();
+            }
+            config.agent_tools = false;
+            config.llm_api_key = None;
+            let selected = json!({"model":{"provider":"fw"}});
+            let red_agent = build_agent_client_for_home(&config, &selected, Some("red-model"), &red, None).unwrap();
+            let blue_agent = build_agent_client_for_home(&config, &selected, Some("blue-model"), &blue, None).unwrap();
+            let (red_tx, mut red_rx) = tokio::sync::mpsc::channel(32);
+            let (blue_tx, mut blue_rx) = tokio::sync::mpsc::channel(32);
+            let (red_result, blue_result) = tokio::join!(
+                red_agent.run_turn(&message, &history, red_tx),
+                blue_agent.run_turn(&message, &history, blue_tx),
+            );
+            red_result.unwrap();
+            blue_result.unwrap();
+            while red_rx.recv().await.is_some() {}
+            while blue_rx.recv().await.is_some() {}
+            {
+            let calls = requests.lock().unwrap();
+            let recent = &calls[calls.len()-2..];
+            for (model, key) in [("red-model", "Bearer red-profile-key"), ("blue-model", "Bearer blue-profile-key")] {
+                let (headers, _) = recent.iter().find(|(_, body)| body["model"] == model).unwrap();
+                assert_eq!(headers["authorization"], key);
+            }
+            assert_eq!(std::env::var_os("HERMES_HOME").unwrap(), home.0.as_os_str());
+            }
+
+            struct RestoreMultiplex(bool);
+            impl Drop for RestoreMultiplex {
+                fn drop(&mut self) { secret_scope::set_multiplex_active(self.0); }
+            }
+            let _multiplex = RestoreMultiplex(secret_scope::is_multiplex_active());
+            secret_scope::set_multiplex_active(true);
+            assert!(build_agent_client_for_home(&config, &selected, Some("scoped-model"), &red, None).is_err());
+            for provider_config in [&selected, &json!({})] {
+                secret_scope::with_secret_scope(Some(Default::default()), async {
+                    // Neither a populated .env nor stale process keys may fill
+                    // an empty authoritative scope, for registered or generic providers.
+                    assert!(build_agent_client_for_home(&config, provider_config, Some("scoped-model"), &red, None).is_err());
+                }).await;
+            }
+            let scoped_agent = secret_scope::with_secret_scope(Some(std::collections::HashMap::from([
+                ("FIREWORKS_API_KEY".into(), "hydrated-profile-key".into()),
+            ])), async {
+                build_agent_client_for_home(&config, &selected, Some("scoped-model"), &red, None).unwrap()
+            }).await;
+            let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+            scoped_agent.run_turn(&message, &history, tx).await.unwrap();
+            while rx.recv().await.is_some() {}
+            assert_eq!(requests.lock().unwrap().last().unwrap().0["authorization"], "Bearer hydrated-profile-key");
         });
     }
 

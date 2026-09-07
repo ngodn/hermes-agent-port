@@ -1,0 +1,414 @@
+[
+  {
+    "payload": {
+      "event": {
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "authorized:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "outer:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "outer:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "outer-nested:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "outer-nested:123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "team": "inner",
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "inner:123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "team": "inner",
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "inner:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "team": "inner",
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "inner:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "team": "inner",
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "inner:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "team": "inner",
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "inner:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "team": "inner",
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "inner:123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "team_id": "primary",
+        "team": "secondary",
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "primary:123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "team_id": "primary",
+        "team": "secondary",
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "primary:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "team_id": "primary",
+        "team": "secondary",
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "primary:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "team_id": "primary",
+        "team": "secondary",
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "primary:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "team_id": "primary",
+        "team": "secondary",
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "primary:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "team_id": "primary",
+        "team": "secondary",
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "primary:123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "team_id": {
+          "id": "nested"
+        },
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "nested:123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "team_id": {
+          "id": "nested"
+        },
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "nested:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "team_id": {
+          "id": "nested"
+        },
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "nested:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "team_id": {
+          "id": "nested"
+        },
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "nested:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "team_id": {
+          "id": "nested"
+        },
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "nested:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "team_id": {
+          "id": "nested"
+        },
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "nested:123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "team_id": 42,
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "123.4"
+  },
+  {
+    "payload": {
+      "event": {
+        "team_id": 42,
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "authorized:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "team_id": 42,
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "outer:123.4"
+  },
+  {
+    "payload": {
+      "team_id": "outer",
+      "event": {
+        "team_id": 42,
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "outer:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "team_id": 42,
+        "ts": "123.4"
+      },
+      "authorizations": []
+    },
+    "result": "outer-nested:123.4"
+  },
+  {
+    "payload": {
+      "team": {
+        "id": "outer-nested"
+      },
+      "event": {
+        "team_id": 42,
+        "ts": "123.4"
+      },
+      "authorizations": [
+        {
+          "team_id": "authorized"
+        }
+      ]
+    },
+    "result": "outer-nested:123.4"
+  }
+]
