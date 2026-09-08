@@ -129,6 +129,8 @@ mod runtime_footer;
 mod scale_to_zero;
 mod secret_scope;
 mod session;
+mod session_admission;
+mod session_commands;
 mod session_db;
 mod session_db_recovery;
 mod session_entry;
@@ -762,7 +764,11 @@ fn start_push_path(
         state.user_config.clone(),
         state.session_db.clone(),
     )
-    .with_turn_leases(state.turn_leases.clone(), state.turn_generation.clone());
+    .with_turn_leases(
+        state.turn_leases.clone(),
+        state.route_leases.clone(),
+        state.turn_generation.clone(),
+    );
     if let Some((store, freshness)) = &state.session_store {
         dispatcher = dispatcher.with_session_store(store.clone(), *freshness);
     }

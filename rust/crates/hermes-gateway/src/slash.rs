@@ -4,8 +4,9 @@
 //! detects a leading slash command, resolves the per-platform/per-scope policy
 //! from the user config, and decides whether this sender may run it. This is
 //! the gate the Python applies at the slash dispatch site
-//! (`gateway/run.py`), minus (for now) the actual command handlers: an allowed
-//! command still flows to the agent as before, a denied one is refused.
+//! (`gateway/run.py`). Native stateful commands are classified here and
+//! executed by ingress after session admission; unsupported native lifecycle
+//! commands are refused here instead of being sent to the model as text.
 
 use hermes_core::Message;
 use serde_json::Value;
@@ -14,6 +15,12 @@ use crate::slash_access::{policy_for_source, Scope, SessionSource, SlashAccessPo
 
 /// Built-in commands the gateway answers itself, without spending an agent turn.
 pub const BUILTIN_COMMANDS: &[&str] = &["help", "whoami", "status"];
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum NativeSlashCommand {
+    Reset { title: Option<String> },
+    Unavailable { reply: String },
+}
 
 /// Outcome of gating an inbound message.
 #[derive(Debug, PartialEq, Eq)]
@@ -42,7 +49,40 @@ pub fn command_name(text: &str) -> Option<String> {
     if name.is_empty() {
         return None;
     }
-    Some(name.to_ascii_lowercase())
+    let name = name.to_ascii_lowercase();
+    Some(match name.as_str() {
+        "reset" => "new".into(),
+        "compact" => "compress".into(),
+        "sessions" => "resume".into(),
+        _ => name,
+    })
+}
+
+fn command_args(text: &str) -> &str {
+    let trimmed = text.trim_start();
+    let token_end = trimmed.find(char::is_whitespace).unwrap_or(trimmed.len());
+    trimmed[token_end..].trim()
+}
+
+/// Classify commands whose lifecycle semantics belong to the native gateway.
+/// Unknown commands still flow to the agent, preserving skill and plugin slash
+/// commands. Known but unported lifecycle commands fail explicitly.
+pub fn native_command(command: &str, text: &str) -> Option<NativeSlashCommand> {
+    match command {
+        "new" => {
+            let title = command_args(text);
+            Some(NativeSlashCommand::Reset {
+                title: (!title.is_empty()).then(|| title.to_owned()),
+            })
+        }
+        "compress" => Some(NativeSlashCommand::Unavailable {
+            reply: "Conversation compression is not available in the native gateway yet. Use /new to start a fresh session.".into(),
+        }),
+        "resume" => Some(NativeSlashCommand::Unavailable {
+            reply: "Session resume is not available in the native gateway yet.".into(),
+        }),
+        _ => None,
+    }
 }
 
 /// Build the [`SessionSource`] for an inbound message.
@@ -171,6 +211,28 @@ mod tests {
         assert_eq!(command_name("hello"), None);
         assert_eq!(command_name("/"), None);
         assert_eq!(command_name(""), None);
+        assert_eq!(command_name("/reset title"), Some("new".into()));
+        assert_eq!(command_name("/compact"), Some("compress".into()));
+        assert_eq!(command_name("/sessions"), Some("resume".into()));
+    }
+
+    #[test]
+    fn classifies_native_lifecycle_commands_without_model_fallthrough() {
+        assert_eq!(
+            native_command("new", "/reset Project Phoenix"),
+            Some(NativeSlashCommand::Reset {
+                title: Some("Project Phoenix".into())
+            })
+        );
+        assert!(matches!(
+            native_command("compress", "/compact --preview"),
+            Some(NativeSlashCommand::Unavailable { .. })
+        ));
+        assert!(matches!(
+            native_command("resume", "/sessions"),
+            Some(NativeSlashCommand::Unavailable { .. })
+        ));
+        assert_eq!(native_command("deploy", "/deploy"), None);
     }
 
     #[test]

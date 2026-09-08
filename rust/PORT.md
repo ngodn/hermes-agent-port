@@ -1,5 +1,56 @@
 # Hermes Rust rewrite
 
+## Explicit native session rotation checkpoint: 2026-09-08
+
+`/new` and its `/reset` alias now execute as native gateway lifecycle commands
+on both HTTP and push ingress. Alias canonicalization happens before slash
+access checks, the commands never reach the model, and a first-message reset
+creates one fresh session without an empty phantom predecessor. Title arguments
+are acknowledged as unavailable until the native title index lands instead of
+being silently discarded.
+
+The session store now owns an explicit compare-and-swap reset transition. It
+preserves route origin and display identity, marks the new entry as a fresh
+reset, promotes the predecessor row to `session_reset`, bumps its durable
+conversation generation, and creates the child with both `parent_session_id`
+and `model_config._reset_from`. The predecessor conversation client is retired
+through the existing deferred, transcript-aware hard teardown path.
+
+Turn admission is now stable across ID rotation. A separate per-route admission
+lease spans source resolution through acquisition of the existing session-ID
+transcript lease. The observed route is checked again before any history read;
+a waiter that resolved an old ID releases it and resolves the new route. This
+keeps both invariants: one stable route cannot rotate during admission, and
+multiple routing keys that point at one transcript still serialize on that
+transcript's ID.
+
+`/compress`, `/compact`, `/resume`, and `/sessions` are recognized lifecycle
+commands and return explicit native-backend availability messages. They cannot
+fall through to the model. This avoids pretend compression and avoids exposing
+a session switch before the titled-session index, compression-tip selection,
+and cross-user/cross-chat ownership checks are complete.
+
+Coverage includes alias and command classification, reset publication fencing,
+empty-route creation, SQLite lineage and conversation generation, stale waiter
+re-resolution, real HTTP reset and cached-client retirement, real in-flight
+persistence ordering, push reset delivery, and unported-command non-forwarding.
+Full workspace validation is **1,523 passed, two ignored**. Conversation prompt,
+plugin prompt, session lifecycle, and session reset source checks pass, as do
+Python compilation, formatting, Clippy with warnings denied, and
+`git diff --check`.
+
+Gemini and Claude were both used through `rust/tools/agy.sh` and
+`rust/tools/claude.sh`. Their source audits and the independently verified
+implementation disposition are indexed under `rust/analysis/`.
+
+Next: port the destructive slash-confirmation state machine and live config
+write used by `/new`, then add the titled-session and ownership surfaces needed
+for secure `/resume`. Real auxiliary-model compression, durable transcript
+compaction/rotation, prompt snapshot transition, native plugin and external
+memory managers, transparent extension-host respawn, and remaining agent-loop
+behavior still follow. This is a session-boundary checkpoint, not completion of
+the full port.
+
 ## Bounded native conversation lifecycle checkpoint: 2026-09-08
 
 Native per-conversation clients are now bounded owners instead of an

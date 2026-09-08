@@ -235,6 +235,29 @@ impl SessionSource {
     }
 }
 
+/// Convert an inbound core message into the gateway's complete routing source.
+/// HTTP and push ingress share this so command routing and normal turns cannot
+/// disagree about the stable session key.
+pub fn source_from_message(message: &hermes_core::Message) -> SessionSource {
+    let mut source = SessionSource::new(
+        if message.platform == hermes_core::Platform::Cli {
+            "local".to_owned()
+        } else {
+            format!("{:?}", message.platform).to_lowercase()
+        },
+        &message.channel_id,
+    );
+    source.user_id = Some(message.sender_id.clone());
+    source.chat_type = match message.chat_type.as_deref() {
+        Some("private" | "dm") | None => "dm".into(),
+        Some(kind) => kind.to_owned(),
+    };
+    source.scope_id = message.workspace_id.clone();
+    source.thread_id = message.thread_id.clone();
+    source.message_id = message.message_id.clone();
+    source
+}
+
 fn opt(v: &Option<String>) -> Value {
     match v {
         Some(s) => json!(s),

@@ -36,6 +36,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [external-memory-lifecycle-review-claude.md](external-memory-lifecycle-review-claude.md) | Claude implementation audit identifying tool transcript and durable ordering gaps fixed before commit |
 | [external-memory-lifecycle-map-agy.md](external-memory-lifecycle-map-agy.md) | Python external-memory prefetch, sidecar, sync, queue-drain and session-boundary contract map |
 | [conversation-eviction-map-claude.md](conversation-eviction-map-claude.md) | Conversation cache ownership, active-turn safety, TTL/LRU/pressure policy and child teardown design for the next checkpoint |
+| [explicit-session-rotation-map-claude.md](explicit-session-rotation-map-claude.md) | Independent audit of `/new` `/reset` `/resume` `/compress`: Python contracts/ordering, live Rust primitives, the pre-lease slash-gate race, the smallest `reset_session` seam, and now-vs-deferred split |
+| [explicit-session-rotation-map-agy.md](explicit-session-rotation-map-agy.md) | Gemini source audit of command aliases, reset lineage, stale-route races, and the safe now-vs-deferred boundary |
+| [explicit-session-rotation-resolution.md](explicit-session-rotation-resolution.md) | Implemented reset/admission design and verified disposition of both helper audits |
 | [extension-host-review-resolution.md](extension-host-review-resolution.md) | Verified disposition of both implementation reviews, with fixed findings, tests, and explicit lifecycle deferrals |
 | [extension-host-implementation-review-agy.md](extension-host-implementation-review-agy.md) | Gemini post-implementation audit of protocol health, collisions, secrets, multimodal results and process cleanup |
 | [extension-host-implementation-review-claude.md](extension-host-implementation-review-claude.md) | Claude post-implementation compatibility review, including auto-loaded backends, route identity and cache-lifetime gaps |

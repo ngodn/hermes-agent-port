@@ -30,12 +30,141 @@ pub struct ExpiredSession {
     pub home: PathBuf,
 }
 
+#[derive(Clone, Debug)]
+pub struct ExplicitSessionReset {
+    pub entry: crate::session_entry::SessionEntry,
+    pub predecessor_id: Option<String>,
+}
+
 struct SessionOrigin<'a> {
     source: &'a crate::session::SessionSource,
     legacy: Option<(&'a str, &'a str)>,
 }
 
 impl SessionStore {
+    pub fn session_key_for_source(&self, source: &crate::session::SessionSource) -> String {
+        let profile = self.config.multiplex_profiles.then(|| {
+            source
+                .profile
+                .as_deref()
+                .filter(|value| !value.is_empty())
+                .unwrap_or(&self.active_profile)
+        });
+        crate::session::build_session_key(
+            source,
+            self.config.group_sessions_per_user,
+            self.config.thread_sessions_per_user,
+            profile,
+        )
+    }
+
+    /// Snapshot the current route for a source. The returned entry carries an
+    /// object-generation token suitable for a later compare-and-swap reset.
+    pub fn current_entry_for_source(
+        &self,
+        source: &crate::session::SessionSource,
+    ) -> Option<crate::session_entry::SessionEntry> {
+        let key = self.session_key_for_source(source);
+        let routing = self.databases.routing();
+        self.reconcile(routing.as_deref());
+        self.index.lock().unwrap().entries.get(&key).cloned()
+    }
+
+    /// True only while the route still names the entry observed before an
+    /// asynchronous lease wait.
+    pub fn route_matches(&self, observed: &crate::session_entry::SessionEntry) -> bool {
+        self.index
+            .lock()
+            .unwrap()
+            .entries
+            .get(&observed.session_key)
+            .is_some_and(|current| {
+                current.same_instance(observed) && current.session_id == observed.session_id
+            })
+    }
+
+    /// Explicit user-driven reset with a compare-and-swap publication fence.
+    /// The caller holds the predecessor's turn lease when one exists. `None`
+    /// means the route changed since `expected` was observed and the caller
+    /// must retry against the new route.
+    pub fn reset_session(
+        &self,
+        source: &crate::session::SessionSource,
+        expected: Option<&crate::session_entry::SessionEntry>,
+    ) -> anyhow::Result<Option<ExplicitSessionReset>> {
+        use crate::session_entry::{CreationContext, SessionEntry};
+
+        let key = self.session_key_for_source(source);
+        let routing = self.databases.routing();
+        self.reconcile(routing.as_deref());
+        let now = chrono::Local::now().naive_local();
+        let predecessor_id = expected.map(|entry| entry.session_id.clone());
+        let context = CreationContext {
+            is_fresh_reset: true,
+            prev_session_id: predecessor_id.clone(),
+            ..Default::default()
+        };
+        let creation_source = expected
+            .and_then(|entry| entry.origin.as_ref())
+            .unwrap_or(source);
+        let mut candidate = SessionEntry::new_candidate(&key, creation_source, now, &context)?;
+        if creation_source.chat_name.is_none() {
+            if let Some(display_name) =
+                expected.and_then(|entry| entry.fields["display_name"].as_str())
+            {
+                candidate
+                    .fields
+                    .insert("display_name".into(), serde_json::json!(display_name));
+            }
+        }
+        let (entry, won) = self
+            .index
+            .lock()
+            .unwrap()
+            .publish_forced_candidate(candidate, expected);
+        if !won {
+            return Ok(None);
+        }
+
+        self.persist_full(routing.as_deref())?;
+        if let Some(db) = self.databases.for_key(&key, &self.home) {
+            if let Some(parent) = predecessor_id.as_deref() {
+                if !db.promote_to_session_reset(parent, "session_reset") {
+                    tracing::warn!(%parent, "explicit reset predecessor promotion did not update a row");
+                }
+            }
+            let origin = creation_source.to_dict().to_string();
+            let model_config = predecessor_id
+                .as_ref()
+                .map(|parent| serde_json::json!({"_reset_from": parent}));
+            let create = crate::session_db::SessionCreate {
+                peer: crate::session_db::GatewayPeer {
+                    source: &creation_source.platform,
+                    session_key: Some(&key),
+                    user_id: creation_source.user_id.as_deref(),
+                    chat_id: Some(&creation_source.chat_id),
+                    chat_type: Some(&creation_source.chat_type),
+                    thread_id: creation_source.thread_id.as_deref(),
+                },
+                profile_name: creation_source.profile.as_deref(),
+                origin_json: Some(&origin),
+                display_name: entry.fields["display_name"].as_str(),
+                parent_session_id: predecessor_id.as_deref(),
+                model_config: model_config.as_ref(),
+                ..Default::default()
+            };
+            if let Err(error) = db.create_session(&entry.session_id, &create) {
+                tracing::warn!(%error, "explicit reset session creation deferred to peer repair");
+            } else {
+                self.refresh_peer(&entry);
+            }
+        }
+        Ok(Some(ExplicitSessionReset {
+            entry,
+            predecessor_id,
+        }))
+    }
+
     pub fn database_for_key(&self, key: &str) -> Option<Arc<crate::session_db::SessionDb>> {
         self.databases.for_key(key, &self.home)
     }
@@ -235,19 +364,7 @@ impl SessionStore {
         freshness_seconds: f64,
         mut active_processes: impl FnMut(&str) -> anyhow::Result<bool>,
     ) -> Result<crate::session_entry::SessionEntry, Arc<anyhow::Error>> {
-        let profile = self.config.multiplex_profiles.then(|| {
-            source
-                .profile
-                .as_deref()
-                .filter(|s| !s.is_empty())
-                .unwrap_or(&self.active_profile)
-        });
-        let key = crate::session::build_session_key(
-            source,
-            self.config.group_sessions_per_user,
-            self.config.thread_sessions_per_user,
-            profile,
-        );
+        let key = self.session_key_for_source(source);
         match self.flights.join(&key) {
             crate::session_routing::SessionFlightTicket::Owner(owner) => {
                 owner.complete(self.transition(
@@ -395,6 +512,7 @@ impl SessionStore {
                             .or_else(|| tokens.as_bool().map(|b| if b { 1.0 } else { 0.0 }))
                             .ok_or_else(|| anyhow::anyhow!("last_prompt_tokens must be numeric"))?;
                         context = CreationContext {
+                            is_fresh_reset: false,
                             was_auto_reset: true,
                             auto_reset_reason: Some(reason.into()),
                             reset_had_activity: tokens > 0.0,
@@ -456,6 +574,7 @@ impl SessionStore {
                     active,
                 )? {
                     context = CreationContext {
+                        is_fresh_reset: false,
                         was_auto_reset: true,
                         auto_reset_reason: Some(reason.into()),
                         reset_had_activity: crate::python_value::truthy(
@@ -998,6 +1117,100 @@ mod tests {
             first.session_id
         );
         drop(db);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[test]
+    fn explicit_reset_is_cas_fenced_and_persists_lineage() {
+        let home = transition_home("explicit_reset");
+        let store = SessionStore::open(
+            GatewayConfig {
+                sessions_dir: home.join("sessions"),
+                ..Default::default()
+            },
+            home.clone(),
+            home.clone(),
+            "default".into(),
+            |_| Ok(false),
+        )
+        .unwrap();
+        let source = SessionSource::new("telegram", "C");
+        let first = store
+            .get_or_create_session(&source, false, true, 3600.0, |_| Ok(false))
+            .unwrap();
+        let reset = store.reset_session(&source, Some(&first)).unwrap().unwrap();
+        assert_ne!(reset.entry.session_id, first.session_id);
+        assert_eq!(
+            reset.predecessor_id.as_deref(),
+            Some(first.session_id.as_str())
+        );
+        assert_eq!(reset.entry.fields["is_fresh_reset"], true);
+        assert_eq!(reset.entry.fields["was_auto_reset"], false);
+
+        // Replaying a command against the stale observed generation must not
+        // overwrite the route that already won.
+        assert!(store
+            .reset_session(&source, Some(&first))
+            .unwrap()
+            .is_none());
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            reset.entry.session_id
+        );
+
+        let db = store.database_for_key(&reset.entry.session_key).unwrap();
+        assert_eq!(
+            db.get_session(&first.session_id).unwrap().unwrap()["end_reason"],
+            "session_reset"
+        );
+        let child = db.get_session(&reset.entry.session_id).unwrap().unwrap();
+        assert_eq!(child["parent_session_id"], first.session_id);
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(child["model_config"].as_str().unwrap())
+                .unwrap()["_reset_from"],
+            first.session_id
+        );
+        let connection = rusqlite::Connection::open(home.join("state.db")).unwrap();
+        let generation: i64 = connection
+            .query_row(
+                "SELECT generation FROM conversation_generations WHERE source=? AND session_key=?",
+                rusqlite::params!["telegram", reset.entry.session_key],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(generation, 1);
+        drop(connection);
+        drop(db);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[test]
+    fn explicit_reset_on_an_empty_route_creates_no_phantom_parent() {
+        let home = transition_home("explicit_reset_empty");
+        let store = SessionStore::open(
+            GatewayConfig {
+                sessions_dir: home.join("sessions"),
+                ..Default::default()
+            },
+            home.clone(),
+            home.clone(),
+            "default".into(),
+            |_| Ok(false),
+        )
+        .unwrap();
+        let source = SessionSource::new("local", "first-command");
+        let reset = store.reset_session(&source, None).unwrap().unwrap();
+        assert!(reset.predecessor_id.is_none());
+        assert_eq!(reset.entry.fields["is_fresh_reset"], true);
+        let row = store
+            .database_for_key(&reset.entry.session_key)
+            .unwrap()
+            .get_session(&reset.entry.session_id)
+            .unwrap()
+            .unwrap();
+        assert!(row["parent_session_id"].is_null());
         drop(store);
         std::fs::remove_dir_all(home).unwrap();
     }

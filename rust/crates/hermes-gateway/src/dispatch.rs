@@ -34,6 +34,7 @@ pub struct Dispatcher {
     /// Serializes turns per resolved session so two routing keys mapped to one
     /// session never interleave their transcript flushes (see turn_lease).
     lease: Arc<SessionTurnLeaseRegistry>,
+    route_lease: Arc<SessionTurnLeaseRegistry>,
     /// Monotonic per-turn generation, for lease ownership diagnostics.
     generation: Arc<AtomicU64>,
     /// User config, for slash-command gating.
@@ -89,6 +90,7 @@ impl Dispatcher {
             agent,
             adapters: HashMap::new(),
             lease: Arc::new(SessionTurnLeaseRegistry::default()),
+            route_lease: Arc::new(SessionTurnLeaseRegistry::default()),
             generation: Arc::new(AtomicU64::new(0)),
             user_config,
             dead_targets,
@@ -103,9 +105,11 @@ impl Dispatcher {
     pub fn with_turn_leases(
         mut self,
         leases: Arc<SessionTurnLeaseRegistry>,
+        route_leases: Arc<SessionTurnLeaseRegistry>,
         generation: Arc<AtomicU64>,
     ) -> Self {
         self.lease = leases;
+        self.route_lease = route_leases;
         self.generation = generation;
         self
     }
@@ -256,6 +260,7 @@ impl Dispatcher {
         // Slash-command gating + built-ins. Refuse a command this sender may not
         // run before spending a turn; answer gateway built-ins directly; let any
         // other allowed command flow to the agent as normal text.
+        let mut native_command = None;
         match slash::evaluate(&self.user_config, &msg) {
             SlashDecision::Denied { command } => {
                 info!(platform = ?msg.platform, %command, "slash command denied by policy");
@@ -267,8 +272,48 @@ impl Dispatcher {
                     self.deliver(&msg, reply).await;
                     return;
                 }
+                native_command = slash::native_command(&command, &msg.text);
+                if let Some(crate::slash::NativeSlashCommand::Unavailable { reply }) =
+                    &native_command
+                {
+                    self.deliver(&msg, reply.clone()).await;
+                    return;
+                }
             }
             SlashDecision::NotSlash => {}
+        }
+
+        if let Some(crate::slash::NativeSlashCommand::Reset { title }) = native_command {
+            let Some((store, _)) = &self.session_store else {
+                self.deliver(
+                    &msg,
+                    "Session reset is not available on this backend.".into(),
+                )
+                .await;
+                return;
+            };
+            match crate::session_commands::reset_session(
+                crate::session_admission::AdmissionDeps {
+                    store: store.clone(),
+                    transcript_leases: self.lease.clone(),
+                    route_leases: self.route_lease.clone(),
+                    generation: self.generation.clone(),
+                },
+                self.agent.clone(),
+                crate::session::source_from_message(&msg),
+                &msg.sender_id,
+                title,
+            )
+            .await
+            {
+                Ok(result) => self.deliver(&msg, result.reply).await,
+                Err(error) => {
+                    warn!(%error, "push session reset failed");
+                    self.deliver(&msg, "Session reset failed. Please try again.".into())
+                        .await;
+                }
+            }
+            return;
         }
 
         // Video context belongs to the model turn, after slash policy has seen
@@ -295,62 +340,41 @@ impl Dispatcher {
         let mut turn_db = self.session_db.clone();
         let mut routing_key = None;
         let mut session_finalizable = false;
+        let mut admitted_lease = None;
         if !manages {
             if let Some((store, freshness)) = &self.session_store {
-                let store = store.clone();
-                let freshness = *freshness;
-                let mut source = crate::session::SessionSource::new(
-                    if msg.platform == Platform::Cli {
-                        "local".to_owned()
-                    } else {
-                        format!("{:?}", msg.platform).to_lowercase()
-                    },
-                    &msg.channel_id,
-                );
-                source.user_id = Some(msg.sender_id.clone());
-                source.chat_type = match msg.chat_type.as_deref() {
-                    Some("private" | "dm") | None => "dm".into(),
-                    Some(kind) => kind.to_owned(),
-                };
-                source.scope_id = msg.workspace_id.clone();
-                source.thread_id = msg.thread_id.clone();
-                source.message_id = msg.message_id.clone();
+                let source = crate::session::source_from_message(&msg);
                 let legacy_id = crate::session_db::message_session_id(&msg);
                 let legacy_source = format!("{:?}", msg.platform).to_lowercase();
-                let resolved = tokio::task::spawn_blocking(move || {
-                    let entry = store.get_or_create_with_legacy(
-                        &source,
-                        Some((&legacy_id, &legacy_source)),
-                        false,
-                        true,
-                        freshness,
-                        |_| Ok(false),
-                    )?;
-                    let finalizable = store.is_session_finalizable(&entry);
-                    let previous = store.take_auto_reset_predecessor(&entry)?;
-                    let db = store.database_for_key(&entry.session_key);
-                    Ok::<_, Arc<anyhow::Error>>((entry, db, finalizable, previous))
-                })
+                let resolved = crate::session_admission::admit_turn(
+                    crate::session_admission::AdmissionDeps {
+                        store: store.clone(),
+                        transcript_leases: self.lease.clone(),
+                        route_leases: self.route_lease.clone(),
+                        generation: self.generation.clone(),
+                    },
+                    source,
+                    Some((legacy_id, legacy_source)),
+                    *freshness,
+                    &msg.sender_id,
+                )
                 .await;
                 match resolved {
-                    Ok(Ok((entry, db, finalizable, previous_session_id))) => {
-                        msg.resolved_session_id = Some(entry.session_id);
-                        routing_key = Some(entry.session_key);
-                        turn_db = db;
-                        session_finalizable = finalizable;
-                        if let Some(previous_session_id) = previous_session_id {
+                    Ok(resolved) => {
+                        msg.resolved_session_id = Some(resolved.entry.session_id);
+                        routing_key = Some(resolved.entry.session_key);
+                        turn_db = resolved.database;
+                        session_finalizable = resolved.finalizable;
+                        admitted_lease = resolved.lease;
+                        if let Some(previous_session_id) = resolved.predecessor_id {
                             self.agent.retire_conversation(
                                 crate::agent::TurnContext::from_database(turn_db.as_deref()),
                                 &previous_session_id,
                             );
                         }
                     }
-                    Ok(Err(error)) => {
-                        warn!(%error, "could not resolve session for inbound turn");
-                        return;
-                    }
                     Err(error) => {
-                        warn!(%error, "session resolver worker failed");
+                        warn!(%error, "could not resolve session for inbound turn");
                         return;
                     }
                 }
@@ -362,16 +386,20 @@ impl Dispatcher {
         // A held lease means a same-session turn is in flight; fail closed on
         // timeout rather than run two turns unserialized on one transcript.
         let session_id = crate::session_db::message_session_id(&msg);
-        let generation = self.generation.fetch_add(1, Ordering::Relaxed);
-        let _lease = match self
-            .lease
-            .acquire(&session_id, &msg.sender_id, generation, None)
-            .await
-        {
-            Ok(token) => token, // held for the turn; released on drop below
-            Err(err) => {
-                warn!(%err, "rejecting turn: could not serialize against the in-flight turn");
-                return;
+        let _lease = if admitted_lease.is_some() {
+            admitted_lease
+        } else {
+            let generation = self.generation.fetch_add(1, Ordering::Relaxed);
+            match self
+                .lease
+                .acquire(&session_id, &msg.sender_id, generation, None)
+                .await
+            {
+                Ok(token) => token,
+                Err(err) => {
+                    warn!(%err, "rejecting turn: could not serialize against the in-flight turn");
+                    return;
+                }
             }
         };
 
@@ -1001,6 +1029,56 @@ mod tests {
         let out = sent.lock().unwrap();
         assert_eq!(out.len(), 1);
         assert!(out[0].text.contains("online"));
+    }
+
+    #[tokio::test]
+    async fn push_reset_rotates_without_forwarding_the_command() {
+        let home = std::env::temp_dir().join(format!(
+            "hermes-push-reset-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let (dispatcher, calls, sent) = harness("answer", json!({}));
+        let dispatcher = dispatcher.with_session_store(store.clone(), 3600.0);
+        dispatcher.handle_turn(cli_msg("first", "u")).await;
+        let source = crate::session::source_from_message(&cli_msg("", "u"));
+        let first_id = store.current_entry_for_source(&source).unwrap().session_id;
+
+        dispatcher.handle_turn(cli_msg("/reset", "u")).await;
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        let second_id = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(second_id, first_id);
+        let output = sent.lock().unwrap();
+        assert_eq!(output.len(), 2);
+        assert!(output[1].text.contains("Session reset"));
+        drop(output);
+        let db = store
+            .database_for_key(&store.session_key_for_source(&source))
+            .unwrap();
+        assert_eq!(
+            db.get_session(&first_id).unwrap().unwrap()["end_reason"],
+            "session_reset"
+        );
+        drop(db);
+        drop(dispatcher);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
     }
 
     #[tokio::test]

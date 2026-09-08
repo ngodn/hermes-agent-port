@@ -31,6 +31,10 @@ pub struct AppState {
     /// One coordinator and lease registry shared by HTTP and push ingress.
     pub session_store: Option<(Arc<crate::session_store::SessionStore>, f64)>,
     pub turn_leases: Arc<crate::turn_lease::SessionTurnLeaseRegistry>,
+    /// Serializes route resolution through transcript-lease acquisition. This
+    /// closes the small window where a route could rotate after resolution but
+    /// before the resolved session lease was held.
+    pub route_leases: Arc<crate::turn_lease::SessionTurnLeaseRegistry>,
     pub turn_generation: Arc<AtomicU64>,
 }
 
@@ -49,6 +53,7 @@ impl AppState {
             session_db,
             session_store: None,
             turn_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+            route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
             turn_generation: Arc::new(AtomicU64::new(0)),
         }
     }

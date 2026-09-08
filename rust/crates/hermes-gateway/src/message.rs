@@ -105,6 +105,7 @@ pub async fn post_message(
     };
 
     // Slash-command gating + built-ins, same policy as the push path.
+    let mut native_command = None;
     match crate::slash::evaluate(&state.user_config, &msg) {
         crate::slash::SlashDecision::Denied { command } => {
             return Ok(Json(MessageResponse {
@@ -115,8 +116,45 @@ pub async fn post_message(
             if let Some(reply) = crate::slash::handle_builtin(&command, &msg, &state.user_config) {
                 return Ok(Json(MessageResponse { reply }));
             }
+            native_command = crate::slash::native_command(&command, &msg.text);
+            if let Some(crate::slash::NativeSlashCommand::Unavailable { reply }) = &native_command {
+                return Ok(Json(MessageResponse {
+                    reply: reply.clone(),
+                }));
+            }
         }
         crate::slash::SlashDecision::NotSlash => {}
+    }
+
+    if let Some(crate::slash::NativeSlashCommand::Reset { title }) = native_command {
+        let Some((store, _)) = &state.session_store else {
+            return Ok(Json(MessageResponse {
+                reply: "Session reset is not available on this backend.".into(),
+            }));
+        };
+        let result = crate::session_commands::reset_session(
+            crate::session_admission::AdmissionDeps {
+                store: store.clone(),
+                transcript_leases: state.turn_leases.clone(),
+                route_leases: state.route_leases.clone(),
+                generation: state.turn_generation.clone(),
+            },
+            state.agent.clone(),
+            crate::session::source_from_message(&msg),
+            &msg.sender_id,
+            title,
+        )
+        .await
+        .map_err(|error| {
+            warn!(%error, "HTTP session reset failed");
+            (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(serde_json::json!({"error":"session reset failed"})),
+            )
+        })?;
+        return Ok(Json(MessageResponse {
+            reply: result.reply,
+        }));
     }
 
     // Load prior history + record the inbound message for stateless backends.
@@ -124,35 +162,24 @@ pub async fn post_message(
     let mut turn_db = state.session_db.clone();
     let mut routing_key = None;
     let mut session_finalizable = false;
+    let mut admitted_lease = None;
     if !manages {
         if let Some((store, freshness)) = &state.session_store {
-            let store = store.clone();
-            let freshness = *freshness;
-            let mut source = crate::session::SessionSource::new("local", &msg.channel_id);
-            source.user_id = Some(msg.sender_id.clone());
+            let source = crate::session::source_from_message(&msg);
             let legacy_id = crate::session_db::message_session_id(&msg);
-            let resolved = tokio::task::spawn_blocking(move || {
-                let entry = store.get_or_create_with_legacy(
-                    &source,
-                    Some((&legacy_id, "cli")),
-                    false,
-                    true,
-                    freshness,
-                    |_| Ok(false),
-                )?;
-                let finalizable = store.is_session_finalizable(&entry);
-                let previous = store.take_auto_reset_predecessor(&entry)?;
-                let db = store.database_for_key(&entry.session_key);
-                Ok::<_, std::sync::Arc<anyhow::Error>>((entry, db, finalizable, previous))
-            })
+            let resolved = crate::session_admission::admit_turn(
+                crate::session_admission::AdmissionDeps {
+                    store: store.clone(),
+                    transcript_leases: state.turn_leases.clone(),
+                    route_leases: state.route_leases.clone(),
+                    generation: state.turn_generation.clone(),
+                },
+                source,
+                Some((legacy_id, "cli".into())),
+                *freshness,
+                &msg.sender_id,
+            )
             .await
-            .map_err(|error| {
-                warn!(%error, "HTTP session resolver worker failed");
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({"error":"session resolver failed"})),
-                )
-            })?
             .map_err(|error| {
                 warn!(%error, "could not resolve HTTP session");
                 (
@@ -160,11 +187,12 @@ pub async fn post_message(
                     Json(serde_json::json!({"error":"session unavailable"})),
                 )
             })?;
-            msg.resolved_session_id = Some(resolved.0.session_id);
-            routing_key = Some(resolved.0.session_key);
-            turn_db = resolved.1;
-            session_finalizable = resolved.2;
-            if let Some(previous_session_id) = resolved.3 {
+            msg.resolved_session_id = Some(resolved.entry.session_id);
+            routing_key = Some(resolved.entry.session_key);
+            turn_db = resolved.database;
+            session_finalizable = resolved.finalizable;
+            admitted_lease = resolved.lease;
+            if let Some(previous_session_id) = resolved.predecessor_id {
                 state.agent.retire_conversation(
                     crate::agent::TurnContext::from_database(turn_db.as_deref()),
                     &previous_session_id,
@@ -176,25 +204,29 @@ pub async fn post_message(
     // Serialize before history reads. The same registry is passed to push
     // dispatchers, so routes that resolve to one transcript cannot interleave.
     let session_id = crate::session_db::message_session_id(&msg);
-    let generation = state
-        .turn_generation
-        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    let _lease = state
-        .turn_leases
-        .acquire(
-            &session_id,
-            routing_key.as_deref().unwrap_or(&msg.sender_id),
-            generation,
-            None,
-        )
-        .await
-        .map_err(|error| {
-            warn!(%error, "HTTP turn could not acquire session lease");
-            (
-                StatusCode::CONFLICT,
-                Json(serde_json::json!({"error":"session is busy"})),
+    let _lease = if admitted_lease.is_some() {
+        admitted_lease
+    } else {
+        let generation = state
+            .turn_generation
+            .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        state
+            .turn_leases
+            .acquire(
+                &session_id,
+                routing_key.as_deref().unwrap_or(&msg.sender_id),
+                generation,
+                None,
             )
-        })?;
+            .await
+            .map_err(|error| {
+                warn!(%error, "HTTP turn could not acquire session lease");
+                (
+                    StatusCode::CONFLICT,
+                    Json(serde_json::json!({"error":"session is busy"})),
+                )
+            })?
+    };
     // Once admitted, the turn owns the lease and persistence independently of
     // the HTTP waiter. Dropping a client request must not detach a live agent
     // from its transcript lock or discard its completed assistant message.
@@ -836,6 +868,297 @@ mod tests {
         assert_eq!(ended[0].len(), 2);
         assert_eq!(ended[0][0]["role"], "user");
         assert_eq!(ended[0][1]["role"], "assistant");
+    }
+
+    #[tokio::test]
+    async fn explicit_http_reset_rotates_history_and_retires_the_old_client() {
+        struct RecordingAgent {
+            turns: Arc<Mutex<Vec<(String, usize, String)>>>,
+            ended: Arc<Mutex<Vec<Vec<Value>>>>,
+        }
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for RecordingAgent {
+            async fn run_turn(
+                &self,
+                message: &Message,
+                history: &[crate::session_db::HistoryMessage],
+                events: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                self.turns.lock().unwrap().push((
+                    message.resolved_session_id.clone().unwrap(),
+                    history.len(),
+                    message.text.clone(),
+                ));
+                events
+                    .send(StreamEvent::MessageChunk {
+                        text: "answer".into(),
+                    })
+                    .await
+                    .unwrap();
+                events
+                    .send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+
+            async fn close_conversation(
+                &self,
+                messages: Option<&[Value]>,
+            ) -> hermes_core::Result<()> {
+                self.ended
+                    .lock()
+                    .unwrap()
+                    .push(messages.unwrap_or_default().to_vec());
+                Ok(())
+            }
+        }
+
+        let home = TempHome::new();
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let turns = Arc::new(Mutex::new(Vec::new()));
+        let ended = Arc::new(Mutex::new(Vec::new()));
+        let fallback = Arc::new(RecordingAgent {
+            turns: turns.clone(),
+            ended: ended.clone(),
+        });
+        let cache = Arc::new(crate::conversation_agent::ConversationAgent::new(
+            fallback,
+            {
+                let turns = turns.clone();
+                let ended = ended.clone();
+                move |_, _, _, _| {
+                    let turns = turns.clone();
+                    let ended = ended.clone();
+                    Box::pin(async move {
+                        Ok(Arc::new(RecordingAgent { turns, ended })
+                            as Arc<dyn crate::agent::AgentClient>)
+                    })
+                }
+            },
+            crate::agent_cache_pressure::AgentCacheBounds::default(),
+        ));
+        let mut state = AppState::new(cache, Arc::new(json!({})), None, Some(db.clone()));
+        state.session_store = Some((store.clone(), 3600.0));
+        let (url, _server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+        let client = reqwest::Client::new();
+        let send = |text: &'static str| {
+            client
+                .post(format!("{url}/message"))
+                .json(&json!({"channel_id":"explicit","sender_id":"local","text":text}))
+                .send()
+        };
+        let first_reply = send("first").await.unwrap();
+        assert_eq!(first_reply.status(), StatusCode::OK);
+        assert_eq!(
+            first_reply.json::<Value>().await.unwrap()["reply"],
+            "answer"
+        );
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "explicit")
+        };
+        let first_id = store.current_entry_for_source(&source).unwrap().session_id;
+
+        let reset_reply = send("/reset").await.unwrap();
+        assert_eq!(reset_reply.status(), StatusCode::OK);
+        assert!(reset_reply.json::<Value>().await.unwrap()["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Session reset"));
+        assert_eq!(turns.lock().unwrap().len(), 1);
+        let second_id = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(second_id, first_id);
+
+        let second_reply = send("second").await.unwrap();
+        assert_eq!(second_reply.status(), StatusCode::OK);
+        assert_eq!(
+            second_reply.json::<Value>().await.unwrap()["reply"],
+            "answer"
+        );
+        {
+            let turns = turns.lock().unwrap();
+            assert_eq!(
+                turns.as_slice(),
+                [
+                    (first_id.clone(), 0, "first".into()),
+                    (second_id.clone(), 0, "second".into()),
+                ]
+            );
+        }
+        let first_row = db.get_session(&first_id).unwrap().unwrap();
+        assert_eq!(first_row["end_reason"], "session_reset");
+        let second_row = db.get_session(&second_id).unwrap().unwrap();
+        assert_eq!(second_row["parent_session_id"], first_id);
+
+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            while ended.lock().unwrap().is_empty() {
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .unwrap();
+        let ended = ended.lock().unwrap();
+        assert_eq!(ended.len(), 1);
+        assert_eq!(ended[0].len(), 2);
+    }
+
+    #[tokio::test]
+    async fn explicit_http_reset_waits_for_in_flight_persistence() {
+        struct GateAgent {
+            entered: tokio::sync::Notify,
+            release: tokio::sync::Semaphore,
+        }
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for GateAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                events: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                self.entered.notify_one();
+                self.release.acquire().await.unwrap().forget();
+                events
+                    .send(StreamEvent::MessageChunk {
+                        text: "persisted".into(),
+                    })
+                    .await
+                    .unwrap();
+                events
+                    .send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+
+        let home = TempHome::new();
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let agent = Arc::new(GateAgent {
+            entered: tokio::sync::Notify::new(),
+            release: tokio::sync::Semaphore::new(0),
+        });
+        let mut state = AppState::new(agent.clone(), Arc::new(json!({})), None, Some(db.clone()));
+        state.session_store = Some((store.clone(), 3600.0));
+        let first = tokio::spawn(post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "reset-race".into(),
+                sender_id: "local".into(),
+                text: "first".into(),
+                content_parts: None,
+            }),
+        ));
+        tokio::time::timeout(std::time::Duration::from_secs(5), agent.entered.notified())
+            .await
+            .unwrap();
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "reset-race")
+        };
+        let first_id = store.current_entry_for_source(&source).unwrap().session_id;
+        let reset = tokio::spawn(post_message(
+            State(state),
+            Json(MessageRequest {
+                channel_id: "reset-race".into(),
+                sender_id: "local".into(),
+                text: "/new".into(),
+                content_parts: None,
+            }),
+        ));
+        tokio::pin!(reset);
+        assert!(
+            tokio::time::timeout(std::time::Duration::from_millis(50), &mut reset)
+                .await
+                .is_err()
+        );
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
+
+        agent.release.add_permits(1);
+        assert_eq!(first.await.unwrap().unwrap().0.reply, "persisted");
+        let reset_reply = tokio::time::timeout(std::time::Duration::from_secs(5), reset)
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap();
+        assert!(reset_reply.0.reply.contains("Session reset"));
+        assert_ne!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
+        let history = db.load_history(&first_id, 0).unwrap();
+        assert_eq!(history.len(), 2);
+        assert_eq!(history[1].content, "persisted");
+        assert_eq!(
+            db.get_session(&first_id).unwrap().unwrap()["end_reason"],
+            "session_reset"
+        );
+    }
+
+    #[tokio::test]
+    async fn unported_lifecycle_commands_never_reach_the_agent() {
+        struct NeverRun;
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for NeverRun {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                _: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                panic!("native lifecycle command reached the model")
+            }
+        }
+        let state = AppState::new(Arc::new(NeverRun), Arc::new(json!({})), None, None);
+        for text in ["/compress", "/compact --preview", "/resume", "/sessions"] {
+            let response = post_message(
+                State(state.clone()),
+                Json(MessageRequest {
+                    channel_id: "commands".into(),
+                    sender_id: "local".into(),
+                    text: text.into(),
+                    content_parts: None,
+                }),
+            )
+            .await
+            .unwrap();
+            assert!(response.0.reply.contains("not available"));
+        }
     }
 
     #[tokio::test]

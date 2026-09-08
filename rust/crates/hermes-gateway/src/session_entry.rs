@@ -70,6 +70,7 @@ pub struct SessionEntry {
 /// Reset lineage carried from the predecessor into a newly created route.
 #[derive(Default)]
 pub struct CreationContext {
+    pub is_fresh_reset: bool,
     pub was_auto_reset: bool,
     pub auto_reset_reason: Option<String>,
     pub reset_had_activity: bool,
@@ -115,6 +116,7 @@ impl SessionEntry {
             "created_at":timestamp, "updated_at":timestamp,
             "display_name":source.chat_name, "platform":source.platform,
             "chat_type":source.chat_type,
+            "is_fresh_reset":context.is_fresh_reset,
             "was_auto_reset":context.was_auto_reset,
             "auto_reset_reason":context.auto_reset_reason,
             "reset_had_activity":context.reset_had_activity,

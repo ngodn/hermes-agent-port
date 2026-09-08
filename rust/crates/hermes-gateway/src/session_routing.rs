@@ -1198,6 +1198,7 @@ mod tests {
                     )
                     .unwrap();
                     let context = crate::session_entry::CreationContext {
+                        is_fresh_reset: false,
                         was_auto_reset: true,
                         auto_reset_reason: Some("idle".into()),
                         reset_had_activity: true,
