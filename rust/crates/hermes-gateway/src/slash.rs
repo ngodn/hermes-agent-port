@@ -100,13 +100,30 @@ fn policy_for(user_config: &Value, msg: &Message) -> SlashAccessPolicy {
     policy_for_source(Some(user_config), Some(&source_for(msg)))
 }
 
+/// Check one already-canonical command against the same source policy used by
+/// ordinary slash dispatch. Confirmation replies use the command that created
+/// the pending prompt, not the reply keyword, for this authorization check.
+pub fn can_run_command(user_config: &Value, msg: &Message, command: &str) -> bool {
+    policy_for(user_config, msg).can_run(Some(&msg.sender_id), command)
+}
+
+/// Prefix that can be typed on the currently native platform. Slack reserves
+/// slash commands in threads and its adapter rewrites recognized bang commands.
+pub fn typed_command_prefix(platform: hermes_core::Platform) -> &'static str {
+    if platform == hermes_core::Platform::Slack {
+        "!"
+    } else {
+        "/"
+    }
+}
+
 /// Gate an inbound message against the slash-access policy in `user_config`.
 pub fn evaluate(user_config: &Value, msg: &Message) -> SlashDecision {
     let Some(command) = command_name(&msg.text) else {
         return SlashDecision::NotSlash;
     };
 
-    if policy_for(user_config, msg).can_run(Some(&msg.sender_id), &command) {
+    if can_run_command(user_config, msg, &command) {
         SlashDecision::Allowed { command }
     } else {
         SlashDecision::Denied { command }

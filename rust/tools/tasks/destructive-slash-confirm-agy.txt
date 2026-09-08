@@ -1,0 +1,17 @@
+Audit the next Rust port seam after native /new and /reset: Python's default-on
+destructive slash confirmation flow. Do not edit files, run Cargo, commit, or
+push. Read the live Python and Rust source directly.
+
+Trace _maybe_confirm_destructive_slash, _request_slash_confirm,
+tools/slash_confirm.py, early message interception, adapter button callbacks,
+typed command prefixes, approvals.destructive_slash_confirm config loading,
+and save_config_value for Always Approve. Record exact state keys, timeout,
+supersession, pop-before-handler, recognized text forms, tool-approval
+precedence, failure behavior, response strings, and config write atomicity.
+
+Inspect the newly committed Rust rotation path and existing config/adapter
+interfaces. Recommend the smallest production-quality checkpoint that gives
+HTTP and push users a faithful text fallback without weakening future button
+callbacks or losing dynamic config updates. Identify concurrency, replay,
+cross-user, and restart hazards. Specify deterministic unit and real HTTP/push
+tests. Give exact file and symbol references and rank design risks.

@@ -104,6 +104,34 @@ pub async fn post_message(
         thread_id: None,
     };
 
+    // A confirmation reply is control input, not a model turn. Intercept it
+    // before ordinary slash dispatch, while authorizing against the destructive
+    // command that created the prompt. Native tool approvals are not live yet;
+    // once ported, their blocking predicate must replace this explicit false.
+    if let Some((store, _)) = &state.session_store {
+        let deps = crate::session_admission::AdmissionDeps {
+            store: store.clone(),
+            transcript_leases: state.turn_leases.clone(),
+            route_leases: state.route_leases.clone(),
+            generation: state.turn_generation.clone(),
+        };
+        if let Some(result) = crate::session_commands::resolve_reset_confirmation(
+            &state.slash_confirmations,
+            deps,
+            state.agent.clone(),
+            crate::session::source_from_message(&msg),
+            &msg,
+            &state.user_config,
+            false,
+        )
+        .await
+        {
+            return Ok(Json(MessageResponse {
+                reply: result.reply,
+            }));
+        }
+    }
+
     // Slash-command gating + built-ins, same policy as the push path.
     let mut native_command = None;
     match crate::slash::evaluate(&state.user_config, &msg) {
@@ -132,7 +160,8 @@ pub async fn post_message(
                 reply: "Session reset is not available on this backend.".into(),
             }));
         };
-        let result = crate::session_commands::reset_session(
+        let result = crate::session_commands::reset_or_confirm(
+            &state.slash_confirmations,
             crate::session_admission::AdmissionDeps {
                 store: store.clone(),
                 transcript_leases: state.turn_leases.clone(),
@@ -143,6 +172,7 @@ pub async fn post_message(
             crate::session::source_from_message(&msg),
             &msg.sender_id,
             title,
+            crate::slash::typed_command_prefix(msg.platform),
         )
         .await
         .map_err(|error| {
@@ -193,6 +223,9 @@ pub async fn post_message(
             session_finalizable = resolved.finalizable;
             admitted_lease = resolved.lease;
             if let Some(previous_session_id) = resolved.predecessor_id {
+                if let Some(route_key) = routing_key.as_deref() {
+                    state.slash_confirmations.clear(route_key);
+                }
                 state.agent.retire_conversation(
                     crate::agent::TurnContext::from_database(turn_db.as_deref()),
                     &previous_session_id,
@@ -952,6 +985,9 @@ mod tests {
             crate::agent_cache_pressure::AgentCacheBounds::default(),
         ));
         let mut state = AppState::new(cache, Arc::new(json!({})), None, Some(db.clone()));
+        state.slash_confirmations = Arc::new(crate::slash_confirm::SlashConfirmations::new(
+            home.0.join("config.yaml"),
+        ));
         state.session_store = Some((store.clone(), 3600.0));
         let (url, _server) = serve(
             axum::Router::new()
@@ -983,8 +1019,19 @@ mod tests {
         assert!(reset_reply.json::<Value>().await.unwrap()["reply"]
             .as_str()
             .unwrap()
-            .contains("Session reset"));
+            .contains("Confirm /new"));
         assert_eq!(turns.lock().unwrap().len(), 1);
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
+
+        let reset_reply = send("/approve").await.unwrap();
+        assert_eq!(reset_reply.status(), StatusCode::OK);
+        assert!(reset_reply.json::<Value>().await.unwrap()["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Session reset"));
         let second_id = store.current_entry_for_source(&source).unwrap().session_id;
         assert_ne!(second_id, first_id);
 
@@ -1019,6 +1066,114 @@ mod tests {
         let ended = ended.lock().unwrap();
         assert_eq!(ended.len(), 1);
         assert_eq!(ended[0].len(), 2);
+    }
+
+    #[tokio::test]
+    async fn http_always_approve_persists_and_the_next_reset_skips_live() {
+        struct NeverRun;
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for NeverRun {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                _: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                panic!("confirmation control message reached the model")
+            }
+        }
+
+        let home = TempHome::new();
+        let config_path = home.0.join("config.yaml");
+        std::fs::write(
+            &config_path,
+            "# keep this comment\napprovals:\n  destructive_slash_confirm: true\n",
+        )
+        .unwrap();
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let mut state = AppState::new(Arc::new(NeverRun), Arc::new(json!({})), None, Some(db));
+        state.slash_confirmations = Arc::new(crate::slash_confirm::SlashConfirmations::new(
+            config_path.clone(),
+        ));
+        state.session_store = Some((store.clone(), 3600.0));
+        let (url, _server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+        let client = reqwest::Client::new();
+        let send = |text: &'static str| {
+            client
+                .post(format!("{url}/message"))
+                .json(&json!({"channel_id":"always","sender_id":"local","text":text}))
+                .send()
+        };
+
+        let prompt = send("/new").await.unwrap().json::<Value>().await.unwrap();
+        assert!(prompt["reply"].as_str().unwrap().contains("Confirm /new"));
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "always")
+        };
+        assert!(store.current_entry_for_source(&source).is_none());
+
+        let cancelled = send("/cancel")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert_eq!(
+            cancelled["reply"],
+            "🟡 /new cancelled. Conversation unchanged."
+        );
+        assert!(store.current_entry_for_source(&source).is_none());
+
+        let prompt = send("/new").await.unwrap().json::<Value>().await.unwrap();
+        assert!(prompt["reply"].as_str().unwrap().contains("Confirm /new"));
+
+        let approved = send("/always")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(approved["reply"]
+            .as_str()
+            .unwrap()
+            .contains("will run without confirmation"));
+        let first_id = store.current_entry_for_source(&source).unwrap().session_id;
+        let written = std::fs::read_to_string(&config_path).unwrap();
+        assert!(written.contains("# keep this comment"));
+        assert!(written.contains("destructive_slash_confirm: false"));
+
+        let immediate = send("/new").await.unwrap().json::<Value>().await.unwrap();
+        assert!(immediate["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Session reset"));
+        assert!(!immediate["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Confirm /new"));
+        assert_ne!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
     }
 
     #[tokio::test]
@@ -1071,6 +1226,9 @@ mod tests {
             release: tokio::sync::Semaphore::new(0),
         });
         let mut state = AppState::new(agent.clone(), Arc::new(json!({})), None, Some(db.clone()));
+        state.slash_confirmations = Arc::new(crate::slash_confirm::SlashConfirmations::new(
+            home.0.join("config.yaml"),
+        ));
         state.session_store = Some((store.clone(), 3600.0));
         let first = tokio::spawn(post_message(
             State(state.clone()),
@@ -1089,12 +1247,24 @@ mod tests {
             ..crate::session::SessionSource::new("local", "reset-race")
         };
         let first_id = store.current_entry_for_source(&source).unwrap().session_id;
+        let prompt = post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "reset-race".into(),
+                sender_id: "local".into(),
+                text: "/new".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert!(prompt.0.reply.contains("Confirm /new"));
         let reset = tokio::spawn(post_message(
             State(state),
             Json(MessageRequest {
                 channel_id: "reset-race".into(),
                 sender_id: "local".into(),
-                text: "/new".into(),
+                text: "/approve".into(),
                 content_parts: None,
             }),
         ));

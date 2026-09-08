@@ -50,6 +50,7 @@ pub struct Dispatcher {
     /// Inbound-audio transcription backend (None = STT not configured; audio
     /// attachments are then left untranscribed and the turn runs on the caption).
     transcription: Option<Arc<dyn crate::transcription_enrichment::TranscriptionBackend>>,
+    slash_confirmations: Arc<crate::slash_confirm::SlashConfirmations>,
 }
 
 impl Dispatcher {
@@ -98,6 +99,9 @@ impl Dispatcher {
             session_store: None,
             delivery_ledger,
             transcription: None,
+            slash_confirmations: Arc::new(crate::slash_confirm::SlashConfirmations::new(
+                crate::config_file::config_path(),
+            )),
         }
     }
 
@@ -132,6 +136,15 @@ impl Dispatcher {
         backend: Arc<dyn crate::transcription_enrichment::TranscriptionBackend>,
     ) -> Self {
         self.transcription = Some(backend);
+        self
+    }
+
+    /// Share the confirmation registry with every other ingress path.
+    pub fn with_slash_confirmations(
+        mut self,
+        confirmations: Arc<crate::slash_confirm::SlashConfirmations>,
+    ) -> Self {
+        self.slash_confirmations = confirmations;
         self
     }
 
@@ -257,6 +270,33 @@ impl Dispatcher {
             }
         }
 
+        // Confirmation replies are gateway control input and never enter the
+        // transcript or model context. Keep this ahead of ordinary slash
+        // dispatch. Native blocking tool approvals will take precedence here
+        // once that runtime is ported, matching Python's ordering contract.
+        if let Some((store, _)) = &self.session_store {
+            let deps = crate::session_admission::AdmissionDeps {
+                store: store.clone(),
+                transcript_leases: self.lease.clone(),
+                route_leases: self.route_lease.clone(),
+                generation: self.generation.clone(),
+            };
+            if let Some(result) = crate::session_commands::resolve_reset_confirmation(
+                &self.slash_confirmations,
+                deps,
+                self.agent.clone(),
+                crate::session::source_from_message(&msg),
+                &msg,
+                &self.user_config,
+                false,
+            )
+            .await
+            {
+                self.deliver(&msg, result.reply).await;
+                return;
+            }
+        }
+
         // Slash-command gating + built-ins. Refuse a command this sender may not
         // run before spending a turn; answer gateway built-ins directly; let any
         // other allowed command flow to the agent as normal text.
@@ -292,7 +332,8 @@ impl Dispatcher {
                 .await;
                 return;
             };
-            match crate::session_commands::reset_session(
+            match crate::session_commands::reset_or_confirm(
+                &self.slash_confirmations,
                 crate::session_admission::AdmissionDeps {
                     store: store.clone(),
                     transcript_leases: self.lease.clone(),
@@ -303,6 +344,7 @@ impl Dispatcher {
                 crate::session::source_from_message(&msg),
                 &msg.sender_id,
                 title,
+                crate::slash::typed_command_prefix(msg.platform),
             )
             .await
             {
@@ -367,6 +409,9 @@ impl Dispatcher {
                         session_finalizable = resolved.finalizable;
                         admitted_lease = resolved.lease;
                         if let Some(previous_session_id) = resolved.predecessor_id {
+                            if let Some(route_key) = routing_key.as_deref() {
+                                self.slash_confirmations.clear(route_key);
+                            }
                             self.agent.retire_conversation(
                                 crate::agent::TurnContext::from_database(turn_db.as_deref()),
                                 &previous_session_id,
@@ -1055,18 +1100,29 @@ mod tests {
             .unwrap(),
         );
         let (dispatcher, calls, sent) = harness("answer", json!({}));
-        let dispatcher = dispatcher.with_session_store(store.clone(), 3600.0);
+        let dispatcher = dispatcher
+            .with_session_store(store.clone(), 3600.0)
+            .with_slash_confirmations(Arc::new(crate::slash_confirm::SlashConfirmations::new(
+                home.join("config.yaml"),
+            )));
         dispatcher.handle_turn(cli_msg("first", "u")).await;
         let source = crate::session::source_from_message(&cli_msg("", "u"));
         let first_id = store.current_entry_for_source(&source).unwrap().session_id;
 
         dispatcher.handle_turn(cli_msg("/reset", "u")).await;
         assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
+        dispatcher.handle_turn(cli_msg("/approve", "u")).await;
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
         let second_id = store.current_entry_for_source(&source).unwrap().session_id;
         assert_ne!(second_id, first_id);
         let output = sent.lock().unwrap();
-        assert_eq!(output.len(), 2);
-        assert!(output[1].text.contains("Session reset"));
+        assert_eq!(output.len(), 3);
+        assert!(output[1].text.contains("Confirm /new"));
+        assert!(output[2].text.contains("Session reset"));
         drop(output);
         let db = store
             .database_for_key(&store.session_key_for_source(&source))

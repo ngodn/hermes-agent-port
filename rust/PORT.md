@@ -1,5 +1,60 @@
 # Hermes Rust rewrite
 
+## Native destructive slash confirmation checkpoint: 2026-09-08
+
+Native `/new` and `/reset` now use the Python-compatible destructive-command
+confirmation flow across HTTP and push ingress. Confirmation is enabled by
+default, reads `approvals.destructive_slash_confirm` from the active config for
+every command, and supports the exact Once, Always and Cancel text forms. The
+prompt and its answers are gateway control traffic, so they never enter the
+transcript, reach the model, mutate the frozen conversation prompt, or create a
+provider client.
+
+Pending state is keyed by the stable route and shared across ingress paths. A
+new prompt supersedes the prior one for that route, entries expire after 300
+seconds, and a recognized response removes the entry under the lock before any
+asynchronous reset work. Concurrent duplicate replies therefore execute at
+most once. Authorization is checked against the original `/new` command, and
+the resolver already exposes the precedence input required when native blocking
+tool approvals arrive. Automatic rotation clears old pending state at the
+session boundary.
+
+No admission lease is held while waiting for confirmation. Approval enters the
+existing compare-and-swap reset path only after the reply, so it serializes
+behind an in-flight turn and retires the predecessor after durable route
+progression. Cancel leaves both the route and model untouched. A confirmed
+reset error is consumed once and returns the same handler-error form as Python.
+
+Always Approve persists `approvals.destructive_slash_confirm: false` before the
+reset. The new native round-trip writer preserves comments, ordering and quoted
+values, validates its result, writes and flushes a private temporary file,
+atomically replaces the target, flushes the parent directory, and preserves a
+managed config symlink. A failed preference write still runs the approved reset
+and reports that the prompt will return.
+
+Coverage includes the exact parser table, Python truthiness, live reload, null
+config, timeout, supersession, route isolation, concurrent exactly-once
+resolution, authorization and tool-precedence behavior, comment-preserving and
+symlink-safe writes, real HTTP prompt/Cancel/Always/immediate-next-reset flows,
+push confirmation, and reset behind an in-flight turn. Full workspace
+validation is **1,537 passed, two ignored**. The selected Python confirmation
+oracle is **22 passed**. Formatting, Clippy with warnings denied, and
+`git diff --check` pass.
+
+Gemini and Claude were both used through `rust/tools/agy.sh` and
+`rust/tools/claude.sh`. Their reports and the independently verified disposition
+are indexed under `rust/analysis/`.
+
+The evidence-based full-port estimate remains **about 41%** (rough range 39% to
+43%). This checkpoint closes a small part of the gateway/session slice and does
+not justify rounding the overall estimate upward. Next: add the titled-session
+index and ownership checks required for secure native `/resume`, then continue
+real compression boundaries, transparent extension-host respawn, native plugin
+and external-memory managers, and the remaining agent-loop and tool runtime.
+Adapter confirmation buttons arrive with the native adapter callback surface;
+`/undo` and `/clear` join this shared primitive when their operations are
+ported. This is not completion of the full port.
+
 ## Explicit native session rotation checkpoint: 2026-09-08
 
 `/new` and its `/reset` alias now execute as native gateway lifecycle commands

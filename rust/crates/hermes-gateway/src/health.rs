@@ -36,6 +36,9 @@ pub struct AppState {
     /// before the resolved session lease was held.
     pub route_leases: Arc<crate::turn_lease::SessionTurnLeaseRegistry>,
     pub turn_generation: Arc<AtomicU64>,
+    /// One route-scoped destructive-command confirmation registry shared by
+    /// HTTP and every push dispatcher in this gateway life.
+    pub slash_confirmations: Arc<crate::slash_confirm::SlashConfirmations>,
 }
 
 impl AppState {
@@ -55,6 +58,9 @@ impl AppState {
             turn_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
             route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
             turn_generation: Arc::new(AtomicU64::new(0)),
+            slash_confirmations: Arc::new(crate::slash_confirm::SlashConfirmations::new(
+                crate::config_file::config_path(),
+            )),
         }
     }
 

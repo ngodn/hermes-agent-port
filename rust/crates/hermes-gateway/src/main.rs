@@ -155,6 +155,7 @@ mod slack;
 mod slack_blocks;
 mod slash;
 mod slash_access;
+mod slash_confirm;
 mod status;
 mod status_phrases;
 mod sticker_cache;
@@ -768,7 +769,8 @@ fn start_push_path(
         state.turn_leases.clone(),
         state.route_leases.clone(),
         state.turn_generation.clone(),
-    );
+    )
+    .with_slash_confirmations(state.slash_confirmations.clone());
     if let Some((store, freshness)) = &state.session_store {
         dispatcher = dispatcher.with_session_store(store.clone(), *freshness);
     }

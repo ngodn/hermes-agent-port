@@ -25,6 +25,7 @@ unicode-normalization = "=0.1.22"
 reqwest = { workspace = true, features = ["multipart"] }
 serde_yaml_ng = "0.10"
 yaml-rust2 = { version = "0.11", default-features = false }
+yaml-edit = { package = "yaml-edit-rp", version = "0.3.1" }
 tokio-tungstenite = { version = "0.30", features = ["connect", "rustls-tls-webpki-roots"] }
 futures-util = "0.3"
 tokio-util = "0.7"

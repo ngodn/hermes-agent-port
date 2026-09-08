@@ -1,0 +1,14 @@
+Independently audit Python's destructive gateway slash-confirmation primitive
+for the Rust port. Do not edit files, run Cargo, commit, or push. Read current
+source, including tools/slash_confirm.py, gateway/run.py, config save helpers,
+adapter send_slash_confirm implementations, command prefix rewriting, and
+tests. Compare with the just-landed native /new and /reset path.
+
+Map exact default config behavior, stable session-key scoping, timeout and
+supersession rules, recognized once/always/cancel text replies, tool approval
+precedence, exactly-once resolution, button callback identifiers, config.yaml
+write semantics, live no-restart behavior, and error/cancellation messages.
+Design the narrow Rust interfaces and ingress ordering needed for a complete
+text fallback now with clean future adapter-button integration. Include
+security and concurrency review plus unit, HTTP, and push integration tests.
+Clearly separate what belongs in this checkpoint from later UI callbacks.
