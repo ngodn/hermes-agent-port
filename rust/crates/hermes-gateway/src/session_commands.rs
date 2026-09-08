@@ -15,6 +15,21 @@ pub struct TitleResult {
     pub reply: String,
 }
 
+pub struct CompressResult {
+    pub reply: String,
+}
+
+pub struct CompressCommand<'a> {
+    pub deps: crate::session_admission::AdmissionDeps,
+    pub agent: Arc<dyn crate::agent::AgentClient>,
+    pub source: crate::session::SessionSource,
+    pub message: &'a hermes_core::Message,
+    pub owner_key: String,
+    pub raw_args: String,
+    pub freshness_seconds: f64,
+    pub checkpoint_required: bool,
+}
+
 pub struct TitleCommand {
     pub deps: crate::session_admission::AdmissionDeps,
     pub source: crate::session::SessionSource,
@@ -32,6 +47,296 @@ pub struct ResumeCommand<'a> {
     pub user_config: &'a serde_json::Value,
     pub raw_args: &'a str,
     pub from_sessions: bool,
+}
+
+/// Preview or compress the current transcript. A live run summarizes outside
+/// SQLite, then publishes a complete rotation child under the held route and
+/// transcript leases.
+pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<CompressResult> {
+    let CompressCommand {
+        deps,
+        agent,
+        source,
+        message,
+        owner_key,
+        raw_args,
+        freshness_seconds,
+        checkpoint_required,
+    } = command;
+    let route_key = deps.store.session_key_for_source(&source);
+    for _ in 0..32 {
+        let route_token = deps
+            .route_leases
+            .acquire(
+                &route_key,
+                &owner_key,
+                deps.generation.fetch_add(1, Ordering::Relaxed),
+                None,
+            )
+            .await
+            .map_err(|error| anyhow::anyhow!(error))?;
+        let resolve_store = deps.store.clone();
+        let resolve_source = source.clone();
+        let entry = tokio::task::spawn_blocking(move || {
+            if let Some(entry) = resolve_store.current_entry_for_source(&resolve_source) {
+                return Ok(entry);
+            }
+            resolve_store
+                .get_or_create_session(&resolve_source, false, false, freshness_seconds, |_| {
+                    Ok(false)
+                })
+                .map_err(|error| anyhow::anyhow!("{error:#}"))
+        })
+        .await
+        .map_err(|error| anyhow::anyhow!("compress session resolver failed: {error}"))??;
+
+        let mut transcript_token = match deps
+            .transcript_leases
+            .acquire(
+                &entry.session_id,
+                &owner_key,
+                deps.generation.fetch_add(1, Ordering::Relaxed),
+                Some(std::time::Duration::from_millis(1)),
+            )
+            .await
+        {
+            Ok(token) => token,
+            Err(_) => {
+                drop(route_token);
+                return Ok(CompressResult {
+                    reply: "Agent is running - /compress can't run mid-turn. Wait for the turn to finish, then try again.".into(),
+                });
+            }
+        };
+        if !deps.store.route_matches(&entry) {
+            drop(transcript_token);
+            drop(route_token);
+            continue;
+        }
+        let materialize_store = deps.store.clone();
+        let materialize_entry = entry.clone();
+        let materialize_source = source.clone();
+        let database = tokio::task::spawn_blocking(move || {
+            materialize_store.materialize_session_entry(&materialize_entry, &materialize_source)
+        })
+        .await
+        .map_err(|error| anyhow::anyhow!("compress session materializer failed: {error}"))??;
+        let session_id = entry.session_id.clone();
+        let args = crate::partial_compress::parse(&raw_args);
+        let _durable_lease = if !args.preview && !args.aggressive && !checkpoint_required {
+            match crate::durable_turn_lease::acquire(
+                database.clone(),
+                &session_id,
+                &owner_key,
+                crate::durable_turn_lease::MUTATION_GRACE,
+            )
+            .await
+            {
+                Ok(lease) => Some(lease),
+                Err(error) => {
+                    tracing::warn!(%error, session = %session_id, "manual compression found a cross-process turn in flight");
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(CompressResult {
+                        reply: "Agent is running in another Hermes process - /compress did not change the conversation. Wait for that turn to finish, then try again.".into(),
+                    });
+                }
+            }
+        } else {
+            None
+        };
+        if _durable_lease.is_some() {
+            let verify_store = deps.store.clone();
+            let verify_source = source.clone();
+            let observed = entry.clone();
+            let still_current = tokio::task::spawn_blocking(move || {
+                Ok::<_, anyhow::Error>(
+                    verify_store
+                        .refresh_current_entry_from_database(&verify_source)?
+                        .is_some_and(|current| {
+                            current.same_instance(&observed)
+                                && current.session_id == observed.session_id
+                        }),
+                )
+            })
+            .await
+            .map_err(|error| anyhow::anyhow!("compression route verifier failed: {error}"))??;
+            if !still_current {
+                drop(transcript_token);
+                drop(route_token);
+                return Ok(CompressResult {
+                    reply: "The conversation changed before compression started. Nothing was changed; inspect the current session and retry if needed.".into(),
+                });
+            }
+        }
+        let database_for_read = database.clone();
+        let read_session_id = session_id.clone();
+        let snapshot = tokio::task::spawn_blocking(move || {
+            database_for_read.load_compression_snapshot(&read_session_id)
+        })
+        .await
+        .map_err(|error| anyhow::anyhow!("compress history reader failed: {error}"))??;
+        let history = snapshot
+            .messages
+            .iter()
+            .map(|item| item.message.clone())
+            .collect::<Vec<_>>();
+
+        let reply = if history.len() < 4 {
+            "🗜️ Not enough conversation history to compress yet.".into()
+        } else {
+            let aggressive_note = "⚠️ --aggressive is not supported for gateway sessions. Use ordinary /compress so Hermes can preserve a context summary.";
+            if args.preview {
+                let mut lines = crate::partial_compress::preview_lines(&history, &args)
+                    .into_iter()
+                    .map(|line| format!("🗜️ {line}"))
+                    .collect::<Vec<_>>();
+                if args.aggressive {
+                    lines.push(aggressive_note.into());
+                }
+                lines.join("\n")
+            } else if args.aggressive {
+                aggressive_note.into()
+            } else if checkpoint_required {
+                "⚠️ Compression is blocked because compression.checkpoint_required is enabled and the native pre-compression memory checkpoint hook is not connected yet. The conversation was not changed.".into()
+            } else {
+                let boundary = args
+                    .partial
+                    .then(|| crate::partial_compress::partial_boundary(&history, args.keep_last))
+                    .flatten();
+                let effective_partial = args.partial && boundary.is_some();
+                let head_end = boundary.unwrap_or(history.len());
+                let head = &snapshot.messages[..head_end];
+                let tail_start_id = boundary.map(|index| snapshot.messages[index].id);
+                let mut summary_message = message.clone();
+                summary_message.resolved_session_id = Some(session_id.clone());
+                let context = crate::agent::TurnContext::from_database(Some(&database))
+                    .with_session_finalizable(deps.store.is_session_finalizable(&entry));
+                let summary_body = match agent
+                    .summarize_context(context, &summary_message, head, args.focus_topic.as_deref())
+                    .await
+                {
+                    Ok(Some(summary)) if !summary.trim().is_empty() => summary,
+                    Ok(Some(_)) | Ok(None) => {
+                        drop(transcript_token);
+                        drop(route_token);
+                        return Ok(CompressResult {
+                            reply: "🗜️ This agent backend has no native summarization surface. The conversation was not changed.".into(),
+                        });
+                    }
+                    Err(error) => {
+                        let error = crate::compression_redact::redact(&error.to_string());
+                        tracing::warn!(%error, session = %session_id, "manual compression summary failed");
+                        drop(transcript_token);
+                        drop(route_token);
+                        return Ok(CompressResult {
+                            reply: "⚠️ Compression summary failed. The conversation was not changed. Check the gateway logs, then retry.".into(),
+                        });
+                    }
+                };
+                let summary_body = crate::compression_redact::redact(&summary_body);
+                let source_chars = head
+                    .iter()
+                    .map(|item| {
+                        serde_json::to_string(&item.message.model_content())
+                            .map_or(0, |value| value.chars().count())
+                            + item
+                                .message
+                                .api_content
+                                .as_deref()
+                                .map_or(0, |value| value.chars().count())
+                            + item
+                                .tool_calls
+                                .as_deref()
+                                .map_or(0, |value| value.chars().count())
+                            + item
+                                .tool_call_id
+                                .as_deref()
+                                .map_or(0, |value| value.chars().count())
+                            + item
+                                .tool_name
+                                .as_deref()
+                                .map_or(0, |value| value.chars().count())
+                    })
+                    .sum::<usize>();
+                if summary_body.chars().count() >= source_chars {
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(CompressResult {
+                        reply: "⚠️ Compression refused because the generated checkpoint would not shrink the selected history. The conversation was not changed.".into(),
+                    });
+                }
+                let summary = crate::compression_prompt::wrap(&summary_body)
+                    .expect("non-empty summary body must wrap");
+                let compacted = [
+                    crate::session_db::HistoryMessage {
+                        role: "user".into(),
+                        content: summary,
+                        api_content: None,
+                    },
+                    crate::session_db::HistoryMessage {
+                        role: "assistant".into(),
+                        content: crate::compression_prompt::SUMMARY_ACK.into(),
+                        api_content: None,
+                    },
+                ];
+                let publish_store = deps.store.clone();
+                let publish_source = source.clone();
+                let publish_entry = entry.clone();
+                let watermark = snapshot.watermark;
+                let published = tokio::task::spawn_blocking(move || {
+                    publish_store.publish_compression(
+                        &publish_source,
+                        &publish_entry,
+                        &compacted,
+                        tail_start_id,
+                        watermark,
+                        _durable_lease.as_ref().map(|lease| lease.holder()),
+                    )
+                })
+                .await
+                .map_err(|error| anyhow::anyhow!("compression publisher failed: {error}"))??;
+                let Some(published) = published else {
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(CompressResult {
+                        reply: "⚠️ The conversation changed while its summary was being prepared, so this compression result was not applied. Inspect the current session and retry if it still needs compression.".into(),
+                    });
+                };
+                if let Some(token) = transcript_token.as_mut() {
+                    if !deps
+                        .transcript_leases
+                        .rebind(token, &published.entry.session_id)
+                    {
+                        tracing::error!(
+                            old_session = %session_id,
+                            new_session = %published.entry.session_id,
+                            "compression lease could not rebind after durable publication"
+                        );
+                    }
+                }
+                agent.release_conversation(context, &session_id);
+                let tail_count = history.len().saturating_sub(head_end);
+                let mut lines = vec![format!(
+                    "🗜️ Conversation compressed: {head_end} message(s) summarized into a durable checkpoint."
+                )];
+                if effective_partial {
+                    lines.push(format!(
+                        "Kept the last {} exchange(s) ({tail_count} message(s)) verbatim.",
+                        args.keep_last
+                    ));
+                }
+                if let Some(focus) = args.focus_topic {
+                    lines.push(format!("Focus: \"{focus}\""));
+                }
+                lines.join("\n")
+            }
+        };
+        drop(transcript_token);
+        drop(route_token);
+        return Ok(CompressResult { reply });
+    }
+    anyhow::bail!("session route kept changing during compression")
 }
 
 struct ResumeRequest {
@@ -860,6 +1165,122 @@ pub async fn reset_session(
 mod tests {
     use super::*;
 
+    struct NoSummary;
+
+    #[async_trait::async_trait]
+    impl crate::agent::AgentClient for NoSummary {
+        async fn run_turn(
+            &self,
+            _: &hermes_core::Message,
+            _: &[crate::session_db::HistoryMessage],
+            _: tokio::sync::mpsc::Sender<hermes_core::StreamEvent>,
+        ) -> hermes_core::Result<()> {
+            panic!("preview must not run the agent")
+        }
+
+        async fn summarize_context(
+            &self,
+            _: crate::agent::TurnContext<'_>,
+            _: &hermes_core::Message,
+            _: &[crate::session_db::CompressionHistoryMessage],
+            _: Option<&str>,
+        ) -> hermes_core::Result<Option<String>> {
+            panic!("this command must not request a summary")
+        }
+    }
+
+    struct RefusingSummary(&'static str);
+
+    #[async_trait::async_trait]
+    impl crate::agent::AgentClient for RefusingSummary {
+        async fn run_turn(
+            &self,
+            _: &hermes_core::Message,
+            _: &[crate::session_db::HistoryMessage],
+            _: tokio::sync::mpsc::Sender<hermes_core::StreamEvent>,
+        ) -> hermes_core::Result<()> {
+            panic!("compression must use the summary boundary")
+        }
+
+        async fn summarize_context(
+            &self,
+            _: crate::agent::TurnContext<'_>,
+            _: &hermes_core::Message,
+            history: &[crate::session_db::CompressionHistoryMessage],
+            _: Option<&str>,
+        ) -> hermes_core::Result<Option<String>> {
+            match self.0 {
+                "none" => Ok(None),
+                "error" => Err(hermes_core::Error::Other(
+                    "provider detail must stay in logs".into(),
+                )),
+                "large" => Ok(Some(
+                    "x".repeat(
+                        history
+                            .iter()
+                            .map(|item| item.message.content.len())
+                            .sum::<usize>()
+                            + 1024,
+                    ),
+                )),
+                other => panic!("unknown refusal fixture: {other}"),
+            }
+        }
+    }
+
+    struct SummaryAgent {
+        summaries: std::sync::atomic::AtomicUsize,
+        releases: std::sync::atomic::AtomicUsize,
+    }
+
+    #[async_trait::async_trait]
+    impl crate::agent::AgentClient for SummaryAgent {
+        async fn run_turn(
+            &self,
+            _: &hermes_core::Message,
+            _: &[crate::session_db::HistoryMessage],
+            _: tokio::sync::mpsc::Sender<hermes_core::StreamEvent>,
+        ) -> hermes_core::Result<()> {
+            panic!("compression must use the summary boundary")
+        }
+
+        async fn summarize_context(
+            &self,
+            _: crate::agent::TurnContext<'_>,
+            _: &hermes_core::Message,
+            history: &[crate::session_db::CompressionHistoryMessage],
+            _: Option<&str>,
+        ) -> hermes_core::Result<Option<String>> {
+            self.summaries
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            assert_eq!(history.len(), 6);
+            Ok(Some("## Goal\nPreserve the completed work.".into()))
+        }
+
+        fn release_conversation(&self, _: crate::agent::TurnContext<'_>, _: &str) -> bool {
+            self.releases
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            true
+        }
+    }
+
+    fn command_message(text: &str, channel: &str) -> hermes_core::Message {
+        hermes_core::Message {
+            resolved_session_id: None,
+            platform: hermes_core::Platform::Cli,
+            channel_id: channel.into(),
+            sender_id: "user".into(),
+            text: text.into(),
+            content_parts: None,
+            chat_type: Some("dm".into()),
+            audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
+        }
+    }
+
     fn temp_home(label: &str) -> std::path::PathBuf {
         std::env::temp_dir().join(format!(
             "hermes-title-{label}-{}-{}",
@@ -1009,6 +1430,310 @@ mod tests {
                 .as_deref(),
             Some("After Turn")
         );
+        drop(database);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn compression_preview_reads_the_live_range_without_mutation() {
+        let home = temp_home("compress-preview");
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource {
+            user_id: Some("user".into()),
+            ..crate::session::SessionSource::new("local", "compress-preview")
+        };
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let database = store.materialize_session_entry(&entry, &source).unwrap();
+        for index in 0..4 {
+            database
+                .append_message(&entry.session_id, "user", &format!("u{index}"))
+                .unwrap();
+            database
+                .append_message(&entry.session_id, "assistant", &format!("a{index}"))
+                .unwrap();
+        }
+        let before = database.load_history(&entry.session_id, 0).unwrap();
+        let deps = crate::session_admission::AdmissionDeps {
+            store: store.clone(),
+            transcript_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+            route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+            generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
+        };
+        let result = compress_session(CompressCommand {
+            deps,
+            agent: Arc::new(NoSummary),
+            source: source.clone(),
+            message: &command_message("/compress --preview here 2", "compress-preview"),
+            owner_key: "user".into(),
+            raw_args: "--aggressive --preview here 2".into(),
+            freshness_seconds: 3600.0,
+            checkpoint_required: false,
+        })
+        .await
+        .unwrap();
+        assert!(result.reply.contains("4 of 8"));
+        assert!(result.reply.contains("last 2 exchange"));
+        assert!(result.reply.contains("--aggressive is not supported"));
+        assert_eq!(database.load_history(&entry.session_id, 0).unwrap(), before);
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            entry.session_id
+        );
+        drop(database);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn compression_rejects_an_in_flight_transcript_without_waiting() {
+        let home = temp_home("compress-busy");
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource {
+            user_id: Some("user".into()),
+            ..crate::session::SessionSource::new("local", "compress-busy")
+        };
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let transcript_leases = Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default());
+        let held = transcript_leases
+            .acquire(&entry.session_id, "turn", 1, None)
+            .await
+            .unwrap();
+        let result = compress_session(CompressCommand {
+            deps: crate::session_admission::AdmissionDeps {
+                store: store.clone(),
+                transcript_leases,
+                route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+                generation: Arc::new(std::sync::atomic::AtomicU64::new(2)),
+            },
+            agent: Arc::new(NoSummary),
+            source,
+            message: &command_message("/compress --preview", "compress-busy"),
+            owner_key: "compress".into(),
+            raw_args: "--preview".into(),
+            freshness_seconds: 3600.0,
+            checkpoint_required: false,
+        })
+        .await
+        .unwrap();
+        assert!(result.reply.contains("can't run mid-turn"));
+        drop(held);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn compression_failure_guards_leave_route_and_history_unchanged() {
+        let home = temp_home("compress-guarded");
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource {
+            user_id: Some("user".into()),
+            ..crate::session::SessionSource::new("local", "compress-guarded")
+        };
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let database = store.materialize_session_entry(&entry, &source).unwrap();
+        for index in 0..4 {
+            database
+                .append_message(&entry.session_id, "user", &format!("question {index}"))
+                .unwrap();
+            database
+                .append_message(&entry.session_id, "assistant", &format!("answer {index}"))
+                .unwrap();
+        }
+        let before = database.load_history(&entry.session_id, 0).unwrap();
+        let deps = crate::session_admission::AdmissionDeps {
+            store: store.clone(),
+            transcript_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+            route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+            generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
+        };
+        let cases: [(Arc<dyn crate::agent::AgentClient>, bool, &str); 4] = [
+            (Arc::new(NoSummary), true, "checkpoint_required"),
+            (
+                Arc::new(RefusingSummary("none")),
+                false,
+                "no native summarization",
+            ),
+            (Arc::new(RefusingSummary("error")), false, "summary failed"),
+            (
+                Arc::new(RefusingSummary("large")),
+                false,
+                "would not shrink",
+            ),
+        ];
+        for (index, (agent, checkpoint_required, expected)) in cases.into_iter().enumerate() {
+            let message = command_message("/compress", &format!("compress-guarded-{index}"));
+            let result = compress_session(CompressCommand {
+                deps: deps.clone(),
+                agent,
+                source: source.clone(),
+                message: &message,
+                owner_key: format!("guard-{index}"),
+                raw_args: String::new(),
+                freshness_seconds: 3600.0,
+                checkpoint_required,
+            })
+            .await
+            .unwrap();
+            assert!(result.reply.contains(expected), "{}", result.reply);
+            assert_eq!(database.load_history(&entry.session_id, 0).unwrap(), before);
+            assert_eq!(
+                store.current_entry_for_source(&source).unwrap().session_id,
+                entry.session_id
+            );
+            assert!(!result.reply.contains("provider detail"));
+        }
+        let other_holder = "python-process-fixture".to_owned();
+        assert!(database
+            .try_acquire_session_turn_lease(&entry.session_id, &other_holder, 300.0)
+            .unwrap());
+        let message = command_message("/compress", "compress-cross-process-busy");
+        let result = compress_session(CompressCommand {
+            deps,
+            agent: Arc::new(NoSummary),
+            source: source.clone(),
+            message: &message,
+            owner_key: "blocked-compressor".into(),
+            raw_args: String::new(),
+            freshness_seconds: 3600.0,
+            checkpoint_required: false,
+        })
+        .await
+        .unwrap();
+        assert!(result.reply.contains("another Hermes process"));
+        assert_eq!(database.load_history(&entry.session_id, 0).unwrap(), before);
+        database
+            .release_session_turn_lease(&entry.session_id, &other_holder)
+            .unwrap();
+        drop(database);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn compression_summarizes_then_atomically_rotates_and_releases_the_old_client() {
+        let home = temp_home("compress-live");
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource {
+            user_id: Some("user".into()),
+            ..crate::session::SessionSource::new("local", "compress-live")
+        };
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let database = store.materialize_session_entry(&entry, &source).unwrap();
+        for index in 0..4 {
+            database
+                .append_message(
+                    &entry.session_id,
+                    "user",
+                    &format!("u{index} {}", "work ".repeat(100)),
+                )
+                .unwrap();
+            database
+                .append_message(
+                    &entry.session_id,
+                    "assistant",
+                    &format!("a{index} {}", "result ".repeat(100)),
+                )
+                .unwrap();
+        }
+        let agent = Arc::new(SummaryAgent {
+            summaries: std::sync::atomic::AtomicUsize::new(0),
+            releases: std::sync::atomic::AtomicUsize::new(0),
+        });
+        let command_message = command_message("/compress here 1", "compress-live");
+        let result = compress_session(CompressCommand {
+            deps: crate::session_admission::AdmissionDeps {
+                store: store.clone(),
+                transcript_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+                route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+                generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
+            },
+            agent: agent.clone(),
+            source: source.clone(),
+            message: &command_message,
+            owner_key: "user".into(),
+            raw_args: "here 1".into(),
+            freshness_seconds: 3600.0,
+            checkpoint_required: false,
+        })
+        .await
+        .unwrap();
+        assert!(result.reply.contains("6 message(s) summarized"));
+        assert!(result.reply.contains("last 1 exchange"));
+        assert_eq!(agent.summaries.load(std::sync::atomic::Ordering::SeqCst), 1);
+        assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 1);
+        let current = store.current_entry_for_source(&source).unwrap();
+        assert_ne!(current.session_id, entry.session_id);
+        assert_eq!(
+            database.get_session(&entry.session_id).unwrap().unwrap()["end_reason"],
+            "compression"
+        );
+        let child = database.load_history(&current.session_id, 0).unwrap();
+        assert_eq!(child.len(), 4);
+        assert_eq!(child[0].role, "user");
+        assert!(child[0]
+            .content
+            .contains(crate::compression_prompt::SUMMARY_PREFIX));
+        assert_eq!(child[1].role, "assistant");
+        assert!(child[2].content.starts_with("u3 "));
+        assert!(child[3].content.starts_with("a3 "));
+        assert_eq!(current.fields["last_prompt_tokens"], 0);
         drop(database);
         drop(store);
         std::fs::remove_dir_all(home).unwrap();

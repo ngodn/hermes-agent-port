@@ -76,6 +76,34 @@ impl SessionStore {
         self.index.lock().unwrap().entries.get(&key).cloned()
     }
 
+    /// Refresh one route directly from SQLite after a cross-process wait.
+    /// Steady-state recovery is intentionally one-shot, so a queued turn must
+    /// explicitly observe rotations committed by another live process.
+    pub fn refresh_current_entry_from_database(
+        &self,
+        source: &crate::session::SessionSource,
+    ) -> anyhow::Result<Option<crate::session_entry::SessionEntry>> {
+        let key = self.session_key_for_source(source);
+        let Some(database) = self.databases.routing() else {
+            return Ok(self.index.lock().unwrap().entries.get(&key).cloned());
+        };
+        let scope = self.index.lock().unwrap().scope().to_owned();
+        let Some(raw) = database.load_gateway_routing_entry(&scope, &key)? else {
+            return Ok(self.index.lock().unwrap().entries.get(&key).cloned());
+        };
+        let value = serde_json::from_str(&raw)
+            .map_err(|error| anyhow::anyhow!("invalid durable route for {key}: {error}"))?;
+        let durable = crate::session_entry::SessionEntry::from_dict(&value)?;
+        let mut index = self.index.lock().unwrap();
+        match index.entries.get(&key) {
+            Some(current) if current.session_id == durable.session_id => Ok(Some(current.clone())),
+            _ => {
+                index.entries.insert(key.clone(), durable);
+                Ok(index.entries.get(&key).cloned())
+            }
+        }
+    }
+
     /// True only while the route still names the entry observed before an
     /// asynchronous lease wait.
     pub fn route_matches(&self, observed: &crate::session_entry::SessionEntry) -> bool {
@@ -226,6 +254,64 @@ impl SessionStore {
                 origin_json: Some(&origin_json),
             })?;
             if !switched {
+                return Ok(None);
+            }
+            index.entries.insert(key.clone(), candidate.clone());
+            let writer = index.writer.clone();
+            let snapshot = index.snapshot_loaded();
+            (candidate, writer, snapshot)
+        };
+        writer.accept_database_commit(snapshot, self.config.write_sessions_json);
+        Ok(Some(ExplicitSessionSwitch {
+            entry,
+            predecessor_id: expected.session_id.clone(),
+        }))
+    }
+
+    /// Publish a rotation-mode compression child. The database transaction
+    /// contains the child transcript, stable routing row and parent closure;
+    /// only a successful commit becomes visible in the in-memory index.
+    pub fn publish_compression(
+        &self,
+        source: &crate::session::SessionSource,
+        expected: &crate::session_entry::SessionEntry,
+        compacted_messages: &[crate::session_db::HistoryMessage],
+        tail_start_id: Option<i64>,
+        watermark: i64,
+        turn_lease_holder: Option<&str>,
+    ) -> anyhow::Result<Option<ExplicitSessionSwitch>> {
+        let key = self.session_key_for_source(source);
+        self.reconcile(self.databases.routing().as_deref());
+        let db = self
+            .databases
+            .for_key(&key, &self.home)
+            .ok_or_else(|| anyhow::anyhow!("session database is unavailable"))?;
+        let (entry, writer, snapshot) = {
+            let mut index = self.index.lock().unwrap();
+            let Some(current) = index.entries.get(&key) else {
+                return Ok(None);
+            };
+            if !current.same_instance(expected) || current.session_id != expected.session_id {
+                return Ok(None);
+            }
+            let candidate = crate::session_entry::SessionEntry::compression_candidate(
+                current,
+                chrono::Local::now().naive_local(),
+            )?;
+            let entry_json = candidate.to_dict().to_string();
+            let published =
+                db.publish_gateway_compression(&crate::session_db::GatewayCompressionPublish {
+                    scope: index.scope(),
+                    session_key: &key,
+                    entry_json: &entry_json,
+                    parent_id: &current.session_id,
+                    child_id: &candidate.session_id,
+                    compacted_messages,
+                    tail_start_id,
+                    watermark,
+                    turn_lease_holder,
+                })?;
+            if !published {
                 return Ok(None);
             }
             index.entries.insert(key.clone(), candidate.clone());

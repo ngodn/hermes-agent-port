@@ -15,6 +15,7 @@ pub struct AdmittedSession {
     pub finalizable: bool,
     pub predecessor_id: Option<String>,
     pub lease: Option<crate::turn_lease::TurnLeaseToken>,
+    pub durable_lease: Option<crate::durable_turn_lease::DurableTurnLease>,
 }
 
 #[derive(Clone)]
@@ -40,7 +41,7 @@ pub async fn admit_turn(
                 &route_key,
                 owner_key,
                 deps.generation.fetch_add(1, Ordering::Relaxed),
-                None,
+                Some(crate::durable_turn_lease::TURN_WAIT),
             )
             .await
             .map_err(|error| anyhow::anyhow!(error))?;
@@ -69,27 +70,43 @@ pub async fn admit_turn(
                 &entry.session_id,
                 owner_key,
                 deps.generation.fetch_add(1, Ordering::Relaxed),
-                None,
+                Some(crate::durable_turn_lease::TURN_WAIT),
             )
             .await
             .map_err(|error| anyhow::anyhow!(error))?;
 
+        let database = deps.store.database_for_key(&entry.session_key);
+        let durable_lease = match database.clone() {
+            Some(database) => Some(
+                crate::durable_turn_lease::acquire(
+                    database,
+                    &entry.session_id,
+                    owner_key,
+                    crate::durable_turn_lease::TURN_WAIT,
+                )
+                .await?,
+            ),
+            None => None,
+        };
         let verify_store = deps.store.clone();
+        let verify_source = source.clone();
         let observed = entry.clone();
         let verified = tokio::task::spawn_blocking(move || {
-            if !verify_store.route_matches(&observed) {
+            let current = verify_store.refresh_current_entry_from_database(&verify_source)?;
+            if !current.as_ref().is_some_and(|current| {
+                current.same_instance(&observed) && current.session_id == observed.session_id
+            }) {
                 return Ok(None);
             }
             verify_store.update_session(&observed.session_key, None, true)?;
             let finalizable = verify_store.is_session_finalizable(&observed);
             let predecessor_id = verify_store.take_auto_reset_predecessor(&observed)?;
-            let database = verify_store.database_for_key(&observed.session_key);
-            Ok::<_, anyhow::Error>(Some((database, finalizable, predecessor_id)))
+            Ok::<_, anyhow::Error>(Some((finalizable, predecessor_id)))
         })
         .await
         .map_err(|error| anyhow::anyhow!("session verifier worker failed: {error}"))??;
 
-        if let Some((database, finalizable, predecessor_id)) = verified {
+        if let Some((finalizable, predecessor_id)) = verified {
             drop(route_token);
             return Ok(AdmittedSession {
                 entry,
@@ -97,8 +114,10 @@ pub async fn admit_turn(
                 finalizable,
                 predecessor_id,
                 lease: token,
+                durable_lease,
             });
         }
+        drop(durable_lease);
         drop(token);
         drop(route_token);
     }
@@ -169,7 +188,92 @@ mod tests {
             .unwrap();
         assert_eq!(admitted.entry.session_id, reset.entry.session_id);
         assert_ne!(admitted.entry.session_id, first.session_id);
+        let admitted_db = admitted.database.as_ref().unwrap().clone();
+        assert!(admitted_db
+            .session_turn_lease_holder(&admitted.entry.session_id)
+            .unwrap()
+            .is_some());
+        let admitted_id = admitted.entry.session_id.clone();
         drop(admitted.lease);
+        drop(admitted.durable_lease);
+        let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(2);
+        while admitted_db
+            .session_turn_lease_holder(&admitted_id)
+            .unwrap()
+            .is_some()
+        {
+            assert!(tokio::time::Instant::now() < deadline);
+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+        }
+        drop(admitted_db);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn durable_waiter_reloads_a_rotation_committed_by_another_process() {
+        let home = home();
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource::new("local", "durable-race");
+        let first = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let database = store.materialize_session_entry(&first, &source).unwrap();
+        assert!(database
+            .try_acquire_session_turn_lease(&first.session_id, "python-fixture", 300.0)
+            .unwrap());
+
+        let waiter = tokio::spawn(admit_turn(
+            AdmissionDeps {
+                store: store.clone(),
+                transcript_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+                route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+                generation: Arc::new(AtomicU64::new(1)),
+            },
+            source.clone(),
+            None,
+            3600.0,
+            "turn",
+        ));
+        tokio::time::sleep(std::time::Duration::from_millis(75)).await;
+
+        let child = crate::session_entry::SessionEntry::compression_candidate(
+            &first,
+            chrono::Local::now().naive_local(),
+        )
+        .unwrap();
+        database
+            .ensure_session(&child.session_id, "local", None, None, None)
+            .unwrap();
+        let scope = store.index.lock().unwrap().scope().to_owned();
+        database
+            .save_gateway_routing_entry(&scope, &child.session_key, &child.to_dict().to_string())
+            .unwrap();
+        database
+            .release_session_turn_lease(&first.session_id, "python-fixture")
+            .unwrap();
+
+        let admitted = tokio::time::timeout(std::time::Duration::from_secs(5), waiter)
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap();
+        assert_eq!(admitted.entry.session_id, child.session_id);
+        assert_ne!(admitted.entry.session_id, first.session_id);
+        drop(admitted);
+        drop(database);
         drop(store);
         std::fs::remove_dir_all(home).unwrap();
     }

@@ -145,11 +145,6 @@ pub async fn post_message(
                 return Ok(Json(MessageResponse { reply }));
             }
             native_command = crate::slash::native_command(&command, &msg.text);
-            if let Some(crate::slash::NativeSlashCommand::Unavailable { reply }) = &native_command {
-                return Ok(Json(MessageResponse {
-                    reply: reply.clone(),
-                }));
-            }
         }
         crate::slash::SlashDecision::NotSlash => {}
     }
@@ -225,6 +220,43 @@ pub async fn post_message(
         }));
     }
 
+    if let Some(crate::slash::NativeSlashCommand::Compress { raw_args }) = native_command.clone() {
+        let Some((store, freshness)) = &state.session_store else {
+            return Ok(Json(MessageResponse {
+                reply: "Session database not available.".into(),
+            }));
+        };
+        let result =
+            crate::session_commands::compress_session(crate::session_commands::CompressCommand {
+                deps: crate::session_admission::AdmissionDeps {
+                    store: store.clone(),
+                    transcript_leases: state.turn_leases.clone(),
+                    route_leases: state.route_leases.clone(),
+                    generation: state.turn_generation.clone(),
+                },
+                agent: state.agent.clone(),
+                source: crate::session::source_from_message(&msg),
+                message: &msg,
+                owner_key: msg.sender_id.clone(),
+                raw_args,
+                freshness_seconds: *freshness,
+                checkpoint_required: crate::python_value::truthy(
+                    &state.user_config["compression"]["checkpoint_required"],
+                ),
+            })
+            .await
+            .map_err(|error| {
+                warn!(%error, "HTTP compression failed");
+                (
+                    StatusCode::SERVICE_UNAVAILABLE,
+                    Json(serde_json::json!({"error":"compression could not complete; conversation unchanged"})),
+                )
+            })?;
+        return Ok(Json(MessageResponse {
+            reply: result.reply,
+        }));
+    }
+
     if let Some(crate::slash::NativeSlashCommand::Reset { title }) = native_command {
         let Some((store, _)) = &state.session_store else {
             return Ok(Json(MessageResponse {
@@ -264,6 +296,7 @@ pub async fn post_message(
     let mut routing_key = None;
     let mut session_finalizable = false;
     let mut admitted_lease = None;
+    let mut admitted_durable_lease = None;
     if !manages {
         if let Some((store, freshness)) = &state.session_store {
             let source = crate::session::source_from_message(&msg);
@@ -293,6 +326,7 @@ pub async fn post_message(
             turn_db = resolved.database;
             session_finalizable = resolved.finalizable;
             admitted_lease = resolved.lease;
+            admitted_durable_lease = resolved.durable_lease;
             if let Some(previous_session_id) = resolved.predecessor_id {
                 if let Some(route_key) = routing_key.as_deref() {
                     state.slash_confirmations.clear(route_key);
@@ -336,6 +370,7 @@ pub async fn post_message(
     // from its transcript lock or discard its completed assistant message.
     tokio::spawn(async move {
         let _turn_lease = _lease;
+        let _durable_turn_lease = admitted_durable_lease;
         let history = crate::session_db::begin_turn(turn_db.as_deref(), manages, &msg, "cli");
 
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
@@ -1786,6 +1821,121 @@ mod tests {
             .unwrap();
             assert!(response.0.reply.contains("database not available"));
         }
+    }
+
+    #[tokio::test]
+    async fn http_compression_calls_the_native_summarizer_before_rotating_history() {
+        async fn compression_model(
+            State(calls): State<Arc<Mutex<Vec<Value>>>>,
+            Json(body): Json<Value>,
+        ) -> Response {
+            calls.lock().unwrap().push(body.clone());
+            if body["stream"] == false {
+                return Json(json!({"choices":[{"message":{"role":"assistant","content":"## Goal\nContinue the verified port.\n\n## Active State\nFour exchanges completed. Leaked value sk-secretvalue123456."}}]})).into_response();
+            }
+            (
+                [("content-type", "text/event-stream")],
+                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\ndata: [DONE]\n\n",
+            )
+                .into_response()
+        }
+
+        let home = TempHome::new();
+        let calls = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let (model_url, _model_server) = serve(
+            axum::Router::new()
+                .route("/chat/completions", post(compression_model))
+                .with_state(calls.clone()),
+        )
+        .await;
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let mut state = AppState::new(
+            Arc::new(NativeAgentClient::new("fixture-model", "fixture-key", model_url).unwrap()),
+            Arc::new(json!({})),
+            None,
+            Some(db.clone()),
+        );
+        state.session_store = Some((store.clone(), 3600.0));
+        let (gateway_url, _gateway_server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+        let client = reqwest::Client::new();
+        let send = |text: String| {
+            client
+                .post(format!("{gateway_url}/message"))
+                .json(&json!({"channel_id":"compress-http","sender_id":"local","text":text}))
+                .send()
+        };
+        for index in 0..4 {
+            let secret = if index == 0 {
+                " OPENAI_API_KEY=sk-secretvalue123456"
+            } else {
+                ""
+            };
+            let response = send(format!("turn {index}{secret} {}", "detail ".repeat(100)))
+                .await
+                .unwrap();
+            assert_eq!(response.status(), StatusCode::OK);
+        }
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "compress-http")
+        };
+        let parent = store.current_entry_for_source(&source).unwrap().session_id;
+        let response = send("/compress here 1".into()).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let reply = response.json::<Value>().await.unwrap()["reply"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        assert!(reply.contains("6 message(s) summarized"));
+        let child = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(child, parent);
+        assert_eq!(
+            db.get_session(&parent).unwrap().unwrap()["end_reason"],
+            "compression"
+        );
+        let compacted = db.load_history(&child, 0).unwrap();
+        assert_eq!(compacted.len(), 4);
+        assert!(compacted[0]
+            .content
+            .starts_with(crate::compression_prompt::SUMMARY_PREFIX));
+        assert!(!compacted[0].content.contains("secretvalue123456"));
+        assert!(compacted[0].content.contains("[REDACTED]"));
+        assert!(compacted[2].content.starts_with("turn 3 "));
+
+        let continued = send("after compression".into()).await.unwrap();
+        assert_eq!(continued.status(), StatusCode::OK);
+        let calls = calls.lock().unwrap();
+        assert_eq!(calls.len(), 6);
+        let summary_request = &calls[4];
+        assert_eq!(summary_request["stream"], false);
+        assert!(summary_request.get("tools").is_none());
+        assert!(!summary_request.to_string().contains("secretvalue123456"));
+        let continuation_request = &calls[5];
+        let wire = continuation_request["messages"].as_array().unwrap();
+        assert!(wire.iter().any(|message| message["content"]
+            .as_str()
+            .is_some_and(|text| text.starts_with(crate::compression_prompt::SUMMARY_PREFIX))));
+        assert!(wire.iter().all(|message| !message["content"]
+            .as_str()
+            .is_some_and(|text| text.starts_with("turn 0 "))));
     }
 
     #[tokio::test]

@@ -21,6 +21,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 - Manual session titles are metadata only. They use `title_source=user`, never
   enter prompt or transcript bytes, and are serialized by the route then
   transcript lease plus an immediate SQLite transaction.
+- Manual native compression is rotation-only. It uses a redacted, tool-aware
+  checkpoint and one atomic child-first publish under the shared
+  `session_turn_leases` protocol. Automatic/in-place compression remains open.
 
 ## Rejected paths
 
@@ -38,6 +41,13 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-compression-resolution.md](native-compression-resolution.md) | Implemented manual rotation compression, accepted and rejected review findings, cross-process lease/route fixes, validation, and explicit automatic/in-place/hook deferrals |
+| [native-compression-fix-review-agy.md](native-compression-fix-review-agy.md) | Gemini fix re-review that found retained tool-group rejection, ingress timeout, structured shrink accounting, release grace, and one incorrect lock-table premise |
+| [native-compression-fix-review-claude.md](native-compression-fix-review-claude.md) | Claude fix re-review that independently found DB-only route healing, refresh teardown logging, and structured shrink accounting gaps |
+| [native-compression-review-agy.md](native-compression-review-agy.md) | Gemini first implementation review covering tool fidelity, redaction, title transfer, cache scope, durable exclusion, guard math, failure text, and partial boundaries |
+| [native-compression-review-claude.md](native-compression-review-claude.md) | Claude first implementation review covering cross-process exclusion, shrink accounting, error handling, and partial-boundary parity |
+| [native-compression-map-agy.md](native-compression-map-agy.md) | Gemini source map of Python manual compression grammar, durability, cache, safety, and concurrency contracts |
+| [native-compression-map-claude.md](native-compression-map-claude.md) | Claude source map supporting a real rotation-mode summary checkpoint through the current native model seam |
 | [conversation-cache-review-resolution.md](conversation-cache-review-resolution.md) | Verified disposition of both bounded-cache audits, including accepted race and descendant-RSS fixes plus rejected exactly-once and PID-reuse premises |
 | [conversation-cache-review-agy.md](conversation-cache-review-agy.md) | Gemini post-implementation audit of cache bounds, finalizer safety, teardown sequencing, reset and shutdown races |
 | [conversation-cache-review-claude.md](conversation-cache-review-claude.md) | Claude post-implementation parity audit of soft and hard retirement, expiry, shutdown and remaining command gaps |
@@ -59,7 +69,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 41% weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 42% weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |

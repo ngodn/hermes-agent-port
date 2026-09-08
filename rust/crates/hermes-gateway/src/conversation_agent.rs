@@ -230,6 +230,14 @@ impl ConversationAgent {
     /// pending, retirement stays attached to the entry until that finalizer
     /// completes instead of racing it.
     pub fn retire_session(&self, home: &Path, session_id: &str) -> bool {
+        self.remove_session(home, session_id, RetirementKind::SessionEnd)
+    }
+
+    pub fn release_session(&self, home: &Path, session_id: &str) -> bool {
+        self.remove_session(home, session_id, RetirementKind::Release)
+    }
+
+    fn remove_session(&self, home: &Path, session_id: &str, kind: RetirementKind) -> bool {
         let _gate = self.retirement_gate.lock().unwrap();
         let key = (home.to_owned(), session_id.to_owned());
         let retired = {
@@ -237,12 +245,12 @@ impl ConversationAgent {
             let Some(entry) = state.entries.get_mut(&key) else {
                 return false;
             };
-            entry.retirement = Some(RetirementKind::SessionEnd);
+            entry.retirement = Some(kind);
             if entry.pending_turns == 0 {
                 state
                     .entries
                     .remove(&key)
-                    .map(|entry| Self::retired(key, entry, RetirementKind::SessionEnd))
+                    .map(|entry| Self::retired(key, entry, kind))
             } else {
                 None
             }
@@ -661,6 +669,57 @@ impl AgentClient for ConversationAgent {
         Ok(())
     }
 
+    async fn summarize_context(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+    ) -> Result<Option<String>> {
+        let Some(key) = Self::key(context, msg) else {
+            return self
+                .fallback
+                .summarize_context(context, msg, history, focus_topic)
+                .await;
+        };
+        let cell = self.checkout(
+            &key,
+            context.database,
+            context.session_finalizable,
+            Instant::now(),
+        )?;
+        let conversation_history = history
+            .iter()
+            .map(|item| item.message.clone())
+            .collect::<Vec<_>>();
+        let initialized = cell
+            .get_or_try_init(|| async {
+                (self.factory)(
+                    key.0.as_path(),
+                    msg,
+                    &conversation_history,
+                    context.database,
+                )
+                .await
+                .map_err(|error| {
+                    Error::Other(format!("conversation agent initialization failed: {error}"))
+                })
+            })
+            .await;
+        let client = match initialized {
+            Ok(client) => client.clone(),
+            Err(error) => {
+                self.finish_turn(&key, &cell, true);
+                return Err(error);
+            }
+        };
+        let result = client
+            .summarize_context(context, msg, history, focus_topic)
+            .await;
+        self.finish_turn(&key, &cell, result.is_err());
+        result
+    }
+
     async fn finalize_turn_after_persist(
         &self,
         context: crate::agent::TurnContext<'_>,
@@ -704,6 +763,16 @@ impl AgentClient for ConversationAgent {
             .home
             .is_some_and(|home| self.retire_session(home, session_id))
     }
+
+    fn release_conversation(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        session_id: &str,
+    ) -> bool {
+        context
+            .home
+            .is_some_and(|home| self.release_session(home, session_id))
+    }
 }
 
 #[cfg(test)]
@@ -727,6 +796,20 @@ mod tests {
         ) -> Result<()> {
             self.calls.lock().unwrap().push(self.label.clone());
             Ok(())
+        }
+
+        async fn summarize_context(
+            &self,
+            _context: crate::agent::TurnContext<'_>,
+            _msg: &Message,
+            _history: &[crate::session_db::CompressionHistoryMessage],
+            _focus_topic: Option<&str>,
+        ) -> Result<Option<String>> {
+            self.calls
+                .lock()
+                .unwrap()
+                .push(format!("summary:{}", self.label));
+            Ok(Some("summary".into()))
         }
 
         async fn close_conversation(
@@ -838,6 +921,38 @@ mod tests {
             ["red:0", "red:0", "blue:1", "red:2", "red:0", "fallback"]
         );
         assert_eq!(builds.load(Ordering::SeqCst), 3);
+    }
+
+    #[tokio::test]
+    async fn summary_uses_the_conversation_client_and_release_is_not_session_end() {
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        let closes = Arc::new(Mutex::new(Vec::new()));
+        let builds = Arc::new(AtomicUsize::new(0));
+        let agent = ConversationAgent::new(
+            Arc::new(RecordedAgent {
+                label: "fallback".into(),
+                calls: calls.clone(),
+                closes: closes.clone(),
+            }),
+            recorded_factory(calls.clone(), closes.clone(), builds.clone()),
+            AgentCacheBounds::default(),
+        );
+        let message = message("compressed");
+        assert_eq!(
+            agent
+                .summarize_context(context(Path::new("home")), &message, &[], Some("focus"))
+                .await
+                .unwrap()
+                .as_deref(),
+            Some("summary")
+        );
+        assert!(agent.contains(Path::new("home"), "compressed"));
+        assert!(agent.release_conversation(context(Path::new("home")), "compressed"));
+        tokio::task::yield_now().await;
+        assert!(!agent.contains(Path::new("home"), "compressed"));
+        assert_eq!(builds.load(Ordering::SeqCst), 1);
+        assert_eq!(*calls.lock().unwrap(), ["summary:home:0"]);
+        assert_eq!(*closes.lock().unwrap(), [false]);
     }
 
     #[tokio::test]

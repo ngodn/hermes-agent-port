@@ -91,6 +91,20 @@ pub trait AgentClient: Send + Sync {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()>;
 
+    /// Produce one unwrapped out-of-band context summary without running tools
+    /// or persisting a user turn. `None` means this backend has no native
+    /// summary surface and the caller must leave the transcript unchanged.
+    async fn summarize_context(
+        &self,
+        context: TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+    ) -> Result<Option<String>> {
+        let _ = (context, msg, history, focus_topic);
+        Ok(None)
+    }
+
     /// Complete post-turn side effects after the gateway has durably recorded
     /// the assistant reply. Backends without such hooks keep the default no-op.
     async fn finalize_turn_after_persist(
@@ -118,6 +132,14 @@ pub trait AgentClient: Send + Sync {
     /// Retire one superseded cached conversation. The default is a no-op for
     /// backends without per-conversation client ownership.
     fn retire_conversation(&self, context: TurnContext<'_>, session_id: &str) -> bool {
+        let _ = (context, session_id);
+        false
+    }
+
+    /// Evict conversation-local provider state without declaring a true
+    /// session end. Compression uses this after publishing its replacement
+    /// transcript so the next turn rebuilds the allowed prompt-cache prefix.
+    fn release_conversation(&self, context: TurnContext<'_>, session_id: &str) -> bool {
         let _ = (context, session_id);
         false
     }

@@ -28,8 +28,8 @@ pub enum NativeSlashCommand {
         raw_args: String,
         from_sessions: bool,
     },
-    Unavailable {
-        reply: String,
+    Compress {
+        raw_args: String,
     },
 }
 
@@ -91,8 +91,8 @@ pub fn native_command(command: &str, text: &str) -> Option<NativeSlashCommand> {
                 raw_title: (!title.is_empty()).then(|| title.to_owned()),
             })
         }
-        "compress" => Some(NativeSlashCommand::Unavailable {
-            reply: "Conversation compression is not available in the native gateway yet. Use /new to start a fresh session.".into(),
+        "compress" => Some(NativeSlashCommand::Compress {
+            raw_args: command_args(text).to_owned(),
         }),
         "resume" | "sessions" => Some(NativeSlashCommand::Resume {
             raw_args: command_args(text).to_owned(),
@@ -267,7 +267,7 @@ mod tests {
         );
         assert!(matches!(
             native_command("compress", "/compact --preview"),
-            Some(NativeSlashCommand::Unavailable { .. })
+            Some(NativeSlashCommand::Compress { raw_args }) if raw_args == "--preview"
         ));
         assert!(matches!(
             native_command("sessions", "/sessions Project Phoenix"),

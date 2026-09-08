@@ -577,7 +577,13 @@ impl NativeAgentClient {
     ) -> Result<()> {
         let mut turn_client = self.clone();
         let session_id = crate::session_db::message_session_id(msg);
-        turn_client.cache_scope = Some(session_id.clone());
+        turn_client.cache_scope = Some(
+            context
+                .database
+                .and_then(|database| database.compression_lineage_root(&session_id).ok())
+                .filter(|scope| !scope.is_empty())
+                .unwrap_or_else(|| session_id.clone()),
+        );
         let clean_content = msg.model_content();
         let mut model_content = clean_content.clone();
         *turn_client.pending_memory_turn.lock().unwrap() = None;
@@ -689,6 +695,24 @@ impl AgentClient for NativeAgentClient {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()> {
         self.run_native_turn(context, msg, history, events).await
+    }
+
+    async fn summarize_context(
+        &self,
+        _context: crate::agent::TurnContext<'_>,
+        _msg: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+    ) -> Result<Option<String>> {
+        let prompt = crate::compression_prompt::build(history, focus_topic);
+        match <Self as ChatModel>::step(self, &[json!({"role":"user", "content":prompt})], &[])
+            .await?
+        {
+            Step::Final(summary) => Ok((!summary.trim().is_empty()).then(|| summary.trim().into())),
+            Step::ToolCalls { .. } => Err(Error::Other(
+                "native compression summary unexpectedly requested a tool".into(),
+            )),
+        }
     }
 
     async fn finalize_turn_after_persist(
@@ -846,6 +870,8 @@ impl ChatModel for NativeAgentClient {
                 body.shift_remove("tool_choice");
                 body.shift_remove("parallel_tool_calls");
                 body.shift_remove("temperature");
+                body.shift_remove("max_tokens");
+                body.shift_remove("max_completion_tokens");
                 if let Some(temperature) = summary_temperature(&self.model) {
                     body.insert("temperature".into(), json!(temperature));
                 }
@@ -982,6 +1008,95 @@ mod tests {
             repaired.as_slice()
         );
         assert_eq!(messages, original);
+    }
+
+    #[tokio::test]
+    async fn compression_uses_one_non_streaming_tool_free_native_request() {
+        use crate::agent::AgentClient;
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+        let capture = Arc::new(Mutex::new(None::<Value>));
+        let captured = capture.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                *captured.lock().unwrap() = Some(body);
+                async {
+                    Json(json!({"choices":[{"message":{"role":"assistant","content":"## Goal\nKeep working."}}]}))
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let client = super::NativeAgentClient::new("model", "key", format!("http://{address}"))
+            .unwrap()
+            .with_system_prompt("ordinary frozen prompt");
+        let message = Message {
+            resolved_session_id: Some("session".into()),
+            platform: hermes_core::Platform::Cli,
+            channel_id: "channel".into(),
+            sender_id: "user".into(),
+            text: "/compress focus".into(),
+            content_parts: None,
+            chat_type: Some("dm".into()),
+            audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
+        };
+        let summary = client
+            .summarize_context(
+                crate::agent::TurnContext::default(),
+                &message,
+                &[
+                    crate::session_db::CompressionHistoryMessage {
+                        id: 1,
+                        message: crate::session_db::HistoryMessage {
+                            role: "user".into(),
+                            content: "original question".into(),
+                            api_content: None,
+                        },
+                        tool_call_id: None,
+                        tool_calls: None,
+                        tool_name: None,
+                    },
+                    crate::session_db::CompressionHistoryMessage {
+                        id: 2,
+                        message: crate::session_db::HistoryMessage {
+                            role: "assistant".into(),
+                            content: "original answer".into(),
+                            api_content: None,
+                        },
+                        tool_call_id: None,
+                        tool_calls: None,
+                        tool_name: None,
+                    },
+                ],
+                Some("database state"),
+            )
+            .await
+            .unwrap()
+            .unwrap();
+        assert_eq!(summary, "## Goal\nKeep working.");
+        let body = capture.lock().unwrap().clone().unwrap();
+        assert_eq!(body["stream"], false);
+        assert!(body.get("tools").is_none());
+        assert_eq!(body["messages"].as_array().unwrap().len(), 1);
+        let prompt = body["messages"][0]["content"].as_str().unwrap();
+        assert!(prompt.contains("original question"));
+        assert!(prompt.contains("FOCUS TOPIC: \"database state\""));
+        assert!(!prompt.contains("ordinary frozen prompt"));
     }
 
     #[tokio::test]

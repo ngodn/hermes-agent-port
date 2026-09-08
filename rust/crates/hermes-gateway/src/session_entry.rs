@@ -78,6 +78,28 @@ pub struct CreationContext {
 }
 
 impl SessionEntry {
+    /// Advance the same stable route onto a newly published compression child.
+    /// Usage counters and origin metadata belong to the conversation and stay
+    /// attached; the prompt-token watermark resets at the cache boundary.
+    pub fn compression_candidate(
+        current: &Self,
+        now: chrono::NaiveDateTime,
+    ) -> anyhow::Result<Self> {
+        let random = crate::install_identity::mint_id()
+            .ok_or_else(|| anyhow::anyhow!("could not generate session identity"))?;
+        let mut candidate = current.clone();
+        candidate.identity = std::sync::Arc::new(());
+        candidate.session_id = format!("{}_{}", now.format("%Y%m%d_%H%M%S"), &random[..8]);
+        candidate.updated_at = EntryTimestamp {
+            local: now,
+            offset_micros: None,
+        };
+        candidate
+            .fields
+            .insert("last_prompt_tokens".into(), json!(0));
+        Ok(candidate)
+    }
+
     /// Rebind one stable route to an existing transcript. Conversation-scoped
     /// counters and overrides do not cross the boundary; only presentation and
     /// origin identity from the route are retained.

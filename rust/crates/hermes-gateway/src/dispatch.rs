@@ -313,12 +313,6 @@ impl Dispatcher {
                     return;
                 }
                 native_command = slash::native_command(&command, &msg.text);
-                if let Some(crate::slash::NativeSlashCommand::Unavailable { reply }) =
-                    &native_command
-                {
-                    self.deliver(&msg, reply.clone()).await;
-                    return;
-                }
             }
             SlashDecision::NotSlash => {}
         }
@@ -391,6 +385,48 @@ impl Dispatcher {
             return;
         }
 
+        if let Some(crate::slash::NativeSlashCommand::Compress { raw_args }) =
+            native_command.clone()
+        {
+            let Some((store, freshness)) = &self.session_store else {
+                self.deliver(&msg, "Session database not available.".into())
+                    .await;
+                return;
+            };
+            match crate::session_commands::compress_session(
+                crate::session_commands::CompressCommand {
+                    deps: crate::session_admission::AdmissionDeps {
+                        store: store.clone(),
+                        transcript_leases: self.lease.clone(),
+                        route_leases: self.route_lease.clone(),
+                        generation: self.generation.clone(),
+                    },
+                    agent: self.agent.clone(),
+                    source: crate::session::source_from_message(&msg),
+                    message: &msg,
+                    owner_key: msg.sender_id.clone(),
+                    raw_args,
+                    freshness_seconds: *freshness,
+                    checkpoint_required: crate::python_value::truthy(
+                        &self.user_config["compression"]["checkpoint_required"],
+                    ),
+                },
+            )
+            .await
+            {
+                Ok(result) => self.deliver(&msg, result.reply).await,
+                Err(error) => {
+                    warn!(%error, "push compression failed");
+                    self.deliver(
+                        &msg,
+                        "Compression could not complete. The conversation was not changed.".into(),
+                    )
+                    .await;
+                }
+            }
+            return;
+        }
+
         if let Some(crate::slash::NativeSlashCommand::Reset { title }) = native_command {
             let Some((store, _)) = &self.session_store else {
                 self.deliver(
@@ -451,6 +487,7 @@ impl Dispatcher {
         let mut routing_key = None;
         let mut session_finalizable = false;
         let mut admitted_lease = None;
+        let mut admitted_durable_lease = None;
         if !manages {
             if let Some((store, freshness)) = &self.session_store {
                 let source = crate::session::source_from_message(&msg);
@@ -476,6 +513,7 @@ impl Dispatcher {
                         turn_db = resolved.database;
                         session_finalizable = resolved.finalizable;
                         admitted_lease = resolved.lease;
+                        admitted_durable_lease = resolved.durable_lease;
                         if let Some(previous_session_id) = resolved.predecessor_id {
                             if let Some(route_key) = routing_key.as_deref() {
                                 self.slash_confirmations.clear(route_key);
@@ -528,7 +566,7 @@ impl Dispatcher {
                     manages,
                     routing_key,
                     session_finalizable,
-                    _lease,
+                    (_lease, admitted_durable_lease),
                 )
                 .await;
         })
@@ -545,7 +583,10 @@ impl Dispatcher {
         manages: bool,
         routing_key: Option<String>,
         session_finalizable: bool,
-        _lease: Option<crate::turn_lease::TurnLeaseToken>,
+        _leases: (
+            Option<crate::turn_lease::TurnLeaseToken>,
+            Option<crate::durable_turn_lease::DurableTurnLease>,
+        ),
     ) {
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
 
@@ -1032,6 +1073,16 @@ mod tests {
             let _ = tx.send(StreamEvent::MessageStop { final_: true }).await;
             Ok(())
         }
+
+        async fn summarize_context(
+            &self,
+            _context: crate::agent::TurnContext<'_>,
+            _msg: &Message,
+            _history: &[crate::session_db::CompressionHistoryMessage],
+            _focus_topic: Option<&str>,
+        ) -> Result<Option<String>> {
+            Ok(Some("## Goal\nContinue after compression.".into()))
+        }
     }
 
     /// Adapter stub: records every outbound message.
@@ -1237,6 +1288,78 @@ mod tests {
         assert!(db.get_session(&second_id).unwrap().unwrap()["end_reason"]
             .as_str()
             .is_some_and(|reason| reason == "session_switch"));
+        drop(db);
+        drop(dispatcher);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn push_compression_preview_and_rotation_match_http_control_flow() {
+        let home = std::env::temp_dir().join(format!(
+            "hermes-push-compress-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let (dispatcher, calls, sent) = harness("answer", json!({}));
+        let dispatcher = dispatcher.with_session_store(store.clone(), 3600.0);
+        for index in 0..4 {
+            dispatcher
+                .handle_turn(cli_msg(
+                    &format!("turn {index} {}", "detail ".repeat(100)),
+                    "u",
+                ))
+                .await;
+        }
+        let source = crate::session::source_from_message(&cli_msg("", "u"));
+        let parent = store.current_entry_for_source(&source).unwrap().session_id;
+        dispatcher
+            .handle_turn(cli_msg("/compress --preview here 1", "u"))
+            .await;
+        assert_eq!(calls.load(Ordering::SeqCst), 4);
+        assert!(sent.lock().unwrap().last().unwrap().text.contains("6 of 8"));
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            parent
+        );
+
+        dispatcher
+            .handle_turn(cli_msg("/compress here 1", "u"))
+            .await;
+        assert_eq!(calls.load(Ordering::SeqCst), 4);
+        let child = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(child, parent);
+        let db = store
+            .database_for_key(&store.session_key_for_source(&source))
+            .unwrap();
+        assert_eq!(
+            db.get_session(&parent).unwrap().unwrap()["end_reason"],
+            "compression"
+        );
+        assert_eq!(db.load_history(&child, 0).unwrap().len(), 4);
+        assert!(sent
+            .lock()
+            .unwrap()
+            .last()
+            .unwrap()
+            .text
+            .contains("6 message(s) summarized"));
         drop(db);
         drop(dispatcher);
         drop(store);

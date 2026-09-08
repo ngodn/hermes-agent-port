@@ -1,5 +1,60 @@
 # Hermes Rust rewrite
 
+## Native manual compression checkpoint: 2026-09-08
+
+Native `/compress` and `/compact` now run on both HTTP and push ingress without
+falling through to the ordinary agent turn. The parser supports preview and
+dry-run aliases, partial `here` and `up-to-here` boundaries, `--keep`, and
+focus text. Preview never calls a provider or mutates the route. Aggressive
+mode and `compression.checkpoint_required` fail closed because their native
+memory consumers are not connected yet.
+
+Live compression uses one non-streaming, tool-free call through the current
+native model. Its bounded prompt treats transcript text as untrusted data and
+includes structured/API-sidecar content plus tool-call identity. A mandatory
+redactor scrubs provider/token prefixes, auth headers, URL credentials and
+secret query keys, config/JSON secret assignments, and private keys from input,
+focus, model output, and logged provider failures. The shrink guard measures
+the complete structured source rather than plain content alone.
+
+Publication is child-first and atomic under one `BEGIN IMMEDIATE` transaction.
+It verifies the durable route and turn-lease owner, copies the immutable prompt
+and frozen tool/plugin fields, transfers `title` and `title_source`, writes the
+checkpoint pair, validates and clones complete retained/concurrent turns
+including tool groups, repoints the route, and closes the parent last. Stale
+routes, lost leases, incomplete tool calls, competing compressors, and injected
+write failures leave the conversation unchanged.
+
+All native turns now use Python's shared `session_turn_leases` schema, keyed by
+the compression-lineage root and refreshed across slow model calls. Waiters use
+Python's 1,800-second budget instead of losing ingress after five seconds. They
+reload the exact SQLite route after acquiring, so a compression committed by a
+different process cannot orphan a queued turn on the ended parent. Release is
+owner-checked, expired/dead and inactive same-process holders are reclaimable,
+and manual mutation includes a short teardown grace.
+
+Provider cache scope also follows the compression-lineage root. Publishing a
+child releases the old physical client without firing true session-end hooks,
+so later turns reuse the logical conversation's stable cache identity while the
+obsolete client is evicted.
+
+Full workspace validation is **1,570 passed, two ignored**. The selected Python
+compression and cross-process lease oracle is **67 passed** under Python
+3.11.15. Formatting, Clippy with warnings denied, and `git diff --check` pass.
+Gemini and Claude were both used through the requested helper scripts for
+source mapping, implementation review, and fix re-review. The maps, reviews,
+and source-verified disposition are indexed under `rust/analysis/`.
+
+The [weighted full-port audit](analysis/progress-audit-2026-09-08.md) is now
+**about 42%** (rough range 40% to 44%). This checkpoint is deliberately manual
+and rotation-only. Automatic threshold compression, configurable in-place
+compression, auxiliary summary-model routing/fallback, pre-compression memory
+and context-engine hooks, aggressive deletion, and the broader native tool
+runtime remain. Next: finish those compression policies and hooks, then
+transparent extension-host recovery, native plugin and external-memory
+managers, and the remaining tool runtime and agent loop. This is not completion
+of the full port.
+
 ## Native session title checkpoint: 2026-09-08
 
 Native `/title` now reads or writes the current session title on both HTTP and

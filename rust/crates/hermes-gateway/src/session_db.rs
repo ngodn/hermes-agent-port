@@ -76,6 +76,21 @@ pub struct HistoryMessage {
     pub api_content: Option<String>,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct CompressionHistoryMessage {
+    pub id: i64,
+    pub message: HistoryMessage,
+    pub tool_call_id: Option<String>,
+    pub tool_calls: Option<String>,
+    pub tool_name: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct CompressionSnapshot {
+    pub watermark: i64,
+    pub messages: Vec<CompressionHistoryMessage>,
+}
+
 impl HistoryMessage {
     /// Decode the stored `content` back into the model-facing value, ported from
     /// hermes_state.py `SessionDB._decode_content`.
@@ -285,6 +300,146 @@ fn now_secs() -> f64 {
         .unwrap_or(0.0)
 }
 
+fn compression_lineage_root_on(conn: &Connection, id: &str) -> rusqlite::Result<String> {
+    if id.is_empty() {
+        return Ok(String::new());
+    }
+    let mut current = id.to_owned();
+    let mut seen = std::collections::HashSet::new();
+    for _ in 0..100 {
+        if !seen.insert(current.clone()) {
+            break;
+        }
+        let row = conn
+            .query_row(
+                "SELECT parent_session_id, source, model_config FROM sessions WHERE id = ?",
+                [&current],
+                |row| {
+                    Ok((
+                        row.get::<_, Option<String>>(0)?,
+                        row.get::<_, Option<String>>(1)?.unwrap_or_default(),
+                        row.get::<_, Option<String>>(2)?,
+                    ))
+                },
+            )
+            .optional()?;
+        let Some((parent_id, source, model_config)) = row else {
+            break;
+        };
+        let is_fork = source == "tool"
+            || model_config
+                .as_deref()
+                .and_then(|raw| serde_json::from_str::<Value>(raw).ok())
+                .and_then(|config| config.as_object().cloned())
+                .is_some_and(|config| {
+                    let parent = parent_id.as_deref();
+                    ["_branched_from", "_delegate_from"].iter().any(|key| {
+                        let marker = config.get(*key).and_then(Value::as_str);
+                        parent.map_or(marker.is_some(), |parent| marker == Some(parent))
+                    })
+                });
+        if is_fork {
+            break;
+        }
+        let Some(parent) = parent_id.filter(|parent| !parent.is_empty()) else {
+            break;
+        };
+        let parent_is_compression = conn
+            .query_row(
+                "SELECT end_reason = 'compression' FROM sessions WHERE id = ?",
+                [&parent],
+                |row| row.get::<_, bool>(0),
+            )
+            .optional()?
+            .unwrap_or(false);
+        if !parent_is_compression {
+            break;
+        }
+        current = parent;
+    }
+    Ok(current)
+}
+
+fn structured_holder_process_is_dead(holder: &str) -> bool {
+    let pid = holder
+        .split(':')
+        .find_map(|part| part.strip_prefix("pid="))
+        .and_then(|value| value.parse::<u32>().ok())
+        .filter(|pid| *pid > 0);
+    if pid == Some(std::process::id()) {
+        return !crate::durable_turn_lease::holder_is_active(holder);
+    }
+    #[cfg(unix)]
+    {
+        pid.is_some_and(|pid| !crate::status::pid_exists(i64::from(pid)))
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = pid;
+        false
+    }
+}
+
+enum TailPhase {
+    User,
+    Assistant,
+    Tools(std::collections::HashSet<String>),
+}
+
+fn phase_after_assistant(tool_calls: Option<&str>) -> Option<TailPhase> {
+    let Some(raw) = tool_calls.filter(|value| !value.trim().is_empty()) else {
+        return Some(TailPhase::User);
+    };
+    let calls = serde_json::from_str::<Value>(raw).ok()?;
+    let calls = calls.as_array()?;
+    if calls.is_empty() {
+        return Some(TailPhase::User);
+    }
+    let mut pending = std::collections::HashSet::with_capacity(calls.len());
+    for call in calls {
+        let id = call.get("id")?.as_str()?.trim();
+        if id.is_empty() || !pending.insert(id.to_owned()) {
+            return None;
+        }
+    }
+    Some(TailPhase::Tools(pending))
+}
+
+/// Validate complete user turns while preserving provider tool-call groups.
+/// A retained tail must begin with a user and end with a final assistant. Each
+/// tool result must answer exactly one id advertised by the preceding
+/// assistant, and chained assistant tool calls remain in the same user turn.
+fn complete_turn_sequence(rows: &[(String, Option<String>, Option<String>)]) -> bool {
+    let mut phase = TailPhase::User;
+    for (role, tool_calls, tool_call_id) in rows {
+        match &mut phase {
+            TailPhase::User if role == "user" => phase = TailPhase::Assistant,
+            TailPhase::Assistant if role == "assistant" => {
+                let Some(next) = phase_after_assistant(tool_calls.as_deref()) else {
+                    return false;
+                };
+                phase = next;
+            }
+            TailPhase::Tools(pending) if role == "tool" => {
+                let Some(id) = tool_call_id.as_deref().map(str::trim) else {
+                    return false;
+                };
+                if id.is_empty() || !pending.remove(id) {
+                    return false;
+                }
+            }
+            TailPhase::Tools(pending) if role == "assistant" && pending.is_empty() => {
+                let Some(next) = phase_after_assistant(tool_calls.as_deref()) else {
+                    return false;
+                };
+                phase = next;
+            }
+            _ => return false,
+        }
+    }
+    matches!(phase, TailPhase::User)
+}
+
 /// Ownership is derived from the database path, never the active profile.
 fn store_profile_owner(path: &std::path::Path, root: &std::path::Path) -> Option<String> {
     let path = std::fs::canonicalize(path).ok()?;
@@ -399,6 +554,18 @@ pub struct GatewaySessionSwitch<'a> {
     pub peer: GatewayPeer<'a>,
     pub display_name: Option<&'a str>,
     pub origin_json: Option<&'a str>,
+}
+
+pub struct GatewayCompressionPublish<'a> {
+    pub scope: &'a str,
+    pub session_key: &'a str,
+    pub entry_json: &'a str,
+    pub parent_id: &'a str,
+    pub child_id: &'a str,
+    pub compacted_messages: &'a [HistoryMessage],
+    pub tail_start_id: Option<i64>,
+    pub watermark: i64,
+    pub turn_lease_holder: Option<&'a str>,
 }
 
 const COMPRESSION_PEER_CTE: &str = r#"
@@ -758,6 +925,110 @@ impl SessionDb {
             chain.push(child);
         }
         Ok(chain)
+    }
+
+    /// Resolve the physical segment to the root of its compression-only
+    /// lineage. Explicit branches, delegates, and tool children keep their own
+    /// cache scope even when their parent was compressed.
+    pub fn compression_lineage_root(&self, id: &str) -> rusqlite::Result<String> {
+        let conn = self.conn.lock().unwrap();
+        compression_lineage_root_on(&conn, id)
+    }
+
+    pub fn try_acquire_session_turn_lease(
+        &self,
+        session_id: &str,
+        holder: &str,
+        ttl_seconds: f64,
+    ) -> rusqlite::Result<bool> {
+        if session_id.is_empty() || holder.is_empty() {
+            return Ok(false);
+        }
+        let now = now_secs();
+        let expires_at = now + ttl_seconds.max(0.1);
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let conversation_id = compression_lineage_root_on(&tx, session_id)?;
+        let current = tx
+            .query_row(
+                "SELECT holder, expires_at FROM session_turn_leases WHERE conversation_id = ?",
+                [&conversation_id],
+                |row| Ok((row.get::<_, String>(0)?, row.get::<_, f64>(1)?)),
+            )
+            .optional()?;
+        if let Some((current_holder, current_expiry)) = current {
+            if current_expiry <= now || structured_holder_process_is_dead(&current_holder) {
+                tx.execute(
+                    "DELETE FROM session_turn_leases WHERE conversation_id = ? AND holder = ?",
+                    params![conversation_id, current_holder],
+                )?;
+            }
+        }
+        tx.execute(
+            "INSERT OR IGNORE INTO session_turn_leases
+             (conversation_id, holder, acquired_at, expires_at) VALUES (?, ?, ?, ?)",
+            params![conversation_id, holder, now, expires_at],
+        )?;
+        let owner = tx
+            .query_row(
+                "SELECT holder FROM session_turn_leases WHERE conversation_id = ?",
+                [&conversation_id],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()?;
+        tx.commit()?;
+        Ok(owner.as_deref() == Some(holder))
+    }
+
+    pub fn refresh_session_turn_lease(
+        &self,
+        session_id: &str,
+        holder: &str,
+        ttl_seconds: f64,
+    ) -> rusqlite::Result<bool> {
+        if session_id.is_empty() || holder.is_empty() {
+            return Ok(false);
+        }
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let conversation_id = compression_lineage_root_on(&tx, session_id)?;
+        let changed = tx.execute(
+            "UPDATE session_turn_leases SET expires_at = ?
+             WHERE conversation_id = ? AND holder = ?",
+            params![now_secs() + ttl_seconds.max(0.1), conversation_id, holder],
+        )?;
+        tx.commit()?;
+        Ok(changed == 1)
+    }
+
+    pub fn release_session_turn_lease(
+        &self,
+        session_id: &str,
+        holder: &str,
+    ) -> rusqlite::Result<()> {
+        if session_id.is_empty() || holder.is_empty() {
+            return Ok(());
+        }
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let conversation_id = compression_lineage_root_on(&tx, session_id)?;
+        tx.execute(
+            "DELETE FROM session_turn_leases WHERE conversation_id = ? AND holder = ?",
+            params![conversation_id, holder],
+        )?;
+        tx.commit()
+    }
+
+    pub fn session_turn_lease_holder(&self, session_id: &str) -> rusqlite::Result<Option<String>> {
+        let conn = self.conn.lock().unwrap();
+        let conversation_id = compression_lineage_root_on(&conn, session_id)?;
+        conn.query_row(
+            "SELECT holder FROM session_turn_leases
+             WHERE conversation_id = ? AND expires_at >= ?",
+            params![conversation_id, now_secs()],
+            |row| row.get(0),
+        )
+        .optional()
     }
 
     pub fn get_compression_tip(&self, id: &str) -> rusqlite::Result<String> {
@@ -1170,6 +1441,219 @@ impl SessionDb {
         Ok(true)
     }
 
+    /// Publish a complete compression child and its routing pointer in one
+    /// immediate transaction. The source transcript is never rewritten. The
+    /// parent is closed only after the child handoff and any protected or
+    /// concurrently appended tail rows are durable.
+    pub fn publish_gateway_compression(
+        &self,
+        change: &GatewayCompressionPublish<'_>,
+    ) -> rusqlite::Result<bool> {
+        if change.scope.is_empty()
+            || change.session_key.is_empty()
+            || change.entry_json.is_empty()
+            || change.parent_id.is_empty()
+            || change.child_id.is_empty()
+            || change.parent_id == change.child_id
+            || change.compacted_messages.is_empty()
+        {
+            return Ok(false);
+        }
+        let mut expect_user = true;
+        for message in change.compacted_messages {
+            let valid = if expect_user {
+                message.role == "user"
+            } else {
+                message.role == "assistant"
+            };
+            if !valid {
+                return Ok(false);
+            }
+            expect_user = !expect_user;
+        }
+        if !expect_user {
+            return Ok(false);
+        }
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let now = now_secs();
+        if let Some(holder) = change.turn_lease_holder {
+            let conversation_id = compression_lineage_root_on(&tx, change.parent_id)?;
+            let owner = tx
+                .query_row(
+                    "SELECT holder FROM session_turn_leases
+                     WHERE conversation_id = ? AND expires_at >= ?",
+                    params![conversation_id, now],
+                    |row| row.get::<_, String>(0),
+                )
+                .optional()?;
+            if owner.as_deref() != Some(holder) {
+                return Ok(false);
+            }
+        }
+        let durable_route = tx
+            .query_row(
+                "SELECT entry_json FROM gateway_routing WHERE scope = ? AND session_key = ?",
+                params![change.scope, change.session_key],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()?;
+        if durable_route.is_some_and(|entry| {
+            serde_json::from_str::<Value>(&entry)
+                .ok()
+                .and_then(|value| value["session_id"].as_str().map(str::to_owned))
+                .as_deref()
+                != Some(change.parent_id)
+        }) {
+            return Ok(false);
+        }
+
+        let clone_predicate = if change.tail_start_id.is_some() {
+            "id >= ?3"
+        } else {
+            "id > ?3"
+        };
+        let role_predicate = if change.tail_start_id.is_some() {
+            "id >= ?2"
+        } else {
+            "id > ?2"
+        };
+        let clone_start = change.tail_start_id.unwrap_or(change.watermark);
+        let clone_rows = {
+            let sql = format!(
+                "SELECT role, tool_calls, tool_call_id FROM messages WHERE session_id = ?1 AND active = 1
+                 AND {role_predicate} ORDER BY id"
+            );
+            let mut query = tx.prepare(&sql)?;
+            let roles = query
+                .query_map(params![change.parent_id, clone_start], |row| {
+                    Ok((
+                        row.get::<_, String>(0)?,
+                        row.get::<_, Option<String>>(1)?,
+                        row.get::<_, Option<String>>(2)?,
+                    ))
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            roles
+        };
+        if !complete_turn_sequence(&clone_rows) {
+            // A protected or concurrent tail ending on an unanswered user turn
+            // would make the next real user message violate role alternation.
+            return Ok(false);
+        }
+        let (title, title_source) = tx
+            .query_row(
+                "SELECT title, title_source FROM sessions WHERE id = ?",
+                [change.parent_id],
+                |row| {
+                    Ok((
+                        row.get::<_, Option<String>>(0)?,
+                        row.get::<_, Option<String>>(1)?,
+                    ))
+                },
+            )
+            .optional()?
+            .unwrap_or((None, None));
+        if title.is_some() || title_source.is_some() {
+            tx.execute(
+                "UPDATE sessions SET title = NULL, title_source = NULL WHERE id = ?",
+                [change.parent_id],
+            )?;
+        }
+        let inserted = tx.execute(
+            "INSERT INTO sessions (
+                 id, source, user_id, session_key, chat_id, chat_type, thread_id,
+                 model, model_config, system_prompt, system_prompt_hash,
+                 parent_session_id, cwd, profile_name, git_repo_root, git_branch,
+                 origin_json, display_name, started_at, message_count,
+                 last_activity_at, tool_names, hidden, title, title_source
+             )
+             SELECT ?1, source, user_id, session_key, chat_id, chat_type, thread_id,
+                    model, model_config, system_prompt, system_prompt_hash,
+                    id, cwd, profile_name, git_repo_root, git_branch,
+                    origin_json, display_name, ?2, 0, ?2, tool_names, 0, ?4, ?5
+             FROM sessions WHERE id = ?3 AND ended_at IS NULL",
+            params![change.child_id, now, change.parent_id, title, title_source],
+        )?;
+        if inserted != 1 {
+            return Ok(false);
+        }
+
+        for (index, message) in change.compacted_messages.iter().enumerate() {
+            tx.execute(
+                "INSERT INTO messages
+                    (session_id, role, content, api_content, timestamp, active,
+                     _compressed_summary, compacted)
+                 VALUES (?1, ?2, ?3, NULL, ?4, 1, ?5, 0)",
+                params![
+                    change.child_id,
+                    message.role,
+                    message.content,
+                    now,
+                    i64::from(index == 0),
+                ],
+            )?;
+        }
+
+        let columns = {
+            let mut query = tx.prepare("PRAGMA table_info(messages)")?;
+            let columns = query
+                .query_map([], |row| row.get::<_, String>(1))?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            columns
+        };
+        let cloned = columns
+            .into_iter()
+            .filter(|column| {
+                !matches!(
+                    column.as_str(),
+                    "id" | "session_id" | "active" | "compacted"
+                )
+            })
+            .collect::<Vec<_>>();
+        if !cloned.is_empty() {
+            let identifiers = cloned
+                .iter()
+                .map(|column| format!("\"{}\"", column.replace('"', "\"\"")))
+                .collect::<Vec<_>>()
+                .join(", ");
+            let sql = format!(
+                "INSERT INTO messages (session_id, {identifiers}, active, compacted)
+                 SELECT ?1, {identifiers}, 1, 0 FROM messages
+                 WHERE session_id = ?2 AND active = 1 AND {clone_predicate} ORDER BY id"
+            );
+            tx.execute(
+                &sql,
+                params![change.child_id, change.parent_id, clone_start,],
+            )?;
+        }
+        let active: i64 = tx.query_row(
+            "SELECT COUNT(*) FROM messages WHERE session_id = ? AND active = 1",
+            [change.child_id],
+            |row| row.get(0),
+        )?;
+        tx.execute(
+            "UPDATE sessions SET message_count = ?, last_activity_at = ? WHERE id = ?",
+            params![active, now, change.child_id],
+        )?;
+        tx.execute(
+            "INSERT INTO gateway_routing (scope, session_key, entry_json, updated_at)
+             VALUES (?, ?, ?, ?) ON CONFLICT(scope, session_key) DO UPDATE SET
+             entry_json = excluded.entry_json, updated_at = excluded.updated_at",
+            params![change.scope, change.session_key, change.entry_json, now],
+        )?;
+        let closed = tx.execute(
+            "UPDATE sessions SET ended_at = ?, end_reason = 'compression'
+             WHERE id = ? AND ended_at IS NULL",
+            params![now, change.parent_id],
+        )?;
+        if closed != 1 {
+            return Ok(false);
+        }
+        tx.commit()?;
+        Ok(true)
+    }
+
     /// Exact-key recovery ranks real conversations ahead of empty session rows.
     /// Only a miss uses the complete legacy peer tuple and store-owner fence.
     pub fn find_latest_gateway_session_for_peer(
@@ -1516,9 +2000,9 @@ impl SessionDb {
         tx.commit()
     }
 
-    /// Add model-wire sidecars to stores created before native memory recall.
-    /// The migration is one short schema transaction and performs no external
-    /// work while SQLite holds its write lock.
+    /// Add native replay and compaction markers to older stores. The migration
+    /// is one short schema transaction and performs no external work while
+    /// SQLite holds its write lock.
     fn ensure_message_schema(conn: &mut Connection) -> rusqlite::Result<()> {
         let columns: Vec<String> = {
             let mut query = conn.prepare("PRAGMA table_info(messages)")?;
@@ -1527,7 +2011,10 @@ impl SessionDb {
                 .collect::<rusqlite::Result<Vec<_>>>()?;
             rows
         };
-        if columns.iter().any(|column| column == "api_content") {
+        if ["api_content", "_compressed_summary", "compacted"]
+            .iter()
+            .all(|required| columns.iter().any(|column| column == required))
+        {
             return Ok(());
         }
 
@@ -1543,6 +2030,18 @@ impl SessionDb {
         };
         if !columns.iter().any(|column| column == "api_content") {
             tx.execute("ALTER TABLE messages ADD COLUMN api_content TEXT", [])?;
+        }
+        if !columns.iter().any(|column| column == "_compressed_summary") {
+            tx.execute(
+                "ALTER TABLE messages ADD COLUMN _compressed_summary INTEGER NOT NULL DEFAULT 0",
+                [],
+            )?;
+        }
+        if !columns.iter().any(|column| column == "compacted") {
+            tx.execute(
+                "ALTER TABLE messages ADD COLUMN compacted INTEGER NOT NULL DEFAULT 0",
+                [],
+            )?;
         }
         tx.commit()
     }
@@ -1599,6 +2098,23 @@ impl SessionDb {
             .query_map([scope], |row| Ok((row.get(0)?, row.get(1)?)))?
             .collect();
         rows
+    }
+
+    pub fn load_gateway_routing_entry(
+        &self,
+        scope: &str,
+        session_key: &str,
+    ) -> rusqlite::Result<Option<String>> {
+        self.conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT entry_json FROM gateway_routing
+                 WHERE scope = ? AND session_key = ?",
+                params![scope, session_key],
+                |row| row.get(0),
+            )
+            .optional()
     }
 
     #[allow(dead_code)]
@@ -1696,6 +2212,15 @@ impl SessionDb {
             [],
         )?;
         Self::heal_routing_schema(conn)?;
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS session_turn_leases (
+                conversation_id TEXT PRIMARY KEY,
+                holder TEXT NOT NULL,
+                acquired_at REAL NOT NULL,
+                expires_at REAL NOT NULL
+            )",
+            [],
+        )?;
         conn.execute(
             "CREATE TABLE IF NOT EXISTS sessions (
                 id TEXT PRIMARY KEY,
@@ -2010,6 +2535,41 @@ impl SessionDb {
         rows.collect()
     }
 
+    /// Capture the exact active row ids and model-facing fields used by a
+    /// manual compression attempt. The max id is a commit watermark; rows
+    /// appended by another process after this read are cloned into the child
+    /// rather than summarized away.
+    pub fn load_compression_snapshot(
+        &self,
+        session_id: &str,
+    ) -> rusqlite::Result<CompressionSnapshot> {
+        let conn = self.conn.lock().unwrap();
+        let mut statement = conn.prepare(
+            "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name FROM messages
+             WHERE session_id = ? AND active = 1 ORDER BY id ASC",
+        )?;
+        let messages = statement
+            .query_map([session_id], |row| {
+                Ok(CompressionHistoryMessage {
+                    id: row.get(0)?,
+                    message: HistoryMessage {
+                        role: row.get(1)?,
+                        content: row.get::<_, Option<String>>(2)?.unwrap_or_default(),
+                        api_content: row.get(3)?,
+                    },
+                    tool_call_id: row.get(4)?,
+                    tool_calls: row.get(5)?,
+                    tool_name: row.get(6)?,
+                })
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        let watermark = messages.last().map_or(0, |message| message.id);
+        Ok(CompressionSnapshot {
+            watermark,
+            messages,
+        })
+    }
+
     /// Reconstruct the durable active transcript for lifecycle hooks. Unlike
     /// model history, this keeps stored tool metadata and the clean/API content
     /// split so an end-of-session provider sees the best available transcript.
@@ -2157,6 +2717,30 @@ impl SessionDb {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn retained_tail_accepts_complete_tool_groups_and_rejects_dangling_calls() {
+        let calls =
+            Some(r#"[{"id":"call-a","type":"function"},{"id":"call-b","type":"function"}]"#.into());
+        let complete = vec![
+            ("user".into(), None, None),
+            ("assistant".into(), calls.clone(), None),
+            ("tool".into(), None, Some("call-b".into())),
+            ("tool".into(), None, Some("call-a".into())),
+            ("assistant".into(), None, None),
+            ("user".into(), None, None),
+            ("assistant".into(), None, None),
+        ];
+        assert!(super::complete_turn_sequence(&complete));
+
+        let mut missing_tool = complete.clone();
+        missing_tool.remove(3);
+        assert!(!super::complete_turn_sequence(&missing_tool));
+
+        let mut wrong_tool = complete;
+        wrong_tool[2].2 = Some("unknown".into());
+        assert!(!super::complete_turn_sequence(&wrong_tool));
+    }
+
     #[test]
     fn footer_keeps_lineage_birth_across_compaction_and_database_reopen() {
         use crate::prompt_footer::Footer;
@@ -2643,6 +3227,10 @@ mod tests {
             ["root", "continuation", "message"]
         );
         assert_eq!(db.get_compression_tip("root").unwrap(), "message");
+        assert_eq!(db.compression_lineage_root("message").unwrap(), "root");
+        assert_eq!(db.compression_lineage_root("branch").unwrap(), "branch");
+        assert_eq!(db.compression_lineage_root("delegate").unwrap(), "delegate");
+        assert_eq!(db.compression_lineage_root("tool").unwrap(), "tool");
         assert_eq!(db.get_compression_chain("missing").unwrap(), ["missing"]);
         assert!(db.get_compression_chain("").unwrap().is_empty());
         assert_eq!(db.get_compression_tip("").unwrap(), "");
@@ -2655,6 +3243,330 @@ mod tests {
             )
             .unwrap();
         assert!(db.get_compression_tip("root").is_err());
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn compression_publish_is_child_first_atomic_and_clones_tail_rows() {
+        let path = temp_db("compression_publish");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.create_session(
+            "parent",
+            &SessionCreate {
+                peer: GatewayPeer {
+                    source: "local",
+                    session_key: Some("route"),
+                    user_id: Some("user"),
+                    chat_id: Some("chat"),
+                    chat_type: Some("dm"),
+                    thread_id: None,
+                },
+                system_prompt: Some("frozen prompt"),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(db
+            .set_user_session_title("parent", "Compression Project")
+            .unwrap());
+        for (role, content) in [
+            ("user", "u0"),
+            ("assistant", "a0"),
+            ("user", "u1"),
+            ("assistant", "a1"),
+            ("user", "u2"),
+            ("assistant", "a2"),
+        ] {
+            db.append_message("parent", role, content).unwrap();
+        }
+        db.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE messages SET tool_calls = ?, tool_name = ?
+                 WHERE session_id = 'parent' AND role = 'assistant' AND content = 'a0'",
+                params![
+                    r#"[{"id":"call-1","function":{"name":"terminal","arguments":"{}"}}]"#,
+                    "terminal"
+                ],
+            )
+            .unwrap();
+        let snapshot = db.load_compression_snapshot("parent").unwrap();
+        assert!(snapshot.messages[1]
+            .tool_calls
+            .as_deref()
+            .unwrap()
+            .contains("call-1"));
+        assert_eq!(snapshot.messages[1].tool_name.as_deref(), Some("terminal"));
+        db.append_message("parent", "user", "concurrent").unwrap();
+        db.append_message("parent", "assistant", "concurrent answer")
+            .unwrap();
+        let compacted = [
+            HistoryMessage {
+                role: "user".into(),
+                content: "summary".into(),
+                api_content: None,
+            },
+            HistoryMessage {
+                role: "assistant".into(),
+                content: "waiting".into(),
+                api_content: None,
+            },
+        ];
+        let entry = serde_json::json!({
+            "session_key":"route", "session_id":"child",
+            "created_at":"2026-09-08T00:00:00", "updated_at":"2026-09-08T00:00:00"
+        })
+        .to_string();
+        assert!(db
+            .publish_gateway_compression(&GatewayCompressionPublish {
+                scope: "scope",
+                session_key: "route",
+                entry_json: &entry,
+                parent_id: "parent",
+                child_id: "child",
+                compacted_messages: &compacted,
+                tail_start_id: Some(snapshot.messages[4].id),
+                watermark: snapshot.watermark,
+                turn_lease_holder: None,
+            })
+            .unwrap());
+        assert_eq!(
+            db.load_history("child", 0)
+                .unwrap()
+                .into_iter()
+                .map(|message| (message.role, message.content))
+                .collect::<Vec<_>>(),
+            [
+                ("user".into(), "summary".into()),
+                ("assistant".into(), "waiting".into()),
+                ("user".into(), "u2".into()),
+                ("assistant".into(), "a2".into()),
+                ("user".into(), "concurrent".into()),
+                ("assistant".into(), "concurrent answer".into()),
+            ]
+        );
+        assert_eq!(
+            db.get_session("parent").unwrap().unwrap()["end_reason"],
+            "compression"
+        );
+        assert_eq!(
+            db.get_session("child").unwrap().unwrap()["parent_session_id"],
+            "parent"
+        );
+        assert_eq!(
+            db.get_session("child").unwrap().unwrap()["system_prompt"],
+            "frozen prompt"
+        );
+        assert_eq!(
+            db.get_session("child").unwrap().unwrap()["title"],
+            "Compression Project"
+        );
+        assert_eq!(
+            db.get_session("child").unwrap().unwrap()["title_source"],
+            "user"
+        );
+        assert!(db.get_session("parent").unwrap().unwrap()["title"].is_null());
+        assert!(db.load_gateway_routing_entries("scope").unwrap()["route"].contains("child"));
+
+        for id in ["stale-parent", "resumed-target"] {
+            db.create_session(
+                id,
+                &SessionCreate {
+                    peer: GatewayPeer {
+                        source: "local",
+                        session_key: Some("stale-route"),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        }
+        db.append_message("stale-parent", "user", "do not rotate")
+            .unwrap();
+        let stale = db.load_compression_snapshot("stale-parent").unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "INSERT INTO gateway_routing(scope,session_key,entry_json,updated_at)
+                 VALUES ('scope','stale-route','{\"session_id\":\"resumed-target\"}',1)",
+                [],
+            )
+            .unwrap();
+        assert!(!db
+            .publish_gateway_compression(&GatewayCompressionPublish {
+                scope: "scope",
+                session_key: "stale-route",
+                entry_json: "{\"session_id\":\"stale-child\"}",
+                parent_id: "stale-parent",
+                child_id: "stale-child",
+                compacted_messages: &compacted,
+                tail_start_id: None,
+                watermark: stale.watermark,
+                turn_lease_holder: None,
+            })
+            .unwrap());
+        assert!(db.get_session("stale-child").unwrap().is_none());
+        assert!(db.get_session("stale-parent").unwrap().unwrap()["ended_at"].is_null());
+        assert!(
+            db.load_gateway_routing_entries("scope").unwrap()["stale-route"]
+                .contains("resumed-target")
+        );
+
+        db.create_session(
+            "incomplete-parent",
+            &SessionCreate {
+                peer: GatewayPeer {
+                    source: "local",
+                    session_key: Some("incomplete-route"),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message("incomplete-parent", "user", "complete question")
+            .unwrap();
+        db.append_message("incomplete-parent", "assistant", "complete answer")
+            .unwrap();
+        let incomplete = db.load_compression_snapshot("incomplete-parent").unwrap();
+        db.append_message("incomplete-parent", "user", "still in flight")
+            .unwrap();
+        assert!(!db
+            .publish_gateway_compression(&GatewayCompressionPublish {
+                scope: "scope",
+                session_key: "incomplete-route",
+                entry_json: "{\"session_id\":\"incomplete-child\"}",
+                parent_id: "incomplete-parent",
+                child_id: "incomplete-child",
+                compacted_messages: &compacted,
+                tail_start_id: None,
+                watermark: incomplete.watermark,
+                turn_lease_holder: None,
+            })
+            .unwrap());
+        assert!(db.get_session("incomplete-child").unwrap().is_none());
+        assert!(db.get_session("incomplete-parent").unwrap().unwrap()["ended_at"].is_null());
+
+        db.create_session(
+            "rollback-parent",
+            &SessionCreate {
+                peer: GatewayPeer {
+                    source: "local",
+                    session_key: Some("rollback-route"),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message("rollback-parent", "user", "keep")
+            .unwrap();
+        let rollback = db.load_compression_snapshot("rollback-parent").unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "CREATE TRIGGER fail_compression_handoff BEFORE INSERT ON messages
+             WHEN new.session_id = 'rollback-child' AND new.role = 'assistant'
+             BEGIN SELECT RAISE(ABORT, 'fixture handoff failure'); END;",
+            )
+            .unwrap();
+        let failed = db.publish_gateway_compression(&GatewayCompressionPublish {
+            scope: "scope",
+            session_key: "rollback-route",
+            entry_json: "{}",
+            parent_id: "rollback-parent",
+            child_id: "rollback-child",
+            compacted_messages: &compacted,
+            tail_start_id: None,
+            watermark: rollback.watermark,
+            turn_lease_holder: None,
+        });
+        assert!(failed.is_err());
+        assert!(db.get_session("rollback-child").unwrap().is_none());
+        assert!(db.get_session("rollback-parent").unwrap().unwrap()["ended_at"].is_null());
+        assert_eq!(db.load_history("rollback-parent", 0).unwrap().len(), 1);
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn concurrent_compression_publications_have_exactly_one_winner() {
+        let path = temp_db("compression_competing");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.create_session(
+            "parent",
+            &SessionCreate {
+                peer: GatewayPeer {
+                    source: "local",
+                    session_key: Some("route"),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message("parent", "user", "question").unwrap();
+        let barrier = Arc::new(std::sync::Barrier::new(2));
+        let workers = ["child-a", "child-b"]
+            .into_iter()
+            .map(|child| {
+                let path = path.clone();
+                let barrier = barrier.clone();
+                std::thread::spawn(move || {
+                    let db = SessionDb::open(path).unwrap();
+                    let entry = format!("{{\"session_id\":\"{child}\"}}");
+                    let compacted = [
+                        HistoryMessage {
+                            role: "user".into(),
+                            content: format!("summary-{child}"),
+                            api_content: None,
+                        },
+                        HistoryMessage {
+                            role: "assistant".into(),
+                            content: "waiting".into(),
+                            api_content: None,
+                        },
+                    ];
+                    barrier.wait();
+                    db.publish_gateway_compression(&GatewayCompressionPublish {
+                        scope: "scope",
+                        session_key: "route",
+                        entry_json: &entry,
+                        parent_id: "parent",
+                        child_id: child,
+                        compacted_messages: &compacted,
+                        tail_start_id: None,
+                        watermark: 1,
+                        turn_lease_holder: None,
+                    })
+                    .unwrap()
+                })
+            })
+            .collect::<Vec<_>>();
+        let results = workers
+            .into_iter()
+            .map(|worker| worker.join().unwrap())
+            .collect::<Vec<_>>();
+        assert_eq!(results.iter().filter(|won| **won).count(), 1);
+        let children: i64 = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM sessions WHERE parent_session_id = 'parent'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(children, 1);
+        assert_eq!(db.get_compression_chain("parent").unwrap().len(), 2);
+        let route = &db.load_gateway_routing_entries("scope").unwrap()["route"];
+        assert!(route.contains("child-a") || route.contains("child-b"));
         drop(db);
         std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
