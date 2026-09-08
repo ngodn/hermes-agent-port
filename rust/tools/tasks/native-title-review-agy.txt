@@ -1,0 +1,12 @@
+Review the current uncommitted Rust implementation of native `/title` and
+`/new <title>` in this repository. Compare the diff directly with the Python
+contract in gateway/slash_commands.py, hermes_state.py,
+hermes_state_schema.py, and relevant tests. Focus on correctness bugs,
+concurrency and SQLite atomicity, title sanitizer parity, uniqueness and legacy
+repair, lazy row creation, route/lease races, reset-confirmation behavior,
+model exclusion, prompt/cache stability, and HTTP/push symmetry.
+
+Do not edit files. Report findings ordered by severity with exact Rust source
+locations and specific fixes or missing tests. Distinguish blocking defects
+from intentionally deferred auto-title, adapter rename, compression execution,
+and UI work.

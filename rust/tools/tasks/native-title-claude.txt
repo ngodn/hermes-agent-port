@@ -1,0 +1,11 @@
+Independently review the next Hermes Python-to-Rust port checkpoint: native
+gateway `/title` plus title persistence for `/new <title>`. Map behavior from
+the current Python source and tests, then compare it to the existing Rust
+gateway. Focus on user-visible replies, title cleanup, maximum length,
+duplicate-title errors, title_source precedence, empty and pre-first-message
+sessions, atomicity/races, reset confirmation parsing, HTTP and push handling,
+and whether a title change may affect cached clients or prompt bytes.
+
+Give a source-cited contract and a minimal Rust design with concrete tests.
+Do not edit the repository. Identify scope that belongs to later auto-title,
+compression, adapter topic rename, or UI work rather than this checkpoint.

@@ -18,6 +18,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 - Conversation clients are keyed by profile home and immutable session ID.
   Resume changes the route key target and must not hard-retire the outgoing
   resumable client.
+- Manual session titles are metadata only. They use `title_source=user`, never
+  enter prompt or transcript bytes, and are serialized by the route then
+  transcript lease plus an immediate SQLite transaction.
 
 ## Rejected paths
 
@@ -57,6 +60,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
 | [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 41% weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
+| [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
+| [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |
+| [native-title-review-claude.md](native-title-review-claude.md) | Claude implementation review that found SQLite busy-wait risk and requested stronger cache, lease and invalid-reset coverage |
+| [native-title-resolution.md](native-title-resolution.md) | Final title design, applied review fixes, rejected race premise, deliberate persistence-error behavior and deferred work |
 | [extension-host-review-resolution.md](extension-host-review-resolution.md) | Verified disposition of both implementation reviews, with fixed findings, tests, and explicit lifecycle deferrals |
 | [extension-host-implementation-review-agy.md](extension-host-implementation-review-agy.md) | Gemini post-implementation audit of protocol health, collisions, secrets, multimodal results and process cleanup |
 | [extension-host-implementation-review-claude.md](extension-host-implementation-review-claude.md) | Claude post-implementation compatibility review, including auto-loaded backends, route identity and cache-lifetime gaps |

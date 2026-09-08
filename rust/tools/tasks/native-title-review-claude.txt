@@ -1,0 +1,10 @@
+Perform an independent code review of the uncommitted native Rust title
+checkpoint. Inspect the actual diff and compare it to current Python behavior
+for `/title` and `/new <title>`. Look for user-visible incompatibility, invalid
+or duplicate title edge cases, cross-process races, partial writes, hidden Bot
+Chat handling, cold-route behavior, stale-route writes, accidental model or
+transcript traffic, cache invalidation, and ingress divergence.
+
+Do not modify the repository. Give severity-ranked findings with exact file and
+line references. Also list high-value regression tests still missing and note
+which larger title features should remain deferred.

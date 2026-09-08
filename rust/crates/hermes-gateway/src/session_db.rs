@@ -138,6 +138,62 @@ pub struct SearchHit {
 
 /// How many prior messages to feed a stateless backend as context.
 pub const HISTORY_LIMIT: usize = 40;
+pub const MAX_SESSION_TITLE_LENGTH: usize = 100;
+
+#[derive(Debug)]
+pub enum SetSessionTitleError {
+    Rejected(String),
+    Database(rusqlite::Error),
+}
+
+impl std::fmt::Display for SetSessionTitleError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Rejected(message) => formatter.write_str(message),
+            Self::Database(error) => error.fmt(formatter),
+        }
+    }
+}
+
+impl std::error::Error for SetSessionTitleError {}
+
+impl From<rusqlite::Error> for SetSessionTitleError {
+    fn from(error: rusqlite::Error) -> Self {
+        Self::Database(error)
+    }
+}
+
+/// Apply the same user-visible cleanup as Python's `SessionDB.sanitize_title`.
+pub fn sanitize_session_title(title: &str) -> anyhow::Result<Option<String>> {
+    let cleaned: String = title
+        .chars()
+        .filter(|character| {
+            let value = *character as u32;
+            !matches!(value, 0x00..=0x08 | 0x0b | 0x0c | 0x0e..=0x1f | 0x7f)
+                && !matches!(
+                    value,
+                    0x200b..=0x200f
+                        | 0x2028..=0x202e
+                        | 0x2060..=0x2069
+                        | 0xfeff
+                        | 0xfffc
+                        | 0xfff9..=0xfffb
+                )
+        })
+        .collect::<String>()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    if cleaned.is_empty() {
+        return Ok(None);
+    }
+    let length = cleaned.chars().count();
+    anyhow::ensure!(
+        length <= MAX_SESSION_TITLE_LENGTH,
+        "Title too long ({length} chars, max {MAX_SESSION_TITLE_LENGTH})"
+    );
+    Ok(Some(cleaned))
+}
 
 /// Stable session id for a message: `<platform>:<channel_id>`, lowercased.
 pub fn session_id_for(platform: Platform, channel_id: &str) -> String {
@@ -1231,6 +1287,98 @@ impl SessionDb {
             .map(Option::flatten)
     }
 
+    /// Set a manual title with Python-compatible uniqueness and provenance.
+    /// The lookup, compression-ancestor transfer and compare-and-swap update
+    /// share one immediate transaction so a concurrent title writer cannot be
+    /// silently overwritten.
+    pub fn set_user_session_title(
+        &self,
+        session_id: &str,
+        title: &str,
+    ) -> Result<bool, SetSessionTitleError> {
+        let sanitized = sanitize_session_title(title)
+            .map_err(|error| SetSessionTitleError::Rejected(error.to_string()))?;
+        let title = sanitized.as_deref();
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let current = tx
+            .query_row(
+                "SELECT title, title_source, hidden FROM sessions WHERE id = ?",
+                [session_id],
+                |row| {
+                    Ok((
+                        row.get::<_, Option<String>>(0)?,
+                        row.get::<_, Option<String>>(1)?,
+                        row.get::<_, bool>(2)?,
+                    ))
+                },
+            )
+            .optional()?;
+        let Some((current_title, current_source, hidden)) = current else {
+            return Ok(false);
+        };
+        if hidden
+            && current_title.as_deref() == Some(crate::bot_mode::BOT_CHAT_TITLE)
+            && title != Some(crate::bot_mode::BOT_CHAT_TITLE)
+        {
+            return Err(SetSessionTitleError::Rejected(
+                "This is the bot's canonical Bot Chat - its name is its identity, and renaming it would orphan the conversation. To start fresh, create a new bot instead."
+                    .into(),
+            ));
+        }
+        if let Some(title) = title {
+            let conflict = tx
+                .query_row(
+                    "SELECT id FROM sessions WHERE title = ? AND id != ?",
+                    params![title, session_id],
+                    |row| row.get::<_, String>(0),
+                )
+                .optional()?;
+            if let Some(conflict_id) = conflict {
+                let is_ancestor = tx
+                    .query_row(
+                        "WITH RECURSIVE ancestors(id) AS (
+                            SELECT ?1
+                            UNION
+                            SELECT child.parent_session_id
+                            FROM ancestors a
+                            JOIN sessions child ON child.id = a.id
+                            JOIN sessions parent ON parent.id = child.parent_session_id
+                            WHERE parent.end_reason = 'compression'
+                        )
+                        SELECT 1 FROM ancestors WHERE id = ?2 AND id != ?1 LIMIT 1",
+                        params![session_id, conflict_id],
+                        |_| Ok(()),
+                    )
+                    .optional()?
+                    .is_some();
+                if is_ancestor {
+                    tx.execute(
+                        "UPDATE sessions SET title = NULL WHERE id = ?",
+                        [&conflict_id],
+                    )?;
+                } else {
+                    return Err(SetSessionTitleError::Rejected(format!(
+                        "Title '{title}' is already in use by session {conflict_id}"
+                    )));
+                }
+            }
+        }
+        let changed = tx.execute(
+            "UPDATE sessions SET title = ?, title_source = ?
+             WHERE id = ? AND title IS ? AND title_source IS ?",
+            params![
+                title,
+                title.map(|_| "user"),
+                session_id,
+                current_title,
+                current_source
+            ],
+        )?;
+        tx.commit()?;
+        Ok(changed > 0)
+    }
+
     /// Direct ID wins over title. A base title follows its newest numbered
     /// continuation, matching the Python gateway's resume resolver.
     pub fn resolve_session_target(&self, target: &str) -> rusqlite::Result<Option<String>> {
@@ -1526,6 +1674,7 @@ impl SessionDb {
             let _ = std::fs::create_dir_all(parent);
         }
         let mut conn = Connection::open(&path)?;
+        conn.busy_timeout(std::time::Duration::from_secs(5))?;
         let _ = conn.pragma_update(None, "journal_mode", "WAL");
         Self::ensure_schema(&mut conn)?;
         Ok(Self {
@@ -1563,10 +1712,7 @@ impl SessionDb {
             [],
         )?;
         Self::ensure_recovery_schema(conn)?;
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_sessions_title ON sessions(title)",
-            [],
-        )?;
+        Self::ensure_title_index(conn)?;
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_sessions_source_key_started
              ON sessions(source, session_key, started_at DESC)",
@@ -1624,6 +1770,37 @@ impl SessionDb {
              END;",
         )?;
         Ok(())
+    }
+
+    fn ensure_title_index(conn: &mut Connection) -> rusqlite::Result<()> {
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let unique = "CREATE UNIQUE INDEX IF NOT EXISTS idx_sessions_title_unique
+                      ON sessions(title) WHERE title IS NOT NULL";
+        if let Err(error) = tx.execute(unique, []) {
+            if !matches!(
+                error,
+                rusqlite::Error::SqliteFailure(
+                    rusqlite::ffi::Error {
+                        code: rusqlite::ErrorCode::ConstraintViolation,
+                        ..
+                    },
+                    _
+                )
+            ) {
+                return Err(error);
+            }
+            tx.execute(
+                "UPDATE sessions AS older SET title = NULL
+                 WHERE title IS NOT NULL AND EXISTS (
+                    SELECT 1 FROM sessions AS newer
+                    WHERE newer.title = older.title AND newer.rowid > older.rowid
+                 )",
+                [],
+            )?;
+            tx.execute(unique, [])?;
+        }
+        tx.execute("DROP INDEX IF EXISTS idx_sessions_title", [])?;
+        tx.commit()
     }
 
     /// Ensure a session row exists (INSERT OR IGNORE). Safe to call every turn.
@@ -2163,6 +2340,168 @@ mod tests {
         assert_eq!(db.get_session("one").unwrap().unwrap()["tool_names"], "[]");
         db.update_session_tool_names("one", None).unwrap();
         assert!(db.get_session("one").unwrap().unwrap()["tool_names"].is_null());
+    }
+
+    #[test]
+    fn title_sanitizer_matches_python_controls_whitespace_and_limit() {
+        assert_eq!(
+            sanitize_session_title("  Project\t\n Phoenix  ").unwrap(),
+            Some("Project Phoenix".into())
+        );
+        assert_eq!(
+            sanitize_session_title("a\0\u{7}b\u{200b}c\u{202e}d\u{feff}e").unwrap(),
+            Some("abcde".into())
+        );
+        assert_eq!(sanitize_session_title("\0\u{200b}").unwrap(), None);
+        assert_eq!(
+            sanitize_session_title(&"🦀".repeat(MAX_SESSION_TITLE_LENGTH)).unwrap(),
+            Some("🦀".repeat(MAX_SESSION_TITLE_LENGTH))
+        );
+        assert!(
+            sanitize_session_title(&"a".repeat(MAX_SESSION_TITLE_LENGTH + 1))
+                .unwrap_err()
+                .to_string()
+                .contains("Title too long (101 chars, max 100)")
+        );
+    }
+
+    #[test]
+    fn manual_titles_are_unique_user_metadata_and_transfer_from_compressed_ancestor() {
+        let path = temp_db("manual_titles");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "INSERT INTO sessions (id,source,title,title_source,started_at,ended_at,end_reason)
+             VALUES ('root','local','Project','user',1,2,'compression');
+             INSERT INTO sessions (id,source,parent_session_id,title,title_source,started_at)
+             VALUES ('tip','local','root','Project #2','llm',3);
+             INSERT INTO sessions (id,source,title,title_source,started_at)
+             VALUES ('other','local','Other','llm',4);
+             INSERT INTO sessions (id,source,title,title_source,hidden,started_at)
+             VALUES ('bot','local','Bot Chat','user',1,5);",
+            )
+            .unwrap();
+
+        assert!(db.set_user_session_title("tip", "Project").unwrap());
+        assert_eq!(db.get_session_title("root").unwrap(), None);
+        assert_eq!(
+            db.get_session_title("tip").unwrap().as_deref(),
+            Some("Project")
+        );
+        assert_eq!(
+            db.get_session("tip").unwrap().unwrap()["title_source"],
+            "user"
+        );
+
+        let error = db.set_user_session_title("other", "Project").unwrap_err();
+        assert!(matches!(error, SetSessionTitleError::Rejected(_)));
+        assert_eq!(
+            db.get_session_title("other").unwrap().as_deref(),
+            Some("Other")
+        );
+        assert!(db
+            .set_user_session_title("bot", "Renamed")
+            .unwrap_err()
+            .to_string()
+            .contains("canonical Bot Chat"));
+        assert!(db.set_user_session_title("other", "").unwrap());
+        assert_eq!(db.get_session_title("other").unwrap(), None);
+        assert!(db.get_session("other").unwrap().unwrap()["title_source"].is_null());
+        assert!(!db.set_user_session_title("missing", "Missing").unwrap());
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn title_index_repairs_legacy_duplicates_and_then_enforces_uniqueness() {
+        let path = temp_db("title_index_repair");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("older", "local", None, None, None)
+            .unwrap();
+        db.ensure_session("newer", "local", None, None, None)
+            .unwrap();
+        {
+            let conn = db.conn.lock().unwrap();
+            conn.execute("DROP INDEX idx_sessions_title_unique", [])
+                .unwrap();
+            conn.execute(
+                "UPDATE sessions SET title='shared' WHERE id IN ('older','newer')",
+                [],
+            )
+            .unwrap();
+        }
+        drop(db);
+
+        let reopened = SessionDb::open(path.clone()).unwrap();
+        assert_eq!(
+            reopened
+                .conn
+                .lock()
+                .unwrap()
+                .query_row("PRAGMA busy_timeout", [], |row| row.get::<_, u64>(0))
+                .unwrap(),
+            5_000
+        );
+        assert_eq!(reopened.get_session_title("older").unwrap(), None);
+        assert_eq!(
+            reopened.get_session_title("newer").unwrap().as_deref(),
+            Some("shared")
+        );
+        assert!(reopened.set_user_session_title("older", "shared").is_err());
+        drop(reopened);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn concurrent_manual_title_claim_has_one_winner() {
+        let path = temp_db("title_race");
+        let first = SessionDb::open(path.clone()).unwrap();
+        first
+            .ensure_session("one", "local", None, None, None)
+            .unwrap();
+        first
+            .ensure_session("two", "local", None, None, None)
+            .unwrap();
+        let second = SessionDb::open(path.clone()).unwrap();
+        let barrier = Arc::new(std::sync::Barrier::new(2));
+        let workers: Vec<_> = [(first, "one"), (second, "two")]
+            .into_iter()
+            .map(|(database, id)| {
+                let barrier = barrier.clone();
+                std::thread::spawn(move || {
+                    barrier.wait();
+                    database.set_user_session_title(id, "claimed")
+                })
+            })
+            .collect();
+        let results: Vec<_> = workers
+            .into_iter()
+            .map(|worker| worker.join().unwrap())
+            .collect();
+        assert_eq!(
+            results
+                .iter()
+                .filter(|result| matches!(result, Ok(true)))
+                .count(),
+            1
+        );
+        assert_eq!(
+            results
+                .iter()
+                .filter(|result| matches!(result, Err(SetSessionTitleError::Rejected(_))))
+                .count(),
+            1
+        );
+        let verify = SessionDb::open(path.clone()).unwrap();
+        let titled = ["one", "two"]
+            .into_iter()
+            .filter(|id| verify.get_session_title(id).unwrap().as_deref() == Some("claimed"))
+            .count();
+        assert_eq!(titled, 1);
+        drop(verify);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
 
     #[test]

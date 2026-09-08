@@ -1,5 +1,53 @@
 # Hermes Rust rewrite
 
+## Native session title checkpoint: 2026-09-08
+
+Native `/title` now reads or writes the current session title on both HTTP and
+push ingress without reaching the model. `/new <title>` preserves the raw title
+through destructive confirmation and applies it only after the new session is
+durable. Bare `/title` reports the immutable session ID and current title. A
+title command before the first model turn materializes the session row and its
+full gateway peer identity immediately, including when validation rejects the
+requested title.
+
+Title cleanup matches `SessionDB.sanitize_title`: unsafe ASCII and Unicode
+controls are removed, whitespace runs collapse, cleaned-empty input is rejected
+at the command surface, and titles are capped at 100 Unicode characters. The
+database API repeats sanitization as its own invariant and stores manual writes
+with `title_source=user`.
+
+Manual title mutation is one `BEGIN IMMEDIATE` transaction containing the
+hidden canonical Bot Chat guard, exact uniqueness lookup, compression-ancestor
+title transfer, and NULL-safe compare-and-swap update. The Python-compatible
+partial unique index is the final cross-process guard. Old Rust databases repair
+duplicate titles by retaining the newest row and drop the obsolete non-unique
+index. `SessionDb` now uses Python's five-second SQLite busy wait so shared
+Python/Rust profiles do not fail immediately under a concurrent writer.
+
+Title metadata never enters the transcript, bumps the durable conversation
+generation, changes prompt bytes, or evicts the client keyed by profile home and
+session ID. Tests prove cached-client reuse, zero model turns for control
+traffic, cold-row creation, route and transcript lease ordering, two-connection
+title contention, canonical Bot Chat refusal, lineage transfer, legacy index
+repair, duplicate and invalid reset titles, and HTTP/push symmetry.
+
+Full workspace validation is **1,547 passed, two ignored**. The selected Python
+title oracle is **21 passed** under Python 3.11.15. Formatting, Clippy with
+warnings denied, and `git diff --check` pass. Gemini and Claude were used through
+the requested helper scripts for pre-implementation mapping and independent
+post-implementation review. The maps, reviews, and verified disposition are
+indexed under `rust/analysis/`.
+
+The [weighted full-port audit](analysis/progress-audit-2026-09-08.md) remains
+**about 41%** (rough range 39% to 43%). This checkpoint closes manual title
+lifecycle behavior but does not change the much larger remaining tool, plugin,
+memory, provider, adapter, UI, and agent-loop inventory. Next: real native
+compression boundaries, then transparent extension-host respawn, native plugin
+and external-memory managers, and the remaining tool runtime and agent loop.
+Automatic derived/LLM titles, Telegram topic rename, desktop/web title state,
+and `/sessions search` remain explicit follow-ups. This is not completion of the
+full port.
+
 ## Native secure resume checkpoint: 2026-09-08
 
 Native `/resume` and `/sessions` now execute as gateway control commands on

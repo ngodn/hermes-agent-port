@@ -1,0 +1,14 @@
+Audit the next Hermes Python-to-Rust port seam: native gateway `/title` and
+`/new <title>` behavior. Read the actual Python source and tests, especially
+gateway/slash_commands.py, hermes_state.py, cli.py, gateway/run.py, and relevant
+tests. Then inspect the current Rust implementation under
+rust/crates/hermes-gateway/src, including slash.rs, session_commands.rs,
+session_db.rs, session_store.rs, message.rs, and dispatch.rs.
+
+Report the exact behavioral contract, sanitization and length rules, title
+provenance and uniqueness semantics, lazy-session behavior, concurrency and
+transaction invariants, cache implications, ingress differences, and the
+narrowest production-quality implementation plan. Name exact source locations
+and high-value tests. Do not edit files. Treat prompt byte stability and
+conversation client identity as invariants. Call out anything that should be
+explicitly deferred.

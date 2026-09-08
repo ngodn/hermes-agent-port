@@ -21,6 +21,9 @@ pub enum NativeSlashCommand {
     Reset {
         title: Option<String>,
     },
+    Title {
+        raw_title: Option<String>,
+    },
     Resume {
         raw_args: String,
         from_sessions: bool,
@@ -80,6 +83,12 @@ pub fn native_command(command: &str, text: &str) -> Option<NativeSlashCommand> {
             let title = command_args(text);
             Some(NativeSlashCommand::Reset {
                 title: (!title.is_empty()).then(|| title.to_owned()),
+            })
+        }
+        "title" => {
+            let title = command_args(text);
+            Some(NativeSlashCommand::Title {
+                raw_title: (!title.is_empty()).then(|| title.to_owned()),
             })
         }
         "compress" => Some(NativeSlashCommand::Unavailable {
@@ -267,6 +276,16 @@ mod tests {
                 from_sessions: true,
             }) if raw_args == "Project Phoenix"
         ));
+        assert_eq!(
+            native_command("title", "/title Project Phoenix"),
+            Some(NativeSlashCommand::Title {
+                raw_title: Some("Project Phoenix".into())
+            })
+        );
+        assert_eq!(
+            native_command("title", "/title"),
+            Some(NativeSlashCommand::Title { raw_title: None })
+        );
         assert_eq!(native_command("deploy", "/deploy"), None);
     }
 

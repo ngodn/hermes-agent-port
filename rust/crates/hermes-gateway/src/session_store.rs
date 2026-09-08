@@ -258,6 +258,43 @@ impl SessionStore {
         self.databases.for_key(key, &self.home)
     }
 
+    /// Ensure a route-only entry has its durable SQLite row. Explicit metadata
+    /// commands use this before the first model turn so their writes and later
+    /// ownership checks do not depend on a future transcript append.
+    pub fn materialize_session_entry(
+        &self,
+        entry: &crate::session_entry::SessionEntry,
+        source: &crate::session::SessionSource,
+    ) -> anyhow::Result<Arc<crate::session_db::SessionDb>> {
+        let database = self
+            .database_for_key(&entry.session_key)
+            .ok_or_else(|| anyhow::anyhow!("session database is unavailable"))?;
+        let origin = source.to_dict().to_string();
+        database.create_session(
+            &entry.session_id,
+            &crate::session_db::SessionCreate {
+                peer: crate::session_db::GatewayPeer {
+                    source: &source.platform,
+                    session_key: Some(&entry.session_key),
+                    user_id: source.user_id.as_deref(),
+                    chat_id: Some(&source.chat_id),
+                    chat_type: Some(&source.chat_type),
+                    thread_id: source.thread_id.as_deref(),
+                },
+                profile_name: source.profile.as_deref(),
+                origin_json: Some(&origin),
+                display_name: entry
+                    .fields
+                    .get("display_name")
+                    .and_then(serde_json::Value::as_str)
+                    .or(source.chat_name.as_deref()),
+                ..Default::default()
+            },
+        )?;
+        self.refresh_peer(entry);
+        Ok(database)
+    }
+
     fn policy_for_entry(
         &self,
         entry: &crate::session_entry::SessionEntry,

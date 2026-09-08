@@ -154,6 +154,38 @@ pub async fn post_message(
         crate::slash::SlashDecision::NotSlash => {}
     }
 
+    if let Some(crate::slash::NativeSlashCommand::Title { raw_title }) = native_command.clone() {
+        let Some((store, freshness)) = &state.session_store else {
+            return Ok(Json(MessageResponse {
+                reply: "Session database not available.".into(),
+            }));
+        };
+        let result =
+            crate::session_commands::title_session(crate::session_commands::TitleCommand {
+                deps: crate::session_admission::AdmissionDeps {
+                    store: store.clone(),
+                    transcript_leases: state.turn_leases.clone(),
+                    route_leases: state.route_leases.clone(),
+                    generation: state.turn_generation.clone(),
+                },
+                source: crate::session::source_from_message(&msg),
+                owner_key: msg.sender_id.clone(),
+                raw_title,
+                freshness_seconds: *freshness,
+            })
+            .await
+            .map_err(|error| {
+                warn!(%error, "HTTP session title failed");
+                (
+                    StatusCode::SERVICE_UNAVAILABLE,
+                    Json(serde_json::json!({"error":"session title failed"})),
+                )
+            })?;
+        return Ok(Json(MessageResponse {
+            reply: result.reply,
+        }));
+    }
+
     if let Some(crate::slash::NativeSlashCommand::Resume {
         raw_args,
         from_sessions,
@@ -943,7 +975,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn http_reset_and_resume_preserve_history_cache_and_ownership() {
+    async fn http_title_reset_and_resume_preserve_history_cache_and_ownership() {
         struct RecordingAgent {
             turns: Arc<Mutex<Vec<(String, usize, String)>>>,
             ended: Arc<Mutex<Vec<Vec<Value>>>>,
@@ -1063,13 +1095,34 @@ mod tests {
             ..crate::session::SessionSource::new("local", "explicit")
         };
         let first_id = store.current_entry_for_source(&source).unwrap().session_id;
-        rusqlite::Connection::open(home.0.join("state.db"))
+        let title_reply = send("/title  First\t Work ")
+            .await
             .unwrap()
-            .execute(
-                "UPDATE sessions SET title = 'First Work', title_source = 'user' WHERE id = ?",
-                [&first_id],
-            )
+            .json::<Value>()
+            .await
             .unwrap();
+        assert_eq!(title_reply["reply"], "✏️ Session title set: **First Work**");
+        assert_eq!(turns.lock().unwrap().len(), 1);
+        assert_eq!(
+            db.get_session(&first_id).unwrap().unwrap()["title_source"],
+            "user"
+        );
+        assert_eq!(*builds.lock().unwrap(), 1);
+        assert_eq!(
+            rusqlite::Connection::open(home.0.join("state.db"))
+                .unwrap()
+                .query_row("SELECT COUNT(*) FROM conversation_generations", [], |row| {
+                    row.get::<_, usize>(0)
+                },)
+                .unwrap(),
+            0
+        );
+        let title_reply = send("/title").await.unwrap().json::<Value>().await.unwrap();
+        assert!(title_reply["reply"].as_str().unwrap().contains(&first_id));
+        assert!(title_reply["reply"]
+            .as_str()
+            .unwrap()
+            .contains("First Work"));
 
         let reset_reply = send("/reset").await.unwrap();
         assert_eq!(reset_reply.status(), StatusCode::OK);
@@ -1091,6 +1144,19 @@ mod tests {
             .contains("Session reset"));
         let second_id = store.current_entry_for_source(&source).unwrap().session_id;
         assert_ne!(second_id, first_id);
+
+        let duplicate = send("/title First Work")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(duplicate["reply"]
+            .as_str()
+            .unwrap()
+            .contains("already in use"));
+        assert_eq!(db.get_session_title(&second_id).unwrap(), None);
+        assert_eq!(turns.lock().unwrap().len(), 1);
 
         let second_reply = send("second").await.unwrap();
         assert_eq!(second_reply.status(), StatusCode::OK);
@@ -1346,7 +1412,12 @@ mod tests {
             )
             .unwrap(),
         );
-        let mut state = AppState::new(Arc::new(NeverRun), Arc::new(json!({})), None, Some(db));
+        let mut state = AppState::new(
+            Arc::new(NeverRun),
+            Arc::new(json!({})),
+            None,
+            Some(db.clone()),
+        );
         state.slash_confirmations = Arc::new(crate::slash_confirm::SlashConfirmations::new(
             config_path.clone(),
         ));
@@ -1358,7 +1429,7 @@ mod tests {
         )
         .await;
         let client = reqwest::Client::new();
-        let send = |text: &'static str| {
+        let send = |text: &str| {
             client
                 .post(format!("{url}/message"))
                 .json(&json!({"channel_id":"always","sender_id":"local","text":text}))
@@ -1385,7 +1456,12 @@ mod tests {
         );
         assert!(store.current_entry_for_source(&source).is_none());
 
-        let prompt = send("/new").await.unwrap().json::<Value>().await.unwrap();
+        let prompt = send("/new Project\t Phoenix")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
         assert!(prompt["reply"].as_str().unwrap().contains("Confirm /new"));
 
         let approved = send("/always")
@@ -1398,24 +1474,86 @@ mod tests {
             .as_str()
             .unwrap()
             .contains("will run without confirmation"));
+        assert!(approved["reply"]
+            .as_str()
+            .unwrap()
+            .contains("New session started: Project Phoenix"));
         let first_id = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_eq!(
+            db.get_session_title(&first_id).unwrap().as_deref(),
+            Some("Project Phoenix")
+        );
         let written = std::fs::read_to_string(&config_path).unwrap();
         assert!(written.contains("# keep this comment"));
         assert!(written.contains("destructive_slash_confirm: false"));
 
-        let immediate = send("/new").await.unwrap().json::<Value>().await.unwrap();
+        let immediate = send("/new Next Project")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
         assert!(immediate["reply"]
             .as_str()
             .unwrap()
-            .contains("Session reset"));
+            .contains("New session started: Next Project"));
         assert!(!immediate["reply"]
             .as_str()
             .unwrap()
             .contains("Confirm /new"));
-        assert_ne!(
-            store.current_entry_for_source(&source).unwrap().session_id,
-            first_id
+        let second_id = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(second_id, first_id);
+        assert_eq!(
+            db.get_session_title(&second_id).unwrap().as_deref(),
+            Some("Next Project")
         );
+
+        let duplicate = send("/new Project Phoenix")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(duplicate["reply"]
+            .as_str()
+            .unwrap()
+            .contains("already in use"));
+        assert!(duplicate["reply"]
+            .as_str()
+            .unwrap()
+            .contains("session started untitled"));
+        let third_id = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(third_id, second_id);
+        assert_eq!(db.get_session_title(&third_id).unwrap(), None);
+
+        let too_long_command = format!("/new {}", "a".repeat(101));
+        let too_long = send(&too_long_command)
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(too_long["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Title too long (101 chars, max 100)"));
+        let fourth_id = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(fourth_id, third_id);
+        assert_eq!(db.get_session_title(&fourth_id).unwrap(), None);
+
+        let empty = send("/new \u{200b}")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(empty["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Title is empty after cleanup"));
+        let fifth_id = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(fifth_id, fourth_id);
+        assert_eq!(db.get_session_title(&fifth_id).unwrap(), None);
     }
 
     #[tokio::test]
@@ -1606,7 +1744,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn unavailable_lifecycle_commands_and_resume_without_a_store_skip_the_agent() {
+    async fn unavailable_lifecycle_commands_and_session_metadata_without_a_store_skip_the_agent() {
         struct NeverRun;
         #[async_trait::async_trait]
         impl crate::agent::AgentClient for NeverRun {
@@ -1634,7 +1772,7 @@ mod tests {
             .unwrap();
             assert!(response.0.reply.contains("not available"));
         }
-        for text in ["/resume", "/sessions"] {
+        for text in ["/title", "/title Project", "/resume", "/sessions"] {
             let response = post_message(
                 State(state.clone()),
                 Json(MessageRequest {

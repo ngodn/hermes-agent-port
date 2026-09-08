@@ -11,6 +11,18 @@ pub struct ResumeResult {
     pub reply: String,
 }
 
+pub struct TitleResult {
+    pub reply: String,
+}
+
+pub struct TitleCommand {
+    pub deps: crate::session_admission::AdmissionDeps,
+    pub source: crate::session::SessionSource,
+    pub owner_key: String,
+    pub raw_title: Option<String>,
+    pub freshness_seconds: f64,
+}
+
 pub struct ResumeCommand<'a> {
     pub confirmations: &'a crate::slash_confirm::SlashConfirmations,
     pub deps: crate::session_admission::AdmissionDeps,
@@ -38,6 +50,126 @@ struct ResumeListQuery {
     lane: Option<String>,
     include_unnamed: bool,
     allow_override: bool,
+}
+
+/// Read or set the title of the transcript currently owned by one stable
+/// route. The title is metadata only: it does not rebuild the immutable prompt
+/// or evict the session-ID-keyed conversation client.
+pub async fn title_session(command: TitleCommand) -> anyhow::Result<TitleResult> {
+    let TitleCommand {
+        deps,
+        source,
+        owner_key,
+        raw_title,
+        freshness_seconds,
+    } = command;
+    let route_key = deps.store.session_key_for_source(&source);
+    for _ in 0..32 {
+        let route_token = deps
+            .route_leases
+            .acquire(
+                &route_key,
+                &owner_key,
+                deps.generation.fetch_add(1, Ordering::Relaxed),
+                None,
+            )
+            .await
+            .map_err(|error| anyhow::anyhow!(error))?;
+        let resolve_store = deps.store.clone();
+        let resolve_source = source.clone();
+        let entry = tokio::task::spawn_blocking(move || {
+            if let Some(entry) = resolve_store.current_entry_for_source(&resolve_source) {
+                return Ok(entry);
+            }
+            resolve_store
+                .get_or_create_session(&resolve_source, false, false, freshness_seconds, |_| {
+                    Ok(false)
+                })
+                .map_err(|error| anyhow::anyhow!("{error:#}"))
+        })
+        .await
+        .map_err(|error| anyhow::anyhow!("title session resolver failed: {error}"))??;
+        let transcript_token = deps
+            .transcript_leases
+            .acquire(
+                &entry.session_id,
+                &owner_key,
+                deps.generation.fetch_add(1, Ordering::Relaxed),
+                None,
+            )
+            .await
+            .map_err(|error| anyhow::anyhow!(error))?;
+        if !deps.store.route_matches(&entry) {
+            drop(transcript_token);
+            drop(route_token);
+            continue;
+        }
+        let materialize_store = deps.store.clone();
+        let materialize_entry = entry.clone();
+        let materialize_source = source.clone();
+        let database = tokio::task::spawn_blocking(move || {
+            materialize_store.materialize_session_entry(&materialize_entry, &materialize_source)
+        })
+        .await
+        .map_err(|error| anyhow::anyhow!("title session materializer failed: {error}"))??;
+        let session_id = entry.session_id.clone();
+        let result = if let Some(raw_title) = raw_title.as_deref() {
+            let title = match crate::session_db::sanitize_session_title(raw_title) {
+                Ok(Some(title)) => title,
+                Ok(None) => {
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(TitleResult {
+                        reply: "⚠️ Title is empty after cleanup. Please use printable characters."
+                            .into(),
+                    });
+                }
+                Err(error) => {
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(TitleResult {
+                        reply: format!("⚠️ {error}"),
+                    });
+                }
+            };
+            tokio::task::spawn_blocking(move || {
+                match database.set_user_session_title(&session_id, &title) {
+                    Ok(true) => Ok(TitleResult {
+                        reply: format!("✏️ Session title set: **{title}**"),
+                    }),
+                    Ok(false) => Ok(TitleResult {
+                        reply: "Session not found in database.".into(),
+                    }),
+                    Err(crate::session_db::SetSessionTitleError::Rejected(error)) => {
+                        Ok(TitleResult {
+                            reply: format!("⚠️ {error}"),
+                        })
+                    }
+                    Err(crate::session_db::SetSessionTitleError::Database(error)) => Err(error),
+                }
+            })
+            .await
+            .map_err(|error| anyhow::anyhow!("title writer failed: {error}"))?
+            .map_err(|error| anyhow::anyhow!(error))?
+        } else {
+            let query_session_id = session_id.clone();
+            let title =
+                tokio::task::spawn_blocking(move || database.get_session_title(&query_session_id))
+                    .await
+                    .map_err(|error| anyhow::anyhow!("title reader failed: {error}"))??;
+            let reply = match title {
+                Some(title) => format!("📌 Session: `{session_id}`\nTitle: **{title}**"),
+                None => format!(
+                    "📌 Session: `{session_id}`\nNo title set. Usage: `/title My Session Name`"
+                ),
+            };
+            TitleResult { reply }
+        };
+        drop(transcript_token);
+        drop(route_token);
+        return Ok(result);
+    }
+    anyhow::bail!("session route kept changing during title update")
 }
 
 fn parse_resume_request(raw: &str, from_sessions: bool) -> anyhow::Result<ResumeRequest> {
@@ -671,17 +803,54 @@ pub async fn reset_session(
                 predecessor_id,
             );
         }
-        drop(lease);
-        drop(route_lease);
-
         let mut reply = if reset.predecessor_id.is_some() {
             "✨ Session reset! Starting fresh.".to_owned()
         } else {
             "✨ New session started!".to_owned()
         };
-        if title.is_some() {
-            reply.push_str("\n\nSession titles are not available in the native gateway yet.");
+        if let Some(raw_title) = title.as_deref() {
+            match crate::session_db::sanitize_session_title(raw_title) {
+                Err(error) => {
+                    reply.push_str(&format!("\n⚠️ Title rejected: {error}"));
+                }
+                Ok(None) => {
+                    reply.push_str("\n⚠️ Title is empty after cleanup - session started untitled.");
+                }
+                Ok(Some(title)) => {
+                    let database = deps.store.database_for_key(&reset.entry.session_key);
+                    let session_id = reset.entry.session_id.clone();
+                    let title_for_write = title.clone();
+                    let persisted = if let Some(database) = database {
+                        tokio::task::spawn_blocking(move || {
+                            database.set_user_session_title(&session_id, &title_for_write)
+                        })
+                        .await
+                        .map_err(|error| anyhow::anyhow!("reset title writer failed: {error}"))?
+                    } else {
+                        Err(crate::session_db::SetSessionTitleError::Rejected(
+                            "Session database not available".into(),
+                        ))
+                    };
+                    match persisted {
+                        Ok(true) => reply = format!("✨ New session started: {title}"),
+                        Ok(false) => reply.push_str(
+                            "\n⚠️ Session not found in database - session started untitled.",
+                        ),
+                        Err(crate::session_db::SetSessionTitleError::Rejected(error)) => {
+                            reply.push_str(&format!("\n⚠️ {error} - session started untitled."));
+                        }
+                        Err(crate::session_db::SetSessionTitleError::Database(error)) => {
+                            tracing::warn!(%error, "could not persist title for reset session");
+                            reply.push_str(
+                                "\n⚠️ Could not save the title - session started untitled.",
+                            );
+                        }
+                    }
+                }
+            }
         }
+        drop(lease);
+        drop(route_lease);
         return Ok(ResetResult { reply });
     }
     anyhow::bail!("session route kept changing during reset")
@@ -690,6 +859,160 @@ pub async fn reset_session(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn temp_home(label: &str) -> std::path::PathBuf {
+        std::env::temp_dir().join(format!(
+            "hermes-title-{label}-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ))
+    }
+
+    #[tokio::test]
+    async fn title_materializes_a_cold_route_without_a_model_turn() {
+        let home = temp_home("cold");
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource {
+            user_id: Some("user".into()),
+            ..crate::session::SessionSource::new("local", "title-only")
+        };
+        let deps = crate::session_admission::AdmissionDeps {
+            store: store.clone(),
+            transcript_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+            route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+            generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
+        };
+        let result = title_session(TitleCommand {
+            deps: deps.clone(),
+            source: source.clone(),
+            owner_key: "user".into(),
+            raw_title: Some("  Cold\tProject  ".into()),
+            freshness_seconds: 3600.0,
+        })
+        .await
+        .unwrap();
+        assert_eq!(result.reply, "✏️ Session title set: **Cold Project**");
+        let entry = store.current_entry_for_source(&source).unwrap();
+        let database = store.database_for_key(&entry.session_key).unwrap();
+        let row = database.get_session(&entry.session_id).unwrap().unwrap();
+        assert_eq!(row["title"], "Cold Project");
+        assert_eq!(row["title_source"], "user");
+        assert_eq!(database.user_message_count(&entry.session_id).unwrap(), 0);
+
+        let shown = title_session(TitleCommand {
+            deps: deps.clone(),
+            source: source.clone(),
+            owner_key: "user".into(),
+            raw_title: None,
+            freshness_seconds: 3600.0,
+        })
+        .await
+        .unwrap();
+        assert!(shown.reply.contains(&entry.session_id));
+        assert!(shown.reply.contains("Cold Project"));
+
+        let invalid_source = crate::session::SessionSource {
+            user_id: Some("user".into()),
+            ..crate::session::SessionSource::new("local", "invalid-title-only")
+        };
+        let rejected = title_session(TitleCommand {
+            deps,
+            source: invalid_source.clone(),
+            owner_key: "user".into(),
+            raw_title: Some("\0\u{200b}".into()),
+            freshness_seconds: 3600.0,
+        })
+        .await
+        .unwrap();
+        assert!(rejected.reply.contains("empty after cleanup"));
+        let invalid_entry = store.current_entry_for_source(&invalid_source).unwrap();
+        assert!(store
+            .database_for_key(&invalid_entry.session_key)
+            .unwrap()
+            .get_session(&invalid_entry.session_id)
+            .unwrap()
+            .is_some());
+        drop(database);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn title_waits_for_the_current_transcript_lease() {
+        let home = temp_home("in_flight");
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource {
+            user_id: Some("user".into()),
+            ..crate::session::SessionSource::new("local", "in-flight-title")
+        };
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let transcript_leases = Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default());
+        let held = transcript_leases
+            .acquire(&entry.session_id, "turn", 1, None)
+            .await
+            .unwrap();
+        let title = tokio::spawn(title_session(TitleCommand {
+            deps: crate::session_admission::AdmissionDeps {
+                store: store.clone(),
+                transcript_leases: transcript_leases.clone(),
+                route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+                generation: Arc::new(std::sync::atomic::AtomicU64::new(2)),
+            },
+            source,
+            owner_key: "title".into(),
+            raw_title: Some("After Turn".into()),
+            freshness_seconds: 3600.0,
+        }));
+        tokio::task::yield_now().await;
+        assert!(!title.is_finished());
+        drop(held);
+        let result = tokio::time::timeout(std::time::Duration::from_secs(5), title)
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap();
+        assert_eq!(result.reply, "✏️ Session title set: **After Turn**");
+        let database = store.database_for_key(&entry.session_key).unwrap();
+        assert_eq!(
+            database
+                .get_session_title(&entry.session_id)
+                .unwrap()
+                .as_deref(),
+            Some("After Turn")
+        );
+        drop(database);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
 
     #[test]
     fn resume_arguments_follow_gateway_shell_and_wrapper_rules() {

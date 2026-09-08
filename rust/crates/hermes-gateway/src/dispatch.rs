@@ -323,6 +323,37 @@ impl Dispatcher {
             SlashDecision::NotSlash => {}
         }
 
+        if let Some(crate::slash::NativeSlashCommand::Title { raw_title }) = native_command.clone()
+        {
+            let Some((store, freshness)) = &self.session_store else {
+                self.deliver(&msg, "Session database not available.".into())
+                    .await;
+                return;
+            };
+            match crate::session_commands::title_session(crate::session_commands::TitleCommand {
+                deps: crate::session_admission::AdmissionDeps {
+                    store: store.clone(),
+                    transcript_leases: self.lease.clone(),
+                    route_leases: self.route_lease.clone(),
+                    generation: self.generation.clone(),
+                },
+                source: crate::session::source_from_message(&msg),
+                owner_key: msg.sender_id.clone(),
+                raw_title,
+                freshness_seconds: *freshness,
+            })
+            .await
+            {
+                Ok(result) => self.deliver(&msg, result.reply).await,
+                Err(error) => {
+                    warn!(%error, "push session title failed");
+                    self.deliver(&msg, "Session title failed. Please try again.".into())
+                        .await;
+                }
+            }
+            return;
+        }
+
         if let Some(crate::slash::NativeSlashCommand::Resume {
             raw_args,
             from_sessions,
@@ -1114,7 +1145,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn push_reset_and_resume_rotate_without_forwarding_control_messages() {
+    async fn push_title_reset_and_resume_skip_model_control_traffic() {
         let home = std::env::temp_dir().join(format!(
             "hermes-push-reset-{}-{}",
             std::process::id(),
@@ -1148,13 +1179,14 @@ mod tests {
         let db = store
             .database_for_key(&store.session_key_for_source(&source))
             .unwrap();
-        rusqlite::Connection::open(home.join("state.db"))
-            .unwrap()
-            .execute(
-                "UPDATE sessions SET title = 'First Work', title_source = 'user' WHERE id = ?",
-                [&first_id],
-            )
-            .unwrap();
+        dispatcher
+            .handle_turn(cli_msg("/title First Work", "u"))
+            .await;
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            db.get_session_title(&first_id).unwrap().as_deref(),
+            Some("First Work")
+        );
         dispatcher.handle_turn(cli_msg("/sessions all", "u")).await;
         assert_eq!(calls.load(Ordering::SeqCst), 1);
         assert!(sent
@@ -1177,9 +1209,9 @@ mod tests {
         assert_ne!(second_id, first_id);
         {
             let output = sent.lock().unwrap();
-            assert_eq!(output.len(), 4);
-            assert!(output[2].text.contains("Confirm /new"));
-            assert!(output[3].text.contains("Session reset"));
+            assert_eq!(output.len(), 5);
+            assert!(output[3].text.contains("Confirm /new"));
+            assert!(output[4].text.contains("Session reset"));
         }
         assert_eq!(
             db.get_session(&first_id).unwrap().unwrap()["end_reason"],
