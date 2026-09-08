@@ -1,5 +1,70 @@
 # Hermes Rust rewrite
 
+## Native secure resume checkpoint: 2026-09-08
+
+Native `/resume` and `/sessions` now execute as gateway control commands on
+both HTTP and push ingress. Direct IDs win over titles, exact title lookup
+follows the newest numbered continuation, numeric choices use the recent named
+list, and `/sessions full` exposes untitled native sessions with discoverable
+IDs and first-message previews. Shell quoting, literal wrapper removal,
+one-based range errors, current-session no-op replies, and non-admin widening
+notices follow the Python command surface. `/sessions search` remains explicit
+about being unavailable instead of falling through to the model.
+
+The authorization boundary treats every ID, title, and list row as a routing
+handle rather than authority. Normal resume requires the same profile database,
+stable route, platform, chat, thread, and DM user. Rows owned by a different
+HTTP sender on the same channel are neither listed nor resumable. Cross-origin
+access requires an explicit `--all` or `--cross-room` from an admin configured
+under an enabled slash policy. An ungated platform grants command use but never
+grants the data-access override.
+
+The durable transition is one `BEGIN IMMEDIATE` SQLite transaction. It closes
+the outgoing routing epoch as `session_switch`, bumps its conversation
+generation, stamps legacy reset children, reopens the existing target, updates
+the target and compression ancestors with the live peer, and upserts the stable
+route. In-memory routing is published only after commit. An injected trigger
+failure proves the session rows, generation and route all roll back together.
+
+The async path acquires the stable-route lease followed by both transcript
+leases in sorted ID order. It rechecks the route and authorization after
+locking, then retries lost compare-and-swap races. A real held HTTP turn proves
+resume waits for the assistant reply to persist into the outgoing transcript
+before switching.
+
+Conversation clients remain keyed by profile home plus immutable session ID.
+Resume does not hard-retire the switched-away client or run end-of-session
+extraction. A real HTTP round trip resumes a still-warm prior client without a
+rebuild and supplies its original transcript, while reset still performs its
+true hard boundary.
+
+Coverage includes ID/title/number selection, wildcard escaping, titled and full
+listing, first-message previews, same-channel foreign-user and foreign-chat
+rejection, explicit-admin widening, non-admin downgrade, current-target no-op,
+compression-tip selection, stale CAS, atomic rollback, warm-client reuse,
+in-flight ordering, and model exclusion across real HTTP and push paths. Full
+workspace validation is **1,541 passed, two ignored**. The selected Python
+resume contract suite is **35 passed** under the checkout Python 3.11.15.
+Formatting, Clippy with warnings denied, and `git diff --check` pass.
+
+Gemini and Claude were both used through `rust/tools/agy.sh` and
+`rust/tools/claude.sh` for source mapping and post-implementation review. Their
+reports and the independently checked resolution are indexed under
+`rust/analysis/`. The transaction design also followed the repository's ACID
+discipline: one minimal durable write set, deterministic locking, and no
+provider or network I/O inside the transaction.
+
+The [weighted full-port audit](analysis/progress-audit-2026-09-08.md) remains
+**about 41%** (rough range 39% to 43%). This closes one important gateway
+lifecycle seam but does not materially change the much larger remaining agent,
+tool, plugin, memory, adapter and UI inventory. Next: native `/title` and
+`/new <title>` persistence, then real
+compression boundaries, transparent extension-host respawn, native plugin and
+external-memory managers, and the remaining agent loop and tool runtime.
+`/sessions search`, automatic titles, the full reset/branch/delegate-aware
+descendant resolver, Matrix room semantics, and adapter picker UI remain
+explicit follow-ups. This is not completion of the full port.
+
 ## Native destructive slash confirmation checkpoint: 2026-09-08
 
 Native `/new` and `/reset` now use the Python-compatible destructive-command

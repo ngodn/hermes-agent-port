@@ -12,6 +12,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   Preserve that gate; helper results still need independent source verification.
 - Inbound media classification is pure; the enclosing Tier 2 pipeline also
   performs model/network calls and per-session mutations.
+- Resume IDs and titles are routing handles, never authority. Normal callers
+  must match route, chat, thread and DM user; see
+  [native-resume-resolution.md](native-resume-resolution.md).
+- Conversation clients are keyed by profile home and immutable session ID.
+  Resume changes the route key target and must not hard-retire the outgoing
+  resumable client.
 
 ## Rejected paths
 
@@ -21,6 +27,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 - Do not substitute another model for either requested helper silently.
 - Do not merge helper code on the strength of its own tests or completion
   report. Python behavioral comparison caught earlier helper test mistakes.
+- Do not title-gate every native session picker before a title writer exists.
+  `/sessions full` is the discoverable ID path until `/title` and auto-title
+  are native.
 
 ## Artifacts
 
@@ -42,6 +51,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [destructive-slash-confirm-map-claude.md](destructive-slash-confirm-map-claude.md) | Independent audit of Python's destructive slash-confirm primitive (gate default, exactly-once resolve, once/always/cancel replies, config write) and a narrow Rust design for a text-fallback confirm wrapping native `/new` `/reset`, with the config-snapshot and comment-preserving-write risks, security/concurrency review, tests, and the buttons-deferred boundary |
 | [destructive-slash-confirm-map-agy.md](destructive-slash-confirm-map-agy.md) | Gemini source audit of route-scoped state, pop-before-action resolution, live config reads, lease timing, access control and deterministic confirmation tests |
 | [destructive-slash-confirm-resolution.md](destructive-slash-confirm-resolution.md) | Implemented confirmation design and verified disposition of both helper audits, including parser corrections, durable config writes and explicit adapter-button deferral |
+| [native-resume-map-claude.md](native-resume-map-claude.md) | Independent audit of Python `/resume` `/sessions` (soft `switch_session` + reopen, titled-vs-preview list, IDOR fail-closed scope, compression-tip landing, no confirm) and the narrowest native checkpoint: own-route preview list + `/resume <N\|id>` soft switch fenced by route+transcript lease and CAS, needing new `switch_session`/`reopen_session`/per-route-listing seams; no cache retirement thanks to id-keyed cache; titles, admin cross-scope, search/full, buttons deferred |
+| [native-resume-map-agy.md](native-resume-map-agy.md) | Retained Gemini source map of the resume authorization, route transition, lease, cache and test invariants used for implementation |
+| [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
+| [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
+| [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 41% weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [extension-host-review-resolution.md](extension-host-review-resolution.md) | Verified disposition of both implementation reviews, with fixed findings, tests, and explicit lifecycle deferrals |
 | [extension-host-implementation-review-agy.md](extension-host-implementation-review-agy.md) | Gemini post-implementation audit of protocol health, collisions, secrets, multimodal results and process cleanup |
 | [extension-host-implementation-review-claude.md](extension-host-implementation-review-claude.md) | Claude post-implementation compatibility review, including auto-loaded backends, route identity and cache-lifetime gaps |

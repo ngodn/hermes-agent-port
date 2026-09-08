@@ -621,6 +621,30 @@ pub struct RoutingWriter {
 }
 
 impl RoutingWriter {
+    /// Advance the writer's revision after a caller committed the routing row
+    /// inside a wider SQLite transaction. The database is already authoritative;
+    /// the optional JSON mirror remains best effort.
+    pub(crate) fn accept_database_commit(&self, mut snapshot: RoutingSnapshot, mirror: bool) {
+        let mut state = self.state.lock().unwrap();
+        if snapshot.revision <= state.persisted {
+            return;
+        }
+        for (key, (revision, entry)) in &state.fast {
+            if *revision > snapshot.revision {
+                snapshot.data.insert(key.clone(), entry.clone());
+            }
+        }
+        if mirror {
+            if let Err(error) = self.save_mirror(snapshot.data) {
+                tracing::warn!(%error, "legacy routing mirror failed after resume transaction");
+            }
+        }
+        state.persisted = snapshot.revision;
+        state
+            .fast
+            .retain(|_, (revision, _)| *revision > snapshot.revision);
+    }
+
     pub fn persist(
         &self,
         mut snapshot: RoutingSnapshot,

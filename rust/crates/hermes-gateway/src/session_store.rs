@@ -36,6 +36,12 @@ pub struct ExplicitSessionReset {
     pub predecessor_id: Option<String>,
 }
 
+#[derive(Clone, Debug)]
+pub struct ExplicitSessionSwitch {
+    pub entry: crate::session_entry::SessionEntry,
+    pub predecessor_id: String,
+}
+
 struct SessionOrigin<'a> {
     source: &'a crate::session::SessionSource,
     legacy: Option<(&'a str, &'a str)>,
@@ -163,6 +169,89 @@ impl SessionStore {
             entry,
             predecessor_id,
         }))
+    }
+
+    /// Repoint a stable route to an existing transcript. The caller must hold
+    /// the route plus both transcript leases. SQLite owns the atomic durable
+    /// transition; memory is published only after that transaction commits.
+    pub fn switch_session(
+        &self,
+        source: &crate::session::SessionSource,
+        expected: &crate::session_entry::SessionEntry,
+        target_session_id: &str,
+    ) -> anyhow::Result<Option<ExplicitSessionSwitch>> {
+        let key = self.session_key_for_source(source);
+        self.reconcile(self.databases.routing().as_deref());
+        let db = self
+            .databases
+            .for_key(&key, &self.home)
+            .ok_or_else(|| anyhow::anyhow!("session database is unavailable"))?;
+        let (entry, writer, snapshot) = {
+            let mut index = self.index.lock().unwrap();
+            let Some(current) = index.entries.get(&key) else {
+                return Ok(None);
+            };
+            if !current.same_instance(expected) || current.session_id != expected.session_id {
+                return Ok(None);
+            }
+            if target_session_id == current.session_id {
+                return Ok(Some(ExplicitSessionSwitch {
+                    entry: current.clone(),
+                    predecessor_id: current.session_id.clone(),
+                }));
+            }
+            let candidate = crate::session_entry::SessionEntry::resumed_candidate(
+                current,
+                target_session_id,
+                chrono::Local::now().naive_local(),
+            )?;
+            let entry_json = candidate.to_dict().to_string();
+            let origin_json = source.to_dict().to_string();
+            let display_name = candidate.fields["display_name"].as_str();
+            let switched = db.switch_gateway_session(&crate::session_db::GatewaySessionSwitch {
+                scope: index.scope(),
+                session_key: &key,
+                entry_json: &entry_json,
+                outgoing_id: &current.session_id,
+                target_id: target_session_id,
+                peer: crate::session_db::GatewayPeer {
+                    source: &source.platform,
+                    session_key: Some(&key),
+                    user_id: source.user_id.as_deref(),
+                    chat_id: Some(&source.chat_id),
+                    chat_type: Some(&source.chat_type),
+                    thread_id: source.thread_id.as_deref(),
+                },
+                display_name,
+                origin_json: Some(&origin_json),
+            })?;
+            if !switched {
+                return Ok(None);
+            }
+            index.entries.insert(key.clone(), candidate.clone());
+            let writer = index.writer.clone();
+            let snapshot = index.snapshot_loaded();
+            (candidate, writer, snapshot)
+        };
+        writer.accept_database_commit(snapshot, self.config.write_sessions_json);
+        Ok(Some(ExplicitSessionSwitch {
+            entry,
+            predecessor_id: expected.session_id.clone(),
+        }))
+    }
+
+    pub fn lookup_by_session_id(
+        &self,
+        session_id: &str,
+    ) -> Option<crate::session_entry::SessionEntry> {
+        self.reconcile(self.databases.routing().as_deref());
+        self.index
+            .lock()
+            .unwrap()
+            .entries
+            .values()
+            .find(|entry| entry.session_id == session_id)
+            .cloned()
     }
 
     pub fn database_for_key(&self, key: &str) -> Option<Arc<crate::session_db::SessionDb>> {
@@ -1211,6 +1300,74 @@ mod tests {
             .unwrap()
             .unwrap();
         assert!(row["parent_session_id"].is_null());
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[test]
+    fn explicit_resume_commits_route_boundary_and_reopen_together() {
+        let home = transition_home("explicit_resume");
+        let store = SessionStore::open(
+            GatewayConfig {
+                sessions_dir: home.join("sessions"),
+                ..Default::default()
+            },
+            home.clone(),
+            home.clone(),
+            "default".into(),
+            |_| Ok(false),
+        )
+        .unwrap();
+        let mut source = SessionSource::new("telegram", "C");
+        source.user_id = Some("U".into());
+        let current = store
+            .get_or_create_session(&source, false, true, 3600.0, |_| Ok(false))
+            .unwrap();
+        let db = store.database_for_key(&current.session_key).unwrap();
+        db.create_session(
+            "old-target",
+            &SessionCreate {
+                peer: GatewayPeer {
+                    source: "telegram",
+                    session_key: Some(&current.session_key),
+                    user_id: Some("U"),
+                    chat_id: Some("C"),
+                    chat_type: Some("dm"),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.end_session("old-target", "agent_close").unwrap();
+
+        let switched = store
+            .switch_session(&source, &current, "old-target")
+            .unwrap()
+            .unwrap();
+        assert_eq!(switched.entry.session_id, "old-target");
+        assert_eq!(switched.predecessor_id, current.session_id);
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            "old-target"
+        );
+        assert_eq!(
+            db.get_session(&current.session_id).unwrap().unwrap()["end_reason"],
+            "session_switch"
+        );
+        let target = db.get_session("old-target").unwrap().unwrap();
+        assert!(target["ended_at"].is_null());
+        assert_eq!(target["session_key"], current.session_key);
+        assert!(store
+            .switch_session(&source, &current, &current.session_id)
+            .unwrap()
+            .is_none());
+        let live = store.current_entry_for_source(&source).unwrap();
+        assert!(store
+            .switch_session(&source, &live, "missing")
+            .unwrap()
+            .is_none());
+        drop(db);
         drop(store);
         std::fs::remove_dir_all(home).unwrap();
     }

@@ -154,6 +154,45 @@ pub async fn post_message(
         crate::slash::SlashDecision::NotSlash => {}
     }
 
+    if let Some(crate::slash::NativeSlashCommand::Resume {
+        raw_args,
+        from_sessions,
+    }) = native_command.clone()
+    {
+        let Some((store, _)) = &state.session_store else {
+            return Ok(Json(MessageResponse {
+                reply: "Session database not available.".into(),
+            }));
+        };
+        let result =
+            crate::session_commands::resume_session(crate::session_commands::ResumeCommand {
+                confirmations: &state.slash_confirmations,
+                deps: crate::session_admission::AdmissionDeps {
+                    store: store.clone(),
+                    transcript_leases: state.turn_leases.clone(),
+                    route_leases: state.route_leases.clone(),
+                    generation: state.turn_generation.clone(),
+                },
+                agent: state.agent.clone(),
+                source: crate::session::source_from_message(&msg),
+                message: &msg,
+                user_config: &state.user_config,
+                raw_args: &raw_args,
+                from_sessions,
+            })
+            .await
+            .map_err(|error| {
+                warn!(%error, "HTTP session resume failed");
+                (
+                    StatusCode::SERVICE_UNAVAILABLE,
+                    Json(serde_json::json!({"error":"session resume failed"})),
+                )
+            })?;
+        return Ok(Json(MessageResponse {
+            reply: result.reply,
+        }));
+    }
+
     if let Some(crate::slash::NativeSlashCommand::Reset { title }) = native_command {
         let Some((store, _)) = &state.session_store else {
             return Ok(Json(MessageResponse {
@@ -904,7 +943,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn explicit_http_reset_rotates_history_and_retires_the_old_client() {
+    async fn http_reset_and_resume_preserve_history_cache_and_ownership() {
         struct RecordingAgent {
             turns: Arc<Mutex<Vec<(String, usize, String)>>>,
             ended: Arc<Mutex<Vec<Vec<Value>>>>,
@@ -964,6 +1003,7 @@ mod tests {
         );
         let turns = Arc::new(Mutex::new(Vec::new()));
         let ended = Arc::new(Mutex::new(Vec::new()));
+        let builds = Arc::new(Mutex::new(0usize));
         let fallback = Arc::new(RecordingAgent {
             turns: turns.clone(),
             ended: ended.clone(),
@@ -973,10 +1013,13 @@ mod tests {
             {
                 let turns = turns.clone();
                 let ended = ended.clone();
+                let builds = builds.clone();
                 move |_, _, _, _| {
                     let turns = turns.clone();
                     let ended = ended.clone();
+                    let builds = builds.clone();
                     Box::pin(async move {
+                        *builds.lock().unwrap() += 1;
                         Ok(Arc::new(RecordingAgent { turns, ended })
                             as Arc<dyn crate::agent::AgentClient>)
                     })
@@ -984,7 +1027,14 @@ mod tests {
             },
             crate::agent_cache_pressure::AgentCacheBounds::default(),
         ));
-        let mut state = AppState::new(cache, Arc::new(json!({})), None, Some(db.clone()));
+        let mut state = AppState::new(
+            cache,
+            Arc::new(json!({"platforms":{"cli":{"extra":{
+                "allow_admin_from":["local"]
+            }}}})),
+            None,
+            Some(db.clone()),
+        );
         state.slash_confirmations = Arc::new(crate::slash_confirm::SlashConfirmations::new(
             home.0.join("config.yaml"),
         ));
@@ -996,7 +1046,7 @@ mod tests {
         )
         .await;
         let client = reqwest::Client::new();
-        let send = |text: &'static str| {
+        let send = |text: &str| {
             client
                 .post(format!("{url}/message"))
                 .json(&json!({"channel_id":"explicit","sender_id":"local","text":text}))
@@ -1013,6 +1063,13 @@ mod tests {
             ..crate::session::SessionSource::new("local", "explicit")
         };
         let first_id = store.current_entry_for_source(&source).unwrap().session_id;
+        rusqlite::Connection::open(home.0.join("state.db"))
+            .unwrap()
+            .execute(
+                "UPDATE sessions SET title = 'First Work', title_source = 'user' WHERE id = ?",
+                [&first_id],
+            )
+            .unwrap();
 
         let reset_reply = send("/reset").await.unwrap();
         assert_eq!(reset_reply.status(), StatusCode::OK);
@@ -1041,21 +1098,10 @@ mod tests {
             second_reply.json::<Value>().await.unwrap()["reply"],
             "answer"
         );
-        {
-            let turns = turns.lock().unwrap();
-            assert_eq!(
-                turns.as_slice(),
-                [
-                    (first_id.clone(), 0, "first".into()),
-                    (second_id.clone(), 0, "second".into()),
-                ]
-            );
-        }
-        let first_row = db.get_session(&first_id).unwrap().unwrap();
-        assert_eq!(first_row["end_reason"], "session_reset");
-        let second_row = db.get_session(&second_id).unwrap().unwrap();
-        assert_eq!(second_row["parent_session_id"], first_id);
-
+        assert_eq!(
+            db.get_session(&first_id).unwrap().unwrap()["end_reason"],
+            "session_reset"
+        );
         tokio::time::timeout(std::time::Duration::from_secs(5), async {
             while ended.lock().unwrap().is_empty() {
                 tokio::task::yield_now().await;
@@ -1063,6 +1109,202 @@ mod tests {
         })
         .await
         .unwrap();
+
+        db.create_session(
+            "foreign-session",
+            &crate::session_db::SessionCreate {
+                peer: crate::session_db::GatewayPeer {
+                    source: "local",
+                    session_key: Some("agent:main:local:dm:other"),
+                    user_id: Some("local"),
+                    chat_id: Some("other"),
+                    chat_type: Some("dm"),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let route_key = store.session_key_for_source(&source);
+        db.create_session(
+            "foreign-user-session",
+            &crate::session_db::SessionCreate {
+                peer: crate::session_db::GatewayPeer {
+                    source: "local",
+                    session_key: Some(&route_key),
+                    user_id: Some("intruder"),
+                    chat_id: Some("explicit"),
+                    chat_type: Some("dm"),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        rusqlite::Connection::open(home.0.join("state.db"))
+            .unwrap()
+            .execute_batch(
+                "UPDATE sessions SET title = 'Foreign Work', title_source = 'user'
+                 WHERE id = 'foreign-session';
+                 UPDATE sessions SET title = 'Foreign User', title_source = 'user'
+                 WHERE id = 'foreign-user-session';",
+            )
+            .unwrap();
+        let listing = send("/sessions")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(listing["reply"].as_str().unwrap().contains("First Work"));
+        assert!(!listing["reply"].as_str().unwrap().contains("Foreign Work"));
+        assert!(!listing["reply"].as_str().unwrap().contains("Foreign User"));
+        let full_listing = send("/sessions full")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(full_listing["reply"].as_str().unwrap().contains(&second_id));
+        assert!(!full_listing["reply"]
+            .as_str()
+            .unwrap()
+            .contains("foreign-session"));
+        assert!(!full_listing["reply"]
+            .as_str()
+            .unwrap()
+            .contains("foreign-user-session"));
+        let blocked = send("/resume Foreign Work")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(blocked["reply"]
+            .as_str()
+            .unwrap()
+            .contains("belongs to a different user or chat"));
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            second_id
+        );
+        let blocked_user = send("/resume Foreign User")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(blocked_user["reply"]
+            .as_str()
+            .unwrap()
+            .contains("belongs to a different user or chat"));
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            second_id
+        );
+
+        let resume_reply = send("/resume 1").await.unwrap();
+        assert_eq!(resume_reply.status(), StatusCode::OK);
+        assert!(resume_reply.json::<Value>().await.unwrap()["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Resumed session **First Work**"));
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
+        assert_eq!(turns.lock().unwrap().len(), 2);
+        let already = send("/resume First Work")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(already["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Already on session **First Work**"));
+        assert_eq!(turns.lock().unwrap().len(), 2);
+        let admin_switch = send("/resume Foreign Work --all")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(admin_switch["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Resumed session **Foreign Work**"));
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            "foreign-session"
+        );
+        let admin_return = send("/resume First Work --all")
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(admin_return["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Resumed session **First Work**"));
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
+        assert_eq!(turns.lock().unwrap().len(), 2);
+
+        let resumed_turn = send("third").await.unwrap();
+        assert_eq!(resumed_turn.status(), StatusCode::OK);
+        assert_eq!(
+            resumed_turn.json::<Value>().await.unwrap()["reply"],
+            "answer"
+        );
+        {
+            let turns = turns.lock().unwrap();
+            assert_eq!(
+                turns.as_slice(),
+                [
+                    (first_id.clone(), 0, "first".into()),
+                    (second_id.clone(), 0, "second".into()),
+                    (first_id.clone(), 2, "third".into()),
+                ]
+            );
+        }
+        let first_row = db.get_session(&first_id).unwrap().unwrap();
+        assert!(first_row["end_reason"].is_null());
+        let second_row = db.get_session(&second_id).unwrap().unwrap();
+        assert_eq!(second_row["parent_session_id"], first_id);
+        assert_eq!(second_row["end_reason"], "session_switch");
+        assert_eq!(*builds.lock().unwrap(), 3);
+
+        let resume_warm = send(&format!("/resume {second_id}"))
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert!(resume_warm["reply"]
+            .as_str()
+            .unwrap()
+            .contains("Conversation restored"));
+        let warm_turn = send("fourth").await.unwrap();
+        assert_eq!(warm_turn.status(), StatusCode::OK);
+        assert_eq!(warm_turn.json::<Value>().await.unwrap()["reply"], "answer");
+        assert_eq!(*builds.lock().unwrap(), 3);
+        let turns = turns.lock().unwrap();
+        assert_eq!(
+            turns.last().unwrap(),
+            &(second_id.clone(), 2, "fourth".into())
+        );
+        drop(turns);
+        assert!(db.get_session(&second_id).unwrap().unwrap()["end_reason"].is_null());
+        assert_eq!(
+            db.get_session(&first_id).unwrap().unwrap()["end_reason"],
+            "session_switch"
+        );
+
         let ended = ended.lock().unwrap();
         assert_eq!(ended.len(), 1);
         assert_eq!(ended[0].len(), 2);
@@ -1177,7 +1419,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn explicit_http_reset_waits_for_in_flight_persistence() {
+    async fn http_reset_and_resume_wait_for_in_flight_persistence() {
         struct GateAgent {
             entered: tokio::sync::Notify,
             release: tokio::sync::Semaphore,
@@ -1260,7 +1502,7 @@ mod tests {
         .unwrap();
         assert!(prompt.0.reply.contains("Confirm /new"));
         let reset = tokio::spawn(post_message(
-            State(state),
+            State(state.clone()),
             Json(MessageRequest {
                 channel_id: "reset-race".into(),
                 sender_id: "local".into(),
@@ -1298,10 +1540,73 @@ mod tests {
             db.get_session(&first_id).unwrap().unwrap()["end_reason"],
             "session_reset"
         );
+
+        let second_id = store.current_entry_for_source(&source).unwrap().session_id;
+        rusqlite::Connection::open(home.0.join("state.db"))
+            .unwrap()
+            .execute(
+                "UPDATE sessions SET title = 'First Work', title_source = 'user' WHERE id = ?",
+                [&first_id],
+            )
+            .unwrap();
+        let second = tokio::spawn(post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "reset-race".into(),
+                sender_id: "local".into(),
+                text: "second".into(),
+                content_parts: None,
+            }),
+        ));
+        tokio::time::timeout(std::time::Duration::from_secs(5), agent.entered.notified())
+            .await
+            .unwrap();
+        let resume = tokio::spawn(post_message(
+            State(state),
+            Json(MessageRequest {
+                channel_id: "reset-race".into(),
+                sender_id: "local".into(),
+                text: "/resume First Work".into(),
+                content_parts: None,
+            }),
+        ));
+        tokio::pin!(resume);
+        assert!(
+            tokio::time::timeout(std::time::Duration::from_millis(50), &mut resume)
+                .await
+                .is_err()
+        );
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            second_id
+        );
+
+        agent.release.add_permits(1);
+        assert_eq!(second.await.unwrap().unwrap().0.reply, "persisted");
+        let resume_reply = tokio::time::timeout(std::time::Duration::from_secs(5), resume)
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap();
+        assert!(resume_reply
+            .0
+            .reply
+            .contains("Resumed session **First Work**"));
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
+        let second_history = db.load_history(&second_id, 0).unwrap();
+        assert_eq!(second_history.len(), 2);
+        assert_eq!(second_history[1].content, "persisted");
+        assert_eq!(
+            db.get_session(&second_id).unwrap().unwrap()["end_reason"],
+            "session_switch"
+        );
     }
 
     #[tokio::test]
-    async fn unported_lifecycle_commands_never_reach_the_agent() {
+    async fn unavailable_lifecycle_commands_and_resume_without_a_store_skip_the_agent() {
         struct NeverRun;
         #[async_trait::async_trait]
         impl crate::agent::AgentClient for NeverRun {
@@ -1315,7 +1620,7 @@ mod tests {
             }
         }
         let state = AppState::new(Arc::new(NeverRun), Arc::new(json!({})), None, None);
-        for text in ["/compress", "/compact --preview", "/resume", "/sessions"] {
+        for text in ["/compress", "/compact --preview"] {
             let response = post_message(
                 State(state.clone()),
                 Json(MessageRequest {
@@ -1328,6 +1633,20 @@ mod tests {
             .await
             .unwrap();
             assert!(response.0.reply.contains("not available"));
+        }
+        for text in ["/resume", "/sessions"] {
+            let response = post_message(
+                State(state.clone()),
+                Json(MessageRequest {
+                    channel_id: "commands".into(),
+                    sender_id: "local".into(),
+                    text: text.into(),
+                    content_parts: None,
+                }),
+            )
+            .await
+            .unwrap();
+            assert!(response.0.reply.contains("database not available"));
         }
     }
 

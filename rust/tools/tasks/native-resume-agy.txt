@@ -1,0 +1,20 @@
+Audit the next Rust port seam after destructive `/new` confirmation: a secure,
+production native `/resume` for the HTTP and push gateway. Do not edit files,
+run Cargo, commit, or push. Read the current Python and Rust source directly.
+
+Trace Python `/resume` and `/sessions` end to end, including command parsing,
+session list/search/title lookup, ownership and platform/chat/user restrictions,
+current-session behavior, selection ambiguity, title generation and persistence,
+reset/expiry/compression metadata, database/routing changes, conversation-client
+retirement, prompt caching, replies, and failure handling. Include every store,
+SQLite schema, helper, and test that defines the contract.
+
+Inspect the live Rust session database, routing index, session store, admission
+leases, explicit reset, conversation cache, slash dispatch, and HTTP/push tests.
+Recommend the smallest coherent checkpoint that ports a useful `/resume`
+without enabling cross-user or cross-chat takeover and without reusing a model
+client whose frozen prompt belongs to another conversation. Distinguish any
+prerequisite title/index work from later interactive menus and adapter buttons.
+Specify exact invariants, races, SQL/index changes, production wiring sites,
+and deterministic unit plus real SQLite/HTTP/push tests. Rank risks and cite
+file/symbol references.

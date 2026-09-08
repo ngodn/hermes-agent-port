@@ -18,8 +18,16 @@ pub const BUILTIN_COMMANDS: &[&str] = &["help", "whoami", "status"];
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum NativeSlashCommand {
-    Reset { title: Option<String> },
-    Unavailable { reply: String },
+    Reset {
+        title: Option<String>,
+    },
+    Resume {
+        raw_args: String,
+        from_sessions: bool,
+    },
+    Unavailable {
+        reply: String,
+    },
 }
 
 /// Outcome of gating an inbound message.
@@ -53,7 +61,6 @@ pub fn command_name(text: &str) -> Option<String> {
     Some(match name.as_str() {
         "reset" => "new".into(),
         "compact" => "compress".into(),
-        "sessions" => "resume".into(),
         _ => name,
     })
 }
@@ -78,8 +85,9 @@ pub fn native_command(command: &str, text: &str) -> Option<NativeSlashCommand> {
         "compress" => Some(NativeSlashCommand::Unavailable {
             reply: "Conversation compression is not available in the native gateway yet. Use /new to start a fresh session.".into(),
         }),
-        "resume" => Some(NativeSlashCommand::Unavailable {
-            reply: "Session resume is not available in the native gateway yet.".into(),
+        "resume" | "sessions" => Some(NativeSlashCommand::Resume {
+            raw_args: command_args(text).to_owned(),
+            from_sessions: command == "sessions",
         }),
         _ => None,
     }
@@ -105,6 +113,13 @@ fn policy_for(user_config: &Value, msg: &Message) -> SlashAccessPolicy {
 /// the pending prompt, not the reply keyword, for this authorization check.
 pub fn can_run_command(user_config: &Value, msg: &Message, command: &str) -> bool {
     policy_for(user_config, msg).can_run(Some(&msg.sender_id), command)
+}
+
+/// Cross-origin session access requires an explicitly configured admin. A
+/// disabled slash gate permits commands but grants no data-access override.
+pub fn is_explicit_admin(user_config: &Value, msg: &Message) -> bool {
+    let policy = policy_for(user_config, msg);
+    policy.enabled && policy.is_admin(Some(&msg.sender_id))
 }
 
 /// Prefix that can be typed on the currently native platform. Slack reserves
@@ -230,7 +245,7 @@ mod tests {
         assert_eq!(command_name(""), None);
         assert_eq!(command_name("/reset title"), Some("new".into()));
         assert_eq!(command_name("/compact"), Some("compress".into()));
-        assert_eq!(command_name("/sessions"), Some("resume".into()));
+        assert_eq!(command_name("/sessions"), Some("sessions".into()));
     }
 
     #[test]
@@ -246,8 +261,11 @@ mod tests {
             Some(NativeSlashCommand::Unavailable { .. })
         ));
         assert!(matches!(
-            native_command("resume", "/sessions"),
-            Some(NativeSlashCommand::Unavailable { .. })
+            native_command("sessions", "/sessions Project Phoenix"),
+            Some(NativeSlashCommand::Resume {
+                raw_args,
+                from_sessions: true,
+            }) if raw_args == "Project Phoenix"
         ));
         assert_eq!(native_command("deploy", "/deploy"), None);
     }

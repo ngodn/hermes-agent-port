@@ -78,6 +78,32 @@ pub struct CreationContext {
 }
 
 impl SessionEntry {
+    /// Rebind one stable route to an existing transcript. Conversation-scoped
+    /// counters and overrides do not cross the boundary; only presentation and
+    /// origin identity from the route are retained.
+    pub fn resumed_candidate(
+        current: &Self,
+        target_session_id: &str,
+        now: chrono::NaiveDateTime,
+    ) -> anyhow::Result<Self> {
+        let timestamp = EntryTimestamp {
+            local: now,
+            offset_micros: None,
+        }
+        .isoformat();
+        let mut candidate = Self::from_dict(&json!({
+            "session_key": current.session_key,
+            "session_id": target_session_id,
+            "created_at": timestamp,
+            "updated_at": timestamp,
+            "display_name": current.fields["display_name"],
+            "platform": current.fields["platform"],
+            "chat_type": current.fields["chat_type"],
+        }))?;
+        candidate.origin = current.origin.clone();
+        Ok(candidate)
+    }
+
     /// Apply an unlocked compression lookup only if this route still points
     /// at the session that was queried. Keep counters, lineage and identity.
     pub fn heal_compression_tip(&mut self, original: Option<&str>, tip: Option<&str>) -> bool {

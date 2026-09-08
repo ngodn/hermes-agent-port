@@ -323,6 +323,43 @@ impl Dispatcher {
             SlashDecision::NotSlash => {}
         }
 
+        if let Some(crate::slash::NativeSlashCommand::Resume {
+            raw_args,
+            from_sessions,
+        }) = native_command.clone()
+        {
+            let Some((store, _)) = &self.session_store else {
+                self.deliver(&msg, "Session database not available.".into())
+                    .await;
+                return;
+            };
+            match crate::session_commands::resume_session(crate::session_commands::ResumeCommand {
+                confirmations: &self.slash_confirmations,
+                deps: crate::session_admission::AdmissionDeps {
+                    store: store.clone(),
+                    transcript_leases: self.lease.clone(),
+                    route_leases: self.route_lease.clone(),
+                    generation: self.generation.clone(),
+                },
+                agent: self.agent.clone(),
+                source: crate::session::source_from_message(&msg),
+                message: &msg,
+                user_config: &self.user_config,
+                raw_args: &raw_args,
+                from_sessions,
+            })
+            .await
+            {
+                Ok(result) => self.deliver(&msg, result.reply).await,
+                Err(error) => {
+                    warn!(%error, "push session resume failed");
+                    self.deliver(&msg, "Session resume failed. Please try again.".into())
+                        .await;
+                }
+            }
+            return;
+        }
+
         if let Some(crate::slash::NativeSlashCommand::Reset { title }) = native_command {
             let Some((store, _)) = &self.session_store else {
                 self.deliver(
@@ -1077,7 +1114,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn push_reset_rotates_without_forwarding_the_command() {
+    async fn push_reset_and_resume_rotate_without_forwarding_control_messages() {
         let home = std::env::temp_dir().join(format!(
             "hermes-push-reset-{}-{}",
             std::process::id(),
@@ -1108,6 +1145,25 @@ mod tests {
         dispatcher.handle_turn(cli_msg("first", "u")).await;
         let source = crate::session::source_from_message(&cli_msg("", "u"));
         let first_id = store.current_entry_for_source(&source).unwrap().session_id;
+        let db = store
+            .database_for_key(&store.session_key_for_source(&source))
+            .unwrap();
+        rusqlite::Connection::open(home.join("state.db"))
+            .unwrap()
+            .execute(
+                "UPDATE sessions SET title = 'First Work', title_source = 'user' WHERE id = ?",
+                [&first_id],
+            )
+            .unwrap();
+        dispatcher.handle_turn(cli_msg("/sessions all", "u")).await;
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert!(sent
+            .lock()
+            .unwrap()
+            .last()
+            .unwrap()
+            .text
+            .contains("requires a configured admin"));
 
         dispatcher.handle_turn(cli_msg("/reset", "u")).await;
         assert_eq!(calls.load(Ordering::SeqCst), 1);
@@ -1119,18 +1175,36 @@ mod tests {
         assert_eq!(calls.load(Ordering::SeqCst), 1);
         let second_id = store.current_entry_for_source(&source).unwrap().session_id;
         assert_ne!(second_id, first_id);
-        let output = sent.lock().unwrap();
-        assert_eq!(output.len(), 3);
-        assert!(output[1].text.contains("Confirm /new"));
-        assert!(output[2].text.contains("Session reset"));
-        drop(output);
-        let db = store
-            .database_for_key(&store.session_key_for_source(&source))
-            .unwrap();
+        {
+            let output = sent.lock().unwrap();
+            assert_eq!(output.len(), 4);
+            assert!(output[2].text.contains("Confirm /new"));
+            assert!(output[3].text.contains("Session reset"));
+        }
         assert_eq!(
             db.get_session(&first_id).unwrap().unwrap()["end_reason"],
             "session_reset"
         );
+        dispatcher.handle_turn(cli_msg("second", "u")).await;
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        dispatcher
+            .handle_turn(cli_msg("/resume First Work", "u"))
+            .await;
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            first_id
+        );
+        assert!(sent
+            .lock()
+            .unwrap()
+            .last()
+            .unwrap()
+            .text
+            .contains("Resumed session **First Work**"));
+        assert!(db.get_session(&second_id).unwrap().unwrap()["end_reason"]
+            .as_str()
+            .is_some_and(|reason| reason == "session_switch"));
         drop(db);
         drop(dispatcher);
         drop(store);

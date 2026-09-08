@@ -1,0 +1,11 @@
+Review the current uncommitted native `/resume` and `/sessions` Rust checkpoint.
+Read the Python reference behavior and the complete Rust diff directly. Focus on
+security, IDOR boundaries, prompt-cache identity, client retirement semantics,
+route/transcript lease ordering, SQLite transaction atomicity, title resolution,
+parser compatibility, HTTP and push wiring, and deterministic test coverage.
+
+Do not edit implementation files, run Cargo, commit, or push. Write a concise,
+ranked review to `rust/analysis/native-resume-review-claude.md`. Include exact
+file/symbol references, identify any blocking issue, and distinguish required
+fixes from explicitly deferred `/title`, auto-title, `/sessions full/search`,
+Matrix, and adapter UI work. Use no em dash characters.

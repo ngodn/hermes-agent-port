@@ -1,0 +1,17 @@
+Independently audit Python's `/resume` and `/sessions` behavior for the Rust
+port. Do not edit files, run Cargo, commit, or push. Read the current source and
+tests, then compare it with the live Rust session store, SQLite schema, route
+admission, reset lifecycle, conversation-agent cache, and slash ingress.
+
+Map exact command syntax and aliases, list/search/title semantics, ownership and
+scope checks, current target behavior, ambiguity and error replies, durable
+route mutation, lineage effects, transcript reuse, cached-client identity and
+retirement, concurrent turn/reset/resume races, and any destructive confirmation
+or interactive callback behavior. Verify whether titles are required, where
+they originate, and which fields are authoritative.
+
+Design the narrowest production-quality native checkpoint that is genuinely
+useful and safe across HTTP and push. Separate now from later UI menus, adapter
+buttons, title auto-generation, compression, and unrelated lifecycle commands.
+Give exact implementation seams and a rigorous test matrix, with source paths
+and symbols for every important claim.

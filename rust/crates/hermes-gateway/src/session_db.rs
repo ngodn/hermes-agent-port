@@ -334,6 +334,17 @@ pub struct GatewayPeerRecord<'a> {
     pub include_compression_ancestors: bool,
 }
 
+pub struct GatewaySessionSwitch<'a> {
+    pub scope: &'a str,
+    pub session_key: &'a str,
+    pub entry_json: &'a str,
+    pub outgoing_id: &'a str,
+    pub target_id: &'a str,
+    pub peer: GatewayPeer<'a>,
+    pub display_name: Option<&'a str>,
+    pub origin_json: Option<&'a str>,
+}
+
 const COMPRESSION_PEER_CTE: &str = r#"
                     WITH RECURSIVE compression_lineage(id) AS (
                         SELECT ?
@@ -1020,6 +1031,89 @@ impl SessionDb {
         tx.commit()
     }
 
+    /// Commit the durable half of a gateway `/resume` as one SQLite
+    /// transaction. The route row, outgoing boundary, target reopen and peer
+    /// capture either all become visible or all roll back.
+    pub fn switch_gateway_session(
+        &self,
+        change: &GatewaySessionSwitch<'_>,
+    ) -> rusqlite::Result<bool> {
+        if change.session_key.is_empty()
+            || change.outgoing_id.is_empty()
+            || change.target_id.is_empty()
+            || change.entry_json.is_empty()
+        {
+            return Ok(false);
+        }
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let target_exists: bool = tx.query_row(
+            "SELECT EXISTS(SELECT 1 FROM sessions WHERE id = ?)",
+            [change.target_id],
+            |row| row.get(0),
+        )?;
+        if !target_exists {
+            return Ok(false);
+        }
+
+        let now = now_secs();
+        let changed = tx.execute(
+            "UPDATE sessions SET ended_at = ?, end_reason = 'session_switch'
+             WHERE id = ? AND (ended_at IS NULL OR end_reason IN
+             ('agent_close','ws_orphan_reap','superseded_by_resume','startup_orphan_reap'))",
+            params![now, change.outgoing_id],
+        )?;
+        if changed != 0 {
+            bump_conversation_generation(&tx, change.outgoing_id, "session_switch")?;
+        }
+
+        tx.execute(
+            "UPDATE sessions AS child SET model_config = json_set(
+                COALESCE(child.model_config, '{}'), '$._reset_from', child.parent_session_id)
+             WHERE child.parent_session_id = ?
+               AND json_extract(COALESCE(child.model_config, '{}'), '$._reset_from') IS NULL
+               AND EXISTS (SELECT 1 FROM sessions p WHERE p.id = child.parent_session_id
+                   AND p.end_reason IN ('session_reset','session_switch','idle','daily','suspended','resume_pending_expired')
+                   AND child.session_key IS NOT NULL AND child.session_key != ''
+                   AND child.session_key = p.session_key)",
+            [change.target_id],
+        )?;
+        tx.execute(
+            "UPDATE sessions SET ended_at = NULL, end_reason = NULL WHERE id = ?",
+            [change.target_id],
+        )?;
+
+        let sql = format!(
+            "{COMPRESSION_PEER_CTE} UPDATE sessions SET session_key = ?, source = ?, user_id = ?,
+             chat_id = ?, chat_type = ?, thread_id = ?,
+             display_name = COALESCE(?, display_name),
+             origin_json = COALESCE(?, origin_json)
+             WHERE id IN (SELECT id FROM compression_lineage)"
+        );
+        tx.execute(
+            &sql,
+            params![
+                change.target_id,
+                change.session_key,
+                change.peer.source,
+                change.peer.user_id,
+                change.peer.chat_id,
+                change.peer.chat_type,
+                change.peer.thread_id,
+                change.display_name,
+                change.origin_json,
+            ],
+        )?;
+        tx.execute(
+            "INSERT INTO gateway_routing (scope, session_key, entry_json, updated_at)
+             VALUES (?, ?, ?, ?) ON CONFLICT(scope, session_key) DO UPDATE SET
+             entry_json = excluded.entry_json, updated_at = excluded.updated_at",
+            params![change.scope, change.session_key, change.entry_json, now],
+        )?;
+        tx.commit()?;
+        Ok(true)
+    }
+
     /// Exact-key recovery ranks real conversations ahead of empty session rows.
     /// Only a miss uses the complete legacy peer tuple and store-owner fence.
     pub fn find_latest_gateway_session_for_peer(
@@ -1124,6 +1218,104 @@ impl SessionDb {
             .optional()
     }
 
+    pub fn get_session_title(&self, session_id: &str) -> rusqlite::Result<Option<String>> {
+        self.conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT title FROM sessions WHERE id = ?",
+                [session_id],
+                |row| row.get(0),
+            )
+            .optional()
+            .map(Option::flatten)
+    }
+
+    /// Direct ID wins over title. A base title follows its newest numbered
+    /// continuation, matching the Python gateway's resume resolver.
+    pub fn resolve_session_target(&self, target: &str) -> rusqlite::Result<Option<String>> {
+        let conn = self.conn.lock().unwrap();
+        let direct = conn
+            .query_row("SELECT id FROM sessions WHERE id = ?", [target], |row| {
+                row.get(0)
+            })
+            .optional()?;
+        if direct.is_some() {
+            return Ok(direct);
+        }
+        let escaped = target
+            .replace('\\', "\\\\")
+            .replace('%', "\\%")
+            .replace('_', "\\_");
+        let numbered = conn
+            .query_row(
+                "SELECT id FROM sessions WHERE title LIKE ? ESCAPE '\\'
+                 ORDER BY started_at DESC LIMIT 1",
+                [format!("{escaped} #%")],
+                |row| row.get(0),
+            )
+            .optional()?;
+        if numbered.is_some() {
+            return Ok(numbered);
+        }
+        conn.query_row("SELECT id FROM sessions WHERE title = ?", [target], |row| {
+            row.get(0)
+        })
+        .optional()
+    }
+
+    pub fn list_resume_sessions(
+        &self,
+        source: Option<&str>,
+        session_key: Option<&str>,
+        include_unnamed: bool,
+        limit: usize,
+    ) -> rusqlite::Result<Vec<Value>> {
+        let conn = self.conn.lock().unwrap();
+        let mut statement = conn.prepare(
+            "SELECT s.id, s.title, s.source, s.user_id, s.session_key, s.chat_id,
+                    s.chat_type, s.thread_id, s.started_at,
+                    COALESCE(s.last_activity_at, s.started_at) AS last_active,
+                    COALESCE((SELECT m.content FROM messages m
+                              WHERE m.session_id = s.id AND m.active = 1
+                                AND m.role = 'user' AND m.content IS NOT NULL
+                              ORDER BY m.timestamp ASC, m.id ASC LIMIT 1), '') AS preview
+             FROM sessions s
+             WHERE (?1 IS NULL OR s.source = ?1) AND (?2 IS NULL OR s.session_key = ?2)
+               AND (?3 OR (s.title IS NOT NULL AND TRIM(s.title) != ''))
+               AND s.source != 'tool'
+               AND COALESCE(s.hidden, 0) = 0
+             ORDER BY s.started_at DESC LIMIT ?4",
+        )?;
+        let rows = statement.query_map(
+            params![source, session_key, include_unnamed, limit as i64],
+            |row| {
+                Ok(serde_json::json!({
+                    "id": row.get::<_, String>(0)?,
+                    "title": row.get::<_, Option<String>>(1)?,
+                    "source": row.get::<_, String>(2)?,
+                    "user_id": row.get::<_, Option<String>>(3)?,
+                    "session_key": row.get::<_, Option<String>>(4)?,
+                    "chat_id": row.get::<_, Option<String>>(5)?,
+                    "chat_type": row.get::<_, Option<String>>(6)?,
+                    "thread_id": row.get::<_, Option<String>>(7)?,
+                    "started_at": row.get::<_, f64>(8)?,
+                    "last_active": row.get::<_, f64>(9)?,
+                    "preview": row.get::<_, String>(10)?,
+                }))
+            },
+        )?;
+        rows.collect()
+    }
+
+    pub fn user_message_count(&self, session_id: &str) -> rusqlite::Result<usize> {
+        self.conn.lock().unwrap().query_row(
+            "SELECT COUNT(*) FROM messages WHERE session_id = ? AND active = 1 AND role = 'user'",
+            [session_id],
+            |row| row.get(0),
+        )
+    }
+
     /// Add only the lifecycle columns needed by recovery. This runs for old
     /// Rust stores as well as fresh databases and preserves wider Python tables.
     fn ensure_recovery_schema(conn: &mut Connection) -> rusqlite::Result<()> {
@@ -1161,6 +1353,9 @@ impl SessionDb {
             ("git_repo_root", "TEXT"),
             ("git_branch", "TEXT"),
             ("tool_names", "TEXT"),
+            ("title", "TEXT"),
+            ("title_source", "TEXT"),
+            ("hidden", "INTEGER NOT NULL DEFAULT 0"),
         ] {
             if !columns.iter().any(|column| column == name) {
                 // Names and declarations are static schema constants.
@@ -1368,6 +1563,15 @@ impl SessionDb {
             [],
         )?;
         Self::ensure_recovery_schema(conn)?;
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_sessions_title ON sessions(title)",
+            [],
+        )?;
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_sessions_source_key_started
+             ON sessions(source, session_key, started_at DESC)",
+            [],
+        )?;
         conn.execute(
             "CREATE TABLE IF NOT EXISTS messages (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2141,6 +2345,112 @@ mod tests {
             db.get_compression_chain("s102").unwrap(),
             ["s102", "s103", "s104"]
         );
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn resume_catalog_resolves_ids_titles_lineage_and_exact_lane() {
+        let path = temp_db("resume_catalog");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "INSERT INTO sessions
+             (id,source,user_id,session_key,chat_id,chat_type,title,started_at,last_activity_at)
+             VALUES
+             ('base','telegram','U','lane','C','dm','Plan_%',1,1),
+             ('next','telegram','U','lane','C','dm','Plan_% #2',2,2),
+             ('foreign','telegram','U','other','D','dm','Foreign',3,3);
+             INSERT INTO messages(session_id,role,content,timestamp)
+             VALUES ('next','user','first work',4),
+                    ('next','user','later work',5);",
+            )
+            .unwrap();
+        assert_eq!(
+            db.resolve_session_target("base").unwrap().as_deref(),
+            Some("base")
+        );
+        assert_eq!(
+            db.resolve_session_target("Plan_%").unwrap().as_deref(),
+            Some("next")
+        );
+        assert!(db.resolve_session_target("PlanXX").unwrap().is_none());
+        let rows = db
+            .list_resume_sessions(Some("telegram"), Some("lane"), false, 10)
+            .unwrap();
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0]["id"], "next");
+        assert_eq!(rows[0]["preview"], "first work");
+        assert_eq!(db.user_message_count("next").unwrap(), 2);
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn resume_transaction_rolls_back_every_durable_change() {
+        let path = temp_db("resume_rollback");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "INSERT INTO sessions
+             (id,source,user_id,session_key,chat_id,chat_type,started_at,last_activity_at)
+             VALUES
+             ('outgoing','telegram','U','lane','C','dm',1,1),
+             ('target','telegram','U','lane','C','dm',2,2);
+             UPDATE sessions SET ended_at = 3, end_reason = 'agent_close' WHERE id = 'target';
+             INSERT INTO gateway_routing(scope,session_key,entry_json,updated_at)
+             VALUES ('scope','lane','old-route',1);
+             CREATE TRIGGER reject_resume_route BEFORE INSERT ON gateway_routing BEGIN
+                 SELECT RAISE(ABORT, 'forced route failure');
+             END;",
+            )
+            .unwrap();
+
+        let change = GatewaySessionSwitch {
+            scope: "scope",
+            session_key: "lane",
+            entry_json: "new-route",
+            outgoing_id: "outgoing",
+            target_id: "target",
+            peer: GatewayPeer {
+                source: "telegram",
+                session_key: Some("lane"),
+                user_id: Some("U"),
+                chat_id: Some("C"),
+                chat_type: Some("dm"),
+                thread_id: None,
+            },
+            display_name: None,
+            origin_json: None,
+        };
+        assert!(db.switch_gateway_session(&change).is_err());
+
+        let outgoing = db.get_session("outgoing").unwrap().unwrap();
+        assert!(outgoing["ended_at"].is_null());
+        assert!(outgoing["end_reason"].is_null());
+        let target = db.get_session("target").unwrap().unwrap();
+        assert_eq!(target["ended_at"], 3.0);
+        assert_eq!(target["end_reason"], "agent_close");
+        let conn = db.conn.lock().unwrap();
+        let route: String = conn
+            .query_row(
+                "SELECT entry_json FROM gateway_routing WHERE scope = 'scope' AND session_key = 'lane'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(route, "old-route");
+        let generations: i64 = conn
+            .query_row("SELECT COUNT(*) FROM conversation_generations", [], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        assert_eq!(generations, 0);
+        drop(conn);
         drop(db);
         std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
