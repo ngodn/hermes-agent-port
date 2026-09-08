@@ -315,6 +315,104 @@ class ExtensionHost:
             )
         raise ValueError(f"extension tool is not registered: {name}")
 
+    def turn_start(self, params: Mapping[str, Any]) -> dict[str, Any]:
+        """Prepare one model-bound user message with recalled memory."""
+        if not self._initialized:
+            raise RuntimeError("extension host is not initialized")
+        manager = self._memory_manager
+        if manager is None:
+            return {"api_content": None, "recall_indicator": None}
+
+        user_message = params.get("user_message")
+        turn_number = params.get("turn_number")
+        if not isinstance(turn_number, int) or isinstance(turn_number, bool):
+            raise ValueError("turn_start requires an integer turn_number")
+        query = user_message if isinstance(user_message, str) else ""
+
+        try:
+            manager.on_turn_start(turn_number, query)
+        except Exception:
+            _LOG.exception("Memory provider turn start failed (non-fatal)")
+
+        recalled = ""
+        from agent.memory_provider import is_trivial_prompt
+
+        if not is_trivial_prompt(query):
+            try:
+                recalled = manager.prefetch_all(
+                    query,
+                    session_id=self._session_info["session_id"],
+                ) or ""
+            except Exception:
+                _LOG.exception("Memory provider prefetch failed (non-fatal)")
+
+        indicator = None
+        if recalled:
+            try:
+                indicator = manager.describe_recall() or None
+            except Exception:
+                _LOG.exception("Memory provider recall status failed (non-fatal)")
+
+        from agent.turn_context import compose_user_api_content
+
+        return {
+            "api_content": compose_user_api_content(user_message, recalled, ""),
+            "recall_indicator": indicator,
+        }
+
+    def turn_complete(self, params: Mapping[str, Any]) -> None:
+        """Queue a completed turn for external-memory persistence and warming."""
+        if not self._initialized:
+            raise RuntimeError("extension host is not initialized")
+        manager = self._memory_manager
+        if manager is None or params.get("interrupted"):
+            return
+        original = params.get("user_message")
+        final_response = params.get("final_response")
+        if not (original and final_response):
+            return
+
+        from agent.codex_responses_adapter import _summarize_user_message_for_log
+        from agent.memory_provider import is_trivial_prompt
+
+        user_text = _summarize_user_message_for_log(original, sep="\n")
+        response_text = _summarize_user_message_for_log(final_response, sep="\n")
+        if not (user_text and response_text):
+            return
+        messages = params.get("messages")
+        sync_kwargs: dict[str, Any] = {
+            "session_id": self._session_info["session_id"],
+        }
+        if isinstance(messages, list):
+            sync_kwargs["messages"] = messages
+        manager.sync_all(user_text, response_text, **sync_kwargs)
+        if not is_trivial_prompt(user_text):
+            manager.queue_prefetch_all(
+                user_text,
+                session_id=self._session_info["session_id"],
+            )
+
+    def session_end(self, params: Mapping[str, Any]) -> None:
+        """Commit end-of-session provider state without unloading the host."""
+        if not self._initialized:
+            raise RuntimeError("extension host is not initialized")
+        messages = params.get("messages")
+        if not isinstance(messages, list):
+            raise ValueError("session_end requires a messages array")
+        if self._memory_manager is not None:
+            self._memory_manager.on_session_end(messages)
+
+    def flush_pending(self, params: Mapping[str, Any]) -> bool:
+        """Wait behind the memory manager's serialized background queue."""
+        if not self._initialized:
+            raise RuntimeError("extension host is not initialized")
+        if self._memory_manager is None:
+            return True
+        timeout = params.get("timeout")
+        if timeout is not None and not isinstance(timeout, (int, float)):
+            raise ValueError("flush_pending timeout must be numeric")
+        return self._memory_manager.flush_pending(timeout=timeout)
+
     def shutdown(self) -> None:
         if self._memory_manager is not None:
             self._memory_manager.shutdown_all()
@@ -364,6 +462,14 @@ def main() -> int:
                     result = host.snapshot()
                 elif method == "call_tool":
                     result = host.call_tool(params)
+                elif method == "turn_start":
+                    result = host.turn_start(params)
+                elif method == "turn_complete":
+                    result = host.turn_complete(params)
+                elif method == "session_end":
+                    result = host.session_end(params)
+                elif method == "flush_pending":
+                    result = host.flush_pending(params)
                 elif method == "shutdown":
                     host.shutdown()
                     result = None

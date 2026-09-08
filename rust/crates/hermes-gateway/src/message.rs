@@ -194,10 +194,11 @@ pub async fn post_message(
 
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
         let agent = state.agent.clone();
+        let turn_agent = agent.clone();
         let agent_db = turn_db.clone();
         let msg_for_agent = msg.clone();
         let turn = tokio::spawn(async move {
-            agent
+            turn_agent
                 .run_turn_with_context(
                     crate::agent::TurnContext::from_database(agent_db.as_deref()),
                     &msg_for_agent,
@@ -231,7 +232,19 @@ pub async fn post_message(
         // The producer may still be finishing after its terminal stream event.
         // Keep ownership until it has stopped, including on error paths.
         let outcome = turn.await;
+        let succeeded = matches!(&outcome, Ok(Ok(())));
         crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        if let Err(error) = agent
+            .finalize_turn_after_persist(
+                crate::agent::TurnContext::from_database(turn_db.as_deref()),
+                &msg,
+                &reply,
+                succeeded,
+            )
+            .await
+        {
+            warn!(%error, "HTTP agent post-persist finalization failed");
+        }
         if let (Some(key), Some((store, _))) = (routing_key, &state.session_store) {
             let store = store.clone();
             match tokio::task::spawn_blocking(move || store.update_session(&key, None, true)).await

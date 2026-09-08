@@ -81,6 +81,19 @@ pub trait AgentClient: Send + Sync {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()>;
 
+    /// Complete post-turn side effects after the gateway has durably recorded
+    /// the assistant reply. Backends without such hooks keep the default no-op.
+    async fn finalize_turn_after_persist(
+        &self,
+        context: TurnContext<'_>,
+        msg: &Message,
+        reply: &str,
+        succeeded: bool,
+    ) -> Result<()> {
+        let _ = (context, msg, reply, succeeded);
+        Ok(())
+    }
+
     /// True when the backend loads and persists conversation history itself, so
     /// the gateway must not inject or record history around it.
     fn manages_history(&self) -> bool {

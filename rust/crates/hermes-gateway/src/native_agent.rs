@@ -27,6 +27,36 @@ use tokio::sync::mpsc;
 use crate::agent::AgentClient;
 use crate::native_tools::{parse_message_step, ChatModel, Step};
 
+struct TranscriptModel<'a> {
+    inner: &'a NativeAgentClient,
+    last_messages: std::sync::Mutex<Vec<Value>>,
+}
+
+struct PendingMemoryTurn {
+    clean_content: Value,
+    messages: Vec<Value>,
+}
+
+#[async_trait]
+impl ChatModel for TranscriptModel<'_> {
+    fn max_concurrent_children(&self) -> usize {
+        self.inner.max_concurrent_children()
+    }
+
+    fn supports_vision(&self) -> bool {
+        self.inner.supports_vision()
+    }
+
+    fn supports_vision_tool_messages(&self) -> bool {
+        self.inner.supports_vision_tool_messages()
+    }
+
+    async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
+        *self.last_messages.lock().unwrap() = messages.to_vec();
+        self.inner.step(messages, tools).await
+    }
+}
+
 /// Summary requests have no caller temperature default. The Python auxiliary
 /// policy omits temperature for Kimi and unspecified models, and fixes Arcee
 /// Trinity Large Thinking at 0.5. Provider profile defaults belong to main turns.
@@ -58,7 +88,13 @@ pub fn build_messages_with_content(
     let mut messages: Vec<Value> = history
         .iter()
         .filter(|m| matches!(m.role.as_str(), "user" | "assistant" | "system"))
-        .map(|m| json!({ "role": m.role, "content": m.model_content() }))
+        .map(|m| {
+            let mut message = json!({ "role": m.role, "content": m.model_content() });
+            if let Some(api_content) = &m.api_content {
+                message["api_content"] = json!(api_content);
+            }
+            message
+        })
         .collect();
     messages.push(json!({ "role": "user", "content": content }));
     messages
@@ -212,6 +248,7 @@ pub struct NativeAgentClient {
     /// Keeps a conversation-scoped legacy extension child alive for plugin and
     /// external-memory tool calls. Dropping the final clone closes its worker.
     _extension_host: Option<crate::extension_host::Client>,
+    pending_memory_turn: std::sync::Arc<std::sync::Mutex<Option<PendingMemoryTurn>>>,
     turn_limit: usize,
     max_concurrent_children: usize,
     /// When non-empty, turns run through the tool-calling loop (non-streaming);
@@ -244,6 +281,7 @@ impl NativeAgentClient {
             system_prompt: None,
             _plugin_prompt: crate::plugin_prompt::Snapshot::default(),
             _extension_host: None,
+            pending_memory_turn: Default::default(),
             turn_limit: crate::turn_limit::UNLIMITED,
             max_concurrent_children: 10,
             tools: Vec::new(),
@@ -466,57 +504,52 @@ impl NativeAgentClient {
         self.turn_limit = limit;
         self
     }
-}
 
-#[async_trait]
-impl AgentClient for NativeAgentClient {
-    fn supports_structured_content(&self) -> bool {
-        true
-    }
-    async fn run_turn(
+    async fn run_model_turn(
         &self,
-        msg: &Message,
+        content: &Value,
         history: &[crate::session_db::HistoryMessage],
         events: mpsc::Sender<StreamEvent>,
-    ) -> Result<()> {
-        // This matches the identity used by begin_turn/end_turn today. Scope
-        // lives in this clone for the whole turn, never in shared client state.
-        let mut turn_client = self.clone();
-        turn_client.cache_scope = Some(crate::session_db::message_session_id(msg));
-        let client = &turn_client;
-        let content = msg.model_content();
-        let prompted_history = client.system_prompt.as_ref().map(|prompt| {
+    ) -> Result<Option<Vec<Value>>> {
+        let prompted_history = self.system_prompt.as_ref().map(|prompt| {
             let mut messages = Vec::with_capacity(history.len() + 1);
             messages.push(crate::session_db::HistoryMessage {
                 role: "system".into(),
                 content: prompt.to_string(),
+                api_content: None,
             });
             messages.extend_from_slice(history);
             messages
         });
         let history = prompted_history.as_deref().unwrap_or(history);
 
-        // Tool-capable turns run the loop (non-streaming); plain turns stream.
-        if !client.tools.is_empty() {
-            return crate::native_tools::run_tool_loop_with_content(
-                client,
-                &client.tools,
+        if !self.tools.is_empty() {
+            let prefix_len = history.len();
+            let model = TranscriptModel {
+                inner: self,
+                last_messages: std::sync::Mutex::new(Vec::new()),
+            };
+            crate::native_tools::run_tool_loop_with_content(
+                &model,
+                &self.tools,
                 history,
-                &content,
+                content,
                 &events,
-                client.turn_limit,
+                self.turn_limit,
             )
-            .await;
+            .await?;
+            let messages = model.last_messages.into_inner().unwrap();
+            return Ok(Some(messages.into_iter().skip(prefix_len).collect()));
         }
 
-        let url = format!("{}/chat/completions", client.base_url);
-        let mut body = build_request_body_with_content(&client.model, history, &content);
-        client.apply_provider_extras(&mut body)?;
+        let url = format!("{}/chat/completions", self.base_url);
+        let mut body = build_request_body_with_content(&self.model, history, content);
+        self.apply_provider_extras(&mut body)?;
         let resp = self
             .client
             .post(&url)
-            .bearer_auth(&client.api_key)
-            .headers(client.provider_headers.clone())
+            .bearer_auth(&self.api_key)
+            .headers(self.provider_headers.clone())
             .json(&body)
             .send()
             .await
@@ -531,7 +564,157 @@ impl AgentClient for NativeAgentClient {
             )));
         }
 
-        forward_sse(resp.bytes_stream(), &events).await
+        forward_sse(resp.bytes_stream(), &events).await?;
+        Ok(None)
+    }
+
+    async fn run_native_turn(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+        events: mpsc::Sender<StreamEvent>,
+    ) -> Result<()> {
+        let mut turn_client = self.clone();
+        let session_id = crate::session_db::message_session_id(msg);
+        turn_client.cache_scope = Some(session_id.clone());
+        let clean_content = msg.model_content();
+        let mut model_content = clean_content.clone();
+        *turn_client.pending_memory_turn.lock().unwrap() = None;
+
+        if let Some(host) = &turn_client._extension_host {
+            let fallback_turn = history.iter().filter(|item| item.role == "user").count() + 1;
+            let turn_number = context
+                .database
+                .and_then(|database| database.user_turn_count(&session_id).ok())
+                .unwrap_or(fallback_turn);
+            match host.turn_start(&clean_content, turn_number).await {
+                Ok(prepared) => {
+                    if let Some(indicator) =
+                        prepared.recall_indicator.filter(|text| !text.is_empty())
+                    {
+                        let _ = events
+                            .send(StreamEvent::GatewayNotice {
+                                notice_kind: "memory_recall".into(),
+                                text: indicator,
+                                extra: Default::default(),
+                            })
+                            .await;
+                    }
+                    if let Some(api_content) = prepared.api_content.filter(|text| !text.is_empty())
+                    {
+                        let persisted = match context.database {
+                            Some(database) => database
+                                .set_latest_user_api_content(
+                                    &session_id,
+                                    &clean_content,
+                                    &api_content,
+                                )
+                                .unwrap_or_else(|error| {
+                                    tracing::warn!(%error, "memory api_content persistence failed");
+                                    false
+                                }),
+                            None => true,
+                        };
+                        if persisted {
+                            model_content = Value::String(api_content);
+                        } else {
+                            tracing::warn!(%session_id, "memory api_content did not match the current user row");
+                        }
+                    }
+                }
+                Err(error) => {
+                    tracing::warn!(%error, "external-memory turn start failed open");
+                }
+            }
+        }
+
+        // Intercept the already-normalized output in this task so task-local
+        // profile state remains visible to native tools. The caller still sees
+        // every event immediately while we retain the completed visible reply.
+        let (inner_tx, mut inner_rx) = mpsc::channel(64);
+        let model = turn_client.run_model_turn(&model_content, history, inner_tx);
+        let forward = async {
+            let mut response = String::new();
+            while let Some(event) = inner_rx.recv().await {
+                if let StreamEvent::MessageChunk { text } = &event {
+                    response.push_str(text);
+                }
+                let _ = events.send(event).await;
+            }
+            response
+        };
+        let (outcome, response) = tokio::join!(model, forward);
+        let turn_messages = outcome?;
+
+        if !response.is_empty() && turn_client._extension_host.is_some() {
+            let mut messages = turn_messages
+                .filter(|messages| !messages.is_empty())
+                .unwrap_or_else(|| vec![json!({"role":"user", "content": clean_content})]);
+            if let Some(current) = messages.first_mut().and_then(Value::as_object_mut) {
+                current.insert("content".into(), clean_content.clone());
+                if model_content != clean_content {
+                    current.insert("api_content".into(), model_content);
+                }
+            }
+            *turn_client.pending_memory_turn.lock().unwrap() = Some(PendingMemoryTurn {
+                clean_content,
+                messages,
+            });
+        }
+        Ok(())
+    }
+}
+
+#[async_trait]
+impl AgentClient for NativeAgentClient {
+    fn supports_structured_content(&self) -> bool {
+        true
+    }
+    async fn run_turn(
+        &self,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+        events: mpsc::Sender<StreamEvent>,
+    ) -> Result<()> {
+        self.run_native_turn(crate::agent::TurnContext::default(), msg, history, events)
+            .await
+    }
+
+    async fn run_turn_with_context(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+        events: mpsc::Sender<StreamEvent>,
+    ) -> Result<()> {
+        self.run_native_turn(context, msg, history, events).await
+    }
+
+    async fn finalize_turn_after_persist(
+        &self,
+        _context: crate::agent::TurnContext<'_>,
+        _msg: &Message,
+        reply: &str,
+        succeeded: bool,
+    ) -> Result<()> {
+        let pending = self.pending_memory_turn.lock().unwrap().take();
+        let Some(mut pending) = pending.filter(|_| succeeded && !reply.is_empty()) else {
+            return Ok(());
+        };
+        let Some(host) = &self._extension_host else {
+            return Ok(());
+        };
+        pending
+            .messages
+            .push(json!({"role":"assistant", "content": reply}));
+        if let Err(error) = host
+            .turn_complete(&pending.clean_content, reply, &pending.messages, false)
+            .await
+        {
+            tracing::warn!(%error, "external-memory turn completion failed open");
+        }
+        Ok(())
     }
 }
 
@@ -1319,6 +1502,7 @@ mod tests {
         let history = vec![crate::session_db::HistoryMessage {
             role: "system".into(),
             content: "static instructions".into(),
+            api_content: None,
         }];
         let (tx, _rx) = tokio::sync::mpsc::channel(64);
         client
@@ -1334,10 +1518,12 @@ mod tests {
             crate::session_db::HistoryMessage {
                 role: "user".into(),
                 content: "one".into(),
+                api_content: None,
             },
             crate::session_db::HistoryMessage {
                 role: "assistant".into(),
                 content: "answer".into(),
+                api_content: None,
             },
         ]);
         client
@@ -1381,6 +1567,7 @@ mod tests {
         let changed = vec![crate::session_db::HistoryMessage {
             role: "system".into(),
             content: "changed instructions".into(),
+            api_content: None,
         }];
         client
             .run_turn(&message("A", "three"), &changed, tx.clone())
@@ -1437,10 +1624,12 @@ mod tests {
             crate::session_db::HistoryMessage {
                 role: "user".into(),
                 content: "earlier".into(),
+                api_content: None,
             },
             crate::session_db::HistoryMessage {
                 role: "assistant".into(),
                 content: "answer".into(),
+                api_content: None,
             },
         ];
         for text in ["first", "second"] {
@@ -1783,15 +1972,18 @@ mod tests {
             HistoryMessage {
                 role: "user".into(),
                 content: "hi".into(),
+                api_content: None,
             },
             HistoryMessage {
                 role: "assistant".into(),
                 content: "hello".into(),
+                api_content: None,
             },
             // A non-chat role is filtered out.
             HistoryMessage {
                 role: "tool".into(),
                 content: "x".into(),
+                api_content: None,
             },
         ];
         let msgs = build_messages(&hist, "next");
@@ -1854,18 +2046,22 @@ mod tests {
             HistoryMessage {
                 role: "system".into(),
                 content: "system prompt".into(),
+                api_content: None,
             },
             HistoryMessage {
                 role: "user".into(),
                 content: "\0json:[{\"type\":\"text\",\"text\":\"prior prompt\"},{\"type\":\"image_url\",\"image_url\":{\"url\":\"data:image/png;base64,11\"}}]".into(),
+                api_content: None,
             },
             HistoryMessage {
                 role: "assistant".into(),
                 content: "prior response".into(),
+                api_content: None,
             },
             HistoryMessage {
                 role: "tool".into(),
                 content: "tool output".into(),
+                api_content: None,
             },
         ];
 

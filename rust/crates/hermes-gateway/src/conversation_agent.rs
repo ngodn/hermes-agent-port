@@ -105,7 +105,32 @@ impl AgentClient for ConversationAgent {
             .clone();
         // Provider I/O begins only after the map lock is released. Failed
         // builds remain uncached and never reuse another profile's client.
-        client.run_turn(msg, history, events).await
+        client
+            .run_turn_with_context(context, msg, history, events)
+            .await
+    }
+
+    async fn finalize_turn_after_persist(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        reply: &str,
+        succeeded: bool,
+    ) -> Result<()> {
+        let Some(home) = context.home else {
+            return self
+                .fallback
+                .finalize_turn_after_persist(context, msg, reply, succeeded)
+                .await;
+        };
+        let key = (home.to_owned(), crate::session_db::message_session_id(msg));
+        let cell = self.clients.lock().await.get(&key).cloned();
+        let Some(client) = cell.and_then(|cell| cell.get().cloned()) else {
+            return Ok(());
+        };
+        client
+            .finalize_turn_after_persist(context, msg, reply, succeeded)
+            .await
     }
 }
 

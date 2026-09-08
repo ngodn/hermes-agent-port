@@ -26,6 +26,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [external-memory-lifecycle-review-resolution.md](external-memory-lifecycle-review-resolution.md) | Verified audit disposition, including tool transcript capture, post-persist sync, clean sidecars and explicit teardown deferrals |
+| [external-memory-lifecycle-review-agy.md](external-memory-lifecycle-review-agy.md) | Gemini implementation audit of lifecycle parity, persistence, transcript shape, timeouts and test gaps |
+| [external-memory-lifecycle-review-claude.md](external-memory-lifecycle-review-claude.md) | Claude implementation audit identifying tool transcript and durable ordering gaps fixed before commit |
+| [external-memory-lifecycle-map-agy.md](external-memory-lifecycle-map-agy.md) | Python external-memory prefetch, sidecar, sync, queue-drain and session-boundary contract map |
+| [conversation-eviction-map-claude.md](conversation-eviction-map-claude.md) | Conversation cache ownership, active-turn safety, TTL/LRU/pressure policy and child teardown design for the next checkpoint |
 | [extension-host-review-resolution.md](extension-host-review-resolution.md) | Verified disposition of both implementation reviews, with fixed findings, tests, and explicit lifecycle deferrals |
 | [extension-host-implementation-review-agy.md](extension-host-implementation-review-agy.md) | Gemini post-implementation audit of protocol health, collisions, secrets, multimodal results and process cleanup |
 | [extension-host-implementation-review-claude.md](extension-host-implementation-review-claude.md) | Claude post-implementation compatibility review, including auto-loaded backends, route identity and cache-lifetime gaps |

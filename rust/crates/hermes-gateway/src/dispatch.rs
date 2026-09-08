@@ -396,10 +396,11 @@ impl Dispatcher {
 
         // Run the agent turn; it streams events into `tx`.
         let agent = Arc::clone(&self.agent);
+        let turn_agent = agent.clone();
         let agent_db = turn_db.clone();
         let msg_for_agent = msg.clone();
         let agent_task = tokio::spawn(async move {
-            agent
+            turn_agent
                 .run_turn_with_context(
                     crate::agent::TurnContext::from_database(agent_db.as_deref()),
                     &msg_for_agent,
@@ -435,15 +436,32 @@ impl Dispatcher {
             }
         }
 
-        match agent_task.await {
-            Ok(Err(err)) => warn!(platform = ?msg.platform, %err, "agent turn failed"),
-            Err(err) => error!(?err, "agent task panicked"),
-            Ok(Ok(())) => {}
-        }
+        let succeeded = match agent_task.await {
+            Ok(Err(err)) => {
+                warn!(platform = ?msg.platform, %err, "agent turn failed");
+                false
+            }
+            Err(err) => {
+                error!(?err, "agent task panicked");
+                false
+            }
+            Ok(Ok(())) => true,
+        };
 
         // Record the assistant reply for stateless backends (before the silence
         // gate: a silence marker is still part of the transcript history).
         crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        if let Err(error) = agent
+            .finalize_turn_after_persist(
+                crate::agent::TurnContext::from_database(turn_db.as_deref()),
+                &msg,
+                &reply,
+                succeeded,
+            )
+            .await
+        {
+            warn!(%error, "agent post-persist finalization failed");
+        }
         if let (Some(key), Some((store, _))) = (routing_key, &self.session_store) {
             let store = store.clone();
             match tokio::task::spawn_blocking(move || store.update_session(&key, None, true)).await
@@ -546,6 +564,7 @@ mod tests {
     async fn coordinated_dispatch_resumes_durable_history_after_store_restart() {
         struct HistoryAgent {
             seen: Arc<Mutex<Vec<(String, usize)>>>,
+            finalized: Arc<Mutex<Vec<(String, String)>>>,
         }
         #[async_trait]
         impl crate::agent::AgentClient for HistoryAgent {
@@ -586,6 +605,29 @@ mod tests {
                     .unwrap();
                 Ok(())
             }
+
+            async fn finalize_turn_after_persist(
+                &self,
+                context: crate::agent::TurnContext<'_>,
+                msg: &Message,
+                reply: &str,
+                succeeded: bool,
+            ) -> Result<()> {
+                assert!(succeeded);
+                let history = context
+                    .database
+                    .unwrap()
+                    .load_history(&crate::session_db::message_session_id(msg), 0)
+                    .unwrap();
+                let last = history.last().unwrap();
+                assert_eq!(last.role, "assistant");
+                assert_eq!(last.content, reply);
+                self.finalized
+                    .lock()
+                    .unwrap()
+                    .push((last.role.clone(), last.content.clone()));
+                Ok(())
+            }
         }
         let home = std::env::temp_dir().join(format!(
             "hermes-dispatch-store-{}-{}",
@@ -600,6 +642,7 @@ mod tests {
             ..Default::default()
         };
         let seen = Arc::new(Mutex::new(Vec::new()));
+        let finalized = Arc::new(Mutex::new(Vec::new()));
         for text in ["first", "second"] {
             let store = Arc::new(
                 crate::session_store::SessionStore::open(
@@ -612,7 +655,10 @@ mod tests {
                 .unwrap(),
             );
             let (mut dispatcher, _, sent) = harness("", json!({}));
-            dispatcher.agent = Arc::new(HistoryAgent { seen: seen.clone() });
+            dispatcher.agent = Arc::new(HistoryAgent {
+                seen: seen.clone(),
+                finalized: finalized.clone(),
+            });
             let dispatcher = dispatcher.with_session_store(store, 3600.0);
             dispatcher.handle_turn(cli_msg(text, "user")).await;
             let replies = sent.lock().unwrap();
@@ -624,6 +670,13 @@ mod tests {
         assert_eq!(seen.len(), 2);
         assert_eq!(seen[0].0, seen[1].0);
         assert_eq!((seen[0].1, seen[1].1), (0, 2));
+        assert_eq!(
+            *finalized.lock().unwrap(),
+            [
+                ("assistant".into(), "answer".into()),
+                ("assistant".into(), "answer".into())
+            ]
+        );
         let db = crate::session_db::SessionDb::open_shared(home.join("state.db")).unwrap();
         assert_eq!(db.load_history(&seen[0].0, 10).unwrap().len(), 4);
         assert!(db.get_session("cli:chan").unwrap().is_none());

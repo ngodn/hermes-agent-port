@@ -26,6 +26,8 @@ use tokio::sync::{mpsc, oneshot};
 const MODULE: &str = "hermes_cli.rust_extension_host";
 const INITIALIZE_TIMEOUT: Duration = Duration::from_secs(60);
 const SNAPSHOT_TIMEOUT: Duration = Duration::from_secs(30);
+const TURN_START_TIMEOUT: Duration = Duration::from_secs(30);
+const TURN_COMPLETE_TIMEOUT: Duration = Duration::from_secs(5);
 const TOOL_TIMEOUT: Duration = Duration::from_secs(310);
 const SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(7);
 const MAX_RESPONSE_BYTES: usize = 4 * 1024 * 1024;
@@ -102,6 +104,12 @@ pub struct PromptSnapshot {
     #[serde(default)]
     pub plugin_sections: Vec<crate::plugin_prompt::Section>,
     pub memory_prompt: Option<String>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct TurnStartResult {
+    pub api_content: Option<String>,
+    pub recall_indicator: Option<String>,
 }
 
 #[derive(Clone)]
@@ -245,6 +253,43 @@ impl Client {
             TOOL_TIMEOUT,
         )
         .await
+    }
+
+    pub async fn turn_start(
+        &self,
+        user_message: &Value,
+        turn_number: usize,
+    ) -> Result<TurnStartResult> {
+        let value = self
+            .request(
+                "turn_start",
+                json!({"user_message": user_message, "turn_number": turn_number}),
+                TURN_START_TIMEOUT,
+            )
+            .await?;
+        serde_json::from_value(value)
+            .map_err(|error| Error::Other(format!("extension host turn start decode: {error}")))
+    }
+
+    pub async fn turn_complete(
+        &self,
+        user_message: &Value,
+        final_response: &str,
+        messages: &[Value],
+        interrupted: bool,
+    ) -> Result<()> {
+        self.request(
+            "turn_complete",
+            json!({
+                "user_message": user_message,
+                "final_response": final_response,
+                "interrupted": interrupted,
+                "messages": messages,
+            }),
+            TURN_COMPLETE_TIMEOUT,
+        )
+        .await
+        .map(|_| ())
     }
 
     async fn request(&self, method: &str, params: Value, timeout: Duration) -> Result<Value> {
@@ -705,6 +750,9 @@ from agent.memory_provider import MemoryProvider
 
 class FixtureProvider(MemoryProvider):
     name = "fixture-extension"
+    def _record(self, event, **fields):
+        with Path(self.home, "extension-lifecycle-" + self.session_id).open("a") as stream:
+            stream.write(json.dumps({"event": event, **fields}, sort_keys=True) + "\n")
     def is_available(self): return True
     def initialize(self, session_id, **kwargs):
         import os
@@ -717,6 +765,20 @@ class FixtureProvider(MemoryProvider):
             "FOREIGN_EXTENSION_SECRET" not in os.environ and
             "FOREIGN_EXTENSION_SETTING" not in os.environ
         )
+    def on_turn_start(self, turn_number, message, **kwargs):
+        self._record("turn_start", turn_number=turn_number, message=message)
+    def prefetch(self, query, **kwargs):
+        self._record("prefetch", query=query, session_id=kwargs.get("session_id", ""))
+        return "remembered fact for " + query
+    def sync_turn(self, user_content, assistant_content, **kwargs):
+        self._record("sync", user=user_content, assistant=assistant_content,
+                     session_id=kwargs.get("session_id", ""),
+                     messages=kwargs.get("messages"))
+    def queue_prefetch(self, query, **kwargs):
+        self._record("queue_prefetch", query=query,
+                     session_id=kwargs.get("session_id", ""))
+    def on_session_end(self, messages, **kwargs):
+        self._record("session_end", messages=messages)
     def system_prompt_block(self):
         return "# Fixture Memory\nSession " + self.session_id
     def get_tool_schemas(self):
@@ -818,6 +880,20 @@ def register(ctx):
             snapshot.memory_prompt.as_deref(),
             Some("# Fixture Memory\nSession session-one")
         );
+        let prepared = client
+            .turn_start(&json!("Where were we?"), 3)
+            .await
+            .unwrap();
+        let api_content = prepared.api_content.unwrap();
+        assert!(api_content.starts_with("Where were we?\n\n<memory-context>\n"));
+        assert!(api_content.contains("remembered fact for Where were we?"));
+        assert!(api_content.ends_with("\n</memory-context>"));
+        assert!(client
+            .turn_start(&json!("thanks"), 4)
+            .await
+            .unwrap()
+            .api_content
+            .is_none());
         assert_eq!(
             tools[0].call(&json!({"text":"image text"})).await.unwrap(),
             json!({"_multimodal":true,"content":[{"type":"text","text":"session-one:image text"}]})
@@ -831,6 +907,62 @@ def register(ctx):
         assert_eq!(memory_result["profile_secret_ok"], true);
         assert_eq!(memory_result["foreign_secret_absent"], true);
         assert_eq!(memory_result["args"], json!({"query":"remember"}));
+
+        client
+            .turn_complete(&json!("discarded"), "partial", &[], true)
+            .await
+            .unwrap();
+        client
+            .request(
+                "turn_complete",
+                json!({"user_message":"discarded", "final_response":"", "interrupted":false}),
+                Duration::from_secs(1),
+            )
+            .await
+            .unwrap();
+        client
+            .turn_complete(
+                &json!([{"type":"text", "text":"User text"}, {"type":"image_url", "image_url":{"url":"data:image/png;base64,AA=="}}]),
+                "Assistant text",
+                &[json!({"role":"user", "content":"User text"}), json!({"role":"assistant", "content":"Assistant text"})],
+                false,
+            )
+            .await
+            .unwrap();
+        assert_eq!(
+            client
+                .request(
+                    "flush_pending",
+                    json!({"timeout": 2.0}),
+                    Duration::from_secs(3),
+                )
+                .await
+                .unwrap(),
+            Value::Bool(true)
+        );
+        let ended = [json!({"role":"user", "content":"User text"}), json!({"role":"assistant", "content":"Assistant text"})];
+        client
+            .request(
+                "session_end",
+                json!({"messages": ended}),
+                Duration::from_secs(15),
+            )
+            .await
+            .unwrap();
+        let lifecycle: Vec<Value> = std::fs::read_to_string(
+            home.0.join("extension-lifecycle-session-one"),
+        )
+        .unwrap()
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+        assert_eq!(lifecycle[0], json!({"event":"turn_start", "message":"Where were we?", "turn_number":3}));
+        assert_eq!(lifecycle[1]["event"], "prefetch");
+        assert_eq!(lifecycle[2], json!({"event":"turn_start", "message":"thanks", "turn_number":4}));
+        assert_eq!(lifecycle[3]["event"], "sync");
+        assert_eq!(lifecycle[3]["user"], "[1 image] User text");
+        assert_eq!(lifecycle[4]["event"], "queue_prefetch");
+        assert_eq!(lifecycle[5]["event"], "session_end");
 
         drop(tools);
         drop(client);

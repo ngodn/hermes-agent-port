@@ -1330,10 +1330,37 @@ mod startup_tests {
             let prompt = row["system_prompt"].as_str().unwrap();
             assert!(prompt.contains("## Plugin Context: fixture.rules"));
             assert!(prompt.contains("Plugin session extension-session"));
+            assert!(prompt.contains("# Fixture Memory"));
             assert_eq!(row["tool_names"], r#"["fixture_plugin_tool"]"#);
+            let history = database.load_history("extension-session", 0).unwrap();
+            assert!(
+                history
+                    .last()
+                    .unwrap()
+                    .api_content
+                    .as_deref()
+                    .unwrap_or_default()
+                    .contains("<memory-context>"),
+                "history was {history:?}"
+            );
+            assert!(history
+                .last()
+                .unwrap()
+                .api_content
+                .as_deref()
+                .unwrap_or_default()
+                .contains("recalled for continue database migration"));
             let call = calls.fetch_add(1, Ordering::SeqCst);
             if call == 0 {
                 assert_eq!(body["tools"][0]["function"]["strict"], true);
+                assert!(body["messages"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|message| message["role"] == "user"
+                        && message["content"].as_str().is_some_and(
+                            |text| text.contains("recalled for continue database migration")
+                        )));
                 Json(
                     json!({"choices":[{"message":{"role":"assistant","content":null,
                     "tool_calls":[{"id":"extension-call","type":"function","function":{
@@ -1367,7 +1394,7 @@ mod startup_tests {
         std::fs::create_dir_all(&plugin).unwrap();
         std::fs::write(
             home.0.join("config.yaml"),
-            "model:\n  default: fixture-model\n  provider: openrouter\nplugins:\n  enabled: [fixture-plugin]\nplatform_toolsets:\n  cli: [fixture]\n",
+            "model:\n  default: fixture-model\n  provider: openrouter\nmemory:\n  provider: fixture-plugin\nplugins:\n  enabled: [fixture-plugin]\nplatform_toolsets:\n  cli: [fixture, memory]\n",
         )
         .unwrap();
         std::fs::write(
@@ -1377,8 +1404,37 @@ mod startup_tests {
         .unwrap();
         std::fs::write(
             plugin.join("__init__.py"),
-            r##"import os
+            r##"import json
+import os
+import sqlite3
 from pathlib import Path
+from agent.memory_provider import MemoryProvider
+
+class FixtureMemory(MemoryProvider):
+    name = "fixture-plugin"
+    def initialize(self, session_id, **kwargs):
+        self.session_id = session_id
+        self.home = kwargs["hermes_home"]
+    def is_available(self): return True
+    def system_prompt_block(self): return "# Fixture Memory"
+    def get_tool_schemas(self): return []
+    def prefetch(self, query, **kwargs):
+        Path(self.home, "memory-prefetch").write_text(query)
+        return "recalled for " + query
+    def sync_turn(self, user_content, assistant_content, **kwargs):
+        with sqlite3.connect(Path(self.home, "state.db")) as connection:
+            durable = connection.execute(
+                "SELECT role, content FROM messages WHERE session_id=? ORDER BY id DESC LIMIT 1",
+                (self.session_id,),
+            ).fetchone()
+        Path(self.home, "memory-sync").write_text(json.dumps(
+            {"user": user_content, "assistant": assistant_content,
+             "messages": kwargs.get("messages"), "durable": durable}, sort_keys=True
+        ))
+    def queue_prefetch(self, query, **kwargs):
+        Path(self.home, "memory-queue-prefetch").write_text(query)
+    def shutdown(self):
+        Path(self.home, "memory-shutdown").write_text(self.session_id)
 
 def fixture_tool(args, **kwargs):
     return {"_multimodal": True, "content": [{"type": "text", "text":
@@ -1391,6 +1447,7 @@ def prompt_section(info):
     return "Plugin session " + info["session_id"]
 
 def register(ctx):
+    ctx.register_memory_provider(FixtureMemory())
     ctx.register_system_prompt_section(
         "fixture.rules", prompt_section
     )
@@ -1423,7 +1480,13 @@ def register(ctx):
         database
             .append_message("extension-session", "user", "earlier")
             .unwrap();
+        database
+            .append_message("extension-session", "assistant", "earlier answer")
+            .unwrap();
         let history = database.load_history("extension-session", 0).unwrap();
+        database
+            .append_message("extension-session", "user", "continue database migration")
+            .unwrap();
 
         let calls = Arc::new(AtomicUsize::new(0));
         let app = Router::new()
@@ -1444,7 +1507,7 @@ def register(ctx):
         config.llm_base_url = Some(base_url);
         config.agent_tools = false;
         let mut message: hermes_core::Message = serde_json::from_value(json!({
-            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"next"
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"continue database migration"
         }))
         .unwrap();
         message.resolved_session_id = Some("extension-session".into());
@@ -1464,10 +1527,66 @@ def register(ctx):
         .await
         .unwrap();
         let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
-        client.run_turn(&message, &history, sender).await.unwrap();
-        while receiver.recv().await.is_some() {}
+        client
+            .run_turn_with_context(
+                agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &history,
+                sender,
+            )
+            .await
+            .unwrap();
+        let mut reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+        session_db::end_turn(Some(&database), false, &message, &reply);
+        client
+            .finalize_turn_after_persist(
+                agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &reply,
+                true,
+            )
+            .await
+            .unwrap();
         assert_eq!(calls.load(Ordering::SeqCst), 2);
         drop(client);
+        for _ in 0..100 {
+            if home.0.join("memory-shutdown").is_file() {
+                break;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(25)).await;
+        }
+        assert_eq!(
+            std::fs::read_to_string(home.0.join("memory-prefetch")).unwrap(),
+            "continue database migration"
+        );
+        let synced: Value =
+            serde_json::from_str(&std::fs::read_to_string(home.0.join("memory-sync")).unwrap())
+                .unwrap();
+        assert_eq!(synced["assistant"], "done");
+        assert_eq!(synced["user"], "continue database migration");
+        assert_eq!(synced["durable"], json!(["assistant", "done"]));
+        let synced_messages = synced["messages"].as_array().unwrap();
+        assert_eq!(synced_messages[0]["content"], "continue database migration");
+        assert!(synced_messages[0]["api_content"]
+            .as_str()
+            .unwrap()
+            .contains("recalled for continue database migration"));
+        assert_eq!(synced_messages[1]["role"], "assistant");
+        assert_eq!(synced_messages[2]["role"], "tool");
+        assert_eq!(synced_messages.last().unwrap()["content"], "done");
+        assert_eq!(
+            std::fs::read_to_string(home.0.join("memory-queue-prefetch")).unwrap(),
+            "continue database migration"
+        );
+        assert_eq!(
+            std::fs::read_to_string(home.0.join("memory-shutdown")).unwrap(),
+            "extension-session"
+        );
 
         let resumed = secret_scope::with_secret_scope(
             Some(Default::default()),
@@ -1576,10 +1695,12 @@ def register(ctx):
                 session_db::HistoryMessage {
                     role: "user".into(),
                     content: "earlier".into(),
+                    api_content: None,
                 },
                 session_db::HistoryMessage {
                     role: "assistant".into(),
                     content: "reply".into(),
+                    api_content: None,
                 },
             ];
             for tools in [false, true] {

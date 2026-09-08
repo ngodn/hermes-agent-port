@@ -71,6 +71,9 @@ pub fn encode_message_content(content: &Value) -> String {
 pub struct HistoryMessage {
     pub role: String,
     pub content: String,
+    /// Exact model-wire content used on the original turn, when it differed
+    /// from the clean transcript content.
+    pub api_content: Option<String>,
 }
 
 impl HistoryMessage {
@@ -1140,6 +1143,37 @@ impl SessionDb {
         tx.commit()
     }
 
+    /// Add model-wire sidecars to stores created before native memory recall.
+    /// The migration is one short schema transaction and performs no external
+    /// work while SQLite holds its write lock.
+    fn ensure_message_schema(conn: &mut Connection) -> rusqlite::Result<()> {
+        let columns: Vec<String> = {
+            let mut query = conn.prepare("PRAGMA table_info(messages)")?;
+            let rows = query
+                .query_map([], |row| row.get(1))?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        if columns.iter().any(|column| column == "api_content") {
+            return Ok(());
+        }
+
+        // Recheck after acquiring the writer because another opener may have
+        // completed the same migration between the read and this transaction.
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let columns: Vec<String> = {
+            let mut query = tx.prepare("PRAGMA table_info(messages)")?;
+            let rows = query
+                .query_map([], |row| row.get(1))?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        if !columns.iter().any(|column| column == "api_content") {
+            tx.execute("ALTER TABLE messages ADD COLUMN api_content TEXT", [])?;
+        }
+        tx.commit()
+    }
+
     /// Older installs used session_key alone as the primary key. Add the scope
     /// column if absent, then rebuild atomically so cross-profile keys coexist.
     /// Inspect under the write transaction to serialize concurrent openers.
@@ -1310,6 +1344,7 @@ impl SessionDb {
                 session_id TEXT NOT NULL,
                 role TEXT NOT NULL,
                 content TEXT,
+                api_content TEXT,
                 tool_call_id TEXT,
                 tool_calls TEXT,
                 tool_name TEXT,
@@ -1320,6 +1355,7 @@ impl SessionDb {
             )",
             [],
         )?;
+        Self::ensure_message_schema(conn)?;
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_messages_session_id ON messages(session_id, id)",
             [],
@@ -1428,6 +1464,38 @@ impl SessionDb {
         self.append_message_with(session_id, role, content, &AppendOptions::default())
     }
 
+    /// Persist the exact API-bound copy for the newest matching user row.
+    /// Matching the clean stored value prevents a delayed preparation from
+    /// attaching one turn's recalled context to a newer message.
+    pub fn set_latest_user_api_content(
+        &self,
+        session_id: &str,
+        clean_content: &Value,
+        api_content: &str,
+    ) -> rusqlite::Result<bool> {
+        let clean_content = encode_message_content(clean_content);
+        let changed = self.conn.lock().unwrap().execute(
+            "UPDATE messages SET api_content = ?1
+             WHERE id = (
+                 SELECT id FROM messages
+                 WHERE session_id = ?2 AND role = 'user' AND active = 1
+                 ORDER BY id DESC LIMIT 1
+             ) AND content = ?3",
+            params![api_content, session_id, clean_content],
+        )?;
+        Ok(changed == 1)
+    }
+
+    /// Count persisted user turns, including the current row after begin_turn.
+    pub fn user_turn_count(&self, session_id: &str) -> rusqlite::Result<usize> {
+        self.conn.lock().unwrap().query_row(
+            "SELECT COUNT(*) FROM messages
+             WHERE session_id = ? AND role = 'user' AND active = 1",
+            [session_id],
+            |row| row.get(0),
+        )
+    }
+
     /// Append a message with the full column set (tool fields, display kind /
     /// metadata, explicit timestamp). `display_metadata` is serialized to JSON
     /// text. Mirrors the shape the delivery/TUI poll path and cron delegation
@@ -1508,13 +1576,13 @@ impl SessionDb {
         let conn = self.conn.lock().unwrap();
         // Take the most recent `limit` by id, then present oldest-first.
         let sql = if limit == 0 {
-            "SELECT role, content FROM messages
+            "SELECT role, content, api_content FROM messages
              WHERE session_id = ? AND active = 1 ORDER BY id ASC"
                 .to_string()
         } else {
             format!(
-                "SELECT role, content FROM (
-                     SELECT id, role, content FROM messages
+                "SELECT role, content, api_content FROM (
+                     SELECT id, role, content, api_content FROM messages
                      WHERE session_id = ? AND active = 1
                      ORDER BY id DESC LIMIT {limit}
                  ) ORDER BY id ASC"
@@ -1525,6 +1593,7 @@ impl SessionDb {
             Ok(HistoryMessage {
                 role: r.get::<_, String>(0)?,
                 content: r.get::<_, Option<String>>(1)?.unwrap_or_default(),
+                api_content: r.get(2)?,
             })
         })?;
         rows.collect()
@@ -3288,20 +3357,95 @@ mod tests {
             vec![
                 HistoryMessage {
                     role: "user".into(),
-                    content: "hello".into()
+                    content: "hello".into(),
+                    api_content: None,
                 },
                 HistoryMessage {
                     role: "assistant".into(),
-                    content: "hi there".into()
+                    content: "hi there".into(),
+                    api_content: None,
                 },
                 HistoryMessage {
                     role: "user".into(),
-                    content: "how are you".into()
+                    content: "how are you".into(),
+                    api_content: None,
                 },
             ]
         );
         assert_eq!(db.message_count("s1").unwrap(), 3);
         let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn api_content_is_checkpointed_on_the_matching_user_row_and_replayed() {
+        let path = temp_db("api_content_sidecar");
+        let db = SessionDb::open(path).unwrap();
+        db.ensure_session("s1", "cli", None, None, None).unwrap();
+        db.append_message("s1", "user", "first").unwrap();
+        db.append_message("s1", "assistant", "answer").unwrap();
+        let current = serde_json::json!("second");
+        let current_id = db.append_message("s1", "user", "second").unwrap();
+
+        assert!(!db
+            .set_latest_user_api_content("s1", &serde_json::json!("first"), "must not attach")
+            .unwrap());
+        assert!(db
+            .set_latest_user_api_content(
+                "s1",
+                &current,
+                "second\n\n<memory-context>recalled</memory-context>"
+            )
+            .unwrap());
+        assert_eq!(db.user_turn_count("s1").unwrap(), 2);
+        assert_eq!(
+            db.get_message(current_id).unwrap().unwrap().content,
+            "second"
+        );
+        let restored = db.load_history("s1", 0).unwrap();
+        assert_eq!(restored[2].content, "second");
+        assert_eq!(
+            restored[2].api_content.as_deref(),
+            Some("second\n\n<memory-context>recalled</memory-context>")
+        );
+    }
+
+    #[test]
+    fn opening_a_legacy_message_table_adds_the_api_content_sidecar() {
+        let path = temp_db("api_content_migration");
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(
+            "CREATE TABLE messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, session_id TEXT NOT NULL,
+                role TEXT NOT NULL, content TEXT, tool_call_id TEXT, tool_calls TEXT,
+                tool_name TEXT, display_kind TEXT, display_metadata TEXT,
+                timestamp REAL NOT NULL, active INTEGER NOT NULL DEFAULT 1
+             );
+             INSERT INTO messages (session_id, role, content, timestamp)
+             VALUES ('legacy', 'user', 'clean', 1);
+             CREATE VIRTUAL TABLE messages_fts USING fts5(
+                content, tool_name, tool_calls,
+                content='messages', content_rowid='id'
+             );
+             INSERT INTO messages_fts(messages_fts) VALUES ('rebuild');",
+        )
+        .unwrap();
+        drop(conn);
+
+        let db = SessionDb::open(path).unwrap();
+        assert!(db
+            .set_latest_user_api_content(
+                "legacy",
+                &serde_json::json!("clean"),
+                "clean with recalled context",
+            )
+            .unwrap());
+        let restored = db.load_history("legacy", 0).unwrap();
+        assert_eq!(restored[0].content, "clean");
+        assert_eq!(
+            restored[0].api_content.as_deref(),
+            Some("clean with recalled context")
+        );
     }
 
     #[test]
@@ -3398,6 +3542,7 @@ mod tests {
         let hm = HistoryMessage {
             role: "user".into(),
             content: stored,
+            api_content: None,
         };
         assert_eq!(hm.model_content(), serde_json::json!("[1,2,3]"));
     }
@@ -3413,6 +3558,7 @@ mod tests {
         let hm = HistoryMessage {
             role: "user".into(),
             content: stored,
+            api_content: None,
         };
         assert_eq!(hm.model_content(), parts);
 
@@ -3420,6 +3566,7 @@ mod tests {
         let hm2 = HistoryMessage {
             role: "user".into(),
             content: encode_message_content(&obj),
+            api_content: None,
         };
         assert_eq!(hm2.model_content(), obj);
     }
@@ -3432,6 +3579,7 @@ mod tests {
         let hm = HistoryMessage {
             role: "assistant".into(),
             content: raw.clone(),
+            api_content: None,
         };
         assert_eq!(hm.model_content(), Value::String(raw));
     }
@@ -3450,6 +3598,7 @@ mod tests {
             let hm = HistoryMessage {
                 role: "user".into(),
                 content: encode_message_content(&v),
+                api_content: None,
             };
             assert_eq!(hm.model_content(), v);
         }
@@ -3540,12 +3689,14 @@ mod golden_corpus {
             let from_python = HistoryMessage {
                 role: "user".into(),
                 content: case["stored"].as_str().unwrap().into(),
+                api_content: None,
             };
             assert_eq!(from_python.model_content(), case["decoded"], "{case}");
             if let Some(input) = case.get("input") {
                 let from_rust = HistoryMessage {
                     role: "user".into(),
                     content: encode_message_content(input),
+                    api_content: None,
                 };
                 assert_eq!(from_rust.model_content(), case["decoded"], "{case}");
             }

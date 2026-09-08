@@ -2118,14 +2118,17 @@ mod tests {
             HistoryMessage {
                 role: "system".into(),
                 content: "system prompt".into(),
+                api_content: None,
             },
             HistoryMessage {
                 role: "user".into(),
                 content: "\0json:[{\"type\":\"text\",\"text\":\"prior image description\"}]".into(),
+                api_content: None,
             },
             HistoryMessage {
                 role: "assistant".into(),
                 content: "understood".into(),
+                api_content: None,
             },
         ];
 

@@ -1,5 +1,54 @@
 # Hermes Rust rewrite
 
+## Native external-memory turn lifecycle checkpoint: 2026-09-08
+
+Native conversations now drive the configured Python external-memory provider
+on every eligible turn without returning model ownership to Python. Turn start
+calls `on_turn_start`, applies Python's trivial-prompt gate and bounded prefetch,
+uses the canonical memory-context composer, and emits a structured recall
+notice. Dynamic recall never changes the frozen system prompt or inserts a
+synthetic role.
+
+SQLite now creates and migrates the nullable `messages.api_content` sidecar.
+The clean user content and exact API-bound bytes stay separate through history
+loading, and the existing wire projection substitutes the sidecar only on the
+provider request copy. The current row is updated atomically before model I/O,
+with a newest-row identity check that cannot reach backward to an older matching
+message. Existing stores inspect the schema read-only and take an immediate
+write transaction only for the one-time migration.
+
+Successful turns capture the real current-turn transcript, including assistant
+tool calls and tool results, then defer external-memory sync until the gateway
+has durably appended the final assistant reply. HTTP and push dispatch share the
+new post-persist finalizer. Python's existing single-worker queue retains FIFO
+write ordering and keeps provider latency off the turn path; nontrivial turns
+also warm the provider's next prefetch. Model errors, interruptions and empty
+responses do not sync.
+
+The compatibility protocol also exposes bounded session-end and queue-drain
+operations for the next ownership checkpoint. Turn-start transport allows
+headroom around Python's 8-second provider prefetch, while a truly wedged child
+still fails open for the model turn and is terminated rather than pinning the
+JSONL worker forever.
+
+Real Python-provider, SQLite and local HTTP coverage proves recall persistence
+before the first model request, byte-stable wire replay, full tool transcript
+sync, durable assistant persistence before provider observation, multimodal
+flattening, trivial/interrupted/empty gates, FIFO drain, and provider shutdown.
+Full workspace: **1,500 passed, two ignored**. The conversation and plugin
+prompt generators pass their source checks. Formatting, Clippy with warnings
+denied, Python compilation, and `git diff --check` pass.
+
+Gemini and Claude mapped and reviewed the lifecycle and cache seams through the
+required helper wrappers. Their four source reports and the verified review
+disposition are indexed under `rust/analysis/`.
+
+Next: bound `ConversationAgent` with the existing cache configuration and
+pressure planner, protect in-flight clients, and wire TTL, LRU, reset, expiry
+and shutdown paths to session-end extraction, queue drain and child teardown.
+Structured lifecycle-notice rendering, transparent host respawn, compression
+checkpoints and built-in memory-tool write mirroring remain later milestones.
+
 ## Live extension-host compatibility checkpoint: 2026-09-08
 
 Native conversations can now use existing Python plugin prompt sections,
