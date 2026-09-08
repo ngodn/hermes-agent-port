@@ -28,8 +28,14 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 - Automatic native compression runs before inbound persistence on HTTP and
   push ingress. It sizes the frozen provider request, preserves complete head
   and tail regions, supports in-place and rotation publication, and persists
-  cooldown and anti-thrash guards. Provider usage, pruning, token-budget tails,
-  auxiliary routing, and hooks remain open.
+  cooldown and anti-thrash guards.
+- Native provider usage is normalized into main and auxiliary ledgers. Native
+  tool-call groups are committed incrementally before side effects and later
+  provider calls, then replayed from the durable wide transcript.
+- Count-based proactive pruning publishes atomically at the next admitted
+  pre-turn boundary with exact-snapshot CAS and durable hysteresis. Same-turn
+  post-tool pruning, token-budget pressure passes, auxiliary routing, and hooks
+  remain open.
 
 ## Rejected paths
 
@@ -47,6 +53,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-provider-usage-pruning-resolution.md](native-provider-usage-pruning-resolution.md) | Source-verified native provider usage, incremental tool history, atomic proactive-prune publication, helper dispositions, and explicit remaining parity |
+| [provider-usage-agy.md](provider-usage-agy.md) | AGY's bounded provider-usage lane, including the accepted source map and rejected draft behavior |
+| [tool-result-prune-claude.md](tool-result-prune-claude.md) | Claude's independent pure count-based tool-result pruning lane |
+| [tool-prune-persistence-claude.md](tool-prune-persistence-claude.md) | Claude's independent wide-row prune publication and durable rearm contract map |
+| [native-tool-history-claude.md](native-tool-history-claude.md) | Claude's independent source trace of assistant-call-before-side-effect and result-before-next-request persistence ordering |
 | [native-automatic-compression-resolution.md](native-automatic-compression-resolution.md) | Live pre-turn request-pressure compression on HTTP and push, complete prefix/tail publication, durable guards, helper corrections, validation, and explicit remaining parity |
 | [automatic-compression-policy-agy.md](automatic-compression-policy-agy.md) | AGY's bounded pure-policy lane plus the source-verified corrections applied before integration |
 | [automatic-compression-guards-claude.md](automatic-compression-guards-claude.md) | Claude's separate SQLite guard lane plus the nullable-deadline correction and runtime use |
@@ -81,7 +92,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 42% weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 45.40-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |

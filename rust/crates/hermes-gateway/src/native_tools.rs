@@ -144,6 +144,12 @@ pub trait ChatModel: Send + Sync {
     fn supports_vision_tool_messages(&self) -> bool {
         true
     }
+    /// Durably record one assistant tool-call row before any advertised tool
+    /// executes. Stateless/test models keep the default no-op.
+    fn persist_tool_loop_message(&self, message: &Value) -> Result<()> {
+        let _ = message;
+        Ok(())
+    }
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step>;
 }
 
@@ -518,12 +524,29 @@ pub async fn run_tool_loop_with_content(
     events: &mpsc::Sender<StreamEvent>,
     max_iters: usize,
 ) -> Result<()> {
+    let history = crate::native_agent::build_history_messages(history);
+    run_tool_loop_with_messages(model, tools, &history, user_content, events, max_iters).await
+}
+
+/// Run the tool loop from an already reconstructed provider-wire history.
+/// This preserves durable assistant tool calls and their matching tool rows;
+/// the narrower [`run_tool_loop_with_content`] remains the compatibility
+/// wrapper for callers that only have plain [`HistoryMessage`] values.
+pub async fn run_tool_loop_with_messages(
+    model: &dyn ChatModel,
+    tools: &[Arc<dyn Tool>],
+    history: &[Value],
+    user_content: &Value,
+    events: &mpsc::Sender<StreamEvent>,
+    max_iters: usize,
+) -> Result<()> {
     let tool_specs: Vec<Value> = tools.iter().map(|t| tool_spec_json(&t.spec())).collect();
     let valid_names: Vec<String> = tool_specs
         .iter()
         .filter_map(|spec| spec["function"]["name"].as_str().map(str::to_owned))
         .collect();
-    let mut messages = crate::native_agent::build_messages_with_content(history, user_content);
+    let mut messages = history.to_vec();
+    messages.push(json!({"role": "user", "content": user_content}));
 
     // Correlation is scoped to the whole turn, including later tool rounds.
     let mut tool_index = 0_i64;
@@ -642,13 +665,16 @@ pub async fn run_tool_loop_with_content(
                         continue;
                     }
                     invalid_json_retries = 0;
+                    model.persist_tool_loop_message(&assistant_message)?;
                     messages.push(assistant_message);
                     for call in calls {
                         let content = match invalid.iter().find(|(name, _)| name == &call.name) {
                             Some((_, error)) => format!("Error: Invalid JSON arguments. {error}. For tools with no required parameters, use an empty object: {{}}. Please retry with valid JSON."),
                             None => "Skipped: other tool call in this response had invalid JSON.".to_owned(),
                         };
-                        messages.push(json!({"role":"tool", "name":call.name, "tool_call_id":call.id, "content":content}));
+                        let result = json!({"role":"tool", "name":call.name, "tool_call_id":call.id, "content":content});
+                        model.persist_tool_loop_message(&result)?;
+                        messages.push(result);
                     }
                     continue;
                 }
@@ -685,6 +711,7 @@ pub async fn run_tool_loop_with_content(
                         housekeeping_answer = Some(answer);
                     }
                 }
+                model.persist_tool_loop_message(&assistant_message)?;
                 messages.push(assistant_message);
                 for call in calls {
                     let _ = events
@@ -735,13 +762,15 @@ pub async fn run_tool_loop_with_content(
                     tool_index += 1;
                     let timestamp =
                         json!(chrono::Utc::now().timestamp_micros() as f64 / 1_000_000.0);
-                    messages.push(crate::tool_result::build(
+                    let result = crate::tool_result::build(
                         &call.name,
                         &content,
                         &json!(call.id),
                         &timestamp,
                         None,
-                    ));
+                    );
+                    model.persist_tool_loop_message(&result)?;
+                    messages.push(result);
                 }
             }
         }

@@ -1,8 +1,8 @@
 # Full Rust port progress audit, 2026-09-08
 
-Current estimate: **44% of the full native replacement**, with a reasonable
-range of **42% to 46%**. This supersedes the 42% estimate recorded after native
-in-place manual compression landed.
+Current estimate: **45% of the full native replacement**, with a reasonable
+range of **43% to 47%**. This supersedes the 44% estimate recorded after native
+automatic compression landed.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -18,12 +18,12 @@ audits.
 | Area | Full-port weight | Current area completion | Overall points |
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 64% | 22.40 |
-| Tool runtime and RPC | 30% | 12% | 3.60 |
-| State and search | 15% | 67% | 10.05 |
-| Native agent core | 20% | 40% | 8.00 |
-| Total | 100% | | **44.05** |
+| Tool runtime and RPC | 30% | 13% | 3.90 |
+| State and search | 15% | 70% | 10.50 |
+| Native agent core | 20% | 43% | 8.60 |
+| Total | 100% | | **45.40** |
 
-`0.35 * 64 + 0.30 * 12 + 0.15 * 67 + 0.20 * 40 = 44.05`
+`0.35 * 64 + 0.30 * 13 + 0.15 * 70 + 0.20 * 43 = 45.40`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -46,19 +46,23 @@ handlers, queue/steer/interrupt behavior, richer streaming delivery, adapter
 callbacks, topic management, and desktop/TUI protocol parity. Three substantial
 native adapters do not represent the roughly twenty Python platforms.
 
-### Tool runtime and RPC, 12%
+### Tool runtime and RPC, 13%
 
 The native model tool loop, schema projection, malformed-call repair, duplicate
 suppression, result framing, event emission, iteration-summary path, and a
 persistent Python extension-host protocol exist. Startup can expose an
 extension-backed tool surface, but the native built-in tool catalog remains
 minimal and startup still registers only the small core fixture-level surface.
+Live native tool rounds now persist assistant call rows before side effects,
+persist each result before the next provider request, and replay complete tool
+groups on later turns. Deterministic old-result pruning can summarize those
+durable rows without changing their call/result identity.
 
 Terminal, file, browser, web, MCP, execution-environment backends, approval
 runtime, delegation execution, most service tools, plugin discovery/management,
 and full backend RPC account for most of this weighted area and remain.
 
-### State and search, 67%
+### State and search, 70%
 
 SQLite history, structured content replay, FTS foundations, route persistence,
 legacy recovery, peer ownership, lineage, conversation generations, prompt
@@ -71,12 +75,21 @@ hidden, and active message/tool counters are reconciled at commit. Injected
 rollback and two-connection contention tests prove the newest multi-row
 transitions.
 
+The shared schema now carries the Python reasoning and Codex replay sidecars,
+provider usage totals, and the per-model/per-task usage ledger. Its open-time
+healer transactionally upgrades the stale five-column Python usage primary key
+so task-aware upserts work without losing legacy or orphan rows. Proactive
+prune publication atomically archives the original active generation, clones
+every wide column, rewrites only candidate content/tool arguments, merges the
+durable rearm watermark, and checks the exact snapshot plus turn lease before
+commit.
+
 Full schema and migration parity, session search projection, archive/pin/read
 state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 40%
+### Native agent core, 43%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -92,7 +105,15 @@ attempt cap, complete head/tail boundaries, and durable retry guards. Native
 turns load the full active transcript instead of silently truncating at 40
 messages.
 
-Provider usage recalibration, token-budget tail selection, pruning and
+Native streaming and non-streaming calls now normalize provider usage into
+fresh input, output, cache-read, cache-write, reasoning, and request-count
+buckets. Main usage reaches both session totals and the model ledger, while
+compression usage remains auxiliary. Count-based proactive pruning is live at
+the next admitted pre-turn boundary with restart-safe hysteresis, minimum
+reclaim gating, exact transcript CAS, and end-to-end proof that the provider
+sees the summary instead of the archived large result.
+
+Same-turn post-tool pruning, token-budget tail selection, pressure demotion,
 micro-compaction, auxiliary summary model routing, provider failover and
 credential retry loops,
 delegation/subagents, full approval/clarification flows, memory and plugin
@@ -102,7 +123,8 @@ core score remains low despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,589 passing Rust tests and two expected ignores.
+The workspace currently has 1,620 passing Rust tests and two expected ignores
+(1,619 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -110,8 +132,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,589 passed, two ignored.
-- Selected Python automatic threshold and guard contract: 26 passed.
+- Full Rust workspace: 1,620 passed, two ignored (1,619 gateway plus one core).
+- Selected Python usage, pruning, restart-safety, wiring, and incremental
+  persistence contract: 91 passed.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
 - The lower end of the range assumes native extension-host functionality earns
   little tool-runtime credit until managers and built-ins use it broadly.
@@ -120,8 +143,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Provider usage, pruning/micro-compaction, auxiliary model policy, and
-   checkpoint hooks complete the current compression cluster.
+1. Same-turn pruning, token-budget pressure demotion, micro-compaction,
+   auxiliary model policy, and checkpoint hooks complete the current
+   compression cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the

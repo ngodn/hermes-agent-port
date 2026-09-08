@@ -37,6 +37,9 @@ use tracing::warn;
 pub struct TurnContext<'a> {
     pub home: Option<&'a std::path::Path>,
     pub database: Option<&'a crate::session_db::SessionDb>,
+    /// Owner token for the cross-process conversation lease held by this
+    /// admitted turn. Transcript mutations can recheck it inside SQLite.
+    pub turn_lease_holder: Option<&'a str>,
     /// True when the session reset policy has a finite boundary. Cache
     /// pressure must preserve its end-of-session memory extraction before
     /// releasing the live conversation client.
@@ -56,12 +59,18 @@ impl<'a> TurnContext<'a> {
         Self {
             home: database.and_then(|db| db.profile_home()),
             database,
+            turn_lease_holder: None,
             session_finalizable: false,
         }
     }
 
     pub fn with_session_finalizable(mut self, finalizable: bool) -> Self {
         self.session_finalizable = finalizable;
+        self
+    }
+
+    pub fn with_turn_lease_holder(mut self, holder: Option<&'a str>) -> Self {
+        self.turn_lease_holder = holder;
         self
     }
 }

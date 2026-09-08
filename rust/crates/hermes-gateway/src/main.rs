@@ -110,6 +110,7 @@ mod profile_routing;
 mod prompt_cache;
 mod prompt_footer;
 mod provider_registry;
+mod provider_usage;
 mod python_literal;
 mod python_value;
 mod qqbot_common;
@@ -176,6 +177,7 @@ mod tool_credentials;
 mod tool_name_repair;
 mod tool_pairing;
 mod tool_result;
+mod tool_result_prune;
 mod toolset_resolution;
 mod transcription_enrichment;
 mod transcription_http;
@@ -1369,19 +1371,20 @@ mod startup_tests {
             assert!(prompt.contains("# Fixture Memory"));
             assert_eq!(row["tool_names"], r#"["fixture_plugin_tool"]"#);
             let history = database.load_history("extension-session", 0).unwrap();
+            let current_user = history
+                .iter()
+                .rev()
+                .find(|message| message.role == "user")
+                .expect("current user row");
             assert!(
-                history
-                    .last()
-                    .unwrap()
+                current_user
                     .api_content
                     .as_deref()
                     .unwrap_or_default()
                     .contains("<memory-context>"),
                 "history was {history:?}"
             );
-            assert!(history
-                .last()
-                .unwrap()
+            assert!(current_user
                 .api_content
                 .as_deref()
                 .unwrap_or_default()

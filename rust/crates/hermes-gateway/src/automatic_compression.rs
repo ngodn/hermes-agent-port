@@ -21,6 +21,9 @@ pub const DEFAULT_PROTECT_FIRST_N: usize = 3;
 
 /// Default per-turn cap on compression retry passes.
 pub const DEFAULT_MAX_ATTEMPTS: u32 = 3;
+pub const DEFAULT_PROACTIVE_PRUNE_TOKENS: u64 = 0;
+pub const DEFAULT_PROACTIVE_PRUNE_MIN_RESULT_CHARS: usize = 8_000;
+pub const DEFAULT_PROACTIVE_PRUNE_MIN_RECLAIM_TOKENS: u64 = 4_096;
 
 /// Minimum valid value for `max_attempts`.
 pub const MIN_MAX_ATTEMPTS: u32 = 1;
@@ -52,6 +55,13 @@ pub struct AutomaticCompressionPolicy {
     pub protect_first_n: usize,
     /// Per-turn cap on compression retry passes. Clamped to [1, 10].
     pub max_attempts: u32,
+    /// Opt-in request-pressure trigger for deterministic tool-result pruning.
+    /// Zero disables the path.
+    pub proactive_prune_tokens: u64,
+    /// Minimum tool-result size eligible for the lossy summary pass.
+    pub proactive_prune_min_result_chars: usize,
+    /// Minimum estimated savings required before a cache-breaking prune commits.
+    pub proactive_prune_min_reclaim_tokens: u64,
 }
 
 impl Default for AutomaticCompressionPolicy {
@@ -64,6 +74,9 @@ impl Default for AutomaticCompressionPolicy {
             protect_last_n: DEFAULT_PROTECT_LAST_N,
             protect_first_n: DEFAULT_PROTECT_FIRST_N,
             max_attempts: DEFAULT_MAX_ATTEMPTS,
+            proactive_prune_tokens: DEFAULT_PROACTIVE_PRUNE_TOKENS,
+            proactive_prune_min_result_chars: DEFAULT_PROACTIVE_PRUNE_MIN_RESULT_CHARS,
+            proactive_prune_min_reclaim_tokens: DEFAULT_PROACTIVE_PRUNE_MIN_RECLAIM_TOKENS,
         }
     }
 }
@@ -142,6 +155,32 @@ impl AutomaticCompressionPolicy {
         let protect_first_n =
             parse_protect_count(map.get("protect_first_n"), DEFAULT_PROTECT_FIRST_N);
         let max_attempts = parse_max_attempts(map.get("max_attempts"), DEFAULT_MAX_ATTEMPTS);
+        let proactive_prune_tokens = u64::try_from(
+            parse_prune_integer(
+                map.get("proactive_prune_tokens"),
+                DEFAULT_PROACTIVE_PRUNE_TOKENS as i128,
+            )
+            .max(0),
+        )
+        .unwrap_or(u64::MAX);
+        let raw_min_chars = parse_prune_integer(
+            map.get("proactive_prune_min_result_chars"),
+            DEFAULT_PROACTIVE_PRUNE_MIN_RESULT_CHARS as i128,
+        );
+        let proactive_prune_min_result_chars = if raw_min_chars == 0 {
+            DEFAULT_PROACTIVE_PRUNE_MIN_RESULT_CHARS
+        } else {
+            usize::try_from(raw_min_chars.max(crate::tool_result_prune::PRUNE_MIN_CHARS as i128))
+                .unwrap_or(usize::MAX)
+        };
+        let proactive_prune_min_reclaim_tokens = u64::try_from(
+            parse_prune_integer(
+                map.get("proactive_prune_min_reclaim_tokens"),
+                DEFAULT_PROACTIVE_PRUNE_MIN_RECLAIM_TOKENS as i128,
+            )
+            .max(0),
+        )
+        .unwrap_or(u64::MAX);
 
         Self {
             enabled,
@@ -151,6 +190,9 @@ impl AutomaticCompressionPolicy {
             protect_last_n,
             protect_first_n,
             max_attempts,
+            proactive_prune_tokens,
+            proactive_prune_min_result_chars,
+            proactive_prune_min_reclaim_tokens,
         }
     }
 
@@ -480,6 +522,29 @@ fn parse_max_attempts(raw: Option<&Value>, default: u32) -> u32 {
     }
 }
 
+fn parse_prune_integer(raw: Option<&Value>, default: i128) -> i128 {
+    match raw {
+        None | Some(Value::Null) | Some(Value::Bool(_)) => default,
+        Some(Value::Number(number)) => {
+            if let Some(value) = number.as_i64() {
+                i128::from(value)
+            } else if let Some(value) = number.as_u64() {
+                i128::from(value)
+            } else if let Some(value) = number.as_f64() {
+                if value.is_finite() && value.fract() == 0.0 {
+                    value as i128
+                } else {
+                    default
+                }
+            } else {
+                default
+            }
+        }
+        Some(Value::String(value)) => value.trim().parse().unwrap_or(default),
+        Some(Value::Array(_) | Value::Object(_)) => default,
+    }
+}
+
 fn now_secs() -> f64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -561,15 +626,17 @@ pub async fn compress_before_turn(
         let session_id = admitted.entry.session_id.clone();
         let read_database = database.clone();
         let read_id = session_id.clone();
-        let (snapshot, has_checkpoint, guard) = tokio::task::spawn_blocking(move || {
-            Ok::<_, rusqlite::Error>((
-                read_database.load_compression_snapshot(&read_id)?,
-                read_database.has_compression_checkpoint(&read_id)?,
-                read_database.load_compression_guard_state(&read_id)?,
-            ))
-        })
-        .await
-        .map_err(|error| anyhow::anyhow!("automatic compression reader failed: {error}"))??;
+        let (snapshot, has_checkpoint, guard, prune_rearm) =
+            tokio::task::spawn_blocking(move || {
+                Ok::<_, rusqlite::Error>((
+                    read_database.load_compression_snapshot(&read_id)?,
+                    read_database.has_compression_checkpoint(&read_id)?,
+                    read_database.load_compression_guard_state(&read_id)?,
+                    read_database.proactive_prune_rearm_tokens(&read_id)?,
+                ))
+            })
+            .await
+            .map_err(|error| anyhow::anyhow!("automatic compression reader failed: {error}"))??;
         let history = snapshot
             .messages
             .iter()
@@ -588,6 +655,74 @@ pub async fn compress_before_turn(
             preflight.max_output_tokens,
             Some(&preflight.model),
         );
+        let protect_first = if has_checkpoint {
+            0
+        } else {
+            policy.protect_first_n
+        };
+
+        // The Python loop runs this deterministic pass after tool results and
+        // before its next provider call. Native ingress currently performs the
+        // same maintenance at the next admitted request boundary, while the
+        // transcript and route leases are still held. It remains opt-in.
+        if policy.proactive_prune_tokens > 0
+            && preflight.request_tokens >= policy.proactive_prune_tokens
+            && snapshot.messages.len()
+                > protect_first
+                    .saturating_add(policy.protect_last_n)
+                    .saturating_add(1)
+        {
+            let before_tokens = u64::try_from(
+                structured_chars(&snapshot.messages)
+                    .saturating_add(snapshot.messages.len().saturating_mul(40))
+                    .saturating_add(3)
+                    / 4,
+            )
+            .unwrap_or(u64::MAX);
+            let rearm_open = before_tokens >= prune_rearm || preflight.request_tokens >= threshold;
+            if rearm_open {
+                let candidate = crate::tool_result_prune::prune_old_tool_results(
+                    &snapshot.messages,
+                    policy.protect_last_n,
+                    policy.proactive_prune_min_result_chars,
+                );
+                let reclaimed_tokens =
+                    u64::try_from(candidate.reclaimed_chars.saturating_add(3) / 4)
+                        .unwrap_or(u64::MAX);
+                if candidate.changed
+                    && candidate.pruned_count > 0
+                    && reclaimed_tokens >= policy.proactive_prune_min_reclaim_tokens
+                {
+                    let after_tokens = before_tokens.saturating_sub(reclaimed_tokens);
+                    let runway = reclaimed_tokens
+                        .max(policy.proactive_prune_tokens)
+                        .max(policy.proactive_prune_min_reclaim_tokens);
+                    let next_rearm = after_tokens.saturating_add(runway);
+                    let holder = admitted.durable_lease.as_ref().map(|lease| lease.holder());
+                    let committed = deps.store.publish_tool_prune(
+                        source,
+                        &admitted.entry,
+                        &snapshot.messages,
+                        &candidate.messages,
+                        next_rearm,
+                        holder,
+                    )?;
+                    if !committed {
+                        return Ok(attempts);
+                    }
+                    tracing::info!(
+                        %session_id,
+                        pruned = candidate.pruned_count,
+                        reclaimed_tokens,
+                        next_rearm,
+                        "proactive native tool-result prune committed"
+                    );
+                    // Reload the fresh row ids and size the exact rewritten
+                    // request before deciding whether an LLM summary is also needed.
+                    continue;
+                }
+            }
+        }
         let now = now_secs();
         let blocked = guard.cooldown_until.is_some_and(|deadline| deadline > now)
             || (guard.ineffective_count >= 2 && guard.recovery_deadline > now);
@@ -601,11 +736,6 @@ pub async fn compress_before_turn(
             database.set_compression_breaker(&session_id, 1, 0.0)?;
         }
 
-        let protect_first = if has_checkpoint {
-            0
-        } else {
-            policy.protect_first_n
-        };
         let Some((prefix_end, tail_start)) =
             compression_boundaries(&snapshot.messages, protect_first, policy.protect_last_n)
         else {
@@ -772,7 +902,43 @@ mod tests {
             assert_eq!(policy.protect_last_n, 20, "{}: protect_last_n", case.name);
             assert_eq!(policy.protect_first_n, 3, "{}: protect_first_n", case.name);
             assert_eq!(policy.max_attempts, 3, "{}: max_attempts", case.name);
+            assert_eq!(
+                policy.proactive_prune_tokens, 0,
+                "{}: prune trigger",
+                case.name
+            );
+            assert_eq!(
+                policy.proactive_prune_min_result_chars, 8_000,
+                "{}: prune result floor",
+                case.name
+            );
+            assert_eq!(
+                policy.proactive_prune_min_reclaim_tokens, 4_096,
+                "{}: prune reclaim floor",
+                case.name
+            );
         }
+    }
+
+    #[test]
+    fn proactive_prune_config_matches_python_coercion() {
+        let policy = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "proactive_prune_tokens": "48000",
+            "proactive_prune_min_result_chars": -5,
+            "proactive_prune_min_reclaim_tokens": 0.0
+        }}));
+        assert_eq!(policy.proactive_prune_tokens, 48_000);
+        assert_eq!(policy.proactive_prune_min_result_chars, 200);
+        assert_eq!(policy.proactive_prune_min_reclaim_tokens, 0);
+
+        let malformed = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "proactive_prune_tokens": true,
+            "proactive_prune_min_result_chars": 12.5,
+            "proactive_prune_min_reclaim_tokens": "bad"
+        }}));
+        assert_eq!(malformed.proactive_prune_tokens, 0);
+        assert_eq!(malformed.proactive_prune_min_result_chars, 8_000);
+        assert_eq!(malformed.proactive_prune_min_reclaim_tokens, 4_096);
     }
 
     // 2. Malformed values and conservative coercion tests

@@ -30,11 +30,34 @@ use crate::native_tools::{parse_message_step, ChatModel, Step};
 struct TranscriptModel<'a> {
     inner: &'a NativeAgentClient,
     last_messages: std::sync::Mutex<Vec<Value>>,
+    database: Option<&'a crate::session_db::SessionDb>,
+    session_id: &'a str,
+    turn_lease_holder: Option<&'a str>,
 }
 
 struct PendingMemoryTurn {
     clean_content: Value,
     messages: Vec<Value>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum UsageBucket {
+    Main,
+    Auxiliary,
+}
+
+struct UsageState {
+    main: crate::provider_usage::CanonicalUsage,
+    auxiliary: crate::provider_usage::CanonicalUsage,
+}
+
+impl Default for UsageState {
+    fn default() -> Self {
+        Self {
+            main: crate::provider_usage::CanonicalUsage::accumulator(),
+            auxiliary: crate::provider_usage::CanonicalUsage::accumulator(),
+        }
+    }
 }
 
 #[async_trait]
@@ -49,6 +72,26 @@ impl ChatModel for TranscriptModel<'_> {
 
     fn supports_vision_tool_messages(&self) -> bool {
         self.inner.supports_vision_tool_messages()
+    }
+
+    fn persist_tool_loop_message(&self, message: &Value) -> Result<()> {
+        let Some(database) = self.database else {
+            return Ok(());
+        };
+        let inserted = database
+            .append_native_tool_message(self.session_id, message, self.turn_lease_holder)
+            .map_err(|error| {
+                Error::Other(format!(
+                    "native tool transcript persistence failed: {error}"
+                ))
+            })?;
+        if inserted {
+            Ok(())
+        } else {
+            Err(Error::Other(
+                "native tool transcript persistence rejected an invalid tail".into(),
+            ))
+        }
     }
 
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
@@ -79,13 +122,11 @@ pub enum SseEvent {
     Ignore,
 }
 
-/// Build the OpenAI `messages` array from prior history plus the current user
-/// message content. Only roles the chat API accepts are forwarded from history.
-pub fn build_messages_with_content(
-    history: &[crate::session_db::HistoryMessage],
-    content: &Value,
-) -> Vec<Value> {
-    let mut messages: Vec<Value> = history
+/// Build provider-wire messages from the gateway's narrow history view.
+/// Only roles representable by that view are forwarded. Native persisted
+/// history uses [`build_messages_from_durable`] so tool groups are retained.
+pub fn build_history_messages(history: &[crate::session_db::HistoryMessage]) -> Vec<Value> {
+    history
         .iter()
         .filter(|m| matches!(m.role.as_str(), "user" | "assistant" | "system"))
         .map(|m| {
@@ -95,8 +136,58 @@ pub fn build_messages_with_content(
             }
             message
         })
-        .collect();
+        .collect()
+}
+
+/// Build the OpenAI `messages` array from prior history plus the current user
+/// message content. Only roles the narrow history view can represent survive.
+#[cfg(test)]
+pub fn build_messages_with_content(
+    history: &[crate::session_db::HistoryMessage],
+    content: &Value,
+) -> Vec<Value> {
+    let mut messages = build_history_messages(history);
     messages.push(json!({ "role": "user", "content": content }));
+    messages
+}
+
+fn build_messages_from_durable(
+    database: Option<&crate::session_db::SessionDb>,
+    session_id: &str,
+    fallback: &[crate::session_db::HistoryMessage],
+    current_clean_content: Option<&Value>,
+) -> Vec<Value> {
+    let Some(database) = database else {
+        return build_history_messages(fallback);
+    };
+    let loaded = match database.load_lifecycle_messages(session_id) {
+        Ok(messages) => messages,
+        Err(error) => {
+            tracing::warn!(%error, %session_id, "native durable history load failed open");
+            return build_history_messages(fallback);
+        }
+    };
+    let mut loaded = loaded;
+    if let Some(current) = current_clean_content {
+        let matches_current = loaded.last().is_some_and(|message| {
+            message.get("role").and_then(Value::as_str) == Some("user")
+                && message.get("content") == Some(current)
+        });
+        if !matches_current {
+            tracing::warn!(%session_id, "native durable history did not end at the current user row");
+            return build_history_messages(fallback);
+        }
+        loaded.pop();
+    }
+    loaded
+}
+
+fn with_system_prompt(prompt: Option<&str>, history: &[Value]) -> Vec<Value> {
+    let mut messages = Vec::with_capacity(history.len() + usize::from(prompt.is_some()));
+    if let Some(prompt) = prompt {
+        messages.push(json!({"role": "system", "content": prompt}));
+    }
+    messages.extend_from_slice(history);
     messages
 }
 
@@ -170,7 +261,16 @@ fn output_cap_parameter(model: &str, base_url: &str) -> &'static str {
     }
 }
 
+fn supports_stream_usage(base_url: &str) -> bool {
+    crate::local_probe::urlparse_hostname(
+        base_url.trim_matches(crate::python_value::python_whitespace),
+    )
+    .to_lowercase()
+        != "generativelanguage.googleapis.com"
+}
+
 /// Build the streaming chat-completions request body for structured user content.
+#[cfg(test)]
 pub fn build_request_body_with_content(
     model: &str,
     history: &[crate::session_db::HistoryMessage],
@@ -179,6 +279,16 @@ pub fn build_request_body_with_content(
     json!({
         "model": model,
         "messages": build_messages_with_content(history, content),
+        "stream": true,
+    })
+}
+
+fn build_request_body_from_messages(model: &str, history: &[Value], content: &Value) -> Value {
+    let mut messages = history.to_vec();
+    messages.push(json!({"role": "user", "content": content}));
+    json!({
+        "model": model,
+        "messages": messages,
         "stream": true,
     })
 }
@@ -250,6 +360,8 @@ pub struct NativeAgentClient {
     /// external-memory tool calls. Dropping the final clone closes its worker.
     _extension_host: Option<crate::extension_host::Client>,
     pending_memory_turn: std::sync::Arc<std::sync::Mutex<Option<PendingMemoryTurn>>>,
+    usage_state: std::sync::Arc<std::sync::Mutex<UsageState>>,
+    usage_bucket: UsageBucket,
     turn_limit: usize,
     max_concurrent_children: usize,
     /// When non-empty, turns run through the tool-calling loop (non-streaming);
@@ -284,6 +396,8 @@ impl NativeAgentClient {
             _plugin_prompt: crate::plugin_prompt::Snapshot::default(),
             _extension_host: None,
             pending_memory_turn: Default::default(),
+            usage_state: Default::default(),
+            usage_bucket: UsageBucket::Main,
             turn_limit: crate::turn_limit::UNLIMITED,
             max_concurrent_children: 10,
             tools: Vec::new(),
@@ -512,34 +626,72 @@ impl NativeAgentClient {
         self
     }
 
+    fn provider_name(&self) -> &str {
+        self.provider_profile
+            .as_ref()
+            .map(|profile| profile.name.as_str())
+            .unwrap_or("")
+    }
+
+    fn begin_main_usage(&self) {
+        self.usage_state.lock().unwrap().main =
+            crate::provider_usage::CanonicalUsage::accumulator();
+    }
+
+    fn begin_auxiliary_usage(&self) {
+        self.usage_state.lock().unwrap().auxiliary =
+            crate::provider_usage::CanonicalUsage::accumulator();
+    }
+
+    fn capture_usage(&self, usage: Option<crate::provider_usage::CanonicalUsage>) {
+        let Some(usage) = usage else {
+            return;
+        };
+        let mut state = self.usage_state.lock().unwrap();
+        match self.usage_bucket {
+            UsageBucket::Main => state.main += &usage,
+            UsageBucket::Auxiliary => state.auxiliary += &usage,
+        }
+    }
+
+    fn take_main_usage(&self) -> crate::provider_usage::CanonicalUsage {
+        std::mem::replace(
+            &mut self.usage_state.lock().unwrap().main,
+            crate::provider_usage::CanonicalUsage::accumulator(),
+        )
+    }
+
+    fn take_auxiliary_usage(&self) -> crate::provider_usage::CanonicalUsage {
+        std::mem::replace(
+            &mut self.usage_state.lock().unwrap().auxiliary,
+            crate::provider_usage::CanonicalUsage::accumulator(),
+        )
+    }
+
     async fn run_model_turn(
         &self,
         content: &Value,
-        history: &[crate::session_db::HistoryMessage],
+        history: &[Value],
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        turn_lease_holder: Option<&str>,
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<Option<Vec<Value>>> {
-        let prompted_history = self.system_prompt.as_ref().map(|prompt| {
-            let mut messages = Vec::with_capacity(history.len() + 1);
-            messages.push(crate::session_db::HistoryMessage {
-                role: "system".into(),
-                content: prompt.to_string(),
-                api_content: None,
-            });
-            messages.extend_from_slice(history);
-            messages
-        });
-        let history = prompted_history.as_deref().unwrap_or(history);
+        let history = with_system_prompt(self.system_prompt.as_deref(), history);
 
         if !self.tools.is_empty() {
             let prefix_len = history.len();
             let model = TranscriptModel {
                 inner: self,
                 last_messages: std::sync::Mutex::new(Vec::new()),
+                database,
+                session_id,
+                turn_lease_holder,
             };
-            crate::native_tools::run_tool_loop_with_content(
+            crate::native_tools::run_tool_loop_with_messages(
                 &model,
                 &self.tools,
-                history,
+                &history,
                 content,
                 &events,
                 self.turn_limit,
@@ -550,8 +702,11 @@ impl NativeAgentClient {
         }
 
         let url = format!("{}/chat/completions", self.base_url);
-        let mut body = build_request_body_with_content(&self.model, history, content);
+        let mut body = build_request_body_from_messages(&self.model, &history, content);
         self.apply_provider_extras(&mut body)?;
+        if supports_stream_usage(&self.base_url) {
+            body["stream_options"] = json!({"include_usage": true});
+        }
         let resp = self
             .client
             .post(&url)
@@ -571,7 +726,8 @@ impl NativeAgentClient {
             )));
         }
 
-        forward_sse(resp.bytes_stream(), &events).await?;
+        let usage = forward_sse(resp.bytes_stream(), &events, self.provider_name()).await?;
+        self.capture_usage(usage);
         Ok(None)
     }
 
@@ -583,6 +739,7 @@ impl NativeAgentClient {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()> {
         let mut turn_client = self.clone();
+        turn_client.begin_main_usage();
         let session_id = crate::session_db::message_session_id(msg);
         turn_client.cache_scope = Some(
             context
@@ -646,7 +803,20 @@ impl NativeAgentClient {
         // profile state remains visible to native tools. The caller still sees
         // every event immediately while we retain the completed visible reply.
         let (inner_tx, mut inner_rx) = mpsc::channel(64);
-        let model = turn_client.run_model_turn(&model_content, history, inner_tx);
+        let durable_history = build_messages_from_durable(
+            context.database,
+            &session_id,
+            history,
+            Some(&clean_content),
+        );
+        let model = turn_client.run_model_turn(
+            &model_content,
+            &durable_history,
+            context.database,
+            &session_id,
+            context.turn_lease_holder,
+            inner_tx,
+        );
         let forward = async {
             let mut response = String::new();
             while let Some(event) = inner_rx.recv().await {
@@ -706,15 +876,39 @@ impl AgentClient for NativeAgentClient {
 
     async fn summarize_context(
         &self,
-        _context: crate::agent::TurnContext<'_>,
-        _msg: &Message,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
         history: &[crate::session_db::CompressionHistoryMessage],
         focus_topic: Option<&str>,
     ) -> Result<Option<String>> {
         let prompt = crate::compression_prompt::build(history, focus_topic);
-        match <Self as ChatModel>::step(self, &[json!({"role":"user", "content":prompt})], &[])
-            .await?
-        {
+        let mut summary_client = self.clone();
+        summary_client.usage_bucket = UsageBucket::Auxiliary;
+        summary_client.begin_auxiliary_usage();
+        let step = <Self as ChatModel>::step(
+            &summary_client,
+            &[json!({"role":"user", "content":prompt})],
+            &[],
+        )
+        .await?;
+        let usage = summary_client.take_auxiliary_usage();
+        if usage.request_count > 0 {
+            if let Some(database) = context.database {
+                let session_id = crate::session_db::message_session_id(msg);
+                let route = crate::session_db::UsageRoute {
+                    model: &summary_client.model,
+                    provider: summary_client.provider_name(),
+                    base_url: &summary_client.base_url,
+                    billing_mode: "",
+                };
+                if let Err(error) =
+                    database.record_auxiliary_usage(&session_id, "compression", &route, &usage)
+                {
+                    tracing::warn!(%error, %session_id, "compression usage persistence failed");
+                }
+            }
+        }
+        match step {
             Step::Final(summary) => Ok((!summary.trim().is_empty()).then(|| summary.trim().into())),
             Step::ToolCalls { .. } => Err(Error::Other(
                 "native compression summary unexpectedly requested a tool".into(),
@@ -724,22 +918,16 @@ impl AgentClient for NativeAgentClient {
 
     async fn compression_preflight(
         &self,
-        _context: crate::agent::TurnContext<'_>,
+        context: crate::agent::TurnContext<'_>,
         msg: &Message,
         history: &[crate::session_db::HistoryMessage],
     ) -> Result<Option<crate::agent::CompressionPreflight>> {
-        let prompted_history = self.system_prompt.as_ref().map(|prompt| {
-            let mut messages = Vec::with_capacity(history.len() + 1);
-            messages.push(crate::session_db::HistoryMessage {
-                role: "system".into(),
-                content: prompt.to_string(),
-                api_content: None,
-            });
-            messages.extend_from_slice(history);
-            messages
-        });
-        let history = prompted_history.as_deref().unwrap_or(history);
-        let mut body = build_request_body_with_content(&self.model, history, &msg.model_content());
+        let session_id = crate::session_db::message_session_id(msg);
+        let durable_history =
+            build_messages_from_durable(context.database, &session_id, history, None);
+        let history = with_system_prompt(self.system_prompt.as_deref(), &durable_history);
+        let mut body =
+            build_request_body_from_messages(&self.model, &history, &msg.model_content());
         if !self.tools.is_empty() {
             body["tools"] = Value::Array(
                 self.tools
@@ -771,11 +959,26 @@ impl AgentClient for NativeAgentClient {
 
     async fn finalize_turn_after_persist(
         &self,
-        _context: crate::agent::TurnContext<'_>,
-        _msg: &Message,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
         reply: &str,
         succeeded: bool,
     ) -> Result<()> {
+        let usage = self.take_main_usage();
+        if usage.request_count > 0 {
+            if let Some(database) = context.database {
+                let session_id = crate::session_db::message_session_id(msg);
+                let route = crate::session_db::UsageRoute {
+                    model: &self.model,
+                    provider: self.provider_name(),
+                    base_url: &self.base_url,
+                    billing_mode: "",
+                };
+                if let Err(error) = database.record_main_usage(&session_id, &route, &usage) {
+                    tracing::warn!(%error, %session_id, "main provider usage persistence failed");
+                }
+            }
+        }
         let pending = self.pending_memory_turn.lock().unwrap().take();
         let Some(mut pending) = pending.filter(|_| succeeded && !reply.is_empty()) else {
             return Ok(());
@@ -838,7 +1041,11 @@ fn flatten_extra_body(body: &mut Value) -> Result<()> {
 
 /// Assemble SSE lines before decoding deltas. Network chunk boundaries carry
 /// no protocol meaning and can split both line endings and UTF-8 characters.
-async fn forward_sse<S, E>(mut stream: S, events: &mpsc::Sender<StreamEvent>) -> Result<()>
+async fn forward_sse<S, E>(
+    mut stream: S,
+    events: &mpsc::Sender<StreamEvent>,
+    provider: &str,
+) -> Result<Option<crate::provider_usage::CanonicalUsage>>
 where
     S: futures_util::Stream<Item = std::result::Result<axum::body::Bytes, E>> + Unpin,
     E: std::fmt::Display,
@@ -848,13 +1055,22 @@ where
 
     let mut buf = Vec::new();
     let mut done = false;
+    let mut usage = None;
     let mut scrubber = crate::think_scrubber::ThinkScrubber::default();
     while let Some(chunk) = stream.next().await {
         let chunk = chunk.map_err(|e| Error::Other(format!("native agent stream: {e}")))?;
         buf.extend_from_slice(&chunk);
         while let Some(nl) = buf.iter().position(|byte| *byte == b'\n') {
             let line: Vec<u8> = buf.drain(..=nl).collect();
-            match parse_sse_line(&String::from_utf8_lossy(&line)) {
+            let line = String::from_utf8_lossy(&line);
+            if let Some(found) = crate::provider_usage::from_sse_line(
+                &line,
+                crate::provider_usage::ApiMode::ChatCompletions,
+                Some(provider),
+            ) {
+                usage = Some(found);
+            }
+            match parse_sse_line(&line) {
                 SseEvent::Delta(text) => {
                     let text = scrubber.feed(&text);
                     if !text.is_empty() {
@@ -874,7 +1090,15 @@ where
     }
     // Handle any final buffered line if the stream ended without a newline.
     if !done {
-        if let SseEvent::Delta(text) = parse_sse_line(&String::from_utf8_lossy(&buf)) {
+        let line = String::from_utf8_lossy(&buf);
+        if let Some(found) = crate::provider_usage::from_sse_line(
+            &line,
+            crate::provider_usage::ApiMode::ChatCompletions,
+            Some(provider),
+        ) {
+            usage = Some(found);
+        }
+        if let SseEvent::Delta(text) = parse_sse_line(&line) {
             let text = scrubber.feed(&text);
             if !text.is_empty() {
                 let _ = events.send(StreamEvent::MessageChunk { text }).await;
@@ -888,7 +1112,7 @@ where
     }
 
     let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
-    Ok(())
+    Ok(usage)
 }
 
 #[async_trait]
@@ -952,6 +1176,11 @@ impl ChatModel for NativeAgentClient {
             .json()
             .await
             .map_err(|e| Error::Other(format!("native agent step decode: {e}")))?;
+        self.capture_usage(crate::provider_usage::from_response(
+            &v,
+            crate::provider_usage::ApiMode::ChatCompletions,
+            Some(self.provider_name()),
+        ));
         let message = v
             .get("choices")
             .and_then(|c| c.get(0))
@@ -1188,6 +1417,337 @@ mod tests {
         assert!(prompt.contains("original question"));
         assert!(prompt.contains("FOCUS TOPIC: \"database state\""));
         assert!(!prompt.contains("ordinary frozen prompt"));
+    }
+
+    #[tokio::test]
+    async fn provider_usage_is_captured_and_persisted_by_task() {
+        use crate::agent::AgentClient;
+        use axum::{response::IntoResponse, routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+
+        let captures = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = captures.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                captured.lock().unwrap().push(body.clone());
+                async move {
+                    if body["stream"] == true {
+                        (
+                            [("content-type", "text/event-stream")],
+                            concat!(
+                                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\n",
+                                "data: {\"choices\":[],\"usage\":{\"prompt_tokens\":100,",
+                                "\"completion_tokens\":9,\"prompt_tokens_details\":{\"cached_tokens\":40},",
+                                "\"completion_tokens_details\":{\"reasoning_tokens\":3}}}\n\n",
+                                "data: [DONE]\n"
+                            ),
+                        )
+                            .into_response()
+                    } else {
+                        Json(json!({
+                            "choices":[{"message":{"role":"assistant","content":"summary"}}],
+                            "usage":{"prompt_tokens":30,"completion_tokens":5}
+                        }))
+                        .into_response()
+                    }
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+
+        let root = std::env::temp_dir().join(format!(
+            "hermes-native-usage-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let path = root.join("state.db");
+        let database = crate::session_db::SessionDb::open(path.clone()).unwrap();
+        database
+            .ensure_session("usage-session", "local", None, None, None)
+            .unwrap();
+        let client =
+            super::NativeAgentClient::new("usage-model", "key", format!("http://{address}"))
+                .unwrap();
+        let message = Message {
+            resolved_session_id: Some("usage-session".into()),
+            platform: hermes_core::Platform::Cli,
+            channel_id: "channel".into(),
+            sender_id: "user".into(),
+            text: "question".into(),
+            content_parts: None,
+            chat_type: Some("dm".into()),
+            audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
+        };
+        let context = crate::agent::TurnContext::from_database(Some(&database));
+        client
+            .summarize_context(
+                context,
+                &message,
+                &[crate::session_db::CompressionHistoryMessage {
+                    id: 1,
+                    message: crate::session_db::HistoryMessage {
+                        role: "user".into(),
+                        content: "old".into(),
+                        api_content: None,
+                    },
+                    tool_call_id: None,
+                    tool_calls: None,
+                    tool_name: None,
+                }],
+                None,
+            )
+            .await
+            .unwrap();
+
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+        client
+            .run_turn_with_context(context, &message, &[], tx)
+            .await
+            .unwrap();
+        let mut reply = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+        assert_eq!(reply, "answer");
+        client
+            .finalize_turn_after_persist(context, &message, &reply, true)
+            .await
+            .unwrap();
+
+        let session = database.get_session("usage-session").unwrap().unwrap();
+        assert_eq!(session["input_tokens"], 60);
+        assert_eq!(session["output_tokens"], 9);
+        assert_eq!(session["cache_read_tokens"], 40);
+        assert_eq!(session["reasoning_tokens"], 3);
+        assert_eq!(session["api_call_count"], 1);
+        let reader = rusqlite::Connection::open(path).unwrap();
+        let rows = reader
+            .prepare(
+                "SELECT task, input_tokens, output_tokens, api_call_count
+                 FROM session_model_usage ORDER BY task",
+            )
+            .unwrap()
+            .query_map([], |row| {
+                Ok((
+                    row.get::<_, String>(0)?,
+                    row.get::<_, i64>(1)?,
+                    row.get::<_, i64>(2)?,
+                    row.get::<_, i64>(3)?,
+                ))
+            })
+            .unwrap()
+            .collect::<rusqlite::Result<Vec<_>>>()
+            .unwrap();
+        assert_eq!(
+            rows,
+            vec![("".into(), 60, 9, 1), ("compression".into(), 30, 5, 1)]
+        );
+        let captures = captures.lock().unwrap();
+        assert_eq!(
+            captures[1]["stream_options"],
+            json!({"include_usage": true})
+        );
+        drop(captures);
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn live_tool_groups_are_persisted_and_replayed_on_the_next_turn() {
+        use crate::agent::AgentClient;
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+
+        let root = std::env::temp_dir().join(format!(
+            "hermes-native-tool-history-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = Arc::new(crate::session_db::SessionDb::open(root.join("state.db")).unwrap());
+        struct PersistProbe(Arc<crate::session_db::SessionDb>);
+        #[async_trait::async_trait]
+        impl crate::native_tools::Tool for PersistProbe {
+            fn spec(&self) -> crate::native_tools::ToolSpec {
+                crate::native_tools::ToolSpec {
+                    name: "current_time".into(),
+                    description: "persistence probe".into(),
+                    parameters: json!({"type":"object"}),
+                    extra: Default::default(),
+                }
+            }
+
+            async fn call(&self, _: &Value) -> hermes_core::Result<Value> {
+                let durable = self.0.load_lifecycle_messages("tool-session").unwrap();
+                assert_eq!(
+                    durable
+                        .iter()
+                        .map(|row| row["role"].as_str().unwrap())
+                        .collect::<Vec<_>>(),
+                    ["user", "assistant"]
+                );
+                Ok(json!("clock result"))
+            }
+        }
+        let requests = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = requests.clone();
+        let captured_database = database.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                let index = {
+                    let mut requests = captured.lock().unwrap();
+                    let index = requests.len();
+                    requests.push(body);
+                    index
+                };
+                let database = captured_database.clone();
+                async move {
+                    if index == 0 {
+                        Json(json!({"choices":[{"message":{
+                            "role":"assistant",
+                            "content":null,
+                            "reasoning":"inspect the clock",
+                            "reasoning_details":[{"type":"summary","text":"clock"}],
+                            "tool_calls":[{"id":"clock-1","type":"function","function":{
+                                "name":"current_time","arguments":"{}"
+                            }}]
+                        }}]}))
+                    } else {
+                        if index == 1 {
+                            let durable = database.load_lifecycle_messages("tool-session").unwrap();
+                            assert_eq!(
+                                durable
+                                    .iter()
+                                    .map(|row| row["role"].as_str().unwrap())
+                                    .collect::<Vec<_>>(),
+                                ["user", "assistant", "tool"]
+                            );
+                        }
+                        let content = if index == 1 {
+                            "first done"
+                        } else {
+                            "second done"
+                        };
+                        Json(json!({"choices":[{"message":{
+                            "role":"assistant","content":content
+                        }}]}))
+                    }
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+
+        let client = super::NativeAgentClient::new("fixture", "key", format!("http://{address}"))
+            .unwrap()
+            .with_tools(vec![Arc::new(PersistProbe(database.clone()))]);
+        let message = |text: &str| Message {
+            resolved_session_id: Some("tool-session".into()),
+            platform: hermes_core::Platform::Cli,
+            channel_id: "channel".into(),
+            sender_id: "user".into(),
+            text: text.into(),
+            content_parts: None,
+            chat_type: Some("dm".into()),
+            audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
+        };
+        let first = message("first question");
+        let history = crate::session_db::begin_turn(Some(&database), false, &first, "cli");
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+        client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &first,
+                &history,
+                tx,
+            )
+            .await
+            .unwrap();
+        let mut reply = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+        assert_eq!(reply, "first done");
+        crate::session_db::end_turn(Some(&database), false, &first, &reply);
+
+        let stored = database.load_lifecycle_messages("tool-session").unwrap();
+        assert_eq!(
+            stored
+                .iter()
+                .map(|row| row["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            ["user", "assistant", "tool", "assistant"]
+        );
+        assert_eq!(stored[1]["tool_calls"][0]["id"], "clock-1");
+        assert_eq!(stored[1]["reasoning"], "inspect the clock");
+        assert_eq!(stored[1]["reasoning_details"][0]["text"], "clock");
+        assert_eq!(stored[2]["tool_call_id"], "clock-1");
+        assert_eq!(stored[2]["name"], "current_time");
+
+        let second = message("second question");
+        let history = crate::session_db::begin_turn(Some(&database), false, &second, "cli");
+        let (tx, _rx) = tokio::sync::mpsc::channel(16);
+        client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &second,
+                &history,
+                tx,
+            )
+            .await
+            .unwrap();
+        let requests = requests.lock().unwrap();
+        let replay = requests[2]["messages"].as_array().unwrap();
+        assert_eq!(replay[0]["content"], "first question");
+        assert_eq!(replay[1]["tool_calls"][0]["id"], "clock-1");
+        assert_eq!(replay[2]["tool_call_id"], "clock-1");
+        assert_eq!(replay[3]["content"], "first done");
+        assert_eq!(replay[4]["content"], "second question");
+
+        drop(requests);
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
     }
 
     #[tokio::test]
@@ -2067,7 +2627,7 @@ mod tests {
                     .map(|byte| Ok(axum::body::Bytes::from(vec![byte])))
                     .collect();
                 let (tx, mut rx) = tokio::sync::mpsc::channel(16);
-                super::forward_sse(futures_util::stream::iter(chunks), &tx)
+                super::forward_sse(futures_util::stream::iter(chunks), &tx, "")
                     .await
                     .unwrap();
                 drop(tx);
@@ -2101,7 +2661,7 @@ mod tests {
                     Ok(axum::body::Bytes::copy_from_slice(&bytes[cut..])),
                 ];
                 let (tx, mut rx) = tokio::sync::mpsc::channel(8);
-                super::forward_sse(futures_util::stream::iter(chunks), &tx)
+                super::forward_sse(futures_util::stream::iter(chunks), &tx, "")
                     .await
                     .unwrap();
                 drop(tx);

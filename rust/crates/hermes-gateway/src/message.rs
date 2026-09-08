@@ -390,6 +390,9 @@ pub async fn post_message(
     tokio::spawn(async move {
         let _turn_lease = _lease;
         let _durable_turn_lease = admitted_durable_lease;
+        let turn_lease_holder = _durable_turn_lease
+            .as_ref()
+            .map(|lease| lease.holder().to_owned());
         let history = crate::session_db::begin_turn(turn_db.as_deref(), manages, &msg, "cli");
 
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
@@ -397,11 +400,13 @@ pub async fn post_message(
         let turn_agent = agent.clone();
         let agent_db = turn_db.clone();
         let msg_for_agent = msg.clone();
+        let agent_turn_lease_holder = turn_lease_holder.clone();
         let turn = tokio::spawn(async move {
             turn_agent
                 .run_turn_with_context(
                     crate::agent::TurnContext::from_database(agent_db.as_deref())
-                        .with_session_finalizable(session_finalizable),
+                        .with_session_finalizable(session_finalizable)
+                        .with_turn_lease_holder(agent_turn_lease_holder.as_deref()),
                     &msg_for_agent,
                     &history,
                     tx,
@@ -438,7 +443,8 @@ pub async fn post_message(
         if let Err(error) = agent
             .finalize_turn_after_persist(
                 crate::agent::TurnContext::from_database(turn_db.as_deref())
-                    .with_session_finalizable(session_finalizable),
+                    .with_session_finalizable(session_finalizable)
+                    .with_turn_lease_holder(turn_lease_holder.as_deref()),
                 &msg,
                 &reply,
                 succeeded,
@@ -660,7 +666,7 @@ mod tests {
             assert_eq!(response.json::<Value>().await.unwrap()["reply"], "seen");
         }
         let requests = calls.lock().unwrap();
-        assert_eq!(requests.len(), if with_tools { 4 } else { 2 });
+        assert_eq!(requests.len(), if with_tools { 3 } else { 2 });
         for request in requests.iter() {
             assert_eq!(request["messages"][0]["content"], json!(parts));
         }
@@ -669,7 +675,10 @@ mod tests {
             .iter()
             .any(|m| m["role"] == "user" && m["content"] == "follow-up"));
         if with_tools {
-            assert_eq!(last.last().unwrap()["role"], "tool");
+            assert!(last.iter().any(|message| {
+                message["role"] == "tool" && message["tool_call_id"] == "call-1"
+            }));
+            assert_eq!(last.last().unwrap()["role"], "user");
         }
         drop(requests);
         // A newly opened connection can replay the first image-bearing turn.
@@ -697,7 +706,23 @@ mod tests {
         };
         let history = reopened.load_history(&sid, 0).unwrap();
         assert_eq!(history[0].model_content(), json!(parts));
-        assert_eq!(history.len(), 4);
+        assert_eq!(history.len(), if with_tools { 6 } else { 4 });
+        if with_tools {
+            assert_eq!(
+                history
+                    .iter()
+                    .map(|message| message.role.as_str())
+                    .collect::<Vec<_>>(),
+                [
+                    "user",
+                    "assistant",
+                    "tool",
+                    "assistant",
+                    "user",
+                    "assistant"
+                ]
+            );
+        }
     }
 
     #[tokio::test]
@@ -2073,6 +2098,139 @@ mod tests {
         assert!(calls[final_index]
             .to_string()
             .contains(crate::compression_prompt::SUMMARY_PREFIX));
+    }
+
+    #[tokio::test]
+    async fn proactive_tool_prune_commits_before_the_next_http_request() {
+        async fn model(
+            State(calls): State<Arc<Mutex<Vec<Value>>>>,
+            Json(body): Json<Value>,
+        ) -> Response {
+            calls.lock().unwrap().push(body);
+            (
+                [("content-type", "text/event-stream")],
+                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\ndata: [DONE]\n\n",
+            )
+                .into_response()
+        }
+
+        let home = TempHome::new();
+        let calls = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let (model_url, _model_server) = serve(
+            axum::Router::new()
+                .route("/chat/completions", post(model))
+                .with_state(calls.clone()),
+        )
+        .await;
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let agent = NativeAgentClient::new("fixture-model", "fixture-key", model_url)
+            .unwrap()
+            .with_context_length(2_000_000);
+        let config = json!({"compression": {
+            "enabled": true,
+            "threshold_tokens": 1_000_000,
+            "protect_first_n": 0,
+            "protect_last_n": 1,
+            "proactive_prune_tokens": 1,
+            "proactive_prune_min_result_chars": 200,
+            "proactive_prune_min_reclaim_tokens": 1,
+            "in_place": true
+        }});
+        let mut state = AppState::new(Arc::new(agent), Arc::new(config), None, Some(db.clone()));
+        state.session_store = Some((store.clone(), 3600.0));
+        let (gateway_url, _gateway_server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+        let client = reqwest::Client::new();
+        let send = |text: &str| {
+            client
+                .post(format!("{gateway_url}/message"))
+                .json(&json!({
+                    "channel_id":"prune-http",
+                    "sender_id":"local",
+                    "text":text
+                }))
+                .send()
+        };
+        assert_eq!(send("first").await.unwrap().status(), StatusCode::OK);
+
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "prune-http")
+        };
+        let session_id = store.current_entry_for_source(&source).unwrap().session_id;
+        db.append_message(&session_id, "user", "run a build")
+            .unwrap();
+        let tool_calls = r#"[{"id":"call-build","type":"function","function":{"name":"terminal","arguments":"{\"command\":\"cargo test\"}"}}]"#;
+        db.append_message_with(
+            &session_id,
+            "assistant",
+            "",
+            &crate::session_db::AppendOptions {
+                tool_calls: Some(tool_calls),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let bulky = format!("BUILDDETAIL {}\nexit_code: 0", "line ".repeat(3_000));
+        db.append_message_with(
+            &session_id,
+            "tool",
+            &bulky,
+            &crate::session_db::AppendOptions {
+                tool_call_id: Some("call-build"),
+                tool_name: Some("terminal"),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message(&session_id, "assistant", "build passed")
+            .unwrap();
+
+        assert_eq!(send("next").await.unwrap().status(), StatusCode::OK);
+        let active = db.load_history(&session_id, 0).unwrap();
+        assert!(active
+            .iter()
+            .any(|message| message.content.starts_with("[terminal] ran `cargo test`")));
+        assert!(active
+            .iter()
+            .all(|message| !message.content.contains("BUILDDETAIL")));
+        assert_eq!(active[active.len() - 2].content, "next");
+        assert_eq!(active[active.len() - 1].content, "answer");
+        assert!(db
+            .search("BUILDDETAIL", 10)
+            .unwrap()
+            .iter()
+            .any(|hit| hit.session_id == session_id));
+        let config: Value = serde_json::from_str(
+            db.get_session(&session_id).unwrap().unwrap()["model_config"]
+                .as_str()
+                .unwrap(),
+        )
+        .unwrap();
+        assert!(config["_proactive_prune_rearm_tokens"].as_u64().unwrap() > 0);
+
+        let calls = calls.lock().unwrap();
+        assert_eq!(calls.len(), 2);
+        assert!(calls.iter().all(|body| body["stream"] == true));
+        assert!(calls[1].to_string().contains("[terminal] ran `cargo test`"));
+        assert!(!calls[1].to_string().contains("BUILDDETAIL"));
     }
 
     #[tokio::test]

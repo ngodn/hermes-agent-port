@@ -66,6 +66,33 @@ pub fn encode_message_content(content: &Value) -> String {
     }
 }
 
+fn native_persisted_content(_role: &str, content: Option<&Value>) -> String {
+    let content = content.unwrap_or(&Value::Null);
+    let Value::Array(parts) = content else {
+        return encode_message_content(content);
+    };
+    let summaries = parts
+        .iter()
+        .filter_map(|part| {
+            let kind = part.get("type").and_then(Value::as_str)?;
+            match kind {
+                "text" | "input_text" | "output_text" => part.get("text").map(|text| {
+                    text.as_str()
+                        .map(str::to_owned)
+                        .unwrap_or_else(|| text.to_string())
+                }),
+                "image" | "image_url" | "input_image" => Some("[screenshot]".to_owned()),
+                _ => None,
+            }
+        })
+        .collect::<Vec<_>>();
+    if summaries.is_empty() {
+        encode_message_content(content)
+    } else {
+        summaries.join("\n")
+    }
+}
+
 /// One message in a conversation, as needed to reconstruct history for a turn.
 #[derive(Debug, Clone, PartialEq)]
 pub struct HistoryMessage {
@@ -89,6 +116,16 @@ pub struct CompressionHistoryMessage {
 pub struct CompressionSnapshot {
     pub watermark: i64,
     pub messages: Vec<CompressionHistoryMessage>,
+}
+
+/// Provider route attached to one usage delta. The empty strings used for an
+/// unknown provider or billing mode match Python's `session_model_usage` key.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct UsageRoute<'a> {
+    pub model: &'a str,
+    pub provider: &'a str,
+    pub base_url: &'a str,
+    pub billing_mode: &'a str,
 }
 
 /// Exact durable compression-guard state for one session, read straight from
@@ -446,34 +483,32 @@ fn phase_after_assistant(tool_calls: Option<&str>) -> Option<TailPhase> {
 /// tool result must answer exactly one id advertised by the preceding
 /// assistant, and chained assistant tool calls remain in the same user turn.
 pub(crate) fn complete_turn_sequence(rows: &[(String, Option<String>, Option<String>)]) -> bool {
+    matches!(partial_turn_phase(rows), Some(TailPhase::User))
+}
+
+fn partial_turn_phase(rows: &[(String, Option<String>, Option<String>)]) -> Option<TailPhase> {
     let mut phase = TailPhase::User;
     for (role, tool_calls, tool_call_id) in rows {
         match &mut phase {
             TailPhase::User if role == "user" => phase = TailPhase::Assistant,
             TailPhase::Assistant if role == "assistant" => {
-                let Some(next) = phase_after_assistant(tool_calls.as_deref()) else {
-                    return false;
-                };
+                let next = phase_after_assistant(tool_calls.as_deref())?;
                 phase = next;
             }
             TailPhase::Tools(pending) if role == "tool" => {
-                let Some(id) = tool_call_id.as_deref().map(str::trim) else {
-                    return false;
-                };
+                let id = tool_call_id.as_deref().map(str::trim)?;
                 if id.is_empty() || !pending.remove(id) {
-                    return false;
+                    return None;
                 }
             }
             TailPhase::Tools(pending) if role == "assistant" && pending.is_empty() => {
-                let Some(next) = phase_after_assistant(tool_calls.as_deref()) else {
-                    return false;
-                };
+                let next = phase_after_assistant(tool_calls.as_deref())?;
                 phase = next;
             }
-            _ => return false,
+            _ => return None,
         }
     }
-    matches!(phase, TailPhase::User)
+    Some(phase)
 }
 
 fn active_transcript_counts(conn: &Connection, session_id: &str) -> rusqlite::Result<(i64, i64)> {
@@ -679,6 +714,18 @@ pub struct GatewayInPlaceCompressionPublish<'a> {
     pub prefix_end_id: Option<i64>,
     pub tail_start_id: Option<i64>,
     pub watermark: i64,
+    pub turn_lease_holder: Option<&'a str>,
+}
+
+pub struct GatewayToolPrunePublish<'a> {
+    pub scope: &'a str,
+    pub session_key: &'a str,
+    pub session_id: &'a str,
+    /// Exact snapshot the pure pruning pass consumed.
+    pub original_messages: &'a [CompressionHistoryMessage],
+    /// Same rows and order as `original_messages`, with only prunable fields changed.
+    pub pruned_messages: &'a [CompressionHistoryMessage],
+    pub rearm_tokens: u64,
     pub turn_lease_holder: Option<&'a str>,
 }
 
@@ -2075,6 +2122,176 @@ impl SessionDb {
         Ok(true)
     }
 
+    /// Atomically publish a deterministic tool-result prune while preserving
+    /// every message column the pure pass did not rewrite. The consumed
+    /// snapshot is compared byte-for-byte inside the write transaction, so a
+    /// stale candidate cannot replace a transcript changed by another writer.
+    pub fn publish_gateway_tool_prune(
+        &self,
+        change: &GatewayToolPrunePublish<'_>,
+    ) -> rusqlite::Result<bool> {
+        if change.scope.is_empty()
+            || change.session_key.is_empty()
+            || change.session_id.is_empty()
+            || change.original_messages.is_empty()
+            || change.original_messages.len() != change.pruned_messages.len()
+            || change
+                .original_messages
+                .iter()
+                .zip(change.pruned_messages)
+                .any(|(before, after)| {
+                    before.id != after.id
+                        || before.message.role != after.message.role
+                        || before.tool_call_id != after.tool_call_id
+                        || before.tool_name != after.tool_name
+                })
+            || change.original_messages == change.pruned_messages
+        {
+            return Ok(false);
+        }
+        let roles = change
+            .pruned_messages
+            .iter()
+            .map(|message| {
+                (
+                    message.message.role.clone(),
+                    message.tool_calls.clone(),
+                    message.tool_call_id.clone(),
+                )
+            })
+            .collect::<Vec<_>>();
+        if !complete_turn_sequence(&roles) {
+            return Ok(false);
+        }
+
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let now = now_secs();
+        if let Some(holder) = change.turn_lease_holder {
+            let conversation_id = compression_lineage_root_on(&tx, change.session_id)?;
+            let owner = tx
+                .query_row(
+                    "SELECT holder FROM session_turn_leases
+                     WHERE conversation_id = ? AND expires_at >= ?",
+                    params![conversation_id, now],
+                    |row| row.get::<_, String>(0),
+                )
+                .optional()?;
+            if owner.as_deref() != Some(holder) {
+                return Ok(false);
+            }
+        }
+        let durable_route = tx
+            .query_row(
+                "SELECT entry_json FROM gateway_routing
+                 WHERE scope = ? AND session_key = ?",
+                params![change.scope, change.session_key],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()?;
+        if durable_route.is_some_and(|entry| {
+            serde_json::from_str::<Value>(&entry)
+                .ok()
+                .and_then(|value| value["session_id"].as_str().map(str::to_owned))
+                .as_deref()
+                != Some(change.session_id)
+        }) {
+            return Ok(false);
+        }
+        let session = tx
+            .query_row(
+                "SELECT ended_at IS NULL, model_config FROM sessions WHERE id = ?",
+                [change.session_id],
+                |row| Ok((row.get::<_, bool>(0)?, row.get::<_, Option<String>>(1)?)),
+            )
+            .optional()?;
+        let Some((true, model_config)) = session else {
+            return Ok(false);
+        };
+
+        let durable = {
+            let mut query = tx.prepare(
+                "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name
+                 FROM messages WHERE session_id = ? AND active = 1 ORDER BY id",
+            )?;
+            let rows = query
+                .query_map([change.session_id], |row| {
+                    Ok(CompressionHistoryMessage {
+                        id: row.get(0)?,
+                        message: HistoryMessage {
+                            role: row.get(1)?,
+                            content: row.get::<_, Option<String>>(2)?.unwrap_or_default(),
+                            api_content: row.get(3)?,
+                        },
+                        tool_call_id: row.get(4)?,
+                        tool_calls: row.get(5)?,
+                        tool_name: row.get(6)?,
+                    })
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        if durable != change.original_messages {
+            return Ok(false);
+        }
+
+        let original_ids = durable.iter().map(|message| message.id).collect::<Vec<_>>();
+        tx.execute(
+            "UPDATE messages SET active = 0, compacted = 1
+             WHERE session_id = ? AND active = 1",
+            [change.session_id],
+        )?;
+        clone_messages_by_id(&tx, change.session_id, &original_ids)?;
+        let cloned_ids = {
+            let mut query = tx.prepare(
+                "SELECT id FROM messages WHERE session_id = ? AND active = 1 ORDER BY id",
+            )?;
+            let rows = query
+                .query_map([change.session_id], |row| row.get::<_, i64>(0))?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        if cloned_ids.len() != change.pruned_messages.len() {
+            return Ok(false);
+        }
+        for (id, message) in cloned_ids.iter().zip(change.pruned_messages) {
+            let updated = tx.execute(
+                "UPDATE messages SET content = ?, api_content = ?, tool_calls = ?
+                 WHERE id = ? AND session_id = ? AND active = 1",
+                params![
+                    message.message.content,
+                    message.message.api_content,
+                    message.tool_calls,
+                    id,
+                    change.session_id,
+                ],
+            )?;
+            if updated != 1 {
+                return Ok(false);
+            }
+        }
+
+        let mut config = model_config
+            .as_deref()
+            .and_then(|raw| serde_json::from_str::<Value>(raw).ok())
+            .and_then(|value| value.as_object().cloned())
+            .unwrap_or_default();
+        config.insert(
+            "_proactive_prune_rearm_tokens".into(),
+            Value::from(change.rearm_tokens),
+        );
+        let config = serde_json::to_string(&config)
+            .map_err(|error| rusqlite::Error::ToSqlConversionFailure(Box::new(error)))?;
+        let (active, tool_calls) = active_transcript_counts(&tx, change.session_id)?;
+        tx.execute(
+            "UPDATE sessions SET message_count = ?, tool_call_count = ?, model_config = ?
+             WHERE id = ?",
+            params![active, tool_calls, config, change.session_id],
+        )?;
+        tx.commit()?;
+        Ok(true)
+    }
+
     /// Exact-key recovery ranks real conversations ahead of empty session rows.
     /// Only a miss uses the complete legacy peer tuple and store-owner fence.
     pub fn find_latest_gateway_session_for_peer(
@@ -2177,6 +2394,183 @@ impl SessionDb {
                 session_row_value,
             )
             .optional()
+    }
+
+    pub fn proactive_prune_rearm_tokens(&self, session_id: &str) -> rusqlite::Result<u64> {
+        let raw = self
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT model_config FROM sessions WHERE id = ?",
+                [session_id],
+                |row| row.get::<_, Option<String>>(0),
+            )
+            .optional()?
+            .flatten();
+        Ok(raw
+            .as_deref()
+            .and_then(|raw| serde_json::from_str::<Value>(raw).ok())
+            .and_then(|value| value["_proactive_prune_rearm_tokens"].as_u64())
+            .unwrap_or(0))
+    }
+
+    /// Atomically add one or more main-loop provider calls to both the legacy
+    /// session totals and the per-route usage table. This mirrors Python's
+    /// incremental `update_token_counts` path. A missing session is a no-op so
+    /// best-effort accounting cannot recreate a conversation after teardown.
+    pub fn record_main_usage(
+        &self,
+        session_id: &str,
+        route: &UsageRoute<'_>,
+        usage: &crate::provider_usage::CanonicalUsage,
+    ) -> rusqlite::Result<bool> {
+        self.record_provider_usage(session_id, route, "", usage, true)
+    }
+
+    /// Record an auxiliary provider call without changing the session's main
+    /// totals. Compression, title generation, and other auxiliary work stay
+    /// visible in `session_model_usage` under their own task key.
+    pub fn record_auxiliary_usage(
+        &self,
+        session_id: &str,
+        task: &str,
+        route: &UsageRoute<'_>,
+        usage: &crate::provider_usage::CanonicalUsage,
+    ) -> rusqlite::Result<bool> {
+        if task.is_empty() {
+            return Ok(false);
+        }
+        self.record_provider_usage(session_id, route, task, usage, false)
+    }
+
+    fn record_provider_usage(
+        &self,
+        session_id: &str,
+        route: &UsageRoute<'_>,
+        task: &str,
+        usage: &crate::provider_usage::CanonicalUsage,
+        update_session_totals: bool,
+    ) -> rusqlite::Result<bool> {
+        if session_id.is_empty() || usage.request_count == 0 {
+            return Ok(false);
+        }
+        fn sql_count(value: u64) -> i64 {
+            i64::try_from(value).unwrap_or(i64::MAX)
+        }
+
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let existing = tx
+            .query_row(
+                "SELECT model, billing_provider, COALESCE(api_call_count, 0)
+                 FROM sessions WHERE id = ?",
+                [session_id],
+                |row| {
+                    Ok((
+                        row.get::<_, Option<String>>(0)?,
+                        row.get::<_, Option<String>>(1)?,
+                        row.get::<_, i64>(2)?,
+                    ))
+                },
+            )
+            .optional()?;
+        let Some((existing_model, existing_provider, existing_calls)) = existing else {
+            return Ok(false);
+        };
+
+        if update_session_totals {
+            // The requested primary route is written at session creation. If
+            // it fails and a fallback produces the first billable response,
+            // that first response is the authoritative route.
+            if existing_calls == 0
+                && (!route.model.is_empty() && !route.provider.is_empty())
+                && (existing_model.as_deref() != Some(route.model)
+                    || existing_provider.as_deref() != Some(route.provider))
+            {
+                tx.execute(
+                    "UPDATE sessions SET model = ?, billing_provider = ?,
+                     billing_base_url = ?, billing_mode = ? WHERE id = ?",
+                    params![
+                        route.model,
+                        route.provider,
+                        route.base_url,
+                        route.billing_mode,
+                        session_id
+                    ],
+                )?;
+            }
+            tx.execute(
+                "UPDATE sessions SET
+                    input_tokens = COALESCE(input_tokens, 0) + ?,
+                    output_tokens = COALESCE(output_tokens, 0) + ?,
+                    cache_read_tokens = COALESCE(cache_read_tokens, 0) + ?,
+                    cache_write_tokens = COALESCE(cache_write_tokens, 0) + ?,
+                    reasoning_tokens = COALESCE(reasoning_tokens, 0) + ?,
+                    api_call_count = COALESCE(api_call_count, 0) + ?,
+                    model = COALESCE(model, NULLIF(?, '')),
+                    billing_provider = COALESCE(billing_provider, NULLIF(?, '')),
+                    billing_base_url = COALESCE(billing_base_url, NULLIF(?, '')),
+                    billing_mode = COALESCE(billing_mode, NULLIF(?, ''))
+                 WHERE id = ?",
+                params![
+                    sql_count(usage.input_tokens),
+                    sql_count(usage.output_tokens),
+                    sql_count(usage.cache_read_tokens),
+                    sql_count(usage.cache_write_tokens),
+                    sql_count(usage.reasoning_tokens),
+                    sql_count(usage.request_count),
+                    route.model,
+                    route.provider,
+                    route.base_url,
+                    route.billing_mode,
+                    session_id,
+                ],
+            )?;
+        }
+
+        let now = now_secs();
+        tx.execute(
+            "INSERT INTO session_model_usage (
+                session_id, model, billing_provider, billing_base_url,
+                billing_mode, task, api_call_count, input_tokens,
+                output_tokens, cache_read_tokens, cache_write_tokens,
+                reasoning_tokens, first_seen, last_seen
+             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON CONFLICT (
+                session_id, model, billing_provider, billing_base_url,
+                billing_mode, task
+             ) DO UPDATE SET
+                api_call_count = api_call_count + excluded.api_call_count,
+                input_tokens = input_tokens + excluded.input_tokens,
+                output_tokens = output_tokens + excluded.output_tokens,
+                cache_read_tokens = cache_read_tokens + excluded.cache_read_tokens,
+                cache_write_tokens = cache_write_tokens + excluded.cache_write_tokens,
+                reasoning_tokens = reasoning_tokens + excluded.reasoning_tokens,
+                last_seen = excluded.last_seen",
+            params![
+                session_id,
+                if route.model.is_empty() {
+                    "unknown"
+                } else {
+                    route.model
+                },
+                route.provider,
+                route.base_url,
+                route.billing_mode,
+                task,
+                sql_count(usage.request_count),
+                sql_count(usage.input_tokens),
+                sql_count(usage.output_tokens),
+                sql_count(usage.cache_read_tokens),
+                sql_count(usage.cache_write_tokens),
+                sql_count(usage.reasoning_tokens),
+                now,
+                now,
+            ],
+        )?;
+        tx.commit()?;
+        Ok(true)
     }
 
     pub fn get_session_title(&self, session_id: &str) -> rusqlite::Result<Option<String>> {
@@ -2402,6 +2796,15 @@ impl SessionDb {
             ("expiry_finalized", "INTEGER DEFAULT 0"),
             ("model_config", "TEXT"),
             ("model", "TEXT"),
+            ("input_tokens", "INTEGER DEFAULT 0"),
+            ("output_tokens", "INTEGER DEFAULT 0"),
+            ("cache_read_tokens", "INTEGER DEFAULT 0"),
+            ("cache_write_tokens", "INTEGER DEFAULT 0"),
+            ("reasoning_tokens", "INTEGER DEFAULT 0"),
+            ("billing_provider", "TEXT"),
+            ("billing_base_url", "TEXT"),
+            ("billing_mode", "TEXT"),
+            ("api_call_count", "INTEGER DEFAULT 0"),
             ("cwd", "TEXT"),
             ("git_repo_root", "TEXT"),
             ("git_branch", "TEXT"),
@@ -2426,7 +2829,153 @@ impl SessionDb {
                 )?;
             }
         }
+        tx.execute(
+            "CREATE TABLE IF NOT EXISTS session_model_usage (
+                session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+                model TEXT NOT NULL,
+                billing_provider TEXT NOT NULL DEFAULT '',
+                billing_base_url TEXT NOT NULL DEFAULT '',
+                billing_mode TEXT NOT NULL DEFAULT '',
+                task TEXT NOT NULL DEFAULT '',
+                api_call_count INTEGER NOT NULL DEFAULT 0,
+                input_tokens INTEGER NOT NULL DEFAULT 0,
+                output_tokens INTEGER NOT NULL DEFAULT 0,
+                cache_read_tokens INTEGER NOT NULL DEFAULT 0,
+                cache_write_tokens INTEGER NOT NULL DEFAULT 0,
+                reasoning_tokens INTEGER NOT NULL DEFAULT 0,
+                estimated_cost_usd REAL NOT NULL DEFAULT 0,
+                actual_cost_usd REAL NOT NULL DEFAULT 0,
+                cost_status TEXT,
+                cost_source TEXT,
+                first_seen REAL,
+                last_seen REAL,
+                PRIMARY KEY (
+                    session_id, model, billing_provider, billing_base_url,
+                    billing_mode, task
+                )
+            )",
+            [],
+        )?;
+        tx.execute(
+            "CREATE INDEX IF NOT EXISTS idx_session_model_usage_session
+             ON session_model_usage(session_id)",
+            [],
+        )?;
+        tx.execute(
+            "CREATE INDEX IF NOT EXISTS idx_session_model_usage_model
+             ON session_model_usage(model)",
+            [],
+        )?;
         tx.commit()
+    }
+
+    /// Repair Python stores whose `task` column was added after creation but
+    /// never joined the primary key. Without this unconditional check, every
+    /// task-aware upsert fails because its six-column conflict target does not
+    /// match the legacy five-column key.
+    fn heal_session_model_usage_pk(conn: &mut Connection) -> rusqlite::Result<()> {
+        let columns = {
+            let mut query = conn.prepare("PRAGMA table_info(session_model_usage)")?;
+            let rows = query
+                .query_map([], |row| {
+                    Ok((row.get::<_, String>(1)?, row.get::<_, i64>(5)?))
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        if columns.is_empty() {
+            return Ok(());
+        }
+        let mut primary = columns
+            .iter()
+            .filter(|(_, position)| *position > 0)
+            .collect::<Vec<_>>();
+        primary.sort_by_key(|(_, position)| *position);
+        let primary = primary
+            .iter()
+            .map(|(name, _)| name.as_str())
+            .collect::<Vec<_>>();
+        let expected = [
+            "session_id",
+            "model",
+            "billing_provider",
+            "billing_base_url",
+            "billing_mode",
+            "task",
+        ];
+        if primary == expected {
+            return Ok(());
+        }
+
+        let has_task = columns.iter().any(|(name, _)| name == "task");
+        let foreign_keys =
+            conn.pragma_query_value(None, "foreign_keys", |row| row.get::<_, bool>(0))?;
+        if foreign_keys {
+            conn.pragma_update(None, "foreign_keys", false)?;
+        }
+        let result = (|| {
+            let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+            tx.execute(
+                "ALTER TABLE session_model_usage RENAME TO session_model_usage_legacy_pk",
+                [],
+            )?;
+            tx.execute_batch(
+                "CREATE TABLE session_model_usage (
+                    session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+                    model TEXT NOT NULL,
+                    billing_provider TEXT NOT NULL DEFAULT '',
+                    billing_base_url TEXT NOT NULL DEFAULT '',
+                    billing_mode TEXT NOT NULL DEFAULT '',
+                    task TEXT NOT NULL DEFAULT '',
+                    api_call_count INTEGER NOT NULL DEFAULT 0,
+                    input_tokens INTEGER NOT NULL DEFAULT 0,
+                    output_tokens INTEGER NOT NULL DEFAULT 0,
+                    cache_read_tokens INTEGER NOT NULL DEFAULT 0,
+                    cache_write_tokens INTEGER NOT NULL DEFAULT 0,
+                    reasoning_tokens INTEGER NOT NULL DEFAULT 0,
+                    estimated_cost_usd REAL NOT NULL DEFAULT 0,
+                    actual_cost_usd REAL NOT NULL DEFAULT 0,
+                    cost_status TEXT,
+                    cost_source TEXT,
+                    first_seen REAL,
+                    last_seen REAL,
+                    PRIMARY KEY (
+                        session_id, model, billing_provider, billing_base_url,
+                        billing_mode, task
+                    )
+                );",
+            )?;
+            let task = if has_task { "COALESCE(task, '')" } else { "''" };
+            tx.execute_batch(&format!(
+                "INSERT OR IGNORE INTO session_model_usage (
+                    session_id, model, billing_provider, billing_base_url,
+                    billing_mode, task, api_call_count, input_tokens,
+                    output_tokens, cache_read_tokens, cache_write_tokens,
+                    reasoning_tokens, estimated_cost_usd, actual_cost_usd,
+                    cost_status, cost_source, first_seen, last_seen
+                 )
+                 SELECT session_id, model, COALESCE(billing_provider, ''),
+                    COALESCE(billing_base_url, ''), COALESCE(billing_mode, ''),
+                    {task}, api_call_count, input_tokens, output_tokens,
+                    cache_read_tokens, cache_write_tokens, reasoning_tokens,
+                    estimated_cost_usd, actual_cost_usd, cost_status,
+                    cost_source, first_seen, last_seen
+                 FROM session_model_usage_legacy_pk;
+                 DROP TABLE session_model_usage_legacy_pk;
+                 CREATE INDEX IF NOT EXISTS idx_session_model_usage_session
+                    ON session_model_usage(session_id);
+                 CREATE INDEX IF NOT EXISTS idx_session_model_usage_model
+                    ON session_model_usage(model);"
+            ))?;
+            tx.commit()
+        })();
+        if foreign_keys {
+            let restore = conn.pragma_update(None, "foreign_keys", true);
+            if result.is_ok() {
+                restore?;
+            }
+        }
+        result
     }
 
     /// Add native replay and compaction markers to older stores. The migration
@@ -2440,9 +2989,20 @@ impl SessionDb {
                 .collect::<rusqlite::Result<Vec<_>>>()?;
             rows
         };
-        if ["api_content", "_compressed_summary", "compacted"]
-            .iter()
-            .all(|required| columns.iter().any(|column| column == required))
+        if [
+            "api_content",
+            "_compressed_summary",
+            "compacted",
+            "effect_disposition",
+            "finish_reason",
+            "reasoning",
+            "reasoning_content",
+            "reasoning_details",
+            "codex_reasoning_items",
+            "codex_message_items",
+        ]
+        .iter()
+        .all(|required| columns.iter().any(|column| column == required))
         {
             return Ok(());
         }
@@ -2471,6 +3031,22 @@ impl SessionDb {
                 "ALTER TABLE messages ADD COLUMN compacted INTEGER NOT NULL DEFAULT 0",
                 [],
             )?;
+        }
+        for column in [
+            "effect_disposition",
+            "finish_reason",
+            "reasoning",
+            "reasoning_content",
+            "reasoning_details",
+            "codex_reasoning_items",
+            "codex_message_items",
+        ] {
+            if !columns.iter().any(|existing| existing == column) {
+                tx.execute(
+                    &format!("ALTER TABLE messages ADD COLUMN {column} TEXT"),
+                    [],
+                )?;
+            }
         }
         tx.commit()
     }
@@ -2671,6 +3247,7 @@ impl SessionDb {
             [],
         )?;
         Self::ensure_recovery_schema(conn)?;
+        Self::heal_session_model_usage_pk(conn)?;
         Self::ensure_title_index(conn)?;
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_sessions_source_key_started
@@ -2687,6 +3264,13 @@ impl SessionDb {
                 tool_call_id TEXT,
                 tool_calls TEXT,
                 tool_name TEXT,
+                effect_disposition TEXT,
+                finish_reason TEXT,
+                reasoning TEXT,
+                reasoning_content TEXT,
+                reasoning_details TEXT,
+                codex_reasoning_items TEXT,
+                codex_message_items TEXT,
                 display_kind TEXT,
                 display_metadata TEXT,
                 timestamp REAL NOT NULL,
@@ -2916,6 +3500,173 @@ impl SessionDb {
         Ok(id)
     }
 
+    /// Persist one native assistant tool-call row or tool-result row before the
+    /// loop advances. The transaction validates it against the current durable
+    /// tail, preventing orphan results, duplicate ids, and reordered groups.
+    pub fn append_native_tool_message(
+        &self,
+        session_id: &str,
+        message: &Value,
+        turn_lease_holder: Option<&str>,
+    ) -> rusqlite::Result<bool> {
+        if session_id.is_empty()
+            || message
+                .get("_empty_recovery_synthetic")
+                .or_else(|| message.get("_empty_terminal_sentinel"))
+                .is_some_and(crate::python_value::truthy)
+        {
+            return Ok(false);
+        }
+        let Some(object) = message.as_object() else {
+            return Ok(false);
+        };
+        let Some(role @ ("assistant" | "tool")) = object.get("role").and_then(Value::as_str) else {
+            return Ok(false);
+        };
+
+        let tool_calls = object
+            .get("tool_calls")
+            .filter(|value| !value.is_null())
+            .map(Value::to_string);
+        if role == "assistant"
+            && object
+                .get("tool_calls")
+                .and_then(Value::as_array)
+                .is_none_or(Vec::is_empty)
+        {
+            return Ok(false);
+        }
+        if role == "assistant"
+            && !matches!(
+                phase_after_assistant(tool_calls.as_deref()),
+                Some(TailPhase::Tools(pending)) if !pending.is_empty()
+            )
+        {
+            return Ok(false);
+        }
+        let tool_call_id = object.get("tool_call_id").and_then(Value::as_str);
+
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        if let Some(holder) = turn_lease_holder {
+            let conversation_id = compression_lineage_root_on(&tx, session_id)?;
+            let owner = tx
+                .query_row(
+                    "SELECT holder FROM session_turn_leases
+                     WHERE conversation_id = ? AND expires_at >= ?",
+                    params![conversation_id, now_secs()],
+                    |row| row.get::<_, String>(0),
+                )
+                .optional()?;
+            if owner.as_deref() != Some(holder) {
+                return Ok(false);
+            }
+        }
+        let live = tx
+            .query_row(
+                "SELECT ended_at IS NULL FROM sessions WHERE id = ?",
+                [session_id],
+                |row| row.get::<_, bool>(0),
+            )
+            .optional()?;
+        if live != Some(true) {
+            return Ok(false);
+        }
+        let tail = {
+            let mut statement = tx.prepare(
+                "SELECT role, tool_calls, tool_call_id FROM messages
+                 WHERE session_id = ? AND active = 1
+                   AND id >= COALESCE((
+                       SELECT MAX(id) FROM messages
+                       WHERE session_id = ? AND active = 1 AND role = 'user'
+                   ), 0)
+                 ORDER BY id",
+            )?;
+            let rows = statement
+                .query_map(params![session_id, session_id], |row| {
+                    Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        let Some(phase) = partial_turn_phase(&tail) else {
+            return Ok(false);
+        };
+        let allowed = match (role, phase) {
+            ("assistant", TailPhase::Assistant) => true,
+            ("assistant", TailPhase::Tools(pending)) => pending.is_empty(),
+            ("tool", TailPhase::Tools(pending)) => tool_call_id
+                .map(str::trim)
+                .filter(|id| !id.is_empty())
+                .is_some_and(|id| pending.contains(id)),
+            _ => false,
+        };
+        if !allowed {
+            return Ok(false);
+        }
+
+        let content = native_persisted_content(role, object.get("content"));
+        let api_content = object.get("api_content").and_then(Value::as_str);
+        let tool_name = object
+            .get("tool_name")
+            .or_else(|| object.get("name"))
+            .and_then(Value::as_str);
+        let json_text = |key: &str| {
+            object
+                .get(key)
+                .filter(|value| !value.is_null())
+                .map(Value::to_string)
+        };
+        let timestamp = object
+            .get("timestamp")
+            .and_then(Value::as_f64)
+            .unwrap_or_else(now_secs);
+        let assistant_text = |key: &str| {
+            (role == "assistant")
+                .then(|| object.get(key).and_then(Value::as_str))
+                .flatten()
+        };
+        let assistant_json = |key: &str| (role == "assistant").then(|| json_text(key)).flatten();
+        tx.execute(
+            "INSERT INTO messages (
+                 session_id, role, content, api_content, tool_call_id, tool_calls,
+                 tool_name, effect_disposition, finish_reason, reasoning,
+                 reasoning_content, reasoning_details, codex_reasoning_items,
+                 codex_message_items, timestamp, active
+             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)",
+            params![
+                session_id,
+                role,
+                content,
+                api_content,
+                tool_call_id,
+                tool_calls,
+                tool_name,
+                object.get("effect_disposition").and_then(Value::as_str),
+                assistant_text("finish_reason"),
+                assistant_text("reasoning"),
+                assistant_text("reasoning_content"),
+                assistant_json("reasoning_details"),
+                assistant_json("codex_reasoning_items"),
+                assistant_json("codex_message_items"),
+                timestamp,
+            ],
+        )?;
+        let new_tool_calls = object
+            .get("tool_calls")
+            .and_then(Value::as_array)
+            .map_or(0_i64, |calls| {
+                i64::try_from(calls.len()).unwrap_or(i64::MAX)
+            });
+        tx.execute(
+            "UPDATE sessions SET message_count = message_count + 1,
+             tool_call_count = tool_call_count + ?, last_activity_at = ? WHERE id = ?",
+            params![new_tool_calls, timestamp, session_id],
+        )?;
+        tx.commit()?;
+        Ok(true)
+    }
+
     /// Read a single stored message by row id (for recovery / diagnostics).
     pub fn get_message(&self, id: i64) -> rusqlite::Result<Option<StoredMessage>> {
         let conn = self.conn.lock().unwrap();
@@ -3028,7 +3779,9 @@ impl SessionDb {
     pub fn load_lifecycle_messages(&self, session_id: &str) -> rusqlite::Result<Vec<Value>> {
         let conn = self.conn.lock().unwrap();
         let mut statement = conn.prepare(
-            "SELECT role, content, api_content, tool_call_id, tool_calls, tool_name
+            "SELECT role, content, api_content, tool_call_id, tool_calls, tool_name,
+                    effect_disposition, finish_reason, reasoning, reasoning_content,
+                    reasoning_details, codex_reasoning_items, codex_message_items
              FROM messages WHERE session_id = ? AND active = 1 ORDER BY id ASC",
         )?;
         let rows = statement.query_map([session_id], |row| {
@@ -3038,12 +3791,19 @@ impl SessionDb {
             let tool_call_id: Option<String> = row.get(3)?;
             let tool_calls: Option<String> = row.get(4)?;
             let tool_name: Option<String> = row.get(5)?;
+            let effect_disposition: Option<String> = row.get(6)?;
+            let finish_reason: Option<String> = row.get(7)?;
+            let reasoning: Option<String> = row.get(8)?;
+            let reasoning_content: Option<String> = row.get(9)?;
+            let reasoning_details: Option<String> = row.get(10)?;
+            let codex_reasoning_items: Option<String> = row.get(11)?;
+            let codex_message_items: Option<String> = row.get(12)?;
             let mut message = serde_json::Map::new();
             message.insert("role".into(), Value::String(role.clone()));
             message.insert(
                 "content".into(),
                 HistoryMessage {
-                    role,
+                    role: role.clone(),
                     content,
                     api_content: api_content.clone(),
                 }
@@ -3062,7 +3822,37 @@ impl SessionDb {
                 );
             }
             if let Some(tool_name) = tool_name {
-                message.insert("name".into(), Value::String(tool_name));
+                message.insert("name".into(), Value::String(tool_name.clone()));
+                message.insert("tool_name".into(), Value::String(tool_name));
+            }
+            if let Some(effect_disposition) = effect_disposition {
+                message.insert(
+                    "effect_disposition".into(),
+                    Value::String(effect_disposition),
+                );
+            }
+            if role == "assistant" {
+                if let Some(finish_reason) = finish_reason {
+                    message.insert("finish_reason".into(), Value::String(finish_reason));
+                }
+                if let Some(reasoning) = reasoning {
+                    message.insert("reasoning".into(), Value::String(reasoning));
+                }
+                if let Some(reasoning_content) = reasoning_content {
+                    message.insert("reasoning_content".into(), Value::String(reasoning_content));
+                }
+                for (key, raw) in [
+                    ("reasoning_details", reasoning_details),
+                    ("codex_reasoning_items", codex_reasoning_items),
+                    ("codex_message_items", codex_message_items),
+                ] {
+                    if let Some(raw) = raw {
+                        message.insert(
+                            key.into(),
+                            serde_json::from_str(&raw).unwrap_or(Value::Null),
+                        );
+                    }
+                }
             }
             Ok(Value::Object(message))
         })?;
@@ -3169,6 +3959,381 @@ impl SessionDb {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn tool_prune_publish_archives_and_clones_wide_rows_with_cas() {
+        use super::{AppendOptions, GatewayToolPrunePublish, SessionDb};
+
+        let path = temp_db("tool_prune_publish");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("prune", "local", None, None, None)
+            .unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE sessions SET model_config=? WHERE id='prune'",
+                [r#"{"keep":"value"}"#],
+            )
+            .unwrap();
+        db.append_message("prune", "user", "question").unwrap();
+        let calls = r#"[{"id":"call-1","type":"function","function":{"name":"terminal","arguments":"{\"command\":\"build\"}"}}]"#;
+        db.append_message_with(
+            "prune",
+            "assistant",
+            "",
+            &AppendOptions {
+                tool_calls: Some(calls),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message_with(
+            "prune",
+            "tool",
+            &format!("{}\nexit_code: 0", "build output ".repeat(900)),
+            &AppendOptions {
+                tool_call_id: Some("call-1"),
+                tool_name: Some("terminal"),
+                display_kind: Some("terminal_result"),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message("prune", "assistant", "done").unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "UPDATE messages SET reasoning='preserve-me'
+                 WHERE session_id='prune' AND role='tool'",
+            )
+            .unwrap();
+
+        let snapshot = db.load_compression_snapshot("prune").unwrap();
+        let candidate = crate::tool_result_prune::prune_old_tool_results(
+            &snapshot.messages,
+            1,
+            crate::tool_result_prune::PRUNE_MIN_CHARS,
+        );
+        assert!(candidate.changed);
+        assert!(db
+            .publish_gateway_tool_prune(&GatewayToolPrunePublish {
+                scope: "default",
+                session_key: "peer",
+                session_id: "prune",
+                original_messages: &snapshot.messages,
+                pruned_messages: &candidate.messages,
+                rearm_tokens: 50_000,
+                turn_lease_holder: None,
+            })
+            .unwrap());
+
+        let active = db.load_compression_snapshot("prune").unwrap();
+        assert_eq!(active.messages.len(), 4);
+        assert!(active.messages[2].message.content.starts_with("[terminal]"));
+        let conn = db.conn.lock().unwrap();
+        let archived = conn
+            .query_row(
+                "SELECT COUNT(*) FROM messages
+                 WHERE session_id='prune' AND active=0 AND compacted=1",
+                [],
+                |row| row.get::<_, i64>(0),
+            )
+            .unwrap();
+        assert_eq!(archived, 4);
+        let preserved = conn
+            .query_row(
+                "SELECT reasoning, display_kind FROM messages
+                 WHERE session_id='prune' AND active=1 AND role='tool'",
+                [],
+                |row| Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?)),
+            )
+            .unwrap();
+        assert_eq!(preserved, ("preserve-me".into(), "terminal_result".into()));
+        let config: serde_json::Value = conn
+            .query_row(
+                "SELECT model_config FROM sessions WHERE id='prune'",
+                [],
+                |row| row.get::<_, String>(0),
+            )
+            .map(|raw| serde_json::from_str(&raw).unwrap())
+            .unwrap();
+        assert_eq!(config["keep"], "value");
+        assert_eq!(config["_proactive_prune_rearm_tokens"], 50_000);
+        drop(conn);
+
+        // The old snapshot no longer matches the fresh active row ids. A stale
+        // publisher is rejected without changing the committed transcript.
+        assert!(!db
+            .publish_gateway_tool_prune(&GatewayToolPrunePublish {
+                scope: "default",
+                session_key: "peer",
+                session_id: "prune",
+                original_messages: &snapshot.messages,
+                pruned_messages: &candidate.messages,
+                rearm_tokens: 99_000,
+                turn_lease_holder: None,
+            })
+            .unwrap());
+        assert_eq!(db.load_compression_snapshot("prune").unwrap(), active);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn provider_usage_updates_main_and_auxiliary_buckets_atomically() {
+        use super::{SessionDb, UsageRoute};
+        use crate::provider_usage::CanonicalUsage;
+
+        let path = temp_db("provider_usage");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("usage", "local", None, None, None)
+            .unwrap();
+        let route = UsageRoute {
+            model: "model-b",
+            provider: "provider-b",
+            base_url: "https://provider.invalid/v1",
+            billing_mode: "metered",
+        };
+        let main = CanonicalUsage {
+            input_tokens: 11,
+            output_tokens: 7,
+            cache_read_tokens: 5,
+            cache_write_tokens: 3,
+            reasoning_tokens: 2,
+            request_count: 2,
+        };
+        assert!(db.record_main_usage("usage", &route, &main).unwrap());
+        let auxiliary = CanonicalUsage {
+            input_tokens: 13,
+            output_tokens: 4,
+            request_count: 1,
+            ..CanonicalUsage::accumulator()
+        };
+        assert!(db
+            .record_auxiliary_usage("usage", "compression", &route, &auxiliary)
+            .unwrap());
+
+        let conn = db.conn.lock().unwrap();
+        let aggregate = conn
+            .query_row(
+                "SELECT input_tokens, output_tokens, cache_read_tokens,
+                        cache_write_tokens, reasoning_tokens, api_call_count,
+                        model, billing_provider
+                 FROM sessions WHERE id='usage'",
+                [],
+                |row| {
+                    Ok((
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, i64>(1)?,
+                        row.get::<_, i64>(2)?,
+                        row.get::<_, i64>(3)?,
+                        row.get::<_, i64>(4)?,
+                        row.get::<_, i64>(5)?,
+                        row.get::<_, String>(6)?,
+                        row.get::<_, String>(7)?,
+                    ))
+                },
+            )
+            .unwrap();
+        assert_eq!(
+            aggregate,
+            (11, 7, 5, 3, 2, 2, "model-b".into(), "provider-b".into())
+        );
+        let rows = conn
+            .prepare(
+                "SELECT task, input_tokens, output_tokens, api_call_count
+                 FROM session_model_usage WHERE session_id='usage' ORDER BY task",
+            )
+            .unwrap()
+            .query_map([], |row| {
+                Ok((
+                    row.get::<_, String>(0)?,
+                    row.get::<_, i64>(1)?,
+                    row.get::<_, i64>(2)?,
+                    row.get::<_, i64>(3)?,
+                ))
+            })
+            .unwrap()
+            .collect::<rusqlite::Result<Vec<_>>>()
+            .unwrap();
+        assert_eq!(
+            rows,
+            vec![("".into(), 11, 7, 2), ("compression".into(), 13, 4, 1)]
+        );
+        drop(conn);
+        assert!(!db.record_main_usage("missing", &route, &main).unwrap());
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn legacy_usage_primary_key_is_healed_on_open() {
+        use super::{SessionDb, UsageRoute};
+        use crate::provider_usage::CanonicalUsage;
+
+        let path = temp_db("legacy_usage_primary_key");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("usage", "local", None, None, None)
+            .unwrap();
+        drop(db);
+
+        let conn = rusqlite::Connection::open(&path).unwrap();
+        conn.execute_batch(
+            "DROP TABLE session_model_usage;
+             CREATE TABLE session_model_usage (
+                session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+                model TEXT NOT NULL,
+                billing_provider TEXT NOT NULL DEFAULT '',
+                billing_base_url TEXT NOT NULL DEFAULT '',
+                billing_mode TEXT NOT NULL DEFAULT '',
+                api_call_count INTEGER NOT NULL DEFAULT 0,
+                input_tokens INTEGER NOT NULL DEFAULT 0,
+                output_tokens INTEGER NOT NULL DEFAULT 0,
+                cache_read_tokens INTEGER NOT NULL DEFAULT 0,
+                cache_write_tokens INTEGER NOT NULL DEFAULT 0,
+                reasoning_tokens INTEGER NOT NULL DEFAULT 0,
+                estimated_cost_usd REAL NOT NULL DEFAULT 0,
+                actual_cost_usd REAL NOT NULL DEFAULT 0,
+                cost_status TEXT,
+                cost_source TEXT,
+                first_seen REAL,
+                last_seen REAL,
+                PRIMARY KEY (
+                    session_id, model, billing_provider, billing_base_url,
+                    billing_mode
+                )
+             );
+             ALTER TABLE session_model_usage ADD COLUMN task TEXT;
+             INSERT INTO session_model_usage (
+                session_id, model, input_tokens, output_tokens, task
+             ) VALUES ('usage', 'legacy-model', 10, 20, NULL);",
+        )
+        .unwrap();
+        drop(conn);
+
+        let db = SessionDb::open(path.clone()).unwrap();
+        let route = UsageRoute {
+            model: "new-model",
+            provider: "provider",
+            base_url: "https://provider.invalid/v1",
+            billing_mode: "",
+        };
+        assert!(db
+            .record_main_usage(
+                "usage",
+                &route,
+                &CanonicalUsage {
+                    input_tokens: 5,
+                    request_count: 1,
+                    ..CanonicalUsage::accumulator()
+                },
+            )
+            .unwrap());
+        let conn = db.conn.lock().unwrap();
+        let mut primary = conn
+            .prepare("PRAGMA table_info(session_model_usage)")
+            .unwrap()
+            .query_map([], |row| {
+                Ok((row.get::<_, String>(1)?, row.get::<_, i64>(5)?))
+            })
+            .unwrap()
+            .filter_map(Result::ok)
+            .filter(|(_, position)| *position > 0)
+            .collect::<Vec<_>>();
+        primary.sort_by_key(|(_, position)| *position);
+        assert_eq!(primary.last().unwrap().0, "task");
+        let legacy = conn
+            .query_row(
+                "SELECT task, input_tokens FROM session_model_usage
+                 WHERE session_id='usage' AND model='legacy-model'",
+                [],
+                |row| Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?)),
+            )
+            .unwrap();
+        assert_eq!(legacy, ("".into(), 10));
+        assert_eq!(
+            conn.query_row(
+                "SELECT input_tokens FROM session_model_usage
+                 WHERE session_id='usage' AND model='new-model'",
+                [],
+                |row| row.get::<_, i64>(0),
+            )
+            .unwrap(),
+            5
+        );
+        assert!(conn
+            .query_row(
+                "SELECT 1 FROM sqlite_master
+                 WHERE type='table' AND name='session_model_usage_legacy_pk'",
+                [],
+                |row| row.get::<_, i64>(0),
+            )
+            .optional()
+            .unwrap()
+            .is_none());
+        drop(conn);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn usage_primary_key_heal_preserves_orphans_and_restores_foreign_keys() {
+        use super::SessionDb;
+
+        let path = temp_db("usage_primary_key_orphans");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("usage", "local", None, None, None)
+            .unwrap();
+        drop(db);
+        let mut conn = rusqlite::Connection::open(&path).unwrap();
+        conn.pragma_update(None, "foreign_keys", false).unwrap();
+        conn.execute_batch(
+            "DROP TABLE session_model_usage;
+             CREATE TABLE session_model_usage (
+                session_id TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+                model TEXT NOT NULL,
+                billing_provider TEXT NOT NULL DEFAULT '',
+                billing_base_url TEXT NOT NULL DEFAULT '',
+                billing_mode TEXT NOT NULL DEFAULT '',
+                api_call_count INTEGER NOT NULL DEFAULT 0,
+                input_tokens INTEGER NOT NULL DEFAULT 0,
+                output_tokens INTEGER NOT NULL DEFAULT 0,
+                cache_read_tokens INTEGER NOT NULL DEFAULT 0,
+                cache_write_tokens INTEGER NOT NULL DEFAULT 0,
+                reasoning_tokens INTEGER NOT NULL DEFAULT 0,
+                estimated_cost_usd REAL NOT NULL DEFAULT 0,
+                actual_cost_usd REAL NOT NULL DEFAULT 0,
+                cost_status TEXT,
+                cost_source TEXT,
+                first_seen REAL,
+                last_seen REAL,
+                PRIMARY KEY (
+                    session_id, model, billing_provider, billing_base_url,
+                    billing_mode
+                )
+             );
+             INSERT INTO session_model_usage (session_id, model, input_tokens)
+                VALUES ('usage', 'model', 1), ('orphan', 'model', 2);",
+        )
+        .unwrap();
+        conn.pragma_update(None, "foreign_keys", true).unwrap();
+        assert!(conn
+            .pragma_query_value(None, "foreign_keys", |row| row.get::<_, bool>(0))
+            .unwrap());
+        SessionDb::heal_session_model_usage_pk(&mut conn).unwrap();
+        assert!(conn
+            .pragma_query_value(None, "foreign_keys", |row| row.get::<_, bool>(0))
+            .unwrap());
+        let sessions = conn
+            .prepare("SELECT session_id FROM session_model_usage ORDER BY session_id")
+            .unwrap()
+            .query_map([], |row| row.get::<_, String>(0))
+            .unwrap()
+            .collect::<rusqlite::Result<Vec<_>>>()
+            .unwrap();
+        assert_eq!(sessions, ["orphan", "usage"]);
+        drop(conn);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
     #[test]
     fn retained_tail_accepts_complete_tool_groups_and_rejects_dangling_calls() {
         let calls =
@@ -5709,7 +6874,8 @@ mod tests {
                 serde_json::json!({"role":"assistant","content":"","tool_calls":calls}),
                 serde_json::json!({
                     "role":"tool","content":"tool result",
-                    "tool_call_id":"call-1","name":"fixture_tool"
+                    "tool_call_id":"call-1","name":"fixture_tool",
+                    "tool_name":"fixture_tool"
                 }),
             ]
         );

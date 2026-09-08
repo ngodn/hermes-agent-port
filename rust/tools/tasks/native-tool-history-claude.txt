@@ -1,0 +1,11 @@
+You are one helper on a coordinated Rust port. Work only on the bounded read-only analysis below. Do not edit Rust source, tests, PORT.md, INDEX.md, or any existing file. Do not run another agent/helper.
+
+Trace the authoritative Python Hermes behavior for persisting and replaying native agent tool-call history across turns. Focus on run_agent.py, hermes_state.py, and directly called helpers. Answer these concrete questions:
+
+1. Which messages from a successful tool loop are persisted, and at what point relative to the final assistant reply?
+2. Which fields are stored and replayed for assistant tool-call rows and tool result rows, including content, api_content, reasoning fields, tool_calls, tool_call_id, name/tool_name, timestamps, and private/synthetic retry messages?
+3. What happens on provider failure or tool-loop failure after some tool calls completed?
+4. What role alternation and complete-tool-group invariants are enforced or assumed?
+5. Identify exact source locations and any existing Python tests that prove the behavior.
+
+Write a concise evidence report to rust/analysis/native-tool-history-claude.md. Clearly separate observed behavior from inference. Use repo-relative paths and line numbers. Do not use em dashes. End with a short checklist for the Rust integrator. Do not modify anything else.

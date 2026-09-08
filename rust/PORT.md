@@ -1,5 +1,58 @@
 # Hermes Rust rewrite
 
+## Native usage, tool history, and proactive pruning checkpoint: 2026-09-09
+
+Native provider responses now normalize fresh input, output, cache-read,
+cache-write, reasoning, and request counts with Python-compatible provider and
+API-mode precedence. Main-turn usage updates both session totals and the model
+ledger atomically. Compression usage is recorded under its auxiliary task and
+does not inflate the session's main totals. Older Python stores with the stale
+five-column usage primary key are rebuilt transactionally with `task` in the
+key before any upsert. Streaming requests ask for usage chunks except on the
+native Gemini host, matching the Python exclusion.
+
+Native tool history is now durable and replayable. The assistant tool-call row
+is validated and committed before any tool side effect. Each result is then
+committed before another tool dispatch or provider request can occur. Later
+turns rebuild the provider request from the full active wide transcript,
+including call IDs, names, reasoning fields, and API-content sidecars. An
+HTTP, SQLite, provider, and real-tool integration test proves both ordering
+points and complete-group replay on the following turn.
+
+Count-based proactive pruning now runs at the next admitted pre-turn boundary.
+It summarizes old large tool results, deduplicates exact repeated output,
+truncates stale tool-call arguments, and retires old images while preserving
+complete tool groups and protected skill content. Publication uses one SQLite
+transaction to verify the exact transcript snapshot and lineage turn lease,
+archive the original active generation, clone every wide column, rewrite only
+the selected fields, merge the durable rearm watermark, and reconcile live
+counters. End-to-end coverage proves the provider sees the summary and the
+archived original remains searchable.
+
+Helper work was divided into separate dependency lanes. AGY mapped provider
+usage only and was run singly behind its auth lock. Claude separately owned the
+pure pruning function, the SQLite publication contract, and the Python tool
+history ordering trace. The primary lane owned shared types, migrations,
+runtime integration, source verification, and end-to-end validation. The full
+disposition is recorded in
+[native-provider-usage-pruning-resolution.md](analysis/native-provider-usage-pruning-resolution.md).
+
+Full workspace validation is **1,620 passed, two ignored** (1,619 gateway plus
+one core test). The selected Python
+usage, pruning, restart-safety, loop-wiring, and incremental-persistence oracle
+is **91 passed** under the project virtual environment. Formatting, Clippy with
+warnings denied, and `git diff --check` pass.
+
+The refreshed [weighted full-port audit](analysis/progress-audit-2026-09-08.md)
+is **45.40 points, reported as about 45%** (rough range 43% to 47%). This is not
+full compression parity. Same-turn post-tool pruning, token-budget pressure
+demotion, micro-compaction, exact estimator parity, final savings measurement,
+auxiliary model routing and fallback, memory checkpoints, and extension
+notifications remain. The larger remaining systems are native plugin and
+external-memory managers, extension-host recovery, the built-in tool runtime,
+approval and delegation, provider failover, platform breadth, and native CLI
+parity.
+
 ## Native automatic compression checkpoint: 2026-09-08
 
 Automatic compression now runs on native HTTP and push ingress after stable

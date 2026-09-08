@@ -606,6 +606,10 @@ impl Dispatcher {
             Option<crate::durable_turn_lease::DurableTurnLease>,
         ),
     ) {
+        let (_turn_lease, durable_turn_lease) = _leases;
+        let turn_lease_holder = durable_turn_lease
+            .as_ref()
+            .map(|lease| lease.holder().to_owned());
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
 
         // Load prior history + record the inbound message for stateless backends.
@@ -617,11 +621,13 @@ impl Dispatcher {
         let turn_agent = agent.clone();
         let agent_db = turn_db.clone();
         let msg_for_agent = msg.clone();
+        let agent_turn_lease_holder = turn_lease_holder.clone();
         let agent_task = tokio::spawn(async move {
             turn_agent
                 .run_turn_with_context(
                     crate::agent::TurnContext::from_database(agent_db.as_deref())
-                        .with_session_finalizable(session_finalizable),
+                        .with_session_finalizable(session_finalizable)
+                        .with_turn_lease_holder(agent_turn_lease_holder.as_deref()),
                     &msg_for_agent,
                     &history,
                     tx,
@@ -673,7 +679,8 @@ impl Dispatcher {
         if let Err(error) = agent
             .finalize_turn_after_persist(
                 crate::agent::TurnContext::from_database(turn_db.as_deref())
-                    .with_session_finalizable(session_finalizable),
+                    .with_session_finalizable(session_finalizable)
+                    .with_turn_lease_holder(turn_lease_holder.as_deref()),
                 &msg,
                 &reply,
                 succeeded,

@@ -891,6 +891,7 @@ mod tests {
         crate::agent::TurnContext {
             home: Some(home),
             database: None,
+            turn_lease_holder: None,
             session_finalizable: false,
         }
     }
