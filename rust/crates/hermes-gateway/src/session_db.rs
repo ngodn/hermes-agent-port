@@ -1055,6 +1055,25 @@ impl SessionDb {
         tx.commit()
     }
 
+    /// Persist the ordered native tool prefix used by this session. The JSON
+    /// text shape is shared with Python's `update_session_tool_names`; `None`
+    /// clears the pin and an empty slice deliberately stores `[]`.
+    pub fn update_session_tool_names(
+        &self,
+        id: &str,
+        tool_names: Option<&[String]>,
+    ) -> rusqlite::Result<()> {
+        let payload = tool_names
+            .map(serde_json::to_string)
+            .transpose()
+            .map_err(|error| rusqlite::Error::ToSqlConversionFailure(Box::new(error)))?;
+        self.conn.lock().unwrap().execute(
+            "UPDATE sessions SET tool_names=? WHERE id=?",
+            params![payload, id],
+        )?;
+        Ok(())
+    }
+
     /// Read a durable lifecycle row, resolving the deduplicated system prompt
     /// the same way as Python. Token writes here are synchronous, so there is
     /// no pending token-delta queue to flush before this read.
@@ -1108,6 +1127,7 @@ impl SessionDb {
             ("cwd", "TEXT"),
             ("git_repo_root", "TEXT"),
             ("git_branch", "TEXT"),
+            ("tool_names", "TEXT"),
         ] {
             if !columns.iter().any(|column| column == name) {
                 // Names and declarations are static schema constants.
@@ -1278,7 +1298,8 @@ impl SessionDb {
                 thread_id TEXT,
                 started_at REAL NOT NULL,
                 message_count INTEGER DEFAULT 0,
-                last_activity_at REAL
+                last_activity_at REAL,
+                tool_names TEXT
             )",
             [],
         )?;
@@ -1775,6 +1796,23 @@ mod tests {
         );
         drop(reopened);
         std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn session_tool_names_round_trip_in_wire_order() {
+        let path = temp_db("tool_names");
+        let db = SessionDb::open(path).unwrap();
+        db.ensure_session("one", "local", None, None, None).unwrap();
+        let names = vec!["current_time".into(), "memory_search".into()];
+        db.update_session_tool_names("one", Some(&names)).unwrap();
+        assert_eq!(
+            db.get_session("one").unwrap().unwrap()["tool_names"],
+            r#"["current_time","memory_search"]"#
+        );
+        db.update_session_tool_names("one", Some(&[])).unwrap();
+        assert_eq!(db.get_session("one").unwrap().unwrap()["tool_names"], "[]");
+        db.update_session_tool_names("one", None).unwrap();
+        assert!(db.get_session("one").unwrap().unwrap()["tool_names"].is_null());
     }
 
     #[test]
@@ -2884,6 +2922,7 @@ mod tests {
             "end_reason",
             "system_prompt",
             "system_prompt_hash",
+            "tool_names",
         ] {
             assert!(row.get(column).unwrap().is_null(), "{column}");
         }

@@ -39,6 +39,72 @@ pub trait Tool: Send + Sync {
     fn call(&self, args: &Value) -> Result<String>;
 }
 
+/// Return the provider-visible names in their wire order.
+pub fn tool_names(tools: &[Arc<dyn Tool>]) -> Vec<String> {
+    tools.iter().map(|tool| tool.spec().name).collect()
+}
+
+/// Fold a freshly resolved tool surface onto a persisted session prefix.
+/// Existing slots take fresh implementations, still-registered unavailable
+/// tools survive probe flaps, removed tools disappear, and new tools append.
+pub fn restore_tool_prefix(
+    saved_names: &[String],
+    fresh_tools: Vec<Arc<dyn Tool>>,
+    registered_tools: &[Arc<dyn Tool>],
+) -> (Vec<Arc<dyn Tool>>, bool) {
+    if saved_names.is_empty() {
+        return (fresh_tools, false);
+    }
+    let mut fresh_order = Vec::new();
+    let mut fresh = std::collections::HashMap::new();
+    for tool in fresh_tools {
+        let name = tool.spec().name;
+        if name.is_empty() {
+            continue;
+        }
+        if !fresh.contains_key(&name) {
+            fresh_order.push(name.clone());
+        }
+        // Python's dict keeps the first insertion slot but the last definition.
+        fresh.insert(name, tool);
+    }
+    let registered: std::collections::HashMap<_, _> = registered_tools
+        .iter()
+        .filter_map(|tool| {
+            let name = tool.spec().name;
+            (!name.is_empty()).then(|| (name, tool.clone()))
+        })
+        .collect();
+
+    // restore_agent_tool_prefix first resolves every saved name against the
+    // non-consuming fresh map. This matters for a corrupt duplicate pin: each
+    // occurrence captures the fresh definition before the inner merge pops it.
+    let saved_tools: Vec<_> = saved_names
+        .iter()
+        .filter_map(|name| {
+            fresh
+                .get(name)
+                .or_else(|| registered.get(name))
+                .map(|tool| (name, tool.clone()))
+        })
+        .collect();
+    let mut merged = Vec::new();
+    for (name, saved_tool) in saved_tools {
+        if let Some(tool) = fresh.remove(name) {
+            merged.push(tool);
+        } else if registered.contains_key(name) {
+            merged.push(saved_tool);
+        }
+    }
+    for name in fresh_order {
+        if let Some(tool) = fresh.remove(&name) {
+            merged.push(tool);
+        }
+    }
+    let changed = tool_names(&merged) != saved_names;
+    (merged, changed)
+}
+
 /// A tool invocation requested by the model.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ToolCall {
@@ -739,6 +805,49 @@ mod tests {
     use super::*;
     use hermes_core::Error;
     use std::sync::Mutex;
+
+    #[test]
+    fn restored_tool_prefix_matches_python_merge_rules() {
+        struct NamedTool(&'static str, &'static str);
+        impl Tool for NamedTool {
+            fn spec(&self) -> ToolSpec {
+                ToolSpec {
+                    name: self.0.into(),
+                    description: self.1.into(),
+                    parameters: json!({}),
+                }
+            }
+            fn call(&self, _args: &Value) -> Result<String> {
+                Ok(String::new())
+            }
+        }
+        let tool = |name, version| Arc::new(NamedTool(name, version)) as Arc<dyn Tool>;
+        let old_a = tool("a", "old");
+        let new_a = tool("a", "new");
+        let flapped = tool("flapped", "registered");
+        let new_b = tool("b", "new");
+        let fresh = vec![new_b.clone(), new_a.clone()];
+        let registered = vec![old_a, flapped.clone(), new_b.clone()];
+        let saved = vec!["a".into(), "flapped".into(), "removed".into(), "a".into()];
+
+        let (merged, changed) = restore_tool_prefix(&saved, fresh, &registered);
+        assert_eq!(tool_names(&merged), ["a", "flapped", "a", "b"]);
+        assert_eq!(merged[0].spec().description, "new");
+        assert_eq!(merged[1].spec().description, "registered");
+        assert_eq!(merged[2].spec().description, "new");
+        assert!(changed);
+
+        let stable = vec![new_a, new_b];
+        let names = tool_names(&stable);
+        let (merged, changed) = restore_tool_prefix(&names, stable.clone(), &stable);
+        assert_eq!(tool_names(&merged), names);
+        assert!(!changed);
+
+        let fresh = vec![tool("a", "fresh")];
+        let (merged, changed) = restore_tool_prefix(&[], fresh.clone(), &fresh);
+        assert_eq!(tool_names(&merged), ["a"]);
+        assert!(!changed);
+    }
 
     #[tokio::test]
     async fn final_delivery_matches_python_visible_response_cases() {

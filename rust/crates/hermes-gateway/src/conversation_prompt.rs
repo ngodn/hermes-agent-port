@@ -20,6 +20,7 @@ pub enum StoredState {
 pub struct RestoreInputs<'a> {
     pub has_history: bool,
     pub runtime: crate::system_prompt::PromptRuntime<'a>,
+    pub tool_names: &'a [String],
     pub capability_stale: bool,
     pub legacy_bot_upgrade: bool,
     pub bot: Option<BotRestoreInputs<'a>>,
@@ -43,6 +44,7 @@ pub struct BuildSnapshot {
 #[derive(Debug, PartialEq, Eq)]
 pub struct Resolution {
     pub prompt: String,
+    pub saved_tool_names: Option<Vec<String>>,
     pub stored_state: StoredState,
     pub reused: bool,
     pub restore_frozen_sections: bool,
@@ -55,6 +57,9 @@ pub struct Resolution {
 pub trait PromptStore: Sync {
     fn session_row(&self, id: &str) -> anyhow::Result<Option<Value>>;
     fn persist_prompt(&self, id: &str, prompt: &str) -> anyhow::Result<()>;
+    fn persist_tool_names(&self, _id: &str, _tool_names: &[String]) -> anyhow::Result<()> {
+        Ok(())
+    }
     fn build_snapshot(&self, _id: &str) -> anyhow::Result<BuildSnapshot> {
         Ok(BuildSnapshot::default())
     }
@@ -401,6 +406,23 @@ fn configured_strings(value: &Value) -> BTreeSet<String> {
         .collect()
 }
 
+fn parse_saved_tool_names(raw: &str) -> Option<Vec<String>> {
+    let Value::Array(values) = serde_json::from_str::<Value>(raw).ok()? else {
+        return None;
+    };
+    let mut names = Vec::new();
+    for value in values {
+        match value {
+            Value::String(name) => names.push(name),
+            // Python dict.get accepts hashable scalar noise and simply misses.
+            Value::Null | Value::Bool(_) | Value::Number(_) => {}
+            // Nested lists/dicts are unhashable and abort the guarded restore.
+            Value::Array(_) | Value::Object(_) => return None,
+        }
+    }
+    Some(names)
+}
+
 fn config_flag(value: &Value, default: bool) -> bool {
     crate::config_schema::coerce_bool(value, default)
 }
@@ -493,6 +515,10 @@ impl PromptStore for crate::session_db::SessionDb {
         Ok(self.update_system_prompt(id, Some(prompt))?)
     }
 
+    fn persist_tool_names(&self, id: &str, tool_names: &[String]) -> anyhow::Result<()> {
+        Ok(self.update_session_tool_names(id, Some(tool_names))?)
+    }
+
     fn build_snapshot(&self, id: &str) -> anyhow::Result<BuildSnapshot> {
         Ok(BuildSnapshot {
             row: self.get_session(id)?,
@@ -574,8 +600,26 @@ where
                     && bot.protocol.stored_prompt_needs_upgrade(stored, bot.home);
             }
             if !capability_stale && !legacy_bot_upgrade {
+                let saved_tool_names = row
+                    .as_ref()
+                    .and_then(|row| row.get("tool_names"))
+                    .and_then(Value::as_str)
+                    .filter(|raw| !raw.is_empty())
+                    .and_then(parse_saved_tool_names);
+                if row
+                    .as_ref()
+                    .and_then(|row| row.get("tool_names"))
+                    .and_then(Value::as_str)
+                    .is_some_and(|raw| !raw.is_empty() && parse_saved_tool_names(raw).is_none())
+                {
+                    tracing::debug!(
+                        session_id,
+                        "Stored tool prefix is invalid; using fresh native tools"
+                    );
+                }
                 return Ok(Resolution {
                     prompt: stored.to_owned(),
+                    saved_tool_names,
                     stored_state: state,
                     reused: true,
                     restore_frozen_sections: true,
@@ -604,12 +648,20 @@ where
     let mut persist_attempted = false;
     if let Some(store) = store {
         persist_attempted = true;
-        if let Err(error) = store.persist_prompt(session_id, &prompt) {
-            tracing::warn!(%error, session_id, "Session DB update_system_prompt failed; later turns may rebuild");
+        match store.persist_prompt(session_id, &prompt) {
+            Ok(()) => {
+                if let Err(error) = store.persist_tool_names(session_id, input.tool_names) {
+                    tracing::debug!(%error, session_id, "Session DB tool-prefix persist skipped");
+                }
+            }
+            Err(error) => {
+                tracing::warn!(%error, session_id, "Session DB update_system_prompt failed; later turns may rebuild");
+            }
         }
     }
     Ok(Resolution {
         prompt,
+        saved_tool_names: None,
         stored_state: state,
         reused: false,
         restore_frozen_sections: false,
@@ -629,6 +681,7 @@ mod tests {
         row: Option<Value>,
         reads: Mutex<usize>,
         writes: Mutex<Vec<(String, String)>>,
+        tool_writes: Mutex<Vec<(String, Vec<String>)>>,
     }
 
     impl PromptStore for Store {
@@ -639,6 +692,14 @@ mod tests {
 
         fn persist_prompt(&self, id: &str, prompt: &str) -> anyhow::Result<()> {
             self.writes.lock().unwrap().push((id.into(), prompt.into()));
+            Ok(())
+        }
+
+        fn persist_tool_names(&self, id: &str, tool_names: &[String]) -> anyhow::Result<()> {
+            self.tool_writes
+                .lock()
+                .unwrap()
+                .push((id.into(), tool_names.to_vec()));
             Ok(())
         }
     }
@@ -654,6 +715,7 @@ mod tests {
                 row: case.get("row").cloned().filter(|value| !value.is_null()),
                 reads: Mutex::new(0),
                 writes: Mutex::new(Vec::new()),
+                tool_writes: Mutex::new(Vec::new()),
             };
             let runtime = crate::system_prompt::PromptRuntime {
                 model: case
@@ -677,6 +739,7 @@ mod tests {
                 &RestoreInputs {
                     has_history: case["history"].as_bool().unwrap(),
                     runtime,
+                    tool_names: &["current_time".into()],
                     capability_stale: case
                         .get("capability_stale")
                         .and_then(Value::as_bool)
@@ -718,6 +781,12 @@ mod tests {
                 case["name"]
             );
             assert_eq!(
+                store.tool_writes.lock().unwrap().len(),
+                expected["writes"].as_array().unwrap().len(),
+                "{}",
+                case["name"]
+            );
+            assert_eq!(
                 result.reused,
                 expected["builds"].as_array().unwrap().is_empty(),
                 "{}",
@@ -731,6 +800,52 @@ mod tests {
                 result.reconstruct_static_prefix,
                 !expected["reconstructed"].as_array().unwrap().is_empty()
             );
+        }
+    }
+
+    #[tokio::test]
+    async fn reused_prompt_recovers_only_valid_ordered_tool_name_json() {
+        let prompt = "User home directory: /home\nCurrent working directory: /work\n\nModel: model-a\nProvider: provider-a\nPlatform: cli";
+        for (raw, expected) in [
+            (
+                r#"["current_time","memory_search"]"#,
+                Some(vec!["current_time".into(), "memory_search".into()]),
+            ),
+            (r#"["current_time", 7]"#, Some(vec!["current_time".into()])),
+            (r#"["current_time", []]"#, None),
+            ("not json", None),
+        ] {
+            let store = Store {
+                row: Some(serde_json::json!({
+                    "system_prompt": prompt,
+                    "tool_names": raw,
+                })),
+                reads: Mutex::new(0),
+                writes: Mutex::new(Vec::new()),
+                tool_writes: Mutex::new(Vec::new()),
+            };
+            let result = restore_or_build(
+                Some(&store),
+                "session-1",
+                &RestoreInputs {
+                    has_history: true,
+                    runtime: crate::system_prompt::PromptRuntime {
+                        model: "model-a",
+                        provider: "provider-a",
+                        platform: "cli",
+                        cwd: "/work",
+                    },
+                    tool_names: &[],
+                    capability_stale: false,
+                    legacy_bot_upgrade: false,
+                    bot: None,
+                },
+                |_| async { panic!("a reusable prompt must not rebuild") },
+            )
+            .await
+            .unwrap();
+            assert!(result.reused);
+            assert_eq!(result.saved_tool_names, expected);
         }
     }
 }

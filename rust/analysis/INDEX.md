@@ -26,6 +26,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [frozen-conversation-state-map-agy.md](frozen-conversation-state-map-agy.md) | Gemini source map of Python tool-prefix restoration, plugin snapshots and persistence order |
+| [frozen-conversation-state-map-claude.md](frozen-conversation-state-map-claude.md) | Claude source map of the native ownership seam and deferred capability managers |
+| [frozen-conversation-state-review-agy.md](frozen-conversation-state-review-agy.md) | Gemini post-implementation audit that identified duplicate and empty-prefix edge cases |
+| [frozen-conversation-state-review-claude.md](frozen-conversation-state-review-claude.md) | Claude parity review of the full two-stage Python restore behavior and malformed-state handling |
 | [async-conversation-prompt-map-agy.md](async-conversation-prompt-map-agy.md) | Gemini map of the async construction seam, prompt ordering and lock boundary |
 | [async-conversation-prompt-map-claude.md](async-conversation-prompt-map-claude.md) | Claude review of single-flight initialization, persistence ordering and retry behavior |
 | [progress-audit-2026-09-07.md](progress-audit-2026-09-07.md) | Current 33% weighted full-port estimate, verified runtime boundaries and historical comparison |

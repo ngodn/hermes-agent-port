@@ -238,7 +238,7 @@ pub fn render_sections<E: std::fmt::Display>(
 
 /// Per-agent frozen sections. Explicit prompt invalidation permits a new render;
 /// ordinary turns and compression reconstruction reuse the captured bytes.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct Snapshot {
     current: Option<Vec<Section>>,
     previous: Vec<Section>,
@@ -253,6 +253,11 @@ impl Snapshot {
 
     pub fn restore(&mut self, prompt: &str) {
         self.current = Some(restore(prompt));
+    }
+
+    #[cfg(test)]
+    pub fn sections(&self) -> Option<&[Section]> {
+        self.current.as_deref()
     }
 
     pub fn get_or_render<E: std::fmt::Display>(

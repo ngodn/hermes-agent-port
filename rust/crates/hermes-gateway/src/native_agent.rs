@@ -205,6 +205,10 @@ pub struct NativeAgentClient {
     /// Already assembled conversation prompt. Clones share the same immutable
     /// bytes, including across tool rounds; construction never reads files here.
     system_prompt: Option<std::sync::Arc<str>>,
+    /// Frozen per-conversation plugin bytes recovered from the accepted prompt.
+    /// Native plugin callbacks are not wired yet; keeping their snapshot here
+    /// prevents a later compression rebuild from consulting live plugin state.
+    _plugin_prompt: crate::plugin_prompt::Snapshot,
     turn_limit: usize,
     max_concurrent_children: usize,
     /// When non-empty, turns run through the tool-calling loop (non-streaming);
@@ -235,6 +239,7 @@ impl NativeAgentClient {
             request_overrides: Default::default(),
             cache_scope: None,
             system_prompt: None,
+            _plugin_prompt: crate::plugin_prompt::Snapshot::default(),
             turn_limit: crate::turn_limit::UNLIMITED,
             max_concurrent_children: 10,
             tools: Vec::new(),
@@ -246,6 +251,12 @@ impl NativeAgentClient {
     /// this client keeps the supplied bytes unchanged throughout its lifetime.
     pub fn with_system_prompt(mut self, prompt: impl Into<String>) -> Self {
         self.system_prompt = Some(std::sync::Arc::from(prompt.into()));
+        self
+    }
+
+    /// Install an already resolved per-conversation plugin snapshot.
+    pub fn with_plugin_prompt_snapshot(mut self, snapshot: crate::plugin_prompt::Snapshot) -> Self {
+        self._plugin_prompt = snapshot;
         self
     }
 
@@ -682,6 +693,22 @@ impl ChatModel for NativeAgentClient {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn native_client_owns_callback_free_restored_plugin_snapshot() {
+        let expected = crate::plugin_prompt::Section {
+            id: "fixture".into(),
+            content: "frozen plugin bytes".into(),
+        };
+        let block = crate::plugin_prompt::format(std::slice::from_ref(&expected));
+        let prompt = format!("identity\n\n{block}\n\nConversation started: today");
+        let mut snapshot = crate::plugin_prompt::Snapshot::default();
+        snapshot.restore(&prompt);
+        let client = super::NativeAgentClient::new("model", "key", "http://localhost")
+            .unwrap()
+            .with_plugin_prompt_snapshot(snapshot);
+        assert_eq!(client._plugin_prompt.sections(), Some(&[expected][..]));
+    }
+
     #[tokio::test]
     async fn tool_pairing_repairs_main_and_summary_http_requests() {
         use crate::native_tools::ChatModel;

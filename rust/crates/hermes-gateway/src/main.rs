@@ -196,6 +196,24 @@ use crate::native_agent::NativeAgentClient;
 use crate::platform::PlatformAdapter;
 use tokio_util::sync::CancellationToken;
 
+struct NativeConversationState {
+    system_prompt: String,
+    tools: Vec<Arc<dyn crate::native_tools::Tool>>,
+    plugin_prompt: crate::plugin_prompt::Snapshot,
+}
+
+fn registered_native_tools() -> Vec<Arc<dyn crate::native_tools::Tool>> {
+    vec![Arc::new(crate::native_tools::CurrentTimeTool)]
+}
+
+fn available_native_tools(config: &Config) -> Vec<Arc<dyn crate::native_tools::Tool>> {
+    if config.agent_tools {
+        registered_native_tools()
+    } else {
+        Vec::new()
+    }
+}
+
 /// Pick the agent backend. Native (in-Rust LLM chat) requires opt-in
 /// (`HERMES_AGENT_NATIVE`), an API key (`HERMES_LLM_API_KEY`), and a resolved
 /// model; anything missing falls back to the Python subprocess bridge so the
@@ -226,7 +244,7 @@ fn build_agent_client_for_home(
     user_config: &serde_json::Value,
     model: Option<&str>,
     home: &std::path::Path,
-    system_prompt: Option<String>,
+    conversation: Option<NativeConversationState>,
 ) -> anyhow::Result<Arc<dyn AgentClient>> {
     // Highest precedence: a CLI backend (Claude Code / Antigravity / any print-
     // mode LLM CLI). Turns run via that CLI, no Python and no HTTP key needed.
@@ -382,8 +400,12 @@ fn build_agent_client_for_home(
                             .as_ref()
                             .and_then(|entry| entry.get("max_output_tokens")),
                     ));
-                    if config.agent_tools {
-                        c = c.with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+                    let tools = conversation
+                        .as_ref()
+                        .map(|state| state.tools.clone())
+                        .unwrap_or_else(|| available_native_tools(config));
+                    if !tools.is_empty() {
+                        c = c.with_tools(tools);
                         tracing::info!(
                             model,
                             base_url,
@@ -392,8 +414,10 @@ fn build_agent_client_for_home(
                     } else {
                         tracing::info!(model, base_url, "using native agent client");
                     }
-                    if let Some(prompt) = system_prompt {
-                        c = c.with_system_prompt(prompt);
+                    if let Some(state) = conversation {
+                        c = c
+                            .with_system_prompt(state.system_prompt)
+                            .with_plugin_prompt_snapshot(state.plugin_prompt);
                     }
                     return Ok(Arc::new(c));
                 }
@@ -450,11 +474,9 @@ async fn build_conversation_client(
         .and_then(|row| row.get("cwd"))
         .and_then(serde_json::Value::as_str);
     let runtime_cwd = initializer.runtime_cwd(home, session_cwd)?;
-    let tools = if config.agent_tools {
-        vec!["current_time".to_owned()]
-    } else {
-        Vec::new()
-    };
+    let registered_tools = registered_native_tools();
+    let fresh_tools = available_native_tools(config);
+    let fresh_tool_names = native_tools::tool_names(&fresh_tools);
     let bot = initializer.bot_inputs(home, Some(&selected));
     let resolution = conversation_prompt::restore_or_build(
         database.map(|database| database as &dyn conversation_prompt::PromptStore),
@@ -467,6 +489,7 @@ async fn build_conversation_client(
                 platform: &platform,
                 cwd: &runtime_cwd,
             },
+            tool_names: &fresh_tool_names,
             capability_stale: false,
             legacy_bot_upgrade: false,
             bot: Some(bot),
@@ -479,18 +502,46 @@ async fn build_conversation_client(
                 provider: &provider,
                 platform: &platform,
                 session_id: &session_id,
-                tools: &tools,
+                tools: &fresh_tool_names,
                 snapshot,
             })
         },
     )
     .await?;
+    let mut plugin_prompt = plugin_prompt::Snapshot::default();
+    let tools = if resolution.restore_frozen_sections {
+        plugin_prompt.restore(&resolution.prompt);
+        match resolution.saved_tool_names.as_deref() {
+            Some(saved) => {
+                let (tools, changed) =
+                    native_tools::restore_tool_prefix(saved, fresh_tools, &registered_tools);
+                if changed {
+                    if let Some(database) = database {
+                        let names = native_tools::tool_names(&tools);
+                        if let Err(error) =
+                            database.update_session_tool_names(&session_id, Some(&names))
+                        {
+                            tracing::debug!(%error, %session_id, "Session DB restored tool-prefix persist skipped");
+                        }
+                    }
+                }
+                tools
+            }
+            None => fresh_tools,
+        }
+    } else {
+        fresh_tools
+    };
     build_agent_client_for_home(
         config,
         &selected,
         Some(&model),
         home,
-        Some(resolution.prompt),
+        Some(NativeConversationState {
+            system_prompt: resolution.prompt,
+            tools,
+            plugin_prompt,
+        }),
     )
 }
 
@@ -905,7 +956,7 @@ mod startup_tests {
 
     #[tokio::test]
     async fn conversation_prompt_is_persisted_before_model_io_and_reused_verbatim() {
-        use axum::{extract::State, response::IntoResponse, routing::post, Json, Router};
+        use axum::{extract::State, routing::post, Json, Router};
 
         type ModelState = (
             Arc<session_db::SessionDb>,
@@ -914,16 +965,14 @@ mod startup_tests {
         async fn model(
             State((database, requests)): State<ModelState>,
             Json(body): Json<Value>,
-        ) -> impl IntoResponse {
+        ) -> Json<Value> {
             let row = database.get_session("session-one").unwrap().unwrap();
             assert!(row["system_prompt"]
                 .as_str()
                 .is_some_and(|text| !text.is_empty()));
+            assert_eq!(row["tool_names"], r#"["current_time"]"#);
             requests.lock().unwrap().push(body);
-            (
-                [("content-type", "text/event-stream")],
-                "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\ndata: [DONE]\n\n",
-            )
+            Json(json!({"choices":[{"message":{"role":"assistant","content":"ok"}}]}))
         }
 
         struct TempDir(std::path::PathBuf);
@@ -979,6 +1028,7 @@ mod startup_tests {
         config.agent_model = Some("fixture-model".into());
         config.llm_base_url = Some(base_url);
         config.agent_cwd = home.0.clone();
+        config.agent_tools = true;
         let mut message: hermes_core::Message = serde_json::from_value(json!({
             "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"next"
         }))
@@ -1020,6 +1070,9 @@ mod startup_tests {
         // A new process-level initializer must restore the stored bytes without
         // consulting changed prompt sources for this continuing conversation.
         std::fs::write(home.0.join("SOUL.md"), "Changed identity must not appear").unwrap();
+        // A fresh process now resolves no available tools. The saved session
+        // prefix must retain current_time from the registered native catalog.
+        config.agent_tools = false;
         let second_initializer =
             conversation_prompt::Initializer::capture(home.0.clone(), home.0.clone()).unwrap();
         let second = build_conversation_client(
@@ -1043,7 +1096,9 @@ mod startup_tests {
                 .as_str()
                 .unwrap()
                 .contains("Changed identity"));
+            assert_eq!(request["tools"][0]["function"]["name"], "current_time");
         }
+        assert_eq!(requests[0]["tools"], requests[1]["tools"]);
         server.abort();
     }
 

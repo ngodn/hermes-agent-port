@@ -1,5 +1,46 @@
 # Hermes Rust rewrite
 
+## Frozen native conversation state checkpoint: 2026-09-08
+
+Continuing native conversations now retain the exact tool prefix that was
+accepted with their stored prompt. Fresh construction persists ordered tool
+names after the prompt write and before provider I/O. Resume parses that state,
+replaces saved slots with current registered definitions, keeps registered
+tools that are temporarily unavailable, drops removed tools, preserves Python's
+duplicate-name behavior, and appends newly available tools in fresh order.
+Invalid persisted JSON falls back to the fresh surface without breaking the
+turn.
+
+SessionDb now creates and migrates the `tool_names` column and exposes the same
+nullable versus stored-empty distinction as Python. The write is a short
+single-statement SQLite boundary with no network or model work inside it. The
+ACID transaction checklist guided that persistence boundary.
+
+The native conversation owner also carries a callback-free plugin prompt
+snapshot restored from the accepted system-prompt bytes. Native plugin callbacks
+are not wired yet, so fresh native prompts still contain no plugin sections.
+Owning the restored snapshot now prevents later compression work from silently
+consulting live plugin state. Static-prefix reconstruction remains deferred
+until the native request path has a segmented cached prefix to reconstruct.
+
+The real SQLite and local HTTP integration test now changes `agent_tools` from
+enabled to disabled between process-level initializers. It proves that prompt
+and tool state are present before the first request, exact prompt bytes are
+reused, and the frozen `current_time` schema remains identical on both model
+requests. Full workspace: **1,492 passed, two ignored**. The 12-case conversation
+restore oracle and 39-case plugin prompt oracle pass. Formatting, Clippy with
+warnings denied, and `git diff --check` pass.
+
+Gemini and Claude mapped and reviewed this seam. Their reviews caught the
+full Python restore function's two-stage duplicate behavior, which is covered
+by the final tests. Reports are indexed under `rust/analysis/`.
+
+Next: add native plugin and external-memory managers, then connect their live
+rendering and tool registration to this frozen conversation owner. Dynamic
+registry, `check_fn`, MCP-derived tool availability, message-count drift
+eviction, compression-triggered invalidation, and conversation-client TTL/LRU
+policy remain. Do not rebuild a live prompt for ordinary file or config drift.
+
 ## Live native conversation prompt checkpoint: 2026-09-08
 
 Native routed conversations now initialize asynchronously and attach one
