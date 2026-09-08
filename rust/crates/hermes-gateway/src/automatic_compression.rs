@@ -601,6 +601,18 @@ fn structured_chars(messages: &[crate::session_db::CompressionHistoryMessage]) -
         .sum()
 }
 
+pub(crate) fn estimate_history_tokens(
+    messages: &[crate::session_db::CompressionHistoryMessage],
+) -> u64 {
+    u64::try_from(
+        structured_chars(messages)
+            .saturating_add(messages.len().saturating_mul(40))
+            .saturating_add(3)
+            / 4,
+    )
+    .unwrap_or(u64::MAX)
+}
+
 /// Run automatic maintenance while admission still owns the route,
 /// transcript and durable lineage leases. The inbound message is measured but
 /// is not persisted until this function returns.
@@ -672,13 +684,7 @@ pub async fn compress_before_turn(
                     .saturating_add(policy.protect_last_n)
                     .saturating_add(1)
         {
-            let before_tokens = u64::try_from(
-                structured_chars(&snapshot.messages)
-                    .saturating_add(snapshot.messages.len().saturating_mul(40))
-                    .saturating_add(3)
-                    / 4,
-            )
-            .unwrap_or(u64::MAX);
+            let before_tokens = estimate_history_tokens(&snapshot.messages);
             let rearm_open = before_tokens >= prune_rearm || preflight.request_tokens >= threshold;
             if rearm_open {
                 let candidate = crate::tool_result_prune::prune_old_tool_results(

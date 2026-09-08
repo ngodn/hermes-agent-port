@@ -1,5 +1,46 @@
 # Hermes Rust rewrite
 
+## Same-turn proactive pruning checkpoint: 2026-09-09
+
+Native tool-result pruning now runs inside the active tool loop after every
+complete result batch is durably committed and before the next provider
+request. The live conversation client receives its frozen compression policy
+at construction. It sizes the provider-visible request, applies trigger,
+protected-head/tail, durable rearm, and minimum-reclaim gates, then publishes
+the candidate through the existing exact-snapshot, route, live-session, and
+lineage-lease transaction.
+
+The publication validator now accepts either a complete turn or a partial turn
+ending in a fully answered tool-call group. Dangling calls remain rejected. On
+commit, the loop replaces its in-memory transcript with the new durable active
+generation while preserving the immutable system prompt. Prune discovery and
+commit errors fail open, matching Python. There is no explicit client eviction:
+the changed request bytes implicitly establish a new provider-cache prefix,
+while reclaim and rearm gates keep cache breaks episodic.
+
+The public HTTP integration test executes a real large-output tool and proves
+that the second provider request in the same turn contains the compact summary,
+not the original result. SQLite proves the summary is active, the original is
+searchable, and final reply delivery still completes. Full workspace validation
+is **1,621 passed, two ignored** (1,620 gateway plus one core test). The selected
+Python usage, pruning, restart-safety, loop-wiring, and incremental-persistence
+oracle is **91 passed**. Formatting, Clippy with warnings denied, and diff
+hygiene pass.
+
+AGY and Claude worked on separate lanes through the requested scripts. AGY
+mapped only token-budget boundary and protected-tail pressure behavior for the
+next pure-function slice. Claude mapped only same-turn runtime ordering,
+adoption, failure, and cache contracts. The primary lane wrote and integrated
+the Rust changes and caught one stale claim from the prior resolution: pruning
+does not evict the cached conversation client.
+
+The refreshed [weighted full-port audit](analysis/progress-audit-2026-09-08.md)
+is **45.60 points, reported as about 46%** (rough range 44% to 48%). Token-budget
+tail selection and pressure demotion are now source-mapped but not yet
+implemented. Micro-compaction, exact estimator parity, same-turn full summary
+compression, auxiliary routing and fallback, memory checkpoints, extension
+notifications, and the larger plugin/tool/provider/platform surfaces remain.
+
 ## Native usage, tool history, and proactive pruning checkpoint: 2026-09-09
 
 Native provider responses now normalize fresh input, output, cache-read,

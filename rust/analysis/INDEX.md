@@ -33,9 +33,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   tool-call groups are committed incrementally before side effects and later
   provider calls, then replayed from the durable wide transcript.
 - Count-based proactive pruning publishes atomically at the next admitted
-  pre-turn boundary with exact-snapshot CAS and durable hysteresis. Same-turn
-  post-tool pruning, token-budget pressure passes, auxiliary routing, and hooks
-  remain open.
+  pre-turn boundary and after durable tool batches in the active loop, with
+  exact-snapshot CAS and durable hysteresis. Token-budget pressure passes,
+  auxiliary routing, and hooks remain open.
 
 ## Rejected paths
 
@@ -53,6 +53,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-same-turn-pruning-resolution.md](native-same-turn-pruning-resolution.md) | Live post-tool prune ordering, partial-turn transaction safety, fail-open adoption, cache behavior, validation, and explicit remaining work |
+| [same-turn-prune-claude.md](same-turn-prune-claude.md) | Claude's independent runtime trace for post-result persistence, prune adoption, hysteresis, and the next-provider-request boundary |
+| [token-budget-prune-agy.md](token-budget-prune-agy.md) | AGY's separate source map of token-tail selection and three-stage pressure demotion for the next pure-function slice |
 | [native-provider-usage-pruning-resolution.md](native-provider-usage-pruning-resolution.md) | Source-verified native provider usage, incremental tool history, atomic proactive-prune publication, helper dispositions, and explicit remaining parity |
 | [provider-usage-agy.md](provider-usage-agy.md) | AGY's bounded provider-usage lane, including the accepted source map and rejected draft behavior |
 | [tool-result-prune-claude.md](tool-result-prune-claude.md) | Claude's independent pure count-based tool-result pruning lane |
@@ -92,7 +95,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 45.40-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 45.60-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |

@@ -1,0 +1,13 @@
+You are one helper on a coordinated Rust port. Work only on the bounded read-only analysis below. Do not edit Rust source, tests, PORT.md, INDEX.md, or any existing file. Do not run another agent/helper.
+
+Trace the authoritative Python runtime wiring for proactive tool-result pruning inside an active tool loop. Focus on agent/conversation_loop.py, agent/context_compressor.py, run_agent.py, and directly called persistence helpers. Exclude the pure pruning algorithm, provider usage parsing, micro-compaction, and general compression summaries.
+
+Answer these concrete questions:
+
+1. Exactly when does pruning run relative to tool-result persistence, the next provider request, iteration accounting, hooks, and final response delivery?
+2. What state is passed in and returned, and how does the live in-memory transcript adopt a committed pruned generation without duplicate persistence?
+3. What threshold, rearm, minimum-reclaim, error, and no-op gates are applied at runtime?
+4. What prompt-cache invalidation or client lifecycle action follows a committed prune?
+5. Map the smallest safe Rust insertion seam in native_tools.rs/native_agent.rs, including ownership and failure propagation, without implementing it.
+
+Write a concise evidence report to rust/analysis/same-turn-prune-claude.md. Clearly separate observed behavior from inference. Use repo-relative paths and line numbers. Do not use em dashes. End with a focused Rust integration checklist. Do not modify anything else.

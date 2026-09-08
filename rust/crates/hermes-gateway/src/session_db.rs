@@ -486,6 +486,14 @@ pub(crate) fn complete_turn_sequence(rows: &[(String, Option<String>, Option<Str
     matches!(partial_turn_phase(rows), Some(TailPhase::User))
 }
 
+fn prunable_turn_sequence(rows: &[(String, Option<String>, Option<String>)]) -> bool {
+    match partial_turn_phase(rows) {
+        Some(TailPhase::User) => true,
+        Some(TailPhase::Tools(pending)) => pending.is_empty(),
+        _ => false,
+    }
+}
+
 fn partial_turn_phase(rows: &[(String, Option<String>, Option<String>)]) -> Option<TailPhase> {
     let mut phase = TailPhase::User;
     for (role, tool_calls, tool_call_id) in rows {
@@ -2160,7 +2168,7 @@ impl SessionDb {
                 )
             })
             .collect::<Vec<_>>();
-        if !complete_turn_sequence(&roles) {
+        if !prunable_turn_sequence(&roles) {
             return Ok(false);
         }
 
@@ -2413,6 +2421,42 @@ impl SessionDb {
             .and_then(|raw| serde_json::from_str::<Value>(raw).ok())
             .and_then(|value| value["_proactive_prune_rearm_tokens"].as_u64())
             .unwrap_or(0))
+    }
+
+    /// Find the newest durable route still pointing at a live session. The
+    /// caller passes the pair back into the prune transaction, where it is
+    /// rechecked under the writer lock before any transcript row changes.
+    pub fn gateway_route_for_session(
+        &self,
+        session_id: &str,
+    ) -> rusqlite::Result<Option<(String, String)>> {
+        if session_id.is_empty() {
+            return Ok(None);
+        }
+        let conn = self.conn.lock().unwrap();
+        let mut query = conn.prepare(
+            "SELECT scope, session_key, entry_json FROM gateway_routing
+             ORDER BY updated_at DESC",
+        )?;
+        let rows = query.query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, String>(2)?,
+            ))
+        })?;
+        for row in rows {
+            let (scope, key, entry) = row?;
+            let matches = serde_json::from_str::<Value>(&entry)
+                .ok()
+                .and_then(|value| value["session_id"].as_str().map(str::to_owned))
+                .as_deref()
+                == Some(session_id);
+            if matches {
+                return Ok(Some((scope, key)));
+            }
+        }
+        Ok(None)
     }
 
     /// Atomically add one or more main-loop provider calls to both the legacy

@@ -498,6 +498,9 @@ fn build_agent_client_for_home(
                             .as_ref()
                             .and_then(|entry| entry.get("max_output_tokens")),
                     ));
+                    c = c.with_automatic_compression_policy(
+                        automatic_compression::AutomaticCompressionPolicy::from_value(user_config),
+                    );
                     let tools = conversation
                         .as_ref()
                         .map(|state| state.tools.clone())

@@ -94,6 +94,20 @@ impl ChatModel for TranscriptModel<'_> {
         }
     }
 
+    fn maintain_tool_loop_messages(
+        &self,
+        messages: &mut Vec<Value>,
+        tools: &[Value],
+    ) -> Result<()> {
+        self.inner.maintain_after_tool_batch(
+            self.database,
+            self.session_id,
+            self.turn_lease_holder,
+            messages,
+            tools,
+        )
+    }
+
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
         *self.last_messages.lock().unwrap() = messages.to_vec();
         self.inner.step(messages, tools).await
@@ -347,6 +361,7 @@ pub struct NativeAgentClient {
     reasoning_echo: bool,
     output_cap: Option<Value>,
     context_length: u64,
+    automatic_compression_policy: crate::automatic_compression::AutomaticCompressionPolicy,
     request_overrides: serde_json::Map<String, Value>,
     cache_scope: Option<String>,
     /// Already assembled conversation prompt. Clones share the same immutable
@@ -390,6 +405,7 @@ impl NativeAgentClient {
             reasoning_echo: false,
             output_cap: None,
             context_length: 256_000,
+            automatic_compression_policy: Default::default(),
             request_overrides: Default::default(),
             cache_scope: None,
             system_prompt: None,
@@ -479,6 +495,14 @@ impl NativeAgentClient {
 
     pub fn with_context_length(mut self, context_length: u64) -> Self {
         self.context_length = context_length.max(1);
+        self
+    }
+
+    pub fn with_automatic_compression_policy(
+        mut self,
+        policy: crate::automatic_compression::AutomaticCompressionPolicy,
+    ) -> Self {
+        self.automatic_compression_policy = policy;
         self
     }
 
@@ -666,6 +690,171 @@ impl NativeAgentClient {
             &mut self.usage_state.lock().unwrap().auxiliary,
             crate::provider_usage::CanonicalUsage::accumulator(),
         )
+    }
+
+    fn tool_request_pressure(
+        &self,
+        messages: &[Value],
+        tools: &[Value],
+    ) -> Result<(u64, Option<u64>)> {
+        let mut body = json!({
+            "model": self.model,
+            "messages": messages,
+            "stream": false,
+        });
+        if !tools.is_empty() {
+            body["tools"] = Value::Array(tools.to_vec());
+        }
+        self.apply_provider_extras(&mut body)?;
+        let output_cap = body
+            .get("max_completion_tokens")
+            .or_else(|| body.get("max_tokens"))
+            .and_then(crate::python_value::integer)
+            .and_then(|value| value.as_u64())
+            .filter(|value| *value > 0);
+        let bytes = serde_json::to_vec(&body).map_err(|error| {
+            Error::Other(format!("same-turn prune request sizing failed: {error}"))
+        })?;
+        let tokens = u64::try_from(bytes.len())
+            .unwrap_or(u64::MAX)
+            .saturating_add(3)
+            / 4;
+        Ok((tokens, output_cap))
+    }
+
+    fn maintain_after_tool_batch(
+        &self,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        turn_lease_holder: Option<&str>,
+        messages: &mut Vec<Value>,
+        tools: &[Value],
+    ) -> Result<()> {
+        let policy = &self.automatic_compression_policy;
+        let (Some(database), Some(holder)) = (database, turn_lease_holder) else {
+            return Ok(());
+        };
+        if !policy.enabled || policy.proactive_prune_tokens == 0 {
+            return Ok(());
+        }
+        let (request_tokens, output_cap) = match self.tool_request_pressure(messages, tools) {
+            Ok(preflight) => preflight,
+            Err(error) => {
+                tracing::debug!(%error, %session_id, "same-turn prune sizing failed open");
+                return Ok(());
+            }
+        };
+        if request_tokens < policy.proactive_prune_tokens {
+            return Ok(());
+        }
+        let snapshot = match database.load_compression_snapshot(session_id) {
+            Ok(snapshot) => snapshot,
+            Err(error) => {
+                tracing::debug!(%error, %session_id, "same-turn prune snapshot failed open");
+                return Ok(());
+            }
+        };
+        let protect_first = match database.has_compression_checkpoint(session_id) {
+            Ok(true) => 0,
+            Ok(false) => policy.protect_first_n,
+            Err(error) => {
+                tracing::debug!(%error, %session_id, "same-turn prune checkpoint read failed open");
+                return Ok(());
+            }
+        };
+        if snapshot.messages.len()
+            <= protect_first
+                .saturating_add(policy.protect_last_n)
+                .saturating_add(1)
+        {
+            return Ok(());
+        }
+        let before_tokens =
+            crate::automatic_compression::estimate_history_tokens(&snapshot.messages);
+        let rearm = match database.proactive_prune_rearm_tokens(session_id) {
+            Ok(rearm) => rearm,
+            Err(error) => {
+                tracing::debug!(%error, %session_id, "same-turn prune rearm read failed open");
+                return Ok(());
+            }
+        };
+        let threshold = policy.compute_effective_threshold_with_output_for(
+            self.context_length,
+            output_cap,
+            Some(&self.model),
+        );
+        if before_tokens < rearm && request_tokens < threshold {
+            return Ok(());
+        }
+        let route = match database.gateway_route_for_session(session_id) {
+            Ok(Some(route)) => route,
+            Ok(None) => return Ok(()),
+            Err(error) => {
+                tracing::debug!(%error, %session_id, "same-turn prune route read failed open");
+                return Ok(());
+            }
+        };
+        let candidate = crate::tool_result_prune::prune_old_tool_results(
+            &snapshot.messages,
+            policy.protect_last_n,
+            policy.proactive_prune_min_result_chars,
+        );
+        if !candidate.changed || candidate.pruned_count == 0 {
+            return Ok(());
+        }
+        let after_tokens =
+            crate::automatic_compression::estimate_history_tokens(&candidate.messages);
+        let reclaimed_tokens = before_tokens.saturating_sub(after_tokens);
+        if reclaimed_tokens < policy.proactive_prune_min_reclaim_tokens {
+            return Ok(());
+        }
+        let runway = reclaimed_tokens
+            .max(policy.proactive_prune_tokens)
+            .max(policy.proactive_prune_min_reclaim_tokens);
+        let next_rearm = after_tokens.saturating_add(runway);
+        let published = match database.publish_gateway_tool_prune(
+            &crate::session_db::GatewayToolPrunePublish {
+                scope: &route.0,
+                session_key: &route.1,
+                session_id,
+                original_messages: &snapshot.messages,
+                pruned_messages: &candidate.messages,
+                rearm_tokens: next_rearm,
+                turn_lease_holder: Some(holder),
+            },
+        ) {
+            Ok(published) => published,
+            Err(error) => {
+                tracing::warn!(%error, %session_id, "same-turn proactive prune commit failed open");
+                return Ok(());
+            }
+        };
+        if !published {
+            return Ok(());
+        }
+
+        let system = messages
+            .first()
+            .filter(|message| message["role"] == "system")
+            .cloned();
+        let durable = database
+            .load_lifecycle_messages(session_id)
+            .map_err(|error| {
+                Error::Other(format!(
+                    "same-turn prune committed but durable replay failed: {error}"
+                ))
+            })?;
+        messages.clear();
+        messages.extend(system);
+        messages.extend(durable);
+        tracing::info!(
+            %session_id,
+            pruned = candidate.pruned_count,
+            reclaimed_tokens,
+            next_rearm,
+            "same-turn proactive native tool-result prune committed"
+        );
+        Ok(())
     }
 
     async fn run_model_turn(

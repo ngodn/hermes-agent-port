@@ -1,0 +1,13 @@
+You are one helper on a coordinated Rust port. Work only on the bounded read-only analysis below. Do not edit Rust source, tests, PORT.md, INDEX.md, or any existing file. Do not run another agent/helper.
+
+Trace the authoritative Python algorithm for token-budget-aware tool-result pruning and pressure demotion. Focus on agent/context_compressor.py and directly called pure helpers. Exclude provider usage, SQLite publication, ingress wiring, micro-compaction, and LLM summarization.
+
+Answer these concrete questions:
+
+1. How is the token-protected tail boundary computed, including estimators, minimum message counts, role/tool-group safety, and equality cases?
+2. Which pruning passes run before and after that boundary, in exact order?
+3. How does protected-tail pressure demotion choose candidates, calculate its target, preserve recent messages/skills/images, and stop?
+4. Which fields may change, which must remain byte-stable, and when is api_content cleared?
+5. Identify exact source locations and Python tests or fixtures that prove each behavior.
+
+Write a concise evidence report to rust/analysis/token-budget-prune-agy.md. Clearly separate observed behavior from inference. Use repo-relative paths and line numbers. Do not use em dashes. End with a minimal pure-Rust implementation checklist. Do not modify anything else.

@@ -1,8 +1,9 @@
 # Full Rust port progress audit, 2026-09-08
 
-Current estimate: **45% of the full native replacement**, with a reasonable
-range of **43% to 47%**. This supersedes the 44% estimate recorded after native
-automatic compression landed.
+Current estimate: **46% of the full native replacement**, with a reasonable
+range of **44% to 48%**. This supersedes the 45% estimate recorded after native
+provider usage, incremental tool history, and next-turn proactive pruning
+landed.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -20,10 +21,10 @@ audits.
 | Gateway | 35% | 64% | 22.40 |
 | Tool runtime and RPC | 30% | 13% | 3.90 |
 | State and search | 15% | 70% | 10.50 |
-| Native agent core | 20% | 43% | 8.60 |
-| Total | 100% | | **45.40** |
+| Native agent core | 20% | 44% | 8.80 |
+| Total | 100% | | **45.60** |
 
-`0.35 * 64 + 0.30 * 13 + 0.15 * 70 + 0.20 * 43 = 45.40`
+`0.35 * 64 + 0.30 * 13 + 0.15 * 70 + 0.20 * 44 = 45.60`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -89,7 +90,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 43%
+### Native agent core, 44%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -109,12 +110,13 @@ Native streaming and non-streaming calls now normalize provider usage into
 fresh input, output, cache-read, cache-write, reasoning, and request-count
 buckets. Main usage reaches both session totals and the model ledger, while
 compression usage remains auxiliary. Count-based proactive pruning is live at
-the next admitted pre-turn boundary with restart-safe hysteresis, minimum
-reclaim gating, exact transcript CAS, and end-to-end proof that the provider
-sees the summary instead of the archived large result.
+the next admitted pre-turn boundary and immediately after a durable tool-result
+batch. Restart-safe hysteresis, minimum reclaim gating, exact transcript CAS,
+and end-to-end tests prove that the provider sees the summary instead of the
+archived large result, including on the next request in the same turn.
 
-Same-turn post-tool pruning, token-budget tail selection, pressure demotion,
-micro-compaction, auxiliary summary model routing, provider failover and
+Token-budget tail selection, pressure demotion, micro-compaction, same-turn LLM
+summary compression, auxiliary summary model routing, provider failover and
 credential retry loops,
 delegation/subagents, full approval/clarification flows, memory and plugin
 managers, skill execution, context invalidation policy, and several agent-loop
@@ -123,8 +125,8 @@ core score remains low despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,620 passing Rust tests and two expected ignores
-(1,619 gateway plus one core test).
+The workspace currently has 1,621 passing Rust tests and two expected ignores
+(1,620 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -132,7 +134,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,620 passed, two ignored (1,619 gateway plus one core).
+- Full Rust workspace: 1,621 passed, two ignored (1,620 gateway plus one core).
 - Selected Python usage, pruning, restart-safety, wiring, and incremental
   persistence contract: 91 passed.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
@@ -143,7 +145,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Same-turn pruning, token-budget pressure demotion, micro-compaction,
+1. Token-budget pressure demotion, micro-compaction, same-turn full compression,
    auxiliary model policy, and checkpoint hooks complete the current
    compression cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers

@@ -14,8 +14,9 @@ This checkpoint connects three previously separate native seams:
 
 The immutable system prompt and frozen tool schema remain unchanged for the
 conversation. A successful prune changes the historical transcript only at an
-allowed compression boundary, then releases the cached client so the next
-request establishes the new prefix.
+allowed compression boundary. It does not evict the conversation client. The
+changed wire bytes implicitly establish the new provider-cache prefix on the
+next request, matching Python.
 
 ## Helper lanes and disposition
 

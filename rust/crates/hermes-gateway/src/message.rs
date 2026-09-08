@@ -2234,6 +2234,150 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn proactive_tool_prune_commits_before_the_same_turn_followup_request() {
+        struct BulkyTerminal;
+        #[async_trait::async_trait]
+        impl Tool for BulkyTerminal {
+            fn spec(&self) -> ToolSpec {
+                ToolSpec {
+                    name: "terminal".into(),
+                    description: "return a large build log".into(),
+                    parameters: json!({"type":"object"}),
+                    extra: Default::default(),
+                }
+            }
+
+            async fn call(&self, _: &Value) -> hermes_core::Result<Value> {
+                Ok(json!(format!(
+                    "SAMETURNDETAIL {}\nexit_code: 0",
+                    "build line ".repeat(3_000)
+                )))
+            }
+        }
+
+        async fn model(
+            State(calls): State<Arc<Mutex<Vec<Value>>>>,
+            Json(body): Json<Value>,
+        ) -> Response {
+            let index = {
+                let mut calls = calls.lock().unwrap();
+                let index = calls.len();
+                calls.push(body);
+                index
+            };
+            let message = if index == 0 {
+                json!({
+                    "role":"assistant",
+                    "content":null,
+                    "tool_calls":[{
+                        "id":"same-turn-build",
+                        "type":"function",
+                        "function":{
+                            "name":"terminal",
+                            "arguments":"{\"command\":\"cargo test\"}"
+                        }
+                    }]
+                })
+            } else {
+                json!({"role":"assistant", "content":"build handled"})
+            };
+            Json(json!({
+                "choices":[{"message":message}],
+                "usage":{"prompt_tokens":50_000,"completion_tokens":10}
+            }))
+            .into_response()
+        }
+
+        let home = TempHome::new();
+        let calls = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let (model_url, _model_server) = serve(
+            axum::Router::new()
+                .route("/chat/completions", post(model))
+                .with_state(calls.clone()),
+        )
+        .await;
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let config = json!({"compression": {
+            "enabled": true,
+            "threshold_tokens": 1_000_000,
+            "protect_first_n": 0,
+            "protect_last_n": 0,
+            "proactive_prune_tokens": 1,
+            "proactive_prune_min_result_chars": 200,
+            "proactive_prune_min_reclaim_tokens": 1
+        }});
+        let policy = crate::automatic_compression::AutomaticCompressionPolicy::from_value(&config);
+        let agent = NativeAgentClient::new("fixture-model", "fixture-key", model_url)
+            .unwrap()
+            .with_tools(vec![Arc::new(BulkyTerminal)])
+            .with_context_length(2_000_000)
+            .with_automatic_compression_policy(policy);
+        let mut state = AppState::new(Arc::new(agent), Arc::new(config), None, Some(db.clone()));
+        state.session_store = Some((store.clone(), 3600.0));
+        let (gateway_url, _gateway_server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+
+        let response = reqwest::Client::new()
+            .post(format!("{gateway_url}/message"))
+            .json(&json!({
+                "channel_id":"same-turn-prune",
+                "sender_id":"local",
+                "text":"run the build"
+            }))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json::<Value>().await.unwrap()["reply"],
+            "build handled"
+        );
+
+        let requests = calls.lock().unwrap();
+        assert_eq!(requests.len(), 2);
+        assert!(requests[1]
+            .to_string()
+            .contains("[terminal] ran `cargo test`"));
+        assert!(!requests[1].to_string().contains("SAMETURNDETAIL"));
+        drop(requests);
+
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "same-turn-prune")
+        };
+        let session_id = store.current_entry_for_source(&source).unwrap().session_id;
+        let active = db.load_history(&session_id, 0).unwrap();
+        assert!(active
+            .iter()
+            .any(|message| message.content.starts_with("[terminal] ran `cargo test`")));
+        assert!(active
+            .iter()
+            .all(|message| !message.content.contains("SAMETURNDETAIL")));
+        assert!(db
+            .search("SAMETURNDETAIL", 10)
+            .unwrap()
+            .iter()
+            .any(|hit| hit.session_id == session_id));
+    }
+
+    #[tokio::test]
     async fn unsupported_backend_rejects_parts_before_persisting_or_running() {
         struct TextOnly;
         #[async_trait::async_trait]
