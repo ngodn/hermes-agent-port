@@ -1,8 +1,8 @@
 # Full Rust port progress audit, 2026-09-08
 
-Current estimate: **46% of the full native replacement**, with a reasonable
-range of **44% to 48%**. This supersedes the 45% estimate recorded after native
-provider usage, incremental tool history, and next-turn proactive pruning
+Current estimate: **46.20% of the full native replacement**, reported as
+**about 46%**, with a reasonable judgment range of **44% to 49%**. This
+supersedes the 45.60-point estimate recorded after same-turn proactive pruning
 landed.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
@@ -21,10 +21,10 @@ audits.
 | Gateway | 35% | 64% | 22.40 |
 | Tool runtime and RPC | 30% | 13% | 3.90 |
 | State and search | 15% | 70% | 10.50 |
-| Native agent core | 20% | 44% | 8.80 |
-| Total | 100% | | **45.60** |
+| Native agent core | 20% | 47% | 9.40 |
+| Total | 100% | | **46.20** |
 
-`0.35 * 64 + 0.30 * 13 + 0.15 * 70 + 0.20 * 44 = 45.60`
+`0.35 * 64 + 0.30 * 13 + 0.15 * 70 + 0.20 * 47 = 46.20`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -90,7 +90,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 44%
+### Native agent core, 47%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -115,8 +115,17 @@ batch. Restart-safe hysteresis, minimum reclaim gating, exact transcript CAS,
 and end-to-end tests prove that the provider sees the summary instead of the
 archived large result, including on the next request in the same turn.
 
-Token-budget tail selection, pressure demotion, micro-compaction, same-turn LLM
-summary compression, auxiliary summary model routing, provider failover and
+Full compression now starts with Python-compatible token-budget pruning. Its
+estimator includes CJK density, multimodal images, full tool-call envelopes,
+reasoning text, and Codex replay sidecars. The strict protected-tail boundary,
+three pressure-demotion stages, lean and legacy tail budgets, and token-aware
+summary tail are connected to live HTTP and push ingress through the guarded
+SQLite publication path. A source-executed Python corpus proves 17 estimator,
+14 prune, and 3 tail-cut cases, while a live oversized-tool test proves the
+rewrite commits before the triggering turn.
+
+Micro-compaction, same-turn LLM summary compression, exact synthetic-user and
+multi-user tail anchors, auxiliary summary model routing, provider failover and
 credential retry loops,
 delegation/subagents, full approval/clarification flows, memory and plugin
 managers, skill execution, context invalidation policy, and several agent-loop
@@ -125,8 +134,8 @@ core score remains low despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,621 passing Rust tests and two expected ignores
-(1,620 gateway plus one core test).
+The workspace currently has 1,633 passing Rust tests and two expected ignores
+(1,632 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -134,9 +143,11 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,621 passed, two ignored (1,620 gateway plus one core).
-- Selected Python usage, pruning, restart-safety, wiring, and incremental
-  persistence contract: 91 passed.
+- Full Rust workspace: 1,633 passed, two ignored (1,632 gateway plus one core).
+- Selected Python compression estimator, pruning, tail-selection, and replay
+  accounting contract: 200 passed.
+- Source-executed differential corpus: 17 estimator, 14 pruning, and 3
+  tail-selection cases.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
 - The lower end of the range assumes native extension-host functionality earns
   little tool-runtime credit until managers and built-ins use it broadly.
@@ -145,7 +156,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Token-budget pressure demotion, micro-compaction, same-turn full compression,
+1. Micro-compaction, same-turn full compression, exact remaining tail anchors,
    auxiliary model policy, and checkpoint hooks complete the current
    compression cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers

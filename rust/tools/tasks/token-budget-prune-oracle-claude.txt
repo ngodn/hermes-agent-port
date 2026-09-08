@@ -1,0 +1,10 @@
+You are completing a bounded helper task after a timed-out first pass.
+
+The first pass already created rust/tools/token-budget-prune-oracle.py through the prune_case helper. Inspect that partial file, finish it from that point, run it, and create exactly these remaining outputs:
+
+- rust/tools/token-budget-prune-goldens.json
+- rust/analysis/token-budget-prune-oracle-claude.md
+
+Do not rewrite the completed estimator section. Do not edit Rust source, PORT.md, INDEX.md, or any other file. Do not run another helper.
+
+The prune cases still need to cover boundary equality, eight-message floor cap, all-content-fits, newest-only versus stale-thinking charging, Codex replay sidecars, Pass 4 stages 4a/4b/4c, protected skill override, and stale api_content removal on image demotion. Use the actual ContextCompressor implementation, JSON-compatible deterministic inputs/outputs, no timestamps, repo-relative paths, and no em dashes. Add --check behavior if the partial script does not yet have it. Run the generator and directly relevant Python tests. Keep the report concise and cite the authoritative local source and tests.

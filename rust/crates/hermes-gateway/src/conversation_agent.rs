@@ -866,6 +866,7 @@ mod tests {
                 context_length: 1_000,
                 max_output_tokens: Some(100),
                 request_tokens: 500,
+                stale_thinking_on_wire: false,
             }))
         }
 

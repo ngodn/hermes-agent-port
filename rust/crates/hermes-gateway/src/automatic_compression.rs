@@ -18,6 +18,10 @@ pub const DEFAULT_PROTECT_LAST_N: usize = 20;
 
 /// Default count of initial non-system messages preserved at transcript head.
 pub const DEFAULT_PROTECT_FIRST_N: usize = 3;
+pub const DEFAULT_TARGET_RATIO: f64 = 0.20;
+pub const DEFAULT_TAIL_MODE: &str = "lean";
+pub const LEAN_TAIL_FLOOR_TOKENS: u64 = 10_000;
+pub const LEAN_TAIL_CAP_TOKENS: u64 = 25_000;
 
 /// Default per-turn cap on compression retry passes.
 pub const DEFAULT_MAX_ATTEMPTS: u32 = 3;
@@ -53,6 +57,10 @@ pub struct AutomaticCompressionPolicy {
     pub protect_last_n: usize,
     /// Number of initial non-system messages preserved at transcript head.
     pub protect_first_n: usize,
+    /// Fraction of the trigger threshold retained by legacy tail mode.
+    pub target_ratio: f64,
+    /// Verbatim tail sizing strategy, either `lean` or `legacy`.
+    pub tail_mode: String,
     /// Per-turn cap on compression retry passes. Clamped to [1, 10].
     pub max_attempts: u32,
     /// Opt-in request-pressure trigger for deterministic tool-result pruning.
@@ -73,6 +81,8 @@ impl Default for AutomaticCompressionPolicy {
             model_thresholds: Vec::new(),
             protect_last_n: DEFAULT_PROTECT_LAST_N,
             protect_first_n: DEFAULT_PROTECT_FIRST_N,
+            target_ratio: DEFAULT_TARGET_RATIO,
+            tail_mode: DEFAULT_TAIL_MODE.into(),
             max_attempts: DEFAULT_MAX_ATTEMPTS,
             proactive_prune_tokens: DEFAULT_PROACTIVE_PRUNE_TOKENS,
             proactive_prune_min_result_chars: DEFAULT_PROACTIVE_PRUNE_MIN_RESULT_CHARS,
@@ -154,6 +164,15 @@ impl AutomaticCompressionPolicy {
         let protect_last_n = parse_protect_count(map.get("protect_last_n"), DEFAULT_PROTECT_LAST_N);
         let protect_first_n =
             parse_protect_count(map.get("protect_first_n"), DEFAULT_PROTECT_FIRST_N);
+        let target_ratio =
+            parse_threshold(map.get("target_ratio"), DEFAULT_TARGET_RATIO).clamp(0.10, 0.80);
+        let tail_mode = map
+            .get("tail_mode")
+            .and_then(Value::as_str)
+            .map(str::trim)
+            .map(str::to_ascii_lowercase)
+            .filter(|mode| matches!(mode.as_str(), "lean" | "legacy"))
+            .unwrap_or_else(|| DEFAULT_TAIL_MODE.into());
         let max_attempts = parse_max_attempts(map.get("max_attempts"), DEFAULT_MAX_ATTEMPTS);
         let proactive_prune_tokens = u64::try_from(
             parse_prune_integer(
@@ -189,6 +208,8 @@ impl AutomaticCompressionPolicy {
             model_thresholds,
             protect_last_n,
             protect_first_n,
+            target_ratio,
+            tail_mode,
             max_attempts,
             proactive_prune_tokens,
             proactive_prune_min_result_chars,
@@ -216,6 +237,20 @@ impl AutomaticCompressionPolicy {
             max_output_tokens,
             self.threshold_tokens,
         )
+    }
+
+    /// Resolve the token budget for the verbatim tail retained by full
+    /// compression. Mirrors `ContextCompressor.tail_token_budget`.
+    #[must_use]
+    pub fn tail_token_budget(&self, context_length: u64, effective_threshold: u64) -> u64 {
+        if self.tail_mode == "legacy" {
+            ((effective_threshold as f64) * self.target_ratio).floor() as u64
+        } else {
+            ((context_length as f64) * 0.025)
+                .floor()
+                .clamp(LEAN_TAIL_FLOOR_TOKENS as f64, LEAN_TAIL_CAP_TOKENS as f64)
+                as u64
+        }
     }
 
     /// Pure decision evaluation given known effective threshold, pressure tokens, attempts, and blocked flag.
@@ -569,19 +604,29 @@ fn compression_boundaries(
     messages: &[crate::session_db::CompressionHistoryMessage],
     protect_first_n: usize,
     protect_last_n: usize,
+    tail_token_budget: u64,
+    charge_all_thinking: bool,
 ) -> Option<(usize, usize)> {
-    if messages.len()
-        <= protect_first_n
-            .saturating_add(protect_last_n)
-            .saturating_add(1)
-    {
+    // Python needs only a complete protected head plus three tail messages
+    // and one compressible row. The token walk, not the configured count,
+    // decides how much recent history survives.
+    if messages.len() <= protect_first_n.saturating_add(4) {
         return None;
     }
     let prefix_limit = protect_first_n.min(messages.len());
     let prefix_end = (0..=prefix_limit)
         .rev()
         .find(|end| complete_region(&messages[..*end]))?;
-    let initial_tail = messages.len().saturating_sub(protect_last_n);
+    let initial_tail = crate::tool_result_prune::find_tail_cut_by_tokens(
+        messages,
+        prefix_end,
+        protect_last_n,
+        tail_token_budget,
+        charge_all_thinking,
+    );
+    if initial_tail <= prefix_end {
+        return None;
+    }
     let tail_start = (prefix_end + 1..=initial_tail)
         .rev()
         .find(|start| complete_region(&messages[*start..]))?;
@@ -633,6 +678,11 @@ pub async fn compress_before_turn(
         .as_bool()
         .unwrap_or(true);
     let mut attempts = 0;
+    // Once an over-threshold pass has committed its deterministic Phase 1,
+    // finish that same compression attempt even if pruning alone drops the
+    // reloaded request below the trigger. Python does not re-run should_compress
+    // between Phase 1 and summary selection.
+    let mut phase_one_committed = false;
 
     while attempts < policy.max_attempts {
         let session_id = admitted.entry.session_id.clone();
@@ -732,9 +782,10 @@ pub async fn compress_before_turn(
         let now = now_secs();
         let blocked = guard.cooldown_until.is_some_and(|deadline| deadline > now)
             || (guard.ineffective_count >= 2 && guard.recovery_deadline > now);
-        if !policy
-            .decide(threshold, preflight.request_tokens, attempts, blocked)
-            .should_compress()
+        if !phase_one_committed
+            && !policy
+                .decide(threshold, preflight.request_tokens, attempts, blocked)
+                .should_compress()
         {
             return Ok(attempts);
         }
@@ -742,9 +793,51 @@ pub async fn compress_before_turn(
             database.set_compression_breaker(&session_id, 1, 0.0)?;
         }
 
-        let Some((prefix_end, tail_start)) =
-            compression_boundaries(&snapshot.messages, protect_first, policy.protect_last_n)
-        else {
+        // Python full compression starts with a token-budget-aware deterministic
+        // prune. Publish that rewrite under the same route, snapshot and lease
+        // guards, then reload before summary selection. No provider request is
+        // made between the two maintenance phases.
+        let tail_token_budget = policy.tail_token_budget(preflight.context_length, threshold);
+        if !phase_one_committed {
+            let candidate = crate::tool_result_prune::prune_old_tool_results_with_budget(
+                &snapshot.messages,
+                policy.protect_last_n,
+                tail_token_budget,
+                crate::tool_result_prune::PRUNE_MIN_CHARS,
+                preflight.stale_thinking_on_wire,
+            );
+            if candidate.changed {
+                let holder = admitted.durable_lease.as_ref().map(|lease| lease.holder());
+                let committed = deps.store.publish_tool_prune(
+                    source,
+                    &admitted.entry,
+                    &snapshot.messages,
+                    &candidate.messages,
+                    prune_rearm,
+                    holder,
+                )?;
+                if !committed {
+                    return Ok(attempts);
+                }
+                tracing::info!(
+                    %session_id,
+                    pruned = candidate.pruned_count,
+                    tail_token_budget,
+                    "native pre-compression token-budget prune committed"
+                );
+                phase_one_committed = true;
+                continue;
+            }
+        }
+        phase_one_committed = false;
+
+        let Some((prefix_end, tail_start)) = compression_boundaries(
+            &snapshot.messages,
+            protect_first,
+            policy.protect_last_n,
+            tail_token_budget,
+            preflight.stale_thinking_on_wire,
+        ) else {
             tracing::warn!(%session_id, "automatic compression found no complete compressible region");
             return Ok(attempts);
         };
@@ -907,6 +1000,8 @@ mod tests {
             );
             assert_eq!(policy.protect_last_n, 20, "{}: protect_last_n", case.name);
             assert_eq!(policy.protect_first_n, 3, "{}: protect_first_n", case.name);
+            assert_eq!(policy.target_ratio, 0.20, "{}: target_ratio", case.name);
+            assert_eq!(policy.tail_mode, "lean", "{}: tail_mode", case.name);
             assert_eq!(policy.max_attempts, 3, "{}: max_attempts", case.name);
             assert_eq!(
                 policy.proactive_prune_tokens, 0,
@@ -945,6 +1040,28 @@ mod tests {
         assert_eq!(malformed.proactive_prune_tokens, 0);
         assert_eq!(malformed.proactive_prune_min_result_chars, 8_000);
         assert_eq!(malformed.proactive_prune_min_reclaim_tokens, 4_096);
+    }
+
+    #[test]
+    fn tail_budget_config_and_modes_match_python() {
+        let default = AutomaticCompressionPolicy::default();
+        assert_eq!(default.tail_token_budget(100_000, 75_000), 10_000);
+        assert_eq!(default.tail_token_budget(1_000_000, 500_000), 25_000);
+
+        let legacy = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "tail_mode": " LEGACY ",
+            "target_ratio": 0.6
+        }}));
+        assert_eq!(legacy.tail_mode, "legacy");
+        assert_eq!(legacy.target_ratio, 0.6);
+        assert_eq!(legacy.tail_token_budget(1_000_000, 400_000), 240_000);
+
+        let clamped = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "tail_mode": "unknown",
+            "target_ratio": 99
+        }}));
+        assert_eq!(clamped.tail_mode, "lean");
+        assert_eq!(clamped.target_ratio, 0.8);
     }
 
     // 2. Malformed values and conservative coercion tests

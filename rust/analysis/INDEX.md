@@ -34,8 +34,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   provider calls, then replayed from the durable wide transcript.
 - Count-based proactive pruning publishes atomically at the next admitted
   pre-turn boundary and after durable tool batches in the active loop, with
-  exact-snapshot CAS and durable hysteresis. Token-budget pressure passes,
-  auxiliary routing, and hooks remain open.
+  exact-snapshot CAS and durable hysteresis. Full compression now also uses the
+  Python token estimator, protected-tail pressure passes, and token-aware
+  summary-tail selection. Auxiliary routing and hooks remain open.
 
 ## Rejected paths
 
@@ -53,6 +54,8 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-token-budget-compression-resolution.md](native-token-budget-compression-resolution.md) | Live token-aware Phase 1 pruning and summary-tail selection, replay-sidecar estimator parity, guarded publication, differential proof, and remaining compression work |
+| [token-budget-prune-oracle-claude.md](token-budget-prune-oracle-claude.md) | Claude's independent source-executed oracle covering 17 estimator, 14 prune, and 3 tail-cut cases |
 | [native-same-turn-pruning-resolution.md](native-same-turn-pruning-resolution.md) | Live post-tool prune ordering, partial-turn transaction safety, fail-open adoption, cache behavior, validation, and explicit remaining work |
 | [same-turn-prune-claude.md](same-turn-prune-claude.md) | Claude's independent runtime trace for post-result persistence, prune adoption, hysteresis, and the next-provider-request boundary |
 | [token-budget-prune-agy.md](token-budget-prune-agy.md) | AGY's separate source map of token-tail selection and three-stage pressure demotion for the next pure-function slice |

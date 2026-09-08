@@ -110,6 +110,16 @@ pub struct CompressionHistoryMessage {
     pub tool_call_id: Option<String>,
     pub tool_calls: Option<String>,
     pub tool_name: Option<String>,
+    /// Generic reasoning text stored on assistant messages.
+    pub reasoning: Option<String>,
+    /// Provider-facing reasoning echo text stored on assistant messages.
+    pub reasoning_content: Option<String>,
+    /// JSON-encoded provider reasoning blocks.
+    pub reasoning_details: Option<String>,
+    /// JSON-encoded Codex Responses reasoning replay items.
+    pub codex_reasoning_items: Option<String>,
+    /// JSON-encoded Codex Responses message replay items.
+    pub codex_message_items: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -2152,6 +2162,11 @@ impl SessionDb {
                         || before.message.role != after.message.role
                         || before.tool_call_id != after.tool_call_id
                         || before.tool_name != after.tool_name
+                        || before.reasoning != after.reasoning
+                        || before.reasoning_content != after.reasoning_content
+                        || before.reasoning_details != after.reasoning_details
+                        || before.codex_reasoning_items != after.codex_reasoning_items
+                        || before.codex_message_items != after.codex_message_items
                 })
             || change.original_messages == change.pruned_messages
         {
@@ -2219,7 +2234,9 @@ impl SessionDb {
 
         let durable = {
             let mut query = tx.prepare(
-                "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name
+                "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name,
+                        reasoning, reasoning_content, reasoning_details,
+                        codex_reasoning_items, codex_message_items
                  FROM messages WHERE session_id = ? AND active = 1 ORDER BY id",
             )?;
             let rows = query
@@ -2234,6 +2251,11 @@ impl SessionDb {
                         tool_call_id: row.get(4)?,
                         tool_calls: row.get(5)?,
                         tool_name: row.get(6)?,
+                        reasoning: row.get(7)?,
+                        reasoning_content: row.get(8)?,
+                        reasoning_details: row.get(9)?,
+                        codex_reasoning_items: row.get(10)?,
+                        codex_message_items: row.get(11)?,
                     })
                 })?
                 .collect::<rusqlite::Result<Vec<_>>>()?;
@@ -3780,7 +3802,10 @@ impl SessionDb {
     ) -> rusqlite::Result<CompressionSnapshot> {
         let conn = self.conn.lock().unwrap();
         let mut statement = conn.prepare(
-            "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name FROM messages
+            "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name,
+                    reasoning, reasoning_content, reasoning_details,
+                    codex_reasoning_items, codex_message_items
+             FROM messages
              WHERE session_id = ? AND active = 1 ORDER BY id ASC",
         )?;
         let messages = statement
@@ -3795,6 +3820,11 @@ impl SessionDb {
                     tool_call_id: row.get(4)?,
                     tool_calls: row.get(5)?,
                     tool_name: row.get(6)?,
+                    reasoning: row.get(7)?,
+                    reasoning_content: row.get(8)?,
+                    reasoning_details: row.get(9)?,
+                    codex_reasoning_items: row.get(10)?,
+                    codex_message_items: row.get(11)?,
                 })
             })?
             .collect::<rusqlite::Result<Vec<_>>>()?;

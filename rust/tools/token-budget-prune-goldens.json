@@ -1,0 +1,3401 @@
+{
+  "constants": {
+    "chars_per_token": 4,
+    "image_char_equivalent": 6400,
+    "image_token_estimate": 1600,
+    "max_keep_tool_images": 3,
+    "max_tail_message_floor": 8,
+    "pressure_keep_recent_messages": 3,
+    "prune_min_chars": 200,
+    "pruned_tool_placeholder": "[Old tool output cleared to save context space]",
+    "role_key_overhead_tokens": 10,
+    "skill_prune_recent_window": 10
+  },
+  "estimator": [
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 110,
+      "message": {
+        "content": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "role": "tool"
+      },
+      "name": "ascii-string"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 110,
+      "message": {
+        "content": "漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢",
+        "role": "tool"
+      },
+      "name": "cjk-dense"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 37,
+      "message": {
+        "content": "漢字 hello world 漢字 hello world 漢字 hello world 漢字 hello world 漢字 hello world ",
+        "role": "tool"
+      },
+      "name": "mixed-cjk-ascii"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 75,
+      "message": {
+        "content": "привет привет привет привет привет привет привет привет привет привет привет привет привет привет привет привет привет привет привет привет ",
+        "role": "user"
+      },
+      "name": "cyrillic-bytes"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 40,
+      "message": {
+        "content": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+        "role": "user"
+      },
+      "name": "emoji-bytes"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 10,
+      "message": {
+        "content": "",
+        "role": "tool"
+      },
+      "name": "empty-content"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 35,
+      "message": {
+        "content": "",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"command\":\"ls\"}",
+              "name": "terminal"
+            },
+            "id": "c1",
+            "type": "function"
+          }
+        ]
+      },
+      "name": "tool-call-overhead"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 60,
+      "message": {
+        "content": "",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"command\":\"ls\"}",
+              "name": "terminal"
+            },
+            "id": "c1",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"path\":\"a.py\"}",
+              "name": "read_file"
+            },
+            "id": "c2",
+            "type": "function"
+          }
+        ]
+      },
+      "name": "tool-call-parallel"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 1611,
+      "message": {
+        "content": [
+          {
+            "image_url": {
+              "url": "data:image/png;base64,AAAA"
+            },
+            "type": "image_url"
+          },
+          {
+            "text": "caption",
+            "type": "text"
+          }
+        ],
+        "role": "tool"
+      },
+      "name": "image-part-list"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 45,
+      "message": {
+        "content": {
+          "_multimodal": true,
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            }
+          ],
+          "text_summary": "a screenshot"
+        },
+        "role": "tool"
+      },
+      "name": "multimodal-envelope"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 70,
+      "message": {
+        "codex_message_items": [
+          {
+            "id": "m1"
+          }
+        ],
+        "codex_reasoning_items": [
+          {
+            "encrypted_content": "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+          }
+        ],
+        "content": "ok",
+        "role": "assistant"
+      },
+      "name": "codex-sidecar-charged"
+    },
+    {
+      "charge_stale_thinking": false,
+      "expected_tokens": 70,
+      "message": {
+        "codex_message_items": [
+          {
+            "id": "m1"
+          }
+        ],
+        "codex_reasoning_items": [
+          {
+            "encrypted_content": "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+          }
+        ],
+        "content": "ok",
+        "role": "assistant"
+      },
+      "name": "codex-sidecar-charged-newest-off"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 112,
+      "message": {
+        "content": "answer",
+        "reasoning": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+        "role": "assistant"
+      },
+      "name": "reasoning-charged"
+    },
+    {
+      "charge_stale_thinking": false,
+      "expected_tokens": 12,
+      "message": {
+        "content": "answer",
+        "reasoning": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+        "role": "assistant"
+      },
+      "name": "reasoning-skipped-when-not-newest"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 42,
+      "message": {
+        "content": "answer",
+        "reasoning": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+        "reasoning_content": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+        "role": "assistant"
+      },
+      "name": "reasoning-content-wins"
+    },
+    {
+      "charge_stale_thinking": true,
+      "expected_tokens": 52,
+      "message": {
+        "content": "answer",
+        "reasoning_details": [
+          {
+            "signature": "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+            "text": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+            "type": "reasoning.text"
+          }
+        ],
+        "role": "assistant"
+      },
+      "name": "reasoning-details-text-only"
+    },
+    {
+      "charge_stale_thinking": false,
+      "expected_tokens": 12,
+      "message": {
+        "content": "answer",
+        "reasoning_details": [
+          {
+            "signature": "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",
+            "text": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+            "type": "reasoning.text"
+          }
+        ],
+        "role": "assistant"
+      },
+      "name": "reasoning-details-skipped-when-not-newest"
+    }
+  ],
+  "notes": "Generated by rust/tools/token-budget-prune-oracle.py from the real ContextCompressor. Do not hand-edit; regenerate instead.",
+  "prune": [
+    {
+      "expected_output": [
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "c0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[swing] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "c0"
+        },
+        {
+          "content": "light follow-up number 0",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 1",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 2",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 3",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 4",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 5",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 6",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 7",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 8",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 9",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 10",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 11",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 12",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 13",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 14",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 15",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 0,
+      "input": [
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "c0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[swing] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "c0"
+        },
+        {
+          "content": "light follow-up number 0",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 1",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 2",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 3",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 4",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 5",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 6",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 7",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 8",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 9",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 10",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 11",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 12",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 13",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 14",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 15",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "boundary-equality-exact",
+      "protect_tail_count": 2,
+      "protect_tail_tokens": 262,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "c0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[read_file] read a.py from line 1 (260 chars)",
+          "role": "tool",
+          "tool_call_id": "c0"
+        },
+        {
+          "content": "light follow-up number 0",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 1",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 2",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 3",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 4",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 5",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 6",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 7",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 8",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 9",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 10",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 11",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 12",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 13",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 14",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 15",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 1,
+      "input": [
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "c0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[swing] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "c0"
+        },
+        {
+          "content": "light follow-up number 0",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 1",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 2",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 3",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 4",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 5",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 6",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 7",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 8",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 9",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 10",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 11",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 12",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 13",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 14",
+          "role": "user"
+        },
+        {
+          "content": "light follow-up number 15",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "boundary-equality-minus-one",
+      "protect_tail_count": 2,
+      "protect_tail_tokens": 261,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "f0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[read_file] read a.py from line 1 (800 chars)",
+          "role": "tool",
+          "tool_call_id": "f0"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"b.py\"}",
+                "name": "read_file"
+              },
+              "id": "f1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[read_file] read b.py from line 1 (800 chars)",
+          "role": "tool",
+          "tool_call_id": "f1"
+        },
+        {
+          "content": "recent question 0",
+          "role": "user"
+        },
+        {
+          "content": "recent question 1",
+          "role": "user"
+        },
+        {
+          "content": "recent question 2",
+          "role": "user"
+        },
+        {
+          "content": "recent question 3",
+          "role": "user"
+        },
+        {
+          "content": "recent question 4",
+          "role": "user"
+        },
+        {
+          "content": "recent question 5",
+          "role": "user"
+        },
+        {
+          "content": "recent question 6",
+          "role": "user"
+        },
+        {
+          "content": "recent question 7",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 2,
+      "input": [
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "f0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[head0] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "f0"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"b.py\"}",
+                "name": "read_file"
+              },
+              "id": "f1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[head1] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "f1"
+        },
+        {
+          "content": "recent question 0",
+          "role": "user"
+        },
+        {
+          "content": "recent question 1",
+          "role": "user"
+        },
+        {
+          "content": "recent question 2",
+          "role": "user"
+        },
+        {
+          "content": "recent question 3",
+          "role": "user"
+        },
+        {
+          "content": "recent question 4",
+          "role": "user"
+        },
+        {
+          "content": "recent question 5",
+          "role": "user"
+        },
+        {
+          "content": "recent question 6",
+          "role": "user"
+        },
+        {
+          "content": "recent question 7",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "eight-message-floor-cap",
+      "protect_tail_count": 20,
+      "protect_tail_tokens": 50,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "hi",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "g0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[a] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "g0"
+        },
+        {
+          "content": "thanks",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 0,
+      "input": [
+        {
+          "content": "hi",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "g0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[a] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "g0"
+        },
+        {
+          "content": "thanks",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "all-content-fits",
+      "protect_tail_count": 2,
+      "protect_tail_tokens": 10000000,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "content": "[swing] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "t0"
+        },
+        {
+          "content": "",
+          "reasoning": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+          "role": "assistant"
+        },
+        {
+          "content": "acknowledged",
+          "role": "assistant"
+        },
+        {
+          "content": "light tail row 0",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 1",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 2",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 3",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 4",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 5",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 6",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 7",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 8",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 9",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 10",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 11",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 12",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 13",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 14",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 15",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 16",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 17",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 18",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 19",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 20",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 21",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 22",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 23",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 24",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 25",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 0,
+      "input": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "content": "[swing] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "t0"
+        },
+        {
+          "content": "",
+          "reasoning": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+          "role": "assistant"
+        },
+        {
+          "content": "acknowledged",
+          "role": "assistant"
+        },
+        {
+          "content": "light tail row 0",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 1",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 2",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 3",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 4",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 5",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 6",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 7",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 8",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 9",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 10",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 11",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 12",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 13",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 14",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 15",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 16",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 17",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 18",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 19",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 20",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 21",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 22",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 23",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 24",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 25",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "stale-thinking-newest-only-generic",
+      "protect_tail_count": 2,
+      "protect_tail_tokens": 403,
+      "route": {
+        "model": "test/model"
+      }
+    },
+    {
+      "expected_output": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "content": "[unknown] (260 chars result)",
+          "role": "tool",
+          "tool_call_id": "t0"
+        },
+        {
+          "content": "",
+          "reasoning": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+          "role": "assistant"
+        },
+        {
+          "content": "acknowledged",
+          "role": "assistant"
+        },
+        {
+          "content": "light tail row 0",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 1",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 2",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 3",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 4",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 5",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 6",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 7",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 8",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 9",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 10",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 11",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 12",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 13",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 14",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 15",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 16",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 17",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 18",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 19",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 20",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 21",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 22",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 23",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 24",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 25",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 1,
+      "input": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "content": "[swing] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "t0"
+        },
+        {
+          "content": "",
+          "reasoning": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+          "role": "assistant"
+        },
+        {
+          "content": "acknowledged",
+          "role": "assistant"
+        },
+        {
+          "content": "light tail row 0",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 1",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 2",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 3",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 4",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 5",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 6",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 7",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 8",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 9",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 10",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 11",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 12",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 13",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 14",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 15",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 16",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 17",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 18",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 19",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 20",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 21",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 22",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 23",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 24",
+          "role": "user"
+        },
+        {
+          "content": "light tail row 25",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "stale-thinking-charge-every-turn-deepseek",
+      "protect_tail_count": 2,
+      "protect_tail_tokens": 403,
+      "route": {
+        "model": "deepseek-chat",
+        "provider": "deepseek"
+      }
+    },
+    {
+      "expected_output": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "codex_message_items": [
+            {
+              "id": "m1"
+            }
+          ],
+          "codex_reasoning_items": [
+            {
+              "encrypted_content": "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+            }
+          ],
+          "content": "ok",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "k0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[read_file] read a.py from line 1 (800 chars)",
+          "role": "tool",
+          "tool_call_id": "k0"
+        },
+        {
+          "content": "ok",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"b.py\"}",
+                "name": "read_file"
+              },
+              "id": "k1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[read_file] read b.py from line 1 (800 chars)",
+          "role": "tool",
+          "tool_call_id": "k1"
+        },
+        {
+          "content": "continue",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 2,
+      "input": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "codex_message_items": [
+            {
+              "id": "m1"
+            }
+          ],
+          "codex_reasoning_items": [
+            {
+              "encrypted_content": "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+            }
+          ],
+          "content": "ok",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "k0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[a] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "k0"
+        },
+        {
+          "content": "ok",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"b.py\"}",
+                "name": "read_file"
+              },
+              "id": "k1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[b] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "k1"
+        },
+        {
+          "content": "continue",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "codex-sidecar-fills-tail",
+      "protect_tail_count": 2,
+      "protect_tail_tokens": 468,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "content": "ok",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "k0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[a] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "k0"
+        },
+        {
+          "content": "ok",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"b.py\"}",
+                "name": "read_file"
+              },
+              "id": "k1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[b] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "k1"
+        },
+        {
+          "content": "continue",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 0,
+      "input": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "content": "ok",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "k0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[a] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "k0"
+        },
+        {
+          "content": "ok",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"b.py\"}",
+                "name": "read_file"
+              },
+              "id": "k1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[b] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "k1"
+        },
+        {
+          "content": "continue",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "codex-sidecar-absent-control",
+      "protect_tail_count": 2,
+      "protect_tail_tokens": 468,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "[unknown] (2,000 chars result)",
+          "role": "tool",
+          "tool_call_id": "a0"
+        },
+        {
+          "content": "[unknown] (2,000 chars result)",
+          "role": "tool",
+          "tool_call_id": "a1"
+        },
+        {
+          "content": "[r2] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "a2"
+        },
+        {
+          "content": "q1",
+          "role": "user"
+        },
+        {
+          "content": "q2",
+          "role": "user"
+        },
+        {
+          "content": "q3",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 2,
+      "input": [
+        {
+          "content": "[r0] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "a0"
+        },
+        {
+          "content": "[r1] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "a1"
+        },
+        {
+          "content": "[r2] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "a2"
+        },
+        {
+          "content": "q1",
+          "role": "user"
+        },
+        {
+          "content": "q2",
+          "role": "user"
+        },
+        {
+          "content": "q3",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "pass4a-pressure-loop",
+      "protect_tail_count": 8,
+      "protect_tail_tokens": 700,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "q1",
+          "role": "user"
+        },
+        {
+          "content": "q2",
+          "role": "user"
+        },
+        {
+          "content": "q3",
+          "role": "user"
+        },
+        {
+          "content": "[unknown] (2,000 chars result)",
+          "role": "tool",
+          "tool_call_id": "b0"
+        },
+        {
+          "content": "[unknown] (2,000 chars result)",
+          "role": "tool",
+          "tool_call_id": "b1"
+        },
+        {
+          "content": "[r2] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "b2"
+        }
+      ],
+      "expected_pruned": 2,
+      "input": [
+        {
+          "content": "q1",
+          "role": "user"
+        },
+        {
+          "content": "q2",
+          "role": "user"
+        },
+        {
+          "content": "q3",
+          "role": "user"
+        },
+        {
+          "content": "[r0] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "b0"
+        },
+        {
+          "content": "[r1] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "b1"
+        },
+        {
+          "content": "[r2] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "b2"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "pass4b-demote-all-but-newest",
+      "protect_tail_count": 8,
+      "protect_tail_tokens": 400,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "q1",
+          "role": "user"
+        },
+        {
+          "content": "q2",
+          "role": "user"
+        },
+        {
+          "content": "q3",
+          "role": "user"
+        },
+        {
+          "content": "q4",
+          "role": "user"
+        },
+        {
+          "content": "q5",
+          "role": "user"
+        },
+        {
+          "content": "[unknown] (8,000 chars result)",
+          "role": "tool",
+          "tool_call_id": "c0"
+        }
+      ],
+      "expected_pruned": 1,
+      "input": [
+        {
+          "content": "q1",
+          "role": "user"
+        },
+        {
+          "content": "q2",
+          "role": "user"
+        },
+        {
+          "content": "q3",
+          "role": "user"
+        },
+        {
+          "content": "q4",
+          "role": "user"
+        },
+        {
+          "content": "q5",
+          "role": "user"
+        },
+        {
+          "content": "[huge] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "c0"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "pass4c-last-resort-newest-tool",
+      "protect_tail_count": 8,
+      "protect_tail_tokens": 400,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "open the acid skill",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"name\":\"acid-transactions\"}",
+                "name": "skill_view"
+              },
+              "id": "s0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[acid skill contents] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "s0"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "s1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[read_file] read a.py from line 1 (3,000 chars)",
+          "role": "tool",
+          "tool_call_id": "s1"
+        },
+        {
+          "content": "filler turn 0",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 1",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 2",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 3",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 4",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 5",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 6",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 7",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 8",
+          "role": "user"
+        },
+        {
+          "content": "remember the acid-transactions rules",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 1,
+      "input": [
+        {
+          "content": "open the acid skill",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"name\":\"acid-transactions\"}",
+                "name": "skill_view"
+              },
+              "id": "s0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[acid skill contents] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "s0"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a.py\"}",
+                "name": "read_file"
+              },
+              "id": "s1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[a] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "s1"
+        },
+        {
+          "content": "filler turn 0",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 1",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 2",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 3",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 4",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 5",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 6",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 7",
+          "role": "user"
+        },
+        {
+          "content": "filler turn 8",
+          "role": "user"
+        },
+        {
+          "content": "remember the acid-transactions rules",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "protected-skill-spared-normal-prune",
+      "protect_tail_count": 2,
+      "protect_tail_tokens": null,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "open the acid skill",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"name\":\"acid-transactions\"}",
+                "name": "skill_view"
+              },
+              "id": "s0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[skill_view] name=acid-transactions (3,000 chars)",
+          "role": "tool",
+          "tool_call_id": "s0"
+        },
+        {
+          "content": "remember the acid-transactions rules",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 1,
+      "input": [
+        {
+          "content": "open the acid skill",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"name\":\"acid-transactions\"}",
+                "name": "skill_view"
+              },
+              "id": "s0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "[acid skill contents] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "s0"
+        },
+        {
+          "content": "remember the acid-transactions rules",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "protected-skill-pass4-override",
+      "protect_tail_count": 8,
+      "protect_tail_tokens": 200,
+      "route": {}
+    },
+    {
+      "expected_output": [
+        {
+          "content": "look at these",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": [
+            {
+              "text": "[screenshot removed to save context]",
+              "type": "text"
+            },
+            {
+              "text": "frame 0",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i0"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": [
+            {
+              "text": "[screenshot removed to save context]",
+              "type": "text"
+            },
+            {
+              "text": "frame 1",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i1"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i2",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "api_content": "WIRE-BYTES-2",
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            },
+            {
+              "text": "frame 2",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i2"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i3",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "api_content": "WIRE-BYTES-3",
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            },
+            {
+              "text": "frame 3",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i3"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i4",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "api_content": "WIRE-BYTES-4",
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            },
+            {
+              "text": "frame 4",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i4"
+        },
+        {
+          "content": "what changed",
+          "role": "user"
+        }
+      ],
+      "expected_pruned": 2,
+      "input": [
+        {
+          "content": "look at these",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i0",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "api_content": "WIRE-BYTES-0",
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            },
+            {
+              "text": "frame 0",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i0"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i1",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "api_content": "WIRE-BYTES-1",
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            },
+            {
+              "text": "frame 1",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i1"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i2",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "api_content": "WIRE-BYTES-2",
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            },
+            {
+              "text": "frame 2",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i2"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i3",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "api_content": "WIRE-BYTES-3",
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            },
+            {
+              "text": "frame 3",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i3"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"kind\":\"screenshot\"}",
+                "name": "vision_analyze"
+              },
+              "id": "i4",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "api_content": "WIRE-BYTES-4",
+          "content": [
+            {
+              "image_url": {
+                "url": "data:image/png;base64,AAAA"
+              },
+              "type": "image_url"
+            },
+            {
+              "text": "frame 4",
+              "type": "text"
+            }
+          ],
+          "role": "tool",
+          "tool_call_id": "i4"
+        },
+        {
+          "content": "what changed",
+          "role": "user"
+        }
+      ],
+      "min_prune_chars": 200,
+      "name": "stale-api-content-image-demotion",
+      "protect_tail_count": 20,
+      "protect_tail_tokens": null,
+      "route": {}
+    }
+  ],
+  "source": "agent/context_compressor.py",
+  "tail_cut": [
+    {
+      "expected_cut": 12,
+      "head_end": 1,
+      "input": [
+        {
+          "content": "start",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_00_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_00_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_00_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_00_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_00_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_01_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_01_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_01_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_01_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_01_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_02_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_02_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_02_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_02_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_02_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_03_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_03_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_03_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_03_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_03_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_04_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_04_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_04_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_04_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_04_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_05_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_05_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_05_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_05_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_05_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_06_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_06_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_06_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_06_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_06_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_07_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_07_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_07_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_07_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_07_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_08_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_08_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_08_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_08_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_08_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_09_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_09_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_09_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_09_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_09_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_10_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_10_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_10_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_10_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_10_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_11_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_11_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_11_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_11_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_11_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_12_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_12_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_12_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_12_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_12_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_13_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_13_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_13_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_13_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_13_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_14_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_14_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_14_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_14_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_14_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_15_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_15_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_15_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_15_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_15_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_16_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_16_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_16_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_16_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_16_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_17_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_17_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_17_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_17_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_17_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_18_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_18_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_18_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_18_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_18_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_19_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_19_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_19_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_19_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"path\":\"a\"}",
+                "name": "read_file"
+              },
+              "id": "call_19_aaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "function"
+            }
+          ]
+        }
+      ],
+      "name": "parallel-tool-call-envelope",
+      "protect_last_n": 20,
+      "route": {
+        "model": "test/model"
+      },
+      "token_budget": 680
+    },
+    {
+      "expected_cut": 5,
+      "head_end": 2,
+      "input": [
+        {
+          "content": "m0",
+          "role": "user"
+        },
+        {
+          "content": "m1",
+          "role": "assistant"
+        },
+        {
+          "content": "m2",
+          "role": "user"
+        },
+        {
+          "content": "m3",
+          "role": "assistant"
+        },
+        {
+          "content": "m4",
+          "role": "user"
+        },
+        {
+          "content": "m5",
+          "role": "assistant"
+        },
+        {
+          "content": "m6",
+          "role": "user"
+        },
+        {
+          "content": "m7",
+          "role": "assistant"
+        },
+        {
+          "content": "m8",
+          "role": "user"
+        },
+        {
+          "content": "m9",
+          "role": "assistant"
+        },
+        {
+          "content": "m10",
+          "role": "user"
+        },
+        {
+          "content": "m11",
+          "role": "assistant"
+        }
+      ],
+      "name": "all-fit-raw-budget-fallback",
+      "protect_last_n": 20,
+      "route": {
+        "model": "test/model"
+      },
+      "token_budget": 1000000
+    },
+    {
+      "expected_cut": 3,
+      "head_end": 2,
+      "input": [
+        {
+          "content": "u0",
+          "role": "user"
+        },
+        {
+          "content": "a0",
+          "role": "assistant"
+        },
+        {
+          "content": "u1",
+          "role": "user"
+        },
+        {
+          "content": "",
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{}",
+                "name": "read_file"
+              },
+              "id": "c",
+              "type": "function"
+            }
+          ]
+        },
+        {
+          "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "role": "tool",
+          "tool_call_id": "c"
+        },
+        {
+          "content": "final",
+          "role": "assistant"
+        },
+        {
+          "content": "u2",
+          "role": "user"
+        },
+        {
+          "content": "a2",
+          "role": "assistant"
+        }
+      ],
+      "name": "tool-group-and-latest-reply-anchors",
+      "protect_last_n": 20,
+      "route": {
+        "model": "test/model"
+      },
+      "token_budget": 20
+    }
+  ]
+}

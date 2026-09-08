@@ -1143,6 +1143,15 @@ impl AgentClient for NativeAgentClient {
             context_length: self.context_length,
             max_output_tokens,
             request_tokens,
+            stale_thinking_on_wire: self.reasoning_echo
+                || crate::reasoning_replay::needs_echo(
+                    self.provider_profile
+                        .as_ref()
+                        .map(|profile| profile.name.as_str())
+                        .unwrap_or(""),
+                    &self.model,
+                    &self.base_url,
+                ),
         }))
     }
 
@@ -1579,6 +1588,11 @@ mod tests {
                         tool_call_id: None,
                         tool_calls: None,
                         tool_name: None,
+                        reasoning: None,
+                        reasoning_content: None,
+                        reasoning_details: None,
+                        codex_reasoning_items: None,
+                        codex_message_items: None,
                     },
                     crate::session_db::CompressionHistoryMessage {
                         id: 2,
@@ -1590,6 +1604,11 @@ mod tests {
                         tool_call_id: None,
                         tool_calls: None,
                         tool_name: None,
+                        reasoning: None,
+                        reasoning_content: None,
+                        reasoning_details: None,
+                        codex_reasoning_items: None,
+                        codex_message_items: None,
                     },
                 ],
                 Some("database state"),
@@ -1702,6 +1721,11 @@ mod tests {
                     tool_call_id: None,
                     tool_calls: None,
                     tool_name: None,
+                    reasoning: None,
+                    reasoning_content: None,
+                    reasoning_details: None,
+                    codex_reasoning_items: None,
+                    codex_message_items: None,
                 }],
                 None,
             )

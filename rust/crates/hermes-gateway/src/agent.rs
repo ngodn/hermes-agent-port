@@ -52,6 +52,9 @@ pub struct CompressionPreflight {
     pub context_length: u64,
     pub max_output_tokens: Option<u64>,
     pub request_tokens: u64,
+    /// True when generic reasoning text from stale assistant turns reaches
+    /// the active provider wire and must count against tail budgets.
+    pub stale_thinking_on_wire: bool,
 }
 
 impl<'a> TurnContext<'a> {

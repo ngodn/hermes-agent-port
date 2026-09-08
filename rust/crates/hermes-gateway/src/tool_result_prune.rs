@@ -1,11 +1,9 @@
 //! Deterministic, no-LLM pre-compression tool-result pruning.
 //!
-//! Ports the count-based deterministic core of the Phase-1 prune in
+//! Ports the deterministic Phase-1 prune in
 //! `agent/context_compressor.py`:
-//! - `ContextCompressor._prune_old_tool_results` (the passes that do not
-//!   depend on the token-budget walk), as driven by
-//!   `ContextCompressor.prune_tool_results_only` (the cost-oriented path that
-//!   always protects the recent tail by message COUNT, never by token budget).
+//! - `ContextCompressor._prune_old_tool_results`, including its count-based
+//!   proactive mode and token-budget pre-compression mode.
 //! - `_summarize_tool_result` / `_summarize_tool_result_unguarded`
 //! - `_truncate_tool_call_args_json`
 //! - `_retire_stale_tool_result_images` and its image-shape helpers
@@ -24,13 +22,10 @@
 //! `MAX_KEEP_TOOL_IMAGES` image-bearing tool results (tail-agnostic, lossy by
 //! design).
 //!
-//! Passes deliberately OMITTED (see tool-result-prune-claude.md for the full
-//! rationale): the token-budget boundary walk (`protect_tail_tokens` /
-//! `_estimate_msg_budget_tokens`) and the Pass-4 protected-tail pressure
-//! demotion. Both are exclusive to the token-budget path and rest on a large,
-//! hard-to-prove estimator surface; the deterministic cost path never uses
-//! them. The prune commit/rearm/reclaim gates and their persistence stay at
-//! the caller, out of this module by design.
+//! Pass 4 applies only in token-budget mode. It relieves an oversized protected
+//! tail by demoting completed tool output and oversized call arguments while
+//! preserving the most recent useful material for as long as the budget allows.
+//! The prune commit/rearm/reclaim gates and their persistence stay at the caller.
 
 use std::collections::{HashMap, HashSet};
 
@@ -54,6 +49,12 @@ pub const SKILL_VIEW_PRUNE_MIN_CHARS: usize = 5000;
 pub const SKILL_PRUNE_RECENT_WINDOW: usize = 10;
 /// Ghost-skill marker prefix. Mirrors Python `SKILL_PRUNED_MARKER_PREFIX`.
 pub const SKILL_PRUNED_MARKER_PREFIX: &str = "[SKILL_PRUNED:";
+/// Maximum count floor applied to a token-protected tail.
+pub const MAX_TAIL_MESSAGE_FLOOR: usize = 8;
+/// Recent messages spared by the first protected-tail pressure stage.
+pub const PRESSURE_KEEP_RECENT_MESSAGES: usize = 3;
+const CHARS_PER_TOKEN: usize = 4;
+const IMAGE_CHAR_EQUIVALENT: usize = 6_400;
 
 /// The generic placeholder that a prior prune may have left behind. Mirrors
 /// Python `_PRUNED_TOOL_PLACEHOLDER`. Never emitted by this module, only
@@ -76,8 +77,8 @@ pub struct PruneOutcome {
     /// tool_call argument truncation (Pass 3) is NOT counted, matching Python.
     pub pruned_count: usize,
     /// Total characters reclaimed from the clean `content` and `tool_calls`
-    /// fields (char count, not bytes). `api_content` is preserved per Python
-    /// and never counted here.
+    /// fields (char count, not bytes). `api_content` is not counted here and
+    /// is cleared only when Python's image-retirement path clears it.
     pub reclaimed_chars: usize,
 }
 
@@ -91,6 +92,38 @@ pub fn prune_old_tool_results(
     messages: &[CompressionHistoryMessage],
     protect_tail_count: usize,
     min_prune_chars: usize,
+) -> PruneOutcome {
+    prune_old_tool_results_inner(messages, protect_tail_count, None, min_prune_chars, false)
+}
+
+/// Prune old tool results with a token-budget protected tail.
+///
+/// The token budget is primary while `protect_tail_count`, capped at
+/// [`MAX_TAIL_MESSAGE_FLOOR`], remains a hard minimum. `charge_all_thinking`
+/// must reflect whether the active provider actually replays generic thinking
+/// text on stale assistant turns. Codex replay sidecars are always charged.
+pub fn prune_old_tool_results_with_budget(
+    messages: &[CompressionHistoryMessage],
+    protect_tail_count: usize,
+    protect_tail_tokens: u64,
+    min_prune_chars: usize,
+    charge_all_thinking: bool,
+) -> PruneOutcome {
+    prune_old_tool_results_inner(
+        messages,
+        protect_tail_count,
+        Some(protect_tail_tokens),
+        min_prune_chars,
+        charge_all_thinking,
+    )
+}
+
+fn prune_old_tool_results_inner(
+    messages: &[CompressionHistoryMessage],
+    protect_tail_count: usize,
+    protect_tail_tokens: Option<u64>,
+    min_prune_chars: usize,
+    charge_all_thinking: bool,
 ) -> PruneOutcome {
     if messages.is_empty() {
         return PruneOutcome {
@@ -108,9 +141,14 @@ pub fn prune_old_tool_results(
     // assistant message's tool_calls, mirroring the Python index build.
     let call_id_to_tool = build_call_id_index(&result);
 
-    // Count-based prune boundary. Indices [0, boundary) are prunable; the last
-    // `protect_tail_count` messages are the protected tail.
-    let prune_boundary = result.len().saturating_sub(protect_tail_count);
+    // Indices [0, boundary) are prunable. The proactive path uses the fixed
+    // count boundary; full compression uses the Python token-budget walk.
+    let prune_boundary = compute_prune_boundary(
+        &result,
+        protect_tail_count,
+        protect_tail_tokens,
+        charge_all_thinking,
+    );
 
     // Pass 1: deduplicate identical tool results (tail-agnostic). Walk newest
     // first, keep the newest full copy, replace older exact duplicates with a
@@ -169,6 +207,70 @@ pub fn prune_old_tool_results(
     // Pass 3.5: retire stale tool-result images across the whole list.
     pruned += retire_stale_tool_result_images(&mut result, MAX_KEEP_TOOL_IMAGES);
 
+    // Pass 4: if the protected region itself exceeds 1.5x the token budget,
+    // reclaim completed tool weight inside it. This intentionally overrides
+    // the ordinary protected-skill guard, matching Python's escape hatch for
+    // otherwise uncompressible heavy tails.
+    if let Some(budget) = protect_tail_tokens.filter(|budget| *budget > 0) {
+        let soft_ceiling = budget.saturating_mul(3) / 2;
+        let keep_recent = PRESSURE_KEEP_RECENT_MESSAGES.min(result.len());
+        let demote_end = result.len().saturating_sub(keep_recent);
+        if demote_end > prune_boundary
+            && protected_region_tokens(&result, prune_boundary) > soft_ceiling
+        {
+            for i in prune_boundary..demote_end {
+                demote_tool_result_at(
+                    &mut result,
+                    i,
+                    &call_id_to_tool,
+                    &protected_skills,
+                    min_prune_chars,
+                    false,
+                    &mut pruned,
+                );
+                truncate_tool_call_args_at(&mut result, i);
+                if protected_region_tokens(&result, prune_boundary) <= soft_ceiling {
+                    break;
+                }
+            }
+
+            if protected_region_tokens(&result, prune_boundary) > soft_ceiling {
+                let last_tool_idx = result.iter().rposition(|message| role(message) == "tool");
+                for i in prune_boundary..result.len() {
+                    if last_tool_idx == Some(i) {
+                        continue;
+                    }
+                    if role(&result[i]) == "tool" {
+                        demote_tool_result_at(
+                            &mut result,
+                            i,
+                            &call_id_to_tool,
+                            &protected_skills,
+                            min_prune_chars,
+                            false,
+                            &mut pruned,
+                        );
+                    } else if role(&result[i]) == "assistant" {
+                        truncate_tool_call_args_at(&mut result, i);
+                    }
+                }
+                if let Some(last_tool_idx) = last_tool_idx.filter(|idx| *idx >= prune_boundary) {
+                    if protected_region_tokens(&result, prune_boundary) > soft_ceiling {
+                        demote_tool_result_at(
+                            &mut result,
+                            last_tool_idx,
+                            &call_id_to_tool,
+                            &protected_skills,
+                            min_prune_chars,
+                            false,
+                            &mut pruned,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
     // Compute change / reclaim metadata against the untouched input.
     let mut reclaimed: i64 = 0;
     let mut changed = false;
@@ -188,6 +290,458 @@ pub fn prune_old_tool_results(
         changed,
         pruned_count: pruned,
         reclaimed_chars: reclaimed.max(0) as usize,
+    }
+}
+
+fn compute_prune_boundary(
+    messages: &[CompressionHistoryMessage],
+    protect_tail_count: usize,
+    protect_tail_tokens: Option<u64>,
+    charge_all_thinking: bool,
+) -> usize {
+    let Some(budget) = protect_tail_tokens.filter(|budget| *budget > 0) else {
+        return messages.len().saturating_sub(protect_tail_count);
+    };
+    let min_protect = protect_tail_count
+        .min(messages.len())
+        .min(MAX_TAIL_MESSAGE_FLOOR);
+    let newest_assistant = messages
+        .iter()
+        .rposition(|message| role(message) == "assistant");
+    let mut accumulated = 0u64;
+    let mut boundary = messages.len();
+    for i in (0..messages.len()).rev() {
+        let message_tokens = estimate_message_budget_tokens(
+            &messages[i],
+            charge_all_thinking || newest_assistant == Some(i),
+        );
+        if accumulated.saturating_add(message_tokens) > budget
+            && messages.len().saturating_sub(i) >= min_protect
+        {
+            boundary = i;
+            break;
+        }
+        accumulated = accumulated.saturating_add(message_tokens);
+        boundary = i;
+    }
+    let budget_protect_count = messages.len().saturating_sub(boundary);
+    let protected_count = budget_protect_count.max(min_protect);
+    messages.len().saturating_sub(protected_count)
+}
+
+/// Select the verbatim tail retained by full compression.
+///
+/// This is the default single-actionable-user path of Python
+/// `_find_tail_cut_by_tokens`: a 1.5x soft ceiling, bounded count floor,
+/// raw-budget retry when the whole region fits, tool-group alignment, and
+/// newest user/assistant anchors.
+pub(crate) fn find_tail_cut_by_tokens(
+    messages: &[CompressionHistoryMessage],
+    head_end: usize,
+    protect_last_n: usize,
+    token_budget: u64,
+    charge_all_thinking: bool,
+) -> usize {
+    let n = messages.len();
+    if n == 0 {
+        return 0;
+    }
+    let available_tail = n.saturating_sub(head_end.saturating_add(1));
+    let min_tail_floor = 3.max(protect_last_n.min(MAX_TAIL_MESSAGE_FLOOR));
+    let compressible_tail_cap = 3.max(available_tail.saturating_sub(2));
+    let min_tail = if available_tail > 1 {
+        min_tail_floor
+            .min(compressible_tail_cap)
+            .min(available_tail)
+    } else {
+        0
+    };
+    let soft_ceiling = token_budget.saturating_mul(3) / 2;
+    let newest_assistant = messages
+        .iter()
+        .rposition(|message| role(message) == "assistant");
+    let charge = |idx: usize| {
+        estimate_message_budget_tokens(
+            &messages[idx],
+            charge_all_thinking || newest_assistant == Some(idx),
+        )
+    };
+
+    let mut accumulated = 0u64;
+    let mut cut = n;
+    for i in (head_end.min(n)..n).rev() {
+        let message_tokens = charge(i);
+        if accumulated.saturating_add(message_tokens) > soft_ceiling
+            && n.saturating_sub(i) >= min_tail
+        {
+            break;
+        }
+        accumulated = accumulated.saturating_add(message_tokens);
+        cut = i;
+    }
+
+    if cut <= head_end && accumulated <= soft_ceiling && accumulated > 0 {
+        let mut raw_accumulated = 0u64;
+        for i in (head_end.min(n)..n).rev() {
+            let message_tokens = charge(i);
+            if raw_accumulated.saturating_add(message_tokens) > token_budget
+                && n.saturating_sub(i) >= min_tail
+            {
+                cut = i;
+                break;
+            }
+            raw_accumulated = raw_accumulated.saturating_add(message_tokens);
+            cut = i;
+        }
+    }
+
+    let fallback_cut = n.saturating_sub(min_tail);
+    cut = cut.min(fallback_cut);
+    if cut <= head_end {
+        cut = fallback_cut.max(head_end.saturating_add(1));
+    }
+    cut = align_tool_boundary_backward(messages, cut);
+    cut = anchor_last_user(messages, cut, head_end);
+    cut = anchor_last_assistant(messages, cut, head_end);
+    align_tool_boundary_forward(messages, cut.max(head_end.saturating_add(1))).min(n)
+}
+
+fn align_tool_boundary_forward(messages: &[CompressionHistoryMessage], mut idx: usize) -> usize {
+    while idx < messages.len() && role(&messages[idx]) == "tool" {
+        idx += 1;
+    }
+    idx
+}
+
+fn align_tool_boundary_backward(messages: &[CompressionHistoryMessage], mut idx: usize) -> usize {
+    if idx == 0 || idx >= messages.len() {
+        return idx;
+    }
+    let mut check = idx - 1;
+    while role(&messages[check]) == "tool" {
+        if check == 0 {
+            return idx;
+        }
+        check -= 1;
+    }
+    if role(&messages[check]) == "assistant" && !parse_tool_calls(&messages[check]).is_empty() {
+        idx = check;
+    }
+    idx
+}
+
+fn is_summary_content(message: &CompressionHistoryMessage) -> bool {
+    let text = match decoded_content(message) {
+        Value::String(text) => text,
+        _ => return false,
+    };
+    let text = text.trim_start();
+    text.starts_with("[CONTEXT COMPACTION")
+        || text.starts_with("[CONTEXT SUMMARY]:")
+        || text
+            .split_once("COMPACTION SUMMARY BELOW]")
+            .is_some_and(|(_, suffix)| suffix.trim_start().starts_with("[CONTEXT COMPACTION"))
+}
+
+fn actionable_user(message: &CompressionHistoryMessage) -> bool {
+    role(message) == "user"
+        && !is_summary_content(message)
+        && match decoded_content(message) {
+            Value::Null => false,
+            Value::String(text) => !text.trim().is_empty(),
+            Value::Array(parts) => parts.iter().any(|part| match part {
+                Value::String(text) => !text.trim().is_empty(),
+                Value::Object(object)
+                    if matches!(
+                        object.get("type").and_then(Value::as_str),
+                        Some("text") | Some("input_text")
+                    ) =>
+                {
+                    object
+                        .get("text")
+                        .and_then(Value::as_str)
+                        .is_some_and(|text| !text.trim().is_empty())
+                }
+                _ => true,
+            }),
+            _ => true,
+        }
+}
+
+fn find_turn_pair_end(messages: &[CompressionHistoryMessage], user_idx: usize) -> usize {
+    let mut idx = user_idx.saturating_add(1);
+    if idx >= messages.len() || role(&messages[idx]) != "assistant" {
+        return idx;
+    }
+    idx += 1;
+    while idx < messages.len() && role(&messages[idx]) == "tool" {
+        idx += 1;
+    }
+    idx
+}
+
+fn anchor_last_user(messages: &[CompressionHistoryMessage], cut: usize, head_end: usize) -> usize {
+    let Some(last_user) = (head_end.min(messages.len())..messages.len())
+        .rev()
+        .find(|idx| actionable_user(&messages[*idx]))
+    else {
+        return cut;
+    };
+    if last_user >= cut {
+        return cut;
+    }
+    let adjusted = last_user.max(head_end.saturating_add(1));
+    if adjusted > last_user {
+        find_turn_pair_end(messages, last_user).max(head_end.saturating_add(1))
+    } else {
+        adjusted
+    }
+}
+
+fn visible_assistant_content(message: &CompressionHistoryMessage) -> bool {
+    if role(message) != "assistant" || is_summary_content(message) {
+        return false;
+    }
+    match decoded_content(message) {
+        Value::String(text) => !text.trim().is_empty(),
+        Value::Array(parts) => parts.iter().any(|part| {
+            part.as_object().is_some_and(|object| {
+                object
+                    .get("text")
+                    .or_else(|| object.get("content"))
+                    .and_then(Value::as_str)
+                    .is_some_and(|text| !text.trim().is_empty())
+            })
+        }),
+        _ => false,
+    }
+}
+
+fn anchor_last_assistant(
+    messages: &[CompressionHistoryMessage],
+    cut: usize,
+    head_end: usize,
+) -> usize {
+    let range = head_end.min(messages.len())..messages.len();
+    let visible = range
+        .clone()
+        .rev()
+        .find(|idx| visible_assistant_content(&messages[*idx]));
+    let fallback = range
+        .rev()
+        .find(|idx| role(&messages[*idx]) == "assistant" && !is_summary_content(&messages[*idx]));
+    let Some(last_assistant) = visible.or(fallback) else {
+        return cut;
+    };
+    if last_assistant >= cut {
+        return cut;
+    }
+    align_tool_boundary_backward(messages, last_assistant).max(head_end.saturating_add(1))
+}
+
+fn protected_region_tokens(messages: &[CompressionHistoryMessage], start: usize) -> u64 {
+    messages[start.min(messages.len())..]
+        .iter()
+        // Python's pressure pass uses the estimator default here, which
+        // conservatively charges generic thinking on every protected row.
+        .fold(0u64, |total, message| {
+            total.saturating_add(estimate_message_budget_tokens(message, true))
+        })
+}
+
+/// Python-compatible rough token estimate used by compression budget walks.
+/// ASCII is charged at roughly four characters per token. CJK, Hangul and
+/// full-width code points are charged one-for-one, with the remaining text
+/// charged by UTF-8 byte length.
+pub(crate) fn estimate_tokens_rough(text: &str) -> u64 {
+    if text.is_empty() {
+        return 0;
+    }
+    if text.is_ascii() {
+        return u64::try_from(char_len(text).saturating_add(3) / CHARS_PER_TOKEN)
+            .unwrap_or(u64::MAX);
+    }
+    let mut dense = 0usize;
+    let mut sparse_bytes = 0usize;
+    for character in text.chars() {
+        if is_dense_cjk(character) {
+            dense = dense.saturating_add(1);
+        } else {
+            sparse_bytes = sparse_bytes.saturating_add(character.len_utf8());
+        }
+    }
+    u64::try_from(dense.saturating_add(sparse_bytes.saturating_add(3) / CHARS_PER_TOKEN))
+        .unwrap_or(u64::MAX)
+}
+
+fn is_dense_cjk(character: char) -> bool {
+    matches!(
+        character as u32,
+        0x1100..=0x11ff
+            | 0x2e80..=0x9fff
+            | 0xa960..=0xa97f
+            | 0xac00..=0xd7af
+            | 0xf900..=0xfaff
+            | 0xff00..=0xffef
+    )
+}
+
+/// Estimate one durable message's contribution to the token-protected tail.
+/// This includes hidden replay fields that do not appear in clean content.
+pub(crate) fn estimate_message_budget_tokens(
+    message: &CompressionHistoryMessage,
+    charge_stale_thinking: bool,
+) -> u64 {
+    let content = decoded_content(message);
+    let mut tokens = match &content {
+        Value::String(text) => estimate_tokens_rough(text).saturating_add(10),
+        other => u64::try_from(content_length_for_budget(other) / CHARS_PER_TOKEN)
+            .unwrap_or(u64::MAX)
+            .saturating_add(10),
+    };
+    for call in parse_tool_calls(message) {
+        if call.is_object() {
+            tokens = tokens.saturating_add(estimate_tokens_rough(
+                &crate::python_value::python_repr(&call),
+            ));
+        }
+    }
+    for raw in [
+        message.codex_reasoning_items.as_deref(),
+        message.codex_message_items.as_deref(),
+    ]
+    .into_iter()
+    .flatten()
+    {
+        tokens = tokens.saturating_add(
+            u64::try_from(serialized_raw_length(raw) / CHARS_PER_TOKEN).unwrap_or(u64::MAX),
+        );
+    }
+    if !charge_stale_thinking {
+        return tokens;
+    }
+
+    let reasoning_content_wins = message
+        .reasoning_content
+        .as_deref()
+        .is_some_and(|text| !text.trim().is_empty());
+    if !reasoning_content_wins {
+        if let Some(reasoning) = message.reasoning.as_deref() {
+            tokens = tokens.saturating_add(
+                u64::try_from(char_len(reasoning) / CHARS_PER_TOKEN).unwrap_or(u64::MAX),
+            );
+        }
+    }
+    if let Some(reasoning_content) = message.reasoning_content.as_deref() {
+        tokens = tokens.saturating_add(
+            u64::try_from(char_len(reasoning_content) / CHARS_PER_TOKEN).unwrap_or(u64::MAX),
+        );
+    }
+    if message.reasoning.as_deref().is_none_or(str::is_empty)
+        && message
+            .reasoning_content
+            .as_deref()
+            .is_none_or(str::is_empty)
+    {
+        if let Some(raw) = message.reasoning_details.as_deref() {
+            let details = serde_json::from_str(raw).unwrap_or_else(|_| Value::String(raw.into()));
+            tokens = tokens.saturating_add(
+                u64::try_from(reasoning_details_text_chars(&details) / CHARS_PER_TOKEN)
+                    .unwrap_or(u64::MAX),
+            );
+        }
+    }
+    tokens
+}
+
+fn content_length_for_budget(content: &Value) -> usize {
+    let Value::Array(parts) = content else {
+        return if crate::python_value::truthy(content) {
+            char_len(&crate::python_value::python_repr(content))
+        } else {
+            0
+        };
+    };
+    parts.iter().fold(0usize, |total, part| {
+        let length = match part {
+            Value::String(text) => char_len(text),
+            Value::Object(object)
+                if matches!(
+                    object.get("type").and_then(Value::as_str),
+                    Some("image_url") | Some("input_image") | Some("image")
+                ) =>
+            {
+                IMAGE_CHAR_EQUIVALENT
+            }
+            Value::Object(object) => object
+                .get("text")
+                .and_then(Value::as_str)
+                .map_or(0, char_len),
+            other => char_len(&crate::python_value::python_repr(other)),
+        };
+        total.saturating_add(length)
+    })
+}
+
+fn serialized_raw_length(raw: &str) -> usize {
+    let value = serde_json::from_str(raw).unwrap_or_else(|_| Value::String(raw.into()));
+    match value {
+        Value::Null => 0,
+        Value::String(ref text) if text.is_empty() => 0,
+        Value::String(ref text) => char_len(text),
+        other => char_len(&sorted_json_unicode(&other)),
+    }
+}
+
+fn sorted_json_unicode(value: &Value) -> String {
+    match value {
+        Value::Array(items) => format!(
+            "[{}]",
+            items
+                .iter()
+                .map(sorted_json_unicode)
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
+        Value::Object(object) => {
+            let mut keys = object.keys().collect::<Vec<_>>();
+            keys.sort_unstable();
+            format!(
+                "{{{}}}",
+                keys.into_iter()
+                    .map(|key| format!(
+                        "{}: {}",
+                        serde_json::to_string(key).unwrap_or_default(),
+                        sorted_json_unicode(&object[key])
+                    ))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )
+        }
+        Value::String(text) => serde_json::to_string(text).unwrap_or_default(),
+        Value::Number(number) => crate::python_value::python_number(number),
+        Value::Bool(value) => value.to_string(),
+        Value::Null => "null".into(),
+    }
+}
+
+fn reasoning_details_text_chars(value: &Value) -> usize {
+    match value {
+        Value::String(text) => char_len(text),
+        Value::Object(_) => reasoning_details_text_chars(&Value::Array(vec![value.clone()])),
+        Value::Array(parts) => parts.iter().fold(0usize, |total, part| {
+            let length = match part {
+                Value::String(text) => char_len(text),
+                Value::Object(object) => ["thinking", "text", "summary"]
+                    .iter()
+                    .filter_map(|key| object.get(*key).and_then(Value::as_str))
+                    .map(char_len)
+                    .sum(),
+                _ => 0,
+            };
+            total.saturating_add(length)
+        }),
+        _ => 0,
     }
 }
 
@@ -1043,6 +1597,11 @@ mod tests {
             tool_call_id: tool_call_id.map(str::to_string),
             tool_calls: tool_calls.map(str::to_string),
             tool_name: None,
+            reasoning: None,
+            reasoning_content: None,
+            reasoning_details: None,
+            codex_reasoning_items: None,
+            codex_message_items: None,
         }
     }
 
@@ -1354,5 +1913,347 @@ mod tests {
             Some("42".to_string())
         );
         assert_eq!(extract_json_int("no field here", "exit_code", true), None);
+    }
+
+    #[test]
+    fn rough_estimator_matches_ascii_cjk_and_utf8_rules() {
+        assert_eq!(estimate_tokens_rough(""), 0);
+        assert_eq!(estimate_tokens_rough("abcde"), 2);
+        assert_eq!(estimate_tokens_rough("漢字"), 2);
+        assert_eq!(estimate_tokens_rough("éé"), 1);
+        assert_eq!(estimate_tokens_rough("A漢é"), 2);
+    }
+
+    #[test]
+    fn message_estimator_counts_full_tool_call_and_replay_sidecars() {
+        let mut row = assistant_call(1, "call_0123456789", "read_file", r#"{"path":"a"}"#);
+        let visible_only = estimate_tokens_rough("") + 10;
+        let with_call = estimate_message_budget_tokens(&row, false);
+        assert!(
+            with_call > visible_only + 10,
+            "full call envelope must be charged"
+        );
+
+        row.codex_reasoning_items = Some(r#"[{"encrypted_content":"xxxxxxxx"}]"#.into());
+        row.codex_message_items = Some(r#"[{"type":"message","text":"界"}]"#.into());
+        let with_replay = estimate_message_budget_tokens(&row, false);
+        assert!(
+            with_replay > with_call,
+            "Codex replay sidecars must always be charged"
+        );
+
+        row.reasoning = Some("r".repeat(400));
+        assert_eq!(estimate_message_budget_tokens(&row, false), with_replay);
+        assert_eq!(
+            estimate_message_budget_tokens(&row, true),
+            with_replay + 100
+        );
+        row.reasoning_content = Some("c".repeat(800));
+        assert_eq!(
+            estimate_message_budget_tokens(&row, true),
+            with_replay + 200
+        );
+    }
+
+    #[test]
+    fn reasoning_details_charge_text_but_not_signed_envelope() {
+        let mut row = msg(1, "assistant", "", None, None);
+        row.reasoning_details = Some(
+            json!([{
+                "thinking": "t".repeat(400),
+                "signature": "s".repeat(40_000),
+                "data": "d".repeat(40_000)
+            }])
+            .to_string(),
+        );
+        assert_eq!(estimate_message_budget_tokens(&row, false), 10);
+        assert_eq!(estimate_message_budget_tokens(&row, true), 110);
+    }
+
+    #[test]
+    fn token_boundary_uses_strict_equality_and_includes_break_row() {
+        let rows = vec![
+            msg(1, "user", "old", None, None),
+            tool_row(2, "c1", &big("TOOL:", 500)),
+            msg(3, "assistant", "a", None, None),
+            msg(4, "user", "a", None, None),
+        ];
+        // The last two rows cost exactly 22 tokens. Equality continues the
+        // walk, then the oversized tool becomes the protected break row.
+        assert_eq!(compute_prune_boundary(&rows, 2, Some(22), false), 1);
+        // One token less breaks on the second-newest row instead.
+        assert_eq!(compute_prune_boundary(&rows, 2, Some(21), false), 2);
+    }
+
+    #[test]
+    fn token_boundary_caps_count_floor_at_eight() {
+        let rows = (0..20)
+            .map(|index| msg(index, "user", "x", None, None))
+            .collect::<Vec<_>>();
+        assert_eq!(compute_prune_boundary(&rows, 20, Some(1), false), 12);
+    }
+
+    #[test]
+    fn pressure_pass_demotes_protected_skill_and_keeps_marker() {
+        let skill = big("# fresh-skill instructions\n", 60_000);
+        let rows = vec![
+            msg(1, "user", "filler", None, None),
+            msg(2, "assistant", "filler", None, None),
+            assistant_call(3, "skill", "skill_view", r#"{"name":"fresh-skill"}"#),
+            tool_row(4, "skill", &skill),
+            msg(5, "user", "active ask", None, None),
+        ];
+        let out = prune_old_tool_results_with_budget(&rows, 4, 100, PRUNE_MIN_CHARS, false);
+        assert!(out.changed);
+        assert!(out.pruned_count >= 1);
+        assert!(out.messages[3]
+            .message
+            .content
+            .contains("[SKILL_PRUNED: content lost in compression; reload with skill_view(name='fresh-skill')]"));
+    }
+
+    #[test]
+    fn pressure_pass_uses_newest_tool_as_absolute_last_resort() {
+        let rows = vec![
+            assistant_call(1, "a", "read_file", r#"{"path":"a"}"#),
+            tool_row(2, "a", &big("A:", 4_000)),
+            assistant_call(3, "b", "read_file", r#"{"path":"b"}"#),
+            tool_row(4, "b", &big("B:", 40_000)),
+            msg(5, "user", "active", None, None),
+        ];
+        let out = prune_old_tool_results_with_budget(&rows, 5, 100, PRUNE_MIN_CHARS, false);
+        assert!(out.messages[1].message.content.starts_with("[read_file]"));
+        assert!(out.messages[3].message.content.starts_with("[read_file]"));
+        assert_eq!(out.messages[4].message.content, "active");
+    }
+
+    #[test]
+    fn summary_tail_cut_matches_python_budget_walk_cases() {
+        let mut heavy = Vec::new();
+        for index in 0..20 {
+            let calls = (0..5)
+                .map(|_| {
+                    json!({
+                        "id": format!("call_{index:02}_{}", "a".repeat(24)),
+                        "type": "function",
+                        "function": {"name": "read_file", "arguments": "{\"path\":\"a\"}"}
+                    })
+                })
+                .collect::<Vec<_>>();
+            heavy.push(msg(
+                index + 2,
+                "assistant",
+                "",
+                None,
+                Some(&Value::Array(calls).to_string()),
+            ));
+        }
+        let mut messages = vec![msg(1, "user", "start", None, None)];
+        messages.extend(heavy);
+        assert_eq!(find_tail_cut_by_tokens(&messages, 1, 20, 680, false), 12);
+
+        let alternating = (0..12)
+            .map(|index| {
+                msg(
+                    index + 1,
+                    if index % 2 == 0 { "user" } else { "assistant" },
+                    &format!("m{index}"),
+                    None,
+                    None,
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            find_tail_cut_by_tokens(&alternating, 2, 20, 1_000_000, false),
+            5
+        );
+    }
+
+    #[test]
+    fn summary_tail_cut_keeps_complete_tool_group_and_latest_replies() {
+        let rows = vec![
+            msg(1, "user", "u0", None, None),
+            msg(2, "assistant", "a0", None, None),
+            msg(3, "user", "u1", None, None),
+            assistant_call(4, "c", "read_file", "{}"),
+            tool_row(5, "c", &big("X:", 1_000)),
+            msg(6, "assistant", "final", None, None),
+            msg(7, "user", "u2", None, None),
+            msg(8, "assistant", "a2", None, None),
+        ];
+        assert_eq!(find_tail_cut_by_tokens(&rows, 2, 20, 20, false), 3);
+    }
+
+    fn golden_row(id: i64, value: &Value) -> CompressionHistoryMessage {
+        let raw_json = |key: &str| {
+            value
+                .get(key)
+                .filter(|field| !field.is_null())
+                .map(Value::to_string)
+        };
+        CompressionHistoryMessage {
+            id,
+            message: HistoryMessage {
+                role: value["role"].as_str().unwrap_or_default().into(),
+                content: encode_message_content(value.get("content").unwrap_or(&Value::Null)),
+                api_content: value
+                    .get("api_content")
+                    .and_then(Value::as_str)
+                    .map(str::to_owned),
+            },
+            tool_call_id: value
+                .get("tool_call_id")
+                .and_then(Value::as_str)
+                .map(str::to_owned),
+            tool_calls: raw_json("tool_calls"),
+            tool_name: value
+                .get("tool_name")
+                .or_else(|| value.get("name"))
+                .and_then(Value::as_str)
+                .map(str::to_owned),
+            reasoning: value
+                .get("reasoning")
+                .and_then(Value::as_str)
+                .map(str::to_owned),
+            reasoning_content: value
+                .get("reasoning_content")
+                .and_then(Value::as_str)
+                .map(str::to_owned),
+            reasoning_details: raw_json("reasoning_details"),
+            codex_reasoning_items: raw_json("codex_reasoning_items"),
+            codex_message_items: raw_json("codex_message_items"),
+        }
+    }
+
+    fn golden_rows(values: &[Value]) -> Vec<CompressionHistoryMessage> {
+        values
+            .iter()
+            .enumerate()
+            .map(|(index, value)| golden_row(index as i64 + 1, value))
+            .collect()
+    }
+
+    fn assert_golden_rows(
+        actual: &[CompressionHistoryMessage],
+        expected: &[CompressionHistoryMessage],
+        case: &Value,
+    ) {
+        assert_eq!(actual.len(), expected.len(), "row count case {case}");
+        for (actual, expected) in actual.iter().zip(expected) {
+            assert_eq!(actual.id, expected.id, "id case {case}");
+            assert_eq!(
+                actual.message.role, expected.message.role,
+                "role case {case}"
+            );
+            assert_eq!(
+                actual.message.model_content(),
+                expected.message.model_content(),
+                "content case {case}"
+            );
+            assert_eq!(
+                actual.message.api_content, expected.message.api_content,
+                "api_content case {case}"
+            );
+            assert_eq!(
+                actual.tool_call_id, expected.tool_call_id,
+                "call id case {case}"
+            );
+            assert_eq!(actual.tool_calls, expected.tool_calls, "calls case {case}");
+            assert_eq!(
+                actual.tool_name, expected.tool_name,
+                "tool name case {case}"
+            );
+            assert_eq!(
+                actual.reasoning, expected.reasoning,
+                "reasoning case {case}"
+            );
+            assert_eq!(
+                actual.reasoning_content, expected.reasoning_content,
+                "reasoning content case {case}"
+            );
+            assert_eq!(
+                actual.reasoning_details, expected.reasoning_details,
+                "reasoning details case {case}"
+            );
+            assert_eq!(
+                actual.codex_reasoning_items, expected.codex_reasoning_items,
+                "Codex reasoning case {case}"
+            );
+            assert_eq!(
+                actual.codex_message_items, expected.codex_message_items,
+                "Codex messages case {case}"
+            );
+        }
+    }
+
+    #[test]
+    fn token_budget_estimator_and_prune_match_python_goldens() {
+        let cases: Value = serde_json::from_str(include_str!(
+            "../../../tools/token-budget-prune-goldens.json"
+        ))
+        .unwrap();
+        for case in cases["estimator"].as_array().unwrap() {
+            let row = golden_row(1, &case["message"]);
+            let actual = estimate_message_budget_tokens(
+                &row,
+                case["charge_stale_thinking"].as_bool().unwrap(),
+            );
+            assert_eq!(
+                actual,
+                case["expected_tokens"].as_u64().unwrap(),
+                "estimator case {}",
+                case["name"]
+            );
+        }
+        for case in cases["prune"].as_array().unwrap() {
+            let input = golden_rows(case["input"].as_array().unwrap());
+            let expected = golden_rows(case["expected_output"].as_array().unwrap());
+            let protect_count = case["protect_tail_count"].as_u64().unwrap() as usize;
+            let min_chars = case["min_prune_chars"].as_u64().unwrap() as usize;
+            let charge_all = crate::reasoning_replay::needs_echo(
+                case["route"]["provider"].as_str().unwrap_or_default(),
+                case["route"]["model"].as_str().unwrap_or_default(),
+                case["route"]["base_url"].as_str().unwrap_or_default(),
+            );
+            let out = if let Some(budget) = case["protect_tail_tokens"].as_u64() {
+                prune_old_tool_results_with_budget(
+                    &input,
+                    protect_count,
+                    budget,
+                    min_chars,
+                    charge_all,
+                )
+            } else {
+                prune_old_tool_results(&input, protect_count, min_chars)
+            };
+            assert_golden_rows(&out.messages, &expected, &case["name"]);
+            assert_eq!(
+                out.pruned_count,
+                case["expected_pruned"].as_u64().unwrap() as usize,
+                "pruned count case {}",
+                case["name"]
+            );
+        }
+        for case in cases["tail_cut"].as_array().unwrap() {
+            let input = golden_rows(case["input"].as_array().unwrap());
+            let charge_all = crate::reasoning_replay::needs_echo(
+                case["route"]["provider"].as_str().unwrap_or_default(),
+                case["route"]["model"].as_str().unwrap_or_default(),
+                case["route"]["base_url"].as_str().unwrap_or_default(),
+            );
+            let actual = find_tail_cut_by_tokens(
+                &input,
+                case["head_end"].as_u64().unwrap() as usize,
+                case["protect_last_n"].as_u64().unwrap() as usize,
+                case["token_budget"].as_u64().unwrap(),
+                charge_all,
+            );
+            assert_eq!(
+                actual,
+                case["expected_cut"].as_u64().unwrap() as usize,
+                "tail cut case {}",
+                case["name"]
+            );
+        }
     }
 }

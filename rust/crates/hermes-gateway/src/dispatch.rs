@@ -1429,6 +1429,7 @@ mod tests {
                     context_length: 2_000,
                     max_output_tokens: None,
                     request_tokens: 1_000,
+                    stale_thinking_on_wire: false,
                 }))
             }
 
@@ -1489,7 +1490,7 @@ mod tests {
         let sent = Arc::new(Mutex::new(Vec::new()));
         dispatcher.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent }));
         let dispatcher = dispatcher.with_session_store(store.clone(), 3600.0);
-        for index in 0..3 {
+        for index in 0..4 {
             dispatcher
                 .handle_turn(cli_msg(
                     &format!("turn {index} {}", "detail ".repeat(20)),
@@ -1500,11 +1501,11 @@ mod tests {
         let source = crate::session::source_from_message(&cli_msg("", "u"));
         let parent = store.current_entry_for_source(&source).unwrap().session_id;
         dispatcher
-            .handle_turn(cli_msg(&format!("turn 3 {}", "detail ".repeat(20)), "u"))
+            .handle_turn(cli_msg(&format!("turn 4 {}", "detail ".repeat(20)), "u"))
             .await;
         let child = store.current_entry_for_source(&source).unwrap().session_id;
         assert_ne!(child, parent);
-        assert_eq!(turns.load(Ordering::SeqCst), 4);
+        assert_eq!(turns.load(Ordering::SeqCst), 5);
         assert_eq!(summaries.load(Ordering::SeqCst), 1);
         let db = store
             .database_for_key(&store.session_key_for_source(&source))
@@ -1514,11 +1515,278 @@ mod tests {
             "compression"
         );
         let live = db.load_history(&child, 0).unwrap();
-        assert_eq!(live.len(), 8);
+        assert_eq!(live.len(), 10);
         assert!(live[2]
             .content
             .starts_with(crate::compression_prompt::SUMMARY_PREFIX));
-        assert!(live[6].content.starts_with("turn 3"));
+        assert!(live[8].content.starts_with("turn 4"));
+        drop(db);
+        drop(dispatcher);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn push_automatic_compression_token_budget_prune_before_the_triggering_turn() {
+        struct PruneAgent {
+            turns: Arc<AtomicUsize>,
+            summaries: Arc<AtomicUsize>,
+        }
+        #[async_trait]
+        impl crate::agent::AgentClient for PruneAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                self.turns.fetch_add(1, Ordering::SeqCst);
+                tx.send(StreamEvent::MessageChunk {
+                    text: "answer".into(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+
+            async fn compression_preflight(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+            ) -> Result<Option<crate::agent::CompressionPreflight>> {
+                Ok(Some(crate::agent::CompressionPreflight {
+                    model: "fixture".into(),
+                    context_length: 2_000,
+                    max_output_tokens: None,
+                    request_tokens: 1_000,
+                    stale_thinking_on_wire: false,
+                }))
+            }
+
+            async fn summarize_context(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &Message,
+                _: &[crate::session_db::CompressionHistoryMessage],
+                _: Option<&str>,
+            ) -> Result<Option<String>> {
+                self.summaries.fetch_add(1, Ordering::SeqCst);
+                Ok(Some("## Goal\nUnexpected summary call.".into()))
+            }
+        }
+
+        let home = std::env::temp_dir().join(format!(
+            "hermes-push-auto-prune-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let turns = Arc::new(AtomicUsize::new(0));
+        let summaries = Arc::new(AtomicUsize::new(0));
+        let agent = Arc::new(PruneAgent {
+            turns: turns.clone(),
+            summaries: summaries.clone(),
+        });
+        let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(
+            home.join("dead.json"),
+        ));
+        let config = json!({"compression": {
+            "threshold_tokens": 100,
+            "protect_first_n": 2,
+            "protect_last_n": 10,
+            "max_attempts": 1,
+            "in_place": true,
+            "proactive_prune_tokens": 0
+        }});
+        let mut dispatcher = Dispatcher::with_deps(agent, Arc::new(config), dead, None, None);
+        let sent = Arc::new(Mutex::new(Vec::new()));
+        dispatcher.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent: sent.clone() }));
+        let dispatcher = dispatcher.with_session_store(store.clone(), 3600.0);
+
+        let source = crate::session::source_from_message(&cli_msg("", "u"));
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let session_id = entry.session_id.clone();
+        let session_key = store.session_key_for_source(&source);
+        let db = store.database_for_key(&session_key).unwrap();
+
+        let unique_needle = "TOKEN_BUDGET_PRUNE_SEARCHABLE_UNIQUE_MARKER_998877";
+        let oversized_content = format!("{unique_needle} {}", "payload_body_chunk ".repeat(5_000));
+        let tool_call_id = "call_read_file_target";
+        let tool_calls = json!([{
+            "id": tool_call_id,
+            "type": "function",
+            "function": {
+                "name": "read_file",
+                "arguments": "{\"path\": \"src/config.rs\"}"
+            }
+        }])
+        .to_string();
+
+        db.append_message_with(
+            &session_id,
+            "user",
+            "Please read the configuration file.",
+            &crate::session_db::AppendOptions::default(),
+        )
+        .unwrap();
+
+        db.append_message_with(
+            &session_id,
+            "assistant",
+            "",
+            &crate::session_db::AppendOptions {
+                tool_calls: Some(&tool_calls),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+
+        let original_tool_id = db
+            .append_message_with(
+                &session_id,
+                "tool",
+                &oversized_content,
+                &crate::session_db::AppendOptions {
+                    tool_call_id: Some(tool_call_id),
+                    tool_name: Some("read_file"),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+
+        db.append_message_with(
+            &session_id,
+            "assistant",
+            "Finished reading the config file.",
+            &crate::session_db::AppendOptions::default(),
+        )
+        .unwrap();
+
+        db.append_message_with(
+            &session_id,
+            "user",
+            "What settings did you find?",
+            &crate::session_db::AppendOptions::default(),
+        )
+        .unwrap();
+
+        db.append_message_with(
+            &session_id,
+            "assistant",
+            "The settings are default configuration values.",
+            &crate::session_db::AppendOptions::default(),
+        )
+        .unwrap();
+
+        // The durable transcript has 6 messages. The Phase 1 count floor protects
+        // all 6, but pressure stage 4a reaches the oversized read_file result at
+        // index 2 because three complete messages follow it.
+        dispatcher
+            .handle_turn(cli_msg("trigger turn message", "u"))
+            .await;
+
+        // Six rows are the protected head plus the minimum three-row tail and
+        // one candidate, so Python's structural guard leaves no summary window.
+        assert_eq!(summaries.load(Ordering::SeqCst), 0);
+
+        // Verify that the triggering turn still ran and was persisted normally.
+        assert_eq!(turns.load(Ordering::SeqCst), 1);
+        let live_history = db.load_history(&session_id, 0).unwrap();
+        assert_eq!(live_history.len(), 8);
+        assert_eq!(live_history[6].role, "user");
+        assert_eq!(live_history[6].content, "trigger turn message");
+        assert_eq!(live_history[7].role, "assistant");
+        assert_eq!(live_history[7].content, "answer");
+        assert_eq!(sent.lock().unwrap().len(), 1);
+        assert_eq!(sent.lock().unwrap()[0].text, "answer");
+
+        // Verify active messages in SQLite:
+        // - deterministic token-budget pressure pruning cloned rows before the triggering user row
+        // - oversized tool result became informative read_file summary
+        // - tool_call/tool_result IDs remain paired
+        let snapshot = db.load_compression_snapshot(&session_id).unwrap();
+        let active_rows = snapshot.messages;
+        assert_eq!(active_rows.len(), 8);
+
+        let triggering_user = &active_rows[6];
+        assert_eq!(triggering_user.message.role, "user");
+        assert_eq!(triggering_user.message.content, "trigger turn message");
+
+        let pruned_tool = &active_rows[2];
+        assert_eq!(pruned_tool.message.role, "tool");
+        assert!(pruned_tool.id < triggering_user.id);
+        assert!(active_rows[5].id < triggering_user.id);
+
+        assert!(pruned_tool
+            .message
+            .content
+            .starts_with("[read_file] read src/config.rs from line 1"));
+        assert!(pruned_tool.message.content.contains("chars)"));
+        assert!(!pruned_tool.message.content.contains(unique_needle));
+
+        let assistant_call_msg = &active_rows[1];
+        assert_eq!(assistant_call_msg.message.role, "assistant");
+        assert!(assistant_call_msg
+            .tool_calls
+            .as_ref()
+            .unwrap()
+            .contains(tool_call_id));
+        assert_eq!(pruned_tool.tool_call_id.as_deref(), Some(tool_call_id));
+        assert_eq!(pruned_tool.tool_name.as_deref(), Some("read_file"));
+
+        // Verify original large body remains searchable as compacted history
+        let hits = db.search(unique_needle, 10).unwrap();
+        assert_eq!(hits.len(), 1);
+        assert_eq!(hits[0].session_id, session_id);
+        assert_eq!(hits[0].message_id, original_tool_id);
+
+        let original_stored = db.get_message(original_tool_id).unwrap().unwrap();
+        assert!(original_stored.content.contains(unique_needle));
+
+        let conn = rusqlite::Connection::open(db.database_path()).unwrap();
+        let (orig_active, orig_compacted): (i64, i64) = conn
+            .query_row(
+                "SELECT active, compacted FROM messages WHERE id = ?",
+                [original_tool_id],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        assert_eq!(orig_active, 0);
+        assert_eq!(orig_compacted, 1);
+        assert!(original_tool_id < triggering_user.id);
+
+        let (pruned_active, pruned_compacted): (i64, i64) = conn
+            .query_row(
+                "SELECT active, compacted FROM messages WHERE id = ?",
+                [pruned_tool.id],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        assert_eq!(pruned_active, 1);
+        assert_eq!(pruned_compacted, 0);
+
+        drop(conn);
         drop(db);
         drop(dispatcher);
         drop(store);

@@ -1,5 +1,46 @@
 # Hermes Rust rewrite
 
+## Native token-budget compression checkpoint: 2026-09-09
+
+Native full compression now runs Python-compatible deterministic Phase 1
+pruning before its summary request. The estimator accounts for ASCII, dense
+CJK/Hangul, other UTF-8 text, structured and image content, complete tool-call
+envelopes, generic thinking according to provider replay behavior, and Codex
+reasoning/message sidecars. Its strict token boundary keeps the capped count
+floor, and its three pressure stages can demote protected tool output, including
+fresh skill bodies, only as context pressure requires.
+
+Automatic summary selection now uses the configured lean or legacy token
+budget instead of only a message count. It applies the Python 1.5x soft ceiling,
+raw-budget retry, complete tool-group alignment, and recent user/assistant
+anchors. Phase 1 publishes through the existing route, exact-snapshot, and
+lineage-lease SQLite transaction, reloads the new active generation, and
+finishes the already-admitted compression attempt without another provider
+request or threshold decision between phases. Compression snapshots and their
+publish guard now include all reasoning and Codex replay columns.
+
+The source-executed Python differential corpus covers 17 estimator cases, 14
+complete prune cases, and 3 tail-cut cases. Live push and HTTP tests prove
+maintenance occurs before the triggering turn, preserves paired tool IDs,
+leaves compacted originals searchable, and still executes and persists the
+turn. Full workspace validation is **1,633 passed, two ignored** (1,632 gateway
+plus one core test). The selected Python compressor suites are **200 passed**.
+Formatting, Clippy with warnings denied, oracle drift checking, and diff hygiene
+pass.
+
+Helper work was split by independent deliverable. Claude produced only the
+Python oracle and golden corpus. AGY ran once behind its exclusive auth lock and
+produced only the live push/SQLite test. The primary lane owned production code,
+shared types, integration, corrections, validation, and this checkpoint.
+
+The refreshed [weighted full-port audit](analysis/progress-audit-2026-09-08.md)
+is **46.20 points, reported as about 46%** (judgment range 44% to 49%). The next
+compression seams are micro-compaction and defragmentation, same-turn LLM
+summary compression, remaining synthetic/multi-user anchors, auxiliary routing
+and fallback, memory checkpoints, extension notifications, overflow recovery,
+and structural backoff. Native plugin/tool/provider/platform breadth remains
+the larger port after this cluster.
+
 ## Same-turn proactive pruning checkpoint: 2026-09-09
 
 Native tool-result pruning now runs inside the active tool loop after every

@@ -108,6 +108,11 @@ mod tests {
             tool_call_id: None,
             tool_calls: None,
             tool_name: None,
+            reasoning: None,
+            reasoning_content: None,
+            reasoning_details: None,
+            codex_reasoning_items: None,
+            codex_message_items: None,
         }
     }
 

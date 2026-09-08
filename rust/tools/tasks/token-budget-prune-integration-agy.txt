@@ -1,0 +1,14 @@
+You are one helper on a coordinated Rust port. Work only in rust/crates/hermes-gateway/src/dispatch.rs. Do not edit any other file and do not run another helper.
+
+Add one focused tokio integration test proving the newly wired full-compression Phase 1 token-budget prune runs through real push ingress and SQLite. Use the existing push_automatic_compression_rotates_before_the_triggering_turn test scaffolding where practical, but do not change that test.
+
+The new test should create a valid complete durable transcript containing an oversized unique read_file tool result inside the token-protected tail, with enough complete messages after it for protected-tail pressure stage 4a to reach it. Configure automatic compression over threshold, default in-place behavior, protect_last_n large enough that the ordinary count boundary protects the whole fixture, and no proactive_prune_tokens. On the next push turn, prove:
+
+- deterministic token-budget pressure pruning happens before the triggering user row is persisted
+- the oversized tool result becomes the informative read_file summary in active SQLite history
+- the original large body remains searchable as compacted history
+- the tool_call/tool_result IDs remain paired
+- no LLM summary call is needed when no complete middle remains after count boundary selection
+- the triggering turn still runs and persists normally
+
+Use existing public SessionDb helpers unless a read-only test query is simpler. Keep the test deterministic and cleanup its temp home. Run that single test. Do not alter production behavior. Do not use em dashes.

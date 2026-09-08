@@ -2044,7 +2044,7 @@ mod tests {
         )
         .await;
         let client = reqwest::Client::new();
-        for index in 0..4 {
+        for index in 0..5 {
             let response = client
                 .post(format!("{gateway_url}/message"))
                 .json(&json!({
@@ -2064,7 +2064,7 @@ mod tests {
         };
         let session_id = store.current_entry_for_source(&source).unwrap().session_id;
         let live = db.load_history(&session_id, 0).unwrap();
-        assert_eq!(live.len(), 8);
+        assert_eq!(live.len(), 10);
         assert_eq!(
             live[0]
                 .content
@@ -2076,8 +2076,8 @@ mod tests {
         assert!(live[2]
             .content
             .starts_with(crate::compression_prompt::SUMMARY_PREFIX));
-        assert!(live[6].content.starts_with("turn 3 "));
-        assert_eq!(live[7].content, "answer");
+        assert!(live[8].content.starts_with("turn 4 "));
+        assert_eq!(live[9].content, "answer");
 
         let calls = calls.lock().unwrap();
         assert_eq!(
@@ -2093,8 +2093,8 @@ mod tests {
             .rposition(|body| body["stream"] == true)
             .unwrap();
         assert!(summary_index < final_index);
-        assert!(!calls[summary_index].to_string().contains("turn 3"));
-        assert!(calls[final_index].to_string().contains("turn 3"));
+        assert!(!calls[summary_index].to_string().contains("turn 4"));
+        assert!(calls[final_index].to_string().contains("turn 4"));
         assert!(calls[final_index]
             .to_string()
             .contains(crate::compression_prompt::SUMMARY_PREFIX));
