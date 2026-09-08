@@ -496,21 +496,36 @@ impl Dispatcher {
                 let source = crate::session::source_from_message(&msg);
                 let legacy_id = crate::session_db::message_session_id(&msg);
                 let legacy_source = format!("{:?}", msg.platform).to_lowercase();
+                let admission_deps = crate::session_admission::AdmissionDeps {
+                    store: store.clone(),
+                    transcript_leases: self.lease.clone(),
+                    route_leases: self.route_lease.clone(),
+                    generation: self.generation.clone(),
+                };
                 let resolved = crate::session_admission::admit_turn(
-                    crate::session_admission::AdmissionDeps {
-                        store: store.clone(),
-                        transcript_leases: self.lease.clone(),
-                        route_leases: self.route_lease.clone(),
-                        generation: self.generation.clone(),
-                    },
-                    source,
+                    admission_deps.clone(),
+                    source.clone(),
                     Some((legacy_id, legacy_source)),
                     *freshness,
                     &msg.sender_id,
                 )
                 .await;
                 match resolved {
-                    Ok(resolved) => {
+                    Ok(mut resolved) => {
+                        msg.resolved_session_id = Some(resolved.entry.session_id.clone());
+                        if let Err(error) = crate::automatic_compression::compress_before_turn(
+                            &admission_deps,
+                            &self.agent,
+                            &source,
+                            &mut msg,
+                            &self.user_config,
+                            &mut resolved,
+                        )
+                        .await
+                        {
+                            warn!(%error, "automatic compression preflight failed open");
+                        }
+                        drop(resolved.route_lease.take());
                         msg.resolved_session_id = Some(resolved.entry.session_id);
                         routing_key = Some(resolved.entry.session_key);
                         turn_db = resolved.database;
@@ -1364,6 +1379,139 @@ mod tests {
             .unwrap()
             .text
             .contains("6 message(s) summarized"));
+        drop(db);
+        drop(dispatcher);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn push_automatic_compression_rotates_before_the_triggering_turn() {
+        struct PressureAgent {
+            turns: Arc<AtomicUsize>,
+            summaries: Arc<AtomicUsize>,
+        }
+        #[async_trait]
+        impl crate::agent::AgentClient for PressureAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                self.turns.fetch_add(1, Ordering::SeqCst);
+                tx.send(StreamEvent::MessageChunk {
+                    text: "answer".into(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+
+            async fn compression_preflight(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+            ) -> Result<Option<crate::agent::CompressionPreflight>> {
+                Ok(Some(crate::agent::CompressionPreflight {
+                    model: "fixture".into(),
+                    context_length: 2_000,
+                    max_output_tokens: None,
+                    request_tokens: 1_000,
+                }))
+            }
+
+            async fn summarize_context(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &Message,
+                history: &[crate::session_db::CompressionHistoryMessage],
+                _: Option<&str>,
+            ) -> Result<Option<String>> {
+                self.summaries.fetch_add(1, Ordering::SeqCst);
+                assert_eq!(history.len(), 2);
+                assert!(history
+                    .iter()
+                    .all(|message| !message.message.content.starts_with("turn 3")));
+                Ok(Some("## Goal\nContinue the active task.".into()))
+            }
+        }
+
+        let home = std::env::temp_dir().join(format!(
+            "hermes-push-auto-compress-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let turns = Arc::new(AtomicUsize::new(0));
+        let summaries = Arc::new(AtomicUsize::new(0));
+        let agent = Arc::new(PressureAgent {
+            turns: turns.clone(),
+            summaries: summaries.clone(),
+        });
+        let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(
+            home.join("dead.json"),
+        ));
+        let config = json!({"compression": {
+            "threshold_tokens": 100,
+            "protect_first_n": 2,
+            "protect_last_n": 2,
+            "max_attempts": 1,
+            "in_place": false
+        }});
+        let mut dispatcher = Dispatcher::with_deps(agent, Arc::new(config), dead, None, None);
+        let sent = Arc::new(Mutex::new(Vec::new()));
+        dispatcher.register_adapter(Platform::Cli, Arc::new(StubAdapter { sent }));
+        let dispatcher = dispatcher.with_session_store(store.clone(), 3600.0);
+        for index in 0..3 {
+            dispatcher
+                .handle_turn(cli_msg(
+                    &format!("turn {index} {}", "detail ".repeat(20)),
+                    "u",
+                ))
+                .await;
+        }
+        let source = crate::session::source_from_message(&cli_msg("", "u"));
+        let parent = store.current_entry_for_source(&source).unwrap().session_id;
+        dispatcher
+            .handle_turn(cli_msg(&format!("turn 3 {}", "detail ".repeat(20)), "u"))
+            .await;
+        let child = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_ne!(child, parent);
+        assert_eq!(turns.load(Ordering::SeqCst), 4);
+        assert_eq!(summaries.load(Ordering::SeqCst), 1);
+        let db = store
+            .database_for_key(&store.session_key_for_source(&source))
+            .unwrap();
+        assert_eq!(
+            db.get_session(&parent).unwrap().unwrap()["end_reason"],
+            "compression"
+        );
+        let live = db.load_history(&child, 0).unwrap();
+        assert_eq!(live.len(), 8);
+        assert!(live[2]
+            .content
+            .starts_with(crate::compression_prompt::SUMMARY_PREFIX));
+        assert!(live[6].content.starts_with("turn 3"));
         drop(db);
         drop(dispatcher);
         drop(store);

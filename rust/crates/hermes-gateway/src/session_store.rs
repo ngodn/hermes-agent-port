@@ -42,6 +42,13 @@ pub struct ExplicitSessionSwitch {
     pub predecessor_id: String,
 }
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct CompressionRanges {
+    pub prefix_end_id: Option<i64>,
+    pub tail_start_id: Option<i64>,
+    pub watermark: i64,
+}
+
 struct SessionOrigin<'a> {
     source: &'a crate::session::SessionSource,
     legacy: Option<(&'a str, &'a str)>,
@@ -276,8 +283,7 @@ impl SessionStore {
         source: &crate::session::SessionSource,
         expected: &crate::session_entry::SessionEntry,
         compacted_messages: &[crate::session_db::HistoryMessage],
-        tail_start_id: Option<i64>,
-        watermark: i64,
+        ranges: CompressionRanges,
         turn_lease_holder: Option<&str>,
     ) -> anyhow::Result<Option<ExplicitSessionSwitch>> {
         let key = self.session_key_for_source(source);
@@ -307,8 +313,9 @@ impl SessionStore {
                     parent_id: &current.session_id,
                     child_id: &candidate.session_id,
                     compacted_messages,
-                    tail_start_id,
-                    watermark,
+                    prefix_end_id: ranges.prefix_end_id,
+                    tail_start_id: ranges.tail_start_id,
+                    watermark: ranges.watermark,
                     turn_lease_holder,
                 })?;
             if !published {
@@ -333,8 +340,7 @@ impl SessionStore {
         source: &crate::session::SessionSource,
         expected: &crate::session_entry::SessionEntry,
         compacted_messages: &[crate::session_db::HistoryMessage],
-        tail_start_id: Option<i64>,
-        watermark: i64,
+        ranges: CompressionRanges,
         turn_lease_holder: Option<&str>,
     ) -> anyhow::Result<bool> {
         let key = self.session_key_for_source(source);
@@ -355,8 +361,9 @@ impl SessionStore {
                 session_key: &key,
                 session_id: &current.session_id,
                 compacted_messages,
-                tail_start_id,
-                watermark,
+                prefix_end_id: ranges.prefix_end_id,
+                tail_start_id: ranges.tail_start_id,
+                watermark: ranges.watermark,
                 turn_lease_holder,
             },
         )?)

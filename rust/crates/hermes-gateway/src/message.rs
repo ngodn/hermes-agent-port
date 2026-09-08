@@ -304,14 +304,15 @@ pub async fn post_message(
         if let Some((store, freshness)) = &state.session_store {
             let source = crate::session::source_from_message(&msg);
             let legacy_id = crate::session_db::message_session_id(&msg);
+            let admission_deps = crate::session_admission::AdmissionDeps {
+                store: store.clone(),
+                transcript_leases: state.turn_leases.clone(),
+                route_leases: state.route_leases.clone(),
+                generation: state.turn_generation.clone(),
+            };
             let resolved = crate::session_admission::admit_turn(
-                crate::session_admission::AdmissionDeps {
-                    store: store.clone(),
-                    transcript_leases: state.turn_leases.clone(),
-                    route_leases: state.route_leases.clone(),
-                    generation: state.turn_generation.clone(),
-                },
-                source,
+                admission_deps.clone(),
+                source.clone(),
                 Some((legacy_id, "cli".into())),
                 *freshness,
                 &msg.sender_id,
@@ -324,6 +325,21 @@ pub async fn post_message(
                     Json(serde_json::json!({"error":"session unavailable"})),
                 )
             })?;
+            let mut resolved = resolved;
+            msg.resolved_session_id = Some(resolved.entry.session_id.clone());
+            if let Err(error) = crate::automatic_compression::compress_before_turn(
+                &admission_deps,
+                &state.agent,
+                &source,
+                &mut msg,
+                &state.user_config,
+                &mut resolved,
+            )
+            .await
+            {
+                warn!(%error, "automatic compression preflight failed open");
+            }
+            drop(resolved.route_lease.take());
             msg.resolved_session_id = Some(resolved.entry.session_id);
             routing_key = Some(resolved.entry.session_key);
             turn_db = resolved.database;
@@ -1942,6 +1958,121 @@ mod tests {
         assert!(wire.iter().all(|message| !message["content"]
             .as_str()
             .is_some_and(|text| text.starts_with("turn 0 "))));
+    }
+
+    #[tokio::test]
+    async fn automatic_compression_runs_before_persisting_triggering_http_turn() {
+        async fn automatic_model(
+            State(calls): State<Arc<Mutex<Vec<Value>>>>,
+            Json(body): Json<Value>,
+        ) -> Response {
+            calls.lock().unwrap().push(body.clone());
+            if body["stream"] == false {
+                return Json(json!({"choices":[{"message":{"role":"assistant","content":"## Goal\nKeep the active work moving.\n\n## Active State\nEarlier details were compacted."}}]})).into_response();
+            }
+            (
+                [("content-type", "text/event-stream")],
+                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\ndata: [DONE]\n\n",
+            )
+                .into_response()
+        }
+
+        let home = TempHome::new();
+        let calls = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let (model_url, _model_server) = serve(
+            axum::Router::new()
+                .route("/chat/completions", post(automatic_model))
+                .with_state(calls.clone()),
+        )
+        .await;
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let agent = NativeAgentClient::new("fixture-model", "fixture-key", model_url)
+            .unwrap()
+            .with_context_length(2_000);
+        let config = json!({"compression": {
+            "enabled": true,
+            "threshold_tokens": 250,
+            "protect_first_n": 2,
+            "protect_last_n": 2,
+            "max_attempts": 1,
+            "in_place": true
+        }});
+        let mut state = AppState::new(Arc::new(agent), Arc::new(config), None, Some(db.clone()));
+        state.session_store = Some((store.clone(), 3600.0));
+        let (gateway_url, _gateway_server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+        let client = reqwest::Client::new();
+        for index in 0..4 {
+            let response = client
+                .post(format!("{gateway_url}/message"))
+                .json(&json!({
+                    "channel_id":"automatic-http",
+                    "sender_id":"local",
+                    "text":format!("turn {index} {}", "detail ".repeat(80))
+                }))
+                .send()
+                .await
+                .unwrap();
+            assert_eq!(response.status(), StatusCode::OK);
+        }
+
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "automatic-http")
+        };
+        let session_id = store.current_entry_for_source(&source).unwrap().session_id;
+        let live = db.load_history(&session_id, 0).unwrap();
+        assert_eq!(live.len(), 8);
+        assert_eq!(
+            live[0]
+                .content
+                .split_whitespace()
+                .take(2)
+                .collect::<Vec<_>>(),
+            ["turn", "0"]
+        );
+        assert!(live[2]
+            .content
+            .starts_with(crate::compression_prompt::SUMMARY_PREFIX));
+        assert!(live[6].content.starts_with("turn 3 "));
+        assert_eq!(live[7].content, "answer");
+
+        let calls = calls.lock().unwrap();
+        assert_eq!(
+            calls.iter().filter(|body| body["stream"] == false).count(),
+            1
+        );
+        let summary_index = calls
+            .iter()
+            .position(|body| body["stream"] == false)
+            .unwrap();
+        let final_index = calls
+            .iter()
+            .rposition(|body| body["stream"] == true)
+            .unwrap();
+        assert!(summary_index < final_index);
+        assert!(!calls[summary_index].to_string().contains("turn 3"));
+        assert!(calls[final_index].to_string().contains("turn 3"));
+        assert!(calls[final_index]
+            .to_string()
+            .contains(crate::compression_prompt::SUMMARY_PREFIX));
     }
 
     #[tokio::test]

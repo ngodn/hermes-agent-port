@@ -236,6 +236,7 @@ pub struct NativeAgentClient {
     reasoning_config: Option<Value>,
     reasoning_echo: bool,
     output_cap: Option<Value>,
+    context_length: u64,
     request_overrides: serde_json::Map<String, Value>,
     cache_scope: Option<String>,
     /// Already assembled conversation prompt. Clones share the same immutable
@@ -276,6 +277,7 @@ impl NativeAgentClient {
             reasoning_config: None,
             reasoning_echo: false,
             output_cap: None,
+            context_length: 256_000,
             request_overrides: Default::default(),
             cache_scope: None,
             system_prompt: None,
@@ -358,6 +360,11 @@ impl NativeAgentClient {
 
     pub fn with_output_cap(mut self, cap: Option<Value>) -> Self {
         self.output_cap = cap;
+        self
+    }
+
+    pub fn with_context_length(mut self, context_length: u64) -> Self {
+        self.context_length = context_length.max(1);
         self
     }
 
@@ -715,6 +722,53 @@ impl AgentClient for NativeAgentClient {
         }
     }
 
+    async fn compression_preflight(
+        &self,
+        _context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+    ) -> Result<Option<crate::agent::CompressionPreflight>> {
+        let prompted_history = self.system_prompt.as_ref().map(|prompt| {
+            let mut messages = Vec::with_capacity(history.len() + 1);
+            messages.push(crate::session_db::HistoryMessage {
+                role: "system".into(),
+                content: prompt.to_string(),
+                api_content: None,
+            });
+            messages.extend_from_slice(history);
+            messages
+        });
+        let history = prompted_history.as_deref().unwrap_or(history);
+        let mut body = build_request_body_with_content(&self.model, history, &msg.model_content());
+        if !self.tools.is_empty() {
+            body["tools"] = Value::Array(
+                self.tools
+                    .iter()
+                    .map(|tool| crate::native_tools::tool_spec_json(&tool.spec()))
+                    .collect(),
+            );
+        }
+        self.apply_provider_extras(&mut body)?;
+        let max_output_tokens = body
+            .get("max_completion_tokens")
+            .or_else(|| body.get("max_tokens"))
+            .and_then(crate::python_value::integer)
+            .and_then(|value| value.as_u64())
+            .filter(|value| *value > 0);
+        let bytes = serde_json::to_vec(&body)
+            .map_err(|error| Error::Other(format!("compression request sizing failed: {error}")))?;
+        let request_tokens = u64::try_from(bytes.len())
+            .unwrap_or(u64::MAX)
+            .saturating_add(3)
+            / 4;
+        Ok(Some(crate::agent::CompressionPreflight {
+            model: self.model.clone(),
+            context_length: self.context_length,
+            max_output_tokens,
+            request_tokens,
+        }))
+    }
+
     async fn finalize_turn_after_persist(
         &self,
         _context: crate::agent::TurnContext<'_>,
@@ -928,6 +982,43 @@ impl ChatModel for NativeAgentClient {
 
 #[cfg(test)]
 mod tests {
+    #[tokio::test]
+    async fn compression_preflight_sizes_frozen_prompt_tools_and_output_reservation() {
+        use crate::agent::AgentClient;
+        use std::sync::Arc;
+
+        let mut message: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"same", "sender_id":"user", "text":"current"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("session".into());
+        let history = [crate::session_db::HistoryMessage {
+            role: "user".into(),
+            content: "prior".into(),
+            api_content: None,
+        }];
+        let base = super::NativeAgentClient::new("gpt-4o", "key", "http://localhost")
+            .unwrap()
+            .with_context_length(123_456);
+        let plain = base
+            .compression_preflight(crate::agent::TurnContext::default(), &message, &history)
+            .await
+            .unwrap()
+            .unwrap();
+        let rich = base
+            .with_system_prompt("frozen system prompt ".repeat(20))
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .compression_preflight(crate::agent::TurnContext::default(), &message, &history)
+            .await
+            .unwrap()
+            .unwrap();
+        assert_eq!(rich.model, "gpt-4o");
+        assert_eq!(rich.context_length, 123_456);
+        assert_eq!(rich.max_output_tokens, Some(4096));
+        assert!(rich.request_tokens > plain.request_tokens);
+    }
+
     #[test]
     fn native_client_owns_callback_free_restored_plugin_snapshot() {
         let expected = crate::plugin_prompt::Section {

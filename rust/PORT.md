@@ -1,5 +1,55 @@
 # Hermes Rust rewrite
 
+## Native automatic compression checkpoint: 2026-09-08
+
+Automatic compression now runs on native HTTP and push ingress after stable
+route, transcript, and cross-process lineage admission, but before the inbound
+user message is persisted. The triggering message contributes to request
+pressure without being included in the older history sent to the summarizer.
+
+Pressure sizing uses the native provider-visible request after the immutable
+system prompt, full active transcript, inbound structured content, frozen tool
+schemas, request hooks, cache fields, and output cap are applied. Model context
+comes from explicit overrides or the native models.dev resolver. Threshold
+policy matches Python's output reservation, small-window 75% adjustment, 64K
+floor, 85% degenerate cap, absolute token cap, longest model override, and
+configured attempt limit. The old Rust-only 40-message history cutoff is gone.
+
+The first pass preserves a complete initial turn and the configured recent
+tail, then decays head protection after a durable checkpoint. SQLite clones
+the protected prefix before the summary and the protected or concurrently
+appended tail after it, retaining every wider message column. Default in-place
+mode keeps the session and cached client. Explicit rotation publishes a child,
+rebinds the process lease, closes the parent, and continues the triggering turn
+on the child.
+
+Summary failures arm a durable 600-second cooldown. Non-shrinking results add
+an ineffective strike and the second strike arms a 300-second recovery window.
+An expired breaker allows one recovery probe, and successful publication clears
+the guards. HTTP and push integration tests prove ordering and both publication
+modes.
+
+AGY and Claude were used as different team lanes through the requested helper
+scripts. AGY owned pure policy parsing and decisions. Claude owned durable
+SQLite guard state. The main lane verified both against Python, corrected
+mistakes in each, and owned request sizing, locking, publication, ingress, and
+end-to-end tests. The disposition is recorded in
+[native-automatic-compression-resolution.md](analysis/native-automatic-compression-resolution.md).
+
+Full workspace validation is **1,589 passed, two ignored**. The selected Python
+automatic threshold and guard oracle is **26 passed** under Python 3.11.15.
+Formatting, Clippy with warnings denied, and `git diff --check` pass.
+
+The refreshed [weighted full-port audit](analysis/progress-audit-2026-09-08.md)
+is **44.05 points, reported as about 44%** (rough range 42% to 46%). This is a
+real production vertical slice, not complete compressor parity. Provider usage
+recalibration, token-budget tail selection, exact raw-count role-collision
+handling, deterministic pruning, micro-compaction, structural backoff, final
+request savings measurement, overflow recovery, auxiliary summary routing,
+memory checkpoints, extension notifications, and aggressive deletion remain.
+After those, the largest seams are native plugin and external-memory managers,
+extension-host recovery, and the broader tool runtime and agent loop.
+
 ## Native in-place compression checkpoint: 2026-09-08
 
 Manual `/compress` and `/compact` now match Python's default

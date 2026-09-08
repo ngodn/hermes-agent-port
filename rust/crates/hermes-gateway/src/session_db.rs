@@ -91,6 +91,40 @@ pub struct CompressionSnapshot {
     pub messages: Vec<CompressionHistoryMessage>,
 }
 
+/// Exact durable compression-guard state for one session, read straight from
+/// the `sessions` row without any wall-clock filtering. The caller compares
+/// `cooldown_until` against its own clock; the load never deletes an expired
+/// row. Mirrors the columns behind `hermes_state.py`'s
+/// `get_compression_failure_cooldown_row`, `get_compression_ineffective_count`,
+/// and `get_compression_recovery_deadline`.
+#[derive(Debug, Clone, PartialEq)]
+pub struct CompressionGuardState {
+    /// False when no `sessions` row exists for the id (or the id was empty).
+    pub session_exists: bool,
+    /// Stored failure-cooldown deadline (wall-clock epoch seconds), or `None`
+    /// when the column is NULL. Exact, never expiry-filtered.
+    pub cooldown_until: Option<f64>,
+    /// Latest stored failure diagnostic, or `None` when NULL.
+    pub cooldown_error: Option<String>,
+    /// Ineffective-compaction strike count, normalized nonnegative on read.
+    pub ineffective_count: i64,
+    /// Anti-thrash recovery deadline (wall-clock epoch seconds); `0.0` means
+    /// "not armed". Normalized nonnegative on read.
+    pub recovery_deadline: f64,
+}
+
+impl Default for CompressionGuardState {
+    fn default() -> Self {
+        Self {
+            session_exists: false,
+            cooldown_until: None,
+            cooldown_error: None,
+            ineffective_count: 0,
+            recovery_deadline: 0.0,
+        }
+    }
+}
+
 impl HistoryMessage {
     /// Decode the stored `content` back into the model-facing value, ported from
     /// hermes_state.py `SessionDB._decode_content`.
@@ -152,7 +186,6 @@ pub struct SearchHit {
 }
 
 /// How many prior messages to feed a stateless backend as context.
-pub const HISTORY_LIMIT: usize = 40;
 pub const MAX_SESSION_TITLE_LENGTH: usize = 100;
 
 #[derive(Debug)]
@@ -270,7 +303,10 @@ pub fn begin_turn(
         Some(&msg.channel_id),
         msg.chat_type.as_deref(),
     );
-    let prior = db.load_history(&sid, HISTORY_LIMIT).unwrap_or_default();
+    // Python sends the full active transcript and relies on compression to
+    // bound it. A fixed tail silently dropped older context and also made
+    // request-pressure compression impossible to trigger accurately.
+    let prior = db.load_history(&sid, 0).unwrap_or_default();
     // Persist the structured model content (plain text or an array of typed
     // text/image_url parts) through the existing append path, encoding it to the
     // TEXT column exactly as hermes_state.py does on write. This is the only DB
@@ -409,7 +445,7 @@ fn phase_after_assistant(tool_calls: Option<&str>) -> Option<TailPhase> {
 /// A retained tail must begin with a user and end with a final assistant. Each
 /// tool result must answer exactly one id advertised by the preceding
 /// assistant, and chained assistant tool calls remain in the same user turn.
-fn complete_turn_sequence(rows: &[(String, Option<String>, Option<String>)]) -> bool {
+pub(crate) fn complete_turn_sequence(rows: &[(String, Option<String>, Option<String>)]) -> bool {
     let mut phase = TailPhase::User;
     for (role, tool_calls, tool_call_id) in rows {
         match &mut phase {
@@ -457,6 +493,53 @@ fn active_transcript_counts(conn: &Connection, session_id: &str) -> rusqlite::Re
             total.saturating_add(i64::try_from(count).unwrap_or(i64::MAX))
         });
     Ok((message_count, tool_call_count))
+}
+
+fn clone_messages_by_id(
+    tx: &rusqlite::Transaction<'_>,
+    target_session_id: &str,
+    ids: &[i64],
+) -> rusqlite::Result<()> {
+    if ids.is_empty() {
+        return Ok(());
+    }
+    let columns = {
+        let mut query = tx.prepare("PRAGMA table_info(messages)")?;
+        let values = query
+            .query_map([], |row| row.get::<_, String>(1))?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        values
+    };
+    let cloned = columns
+        .into_iter()
+        .filter(|column| {
+            !matches!(
+                column.as_str(),
+                "id" | "session_id" | "active" | "compacted"
+            )
+        })
+        .collect::<Vec<_>>();
+    if cloned.is_empty() {
+        return Ok(());
+    }
+    let identifiers = cloned
+        .iter()
+        .map(|column| format!("\"{}\"", column.replace('"', "\"\"")))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let placeholders = std::iter::repeat_n("?", ids.len())
+        .collect::<Vec<_>>()
+        .join(",");
+    let sql = format!(
+        "INSERT INTO messages (session_id, {identifiers}, active, compacted)
+         SELECT ?, {identifiers}, 1, 0 FROM messages
+         WHERE id IN ({placeholders}) ORDER BY id"
+    );
+    let mut values = Vec::<rusqlite::types::Value>::with_capacity(ids.len() + 1);
+    values.push(target_session_id.to_owned().into());
+    values.extend(ids.iter().copied().map(Into::into));
+    tx.execute(&sql, rusqlite::params_from_iter(values))?;
+    Ok(())
 }
 
 /// Ownership is derived from the database path, never the active profile.
@@ -582,6 +665,7 @@ pub struct GatewayCompressionPublish<'a> {
     pub parent_id: &'a str,
     pub child_id: &'a str,
     pub compacted_messages: &'a [HistoryMessage],
+    pub prefix_end_id: Option<i64>,
     pub tail_start_id: Option<i64>,
     pub watermark: i64,
     pub turn_lease_holder: Option<&'a str>,
@@ -592,6 +676,7 @@ pub struct GatewayInPlaceCompressionPublish<'a> {
     pub session_key: &'a str,
     pub session_id: &'a str,
     pub compacted_messages: &'a [HistoryMessage],
+    pub prefix_end_id: Option<i64>,
     pub tail_start_id: Option<i64>,
     pub watermark: i64,
     pub turn_lease_holder: Option<&'a str>,
@@ -1067,6 +1152,128 @@ impl SessionDb {
             .unwrap_or_else(|| id.to_owned()))
     }
 
+    /// Load the exact durable compression-guard state for one session in a
+    /// single read. Combines the columns behind Python's
+    /// `get_compression_failure_cooldown_row`, `get_compression_ineffective_count`,
+    /// and `get_compression_recovery_deadline`. Values are returned verbatim
+    /// (cooldown deadline not expiry-filtered); the caller owns the wall-clock
+    /// comparison. Strike count and recovery deadline are normalized
+    /// nonnegative exactly like the Python getters. An empty id or absent row
+    /// yields `session_exists = false` with default fields.
+    pub fn load_compression_guard_state(
+        &self,
+        session_id: &str,
+    ) -> rusqlite::Result<CompressionGuardState> {
+        if session_id.is_empty() {
+            return Ok(CompressionGuardState::default());
+        }
+        let conn = self.conn.lock().unwrap();
+        let row = conn
+            .query_row(
+                "SELECT compression_failure_cooldown_until, compression_failure_error, \
+                 compression_ineffective_count, compression_recovery_deadline \
+                 FROM sessions WHERE id = ?",
+                [session_id],
+                |row| {
+                    Ok((
+                        row.get::<_, Option<f64>>(0)?,
+                        row.get::<_, Option<String>>(1)?,
+                        row.get::<_, Option<i64>>(2)?,
+                        row.get::<_, Option<f64>>(3)?,
+                    ))
+                },
+            )
+            .optional()?;
+        let Some((cooldown_until, cooldown_error, ineffective_count, recovery_deadline)) = row
+        else {
+            return Ok(CompressionGuardState::default());
+        };
+        Ok(CompressionGuardState {
+            session_exists: true,
+            cooldown_until,
+            cooldown_error,
+            // Normalize like Python's `max(0, int(value or 0))` /
+            // `max(0.0, float(value or 0.0))`, so a NULL or negative stored
+            // value reads as an unarmed guard.
+            ineffective_count: ineffective_count.unwrap_or(0).max(0),
+            recovery_deadline: recovery_deadline.unwrap_or(0.0).max(0.0),
+        })
+    }
+
+    /// Persist a compression-failure cooldown, merging with any longer live
+    /// deadline so a later shorter write cannot reopen the thrash window. The
+    /// error column always takes the latest diagnostic. Ported from Python's
+    /// `record_compression_failure_cooldown`. Returns false (no write) for an
+    /// empty id, and false when no session row matched so a missing session is
+    /// never reported as a successful update.
+    pub fn record_compression_failure_cooldown(
+        &self,
+        session_id: &str,
+        cooldown_until: f64,
+        error: Option<&str>,
+    ) -> rusqlite::Result<bool> {
+        if session_id.is_empty() {
+            return Ok(false);
+        }
+        let changed = self.conn.lock().unwrap().execute(
+            "UPDATE sessions SET compression_failure_cooldown_until = CASE \
+             WHEN compression_failure_cooldown_until IS NOT NULL \
+              AND compression_failure_cooldown_until > ? \
+             THEN compression_failure_cooldown_until ELSE ? END, \
+             compression_failure_error = ? WHERE id = ?",
+            params![cooldown_until, cooldown_until, error, session_id],
+        )?;
+        Ok(changed == 1)
+    }
+
+    /// Clear any persisted compression-failure cooldown for a session. Ported
+    /// from Python's `clear_compression_failure_cooldown`. Returns false for an
+    /// empty id or when no session row matched.
+    pub fn clear_compression_failure_cooldown(&self, session_id: &str) -> rusqlite::Result<bool> {
+        if session_id.is_empty() {
+            return Ok(false);
+        }
+        let changed = self.conn.lock().unwrap().execute(
+            "UPDATE sessions SET compression_failure_cooldown_until = NULL, \
+             compression_failure_error = NULL WHERE id = ?",
+            [session_id],
+        )?;
+        Ok(changed == 1)
+    }
+
+    /// Atomically persist the durable anti-thrash breaker: the ineffective
+    /// strike count and the recovery deadline, both normalized nonnegative.
+    /// Combines Python's `set_compression_ineffective_count` and
+    /// `set_compression_recovery_deadline` in one write so a resumed
+    /// compressor can never observe a half-updated breaker. A zero deadline is
+    /// stored as NULL, matching Python's disarmed state.
+    /// Returns false for an empty id or when no session row matched.
+    pub fn set_compression_breaker(
+        &self,
+        session_id: &str,
+        ineffective_count: i64,
+        recovery_deadline: f64,
+    ) -> rusqlite::Result<bool> {
+        if session_id.is_empty() {
+            return Ok(false);
+        }
+        let count = ineffective_count.max(0);
+        // Guard against NaN: `max` on a NaN deadline would carry it through
+        // and poison later comparisons.
+        let deadline = if recovery_deadline.is_finite() {
+            recovery_deadline.max(0.0)
+        } else {
+            0.0
+        };
+        let stored_deadline = (deadline > 0.0).then_some(deadline);
+        let changed = self.conn.lock().unwrap().execute(
+            "UPDATE sessions SET compression_ineffective_count = ?, \
+             compression_recovery_deadline = ? WHERE id = ?",
+            params![count, stored_deadline, session_id],
+        )?;
+        Ok(changed == 1)
+    }
+
     /// Create or enrich a session atomically, retaining first-writer metadata
     /// and inheriting compression routing before the new row becomes visible.
     pub fn create_session(&self, id: &str, create: &SessionCreate<'_>) -> rusqlite::Result<()> {
@@ -1485,6 +1692,10 @@ impl SessionDb {
             || change.child_id.is_empty()
             || change.parent_id == change.child_id
             || change.compacted_messages.is_empty()
+            || change
+                .prefix_end_id
+                .zip(change.tail_start_id)
+                .is_some_and(|(prefix, tail)| prefix >= tail)
         {
             return Ok(false);
         }
@@ -1537,35 +1748,59 @@ impl SessionDb {
             return Ok(false);
         }
 
-        let clone_predicate = if change.tail_start_id.is_some() {
-            "id >= ?3"
-        } else {
-            "id > ?3"
-        };
         let role_predicate = if change.tail_start_id.is_some() {
             "id >= ?2"
         } else {
             "id > ?2"
         };
         let clone_start = change.tail_start_id.unwrap_or(change.watermark);
-        let clone_rows = {
+        let tail_rows = {
             let sql = format!(
-                "SELECT role, tool_calls, tool_call_id FROM messages WHERE session_id = ?1 AND active = 1
+                "SELECT id, role, tool_calls, tool_call_id FROM messages WHERE session_id = ?1 AND active = 1
                  AND {role_predicate} ORDER BY id"
             );
             let mut query = tx.prepare(&sql)?;
             let roles = query
                 .query_map(params![change.parent_id, clone_start], |row| {
                     Ok((
-                        row.get::<_, String>(0)?,
-                        row.get::<_, Option<String>>(1)?,
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, String>(1)?,
                         row.get::<_, Option<String>>(2)?,
+                        row.get::<_, Option<String>>(3)?,
                     ))
                 })?
                 .collect::<rusqlite::Result<Vec<_>>>()?;
             roles
         };
-        if !complete_turn_sequence(&clone_rows) {
+        let prefix_rows = match change.prefix_end_id {
+            Some(prefix_end) => {
+                let mut query = tx.prepare(
+                    "SELECT id, role, tool_calls, tool_call_id FROM messages
+                     WHERE session_id = ? AND active = 1 AND id <= ? ORDER BY id",
+                )?;
+                let rows = query
+                    .query_map(params![change.parent_id, prefix_end], |row| {
+                        Ok((
+                            row.get::<_, i64>(0)?,
+                            row.get::<_, String>(1)?,
+                            row.get::<_, Option<String>>(2)?,
+                            row.get::<_, Option<String>>(3)?,
+                        ))
+                    })?
+                    .collect::<rusqlite::Result<Vec<_>>>()?;
+                rows
+            }
+            None => Vec::new(),
+        };
+        let prefix_roles = prefix_rows
+            .iter()
+            .map(|(_, role, calls, call_id)| (role.clone(), calls.clone(), call_id.clone()))
+            .collect::<Vec<_>>();
+        let tail_roles = tail_rows
+            .iter()
+            .map(|(_, role, calls, call_id)| (role.clone(), calls.clone(), call_id.clone()))
+            .collect::<Vec<_>>();
+        if !complete_turn_sequence(&prefix_roles) || !complete_turn_sequence(&tail_roles) {
             // A protected or concurrent tail ending on an unanswered user turn
             // would make the next real user message violate role alternation.
             return Ok(false);
@@ -1608,6 +1843,10 @@ impl SessionDb {
             return Ok(false);
         }
 
+        let prefix_ids = prefix_rows.iter().map(|row| row.0).collect::<Vec<_>>();
+        let tail_ids = tail_rows.iter().map(|row| row.0).collect::<Vec<_>>();
+        clone_messages_by_id(&tx, change.child_id, &prefix_ids)?;
+
         for (index, message) in change.compacted_messages.iter().enumerate() {
             tx.execute(
                 "INSERT INTO messages
@@ -1624,38 +1863,7 @@ impl SessionDb {
             )?;
         }
 
-        let columns = {
-            let mut query = tx.prepare("PRAGMA table_info(messages)")?;
-            let columns = query
-                .query_map([], |row| row.get::<_, String>(1))?
-                .collect::<rusqlite::Result<Vec<_>>>()?;
-            columns
-        };
-        let cloned = columns
-            .into_iter()
-            .filter(|column| {
-                !matches!(
-                    column.as_str(),
-                    "id" | "session_id" | "active" | "compacted"
-                )
-            })
-            .collect::<Vec<_>>();
-        if !cloned.is_empty() {
-            let identifiers = cloned
-                .iter()
-                .map(|column| format!("\"{}\"", column.replace('"', "\"\"")))
-                .collect::<Vec<_>>()
-                .join(", ");
-            let sql = format!(
-                "INSERT INTO messages (session_id, {identifiers}, active, compacted)
-                 SELECT ?1, {identifiers}, 1, 0 FROM messages
-                 WHERE session_id = ?2 AND active = 1 AND {clone_predicate} ORDER BY id"
-            );
-            tx.execute(
-                &sql,
-                params![change.child_id, change.parent_id, clone_start,],
-            )?;
-        }
+        clone_messages_by_id(&tx, change.child_id, &tail_ids)?;
         let (active, tool_calls) = active_transcript_counts(&tx, change.child_id)?;
         tx.execute(
             "UPDATE sessions SET message_count = ?, tool_call_count = ?, last_activity_at = ?
@@ -1692,6 +1900,10 @@ impl SessionDb {
             || change.session_key.is_empty()
             || change.session_id.is_empty()
             || change.compacted_messages.is_empty()
+            || change
+                .prefix_end_id
+                .zip(change.tail_start_id)
+                .is_some_and(|(prefix, tail)| prefix >= tail)
         {
             return Ok(false);
         }
@@ -1755,7 +1967,7 @@ impl SessionDb {
             "id > ?2"
         };
         let clone_start = change.tail_start_id.unwrap_or(change.watermark);
-        let clone_rows = {
+        let tail_rows = {
             let sql = format!(
                 "SELECT id, role, tool_calls, tool_call_id FROM messages
                  WHERE session_id = ?1 AND active = 1 AND {predicate} ORDER BY id"
@@ -1773,16 +1985,49 @@ impl SessionDb {
                 .collect::<rusqlite::Result<Vec<_>>>()?;
             rows
         };
-        let roles = clone_rows
+        let prefix_rows = match change.prefix_end_id {
+            Some(prefix_end) => {
+                let mut query = tx.prepare(
+                    "SELECT id, role, tool_calls, tool_call_id FROM messages
+                     WHERE session_id = ? AND active = 1 AND id <= ? ORDER BY id",
+                )?;
+                let rows = query
+                    .query_map(params![change.session_id, prefix_end], |row| {
+                        Ok((
+                            row.get::<_, i64>(0)?,
+                            row.get::<_, String>(1)?,
+                            row.get::<_, Option<String>>(2)?,
+                            row.get::<_, Option<String>>(3)?,
+                        ))
+                    })?
+                    .collect::<rusqlite::Result<Vec<_>>>()?;
+                rows
+            }
+            None => Vec::new(),
+        };
+        let prefix_roles = prefix_rows
             .iter()
             .map(|(_, role, calls, call_id)| (role.clone(), calls.clone(), call_id.clone()))
             .collect::<Vec<_>>();
-        if !complete_turn_sequence(&roles) {
+        let tail_roles = tail_rows
+            .iter()
+            .map(|(_, role, calls, call_id)| (role.clone(), calls.clone(), call_id.clone()))
+            .collect::<Vec<_>>();
+        if !complete_turn_sequence(&prefix_roles) || !complete_turn_sequence(&tail_roles) {
             return Ok(false);
         }
-        let clone_ids = clone_rows
+        let prefix_ids = prefix_rows
             .iter()
             .map(|(id, _, _, _)| *id)
+            .collect::<Vec<_>>();
+        let tail_ids = tail_rows
+            .iter()
+            .map(|(id, _, _, _)| *id)
+            .collect::<Vec<_>>();
+        let clone_ids = prefix_ids
+            .iter()
+            .chain(&tail_ids)
+            .copied()
             .collect::<Vec<_>>();
 
         tx.execute(
@@ -1803,6 +2048,7 @@ impl SessionDb {
             values.extend(clone_ids.iter().copied().map(Into::into));
             tx.execute(&sql, rusqlite::params_from_iter(values))?;
         }
+        clone_messages_by_id(&tx, change.session_id, &prefix_ids)?;
         for (index, message) in change.compacted_messages.iter().enumerate() {
             tx.execute(
                 "INSERT INTO messages
@@ -1818,30 +2064,7 @@ impl SessionDb {
                 ],
             )?;
         }
-        if !clone_ids.is_empty() {
-            let columns = {
-                let mut query = tx.prepare("PRAGMA table_info(messages)")?;
-                let columns = query
-                    .query_map([], |row| row.get::<_, String>(1))?
-                    .collect::<rusqlite::Result<Vec<_>>>()?;
-                columns
-            };
-            let identifiers = columns
-                .into_iter()
-                .filter(|column| !matches!(column.as_str(), "id" | "active" | "compacted"))
-                .map(|column| format!("\"{}\"", column.replace('"', "\"\"")))
-                .collect::<Vec<_>>()
-                .join(", ");
-            let placeholders = std::iter::repeat_n("?", clone_ids.len())
-                .collect::<Vec<_>>()
-                .join(",");
-            let sql = format!(
-                "INSERT INTO messages ({identifiers}, active, compacted)
-                 SELECT {identifiers}, 1, 0 FROM messages
-                 WHERE id IN ({placeholders}) ORDER BY id"
-            );
-            tx.execute(&sql, rusqlite::params_from_iter(clone_ids))?;
-        }
+        clone_messages_by_id(&tx, change.session_id, &tail_ids)?;
         let (active, tool_calls) = active_transcript_counts(&tx, change.session_id)?;
         tx.execute(
             "UPDATE sessions SET message_count = ?, tool_call_count = ?, last_activity_at = ?
@@ -2187,6 +2410,13 @@ impl SessionDb {
             ("title_source", "TEXT"),
             ("hidden", "INTEGER NOT NULL DEFAULT 0"),
             ("tool_call_count", "INTEGER DEFAULT 0"),
+            ("compression_failure_cooldown_until", "REAL"),
+            ("compression_failure_error", "TEXT"),
+            (
+                "compression_ineffective_count",
+                "INTEGER NOT NULL DEFAULT 0",
+            ),
+            ("compression_recovery_deadline", "REAL"),
         ] {
             if !columns.iter().any(|column| column == name) {
                 // Names and declarations are static schema constants.
@@ -2432,7 +2662,11 @@ impl SessionDb {
                 message_count INTEGER DEFAULT 0,
                 tool_call_count INTEGER DEFAULT 0,
                 last_activity_at REAL,
-                tool_names TEXT
+                tool_names TEXT,
+                compression_failure_cooldown_until REAL,
+                compression_failure_error TEXT,
+                compression_ineffective_count INTEGER NOT NULL DEFAULT 0,
+                compression_recovery_deadline REAL
             )",
             [],
         )?;
@@ -2776,6 +3010,18 @@ impl SessionDb {
         })
     }
 
+    pub fn has_compression_checkpoint(&self, session_id: &str) -> rusqlite::Result<bool> {
+        if session_id.is_empty() {
+            return Ok(false);
+        }
+        self.conn.lock().unwrap().query_row(
+            "SELECT EXISTS(SELECT 1 FROM messages
+             WHERE session_id = ? AND _compressed_summary = 1)",
+            [session_id],
+            |row| row.get(0),
+        )
+    }
+
     /// Reconstruct the durable active transcript for lifecycle hooks. Unlike
     /// model history, this keeps stored tool metadata and the clean/API content
     /// split so an end-of-session provider sees the best available transcript.
@@ -3008,6 +3254,7 @@ mod tests {
                 session_key: "route",
                 session_id: "same",
                 compacted_messages: &compacted,
+                prefix_end_id: None,
                 tail_start_id: Some(snapshot.messages[4].id),
                 watermark: snapshot.watermark,
                 turn_lease_holder: None,
@@ -3059,6 +3306,7 @@ mod tests {
                 session_key: "route",
                 session_id: "same",
                 compacted_messages: &compacted,
+                prefix_end_id: None,
                 tail_start_id: None,
                 watermark: failed_snapshot.watermark,
                 turn_lease_holder: None,
@@ -3679,6 +3927,7 @@ mod tests {
                 parent_id: "parent",
                 child_id: "child",
                 compacted_messages: &compacted,
+                prefix_end_id: None,
                 tail_start_id: Some(snapshot.messages[4].id),
                 watermark: snapshot.watermark,
                 turn_lease_holder: None,
@@ -3756,6 +4005,7 @@ mod tests {
                 parent_id: "stale-parent",
                 child_id: "stale-child",
                 compacted_messages: &compacted,
+                prefix_end_id: None,
                 tail_start_id: None,
                 watermark: stale.watermark,
                 turn_lease_holder: None,
@@ -3795,6 +4045,7 @@ mod tests {
                 parent_id: "incomplete-parent",
                 child_id: "incomplete-child",
                 compacted_messages: &compacted,
+                prefix_end_id: None,
                 tail_start_id: None,
                 watermark: incomplete.watermark,
                 turn_lease_holder: None,
@@ -3834,6 +4085,7 @@ mod tests {
             parent_id: "rollback-parent",
             child_id: "rollback-child",
             compacted_messages: &compacted,
+            prefix_end_id: None,
             tail_start_id: None,
             watermark: rollback.watermark,
             turn_lease_holder: None,
@@ -3892,6 +4144,7 @@ mod tests {
                         parent_id: "parent",
                         child_id: child,
                         compacted_messages: &compacted,
+                        prefix_end_id: None,
                         tail_start_id: None,
                         watermark: 1,
                         turn_lease_holder: None,
@@ -5778,6 +6031,123 @@ mod tests {
             .unwrap()
         };
         assert_eq!(count, 1);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn compression_guard_state_merges_clears_and_persists_across_connections() {
+        let path = temp_db("compression_guard");
+        // Two independent connections onto the same file, as a resumed
+        // compressor in another process would see it.
+        let writer = SessionDb::open(path.clone()).unwrap();
+        let reader = SessionDb::open(path.clone()).unwrap();
+        writer.ensure_session("s", "cli", None, None, None).unwrap();
+
+        // Fresh row: exists, cooldown NULL, breaker at rest.
+        let state = reader.load_compression_guard_state("s").unwrap();
+        assert!(state.session_exists);
+        assert_eq!(state.cooldown_until, None);
+        assert_eq!(state.cooldown_error, None);
+        assert_eq!(state.ineffective_count, 0);
+        assert_eq!(state.recovery_deadline, 0.0);
+
+        // Record a cooldown, then a shorter one: merge-max keeps the longer
+        // deadline while the latest error always wins.
+        assert!(writer
+            .record_compression_failure_cooldown("s", 500.0, Some("first"))
+            .unwrap());
+        assert!(writer
+            .record_compression_failure_cooldown("s", 200.0, Some("second"))
+            .unwrap());
+        let state = reader.load_compression_guard_state("s").unwrap();
+        assert_eq!(state.cooldown_until, Some(500.0));
+        assert_eq!(state.cooldown_error.as_deref(), Some("second"));
+
+        // A longer deadline does extend it; error still replaced.
+        assert!(writer
+            .record_compression_failure_cooldown("s", 900.0, None)
+            .unwrap());
+        let state = reader.load_compression_guard_state("s").unwrap();
+        assert_eq!(state.cooldown_until, Some(900.0));
+        assert_eq!(state.cooldown_error, None);
+
+        // The load exposes the exact stored deadline even when it is already in
+        // the past; expiry interpretation belongs to the caller.
+        assert!(writer
+            .record_compression_failure_cooldown("s", 1.0, Some("expired"))
+            .unwrap());
+        assert!(writer.clear_compression_failure_cooldown("s").unwrap());
+        // Re-arm with a stale deadline and confirm it is returned verbatim.
+        assert!(writer
+            .record_compression_failure_cooldown("s", 1.0, Some("stale"))
+            .unwrap());
+        let state = reader.load_compression_guard_state("s").unwrap();
+        assert_eq!(state.cooldown_until, Some(1.0));
+
+        // Exact clearing zeroes both cooldown columns.
+        assert!(writer.clear_compression_failure_cooldown("s").unwrap());
+        let state = reader.load_compression_guard_state("s").unwrap();
+        assert_eq!(state.cooldown_until, None);
+        assert_eq!(state.cooldown_error, None);
+
+        // Breaker values normalize nonnegative; negative inputs clamp to zero.
+        assert!(writer.set_compression_breaker("s", -3, -1.0).unwrap());
+        let state = reader.load_compression_guard_state("s").unwrap();
+        assert_eq!(state.ineffective_count, 0);
+        assert_eq!(state.recovery_deadline, 0.0);
+        let raw_deadline = reader
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT compression_recovery_deadline FROM sessions WHERE id='s'",
+                [],
+                |row| row.get::<_, Option<f64>>(0),
+            )
+            .unwrap();
+        assert_eq!(raw_deadline, None);
+        assert!(writer.set_compression_breaker("s", 4, 1234.5).unwrap());
+        let state = reader.load_compression_guard_state("s").unwrap();
+        assert_eq!(state.ineffective_count, 4);
+        assert_eq!(state.recovery_deadline, 1234.5);
+
+        // Missing session: every update reports false, load reports absence.
+        assert!(!writer
+            .record_compression_failure_cooldown("missing", 10.0, Some("x"))
+            .unwrap());
+        assert!(!writer
+            .clear_compression_failure_cooldown("missing")
+            .unwrap());
+        assert!(!writer.set_compression_breaker("missing", 1, 5.0).unwrap());
+        assert!(
+            !reader
+                .load_compression_guard_state("missing")
+                .unwrap()
+                .session_exists
+        );
+
+        // Empty id fails closed on both read and write, with no row created.
+        assert!(!writer
+            .record_compression_failure_cooldown("", 10.0, None)
+            .unwrap());
+        assert!(!writer.clear_compression_failure_cooldown("").unwrap());
+        assert!(!writer.set_compression_breaker("", 1, 5.0).unwrap());
+        assert!(
+            !reader
+                .load_compression_guard_state("")
+                .unwrap()
+                .session_exists
+        );
+
+        // Reopen from disk: breaker survives, cleared cooldown stays cleared.
+        drop(writer);
+        drop(reader);
+        let reopened = SessionDb::open(path.clone()).unwrap();
+        let state = reopened.load_compression_guard_state("s").unwrap();
+        assert!(state.session_exists);
+        assert_eq!(state.cooldown_until, None);
+        assert_eq!(state.ineffective_count, 4);
+        assert_eq!(state.recovery_deadline, 1234.5);
         let _ = std::fs::remove_dir_all(path.parent().unwrap());
     }
 }

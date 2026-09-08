@@ -720,6 +720,45 @@ impl AgentClient for ConversationAgent {
         result
     }
 
+    async fn compression_preflight(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+    ) -> Result<Option<crate::agent::CompressionPreflight>> {
+        let Some(key) = Self::key(context, msg) else {
+            return self
+                .fallback
+                .compression_preflight(context, msg, history)
+                .await;
+        };
+        let cell = self.checkout(
+            &key,
+            context.database,
+            context.session_finalizable,
+            Instant::now(),
+        )?;
+        let initialized = cell
+            .get_or_try_init(|| async {
+                (self.factory)(key.0.as_path(), msg, history, context.database)
+                    .await
+                    .map_err(|error| {
+                        Error::Other(format!("conversation agent initialization failed: {error}"))
+                    })
+            })
+            .await;
+        let client = match initialized {
+            Ok(client) => client.clone(),
+            Err(error) => {
+                self.finish_turn(&key, &cell, true);
+                return Err(error);
+            }
+        };
+        let result = client.compression_preflight(context, msg, history).await;
+        self.finish_turn(&key, &cell, result.is_err());
+        result
+    }
+
     async fn finalize_turn_after_persist(
         &self,
         context: crate::agent::TurnContext<'_>,
@@ -810,6 +849,24 @@ mod tests {
                 .unwrap()
                 .push(format!("summary:{}", self.label));
             Ok(Some("summary".into()))
+        }
+
+        async fn compression_preflight(
+            &self,
+            _context: crate::agent::TurnContext<'_>,
+            _msg: &Message,
+            _history: &[crate::session_db::HistoryMessage],
+        ) -> Result<Option<crate::agent::CompressionPreflight>> {
+            self.calls
+                .lock()
+                .unwrap()
+                .push(format!("preflight:{}", self.label));
+            Ok(Some(crate::agent::CompressionPreflight {
+                model: self.label.clone(),
+                context_length: 1_000,
+                max_output_tokens: Some(100),
+                request_tokens: 500,
+            }))
         }
 
         async fn close_conversation(
@@ -940,6 +997,15 @@ mod tests {
         let message = message("compressed");
         assert_eq!(
             agent
+                .compression_preflight(context(Path::new("home")), &message, &[])
+                .await
+                .unwrap()
+                .unwrap()
+                .request_tokens,
+            500
+        );
+        assert_eq!(
+            agent
                 .summarize_context(context(Path::new("home")), &message, &[], Some("focus"))
                 .await
                 .unwrap()
@@ -951,7 +1017,10 @@ mod tests {
         tokio::task::yield_now().await;
         assert!(!agent.contains(Path::new("home"), "compressed"));
         assert_eq!(builds.load(Ordering::SeqCst), 1);
-        assert_eq!(*calls.lock().unwrap(), ["summary:home:0"]);
+        assert_eq!(
+            *calls.lock().unwrap(),
+            ["preflight:home:0", "summary:home:0"]
+        );
         assert_eq!(*closes.lock().unwrap(), [false]);
     }
 

@@ -24,7 +24,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 - Manual native compression defaults to same-session in-place publication and
   keeps rotation behind `compression.in_place: false`. Both paths use a
   redacted, tool-aware checkpoint under the shared `session_turn_leases`
-  protocol. Automatic compression remains open.
+  protocol.
+- Automatic native compression runs before inbound persistence on HTTP and
+  push ingress. It sizes the frozen provider request, preserves complete head
+  and tail regions, supports in-place and rotation publication, and persists
+  cooldown and anti-thrash guards. Provider usage, pruning, token-budget tails,
+  auxiliary routing, and hooks remain open.
 
 ## Rejected paths
 
@@ -42,6 +47,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-automatic-compression-resolution.md](native-automatic-compression-resolution.md) | Live pre-turn request-pressure compression on HTTP and push, complete prefix/tail publication, durable guards, helper corrections, validation, and explicit remaining parity |
+| [automatic-compression-policy-agy.md](automatic-compression-policy-agy.md) | AGY's bounded pure-policy lane plus the source-verified corrections applied before integration |
+| [automatic-compression-guards-claude.md](automatic-compression-guards-claude.md) | Claude's separate SQLite guard lane plus the nullable-deadline correction and runtime use |
 | [native-in-place-compression-resolution.md](native-in-place-compression-resolution.md) | Implemented Python-default same-session publication, soft-archive recall semantics, byte-exact tail cloning, live counters, rollback, cache retention, and explicit remaining work |
 | [automatic-compression-map-agy.md](automatic-compression-map-agy.md) | AGY's bounded source map of automatic thresholds, retry/rearm state, pruning, micro-compaction, and safe Rust insertion points |
 | [compression-hooks-model-map-claude.md](compression-hooks-model-map-claude.md) | Claude's separate bounded source map of auxiliary routing, cooldowns, checkpoint hooks, notifications, and in-place policy |

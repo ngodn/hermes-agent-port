@@ -43,6 +43,14 @@ pub struct TurnContext<'a> {
     pub session_finalizable: bool,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CompressionPreflight {
+    pub model: String,
+    pub context_length: u64,
+    pub max_output_tokens: Option<u64>,
+    pub request_tokens: u64,
+}
+
 impl<'a> TurnContext<'a> {
     pub fn from_database(database: Option<&'a crate::session_db::SessionDb>) -> Self {
         Self {
@@ -102,6 +110,20 @@ pub trait AgentClient: Send + Sync {
         focus_topic: Option<&str>,
     ) -> Result<Option<String>> {
         let _ = (context, msg, history, focus_topic);
+        Ok(None)
+    }
+
+    /// Measure the provider-visible request before any provider I/O. Native
+    /// clients include the frozen system prompt, history, inbound content and
+    /// frozen tool schemas. `None` keeps bridge backends on their existing
+    /// compression implementation.
+    async fn compression_preflight(
+        &self,
+        context: TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::HistoryMessage],
+    ) -> Result<Option<CompressionPreflight>> {
+        let _ = (context, msg, history);
         Ok(None)
     }
 

@@ -292,8 +292,11 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                             &publish_source,
                             &publish_entry,
                             &compacted,
-                            tail_start_id,
-                            watermark,
+                            crate::session_store::CompressionRanges {
+                                prefix_end_id: None,
+                                tail_start_id,
+                                watermark,
+                            },
                             _durable_lease.as_ref().map(|lease| lease.holder()),
                         )
                     })
@@ -336,8 +339,11 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                         &publish_source,
                         &publish_entry,
                         &compacted,
-                        tail_start_id,
-                        watermark,
+                        crate::session_store::CompressionRanges {
+                            prefix_end_id: None,
+                            tail_start_id,
+                            watermark,
+                        },
                         _durable_lease.as_ref().map(|lease| lease.holder()),
                     )
                 })

@@ -11,6 +11,7 @@ mod atomic_file;
 mod audio_process;
 mod auth_store;
 mod authz;
+mod automatic_compression;
 mod bot_mode;
 mod browser_control_artifacts;
 mod browser_control_broker;
@@ -209,6 +210,7 @@ struct NativeConversationState {
     tools: Vec<Arc<dyn crate::native_tools::Tool>>,
     plugin_prompt: crate::plugin_prompt::Snapshot,
     extension_host: Option<crate::extension_host::Client>,
+    context_length: u64,
 }
 
 fn registered_native_tools() -> Vec<Arc<dyn crate::native_tools::Tool>> {
@@ -512,7 +514,8 @@ fn build_agent_client_for_home(
                         c = c
                             .with_system_prompt(state.system_prompt)
                             .with_plugin_prompt_snapshot(state.plugin_prompt)
-                            .with_extension_host(state.extension_host);
+                            .with_extension_host(state.extension_host)
+                            .with_context_length(state.context_length);
                     }
                     return Ok(Arc::new(c));
                 }
@@ -730,6 +733,10 @@ async fn build_conversation_client(
     } else {
         fresh_tools
     };
+    let context_length = models_dev::ModelsDev::new(home.to_path_buf(), &selected)
+        .context_window(&provider, &model, &selected, true)
+        .await
+        .unwrap_or(256_000);
     build_agent_client_for_home(
         config,
         &selected,
@@ -740,6 +747,7 @@ async fn build_conversation_client(
             tools,
             plugin_prompt,
             extension_host: extension.map(|(client, _)| client),
+            context_length,
         }),
     )
 }

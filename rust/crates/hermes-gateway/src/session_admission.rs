@@ -16,6 +16,9 @@ pub struct AdmittedSession {
     pub predecessor_id: Option<String>,
     pub lease: Option<crate::turn_lease::TurnLeaseToken>,
     pub durable_lease: Option<crate::durable_turn_lease::DurableTurnLease>,
+    /// Held only through pre-turn maintenance. The caller drops it before
+    /// provider I/O, after any automatic route rotation is published.
+    pub route_lease: Option<crate::turn_lease::TurnLeaseToken>,
 }
 
 #[derive(Clone)]
@@ -107,7 +110,6 @@ pub async fn admit_turn(
         .map_err(|error| anyhow::anyhow!("session verifier worker failed: {error}"))??;
 
         if let Some((finalizable, predecessor_id)) = verified {
-            drop(route_token);
             return Ok(AdmittedSession {
                 entry,
                 database,
@@ -115,6 +117,7 @@ pub async fn admit_turn(
                 predecessor_id,
                 lease: token,
                 durable_lease,
+                route_lease: route_token,
             });
         }
         drop(durable_lease);
