@@ -26,6 +26,8 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-plugin-memory-manager-map-agy.md](native-plugin-memory-manager-map-agy.md) | Gemini map of dormant native plugin/memory seams; its fixture-only manager recommendation is rejected because it has no production consumer |
+| [native-plugin-memory-manager-map-claude.md](native-plugin-memory-manager-map-claude.md) | Claude map confirming prompt order, toolset gates and Python-only providers; its empty-manager checkpoint is likewise not sufficient |
 | [frozen-conversation-state-map-agy.md](frozen-conversation-state-map-agy.md) | Gemini source map of Python tool-prefix restoration, plugin snapshots and persistence order |
 | [frozen-conversation-state-map-claude.md](frozen-conversation-state-map-claude.md) | Claude source map of the native ownership seam and deferred capability managers |
 | [frozen-conversation-state-review-agy.md](frozen-conversation-state-review-agy.md) | Gemini post-implementation audit that identified duplicate and empty-prefix edge cases |
