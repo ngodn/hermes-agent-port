@@ -243,6 +243,9 @@ pub async fn post_message(
                 checkpoint_required: crate::python_value::truthy(
                     &state.user_config["compression"]["checkpoint_required"],
                 ),
+                in_place: state.user_config["compression"]["in_place"]
+                    .as_bool()
+                    .unwrap_or(true),
             })
             .await
             .map_err(|error| {
@@ -1824,7 +1827,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn http_compression_calls_the_native_summarizer_before_rotating_history() {
+    async fn http_compression_defaults_to_same_id_in_place_publication() {
         async fn compression_model(
             State(calls): State<Arc<Mutex<Vec<Value>>>>,
             Json(body): Json<Value>,
@@ -1906,12 +1909,10 @@ mod tests {
             .to_owned();
         assert!(reply.contains("6 message(s) summarized"));
         let child = store.current_entry_for_source(&source).unwrap().session_id;
-        assert_ne!(child, parent);
-        assert_eq!(
-            db.get_session(&parent).unwrap().unwrap()["end_reason"],
-            "compression"
-        );
-        let compacted = db.load_history(&child, 0).unwrap();
+        assert_eq!(child, parent);
+        assert!(db.get_session(&parent).unwrap().unwrap()["end_reason"].is_null());
+        assert!(reply.contains("compressed in place"));
+        let compacted = db.load_history(&parent, 0).unwrap();
         assert_eq!(compacted.len(), 4);
         assert!(compacted[0]
             .content
@@ -1919,6 +1920,11 @@ mod tests {
         assert!(!compacted[0].content.contains("secretvalue123456"));
         assert!(compacted[0].content.contains("[REDACTED]"));
         assert!(compacted[2].content.starts_with("turn 3 "));
+        assert!(db
+            .search("turn", 20)
+            .unwrap()
+            .iter()
+            .any(|hit| hit.session_id == parent));
 
         let continued = send("after compression".into()).await.unwrap();
         assert_eq!(continued.status(), StatusCode::OK);

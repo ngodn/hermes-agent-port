@@ -1,5 +1,49 @@
 # Hermes Rust rewrite
 
+## Native in-place compression checkpoint: 2026-09-08
+
+Manual `/compress` and `/compact` now match Python's default
+`compression.in_place: true` behavior on HTTP and push ingress. A successful
+compression keeps the same session ID, route, frozen system prompt, transcript
+lease identity, and native conversation client. Setting
+`compression.in_place: false` keeps the existing atomic rotation behavior.
+
+The new SQLite publication path performs one `BEGIN IMMEDIATE` transaction. It
+verifies the open session, exact durable route, and optional lineage-root turn
+lease, then soft-archives summarized originals as searchable
+`active=0, compacted=1` rows. Retained and concurrently appended rows are
+re-sequenced after the summary pair through a byte-exact SQL clone, with their
+superseded originals hidden from recall as `active=0, compacted=0`. Complete
+tool groups and every wider Python message column survive the clone.
+
+Live `message_count` and `tool_call_count` are recomputed at commit. Fresh Rust
+databases now include the Python-compatible tool counter, and older/shared
+databases add it safely. FTS search includes compacted originals but continues
+to exclude rewind/undo rows. An injected insert failure proves archival flags,
+new rows, and counters roll back together.
+
+Tests prove the Python-default config, explicit rotation, same-ID continuation,
+redaction, partial-tail preservation, concurrent tool-call tail cloning,
+searchability, rollback, and that in-place compression does not evict the
+cached client. Full workspace validation is **1,572 passed, two ignored**. The
+Python in-place compaction oracle is **15 passed** under Python 3.11.15.
+Formatting, Clippy with warnings denied, and `git diff --check` pass.
+
+AGY and Claude were used through the requested helper scripts on different,
+non-overlapping work: AGY mapped automatic trigger/pruning behavior, while
+Claude mapped auxiliary routing, checkpoint/hook, cooldown, and in-place
+policy. The main implementation and source-verified disposition are recorded
+in [native-in-place-compression-resolution.md](analysis/native-in-place-compression-resolution.md).
+
+The [weighted full-port audit](analysis/progress-audit-2026-09-08.md) is
+**42.25 points, reported as about 42%** (rough range 40% to 44%). In-place
+publication raises the state and native-core inventory, but not enough to
+honestly round the overall port upward. Automatic request-pressure triggering,
+provider usage capture, retry/rearm state, pruning/micro-compaction, auxiliary
+summary routing/fallback, memory checkpoints, extension notifications,
+aggressive deletion, and the broader tool/plugin runtime remain. This is not
+completion of the full port.
+
 ## Native manual compression checkpoint: 2026-09-08
 
 Native `/compress` and `/compact` now run on both HTTP and push ingress without

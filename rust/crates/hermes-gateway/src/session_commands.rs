@@ -28,6 +28,7 @@ pub struct CompressCommand<'a> {
     pub raw_args: String,
     pub freshness_seconds: f64,
     pub checkpoint_required: bool,
+    pub in_place: bool,
 }
 
 pub struct TitleCommand {
@@ -50,8 +51,8 @@ pub struct ResumeCommand<'a> {
 }
 
 /// Preview or compress the current transcript. A live run summarizes outside
-/// SQLite, then publishes a complete rotation child under the held route and
-/// transcript leases.
+/// SQLite, then atomically publishes either an in-place live set or a rotation
+/// child under the held route and transcript leases.
 pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<CompressResult> {
     let CompressCommand {
         deps,
@@ -62,6 +63,7 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
         raw_args,
         freshness_seconds,
         checkpoint_required,
+        in_place,
     } = command;
     let route_key = deps.store.session_key_for_source(&source);
     for _ in 0..32 {
@@ -280,6 +282,51 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                         api_content: None,
                     },
                 ];
+                if in_place {
+                    let publish_store = deps.store.clone();
+                    let publish_source = source.clone();
+                    let publish_entry = entry.clone();
+                    let watermark = snapshot.watermark;
+                    let committed = tokio::task::spawn_blocking(move || {
+                        publish_store.publish_in_place_compression(
+                            &publish_source,
+                            &publish_entry,
+                            &compacted,
+                            tail_start_id,
+                            watermark,
+                            _durable_lease.as_ref().map(|lease| lease.holder()),
+                        )
+                    })
+                    .await
+                    .map_err(|error| {
+                        anyhow::anyhow!("in-place compression publisher failed: {error}")
+                    })??;
+                    if !committed {
+                        drop(transcript_token);
+                        drop(route_token);
+                        return Ok(CompressResult {
+                            reply: "⚠️ The conversation changed while its summary was being prepared, so this compression result was not applied. Inspect the current session and retry if it still needs compression.".into(),
+                        });
+                    }
+                    let tail_count = history.len().saturating_sub(head_end);
+                    let mut lines = vec![format!(
+                        "🗜️ Conversation compressed in place: {head_end} message(s) summarized into a durable checkpoint."
+                    )];
+                    if effective_partial {
+                        lines.push(format!(
+                            "Kept the last {} exchange(s) ({tail_count} message(s)) verbatim.",
+                            args.keep_last
+                        ));
+                    }
+                    if let Some(focus) = args.focus_topic {
+                        lines.push(format!("Focus: \"{focus}\""));
+                    }
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(CompressResult {
+                        reply: lines.join("\n"),
+                    });
+                }
                 let publish_store = deps.store.clone();
                 let publish_source = source.clone();
                 let publish_entry = entry.clone();
@@ -1483,6 +1530,7 @@ mod tests {
             raw_args: "--aggressive --preview here 2".into(),
             freshness_seconds: 3600.0,
             checkpoint_required: false,
+            in_place: false,
         })
         .await
         .unwrap();
@@ -1541,6 +1589,7 @@ mod tests {
             raw_args: "--preview".into(),
             freshness_seconds: 3600.0,
             checkpoint_required: false,
+            in_place: false,
         })
         .await
         .unwrap();
@@ -1614,6 +1663,7 @@ mod tests {
                 raw_args: String::new(),
                 freshness_seconds: 3600.0,
                 checkpoint_required,
+                in_place: false,
             })
             .await
             .unwrap();
@@ -1639,6 +1689,7 @@ mod tests {
             raw_args: String::new(),
             freshness_seconds: 3600.0,
             checkpoint_required: false,
+            in_place: false,
         })
         .await
         .unwrap();
@@ -1711,6 +1762,7 @@ mod tests {
             raw_args: "here 1".into(),
             freshness_seconds: 3600.0,
             checkpoint_required: false,
+            in_place: false,
         })
         .await
         .unwrap();
@@ -1734,6 +1786,87 @@ mod tests {
         assert!(child[2].content.starts_with("u3 "));
         assert!(child[3].content.starts_with("a3 "));
         assert_eq!(current.fields["last_prompt_tokens"], 0);
+        drop(database);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn in_place_compression_keeps_session_and_cached_client() {
+        let home = temp_home("compress-in-place");
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource {
+            user_id: Some("user".into()),
+            ..crate::session::SessionSource::new("local", "compress-in-place")
+        };
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let database = store.materialize_session_entry(&entry, &source).unwrap();
+        for index in 0..4 {
+            database
+                .append_message(
+                    &entry.session_id,
+                    "user",
+                    &format!("u{index} {}", "work ".repeat(100)),
+                )
+                .unwrap();
+            database
+                .append_message(
+                    &entry.session_id,
+                    "assistant",
+                    &format!("a{index} {}", "result ".repeat(100)),
+                )
+                .unwrap();
+        }
+        let agent = Arc::new(SummaryAgent {
+            summaries: std::sync::atomic::AtomicUsize::new(0),
+            releases: std::sync::atomic::AtomicUsize::new(0),
+        });
+        let result = compress_session(CompressCommand {
+            deps: crate::session_admission::AdmissionDeps {
+                store: store.clone(),
+                transcript_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+                route_leases: Arc::new(crate::turn_lease::SessionTurnLeaseRegistry::default()),
+                generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
+            },
+            agent: agent.clone(),
+            source: source.clone(),
+            message: &command_message("/compress here 1", "compress-in-place"),
+            owner_key: "user".into(),
+            raw_args: "here 1".into(),
+            freshness_seconds: 3600.0,
+            checkpoint_required: false,
+            in_place: true,
+        })
+        .await
+        .unwrap();
+
+        assert!(result.reply.contains("compressed in place"));
+        assert_eq!(agent.summaries.load(std::sync::atomic::Ordering::SeqCst), 1);
+        assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 0);
+        let current = store.current_entry_for_source(&source).unwrap();
+        assert_eq!(current.session_id, entry.session_id);
+        assert!(database.get_session(&entry.session_id).unwrap().unwrap()["ended_at"].is_null());
+        let live = database.load_history(&entry.session_id, 0).unwrap();
+        assert_eq!(live.len(), 4);
+        assert!(live[0]
+            .content
+            .contains(crate::compression_prompt::SUMMARY_PREFIX));
+        assert!(live[2].content.starts_with("u3 "));
+        assert!(live[3].content.starts_with("a3 "));
         drop(database);
         drop(store);
         std::fs::remove_dir_all(home).unwrap();

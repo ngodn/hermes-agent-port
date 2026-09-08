@@ -410,6 +410,9 @@ impl Dispatcher {
                     checkpoint_required: crate::python_value::truthy(
                         &self.user_config["compression"]["checkpoint_required"],
                     ),
+                    in_place: self.user_config["compression"]["in_place"]
+                        .as_bool()
+                        .unwrap_or(true),
                 },
             )
             .await
@@ -1317,7 +1320,8 @@ mod tests {
             )
             .unwrap(),
         );
-        let (dispatcher, calls, sent) = harness("answer", json!({}));
+        let (dispatcher, calls, sent) =
+            harness("answer", json!({"compression":{"in_place":false}}));
         let dispatcher = dispatcher.with_session_store(store.clone(), 3600.0);
         for index in 0..4 {
             dispatcher

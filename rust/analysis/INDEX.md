@@ -21,9 +21,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 - Manual session titles are metadata only. They use `title_source=user`, never
   enter prompt or transcript bytes, and are serialized by the route then
   transcript lease plus an immediate SQLite transaction.
-- Manual native compression is rotation-only. It uses a redacted, tool-aware
-  checkpoint and one atomic child-first publish under the shared
-  `session_turn_leases` protocol. Automatic/in-place compression remains open.
+- Manual native compression defaults to same-session in-place publication and
+  keeps rotation behind `compression.in_place: false`. Both paths use a
+  redacted, tool-aware checkpoint under the shared `session_turn_leases`
+  protocol. Automatic compression remains open.
 
 ## Rejected paths
 
@@ -41,6 +42,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-in-place-compression-resolution.md](native-in-place-compression-resolution.md) | Implemented Python-default same-session publication, soft-archive recall semantics, byte-exact tail cloning, live counters, rollback, cache retention, and explicit remaining work |
+| [automatic-compression-map-agy.md](automatic-compression-map-agy.md) | AGY's bounded source map of automatic thresholds, retry/rearm state, pruning, micro-compaction, and safe Rust insertion points |
+| [compression-hooks-model-map-claude.md](compression-hooks-model-map-claude.md) | Claude's separate bounded source map of auxiliary routing, cooldowns, checkpoint hooks, notifications, and in-place policy |
 | [native-compression-resolution.md](native-compression-resolution.md) | Implemented manual rotation compression, accepted and rejected review findings, cross-process lease/route fixes, validation, and explicit automatic/in-place/hook deferrals |
 | [native-compression-fix-review-agy.md](native-compression-fix-review-agy.md) | Gemini fix re-review that found retained tool-group rejection, ingress timeout, structured shrink accounting, release grace, and one incorrect lock-table premise |
 | [native-compression-fix-review-claude.md](native-compression-fix-review-claude.md) | Claude fix re-review that independently found DB-only route healing, refresh teardown logging, and structured shrink accounting gaps |

@@ -19,11 +19,11 @@ audits.
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 62% | 21.70 |
 | Tool runtime and RPC | 30% | 12% | 3.60 |
-| State and search | 15% | 64% | 9.60 |
-| Native agent core | 20% | 35% | 7.00 |
-| Total | 100% | | **41.90** |
+| State and search | 15% | 65% | 9.75 |
+| Native agent core | 20% | 36% | 7.20 |
+| Total | 100% | | **42.25** |
 
-`0.35 * 62 + 0.30 * 12 + 0.15 * 64 + 0.20 * 35 = 41.90`
+`0.35 * 62 + 0.30 * 12 + 0.15 * 65 + 0.20 * 36 = 42.25`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -58,32 +58,36 @@ Terminal, file, browser, web, MCP, execution-environment backends, approval
 runtime, delegation execution, most service tools, plugin discovery/management,
 and full backend RPC account for most of this weighted area and remain.
 
-### State and search, 64%
+### State and search, 65%
 
 SQLite history, structured content replay, FTS foundations, route persistence,
 legacy recovery, peer ownership, lineage, conversation generations, prompt
 deduplication, frozen tool/plugin snapshot fields, lifecycle closure, reset,
-atomic resume, title provenance, compression lineage, durable turn leases, and
-atomic child-first compression are live. Injected rollback and two-connection
-contention tests prove the newest multi-row transitions.
+atomic resume, title provenance, compression lineage, durable turn leases,
+atomic child-first compression, and same-session soft-archive compaction are
+live. Compacted originals stay searchable, verbatim duplicates stay hidden,
+and active message/tool counters are reconciled at commit. Injected rollback
+and two-connection contention tests prove the newest multi-row transitions.
 
 Full schema and migration parity, session search projection, archive/pin/read
 state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 35%
+### Native agent core, 36%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
 per-conversation prompt snapshots, tool/plugin freezing, external-memory turn
 callbacks, and bounded client lifecycle are connected to production startup.
-Manual rotation compression now makes one real tool-free summary request,
-strictly redacts the checkpoint boundary, preserves tool metadata, and keeps
-provider cache identity stable across physical session segments.
+Manual compression now makes one real tool-free summary request, strictly
+redacts the checkpoint boundary, preserves tool metadata, and defaults to
+same-session publication without evicting the frozen-prompt conversation
+client. Explicit rotation keeps provider cache identity stable across physical
+session segments.
 
-Automatic and in-place compression, pruning/micro-compaction, auxiliary summary
-model routing, provider failover and credential retry loops,
+Automatic compression, pruning/micro-compaction, auxiliary summary model
+routing, provider failover and credential retry loops,
 delegation/subagents, full approval/clarification flows, memory and plugin
 managers, skill execution, context invalidation policy, and several agent-loop
 recovery behaviors remain. These are large behavioral systems, which is why the
@@ -91,7 +95,7 @@ core score remains low despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,570 passing Rust tests and two expected ignores.
+The workspace currently has 1,572 passing Rust tests and two expected ignores.
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -99,8 +103,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,570 passed, two ignored.
-- Selected Python compression and cross-process lease contract: 67 passed.
+- Full Rust workspace: 1,572 passed, two ignored.
+- Selected Python in-place compaction contract: 15 passed.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
 - The lower end of the range assumes native extension-host functionality earns
   little tool-runtime credit until managers and built-ins use it broadly.
@@ -109,8 +113,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Automatic/in-place compression, auxiliary model policy, and checkpoint hooks
-   complete the current session-lifecycle cluster.
+1. Automatic compression, auxiliary model policy, and checkpoint hooks complete
+   the current session-lifecycle cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the

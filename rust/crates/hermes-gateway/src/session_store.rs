@@ -326,6 +326,42 @@ impl SessionStore {
         }))
     }
 
+    /// Publish an in-place compaction without changing route identity. The
+    /// database owns the soft archive and live-set replacement atomically.
+    pub fn publish_in_place_compression(
+        &self,
+        source: &crate::session::SessionSource,
+        expected: &crate::session_entry::SessionEntry,
+        compacted_messages: &[crate::session_db::HistoryMessage],
+        tail_start_id: Option<i64>,
+        watermark: i64,
+        turn_lease_holder: Option<&str>,
+    ) -> anyhow::Result<bool> {
+        let key = self.session_key_for_source(source);
+        let db = self
+            .databases
+            .for_key(&key, &self.home)
+            .ok_or_else(|| anyhow::anyhow!("session database is unavailable"))?;
+        let index = self.index.lock().unwrap();
+        let Some(current) = index.entries.get(&key) else {
+            return Ok(false);
+        };
+        if !current.same_instance(expected) || current.session_id != expected.session_id {
+            return Ok(false);
+        }
+        Ok(db.publish_gateway_in_place_compression(
+            &crate::session_db::GatewayInPlaceCompressionPublish {
+                scope: index.scope(),
+                session_key: &key,
+                session_id: &current.session_id,
+                compacted_messages,
+                tail_start_id,
+                watermark,
+                turn_lease_holder,
+            },
+        )?)
+    }
+
     pub fn lookup_by_session_id(
         &self,
         session_id: &str,

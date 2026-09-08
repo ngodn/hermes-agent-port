@@ -440,6 +440,25 @@ fn complete_turn_sequence(rows: &[(String, Option<String>, Option<String>)]) -> 
     matches!(phase, TailPhase::User)
 }
 
+fn active_transcript_counts(conn: &Connection, session_id: &str) -> rusqlite::Result<(i64, i64)> {
+    let mut query = conn.prepare(
+        "SELECT tool_calls FROM messages WHERE session_id = ? AND active = 1 ORDER BY id",
+    )?;
+    let tool_calls = query
+        .query_map([session_id], |row| row.get::<_, Option<String>>(0))?
+        .collect::<rusqlite::Result<Vec<_>>>()?;
+    let message_count = i64::try_from(tool_calls.len()).unwrap_or(i64::MAX);
+    let tool_call_count = tool_calls
+        .iter()
+        .filter_map(|raw| raw.as_deref())
+        .filter_map(|raw| serde_json::from_str::<Value>(raw).ok())
+        .filter_map(|value| value.as_array().map(Vec::len))
+        .fold(0_i64, |total, count| {
+            total.saturating_add(i64::try_from(count).unwrap_or(i64::MAX))
+        });
+    Ok((message_count, tool_call_count))
+}
+
 /// Ownership is derived from the database path, never the active profile.
 fn store_profile_owner(path: &std::path::Path, root: &std::path::Path) -> Option<String> {
     let path = std::fs::canonicalize(path).ok()?;
@@ -562,6 +581,16 @@ pub struct GatewayCompressionPublish<'a> {
     pub entry_json: &'a str,
     pub parent_id: &'a str,
     pub child_id: &'a str,
+    pub compacted_messages: &'a [HistoryMessage],
+    pub tail_start_id: Option<i64>,
+    pub watermark: i64,
+    pub turn_lease_holder: Option<&'a str>,
+}
+
+pub struct GatewayInPlaceCompressionPublish<'a> {
+    pub scope: &'a str,
+    pub session_key: &'a str,
+    pub session_id: &'a str,
     pub compacted_messages: &'a [HistoryMessage],
     pub tail_start_id: Option<i64>,
     pub watermark: i64,
@@ -1627,14 +1656,11 @@ impl SessionDb {
                 params![change.child_id, change.parent_id, clone_start,],
             )?;
         }
-        let active: i64 = tx.query_row(
-            "SELECT COUNT(*) FROM messages WHERE session_id = ? AND active = 1",
-            [change.child_id],
-            |row| row.get(0),
-        )?;
+        let (active, tool_calls) = active_transcript_counts(&tx, change.child_id)?;
         tx.execute(
-            "UPDATE sessions SET message_count = ?, last_activity_at = ? WHERE id = ?",
-            params![active, now, change.child_id],
+            "UPDATE sessions SET message_count = ?, tool_call_count = ?, last_activity_at = ?
+             WHERE id = ?",
+            params![active, tool_calls, now, change.child_id],
         )?;
         tx.execute(
             "INSERT INTO gateway_routing (scope, session_key, entry_json, updated_at)
@@ -1650,6 +1676,178 @@ impl SessionDb {
         if closed != 1 {
             return Ok(false);
         }
+        tx.commit()?;
+        Ok(true)
+    }
+
+    /// Atomically replace the live transcript without changing session or
+    /// route identity. Original rows remain searchable as `compacted=1`;
+    /// verbatim retained and concurrent tails are archived as superseded
+    /// duplicates and cloned byte-for-byte after the checkpoint pair.
+    pub fn publish_gateway_in_place_compression(
+        &self,
+        change: &GatewayInPlaceCompressionPublish<'_>,
+    ) -> rusqlite::Result<bool> {
+        if change.scope.is_empty()
+            || change.session_key.is_empty()
+            || change.session_id.is_empty()
+            || change.compacted_messages.is_empty()
+        {
+            return Ok(false);
+        }
+        let compacted_roles = change
+            .compacted_messages
+            .iter()
+            .map(|message| (message.role.clone(), None, None))
+            .collect::<Vec<_>>();
+        if !complete_turn_sequence(&compacted_roles) {
+            return Ok(false);
+        }
+
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let now = now_secs();
+        if let Some(holder) = change.turn_lease_holder {
+            let conversation_id = compression_lineage_root_on(&tx, change.session_id)?;
+            let owner = tx
+                .query_row(
+                    "SELECT holder FROM session_turn_leases
+                     WHERE conversation_id = ? AND expires_at >= ?",
+                    params![conversation_id, now],
+                    |row| row.get::<_, String>(0),
+                )
+                .optional()?;
+            if owner.as_deref() != Some(holder) {
+                return Ok(false);
+            }
+        }
+        let durable_route = tx
+            .query_row(
+                "SELECT entry_json FROM gateway_routing WHERE scope = ? AND session_key = ?",
+                params![change.scope, change.session_key],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()?;
+        if durable_route.is_some_and(|entry| {
+            serde_json::from_str::<Value>(&entry)
+                .ok()
+                .and_then(|value| value["session_id"].as_str().map(str::to_owned))
+                .as_deref()
+                != Some(change.session_id)
+        }) {
+            return Ok(false);
+        }
+        let live = tx
+            .query_row(
+                "SELECT ended_at IS NULL FROM sessions WHERE id = ?",
+                [change.session_id],
+                |row| row.get::<_, bool>(0),
+            )
+            .optional()?
+            .unwrap_or(false);
+        if !live {
+            return Ok(false);
+        }
+
+        let predicate = if change.tail_start_id.is_some() {
+            "id >= ?2"
+        } else {
+            "id > ?2"
+        };
+        let clone_start = change.tail_start_id.unwrap_or(change.watermark);
+        let clone_rows = {
+            let sql = format!(
+                "SELECT id, role, tool_calls, tool_call_id FROM messages
+                 WHERE session_id = ?1 AND active = 1 AND {predicate} ORDER BY id"
+            );
+            let mut query = tx.prepare(&sql)?;
+            let rows = query
+                .query_map(params![change.session_id, clone_start], |row| {
+                    Ok((
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, String>(1)?,
+                        row.get::<_, Option<String>>(2)?,
+                        row.get::<_, Option<String>>(3)?,
+                    ))
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        let roles = clone_rows
+            .iter()
+            .map(|(_, role, calls, call_id)| (role.clone(), calls.clone(), call_id.clone()))
+            .collect::<Vec<_>>();
+        if !complete_turn_sequence(&roles) {
+            return Ok(false);
+        }
+        let clone_ids = clone_rows
+            .iter()
+            .map(|(id, _, _, _)| *id)
+            .collect::<Vec<_>>();
+
+        tx.execute(
+            "UPDATE messages SET active = 0, compacted = 1
+             WHERE session_id = ? AND active = 1",
+            [change.session_id],
+        )?;
+        if !clone_ids.is_empty() {
+            let placeholders = std::iter::repeat_n("?", clone_ids.len())
+                .collect::<Vec<_>>()
+                .join(",");
+            let sql = format!(
+                "UPDATE messages SET compacted = 0 WHERE session_id = ?
+                 AND id IN ({placeholders})"
+            );
+            let mut values = Vec::<rusqlite::types::Value>::with_capacity(clone_ids.len() + 1);
+            values.push(change.session_id.to_owned().into());
+            values.extend(clone_ids.iter().copied().map(Into::into));
+            tx.execute(&sql, rusqlite::params_from_iter(values))?;
+        }
+        for (index, message) in change.compacted_messages.iter().enumerate() {
+            tx.execute(
+                "INSERT INTO messages
+                    (session_id, role, content, api_content, timestamp, active,
+                     _compressed_summary, compacted)
+                 VALUES (?1, ?2, ?3, NULL, ?4, 1, ?5, 0)",
+                params![
+                    change.session_id,
+                    message.role,
+                    message.content,
+                    now,
+                    i64::from(index == 0),
+                ],
+            )?;
+        }
+        if !clone_ids.is_empty() {
+            let columns = {
+                let mut query = tx.prepare("PRAGMA table_info(messages)")?;
+                let columns = query
+                    .query_map([], |row| row.get::<_, String>(1))?
+                    .collect::<rusqlite::Result<Vec<_>>>()?;
+                columns
+            };
+            let identifiers = columns
+                .into_iter()
+                .filter(|column| !matches!(column.as_str(), "id" | "active" | "compacted"))
+                .map(|column| format!("\"{}\"", column.replace('"', "\"\"")))
+                .collect::<Vec<_>>()
+                .join(", ");
+            let placeholders = std::iter::repeat_n("?", clone_ids.len())
+                .collect::<Vec<_>>()
+                .join(",");
+            let sql = format!(
+                "INSERT INTO messages ({identifiers}, active, compacted)
+                 SELECT {identifiers}, 1, 0 FROM messages
+                 WHERE id IN ({placeholders}) ORDER BY id"
+            );
+            tx.execute(&sql, rusqlite::params_from_iter(clone_ids))?;
+        }
+        let (active, tool_calls) = active_transcript_counts(&tx, change.session_id)?;
+        tx.execute(
+            "UPDATE sessions SET message_count = ?, tool_call_count = ?, last_activity_at = ?
+             WHERE id = ?",
+            params![active, tool_calls, now, change.session_id],
+        )?;
         tx.commit()?;
         Ok(true)
     }
@@ -1988,6 +2186,7 @@ impl SessionDb {
             ("title", "TEXT"),
             ("title_source", "TEXT"),
             ("hidden", "INTEGER NOT NULL DEFAULT 0"),
+            ("tool_call_count", "INTEGER DEFAULT 0"),
         ] {
             if !columns.iter().any(|column| column == name) {
                 // Names and declarations are static schema constants.
@@ -2231,6 +2430,7 @@ impl SessionDb {
                 thread_id TEXT,
                 started_at REAL NOT NULL,
                 message_count INTEGER DEFAULT 0,
+                tool_call_count INTEGER DEFAULT 0,
                 last_activity_at REAL,
                 tool_names TEXT
             )",
@@ -2467,11 +2667,17 @@ impl SessionDb {
             ],
         )?;
         let id = conn.last_insert_rowid();
+        let num_tool_calls = opts
+            .tool_calls
+            .and_then(|raw| serde_json::from_str::<Value>(raw).ok())
+            .and_then(|value| value.as_array().map(Vec::len))
+            .map_or(0_i64, |count| i64::try_from(count).unwrap_or(i64::MAX));
         // Best-effort counter bump; ignore if the session row isn't present.
         let _ = conn.execute(
-            "UPDATE sessions SET message_count = message_count + 1, last_activity_at = ?
+            "UPDATE sessions SET message_count = message_count + 1,
+             tool_call_count = tool_call_count + ?, last_activity_at = ?
              WHERE id = ?",
-            params![ts, session_id],
+            params![num_tool_calls, ts, session_id],
         );
         Ok(id)
     }
@@ -2617,9 +2823,9 @@ impl SessionDb {
         rows.collect()
     }
 
-    /// Full-text search live messages across all sessions, newest-matching
-    /// first by FTS rank. `query` is an FTS5 MATCH expression; a malformed
-    /// expression is caught and returned as an empty result rather than an error.
+    /// Full-text search live and compression-archived messages across all
+    /// sessions, newest-matching first by FTS rank. Rewind/undo rows remain
+    /// hidden (`active=0, compacted=0`).
     pub fn search(&self, query: &str, limit: usize) -> rusqlite::Result<Vec<SearchHit>> {
         if query.trim().is_empty() {
             return Ok(Vec::new());
@@ -2632,7 +2838,7 @@ impl SessionDb {
                     m.timestamp
              FROM messages_fts
              JOIN messages m ON m.id = messages_fts.rowid
-             WHERE messages_fts MATCH ?1 AND m.active = 1
+             WHERE messages_fts MATCH ?1 AND (m.active = 1 OR m.compacted = 1)
              ORDER BY rank
              LIMIT ?2",
         )?;
@@ -2739,6 +2945,152 @@ mod tests {
         let mut wrong_tool = complete;
         wrong_tool[2].2 = Some("unknown".into());
         assert!(!super::complete_turn_sequence(&wrong_tool));
+    }
+
+    #[test]
+    fn in_place_compression_archives_head_and_clones_complete_tails() {
+        use super::{AppendOptions, GatewayInPlaceCompressionPublish, HistoryMessage, SessionDb};
+        let path = temp_db("in_place_compression");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("same", "local", None, None, None)
+            .unwrap();
+        for (role, content) in [
+            ("user", "u0"),
+            ("assistant", "a0"),
+            ("user", "u1"),
+            ("assistant", "a1"),
+            ("user", "u2"),
+            ("assistant", "a2"),
+        ] {
+            db.append_message("same", role, content).unwrap();
+        }
+        let snapshot = db.load_compression_snapshot("same").unwrap();
+        db.append_message("same", "user", "concurrent").unwrap();
+        let calls = r#"[{"id":"call-1","function":{"name":"terminal","arguments":"{}"}}]"#;
+        db.append_message_with(
+            "same",
+            "assistant",
+            "",
+            &AppendOptions {
+                tool_calls: Some(calls),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message_with(
+            "same",
+            "tool",
+            "result",
+            &AppendOptions {
+                tool_call_id: Some("call-1"),
+                tool_name: Some("terminal"),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message("same", "assistant", "done").unwrap();
+        let compacted = [
+            HistoryMessage {
+                role: "user".into(),
+                content: "summary".into(),
+                api_content: None,
+            },
+            HistoryMessage {
+                role: "assistant".into(),
+                content: "waiting".into(),
+                api_content: None,
+            },
+        ];
+
+        assert!(db
+            .publish_gateway_in_place_compression(&GatewayInPlaceCompressionPublish {
+                scope: "scope",
+                session_key: "route",
+                session_id: "same",
+                compacted_messages: &compacted,
+                tail_start_id: Some(snapshot.messages[4].id),
+                watermark: snapshot.watermark,
+                turn_lease_holder: None,
+            })
+            .unwrap());
+        let live = db.load_lifecycle_messages("same").unwrap();
+        assert_eq!(
+            live.iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            [
+                "user",
+                "assistant",
+                "user",
+                "assistant",
+                "user",
+                "assistant",
+                "tool",
+                "assistant"
+            ]
+        );
+        assert_eq!(live[6]["tool_call_id"], "call-1");
+        assert_eq!(live[6]["name"], "terminal");
+        assert_eq!(
+            db.conn
+                .lock()
+                .unwrap()
+                .query_row(
+                    "SELECT message_count, tool_call_count FROM sessions WHERE id='same'",
+                    [],
+                    |row| Ok((row.get::<_, i64>(0)?, row.get::<_, i64>(1)?)),
+                )
+                .unwrap(),
+            (8, 1)
+        );
+        let before_failed_publish = live.clone();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "CREATE TRIGGER reject_in_place_insert BEFORE INSERT ON messages
+                 BEGIN SELECT RAISE(ABORT, 'injected in-place failure'); END;",
+            )
+            .unwrap();
+        let failed_snapshot = db.load_compression_snapshot("same").unwrap();
+        assert!(db
+            .publish_gateway_in_place_compression(&GatewayInPlaceCompressionPublish {
+                scope: "scope",
+                session_key: "route",
+                session_id: "same",
+                compacted_messages: &compacted,
+                tail_start_id: None,
+                watermark: failed_snapshot.watermark,
+                turn_lease_holder: None,
+            })
+            .is_err());
+        assert_eq!(
+            db.load_lifecycle_messages("same").unwrap(),
+            before_failed_publish
+        );
+        let conn = db.conn.lock().unwrap();
+        assert_eq!(
+            conn.query_row(
+                "SELECT COUNT(*) FROM messages WHERE session_id='same' AND active=0 AND compacted=1",
+                [],
+                |row| row.get::<_, i64>(0),
+            )
+            .unwrap(),
+            4
+        );
+        assert_eq!(
+            conn.query_row(
+                "SELECT COUNT(*) FROM messages WHERE session_id='same' AND active=0 AND compacted=0",
+                [],
+                |row| row.get::<_, i64>(0),
+            )
+            .unwrap(),
+            6
+        );
+        drop(conn);
+        assert!(db.get_session("same").unwrap().unwrap()["ended_at"].is_null());
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
 
     #[test]
