@@ -346,16 +346,18 @@ mod tests {
     }
 
     struct Echo;
+    #[async_trait::async_trait]
     impl Tool for Echo {
         fn spec(&self) -> ToolSpec {
             ToolSpec {
                 name: "echo".into(),
                 description: "test echo".into(),
                 parameters: json!({"type":"object"}),
+                extra: Default::default(),
             }
         }
-        fn call(&self, _: &Value) -> hermes_core::Result<String> {
-            Ok("done".into())
+        async fn call(&self, _: &Value) -> hermes_core::Result<Value> {
+            Ok(json!("done"))
         }
     }
 

@@ -30,13 +30,16 @@ pub struct ToolSpec {
     pub description: String,
     /// JSON Schema for the tool's arguments.
     pub parameters: Value,
+    /// Provider-specific function-schema fields such as `strict`.
+    pub extra: serde_json::Map<String, Value>,
 }
 
-/// A callable tool. `call` runs synchronously; long-running tools can block on
-/// their own runtime handle if needed.
+/// A callable tool. External tools may cross a process or network boundary, so
+/// execution is asynchronous even when a built-in implementation is immediate.
+#[async_trait]
 pub trait Tool: Send + Sync {
     fn spec(&self) -> ToolSpec;
-    fn call(&self, args: &Value) -> Result<String>;
+    async fn call(&self, args: &Value) -> Result<Value>;
 }
 
 /// Return the provider-visible names in their wire order.
@@ -135,19 +138,71 @@ pub trait ChatModel: Send + Sync {
     fn max_concurrent_children(&self) -> usize {
         10
     }
+    fn supports_vision(&self) -> bool {
+        false
+    }
+    fn supports_vision_tool_messages(&self) -> bool {
+        true
+    }
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step>;
+}
+
+/// Unwrap the registry's multimodal envelope before it reaches an API message.
+/// Text-only content lists are always safe. Image parts require both a vision
+/// model and a provider that accepts list-valued tool content.
+fn tool_result_content(model: &dyn ChatModel, value: Value) -> Value {
+    let Some(envelope) = value.as_object() else {
+        return value;
+    };
+    if envelope.get("_multimodal") != Some(&Value::Bool(true)) {
+        return value;
+    }
+    let Some(parts) = envelope.get("content").and_then(Value::as_array) else {
+        return value;
+    };
+    let has_images = parts.iter().any(|part| {
+        part.get("type")
+            .and_then(Value::as_str)
+            .is_some_and(|kind| matches!(kind, "image_url" | "image"))
+    });
+    if !has_images || (model.supports_vision() && model.supports_vision_tool_messages()) {
+        return Value::Array(parts.clone());
+    }
+    if let Some(summary) = envelope
+        .get("text_summary")
+        .filter(|summary| crate::python_value::truthy(summary))
+    {
+        return Value::String(match summary {
+            Value::String(text) => text.clone(),
+            other => crate::python_value::python_repr(other),
+        });
+    }
+    let text = parts
+        .iter()
+        .filter(|part| part.get("type").and_then(Value::as_str) == Some("text"))
+        .filter_map(|part| part.get("text"))
+        .map(|text| match text {
+            Value::String(text) => text.clone(),
+            other => crate::python_value::python_repr(other),
+        })
+        .collect::<Vec<_>>();
+    Value::String(if text.is_empty() {
+        "[multimodal tool result]".into()
+    } else {
+        text.join("\n")
+    })
 }
 
 /// Convert a [`ToolSpec`] to the OpenAI `tools` array entry.
 pub fn tool_spec_json(spec: &ToolSpec) -> Value {
-    json!({
-        "type": "function",
-        "function": {
-            "name": spec.name,
-            "description": spec.description,
-            "parameters": spec.parameters,
-        }
-    })
+    let mut function = spec.extra.clone();
+    function.insert("name".into(), Value::String(spec.name.clone()));
+    function.insert(
+        "description".into(),
+        Value::String(spec.description.clone()),
+    );
+    function.insert("parameters".into(), spec.parameters.clone());
+    json!({"type": "function", "function": function})
 }
 
 /// Build the assistant message that echoes the model's tool calls, as required
@@ -658,16 +713,17 @@ pub async fn run_tool_loop_with_content(
                                 .collect::<std::collections::BTreeSet<_>>()
                                 .into_iter()
                                 .collect();
-                            (invalid_tool_name(&call.name, &names), false)
+                            (json!(invalid_tool_name(&call.name, &names)), false)
                         }
                         Some(_) if !call.arguments.is_object() => {
-                            (INVALID_TOOL_ARGUMENTS.to_owned(), false)
+                            (json!(INVALID_TOOL_ARGUMENTS), false)
                         }
-                        Some(tool) => match tool.call(&call.arguments) {
+                        Some(tool) => match tool.call(&call.arguments).await {
                             Ok(out) => (out, true),
-                            Err(error) => (format!("tool error: {error}"), false),
+                            Err(error) => (json!(format!("tool error: {error}")), false),
                         },
                     };
+                    let content = tool_result_content(model, content);
                     let _ = events
                         .send(StreamEvent::ToolCallFinished {
                             tool_name: call.name.clone(),
@@ -681,7 +737,7 @@ pub async fn run_tool_loop_with_content(
                         json!(chrono::Utc::now().timestamp_micros() as f64 / 1_000_000.0);
                     messages.push(crate::tool_result::build(
                         &call.name,
-                        &json!(content),
+                        &content,
                         &json!(call.id),
                         &timestamp,
                         None,
@@ -782,21 +838,23 @@ pub async fn run_tool_loop(
 /// Returns the current Unix time in seconds. No external dependencies.
 pub struct CurrentTimeTool;
 
+#[async_trait]
 impl Tool for CurrentTimeTool {
     fn spec(&self) -> ToolSpec {
         ToolSpec {
             name: "current_time".into(),
             description: "Get the current time as Unix epoch seconds.".into(),
             parameters: json!({ "type": "object", "properties": {}, "required": [] }),
+            extra: Default::default(),
         }
     }
 
-    fn call(&self, _args: &Value) -> Result<String> {
+    async fn call(&self, _args: &Value) -> Result<Value> {
         let secs = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_secs())
             .unwrap_or(0);
-        Ok(secs.to_string())
+        Ok(json!(secs.to_string()))
     }
 }
 
@@ -806,19 +864,82 @@ mod tests {
     use hermes_core::Error;
     use std::sync::Mutex;
 
+    struct ToolContentModel {
+        vision: bool,
+        tool_images: bool,
+    }
+
+    #[async_trait]
+    impl ChatModel for ToolContentModel {
+        fn supports_vision(&self) -> bool {
+            self.vision
+        }
+        fn supports_vision_tool_messages(&self) -> bool {
+            self.tool_images
+        }
+        async fn step(&self, _: &[Value], _: &[Value]) -> Result<Step> {
+            unreachable!()
+        }
+    }
+
+    #[test]
+    fn multimodal_tool_envelopes_never_reach_provider_messages() {
+        let text = json!({"_multimodal":true,"content":[{"type":"text","text":"hello"}]});
+        assert_eq!(
+            tool_result_content(
+                &ToolContentModel {
+                    vision: false,
+                    tool_images: false,
+                },
+                text,
+            ),
+            json!([{"type":"text","text":"hello"}])
+        );
+
+        let image = json!({"_multimodal":true,"text_summary":"screen summary","content":[
+            {"type":"text","text":"hello"},
+            {"type":"image_url","image_url":{"url":"data:image/png;base64,AA=="}}
+        ]});
+        assert_eq!(
+            tool_result_content(
+                &ToolContentModel {
+                    vision: false,
+                    tool_images: true,
+                },
+                image.clone(),
+            ),
+            json!("screen summary")
+        );
+        assert_eq!(
+            tool_result_content(
+                &ToolContentModel {
+                    vision: true,
+                    tool_images: true,
+                },
+                image,
+            ),
+            json!([
+                {"type":"text","text":"hello"},
+                {"type":"image_url","image_url":{"url":"data:image/png;base64,AA=="}}
+            ])
+        );
+    }
+
     #[test]
     fn restored_tool_prefix_matches_python_merge_rules() {
         struct NamedTool(&'static str, &'static str);
+        #[async_trait]
         impl Tool for NamedTool {
             fn spec(&self) -> ToolSpec {
                 ToolSpec {
                     name: self.0.into(),
                     description: self.1.into(),
                     parameters: json!({}),
+                    extra: Default::default(),
                 }
             }
-            fn call(&self, _args: &Value) -> Result<String> {
-                Ok(String::new())
+            async fn call(&self, _args: &Value) -> Result<Value> {
+                Ok(json!(""))
             }
         }
         let tool = |name, version| Arc::new(NamedTool(name, version)) as Arc<dyn Tool>;
@@ -968,16 +1089,18 @@ mod tests {
     #[tokio::test]
     async fn housekeeping_answer_recovery_preserves_replay_and_invalidates_stale_text() {
         struct NamedTool(&'static str);
+        #[async_trait]
         impl Tool for NamedTool {
             fn spec(&self) -> ToolSpec {
                 ToolSpec {
                     name: self.0.into(),
                     description: "fixture".into(),
                     parameters: json!({"type":"object"}),
+                    extra: Default::default(),
                 }
             }
-            fn call(&self, _: &Value) -> Result<String> {
-                Ok("saved".into())
+            async fn call(&self, _: &Value) -> Result<Value> {
+                Ok(json!("saved"))
             }
         }
         // Empty housekeeping rounds retain the last answer, but substantive
@@ -1133,16 +1256,18 @@ mod tests {
             }
         }
         struct FixtureTool(&'static str);
+        #[async_trait]
         impl Tool for FixtureTool {
             fn spec(&self) -> ToolSpec {
                 ToolSpec {
                     name: self.0.into(),
                     description: "fixture".into(),
                     parameters: json!({"type":"object"}),
+                    extra: Default::default(),
                 }
             }
-            fn call(&self, _: &Value) -> Result<String> {
-                Ok("executed".into())
+            async fn call(&self, _: &Value) -> Result<Value> {
+                Ok(json!("executed"))
             }
         }
         let names = [
@@ -1259,15 +1384,17 @@ mod tests {
     #[tokio::test]
     async fn malformed_batch_retries_without_executing_valid_siblings() {
         struct NeverTool(&'static str);
+        #[async_trait]
         impl Tool for NeverTool {
             fn spec(&self) -> ToolSpec {
                 ToolSpec {
                     name: self.0.into(),
                     description: "fixture".into(),
                     parameters: json!({"type":"object"}),
+                    extra: Default::default(),
                 }
             }
-            fn call(&self, _: &Value) -> Result<String> {
+            async fn call(&self, _: &Value) -> Result<Value> {
                 panic!("a malformed batch must not execute siblings")
             }
         }
@@ -1448,17 +1575,19 @@ mod tests {
     #[tokio::test]
     async fn invalid_arguments_never_execute_the_tool() {
         struct CountingTool(Mutex<Vec<Value>>);
+        #[async_trait]
         impl Tool for CountingTool {
             fn spec(&self) -> ToolSpec {
                 ToolSpec {
                     name: "fixture".into(),
                     description: "count executions".into(),
                     parameters: json!({"type":"object"}),
+                    extra: Default::default(),
                 }
             }
-            fn call(&self, arguments: &Value) -> Result<String> {
+            async fn call(&self, arguments: &Value) -> Result<Value> {
                 self.0.lock().unwrap().push(arguments.clone());
-                Ok("executed".into())
+                Ok(json!("executed"))
             }
         }
         let rows: Value =
@@ -1767,20 +1896,22 @@ mod tests {
     #[tokio::test]
     async fn tool_events_correlate_repeated_calls_across_iterations() {
         struct TimedTool;
+        #[async_trait]
         impl Tool for TimedTool {
             fn spec(&self) -> ToolSpec {
                 ToolSpec {
                     name: "timed".into(),
                     description: "test".into(),
                     parameters: json!({"type":"object"}),
+                    extra: Default::default(),
                 }
             }
-            fn call(&self, args: &Value) -> Result<String> {
+            async fn call(&self, args: &Value) -> Result<Value> {
                 std::thread::sleep(std::time::Duration::from_millis(2));
                 if args["fail"] == true {
                     Err(Error::Other("test failure".into()))
                 } else {
-                    Ok("ok".into())
+                    Ok(json!("ok"))
                 }
             }
         }

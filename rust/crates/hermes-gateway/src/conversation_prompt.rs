@@ -88,6 +88,8 @@ pub struct FreshPromptInputs<'a> {
     pub platform: &'a str,
     pub session_id: &'a str,
     pub tools: &'a [String],
+    pub external_memory: Option<String>,
+    pub plugin_sections: Vec<crate::plugin_prompt::Section>,
     pub snapshot: BuildSnapshot,
 }
 
@@ -145,6 +147,10 @@ impl Initializer {
         .agent_cwd()?
         .to_string_lossy()
         .into_owned())
+    }
+
+    pub fn profile_name(&self, home: &Path) -> String {
+        crate::profile_name::agent_profile_name(home, &self.root)
     }
 
     pub async fn build_fresh(&self, input: FreshPromptInputs<'_>) -> anyhow::Result<String> {
@@ -348,6 +354,16 @@ impl Initializer {
                 }
                 Err(error) => tracing::warn!(%error, "Could not load prompt memory snapshot"),
             }
+        }
+        sections.external_memory = input.external_memory.filter(|block| {
+            !block
+                .trim_matches(crate::python_value::python_whitespace)
+                .is_empty()
+        });
+        let plugin_sections = crate::plugin_prompt::validate_rendered(input.plugin_sections);
+        let plugin_block = crate::plugin_prompt::format(&plugin_sections);
+        if !plugin_block.is_empty() {
+            sections.plugin_sections.push(plugin_block);
         }
 
         let creation = row

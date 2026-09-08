@@ -26,6 +26,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [extension-host-review-resolution.md](extension-host-review-resolution.md) | Verified disposition of both implementation reviews, with fixed findings, tests, and explicit lifecycle deferrals |
+| [extension-host-implementation-review-agy.md](extension-host-implementation-review-agy.md) | Gemini post-implementation audit of protocol health, collisions, secrets, multimodal results and process cleanup |
+| [extension-host-implementation-review-claude.md](extension-host-implementation-review-claude.md) | Claude post-implementation compatibility review, including auto-loaded backends, route identity and cache-lifetime gaps |
+| [extension-host-protocol-agy.md](extension-host-protocol-agy.md) | Gemini protocol and lifecycle design for a persistent JSONL plugin and external-memory host |
+| [extension-host-python-audit-claude.md](extension-host-python-audit-claude.md) | Claude source audit of the real Python plugin, toolset, memory-provider and shutdown contracts |
 | [native-plugin-memory-manager-map-agy.md](native-plugin-memory-manager-map-agy.md) | Gemini map of dormant native plugin/memory seams; its fixture-only manager recommendation is rejected because it has no production consumer |
 | [native-plugin-memory-manager-map-claude.md](native-plugin-memory-manager-map-claude.md) | Claude map confirming prompt order, toolset gates and Python-only providers; its empty-manager checkpoint is likewise not sufficient |
 | [frozen-conversation-state-map-agy.md](frozen-conversation-state-map-agy.md) | Gemini source map of Python tool-prefix restoration, plugin snapshots and persistence order |

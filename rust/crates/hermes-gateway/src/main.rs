@@ -52,6 +52,7 @@ mod display_config;
 mod drain_control;
 mod environment_probe;
 mod environment_prompt;
+mod extension_host;
 mod file_read_safety;
 mod gemini_thinking;
 mod git_probe;
@@ -200,6 +201,7 @@ struct NativeConversationState {
     system_prompt: String,
     tools: Vec<Arc<dyn crate::native_tools::Tool>>,
     plugin_prompt: crate::plugin_prompt::Snapshot,
+    extension_host: Option<crate::extension_host::Client>,
 }
 
 fn registered_native_tools() -> Vec<Arc<dyn crate::native_tools::Tool>> {
@@ -212,6 +214,91 @@ fn available_native_tools(config: &Config) -> Vec<Arc<dyn crate::native_tools::T
     } else {
         Vec::new()
     }
+}
+
+fn extensions_configured(
+    config: &serde_json::Value,
+    platform: &str,
+    install_root: &std::path::Path,
+) -> bool {
+    config["memory"]["provider"]
+        .as_str()
+        .is_some_and(|name| !name.trim().is_empty())
+        || config["plugins"]["enabled"]
+            .as_array()
+            .is_some_and(|items| {
+                items
+                    .iter()
+                    .any(|item| item.as_str().is_some_and(|name| !name.trim().is_empty()))
+            })
+        || auto_tool_backend_requested(config, platform, install_root)
+}
+
+fn auto_tool_backend_requested(
+    config: &serde_json::Value,
+    platform: &str,
+    install_root: &std::path::Path,
+) -> bool {
+    let requested: std::collections::HashSet<_> = config["platform_toolsets"][platform]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(serde_json::Value::as_str)
+        .collect();
+    if requested.is_empty() {
+        return false;
+    }
+    fn scan(
+        path: &std::path::Path,
+        depth: usize,
+        requested: &std::collections::HashSet<&str>,
+    ) -> bool {
+        let Ok(entries) = std::fs::read_dir(path) else {
+            return false;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.file_name().is_some_and(|name| name == "plugin.yaml") {
+                let Ok(text) = std::fs::read_to_string(&path) else {
+                    continue;
+                };
+                let Ok(manifest) = serde_yaml_ng::from_str::<serde_json::Value>(&text) else {
+                    continue;
+                };
+                if manifest["kind"].as_str() == Some("backend")
+                    && manifest["provides_tools"]
+                        .as_array()
+                        .is_some_and(|tools| !tools.is_empty())
+                    && manifest["name"]
+                        .as_str()
+                        .is_some_and(|name| requested.contains(name))
+                {
+                    return true;
+                }
+            } else if depth > 0 && path.is_dir() && scan(&path, depth - 1, requested) {
+                return true;
+            }
+        }
+        false
+    }
+    scan(&install_root.join("plugins"), 3, &requested)
+}
+
+/// Extension definitions replace an explicitly authorized native override in
+/// place, while new names append without perturbing the existing prefix.
+fn merge_native_tools(
+    mut base: Vec<Arc<dyn crate::native_tools::Tool>>,
+    extensions: Vec<Arc<dyn crate::native_tools::Tool>>,
+) -> Vec<Arc<dyn crate::native_tools::Tool>> {
+    for extension in extensions {
+        let name = extension.spec().name;
+        if let Some(slot) = base.iter().position(|tool| tool.spec().name == name) {
+            base[slot] = extension;
+        } else if !name.is_empty() {
+            base.push(extension);
+        }
+    }
+    base
 }
 
 /// Pick the agent backend. Native (in-Rust LLM chat) requires opt-in
@@ -417,7 +504,8 @@ fn build_agent_client_for_home(
                     if let Some(state) = conversation {
                         c = c
                             .with_system_prompt(state.system_prompt)
-                            .with_plugin_prompt_snapshot(state.plugin_prompt);
+                            .with_plugin_prompt_snapshot(state.plugin_prompt)
+                            .with_extension_host(state.extension_host);
                     }
                     return Ok(Arc::new(c));
                 }
@@ -440,6 +528,11 @@ async fn build_conversation_client(
     history: &[session_db::HistoryMessage],
     database: Option<&session_db::SessionDb>,
 ) -> anyhow::Result<Arc<dyn AgentClient>> {
+    let profile_secrets = secret_scope::current_secret_scope().as_deref().cloned();
+    anyhow::ensure!(
+        !secret_scope::is_multiplex_active() || profile_secrets.is_some(),
+        "native profile construction requires a secret scope"
+    );
     let selected = config_file::load_config_from(&home.join("config.yaml"));
     let model = config
         .agent_model
@@ -473,10 +566,77 @@ async fn build_conversation_client(
         .as_ref()
         .and_then(|row| row.get("cwd"))
         .and_then(serde_json::Value::as_str);
+    let gateway_session_key = metadata_row
+        .as_ref()
+        .and_then(|row| row.get("session_key"))
+        .and_then(serde_json::Value::as_str)
+        .filter(|value| !value.is_empty())
+        .unwrap_or(&session_id)
+        .to_owned();
     let runtime_cwd = initializer.runtime_cwd(home, session_cwd)?;
-    let registered_tools = registered_native_tools();
-    let fresh_tools = available_native_tools(config);
+    let mut extension = if extensions_configured(&selected, &platform, &config.agent_cwd) {
+        let params = extension_host::InitializeParams {
+            home: home.to_string_lossy().into_owned(),
+            session_id: session_id.clone(),
+            model: model.clone(),
+            provider: provider.clone(),
+            platform: platform.clone(),
+            profile_name: initializer.profile_name(home),
+            cwd: runtime_cwd.clone(),
+            session_title: metadata_row
+                .as_ref()
+                .and_then(|row| row.get("display_name"))
+                .and_then(serde_json::Value::as_str)
+                .map(str::to_owned),
+            user_id: (!message.sender_id.is_empty()).then(|| message.sender_id.clone()),
+            user_id_alt: None,
+            user_name: None,
+            chat_id: (!message.channel_id.is_empty()).then(|| message.channel_id.clone()),
+            chat_name: None,
+            chat_type: message.chat_type.clone(),
+            thread_id: message.thread_id.clone(),
+            gateway_session_key: Some(gateway_session_key),
+            native_tool_names: native_tools::tool_names(&registered_native_tools()),
+            profile_secrets: profile_secrets.clone(),
+        };
+        match extension_host::Client::spawn(&config.agent_python, &config.agent_cwd, home, params)
+            .await
+        {
+            Ok((client, initialized)) => {
+                if let Some(provider) = initialized.active_memory_provider.as_deref() {
+                    tracing::info!(provider, %session_id, "Native external-memory provider activated");
+                    if !initialized.memory_exposed {
+                        tracing::info!(provider, %session_id, "External-memory prompt and tools are gated off for this session");
+                    }
+                }
+                Some((client, initialized))
+            }
+            Err(error) => {
+                tracing::warn!(%error, %session_id, "Native extension host unavailable; continuing without extensions");
+                None
+            }
+        }
+    } else {
+        None
+    };
+    let registered_extension_tools = extension
+        .as_ref()
+        .map(|(client, initialized)| initialized.registered_tools(client))
+        .unwrap_or_default();
+    // HERMES_AGENT_TOOLS is the legacy opt-in for Rust's built-in tools only.
+    // Explicitly configured plugin and memory tools follow their own Python
+    // toolset gates and must stay executable whenever they are advertised.
+    let available_extension_tools = extension
+        .as_ref()
+        .map(|(client, initialized)| initialized.available_tools(client))
+        .unwrap_or_default();
+    let registered_tools =
+        merge_native_tools(registered_native_tools(), registered_extension_tools);
+    let base_fresh_tools = available_native_tools(config);
+    let base_fresh_tool_names = native_tools::tool_names(&base_fresh_tools);
+    let mut fresh_tools = merge_native_tools(base_fresh_tools, available_extension_tools);
     let fresh_tool_names = native_tools::tool_names(&fresh_tools);
+    let extension_snapshot_failed = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
     let bot = initializer.bot_inputs(home, Some(&selected));
     let resolution = conversation_prompt::restore_or_build(
         database.map(|database| database as &dyn conversation_prompt::PromptStore),
@@ -494,7 +654,25 @@ async fn build_conversation_client(
             legacy_bot_upgrade: false,
             bot: Some(bot),
         },
-        |snapshot| {
+        |snapshot| async {
+            let extension_snapshot = match extension.as_ref() {
+                Some((client, _)) => match client.snapshot().await {
+                    Ok(snapshot) => snapshot,
+                    Err(error) => {
+                        extension_snapshot_failed.store(true, std::sync::atomic::Ordering::Release);
+                        tracing::warn!(%error, %session_id, "Native extension prompt snapshot failed; omitting extensions");
+                        extension_host::PromptSnapshot::default()
+                    }
+                },
+                None => extension_host::PromptSnapshot::default(),
+            };
+            let prompt_tools = if extension_snapshot_failed
+                .load(std::sync::atomic::Ordering::Acquire)
+            {
+                &base_fresh_tool_names
+            } else {
+                &fresh_tool_names
+            };
             initializer.build_fresh(conversation_prompt::FreshPromptInputs {
                 home,
                 config: &selected,
@@ -502,15 +680,28 @@ async fn build_conversation_client(
                 provider: &provider,
                 platform: &platform,
                 session_id: &session_id,
-                tools: &fresh_tool_names,
+                tools: prompt_tools,
+                external_memory: extension_snapshot.memory_prompt,
+                plugin_sections: extension_snapshot.plugin_sections,
                 snapshot,
-            })
+            }).await
         },
     )
     .await?;
+    if !resolution.reused && extension_snapshot_failed.load(std::sync::atomic::Ordering::Acquire) {
+        fresh_tools = available_native_tools(config);
+        extension = None;
+        if let Some(database) = database {
+            if let Err(error) =
+                database.update_session_tool_names(&session_id, Some(&base_fresh_tool_names))
+            {
+                tracing::debug!(%error, %session_id, "Session DB extension-failure tool persist skipped");
+            }
+        }
+    }
     let mut plugin_prompt = plugin_prompt::Snapshot::default();
+    plugin_prompt.restore(&resolution.prompt);
     let tools = if resolution.restore_frozen_sections {
-        plugin_prompt.restore(&resolution.prompt);
         match resolution.saved_tool_names.as_deref() {
             Some(saved) => {
                 let (tools, changed) =
@@ -541,6 +732,7 @@ async fn build_conversation_client(
             system_prompt: resolution.prompt,
             tools,
             plugin_prompt,
+            extension_host: extension.map(|(client, _)| client),
         }),
     )
 }
@@ -932,6 +1124,22 @@ async fn wait_for_signal() {
 #[cfg(test)]
 mod startup_tests {
     use super::*;
+
+    #[test]
+    fn configured_auto_tool_backend_opens_extension_host_without_default_overhead() {
+        let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../..");
+        assert!(extensions_configured(
+            &json!({"platform_toolsets":{"cli":["spotify"]}}),
+            "cli",
+            &repo,
+        ));
+        assert!(!extensions_configured(&json!({}), "cli", &repo));
+        assert!(!extensions_configured(
+            &json!({"platform_toolsets":{"telegram":["spotify"]}}),
+            "cli",
+            &repo,
+        ));
+    }
     use serde_json::{json, Value};
 
     fn native_config() -> Config {
@@ -1037,13 +1245,16 @@ mod startup_tests {
 
         let initializer =
             conversation_prompt::Initializer::capture(home.0.clone(), home.0.clone()).unwrap();
-        let first = build_conversation_client(
-            &config,
-            &initializer,
-            &home.0,
-            &message,
-            &history,
-            Some(&database),
+        let first = secret_scope::with_secret_scope(
+            Some(Default::default()),
+            build_conversation_client(
+                &config,
+                &initializer,
+                &home.0,
+                &message,
+                &history,
+                Some(&database),
+            ),
         )
         .await
         .unwrap();
@@ -1075,13 +1286,16 @@ mod startup_tests {
         config.agent_tools = false;
         let second_initializer =
             conversation_prompt::Initializer::capture(home.0.clone(), home.0.clone()).unwrap();
-        let second = build_conversation_client(
-            &config,
-            &second_initializer,
-            &home.0,
-            &message,
-            &history,
-            Some(&database),
+        let second = secret_scope::with_secret_scope(
+            Some(Default::default()),
+            build_conversation_client(
+                &config,
+                &second_initializer,
+                &home.0,
+                &message,
+                &history,
+                Some(&database),
+            ),
         )
         .await
         .unwrap();
@@ -1099,6 +1313,181 @@ mod startup_tests {
             assert_eq!(request["tools"][0]["function"]["name"], "current_time");
         }
         assert_eq!(requests[0]["tools"], requests[1]["tools"]);
+        server.abort();
+    }
+
+    #[tokio::test]
+    async fn configured_python_extension_reaches_native_prompt_and_tool_loop() {
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+
+        type ModelState = (Arc<session_db::SessionDb>, Arc<AtomicUsize>);
+        async fn model(
+            State((database, calls)): State<ModelState>,
+            Json(body): Json<Value>,
+        ) -> Json<Value> {
+            let row = database.get_session("extension-session").unwrap().unwrap();
+            let prompt = row["system_prompt"].as_str().unwrap();
+            assert!(prompt.contains("## Plugin Context: fixture.rules"));
+            assert!(prompt.contains("Plugin session extension-session"));
+            assert_eq!(row["tool_names"], r#"["fixture_plugin_tool"]"#);
+            let call = calls.fetch_add(1, Ordering::SeqCst);
+            if call == 0 {
+                assert_eq!(body["tools"][0]["function"]["strict"], true);
+                Json(
+                    json!({"choices":[{"message":{"role":"assistant","content":null,
+                    "tool_calls":[{"id":"extension-call","type":"function","function":{
+                        "name":"fixture_plugin_tool","arguments":"{\"value\":\"hello\"}"
+                    }}]}}]}),
+                )
+            } else {
+                let result = body["messages"].as_array().unwrap().last().unwrap();
+                assert_eq!(result["name"], "fixture_plugin_tool");
+                assert_eq!(
+                    result["content"],
+                    json!([{"type":"text","text":"plugin:extension-session:hello"}])
+                );
+                Json(json!({"choices":[{"message":{"role":"assistant","content":"done"}}]}))
+            }
+        }
+
+        struct TempDir(std::path::PathBuf);
+        impl Drop for TempDir {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home =
+            TempDir(std::env::temp_dir().join(format!("hermes-native-extension-live-{nonce}")));
+        let plugin = home.0.join("plugins/fixture-plugin");
+        std::fs::create_dir_all(&plugin).unwrap();
+        std::fs::write(
+            home.0.join("config.yaml"),
+            "model:\n  default: fixture-model\n  provider: openrouter\nplugins:\n  enabled: [fixture-plugin]\nplatform_toolsets:\n  cli: [fixture]\n",
+        )
+        .unwrap();
+        std::fs::write(
+            plugin.join("plugin.yaml"),
+            "name: fixture-plugin\nversion: 1.0.0\nkind: standalone\n",
+        )
+        .unwrap();
+        std::fs::write(
+            plugin.join("__init__.py"),
+            r##"import os
+from pathlib import Path
+
+def fixture_tool(args, **kwargs):
+    return {"_multimodal": True, "content": [{"type": "text", "text":
+            "plugin:" + kwargs.get("session_id", "") + ":" + str(args.get("value", ""))}]}
+
+def prompt_section(info):
+    count = Path(os.environ["HERMES_HOME"], "prompt-callback-count")
+    with count.open("a", encoding="utf-8") as handle:
+        handle.write("called\n")
+    return "Plugin session " + info["session_id"]
+
+def register(ctx):
+    ctx.register_system_prompt_section(
+        "fixture.rules", prompt_section
+    )
+    ctx.register_tool(
+        name="fixture_plugin_tool", toolset="fixture",
+        schema={"description":"fixture","parameters":{"type":"object"},"strict":True},
+        handler=fixture_tool,
+    )
+"##,
+        )
+        .unwrap();
+
+        let database = session_db::SessionDb::open_shared(home.0.join("state.db")).unwrap();
+        database
+            .create_session(
+                "extension-session",
+                &session_db::SessionCreate {
+                    peer: session_db::GatewayPeer {
+                        source: "cli",
+                        session_key: Some("route-extension"),
+                        chat_id: Some("chat"),
+                        chat_type: Some("dm"),
+                        ..Default::default()
+                    },
+                    cwd: home.0.to_str(),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        database
+            .append_message("extension-session", "user", "earlier")
+            .unwrap();
+        let history = database.load_history("extension-session", 0).unwrap();
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route("/chat/completions", post(model))
+            .with_state((database.clone(), calls.clone()));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+
+        let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../..")
+            .canonicalize()
+            .unwrap();
+        let mut config = native_config();
+        config.agent_python = repo.join(".venv/bin/python").to_string_lossy().into_owned();
+        config.agent_cwd = repo.clone();
+        config.agent_model = Some("fixture-model".into());
+        config.llm_base_url = Some(base_url);
+        config.agent_tools = false;
+        let mut message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"next"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("extension-session".into());
+        let initializer =
+            conversation_prompt::Initializer::capture(home.0.clone(), repo.clone()).unwrap();
+        let client = secret_scope::with_secret_scope(
+            Some(Default::default()),
+            build_conversation_client(
+                &config,
+                &initializer,
+                &home.0,
+                &message,
+                &history,
+                Some(&database),
+            ),
+        )
+        .await
+        .unwrap();
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+        client.run_turn(&message, &history, sender).await.unwrap();
+        while receiver.recv().await.is_some() {}
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        drop(client);
+
+        let resumed = secret_scope::with_secret_scope(
+            Some(Default::default()),
+            build_conversation_client(
+                &config,
+                &conversation_prompt::Initializer::capture(home.0.clone(), repo).unwrap(),
+                &home.0,
+                &message,
+                &history,
+                Some(&database),
+            ),
+        )
+        .await
+        .unwrap();
+        drop(resumed);
+        assert_eq!(
+            std::fs::read_to_string(home.0.join("prompt-callback-count")).unwrap(),
+            "called\n",
+            "stored prompt reuse must not execute plugin prompt callbacks"
+        );
         server.abort();
     }
 

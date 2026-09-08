@@ -291,6 +291,26 @@ pub fn format(sections: &[Section]) -> String {
     format!("{START}\n{}\n{END}", blocks.join("\n\n"))
 }
 
+/// Re-validate rendered sections received across an extension-host boundary.
+/// The Python host applies the same checks, but subprocess output is data, not
+/// trusted in-process state. Invalid or duplicate entries are skipped.
+pub fn validate_rendered(sections: Vec<Section>) -> Vec<Section> {
+    let mut registry = Registry::default();
+    for section in sections {
+        let id = section.id.clone();
+        if let Err(error) = registry.register(
+            "extension-host",
+            &id,
+            Content::Text(section.content),
+            "after_memory",
+            4_000,
+        ) {
+            tracing::warn!(id, %error, "Extension-host prompt section rejected");
+        }
+    }
+    registry.render(&serde_json::Map::new())
+}
+
 fn format_section(section: &Section) -> String {
     format!(
         "## Plugin Context: {}\n<!-- hermes-plugin-section-chars:{} -->\n\n{}",

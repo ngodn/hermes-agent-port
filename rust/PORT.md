@@ -1,5 +1,57 @@
 # Hermes Rust rewrite
 
+## Live extension-host compatibility checkpoint: 2026-09-08
+
+Native conversations can now use existing Python plugin prompt sections,
+plugin tools, and one configured external-memory provider without handing the
+model turn back to Python. A persistent child is owned by each cached
+conversation and is started only when memory, an enabled standalone plugin, or
+an explicitly selected bundled backend toolset requires it. The default path
+still starts no Python process and produces the same prompt bytes and native
+tool surface.
+
+The child binds the selected profile home and session cwd before discovery,
+uses the real plugin manager, tool resolver, dispatch middleware, memory
+manager, availability checks, and shutdown drain, and carries the stable
+gateway route key separately from the transcript session ID. Fresh construction
+renders external memory and plugin sections in Python order before persisting
+the complete prompt. Stored prompts skip those callbacks and reuse their exact
+bytes. Snapshot failure drops the extension prompt and tools coherently before
+provider I/O.
+
+The JSONL boundary is serialized and bounded. It rejects oversized responses
+and mismatched IDs, scans past a limited amount of stdout contamination,
+distinguishes recoverable application errors from fatal transport failures,
+and kills the child process tree on timeout or teardown. Scoped conversations
+start from an explicit process-global environment allowlist, then install only
+the selected profile snapshot over the private stdin pipe. Rust-native tool
+names are reserved in the Python registry, so its existing explicit override
+and operator-consent checks also protect cross-runtime collisions.
+
+Native tools are now asynchronous, preserve provider-specific schema fields,
+and return structured JSON values. Supported multimodal plugin results are
+converted to provider-valid content arrays or text fallbacks before request
+projection. Real subprocess, SQLite, and local HTTP tests cover prompt
+persistence before model I/O, callback-free resume, plugin and memory toolset
+gates, schema preservation, collision routing, profile isolation, route-key and
+cwd propagation, stdout defense, recoverable errors, fatal timeouts, graceful
+shutdown, and multimodal replay. Full workspace: **1,498 passed, two ignored**.
+The 12-case conversation restore oracle and existing plugin prompt tests pass.
+Formatting, Clippy with warnings denied, Python compilation, and
+`git diff --check` pass.
+
+Gemini and Claude mapped and reviewed this seam through the required helper
+wrappers. Their four reports and the verified disposition are indexed under
+`rust/analysis/`.
+
+Next: add external-memory turn lifecycle calls such as prefetch and write/sync,
+then implement conversation-client TTL/LRU and reset-driven teardown so cached
+sessions cannot pin extension children indefinitely. Mid-conversation host
+respawn, richer gateway identity fields, compression-triggered prompt
+invalidation, dynamic registry drift, route-specific toolset overlays, and a
+Windows Job Object for abrupt descendant cleanup remain. This checkpoint is a
+production compatibility host, not the final native plugin/provider manager.
+
 ## Frozen native conversation state checkpoint: 2026-09-08
 
 Continuing native conversations now retain the exact tool prefix that was
