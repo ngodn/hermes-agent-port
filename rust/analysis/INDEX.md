@@ -26,6 +26,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [conversation-cache-review-resolution.md](conversation-cache-review-resolution.md) | Verified disposition of both bounded-cache audits, including accepted race and descendant-RSS fixes plus rejected exactly-once and PID-reuse premises |
+| [conversation-cache-review-agy.md](conversation-cache-review-agy.md) | Gemini post-implementation audit of cache bounds, finalizer safety, teardown sequencing, reset and shutdown races |
+| [conversation-cache-review-claude.md](conversation-cache-review-claude.md) | Claude post-implementation parity audit of soft and hard retirement, expiry, shutdown and remaining command gaps |
+| [conversation-cache-implementation-agy.md](conversation-cache-implementation-agy.md) | Gemini source-grounded bounded-cache design, with active-turn, LRU, pressure and awaitable teardown requirements |
+| [conversation-lifecycle-wiring-claude.md](conversation-lifecycle-wiring-claude.md) | Claude source map of Python cache triggers, post-persist ownership and the production Rust wiring sites |
 | [external-memory-lifecycle-review-resolution.md](external-memory-lifecycle-review-resolution.md) | Verified audit disposition, including tool transcript capture, post-persist sync, clean sidecars and explicit teardown deferrals |
 | [external-memory-lifecycle-review-agy.md](external-memory-lifecycle-review-agy.md) | Gemini implementation audit of lifecycle parity, persistence, transcript shape, timeouts and test gaps |
 | [external-memory-lifecycle-review-claude.md](external-memory-lifecycle-review-claude.md) | Claude implementation audit identifying tool transcript and durable ordering gaps fixed before commit |

@@ -884,6 +884,7 @@ async fn main() -> anyhow::Result<()> {
     // Choose the agent backend. Native (in-Rust LLM) is opt-in and needs a key +
     // a model; otherwise fall back to the Python subprocess bridge (default).
     let agent = build_agent_client(&config, &user_config, configured_model.as_deref());
+    let mut conversation_cache = None;
     let agent: Arc<dyn AgentClient> =
         if config.agent_native && config.agent_cli.is_none() && !agent.manages_history() {
             let captured = config.clone();
@@ -891,7 +892,7 @@ async fn main() -> anyhow::Result<()> {
                 config_file::hermes_root(),
                 config.agent_cwd.clone(),
             )?);
-            Arc::new(conversation_agent::ConversationAgent::new(
+            let cache = Arc::new(conversation_agent::ConversationAgent::new(
                 agent,
                 move |home, message, history, database| {
                     let home = home.to_owned();
@@ -911,7 +912,10 @@ async fn main() -> anyhow::Result<()> {
                         .await
                     })
                 },
-            ))
+                agent_cache_pressure::resolve_agent_cache_bounds(&user_config),
+            ));
+            conversation_cache = Some(cache.clone());
+            cache
         } else {
             agent
         };
@@ -987,6 +991,12 @@ async fn main() -> anyhow::Result<()> {
     // Periodic RSS logging (leak detection). Passive logging only, so it runs
     // regardless of the singleton flag; stops with the shutdown token.
     memory_monitor::start_memory_monitoring(std::time::Duration::from_secs(300), shutdown.clone());
+    if let Some(cache) = &conversation_cache {
+        cache.start_maintenance(
+            shutdown.clone(),
+            state.session_store.as_ref().map(|(store, _)| store.clone()),
+        );
+    }
 
     // Loop-liveness heartbeat: every 30s write state/gateway.heartbeat with a
     // memory sample, so an unclean death leaves pre-death telemetry and
@@ -1075,9 +1085,15 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
-    axum::serve(listener, app)
-        .with_graceful_shutdown(async move { shutdown.cancelled().await })
-        .await?;
+    let server_shutdown = shutdown.clone();
+    let server_result = axum::serve(listener, app)
+        .with_graceful_shutdown(async move { server_shutdown.cancelled().await })
+        .await;
+    shutdown.cancel();
+    if let Some(cache) = conversation_cache {
+        cache.shutdown(std::time::Duration::from_secs(45)).await;
+    }
+    server_result?;
 
     // Graceful shutdown finished: record it and release the singleton claims.
     if singleton {

@@ -21,13 +21,15 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Map, Value};
 use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
 use tokio::process::{Child, ChildStdin, ChildStdout, Command};
-use tokio::sync::{mpsc, oneshot};
+use tokio::sync::{mpsc, oneshot, watch};
 
 const MODULE: &str = "hermes_cli.rust_extension_host";
 const INITIALIZE_TIMEOUT: Duration = Duration::from_secs(60);
 const SNAPSHOT_TIMEOUT: Duration = Duration::from_secs(30);
 const TURN_START_TIMEOUT: Duration = Duration::from_secs(30);
 const TURN_COMPLETE_TIMEOUT: Duration = Duration::from_secs(5);
+const MEMORY_FLUSH_TIMEOUT: Duration = Duration::from_secs(10);
+const SESSION_END_TIMEOUT: Duration = Duration::from_secs(15);
 const TOOL_TIMEOUT: Duration = Duration::from_secs(310);
 const SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(7);
 const MAX_RESPONSE_BYTES: usize = 4 * 1024 * 1024;
@@ -116,6 +118,7 @@ pub struct TurnStartResult {
 pub struct Client {
     sender: mpsc::Sender<WorkerCommand>,
     next_id: Arc<AtomicU64>,
+    worker_done: watch::Receiver<bool>,
 }
 
 struct WorkerCommand {
@@ -221,10 +224,15 @@ impl Client {
             stdout: BufReader::new(stdout),
         };
         let (sender, receiver) = mpsc::channel(16);
-        tokio::spawn(run_worker(process, receiver));
+        let (worker_done_tx, worker_done) = watch::channel(false);
+        tokio::spawn(async move {
+            run_worker(process, receiver).await;
+            let _ = worker_done_tx.send(true);
+        });
         let client = Self {
             sender,
             next_id: Arc::new(AtomicU64::new(1)),
+            worker_done,
         };
         let value = client
             .request(
@@ -292,6 +300,78 @@ impl Client {
         .map(|_| ())
     }
 
+    /// Drain queued writes, optionally finalize the conversation transcript,
+    /// shut the provider/plugin host down, and wait until its process exits.
+    /// Every stage is bounded and later stages still run after an earlier
+    /// best-effort failure.
+    pub async fn close(&self, session_messages: Option<&[Value]>) -> Result<()> {
+        if *self.worker_done.borrow() {
+            return Ok(());
+        }
+
+        let mut first_error = None;
+        match self
+            .request(
+                "flush_pending",
+                json!({"timeout": MEMORY_FLUSH_TIMEOUT.as_secs_f64()}),
+                MEMORY_FLUSH_TIMEOUT + Duration::from_secs(1),
+            )
+            .await
+        {
+            Ok(Value::Bool(true)) => {}
+            Ok(_) => {
+                first_error = Some(Error::Other(
+                    "extension host memory queue did not drain".into(),
+                ));
+            }
+            Err(error) => first_error = Some(error),
+        }
+
+        if let Some(messages) = session_messages {
+            if let Err(error) = self
+                .request(
+                    "session_end",
+                    json!({"messages": messages}),
+                    SESSION_END_TIMEOUT,
+                )
+                .await
+            {
+                first_error.get_or_insert(error);
+            }
+        }
+
+        if let Err(error) = self.request("shutdown", json!({}), SHUTDOWN_TIMEOUT).await {
+            first_error.get_or_insert(error);
+        }
+
+        let mut done = self.worker_done.clone();
+        let exited = async {
+            if *done.borrow() {
+                return Ok(());
+            }
+            done.wait_for(|finished| *finished)
+                .await
+                .map(|_| ())
+                .map_err(|_| Error::Other("extension host worker exit signal closed".into()))
+        };
+        match tokio::time::timeout(SHUTDOWN_TIMEOUT + Duration::from_secs(1), exited).await {
+            Ok(Ok(())) => {}
+            Ok(Err(error)) => {
+                first_error.get_or_insert(error);
+            }
+            Err(_) => {
+                first_error.get_or_insert_with(|| {
+                    Error::Other("extension host worker did not exit after shutdown".into())
+                });
+            }
+        }
+
+        match first_error {
+            Some(error) => Err(error),
+            None => Ok(()),
+        }
+    }
+
     async fn request(&self, method: &str, params: Value, timeout: Duration) -> Result<Value> {
         let id = self.next_id.fetch_add(1, Ordering::Relaxed);
         let request = json!({"id": id, "method": method, "params": params});
@@ -355,7 +435,9 @@ fn inherited_child_env_is_global(name: &str) -> bool {
 
 async fn run_worker(mut process: Process, mut receiver: mpsc::Receiver<WorkerCommand>) {
     let mut healthy = true;
+    let mut shutdown_sent = false;
     while let Some(command) = receiver.recv().await {
+        let is_shutdown = command.request["method"] == "shutdown";
         let (result, transport_failed) = if healthy {
             match exchange(&mut process, &command.request, command.timeout).await {
                 Ok(value) => (Ok(value), false),
@@ -370,7 +452,12 @@ async fn run_worker(mut process: Process, mut receiver: mpsc::Receiver<WorkerCom
                 false,
             )
         };
+        let shutdown_succeeded = is_shutdown && result.is_ok();
         let _ = command.response.send(result);
+        if shutdown_succeeded {
+            shutdown_sent = true;
+            break;
+        }
         if transport_failed {
             healthy = false;
             kill_process_tree(&mut process.child).await;
@@ -378,7 +465,7 @@ async fn run_worker(mut process: Process, mut receiver: mpsc::Receiver<WorkerCom
         }
     }
 
-    if healthy {
+    if healthy && !shutdown_sent {
         let request = json!({"id": 0, "method": "shutdown", "params": {}});
         let _ = exchange(&mut process, &request, SHUTDOWN_TIMEOUT).await;
     }
@@ -606,9 +693,11 @@ mod tests {
     #[test]
     fn extension_tool_preserves_extra_schema_fields() {
         let (sender, _receiver) = mpsc::channel(1);
+        let (_worker_done_tx, worker_done) = watch::channel(false);
         let client = Client {
             sender,
             next_id: Arc::new(AtomicU64::new(1)),
+            worker_done,
         };
         let tool = Tool::from_definition(
             client,
@@ -628,9 +717,11 @@ mod tests {
         );
 
         let (sender, _receiver) = mpsc::channel(1);
+        let (_worker_done_tx, worker_done) = watch::channel(false);
         let client = Client {
             sender,
             next_id: Arc::new(AtomicU64::new(1)),
+            worker_done,
         };
         assert!(Tool::from_definition(
             client.clone(),
@@ -929,26 +1020,10 @@ def register(ctx):
             )
             .await
             .unwrap();
-        assert_eq!(
-            client
-                .request(
-                    "flush_pending",
-                    json!({"timeout": 2.0}),
-                    Duration::from_secs(3),
-                )
-                .await
-                .unwrap(),
-            Value::Bool(true)
-        );
         let ended = [json!({"role":"user", "content":"User text"}), json!({"role":"assistant", "content":"Assistant text"})];
-        client
-            .request(
-                "session_end",
-                json!({"messages": ended}),
-                Duration::from_secs(15),
-            )
-            .await
-            .unwrap();
+        drop(tools);
+        client.close(Some(&ended)).await.unwrap();
+        assert!(*client.worker_done.borrow());
         let lifecycle: Vec<Value> = std::fs::read_to_string(
             home.0.join("extension-lifecycle-session-one"),
         )
@@ -963,15 +1038,6 @@ def register(ctx):
         assert_eq!(lifecycle[3]["user"], "[1 image] User text");
         assert_eq!(lifecycle[4]["event"], "queue_prefetch");
         assert_eq!(lifecycle[5]["event"], "session_end");
-
-        drop(tools);
-        drop(client);
-        for _ in 0..100 {
-            if home.0.join("extension-shutdown-session-one").is_file() {
-                break;
-            }
-            tokio::time::sleep(Duration::from_millis(25)).await;
-        }
         assert_eq!(
             std::fs::read_to_string(home.0.join("extension-shutdown-session-one")).unwrap(),
             "session-one"

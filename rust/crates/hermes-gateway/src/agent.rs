@@ -37,6 +37,10 @@ use tracing::warn;
 pub struct TurnContext<'a> {
     pub home: Option<&'a std::path::Path>,
     pub database: Option<&'a crate::session_db::SessionDb>,
+    /// True when the session reset policy has a finite boundary. Cache
+    /// pressure must preserve its end-of-session memory extraction before
+    /// releasing the live conversation client.
+    pub session_finalizable: bool,
 }
 
 impl<'a> TurnContext<'a> {
@@ -44,7 +48,13 @@ impl<'a> TurnContext<'a> {
         Self {
             home: database.and_then(|db| db.profile_home()),
             database,
+            session_finalizable: false,
         }
+    }
+
+    pub fn with_session_finalizable(mut self, finalizable: bool) -> Self {
+        self.session_finalizable = finalizable;
+        self
     }
 }
 
@@ -92,6 +102,24 @@ pub trait AgentClient: Send + Sync {
     ) -> Result<()> {
         let _ = (context, msg, reply, succeeded);
         Ok(())
+    }
+
+    /// Release conversation-owned resources. `Some(messages)` marks a real
+    /// session boundary and lets providers run end-of-session extraction;
+    /// `None` is a cache-only release. Implementations must be idempotent.
+    async fn close_conversation(
+        &self,
+        session_messages: Option<&[serde_json::Value]>,
+    ) -> Result<()> {
+        let _ = session_messages;
+        Ok(())
+    }
+
+    /// Retire one superseded cached conversation. The default is a no-op for
+    /// backends without per-conversation client ownership.
+    fn retire_conversation(&self, context: TurnContext<'_>, session_id: &str) -> bool {
+        let _ = (context, session_id);
+        false
     }
 
     /// True when the backend loads and persists conversation history itself, so

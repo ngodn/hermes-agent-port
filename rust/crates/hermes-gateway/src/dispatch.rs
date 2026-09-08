@@ -294,6 +294,7 @@ impl Dispatcher {
         let manages = self.agent.manages_history();
         let mut turn_db = self.session_db.clone();
         let mut routing_key = None;
+        let mut session_finalizable = false;
         if !manages {
             if let Some((store, freshness)) = &self.session_store {
                 let store = store.clone();
@@ -325,15 +326,24 @@ impl Dispatcher {
                         freshness,
                         |_| Ok(false),
                     )?;
+                    let finalizable = store.is_session_finalizable(&entry);
+                    let previous = store.take_auto_reset_predecessor(&entry)?;
                     let db = store.database_for_key(&entry.session_key);
-                    Ok::<_, Arc<anyhow::Error>>((entry, db))
+                    Ok::<_, Arc<anyhow::Error>>((entry, db, finalizable, previous))
                 })
                 .await;
                 match resolved {
-                    Ok(Ok((entry, db))) => {
+                    Ok(Ok((entry, db, finalizable, previous_session_id))) => {
                         msg.resolved_session_id = Some(entry.session_id);
                         routing_key = Some(entry.session_key);
                         turn_db = db;
+                        session_finalizable = finalizable;
+                        if let Some(previous_session_id) = previous_session_id {
+                            self.agent.retire_conversation(
+                                crate::agent::TurnContext::from_database(turn_db.as_deref()),
+                                &previous_session_id,
+                            );
+                        }
                     }
                     Ok(Err(error)) => {
                         warn!(%error, "could not resolve session for inbound turn");
@@ -371,7 +381,14 @@ impl Dispatcher {
         let owner = self.clone();
         if let Err(error) = tokio::spawn(async move {
             owner
-                .run_admitted_turn(msg, turn_db, manages, routing_key, _lease)
+                .run_admitted_turn(
+                    msg,
+                    turn_db,
+                    manages,
+                    routing_key,
+                    session_finalizable,
+                    _lease,
+                )
                 .await;
         })
         .await
@@ -386,6 +403,7 @@ impl Dispatcher {
         turn_db: Option<Arc<crate::session_db::SessionDb>>,
         manages: bool,
         routing_key: Option<String>,
+        session_finalizable: bool,
         _lease: Option<crate::turn_lease::TurnLeaseToken>,
     ) {
         let (tx, mut rx) = mpsc::channel::<StreamEvent>(64);
@@ -402,7 +420,8 @@ impl Dispatcher {
         let agent_task = tokio::spawn(async move {
             turn_agent
                 .run_turn_with_context(
-                    crate::agent::TurnContext::from_database(agent_db.as_deref()),
+                    crate::agent::TurnContext::from_database(agent_db.as_deref())
+                        .with_session_finalizable(session_finalizable),
                     &msg_for_agent,
                     &history,
                     tx,
@@ -453,7 +472,8 @@ impl Dispatcher {
         crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
         if let Err(error) = agent
             .finalize_turn_after_persist(
-                crate::agent::TurnContext::from_database(turn_db.as_deref()),
+                crate::agent::TurnContext::from_database(turn_db.as_deref())
+                    .with_session_finalizable(session_finalizable),
                 &msg,
                 &reply,
                 succeeded,

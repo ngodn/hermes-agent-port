@@ -23,6 +23,13 @@ pub struct SessionStore {
     active_profile: String,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ExpiredSession {
+    pub session_key: String,
+    pub session_id: String,
+    pub home: PathBuf,
+}
+
 struct SessionOrigin<'a> {
     source: &'a crate::session::SessionSource,
     legacy: Option<(&'a str, &'a str)>,
@@ -31,6 +38,146 @@ struct SessionOrigin<'a> {
 impl SessionStore {
     pub fn database_for_key(&self, key: &str) -> Option<Arc<crate::session_db::SessionDb>> {
         self.databases.for_key(key, &self.home)
+    }
+
+    fn policy_for_entry(
+        &self,
+        entry: &crate::session_entry::SessionEntry,
+    ) -> crate::config_types::SessionResetPolicy {
+        let platform = entry
+            .origin
+            .as_ref()
+            .map(|source| source.platform.as_str())
+            .or_else(|| entry.fields["platform"].as_str());
+        let chat_type = entry
+            .origin
+            .as_ref()
+            .map(|source| source.chat_type.as_str())
+            .or_else(|| entry.fields["chat_type"].as_str());
+        self.config
+            .get_reset_policy(platform.and_then(Platform::from_value), chat_type)
+            .clone()
+    }
+
+    /// Whether the expiry watcher will eventually establish a real session
+    /// boundary. Only the explicit `none` policy has no future boundary.
+    pub fn is_session_finalizable(&self, entry: &crate::session_entry::SessionEntry) -> bool {
+        self.policy_for_entry(entry).mode != "none"
+    }
+
+    /// Consume the one-shot predecessor marker published by an automatic
+    /// reset. Object identity prevents an older resolver from clearing a newer
+    /// route. The durable routing update happens outside the index lock.
+    pub fn take_auto_reset_predecessor(
+        &self,
+        observed: &crate::session_entry::SessionEntry,
+    ) -> anyhow::Result<Option<String>> {
+        let database = self.database_for_key(&observed.session_key);
+        let captured = {
+            let mut index = self.index.lock().unwrap();
+            let Some(entry) = index
+                .entries
+                .get_mut(&observed.session_key)
+                .filter(|entry| entry.same_instance(observed))
+            else {
+                return Ok(None);
+            };
+            if !crate::python_value::truthy(&entry.fields["was_auto_reset"]) {
+                return Ok(None);
+            }
+            let previous = entry.fields["prev_session_id"]
+                .as_str()
+                .filter(|previous| *previous != entry.session_id)
+                .map(str::to_owned);
+            entry
+                .fields
+                .insert("was_auto_reset".into(), serde_json::json!(false));
+            let (data, revision) = index.capture_entry(&observed.session_key).unwrap();
+            (index.writer.clone(), data, revision, previous)
+        };
+        if !captured.0.persist_entry(
+            &observed.session_key,
+            &captured.1,
+            captured.2,
+            database.as_deref(),
+        )? {
+            self.persist_full(database.as_deref())?;
+        }
+        Ok(captured.3)
+    }
+
+    /// Capture expired routing entries without holding the routing lock during
+    /// later provider teardown or database writes.
+    pub fn expired_sessions(&self) -> Vec<ExpiredSession> {
+        self.expired_sessions_at(chrono::Local::now().naive_local())
+    }
+
+    fn expired_sessions_at(&self, now: chrono::NaiveDateTime) -> Vec<ExpiredSession> {
+        let expired: Vec<_> = self
+            .index
+            .lock()
+            .unwrap()
+            .entries
+            .values()
+            .filter(|entry| !crate::python_value::truthy(&entry.fields["expiry_finalized"]))
+            .filter(|entry| {
+                crate::session_reset::reset_reason(
+                    &self.policy_for_entry(entry),
+                    entry.updated_at.local,
+                    now,
+                    false,
+                )
+                .unwrap_or(None)
+                .is_some()
+            })
+            .map(|entry| (entry.session_key.clone(), entry.session_id.clone()))
+            .collect();
+        expired
+            .into_iter()
+            .map(|(session_key, session_id)| ExpiredSession {
+                home: self
+                    .database_for_key(&session_key)
+                    .and_then(|db| db.profile_home().map(PathBuf::from))
+                    .unwrap_or_else(|| self.home.clone()),
+                session_key,
+                session_id,
+            })
+            .collect()
+    }
+
+    /// Record a completed expiry boundary in SQLite first, then mirror the
+    /// routing entry. SQLite changes share one short transaction; provider I/O
+    /// has already completed before this method is called.
+    pub fn finalize_expired_session(&self, expired: &ExpiredSession) -> anyhow::Result<()> {
+        let database = self.database_for_key(&expired.session_key);
+        if let Some(database) = database.as_deref() {
+            database.finalize_session_expiry(&expired.session_id)?;
+        }
+        let captured = {
+            let mut index = self.index.lock().unwrap();
+            let Some(entry) = index
+                .entries
+                .get_mut(&expired.session_key)
+                .filter(|entry| entry.session_id == expired.session_id)
+            else {
+                return Ok(());
+            };
+            entry
+                .fields
+                .insert("expiry_finalized".into(), serde_json::json!(true));
+            entry.fields.remove("model_override");
+            let (data, revision) = index.capture_entry(&expired.session_key).unwrap();
+            (index.writer.clone(), data, revision)
+        };
+        if !captured.0.persist_entry(
+            &expired.session_key,
+            &captured.1,
+            captured.2,
+            database.as_deref(),
+        )? {
+            self.persist_full(database.as_deref())?;
+        }
+        Ok(())
     }
 
     fn recovery_request<'a>(
@@ -829,6 +976,15 @@ mod tests {
         assert_eq!(next.fields["prev_session_id"], first.session_id);
         assert_eq!(next.fields["auto_reset_reason"], "idle");
         assert_eq!(next.fields["reset_had_activity"], true);
+        assert_eq!(
+            store.take_auto_reset_predecessor(&next).unwrap(),
+            Some(first.session_id.clone())
+        );
+        assert_eq!(store.take_auto_reset_predecessor(&next).unwrap(), None);
+        assert_eq!(
+            store.index.lock().unwrap().entries[&next.session_key].fields["was_auto_reset"],
+            false
+        );
         let db = store.databases.routing().unwrap();
         assert_eq!(
             db.get_session(&first.session_id).unwrap().unwrap()["end_reason"],
@@ -842,6 +998,109 @@ mod tests {
             first.session_id
         );
         drop(db);
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[test]
+    fn expiry_candidates_follow_policy_and_finalize_both_durable_copies() {
+        let home = transition_home("expiry");
+        let config = GatewayConfig {
+            sessions_dir: home.join("sessions"),
+            default_reset_policy: crate::config_types::SessionResetPolicy {
+                mode: serde_json::json!("idle"),
+                idle_minutes: serde_json::json!(30),
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+        let store =
+            SessionStore::open(config, home.clone(), home.clone(), "default".into(), |_| {
+                Ok(false)
+            })
+            .unwrap();
+        let source = SessionSource::new("telegram", "C");
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        assert!(store.is_session_finalizable(&entry));
+        {
+            let mut index = store.index.lock().unwrap();
+            let current = index.entries.get_mut(&entry.session_key).unwrap();
+            current.updated_at = crate::session_entry::EntryTimestamp::parse(&serde_json::json!(
+                "2026-09-08T00:00:00"
+            ))
+            .unwrap();
+            current.fields.insert(
+                "model_override".into(),
+                serde_json::json!({"model":"temporary"}),
+            );
+        }
+        let before = chrono::NaiveDate::from_ymd_opt(2026, 9, 8)
+            .unwrap()
+            .and_hms_opt(0, 29, 59)
+            .unwrap();
+        assert!(store.expired_sessions_at(before).is_empty());
+        let after = chrono::NaiveDate::from_ymd_opt(2026, 9, 8)
+            .unwrap()
+            .and_hms_opt(0, 30, 1)
+            .unwrap();
+        let expired = store.expired_sessions_at(after);
+        assert_eq!(expired.len(), 1);
+        assert_eq!(expired[0].session_id, entry.session_id);
+        store.finalize_expired_session(&expired[0]).unwrap();
+        assert!(store.expired_sessions_at(after).is_empty());
+        let current = store
+            .index
+            .lock()
+            .unwrap()
+            .entries
+            .get(&entry.session_key)
+            .unwrap()
+            .to_dict();
+        assert_eq!(current["expiry_finalized"], true);
+        assert!(current.get("model_override").is_none());
+        let row = store
+            .database_for_key(&entry.session_key)
+            .unwrap()
+            .get_session(&entry.session_id)
+            .unwrap()
+            .unwrap();
+        assert_eq!(row["expiry_finalized"], 1);
+        assert_eq!(row["end_reason"], "session_reset");
+        drop(store);
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[test]
+    fn mode_none_sessions_are_not_finalizable_or_expirable() {
+        let home = transition_home("expiry_none");
+        let config = GatewayConfig {
+            sessions_dir: home.join("sessions"),
+            default_reset_policy: crate::config_types::SessionResetPolicy {
+                mode: serde_json::json!("none"),
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+        let store =
+            SessionStore::open(config, home.clone(), home.clone(), "default".into(), |_| {
+                Ok(false)
+            })
+            .unwrap();
+        let entry = store
+            .get_or_create_session(
+                &SessionSource::new("telegram", "C"),
+                false,
+                false,
+                3600.0,
+                |_| Ok(false),
+            )
+            .unwrap();
+        assert!(!store.is_session_finalizable(&entry));
+        assert!(store
+            .expired_sessions_at(chrono::Local::now().naive_local() + chrono::TimeDelta::days(365))
+            .is_empty());
         drop(store);
         std::fs::remove_dir_all(home).unwrap();
     }

@@ -1,5 +1,67 @@
 # Hermes Rust rewrite
 
+## Bounded native conversation lifecycle checkpoint: 2026-09-08
+
+Native per-conversation clients are now bounded owners instead of an
+ever-growing prompt cache. The cache keeps Python-compatible defaults of 128
+entries and a 3,600-second idle threshold, enforces LRU capacity on checkout,
+uses the existing pressure policy, and runs expiry, idle and pressure
+maintenance on the gateway lifecycle. Profile home plus immutable conversation
+ID remains the key, so a reset cannot silently reuse a stale system-prompt
+prefix.
+
+One pending counter now covers the full turn, including assistant persistence
+and external-memory finalization. Capacity, idle and pressure paths skip active
+entries. Reset attaches hard retirement until the finalizer completes, expiry
+returns for a later watcher pass, and shutdown gives active finalizers a bounded
+grace before deliberately forcing the remaining clients. Cache mutation is
+synchronous and small; construction, SQLite transcript loading, provider calls
+and process teardown all happen outside the leaf mutex.
+
+Capacity and pressure retirement eagerly extracts finite-session memory before
+dropping the owning extension child, matching Python's pre-eviction
+`commit_memory_session` intent. Mode `none` idle entries use release without a
+session transcript, while finite unexpired sessions remain owned until expiry
+or another pressure boundary. Linux pressure measurement now includes the
+gateway's descendant process tree, so per-conversation Python hosts cannot hide
+behind parent-only RSS.
+
+Automatic resets consume and persist their predecessor marker exactly once,
+then retire the old conversation for both HTTP and push dispatch. Policy expiry
+loads the durable structured transcript, runs provider teardown, and atomically
+marks `expiry_finalized`, promotes the session end reason, and bumps the
+conversation generation. The database operation is idempotent and preserves an
+existing explicit compression boundary.
+
+Extension-host close is now awaitable. It drains queued writes, optionally
+delivers `session_end` with the SQLite transcript, sends `shutdown`, and waits
+for the child worker to exit. Each stage is bounded, later cleanup still runs
+after an earlier best-effort error, and gateway shutdown joins or aborts every
+tracked retirement task within its total budget. A real Python-child test proves
+the session transcript event and shutdown sentinel.
+
+Coverage includes LRU and pending-finalizer protection, idle and pressure
+policy, retryable construction, reset deferral, policy expiry, ordinary and
+forced shutdown, failed-turn single release, descendant RSS, transcript shape,
+idempotent database boundaries, routing-marker consumption, a real extension
+child, and a real two-request HTTP auto-reset. Full workspace validation is
+**1,515 passed, two ignored**. Conversation prompt, plugin prompt, session
+lifecycle, and session reset generators pass their source checks. Formatting,
+Clippy with warnings denied, Python compilation, and `git diff --check` pass.
+
+Gemini and Claude were both used through `rust/tools/agy.sh` and
+`rust/tools/claude.sh` for design and post-implementation audits. The four raw
+reports and the independently verified disposition are indexed under
+`rust/analysis/`.
+
+Next: port explicit `/new`, `/reset`, resume and compression command boundaries
+so manual rotation drives the same cache retirement and prompt invalidation
+contract. Transparent extension-host respawn, built-in memory-tool write
+mirroring, native plugin and memory managers, route-specific capability
+overlays, plugin session-finalize hooks, active-process expiry suppression, and
+remaining agent-loop behavior still follow. This is a bounded ownership
+checkpoint, not the completion of the full port.
+
 ## Native external-memory turn lifecycle checkpoint: 2026-09-08
 
 Native conversations now drive the configured Python external-memory provider

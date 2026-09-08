@@ -443,6 +443,12 @@ impl SessionDb {
     pub fn profile_home(&self) -> Option<&std::path::Path> {
         self.db_path.parent()
     }
+
+    /// Exact selected database path. Conversation teardown retains this path
+    /// so it can reload the durable transcript without guessing profile scope.
+    pub fn database_path(&self) -> &std::path::Path {
+        &self.db_path
+    }
 }
 
 /// Metadata supplied by gateway creation and later agent enrichment.
@@ -921,6 +927,30 @@ impl SessionDb {
             )?;
         }
         Ok(())
+    }
+
+    /// Persist the expiry flag and durable reset boundary atomically. The
+    /// update is idempotent so a watcher can safely retry after an ambiguous
+    /// process interruption.
+    pub fn finalize_session_expiry(&self, id: &str) -> rusqlite::Result<()> {
+        if id.is_empty() {
+            return Ok(());
+        }
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction()?;
+        tx.execute(
+            "UPDATE sessions SET expiry_finalized = 1 WHERE id = ?",
+            [id],
+        )?;
+        let changed = tx.execute(
+            "UPDATE sessions SET ended_at = ?, end_reason = 'session_reset' WHERE id = ? AND
+            (ended_at IS NULL OR end_reason IN ('agent_close','ws_orphan_reap','superseded_by_resume','startup_orphan_reap'))",
+            params![now_secs(), id],
+        )?;
+        if changed != 0 {
+            bump_conversation_generation(&tx, id, "session_reset")?;
+        }
+        tx.commit()
     }
 
     /// First closure wins. Intentional reset boundaries advance the durable
@@ -1595,6 +1625,53 @@ impl SessionDb {
                 content: r.get::<_, Option<String>>(1)?.unwrap_or_default(),
                 api_content: r.get(2)?,
             })
+        })?;
+        rows.collect()
+    }
+
+    /// Reconstruct the durable active transcript for lifecycle hooks. Unlike
+    /// model history, this keeps stored tool metadata and the clean/API content
+    /// split so an end-of-session provider sees the best available transcript.
+    pub fn load_lifecycle_messages(&self, session_id: &str) -> rusqlite::Result<Vec<Value>> {
+        let conn = self.conn.lock().unwrap();
+        let mut statement = conn.prepare(
+            "SELECT role, content, api_content, tool_call_id, tool_calls, tool_name
+             FROM messages WHERE session_id = ? AND active = 1 ORDER BY id ASC",
+        )?;
+        let rows = statement.query_map([session_id], |row| {
+            let role: String = row.get(0)?;
+            let content = row.get::<_, Option<String>>(1)?.unwrap_or_default();
+            let api_content: Option<String> = row.get(2)?;
+            let tool_call_id: Option<String> = row.get(3)?;
+            let tool_calls: Option<String> = row.get(4)?;
+            let tool_name: Option<String> = row.get(5)?;
+            let mut message = serde_json::Map::new();
+            message.insert("role".into(), Value::String(role.clone()));
+            message.insert(
+                "content".into(),
+                HistoryMessage {
+                    role,
+                    content,
+                    api_content: api_content.clone(),
+                }
+                .model_content(),
+            );
+            if let Some(api_content) = api_content {
+                message.insert("api_content".into(), Value::String(api_content));
+            }
+            if let Some(tool_call_id) = tool_call_id {
+                message.insert("tool_call_id".into(), Value::String(tool_call_id));
+            }
+            if let Some(tool_calls) = tool_calls {
+                message.insert(
+                    "tool_calls".into(),
+                    serde_json::from_str(&tool_calls).unwrap_or(Value::String(tool_calls)),
+                );
+            }
+            if let Some(tool_name) = tool_name {
+                message.insert("name".into(), Value::String(tool_name));
+            }
+            Ok(Value::Object(message))
         })?;
         rows.collect()
     }
@@ -3407,6 +3484,122 @@ mod tests {
             restored[2].api_content.as_deref(),
             Some("second\n\n<memory-context>recalled</memory-context>")
         );
+    }
+
+    #[test]
+    fn lifecycle_messages_preserve_clean_content_sidecar_and_tool_metadata() {
+        let path = temp_db("lifecycle_messages");
+        let db = super::SessionDb::open(path).unwrap();
+        db.ensure_session("s1", "local", None, Some("C"), Some("dm"))
+            .unwrap();
+        let clean = serde_json::json!([
+            {"type":"text","text":"look"},
+            {"type":"image_url","image_url":{"url":"https://fixture/image.png"}}
+        ]);
+        db.append_message("s1", "user", &super::encode_message_content(&clean))
+            .unwrap();
+        db.set_latest_user_api_content("s1", &clean, "look\n\nRelevant memory")
+            .unwrap();
+        let calls = serde_json::json!([{
+            "id":"call-1","type":"function",
+            "function":{"name":"fixture_tool","arguments":"{\"x\":1}"}
+        }]);
+        db.append_message_with(
+            "s1",
+            "assistant",
+            "",
+            &super::AppendOptions {
+                tool_calls: Some(&calls.to_string()),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.append_message_with(
+            "s1",
+            "tool",
+            "tool result",
+            &super::AppendOptions {
+                tool_call_id: Some("call-1"),
+                tool_name: Some("fixture_tool"),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let inactive = db.append_message("s1", "assistant", "inactive").unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute("UPDATE messages SET active=0 WHERE id=?", [inactive])
+            .unwrap();
+
+        assert_eq!(
+            db.load_lifecycle_messages("s1").unwrap(),
+            vec![
+                serde_json::json!({
+                    "role":"user",
+                    "content":clean,
+                    "api_content":"look\n\nRelevant memory"
+                }),
+                serde_json::json!({"role":"assistant","content":"","tool_calls":calls}),
+                serde_json::json!({
+                    "role":"tool","content":"tool result",
+                    "tool_call_id":"call-1","name":"fixture_tool"
+                }),
+            ]
+        );
+    }
+
+    #[test]
+    fn expiry_marker_and_reset_boundary_commit_atomically_and_idempotently() {
+        let path = temp_db("expiry_boundary");
+        let db = super::SessionDb::open(path).unwrap();
+        db.create_session(
+            "expiring",
+            &super::SessionCreate {
+                peer: super::GatewayPeer {
+                    source: "telegram",
+                    session_key: Some("agent:main:telegram:dm:C"),
+                    chat_id: Some("C"),
+                    chat_type: Some("dm"),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.finalize_session_expiry("expiring").unwrap();
+        db.finalize_session_expiry("expiring").unwrap();
+        let row = db.get_session("expiring").unwrap().unwrap();
+        assert_eq!(row["expiry_finalized"], 1);
+        assert_eq!(row["end_reason"], "session_reset");
+        let generations: i64 = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT generation FROM conversation_generations WHERE source='telegram' AND session_key='agent:main:telegram:dm:C'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(generations, 1);
+
+        db.create_session(
+            "explicit",
+            &super::SessionCreate {
+                peer: super::GatewayPeer {
+                    source: "telegram",
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        db.end_session("explicit", "compression").unwrap();
+        db.finalize_session_expiry("explicit").unwrap();
+        let explicit = db.get_session("explicit").unwrap().unwrap();
+        assert_eq!(explicit["expiry_finalized"], 1);
+        assert_eq!(explicit["end_reason"], "compression");
     }
 
     #[test]

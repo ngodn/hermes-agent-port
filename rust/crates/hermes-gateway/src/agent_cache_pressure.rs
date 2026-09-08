@@ -1,8 +1,5 @@
 //! Port of gateway/agent_cache_pressure.py.
 //!
-// Public API is ahead of its callers (the gateway agent-cache sweep wires it).
-#![allow(dead_code)]
-//!
 //! Memory-pressure bounds for the gateway's per-session agent cache. The gateway
 //! caches one agent per session so a long-lived conversation reuses its prompt
 //! prefix, but each cached agent pins the full live transcript (tens of MB on a
@@ -23,6 +20,8 @@
 //! gateway. Config lives under `agent.agent_cache` in config.yaml.
 
 use serde_json::Value;
+#[cfg(target_os = "linux")]
+use std::collections::HashSet;
 
 // Fraction of the resolved memory limit at which we start shedding transcripts.
 // Well under the limit: eviction has to happen while the process still has room
@@ -36,6 +35,9 @@ const AUTO_BUDGET_FLOOR_MB: i64 = 512;
 const DEFAULT_MAX_EVICTIONS_PER_PASS: i64 = 16;
 // Never let a pressure pass touch the hottest sessions.
 const DEFAULT_PROTECT_RECENT: i64 = 8;
+
+pub const DEFAULT_MAX_SIZE: usize = 128;
+pub const DEFAULT_IDLE_TTL_SECS: f64 = 3600.0;
 
 const BYTES_PER_MB: i64 = 1024 * 1024;
 
@@ -62,6 +64,18 @@ impl Default for AgentCacheBounds {
             protect_recent: DEFAULT_PROTECT_RECENT,
         }
     }
+}
+
+pub fn effective_max_size(bounds: &AgentCacheBounds) -> usize {
+    bounds
+        .max_size
+        .and_then(|value| usize::try_from(value).ok())
+        .filter(|value| *value > 0)
+        .unwrap_or(DEFAULT_MAX_SIZE)
+}
+
+pub fn effective_idle_ttl(bounds: &AgentCacheBounds) -> f64 {
+    bounds.idle_ttl_secs.unwrap_or(DEFAULT_IDLE_TTL_SECS)
 }
 
 /// Python `int(value)` if positive, else `None` (rejects bool/None; truncates a
@@ -269,6 +283,70 @@ pub fn read_anon_rss_mb() -> Option<i64> {
     rss_kib.filter(|&v| v > 0).map(|v| v / 1024)
 }
 
+/// Anonymous RSS for the gateway and every process still parented beneath it.
+/// The Rust gateway owns per-conversation Python hosts, so measuring only
+/// `/proc/self/status` would omit the largest cache-owned allocations.
+#[cfg(target_os = "linux")]
+pub fn read_process_tree_anon_rss_mb() -> Option<i64> {
+    let Some(entries) = std::fs::read_dir("/proc").ok() else {
+        return read_anon_rss_mb();
+    };
+    let processes = entries
+        .filter_map(|entry| {
+            let entry = entry.ok()?;
+            let pid = entry.file_name().to_str()?.parse::<i32>().ok()?;
+            let status = std::fs::read_to_string(entry.path().join("status")).ok()?;
+            let (parent, rss_kib) = parse_process_status(&status)?;
+            Some((pid, parent, rss_kib))
+        })
+        .collect();
+    let rss_mb = process_tree_rss_kib(processes, std::process::id() as i32) / 1024;
+    (rss_mb > 0).then_some(rss_mb).or_else(read_anon_rss_mb)
+}
+
+#[cfg(not(target_os = "linux"))]
+pub fn read_process_tree_anon_rss_mb() -> Option<i64> {
+    read_anon_rss_mb()
+}
+
+#[cfg(target_os = "linux")]
+fn parse_process_status(status: &str) -> Option<(i32, i64)> {
+    let mut parent = None;
+    let mut anon = None;
+    let mut total = None;
+    for line in status.lines() {
+        if let Some(rest) = line.strip_prefix("PPid:") {
+            parent = rest.split_whitespace().next()?.parse().ok();
+        } else if let Some(rest) = line.strip_prefix("RssAnon:") {
+            anon = parse_status_kib(rest);
+        } else if let Some(rest) = line.strip_prefix("VmRSS:") {
+            total = parse_status_kib(rest);
+        }
+    }
+    Some((parent?, anon.filter(|value| *value > 0).or(total)?))
+}
+
+#[cfg(target_os = "linux")]
+fn process_tree_rss_kib(processes: Vec<(i32, i32, i64)>, root: i32) -> i64 {
+    let mut included = HashSet::from([root]);
+    loop {
+        let before = included.len();
+        for (pid, parent, _) in &processes {
+            if included.contains(parent) {
+                included.insert(*pid);
+            }
+        }
+        if included.len() == before {
+            break;
+        }
+    }
+    processes
+        .into_iter()
+        .filter(|(pid, _, _)| included.contains(pid))
+        .map(|(_, _, rss)| rss)
+        .sum()
+}
+
 #[cfg(not(target_os = "linux"))]
 pub fn read_anon_rss_mb() -> Option<i64> {
     None
@@ -288,14 +366,14 @@ fn parse_status_kib(rest: &str) -> Option<i64> {
 /// bound, clamped to half the cache: a handful of sessions can exhaust the
 /// budget on their own, and a fixed guard would then protect the whole cache and
 /// leave the gateway climbing toward the OOM killer with nothing to shed.
-pub fn plan_pressure_evictions<A, F>(
-    ordered_entries: Vec<(String, A)>,
+pub fn plan_pressure_evictions<K, A, F>(
+    ordered_entries: Vec<(K, A)>,
     is_evictable: F,
     max_evictions: i64,
     protect_recent: i64,
-) -> Vec<(String, A)>
+) -> Vec<(K, A)>
 where
-    F: Fn(&str, &A) -> bool,
+    F: Fn(&K, &A) -> bool,
 {
     if max_evictions <= 0 || ordered_entries.is_empty() {
         return Vec::new();
@@ -304,7 +382,7 @@ where
     let protect = protect_recent.max(0).min((len / 2) as i64) as usize;
     let keep_until = len - protect;
 
-    let mut plan: Vec<(String, A)> = Vec::new();
+    let mut plan: Vec<(K, A)> = Vec::new();
     for (i, (key, agent)) in ordered_entries.into_iter().enumerate() {
         if i >= keep_until {
             break; // protected MRU tail
@@ -340,6 +418,41 @@ mod tests {
         assert_eq!(b.memory_high_mb, Some(2048));
         assert_eq!(b.max_evictions_per_pass, 4);
         assert_eq!(b.protect_recent, 2);
+    }
+
+    #[test]
+    fn absent_entry_and_idle_bounds_use_gateway_defaults() {
+        let bounds = AgentCacheBounds::default();
+        assert_eq!(effective_max_size(&bounds), DEFAULT_MAX_SIZE);
+        assert_eq!(effective_idle_ttl(&bounds), DEFAULT_IDLE_TTL_SECS);
+
+        let configured = AgentCacheBounds {
+            max_size: Some(7),
+            idle_ttl_secs: Some(12.5),
+            ..Default::default()
+        };
+        assert_eq!(effective_max_size(&configured), 7);
+        assert_eq!(effective_idle_ttl(&configured), 12.5);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn process_tree_memory_includes_descendants_and_uses_total_rss_fallback() {
+        assert_eq!(
+            parse_process_status("Name:\tx\nPPid:\t7\nVmRSS:\t90 kB\nRssAnon:\t40 kB\n"),
+            Some((7, 40))
+        );
+        assert_eq!(
+            parse_process_status("Name:\tx\nPPid:\t7\nVmRSS:\t90 kB\nRssAnon:\t0 kB\n"),
+            Some((7, 90))
+        );
+        assert_eq!(
+            process_tree_rss_kib(
+                vec![(10, 1, 100), (11, 10, 200), (12, 11, 300), (20, 1, 900)],
+                10,
+            ),
+            600
+        );
     }
 
     #[test]
@@ -418,7 +531,7 @@ mod tests {
 
     #[test]
     fn plan_empty_or_zero_cap() {
-        assert!(plan_pressure_evictions::<i32, _>(vec![], |_, _| true, 5, 0).is_empty());
+        assert!(plan_pressure_evictions::<String, i32, _>(vec![], |_, _| true, 5, 0).is_empty());
         let entries = vec![("a".to_string(), 1)];
         assert!(plan_pressure_evictions(entries, |_, _| true, 0, 0).is_empty());
     }

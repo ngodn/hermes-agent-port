@@ -123,6 +123,7 @@ pub async fn post_message(
     let manages = state.agent.manages_history();
     let mut turn_db = state.session_db.clone();
     let mut routing_key = None;
+    let mut session_finalizable = false;
     if !manages {
         if let Some((store, freshness)) = &state.session_store {
             let store = store.clone();
@@ -139,8 +140,10 @@ pub async fn post_message(
                     freshness,
                     |_| Ok(false),
                 )?;
+                let finalizable = store.is_session_finalizable(&entry);
+                let previous = store.take_auto_reset_predecessor(&entry)?;
                 let db = store.database_for_key(&entry.session_key);
-                Ok::<_, std::sync::Arc<anyhow::Error>>((entry, db))
+                Ok::<_, std::sync::Arc<anyhow::Error>>((entry, db, finalizable, previous))
             })
             .await
             .map_err(|error| {
@@ -160,6 +163,13 @@ pub async fn post_message(
             msg.resolved_session_id = Some(resolved.0.session_id);
             routing_key = Some(resolved.0.session_key);
             turn_db = resolved.1;
+            session_finalizable = resolved.2;
+            if let Some(previous_session_id) = resolved.3 {
+                state.agent.retire_conversation(
+                    crate::agent::TurnContext::from_database(turn_db.as_deref()),
+                    &previous_session_id,
+                );
+            }
         }
     }
 
@@ -200,7 +210,8 @@ pub async fn post_message(
         let turn = tokio::spawn(async move {
             turn_agent
                 .run_turn_with_context(
-                    crate::agent::TurnContext::from_database(agent_db.as_deref()),
+                    crate::agent::TurnContext::from_database(agent_db.as_deref())
+                        .with_session_finalizable(session_finalizable),
                     &msg_for_agent,
                     &history,
                     tx,
@@ -236,7 +247,8 @@ pub async fn post_message(
         crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
         if let Err(error) = agent
             .finalize_turn_after_persist(
-                crate::agent::TurnContext::from_database(turn_db.as_deref()),
+                crate::agent::TurnContext::from_database(turn_db.as_deref())
+                    .with_session_finalizable(session_finalizable),
                 &msg,
                 &reply,
                 succeeded,
@@ -565,6 +577,7 @@ mod tests {
                     Ok(selected as Arc<dyn crate::agent::AgentClient>)
                 })
             },
+            crate::agent_cache_pressure::AgentCacheBounds::default(),
         );
         let mut state = AppState::new(
             Arc::new(routed),
@@ -710,6 +723,119 @@ mod tests {
             .unwrap();
         assert_eq!(response.0.reply, "seen");
         assert_eq!(calls.lock().unwrap().len(), 1);
+    }
+
+    #[tokio::test]
+    async fn automatic_http_reset_retires_the_previous_cached_conversation() {
+        struct LifecycleAgent {
+            ended: Arc<Mutex<Vec<Vec<Value>>>>,
+        }
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for LifecycleAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                events: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                events
+                    .send(StreamEvent::MessageChunk {
+                        text: "answer".into(),
+                    })
+                    .await
+                    .unwrap();
+                events
+                    .send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+
+            async fn close_conversation(
+                &self,
+                messages: Option<&[Value]>,
+            ) -> hermes_core::Result<()> {
+                self.ended
+                    .lock()
+                    .unwrap()
+                    .push(messages.unwrap_or_default().to_vec());
+                Ok(())
+            }
+        }
+
+        let home = TempHome::new();
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    default_reset_policy: crate::config_types::SessionResetPolicy {
+                        mode: json!("idle"),
+                        idle_minutes: json!(0),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let builds = Arc::new(Mutex::new(0usize));
+        let ended = Arc::new(Mutex::new(Vec::new()));
+        let fallback = Arc::new(LifecycleAgent {
+            ended: ended.clone(),
+        });
+        let cache = Arc::new(crate::conversation_agent::ConversationAgent::new(
+            fallback,
+            {
+                let builds = builds.clone();
+                let ended = ended.clone();
+                move |_, _, _, _| {
+                    let builds = builds.clone();
+                    let ended = ended.clone();
+                    Box::pin(async move {
+                        *builds.lock().unwrap() += 1;
+                        Ok(Arc::new(LifecycleAgent { ended })
+                            as Arc<dyn crate::agent::AgentClient>)
+                    })
+                }
+            },
+            crate::agent_cache_pressure::AgentCacheBounds::default(),
+        ));
+        let mut state = AppState::new(cache, Arc::new(json!({})), None, Some(db));
+        state.session_store = Some((store, 3600.0));
+        let request = || {
+            post_message(
+                State(state.clone()),
+                Json(MessageRequest {
+                    channel_id: "reset".into(),
+                    sender_id: "local".into(),
+                    text: "question".into(),
+                    content_parts: None,
+                }),
+            )
+        };
+        assert_eq!(request().await.unwrap().0.reply, "answer");
+        assert_eq!(request().await.unwrap().0.reply, "answer");
+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            loop {
+                if !ended.lock().unwrap().is_empty() {
+                    break;
+                }
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .unwrap();
+        assert_eq!(*builds.lock().unwrap(), 2);
+        let ended = ended.lock().unwrap();
+        assert_eq!(ended.len(), 1);
+        assert_eq!(ended[0].len(), 2);
+        assert_eq!(ended[0][0]["role"], "user");
+        assert_eq!(ended[0][1]["role"], "assistant");
     }
 
     #[tokio::test]

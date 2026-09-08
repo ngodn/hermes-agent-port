@@ -716,6 +716,13 @@ impl AgentClient for NativeAgentClient {
         }
         Ok(())
     }
+
+    async fn close_conversation(&self, session_messages: Option<&[Value]>) -> Result<()> {
+        match &self._extension_host {
+            Some(host) => host.close(session_messages).await,
+            None => Ok(()),
+        }
+    }
 }
 
 /// Python applies caller overrides after profile hooks, then the SDK shallowly
