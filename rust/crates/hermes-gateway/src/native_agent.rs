@@ -878,12 +878,399 @@ fn compression_payment_failure(error: &Error) -> bool {
 }
 
 #[derive(Clone)]
+pub struct MainPoolCredential {
+    locator: crate::credential_pool::PoolLocator,
+    fallback_base_url: String,
+    active: std::sync::Arc<std::sync::Mutex<ActiveMainCredential>>,
+    route_headers: std::sync::Arc<Vec<(String, reqwest::header::HeaderMap)>>,
+}
+
+#[derive(Clone)]
+struct ActiveMainCredential {
+    credential: crate::credential_pool::RuntimeCredential,
+    client: reqwest::Client,
+}
+
+#[derive(Clone)]
+struct MainRequestRoute {
+    credential_id: String,
+    api_key: String,
+    base_url: String,
+    client: reqwest::Client,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum MainPoolFailure {
+    Auth,
+    Billing,
+    BillingUnverified,
+    RateLimit,
+    UpstreamRateLimit,
+    Unrelated,
+}
+
+impl MainPoolCredential {
+    pub fn new(
+        locator: crate::credential_pool::PoolLocator,
+        credential: crate::credential_pool::RuntimeCredential,
+        fallback_base_url: impl Into<String>,
+        route_headers: Vec<(String, serde_json::Map<String, Value>)>,
+    ) -> Result<Self> {
+        let route_headers = route_headers
+            .into_iter()
+            .map(|(route, headers)| Ok((route, parse_header_map(&headers)?)))
+            .collect::<Result<Vec<_>>>()?;
+        let client = fresh_main_http_client()?;
+        Ok(Self {
+            locator,
+            fallback_base_url: fallback_base_url.into(),
+            active: std::sync::Arc::new(std::sync::Mutex::new(ActiveMainCredential {
+                credential,
+                client,
+            })),
+            route_headers: std::sync::Arc::new(route_headers),
+        })
+    }
+
+    fn route(&self) -> MainRequestRoute {
+        let active = self
+            .active
+            .lock()
+            .unwrap_or_else(|error| error.into_inner());
+        MainRequestRoute {
+            credential_id: active.credential.id().to_owned(),
+            api_key: active.credential.api_key().to_owned(),
+            base_url: active
+                .credential
+                .base_url()
+                .unwrap_or(&self.fallback_base_url)
+                .trim_end_matches('/')
+                .to_owned(),
+            client: active.client.clone(),
+        }
+    }
+
+    fn install_replacement(
+        &self,
+        failed: &MainRequestRoute,
+        replacement: crate::credential_pool::RuntimeCredential,
+    ) -> Result<()> {
+        let client = fresh_main_http_client()?;
+        let mut active = self
+            .active
+            .lock()
+            .unwrap_or_else(|error| error.into_inner());
+        if active.credential.id() == failed.credential_id
+            && active.credential.api_key() == failed.api_key
+        {
+            *active = ActiveMainCredential {
+                credential: replacement,
+                client,
+            };
+        }
+        Ok(())
+    }
+
+    fn rotate_after_failure(
+        &self,
+        failed: &MainRequestRoute,
+        status_code: i64,
+        context: &Value,
+        failure_reason: &str,
+    ) -> Result<Option<crate::credential_pool::RuntimeCredential>> {
+        let replacement = self
+            .locator
+            .mark_exhausted_and_rotate(
+                Some(status_code),
+                Some(context),
+                Some(&failed.api_key),
+                Some(&failed.credential_id),
+                Some(failure_reason),
+            )
+            .map_err(|error| {
+                Error::Other(format!("credential recovery persistence failed: {error}"))
+            })?;
+        if let Some(replacement) = replacement.as_ref() {
+            self.install_replacement(failed, replacement.clone())?;
+        }
+        Ok(replacement)
+    }
+}
+
+fn fresh_main_http_client() -> Result<reqwest::Client> {
+    reqwest::Client::builder()
+        .build()
+        .map_err(|error| Error::Other(format!("native agent: build main HTTP client: {error}")))
+}
+
+fn parse_header_map(
+    headers: &serde_json::Map<String, Value>,
+) -> Result<reqwest::header::HeaderMap> {
+    let mut parsed = reqwest::header::HeaderMap::new();
+    for (name, value) in headers {
+        let name = reqwest::header::HeaderName::from_bytes(name.as_bytes())
+            .map_err(|_| Error::Other("invalid provider header name".into()))?;
+        let value = value
+            .as_str()
+            .and_then(|value| reqwest::header::HeaderValue::from_str(value).ok())
+            .ok_or_else(|| Error::Other("invalid provider header value".into()))?;
+        parsed.insert(name, value);
+    }
+    Ok(parsed)
+}
+
+fn merge_header_map(target: &mut reqwest::header::HeaderMap, source: &reqwest::header::HeaderMap) {
+    for (name, value) in source {
+        target.insert(name.clone(), value.clone());
+    }
+}
+
+fn main_pool_failure(
+    status: reqwest::StatusCode,
+    text: &str,
+    headers: &reqwest::header::HeaderMap,
+    provider: &str,
+) -> MainPoolFailure {
+    let lower = text.to_lowercase();
+    let parsed = serde_json::from_str::<Value>(text).unwrap_or(Value::Null);
+    let billing = [
+        "insufficient credits",
+        "insufficient_credits",
+        "insufficient_quota",
+        "insufficient balance",
+        "credit balance",
+        "credits exhausted",
+        "credits have been exhausted",
+        "requires available credits",
+        "account balance is too low",
+        "no usable credits",
+        "no_usable_credits",
+        "top up your credits",
+        "payment required",
+        "payment_required",
+        "billing_not_active",
+        "billing hard limit",
+        "exceeded your current quota",
+        "account is deactivated",
+        "plan does not include",
+        "out of extra usage",
+        "out of funds",
+        "run out of funds",
+        "balance_depleted",
+        "model_not_supported_on_free_tier",
+        "not available on the free tier",
+        "key limit exceeded",
+        "spending limit",
+        "member_spend_cap_exceeded",
+        "personal-team-blocked:spending-limit",
+    ]
+    .iter()
+    .any(|marker| lower.contains(marker));
+    let usage_limit = [
+        "usage limit",
+        "usage_limit_reached",
+        "quota",
+        "limit exceeded",
+    ]
+    .iter()
+    .any(|marker| lower.contains(marker));
+    let explicit_rate = [
+        "rate limit",
+        "rate_limit",
+        "too many requests",
+        "throttled",
+        "requests per minute",
+        "tokens per minute",
+        "requests per day",
+        "resource_exhausted",
+    ]
+    .iter()
+    .any(|marker| lower.contains(marker));
+    let transient = [
+        "try again",
+        "retry",
+        "resets at",
+        "reset in",
+        "resets in",
+        "reset after",
+        "available in",
+        "wait",
+        "requests remaining",
+        "periodic",
+        "window",
+        "per minute",
+        "per second",
+    ]
+    .iter()
+    .any(|marker| lower.contains(marker))
+        || ["retry-after", "x-ratelimit-reset"]
+            .iter()
+            .any(|name| headers.get(*name).is_some())
+        || ["resets_in_seconds", "resets_at", "reset_at", "retry_after"]
+            .iter()
+            .any(|name| {
+                parsed.get(*name).is_some_and(|value| !value.is_null())
+                    || parsed["error"]
+                        .get(*name)
+                        .is_some_and(|value| !value.is_null())
+            });
+    let stale_oauth = lower.contains("[wke=unauthenticated:")
+        || lower.contains("oauth2 access token could not be validated");
+    let entitlement = !stale_oauth
+        && (lower.contains("oauth authentication is currently not allowed for this organization")
+            || lower.contains("do not have an active grok subscription")
+            || lower.contains("out of available resources") && lower.contains("grok")
+            || lower.contains("does not have permission") && lower.contains("grok"));
+
+    match status.as_u16() {
+        401 => MainPoolFailure::Auth,
+        403 if billing => MainPoolFailure::Billing,
+        403 if entitlement => MainPoolFailure::Unrelated,
+        403 => MainPoolFailure::Auth,
+        402 if usage_limit && transient => MainPoolFailure::RateLimit,
+        402 => MainPoolFailure::Billing,
+        404 if billing => MainPoolFailure::Billing,
+        429 if lower.contains("overloaded") || lower.contains("at capacity") => {
+            MainPoolFailure::Unrelated
+        }
+        429 if parsed["error"]["message"].as_str().is_some_and(|message| {
+            message
+                .trim()
+                .eq_ignore_ascii_case("provider returned error")
+        }) && (provider.eq_ignore_ascii_case("openrouter")
+            || parsed["error"]["metadata"].get("raw").is_some()
+            || parsed["error"]["metadata"].get("provider_name").is_some()) =>
+        {
+            MainPoolFailure::UpstreamRateLimit
+        }
+        429 if (billing || usage_limit) && !explicit_rate && !transient => MainPoolFailure::Billing,
+        429 => MainPoolFailure::RateLimit,
+        400 if lower.contains("out of extra usage") => MainPoolFailure::BillingUnverified,
+        _ => MainPoolFailure::Unrelated,
+    }
+}
+
+fn main_error_context(text: &str, headers: &reqwest::header::HeaderMap) -> Value {
+    let payload = serde_json::from_str::<Value>(text).unwrap_or(Value::Null);
+    let source = payload
+        .get("error")
+        .filter(|value| value.is_object())
+        .unwrap_or(&payload);
+    let mut context = serde_json::Map::new();
+    for key in ["reason", "message", "reset_at", "resets_at", "retry_until"] {
+        if let Some(value) = source.get(key).filter(|value| !value.is_null()) {
+            context.insert(key.into(), value.clone());
+        }
+    }
+    if !context.contains_key("reason") {
+        for key in ["code", "type", "error"] {
+            if let Some(reason) = source
+                .get(key)
+                .and_then(Value::as_str)
+                .filter(|value| !value.trim().is_empty())
+            {
+                context.insert("reason".into(), json!(reason.trim()));
+                break;
+            }
+        }
+    }
+    if !context.contains_key("message") {
+        for key in ["error_description", "error"] {
+            if let Some(message) = source
+                .get(key)
+                .and_then(Value::as_str)
+                .filter(|value| !value.trim().is_empty())
+            {
+                context.insert("message".into(), json!(message.trim()));
+                break;
+            }
+        }
+    }
+    if !context.contains_key("reset_at") {
+        if let Some(retry_after) = source.get("retry_after").and_then(|value| {
+            value
+                .as_f64()
+                .or_else(|| value.as_str().and_then(|value| value.parse::<f64>().ok()))
+        }) {
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|duration| duration.as_secs_f64())
+                .unwrap_or(0.0);
+            context.insert("reset_at".into(), json!(now + retry_after));
+        }
+    }
+    if !context.contains_key("reset_at") {
+        if let Some(retry_after) = headers
+            .get("retry-after")
+            .and_then(|value| value.to_str().ok())
+            .and_then(|value| value.parse::<f64>().ok())
+        {
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|duration| duration.as_secs_f64())
+                .unwrap_or(0.0);
+            context.insert("reset_at".into(), json!(now + retry_after));
+        }
+    }
+    if !context.contains_key("reset_at") {
+        if let Some(reset) = headers
+            .get("x-ratelimit-reset")
+            .and_then(|value| value.to_str().ok())
+        {
+            context.insert("reset_at".into(), json!(reset));
+        }
+    }
+    Value::Object(context)
+}
+
+fn main_usage_limit_reached(context: &Value) -> bool {
+    let reason = context
+        .get("reason")
+        .map(|value| {
+            value
+                .as_str()
+                .map(str::to_owned)
+                .unwrap_or_else(|| value.to_string())
+        })
+        .unwrap_or_default()
+        .to_lowercase();
+    let message = context
+        .get("message")
+        .map(|value| {
+            value
+                .as_str()
+                .map(str::to_owned)
+                .unwrap_or_else(|| value.to_string())
+        })
+        .unwrap_or_default()
+        .to_lowercase();
+    reason.contains("usage_limit_reached")
+        || reason.contains("gousagelimit")
+        || message.contains("usage limit reached")
+        || message.contains("usage limit has been reached")
+}
+
+fn main_http_error(label: &str, status: reqwest::StatusCode, text: &str) -> Error {
+    let label = if label.is_empty() {
+        String::new()
+    } else {
+        format!("{label} ")
+    };
+    Error::Other(format!(
+        "native agent {label}HTTP {status}: {}",
+        text.chars().take(300).collect::<String>()
+    ))
+}
+
+#[derive(Clone)]
 pub struct NativeAgentClient {
     model: String,
     api_key: String,
     base_url: String,
     client: reqwest::Client,
     provider_headers: reqwest::header::HeaderMap,
+    provider_default_headers: reqwest::header::HeaderMap,
+    main_pool: Option<MainPoolCredential>,
     provider_profile: Option<crate::provider_registry::ProviderProfile>,
     provider_identity: Option<String>,
     reasoning_config: Option<Value>,
@@ -944,6 +1331,8 @@ impl NativeAgentClient {
             base_url: base_url.into().trim_end_matches('/').to_string(),
             client,
             provider_headers: reqwest::header::HeaderMap::new(),
+            provider_default_headers: reqwest::header::HeaderMap::new(),
+            main_pool: None,
             provider_profile: None,
             provider_identity: None,
             reasoning_config: None,
@@ -1058,7 +1447,8 @@ impl NativeAgentClient {
                 profile.name
             )));
         }
-        self = self.with_extra_headers(&profile.default_headers)?;
+        self.provider_default_headers = parse_header_map(&profile.default_headers)?;
+        merge_header_map(&mut self.provider_headers, &self.provider_default_headers);
         self.provider_profile = Some(profile.clone());
         Ok(self)
     }
@@ -1066,16 +1456,20 @@ impl NativeAgentClient {
     /// Apply route-specific headers after profile defaults. Error messages must
     /// never expose values, since these headers can carry proxy credentials.
     pub fn with_extra_headers(mut self, headers: &serde_json::Map<String, Value>) -> Result<Self> {
-        for (name, value) in headers {
-            let name = reqwest::header::HeaderName::from_bytes(name.as_bytes())
-                .map_err(|_| Error::Other("invalid provider header name".into()))?;
-            let value = value
-                .as_str()
-                .and_then(|value| reqwest::header::HeaderValue::from_str(value).ok())
-                .ok_or_else(|| Error::Other("invalid provider header value".into()))?;
-            self.provider_headers.insert(name, value);
-        }
+        merge_header_map(&mut self.provider_headers, &parse_header_map(headers)?);
         Ok(self)
+    }
+
+    /// Attach a profile-scoped static API-key pool to the main request path.
+    /// The selected credential is shared by this conversation's clones, while
+    /// every durable mutation reloads the store through the locator.
+    pub fn with_main_pool(mut self, pool: MainPoolCredential) -> Self {
+        let route = pool.route();
+        self.api_key = route.api_key;
+        self.base_url = route.base_url;
+        self.client = route.client;
+        self.main_pool = Some(pool);
+        self
     }
 
     pub fn with_reasoning_config(mut self, config: Option<Value>) -> Self {
@@ -1155,6 +1549,133 @@ impl NativeAgentClient {
     pub fn with_request_overrides(mut self, overrides: serde_json::Map<String, Value>) -> Self {
         self.request_overrides = overrides;
         self
+    }
+
+    fn headers_for_main_route(&self, base_url: &str) -> reqwest::header::HeaderMap {
+        let Some(pool) = &self.main_pool else {
+            return self.provider_headers.clone();
+        };
+        let mut headers = self.provider_default_headers.clone();
+        let route = crate::custom_provider_config::route_identity(base_url);
+        if let Some((_, extra)) = pool
+            .route_headers
+            .iter()
+            .find(|(configured, _)| configured == &route)
+        {
+            merge_header_map(&mut headers, extra);
+        }
+        headers
+    }
+
+    async fn send_main_request(&self, body: &Value, label: &str) -> Result<reqwest::Response> {
+        let operation = if label.is_empty() { "" } else { " step" };
+        let mut retried_429 = std::collections::HashSet::<(String, String)>::new();
+        let mut attempts = std::collections::HashMap::<(String, String), usize>::new();
+        loop {
+            let route = self
+                .main_pool
+                .as_ref()
+                .map(MainPoolCredential::route)
+                .unwrap_or_else(|| MainRequestRoute {
+                    credential_id: String::new(),
+                    api_key: self.api_key.clone(),
+                    base_url: self.base_url.clone(),
+                    client: self.client.clone(),
+                });
+            // IDs can legitimately survive an out-of-process reauthentication.
+            // Bound and retry the exact dispatched credential, not only its
+            // durable row identity. This key is request-local and never logged.
+            let identity = (route.credential_id.clone(), route.api_key.clone());
+            let count = attempts.entry(identity.clone()).or_default();
+            *count += 1;
+            if *count > 2 {
+                return Err(Error::Other(format!(
+                    "native agent{operation} credential recovery repeated one pool entry"
+                )));
+            }
+            let url = format!("{}/chat/completions", route.base_url);
+            let response = route
+                .client
+                .post(url)
+                .bearer_auth(&route.api_key)
+                .headers(self.headers_for_main_route(&route.base_url))
+                .json(body)
+                .send()
+                .await
+                .map_err(|error| {
+                    Error::Other(format!("native agent{operation} request: {error}"))
+                })?;
+            if response.status().is_success() {
+                return Ok(response);
+            }
+            let status = response.status();
+            let headers = response.headers().clone();
+            let text = response.text().await.unwrap_or_default();
+            let Some(pool) = &self.main_pool else {
+                return Err(main_http_error(label, status, &text));
+            };
+            let failure = main_pool_failure(status, &text, &headers, self.provider_name());
+            if matches!(
+                failure,
+                MainPoolFailure::Unrelated | MainPoolFailure::UpstreamRateLimit
+            ) {
+                return Err(main_http_error(label, status, &text));
+            }
+            let context = main_error_context(&text, &headers);
+
+            if failure == MainPoolFailure::RateLimit {
+                let locator = pool.locator.clone();
+                let credential_id = route.credential_id.clone();
+                let api_key = route.api_key.clone();
+                let already_exhausted = tokio::task::spawn_blocking(move || {
+                    locator.credential_is_exhausted(&credential_id, &api_key)
+                })
+                .await
+                .map_err(|error| {
+                    Error::Other(format!(
+                        "native agent{operation} credential status task failed: {error}"
+                    ))
+                })?
+                .map_err(|error| {
+                    Error::Other(format!(
+                        "native agent{operation} credential status read failed: {error}"
+                    ))
+                })?;
+                if !already_exhausted
+                    && !main_usage_limit_reached(&context)
+                    && retried_429.insert(identity)
+                {
+                    continue;
+                }
+            }
+
+            let failure_reason = match failure {
+                MainPoolFailure::Auth => "auth",
+                MainPoolFailure::Billing => "billing",
+                MainPoolFailure::BillingUnverified => "billing_unverified",
+                MainPoolFailure::RateLimit => "rate_limit",
+                MainPoolFailure::UpstreamRateLimit | MainPoolFailure::Unrelated => unreachable!(),
+            };
+            let binding = pool.clone();
+            let failed = route.clone();
+            let status_code = i64::from(status.as_u16());
+            let failure_reason = failure_reason.to_owned();
+            let replacement = tokio::task::spawn_blocking(move || {
+                binding.rotate_after_failure(&failed, status_code, &context, &failure_reason)
+            })
+            .await
+            .map_err(|error| {
+                Error::Other(format!(
+                    "native agent{operation} credential recovery task failed: {error}"
+                ))
+            })??;
+            let Some(replacement) = replacement else {
+                return Err(main_http_error(label, status, &text));
+            };
+            if replacement.id() == route.credential_id && replacement.api_key() == route.api_key {
+                return Err(main_http_error(label, status, &text));
+            }
+        }
     }
 
     /// Apply request hooks at the wire boundary so streaming and every tool
@@ -2711,30 +3232,12 @@ impl NativeAgentClient {
             return Ok(Some(current_turn_messages(messages, prefix_len, content)));
         }
 
-        let url = format!("{}/chat/completions", self.base_url);
         let mut body = build_request_body_from_messages(&self.model, &history, content);
         self.apply_provider_extras(&mut body)?;
         if supports_stream_usage(&self.base_url) {
             body["stream_options"] = json!({"include_usage": true});
         }
-        let resp = self
-            .client
-            .post(&url)
-            .bearer_auth(&self.api_key)
-            .headers(self.provider_headers.clone())
-            .json(&body)
-            .send()
-            .await
-            .map_err(|e| Error::Other(format!("native agent request: {e}")))?;
-
-        if !resp.status().is_success() {
-            let status = resp.status();
-            let body = resp.text().await.unwrap_or_default();
-            return Err(Error::Other(format!(
-                "native agent HTTP {status}: {}",
-                body.chars().take(300).collect::<String>()
-            )));
-        }
+        let resp = self.send_main_request(&body, "").await?;
 
         let usage = forward_sse(resp.bytes_stream(), &events, self.provider_name()).await?;
         self.capture_usage(usage);
@@ -3237,7 +3740,6 @@ impl ChatModel for NativeAgentClient {
     /// for the no-tools case.
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
         self.clear_last_main_prompt_tokens();
-        let url = format!("{}/chat/completions", self.base_url);
         let mut body = json!({ "model": self.model, "messages": messages, "stream": false });
         if !tools.is_empty() {
             body["tools"] = Value::Array(tools.to_vec());
@@ -3257,23 +3759,7 @@ impl ChatModel for NativeAgentClient {
                 }
             }
         }
-        let resp = self
-            .client
-            .post(&url)
-            .bearer_auth(&self.api_key)
-            .headers(self.provider_headers.clone())
-            .json(&body)
-            .send()
-            .await
-            .map_err(|e| Error::Other(format!("native agent step request: {e}")))?;
-        if !resp.status().is_success() {
-            let status = resp.status();
-            let text = resp.text().await.unwrap_or_default();
-            return Err(Error::Other(format!(
-                "native agent step HTTP {status}: {}",
-                text.chars().take(300).collect::<String>()
-            )));
-        }
+        let resp = self.send_main_request(&body, "step").await?;
         let v: Value = resp
             .json()
             .await
@@ -3313,6 +3799,151 @@ impl ChatModel for NativeAgentClient {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn main_pool_failure_classification_preserves_credential_boundaries() {
+        use super::MainPoolFailure;
+        use reqwest::{header::HeaderMap, StatusCode};
+        use serde_json::Value;
+
+        let cases = [
+            (
+                StatusCode::UNAUTHORIZED,
+                "invalid key",
+                "gmi",
+                MainPoolFailure::Auth,
+            ),
+            (
+                StatusCode::PAYMENT_REQUIRED,
+                "credits exhausted",
+                "gmi",
+                MainPoolFailure::Billing,
+            ),
+            (
+                StatusCode::PAYMENT_REQUIRED,
+                "usage limit, try again in 5 minutes",
+                "gmi",
+                MainPoolFailure::RateLimit,
+            ),
+            (
+                StatusCode::FORBIDDEN,
+                "key limit exceeded",
+                "openrouter",
+                MainPoolFailure::Billing,
+            ),
+            (
+                StatusCode::FORBIDDEN,
+                "You do not have an active Grok subscription",
+                "xai-oauth",
+                MainPoolFailure::Unrelated,
+            ),
+            (
+                StatusCode::TOO_MANY_REQUESTS,
+                "rate limit exceeded",
+                "gmi",
+                MainPoolFailure::RateLimit,
+            ),
+            (
+                StatusCode::TOO_MANY_REQUESTS,
+                r#"{"error":{"message":"Provider returned error","metadata":{"provider_name":"DeepSeek"}}}"#,
+                "openrouter",
+                MainPoolFailure::UpstreamRateLimit,
+            ),
+            (
+                StatusCode::TOO_MANY_REQUESTS,
+                "service is temporarily overloaded",
+                "zai",
+                MainPoolFailure::Unrelated,
+            ),
+            (
+                StatusCode::BAD_REQUEST,
+                "out of extra usage",
+                "anthropic",
+                MainPoolFailure::BillingUnverified,
+            ),
+        ];
+        for (status, body, provider, expected) in cases {
+            assert_eq!(
+                super::main_pool_failure(status, body, &HeaderMap::new(), provider),
+                expected,
+                "{status} {body}"
+            );
+        }
+
+        let corpus: Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-pool-goldens.json"
+        ))
+        .unwrap();
+        for row in corpus["raw_http_classifier_boundaries"].as_array().unwrap() {
+            let mut headers = HeaderMap::new();
+            for (name, value) in row["headers"].as_object().unwrap() {
+                headers.insert(
+                    reqwest::header::HeaderName::from_bytes(name.as_bytes()).unwrap(),
+                    reqwest::header::HeaderValue::from_str(value.as_str().unwrap()).unwrap(),
+                );
+            }
+            let expected = match row["failure"].as_str().unwrap() {
+                "auth" => MainPoolFailure::Auth,
+                "billing" => MainPoolFailure::Billing,
+                "billing_unverified" => MainPoolFailure::BillingUnverified,
+                "rate_limit" => MainPoolFailure::RateLimit,
+                "upstream_rate_limit" => MainPoolFailure::UpstreamRateLimit,
+                "unrelated" => MainPoolFailure::Unrelated,
+                other => panic!("unknown golden failure {other}"),
+            };
+            let status = StatusCode::from_u16(row["status"].as_u64().unwrap() as u16).unwrap();
+            let body = row["body_text"].as_str().unwrap();
+            assert_eq!(
+                super::main_pool_failure(status, body, &headers, row["provider"].as_str().unwrap(),),
+                expected,
+                "{}",
+                row["case"]
+            );
+            assert_eq!(
+                super::main_usage_limit_reached(&super::main_error_context(body, &headers)),
+                row["usage_limit_reached"].as_bool().unwrap(),
+                "{}",
+                row["case"]
+            );
+        }
+    }
+
+    #[test]
+    fn main_pool_error_context_carries_retry_deadlines() {
+        use reqwest::header::{HeaderMap, HeaderValue};
+        let mut headers = HeaderMap::new();
+        headers.insert("retry-after", HeaderValue::from_static("120"));
+        let before = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs_f64();
+        let context = super::main_error_context(
+            r#"{"error":{"code":"rate_limit","message":"slow down"}}"#,
+            &headers,
+        );
+        assert_eq!(context["reason"], "rate_limit");
+        assert_eq!(context["message"], "slow down");
+        assert!(context["reset_at"].as_f64().unwrap() >= before + 119.0);
+        assert!(super::main_usage_limit_reached(&serde_json::json!({
+            "reason":"usage_limit_reached",
+            "message":"Usage limit reached. Try again in 1 hour."
+        })));
+        assert!(!super::main_usage_limit_reached(&context));
+    }
+
+    #[test]
+    fn main_header_overrides_replace_instead_of_append() {
+        use reqwest::header::{HeaderMap, HeaderValue};
+        let mut target = HeaderMap::new();
+        target.insert("x-route-token", HeaderValue::from_static("profile-default"));
+        let mut override_headers = HeaderMap::new();
+        override_headers.insert("x-route-token", HeaderValue::from_static("route-specific"));
+
+        super::merge_header_map(&mut target, &override_headers);
+
+        assert_eq!(target["x-route-token"], "route-specific");
+        assert_eq!(target.get_all("x-route-token").iter().count(), 1);
+    }
+
     #[test]
     fn compression_http_auth_and_payment_failures_are_credential_scoped() {
         use crate::compression_auxiliary::FailureScope;

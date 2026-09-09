@@ -47,6 +47,13 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   real prompt usage, sentinel/rearm attempt semantics, guarded publication,
   durable transcript adoption, byte-stable system prompts, and a shared
   physical-session identity that follows the committed child.
+- The native main chat-completions path now selects profile-scoped static
+  API-key pools before environment credentials and shares one exact-key
+  recovery dispatcher across streaming and tool rounds. Durable rotation,
+  per-entry endpoints, fresh clients, route-header isolation, usage-limit and
+  pre-exhausted 429 behavior, and frozen request bytes are live. OAuth,
+  non-chat transports, and general provider fallback remain open. See
+  [native-main-provider-pool-resolution.md](native-main-provider-pool-resolution.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -124,6 +131,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-main-provider-pool-resolution.md](native-main-provider-pool-resolution.md) | Production main-provider static API-key selection and recovery, shared streaming/tool dispatch, exact-key durability, endpoint/header isolation, helper disposition, and explicit transport limits |
+| [main-provider-pool-contract-agy.md](main-provider-pool-contract-agy.md) | AGY's Python behavior contract, corrected and extended by the primary lane for executable precedence, persistence, cooldown, and raw-classifier evidence |
+| [main-provider-pool-seam-claude.md](main-provider-pool-seam-claude.md) | Claude's independent Rust ownership, concurrency, cancellation, and shared-dispatch seam analysis |
+| [main-provider-pool-review-claude.md](main-provider-pool-review-claude.md) | Claude's post-implementation review that found the fixed usage-limit retry and duplicate-header regressions |
+| [main-provider-pool-goldens.json](../tools/main-provider-pool-goldens.json) | Source-executed 86-case startup, attribution, persistence, retry, cooldown, route, lifecycle, transport, and raw HTTP classification corpus |
 | [native-nous-oauth-recovery-resolution.md](native-nous-oauth-recovery-resolution.md) | Production canonical Nous device-code discovery, cross-profile single-use refresh transaction, fail-closed persistence, prompt-stable retry, helper disposition, and explicit remaining model and pool scope |
 | [nous-oauth-recovery-contract-agy.md](nous-oauth-recovery-contract-agy.md) | AGY's source-executed Python contract, corrected and extended by the primary lane for shared paths, singleton identity, routing persistence, peer adoption, and corpus truthfulness |
 | [nous-oauth-recovery-rust-seam-claude.md](nous-oauth-recovery-rust-seam-claude.md) | Claude's pre-implementation Rust ownership and cancellation analysis, with primary corrections prominently recorded |

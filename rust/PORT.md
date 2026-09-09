@@ -1,5 +1,44 @@
 # Hermes Rust rewrite
 
+## Native main-provider API-key recovery: 2026-09-10
+
+The native main chat-completions route now selects profile-scoped static
+API-key pools before environment credentials. Profile pools shadow root pools,
+missing profile providers borrow root state, explicit native key or endpoint
+overrides bypass the pool, and per-entry endpoints take effect without changing
+the frozen conversation prompt.
+
+Streaming and tool-loop requests share one bounded recovery dispatcher. Exact
+failed-key attribution and request-local durable reloads protect concurrent
+conversations. Auth and billing failures rotate immediately, ordinary 429
+responses retry the same physical key once, and usage-limit or pre-exhausted
+429 responses rotate on the first failure. Persistence completes before retry,
+each replacement receives a fresh client, and the shared cursor survives later
+tool rounds and turns.
+
+Route headers are recomputed for each endpoint and later values replace earlier
+defaults, preventing stale or duplicate credentials from crossing routes. The
+retry reuses the same request bytes, prompt, messages, and tool schema. Recovery
+stops at the response-status boundary so a partially emitted stream is never
+replayed. See
+[native-main-provider-pool-resolution.md](analysis/native-main-provider-pool-resolution.md).
+
+AGY owned the Python behavior and source-executed corpus lane. Claude separately
+owned the Rust seam analysis and post-implementation review. The primary lane
+corrected the helper evidence, fixed the review's usage-limit retry and header
+merge findings, and expanded the corpus to 86 cases across 11 sections with raw
+HTTP classifier parity.
+
+The refreshed weighted audit is **56.95 points, reported as about 57%**
+(judgment range 55% to 60%). This moves state/search from 75% to 76% and native
+agent core from 71% to 73%; gateway and tool/RPC estimates are unchanged.
+OAuth, non-chat transports, general provider fallback, dynamic plugins,
+external-memory managers, prompt invalidation, and broader client eviction
+remain. Validation is **1,845 Rust tests passed, two ignored**, plus **256
+selected Python tests passed**. The 86-case Python corpus regenerates byte for
+byte. Rust and Python formatting, Ruff, workspace Clippy with warnings denied,
+and diff hygiene pass.
+
 ## Native Nous OAuth compression recovery: 2026-09-10
 
 Native auxiliary auto-discovery now includes the canonical Nous device-code

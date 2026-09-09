@@ -1002,6 +1002,18 @@ fn build_agent_client_for_home_with_discovery(
         profiles.register_upstage();
         profiles.register_nebius();
         profiles.register_vercel();
+        if let Some(requested) = user_config["model"]["provider"]
+            .as_str()
+            .map(str::trim)
+            .filter(|provider| !provider.is_empty())
+        {
+            if let Some(block) = user_config["providers"].get(requested) {
+                anyhow::ensure!(
+                    custom_provider_config::enabled(block),
+                    "provider {requested:?} is disabled in config (providers.{requested}.enabled: false)"
+                );
+            }
+        }
         let profile = user_config
             .get("model")
             .and_then(|model| model.get("provider"))
@@ -1011,7 +1023,7 @@ fn build_agent_client_for_home_with_discovery(
 
         // Explicit endpoints win, then a registered base-profile endpoint.
         // Generic configurations retain the OpenRouter default.
-        let base_url = config
+        let fallback_base_url = config
             .llm_base_url
             .clone()
             .or_else(|| {
@@ -1034,17 +1046,6 @@ fn build_agent_client_for_home_with_discovery(
             })
             .or_else(|| profile.as_ref().map(|profile| profile.base_url.clone()))
             .unwrap_or_else(|| "https://openrouter.ai/api/v1".to_string());
-
-        // Explicit native credentials win. Registered profiles use their own
-        // declared key names; generic configurations retain the legacy lookup.
-        let key = config.llm_api_key.clone().or_else(|| match &profile {
-            Some(profile) => {
-                config_file::resolve_profile_api_key(profile, &dotenv, &mut environment)
-            }
-            None => {
-                config_file::resolve_provider_api_key_with_env(&base_url, &dotenv, &mut environment)
-            }
-        });
         let configured_provider = user_config["model"]["provider"]
             .as_str()
             .map(str::trim)
@@ -1054,12 +1055,71 @@ fn build_agent_client_for_home_with_discovery(
             .map(|profile| profile.name.as_str())
             .or(configured_provider)
             .unwrap_or_else(|| {
-                if local_probe::urlparse_hostname(&base_url).ends_with("openrouter.ai") {
+                if local_probe::urlparse_hostname(&fallback_base_url).ends_with("openrouter.ai") {
                     "openrouter"
                 } else {
                     "custom"
                 }
             });
+
+        // Explicit runtime overrides stay outside durable-pool routing. For a
+        // normal provider selection, the profile-scoped stored pool precedes
+        // dotenv and process credentials, matching Python runtime resolution.
+        let explicit_runtime = config.llm_api_key.is_some() || config.llm_base_url.is_some();
+        let pool_provider = provider_identity.trim().to_lowercase();
+        let pool_supported = !matches!(
+            pool_provider.as_str(),
+            "" | "auto" | "custom" | "anthropic" | "openai-codex" | "xai-oauth" | "nous"
+        ) && !pool_provider.starts_with("custom:");
+        let profile_auth = home.join("auth.json");
+        let root = config_file::hermes_root();
+        let root_auth = (home.parent() == Some(root.join("profiles").as_path()))
+            .then(|| root.join("auth.json"));
+        let main_pool_runtime = (!explicit_runtime && pool_supported)
+            .then(|| {
+                let locator = credential_pool::PoolLocator::new(
+                    profile_auth,
+                    root_auth,
+                    &pool_provider,
+                    credential_pool::pool_strategy(&pool_provider, user_config),
+                );
+                match locator.select_runtime() {
+                    Ok(Some(runtime)) => Some((locator, runtime)),
+                    Ok(None) => None,
+                    Err(error) => {
+                        tracing::debug!(
+                            provider = pool_provider,
+                            error = %compression_redact::redact(&error.to_string()),
+                            "main credential pool unavailable"
+                        );
+                        None
+                    }
+                }
+            })
+            .flatten();
+        let key = config
+            .llm_api_key
+            .clone()
+            .or_else(|| {
+                main_pool_runtime
+                    .as_ref()
+                    .map(|(_, runtime)| runtime.api_key().to_owned())
+            })
+            .or_else(|| match &profile {
+                Some(profile) => {
+                    config_file::resolve_profile_api_key(profile, &dotenv, &mut environment)
+                }
+                None => config_file::resolve_provider_api_key_with_env(
+                    &fallback_base_url,
+                    &dotenv,
+                    &mut environment,
+                ),
+            });
+        let base_url = main_pool_runtime
+            .as_ref()
+            .and_then(|(_, runtime)| runtime.base_url())
+            .unwrap_or(&fallback_base_url)
+            .to_owned();
 
         match (key, model) {
             (Some(key), Some(model)) => match NativeAgentClient::new(model, &key, base_url.clone())
@@ -1085,6 +1145,14 @@ fn build_agent_client_for_home_with_discovery(
                     ))
                 }) {
                 Ok(mut c) => {
+                    if let Some((locator, runtime)) = main_pool_runtime.clone() {
+                        c = c.with_main_pool(native_agent::MainPoolCredential::new(
+                            locator,
+                            runtime,
+                            fallback_base_url.clone(),
+                            custom_provider_config::extra_header_routes(user_config),
+                        )?);
+                    }
                     let compression_policy = compression_auxiliary::Config::from_value(user_config);
                     let compression_auto = compression_policy.provider == "auto";
                     c = c.with_summary_request_policy(compression_policy.timeout, None);
@@ -3756,6 +3824,205 @@ def register(ctx):
                 !agent.supports_structured_content(),
                 "provider {provider} must not become a generic native chat client"
             );
+        }
+    }
+
+    #[tokio::test]
+    async fn native_main_pool_recovers_streaming_and_tool_requests() {
+        use axum::{
+            body::Bytes,
+            http::{HeaderMap, StatusCode},
+            response::IntoResponse,
+            routing::post,
+            Json, Router,
+        };
+
+        type Captures = Arc<std::sync::Mutex<Vec<(HeaderMap, Vec<u8>)>>>;
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+
+        for (tools, failure_status, usage_limit) in [
+            (false, StatusCode::UNAUTHORIZED, false),
+            (true, StatusCode::UNAUTHORIZED, false),
+            (false, StatusCode::TOO_MANY_REQUESTS, false),
+            (true, StatusCode::TOO_MANY_REQUESTS, false),
+            (false, StatusCode::TOO_MANY_REQUESTS, true),
+            (true, StatusCode::TOO_MANY_REQUESTS, true),
+        ] {
+            let nonce = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos();
+            let home = TempHome(std::env::temp_dir().join(format!(
+                "hermes-main-pool-{}-{tools}-{}-{usage_limit}-{nonce}",
+                std::process::id(),
+                failure_status.as_u16()
+            )));
+            std::fs::create_dir_all(&home.0).unwrap();
+            let auth_path = home.0.join("auth.json");
+            let first_requests: Captures = Default::default();
+            let captured = first_requests.clone();
+            let first_app = Router::new().route(
+                "/chat/completions",
+                post(move |headers: HeaderMap, body: Bytes| {
+                    captured.lock().unwrap().push((headers, body.to_vec()));
+                    async move {
+                        (
+                            failure_status,
+                            Json(if failure_status == StatusCode::UNAUTHORIZED {
+                                json!({"error":{"message":"invalid api key"}})
+                            } else if usage_limit {
+                                json!({"error":{"message":"Usage limit reached. Try again in 1 hour."}})
+                            } else {
+                                json!({"error":{"message":"rate limit exceeded"}})
+                            }),
+                        )
+                    }
+                }),
+            );
+            let first_listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let first_url = format!("http://{}", first_listener.local_addr().unwrap());
+            let _first_server = Server(tokio::spawn(async move {
+                axum::serve(first_listener, first_app).await.unwrap();
+            }));
+
+            let second_requests: Captures = Default::default();
+            let persisted_before_retry = Arc::new(std::sync::atomic::AtomicBool::new(false));
+            let captured = second_requests.clone();
+            let persisted = persisted_before_retry.clone();
+            let persisted_path = auth_path.clone();
+            let second_app = Router::new().route(
+                "/chat/completions",
+                post(move |headers: HeaderMap, body: Bytes| {
+                    let captured = captured.clone();
+                    let persisted = persisted.clone();
+                    let persisted_path = persisted_path.clone();
+                    async move {
+                        let auth: Value = serde_json::from_slice(
+                            &std::fs::read(persisted_path).expect("persisted auth store"),
+                        )
+                        .unwrap();
+                        persisted.store(
+                            auth["credential_pool"]["gmi"][0]["last_status"] == "exhausted",
+                            std::sync::atomic::Ordering::Release,
+                        );
+                        let parsed: Value = serde_json::from_slice(&body).unwrap();
+                        let streaming = parsed["stream"] == true;
+                        let index = {
+                            let mut captured = captured.lock().unwrap();
+                            let index = captured.len();
+                            captured.push((headers, body.to_vec()));
+                            index
+                        };
+                        if streaming {
+                            (
+                                [("content-type", "text/event-stream")],
+                                "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\ndata: [DONE]\n\n",
+                            )
+                                .into_response()
+                        } else if tools && index == 0 {
+                            Json(json!({"choices":[{"message":{
+                                "role":"assistant", "content":null,
+                                "tool_calls":[{"id":"clock","type":"function","function":{
+                                    "name":"current_time","arguments":"{}"
+                                }}]
+                            }}]}))
+                            .into_response()
+                        } else {
+                            Json(json!({
+                                "choices":[{"message":{"role":"assistant","content":"ok"}}]
+                            }))
+                            .into_response()
+                        }
+                    }
+                }),
+            );
+            let second_listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let second_url = format!("http://{}", second_listener.local_addr().unwrap());
+            let _second_server = Server(tokio::spawn(async move {
+                axum::serve(second_listener, second_app).await.unwrap();
+            }));
+
+            std::fs::write(
+                &auth_path,
+                serde_json::to_vec(&json!({
+                    "credential_pool":{"gmi":[
+                        {"id":"failed","auth_type":"api_key","source":"manual",
+                         "priority":0,"access_token":"pool-key-one","base_url":first_url},
+                        {"id":"healthy","auth_type":"api_key","source":"manual",
+                         "priority":1,"access_token":"pool-key-two","base_url":second_url}
+                    ]}
+                }))
+                .unwrap(),
+            )
+            .unwrap();
+            std::fs::write(home.0.join(".env"), "GMI_API_KEY=environment-key\n").unwrap();
+
+            let mut config = native_config();
+            config.agent_tools = tools;
+            config.llm_api_key = None;
+            config.llm_base_url = None;
+            let user_config = json!({
+                "model":{"provider":"gmi","base_url":first_url},
+                "custom_providers":[
+                    {"name":"first-route","base_url":first_url,
+                     "extra_headers":{"X-Route-Token":"first-only"}},
+                    {"name":"second-route","base_url":second_url,
+                     "extra_headers":{"X-Route-Token":"second-only"}}
+                ]
+            });
+            let agent = build_agent_client_for_home(
+                &config,
+                &user_config,
+                Some("fixture-model"),
+                &home.0,
+                None,
+            )
+            .unwrap();
+            let message: hermes_core::Message = serde_json::from_value(json!({
+                "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"hello"
+            }))
+            .unwrap();
+            let (tx, mut rx) = tokio::sync::mpsc::channel(32);
+            agent.run_turn(&message, &[], tx).await.unwrap();
+            while rx.recv().await.is_some() {}
+
+            assert!(persisted_before_retry.load(std::sync::atomic::Ordering::Acquire));
+            let first = first_requests.lock().unwrap();
+            let second = second_requests.lock().unwrap();
+            let expected_first = if failure_status == StatusCode::TOO_MANY_REQUESTS && !usage_limit
+            {
+                2
+            } else {
+                1
+            };
+            assert_eq!(first.len(), expected_first);
+            assert_eq!(second.len(), if tools { 2 } else { 1 });
+            for (headers, body) in first.iter() {
+                assert_eq!(headers["authorization"], "Bearer pool-key-one");
+                assert_eq!(headers["x-route-token"], "first-only");
+                assert_eq!(body, &second[0].1);
+            }
+            for (headers, _) in second.iter() {
+                assert_eq!(headers["authorization"], "Bearer pool-key-two");
+                assert_eq!(headers["x-route-token"], "second-only");
+            }
+            if tools {
+                let first_body: Value = serde_json::from_slice(&second[0].1).unwrap();
+                let next_body: Value = serde_json::from_slice(&second[1].1).unwrap();
+                assert_eq!(next_body["tools"], first_body["tools"]);
+                assert_eq!(next_body["messages"][0], first_body["messages"][0]);
+            }
         }
     }
 }

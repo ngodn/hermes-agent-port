@@ -40,7 +40,7 @@ fn api_mode(value: &str) -> &str {
     }
 }
 
-fn enabled(entry: &Value) -> bool {
+pub(crate) fn enabled(entry: &Value) -> bool {
     entry.get("enabled").is_none_or(|flag| match flag {
         Value::String(s) => !matches!(
             s.trim_matches(python_whitespace).to_lowercase().as_str(),
@@ -53,7 +53,7 @@ fn enabled(entry: &Value) -> bool {
 /// Preserve route distinctions that URL clients often erase (path case, empty
 /// query delimiters, repeated slashes and IPv6 zone case). Malformed input keeps
 /// its literal identity, matching the Python route-normalization boundary.
-fn route_identity(raw: &str) -> String {
+pub(crate) fn route_identity(raw: &str) -> String {
     if raw.chars().any(|c| c <= ' ') {
         return raw.into();
     }
@@ -115,6 +115,22 @@ fn route_identity(raw: &str) -> String {
         result.push_str(query);
     }
     result
+}
+
+/// Freeze the configured route-to-header projection without retaining the
+/// rest of config.yaml, which may contain unrelated credentials.
+pub fn extra_header_routes(config: &Value) -> Vec<(String, Map<String, Value>)> {
+    compatible(config)
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|entry| {
+            let base_url = entry["base_url"].as_str()?.trim_matches(python_whitespace);
+            let headers = entry["extra_headers"].as_object()?.clone();
+            (!base_url.is_empty() && !headers.is_empty())
+                .then(|| (route_identity(base_url), headers))
+        })
+        .collect()
 }
 
 /// Headers belong to the effective endpoint. Skip matching entries without

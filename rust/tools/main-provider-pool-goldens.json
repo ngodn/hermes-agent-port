@@ -1,0 +1,578 @@
+{
+  "failure_attribution_and_key_matching": [
+    {
+      "case": "attribution_by_entry_id_matches",
+      "cred_1_status": "exhausted",
+      "cred_2_status": null,
+      "recovered": true,
+      "retried": false
+    },
+    {
+      "case": "attribution_by_key_hint_when_id_none",
+      "cred_1_status": null,
+      "cred_2_status": "exhausted",
+      "recovered": true
+    },
+    {
+      "case": "attribution_disagreement_key_wins",
+      "cred_1_status": null,
+      "cred_2_status": "exhausted",
+      "recovered": true
+    },
+    {
+      "case": "attribution_stale_id_unknown_key_dropped",
+      "cred_1_status": null,
+      "cred_2_status": null,
+      "recovered": true
+    },
+    {
+      "case": "attribution_fallback_to_current",
+      "cred_1_status": "exhausted",
+      "cred_2_status": null,
+      "recovered": true
+    },
+    {
+      "case": "sibling_key_exhaustion_marks_all",
+      "next_swapped_id": "sib-2",
+      "recovered": true,
+      "sib_1_status": "exhausted",
+      "sib_2_status": null,
+      "sib_3_status": "exhausted"
+    },
+    {
+      "capped_at_none": false,
+      "case": "unmatched_key_streak_capped",
+      "pool_size": 2,
+      "streak_outcomes": [
+        "cred-1",
+        "cred-1",
+        null,
+        "cred-1"
+      ]
+    },
+    {
+      "case": "single_entry_pool_unmatched_key_no_loop",
+      "outcome": null
+    }
+  ],
+  "fallback_and_non_chat_boundaries": [
+    {
+      "case": "oauth_refresh_boundary",
+      "falls_through_to_rotation": true,
+      "static_key_refresh_attempt_result": null
+    },
+    {
+      "activates_general_fallback_chain": true,
+      "case": "fallback_provider_boundary",
+      "pool_recovery_exhausted_result": false
+    },
+    {
+      "api_mode": "anthropic_messages",
+      "bypasses_chat_header_merge": true,
+      "case": "non_chat_transport_boundary"
+    }
+  ],
+  "lifecycle_across_tool_rounds_and_later_turns": [
+    {
+      "case": "tool_round_1_rotation_survives_to_tool_round_2",
+      "current_api_key_after_round_1": "k2",
+      "current_entry_id_after_round_1": "c2",
+      "round_1_recovered": true
+    },
+    {
+      "active_api_key_for_round_2": "k2",
+      "case": "tool_round_2_resets_has_retried_429",
+      "round_2_initial_has_retried_429": false
+    },
+    {
+      "c1_status": "exhausted",
+      "c2_status": null,
+      "case": "pool_request_counts_and_statuses_persist_across_rounds"
+    },
+    {
+      "agent_api_key_maintained": "k2",
+      "case": "session_turn_2_preserves_rotated_key",
+      "env_adopted_over_pool_key": false
+    },
+    {
+      "case": "session_turn_2_cooldown_expired_revival",
+      "revived_id": "c1",
+      "revived_status": "ok"
+    }
+  ],
+  "persistence_before_retry_ordering": [
+    {
+      "case": "rate_limit_persisted_before_swap",
+      "execution_order": [
+        "persist:exhausted",
+        "swap:c2"
+      ],
+      "persisted_first": true
+    },
+    {
+      "case": "billing_persisted_before_swap",
+      "execution_order": [
+        "persist:exhausted",
+        "swap:c2"
+      ],
+      "persisted_first": true
+    },
+    {
+      "case": "auth_persisted_before_swap",
+      "execution_order": [
+        "persist:exhausted",
+        "persist:exhausted",
+        "swap:c2"
+      ],
+      "persisted_first": false
+    },
+    {
+      "case": "sibling_entries_persisted_together",
+      "persist_call_count": 2,
+      "s1_persisted_status": "exhausted",
+      "s2_persisted_status": null,
+      "s3_persisted_status": "exhausted"
+    }
+  ],
+  "provider_mismatch_isolation": [
+    {
+      "case": "primary_pool_mismatched_fallback_skips",
+      "entry_status": null,
+      "recovered": false,
+      "retried": false
+    },
+    {
+      "case": "primary_pool_matching_provider_rotates",
+      "entry_status": null,
+      "recovered": true
+    },
+    {
+      "case": "custom_pool_matching_alias_and_url",
+      "entry_status": null,
+      "recovered": true
+    },
+    {
+      "case": "custom_pool_generic_custom_matching_url",
+      "entry_status": null,
+      "recovered": true
+    },
+    {
+      "case": "custom_pool_mismatched_url_skips",
+      "entry_status": null,
+      "recovered": false,
+      "retried": true
+    },
+    {
+      "case": "custom_pool_mismatched_provider_name_skips",
+      "entry_status": null,
+      "recovered": false
+    },
+    {
+      "case": "unscoped_pool_adapter_compatible",
+      "entry_status": null,
+      "recovered": true
+    },
+    {
+      "case": "empty_agent_provider_fails_closed",
+      "entry_status": null,
+      "recovered": false
+    }
+  ],
+  "raw_http_classifier_boundaries": [
+    {
+      "body_text": "{\"error\":{\"message\":\"invalid api key\"}}",
+      "case": "unauthorized",
+      "failure": "auth",
+      "headers": {},
+      "provider": "gmi",
+      "status": 401,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"forbidden\"}}",
+      "case": "forbidden_auth",
+      "failure": "auth",
+      "headers": {},
+      "provider": "gmi",
+      "status": 403,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"credits exhausted\"}}",
+      "case": "payment_credits",
+      "failure": "billing",
+      "headers": {},
+      "provider": "gmi",
+      "status": 402,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"usage limit, try again in 5 minutes\"}}",
+      "case": "payment_transient_quota",
+      "failure": "rate_limit",
+      "headers": {},
+      "provider": "gmi",
+      "status": 402,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"model not available on the free tier\"}}",
+      "case": "free_tier_not_found",
+      "failure": "billing",
+      "headers": {},
+      "provider": "nous",
+      "status": 404,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"rate limit exceeded\"}}",
+      "case": "ordinary_rate_limit",
+      "failure": "rate_limit",
+      "headers": {},
+      "provider": "gmi",
+      "status": 429,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"usage limit reached\",\"type\":\"usage_limit_reached\"}}",
+      "case": "hard_usage_limit",
+      "failure": "billing",
+      "headers": {},
+      "provider": "gmi",
+      "status": 429,
+      "usage_limit_reached": true
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"Usage limit reached. Try again in 1 hour.\",\"type\":\"usage_limit_reached\"}}",
+      "case": "transient_usage_limit",
+      "failure": "rate_limit",
+      "headers": {},
+      "provider": "gmi",
+      "status": 429,
+      "usage_limit_reached": true
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"usage limit reached\"}}",
+      "case": "usage_limit_retry_after",
+      "failure": "rate_limit",
+      "headers": {
+        "retry-after": "120"
+      },
+      "provider": "gmi",
+      "status": 429,
+      "usage_limit_reached": true
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"insufficient credits\"}}",
+      "case": "billing_wrapped_429",
+      "failure": "billing",
+      "headers": {},
+      "provider": "openrouter",
+      "status": 429,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"Provider returned error\",\"metadata\":{\"provider_name\":\"DeepSeek\"}}}",
+      "case": "upstream_openrouter_429",
+      "failure": "upstream_rate_limit",
+      "headers": {},
+      "provider": "openrouter",
+      "status": 429,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"service is temporarily overloaded\"}}",
+      "case": "overloaded_429",
+      "failure": "unrelated",
+      "headers": {},
+      "provider": "zai",
+      "status": 429,
+      "usage_limit_reached": false
+    },
+    {
+      "body_text": "{\"error\":{\"message\":\"You're out of extra usage\"}}",
+      "case": "ambiguous_extra_usage",
+      "failure": "billing_unverified",
+      "headers": {},
+      "provider": "anthropic",
+      "status": 400,
+      "usage_limit_reached": false
+    }
+  ],
+  "retry_state_transitions_and_request_counts": [
+    {
+      "case": "auth_401_immediate_rotation",
+      "has_retried_429": false,
+      "recovered": true,
+      "swapped_count": 1,
+      "swapped_to_id": "c2"
+    },
+    {
+      "case": "auth_401_terminal_dead_status",
+      "entry_status": "dead",
+      "is_dead": true,
+      "recovered": true
+    },
+    {
+      "case": "auth_403_entitlement_skips_pool",
+      "has_retried_429": false,
+      "recovered": false,
+      "swapped_count": 0
+    },
+    {
+      "case": "billing_402_immediate_rotation",
+      "has_retried_429": false,
+      "recovered": true,
+      "swapped_to_id": "c2"
+    },
+    {
+      "case": "billing_403_classified_reason",
+      "failure_reason": "billing",
+      "recovered": true
+    },
+    {
+      "case": "billing_unverified_short_cooldown_record",
+      "failure_reason": "billing_unverified",
+      "recovered": true
+    },
+    {
+      "case": "ordinary_rate_limit_attempt_1_retries_same",
+      "has_retried_429": true,
+      "recovered": false,
+      "swapped_count": 0
+    },
+    {
+      "case": "ordinary_rate_limit_attempt_2_rotates",
+      "has_retried_429": false,
+      "recovered": true,
+      "swapped_to_id": "c2"
+    },
+    {
+      "case": "pre_exhausted_rate_limit_immediate_rotation",
+      "has_retried_429": false,
+      "recovered": true,
+      "swapped_to_id": "c2"
+    },
+    {
+      "case": "usage_limit_reached_immediate_rotation",
+      "has_retried_429": false,
+      "recovered": true,
+      "swapped_to_id": "c2"
+    },
+    {
+      "c1_status": null,
+      "case": "upstream_aggregator_rate_limit_defers",
+      "has_retried_429": false,
+      "recovered": false,
+      "swapped_count": 0
+    },
+    {
+      "attempt_1_recovered": false,
+      "attempt_1_retried": true,
+      "attempt_2_recovered": false,
+      "attempt_2_retried": true,
+      "case": "pool_exhaustion_returns_false"
+    }
+  ],
+  "route_changes_and_client_reconfiguration": [
+    {
+      "api_key": "sk-2",
+      "base_url": "https://openrouter.ai/api/v1",
+      "case": "same_route_rotation_preserves_headers",
+      "route_changed": false
+    },
+    {
+      "api_key": "sk-3",
+      "base_url": "https://custom-proxy.internal/v1",
+      "case": "different_endpoint_triggers_route_change",
+      "route_changed": true
+    },
+    {
+      "apply_headers_user_headers_arg": false,
+      "case": "route_change_reapplies_tls_and_drops_user_headers",
+      "ssl_ca_cert_cleared": true,
+      "ssl_verify_cleared": true
+    },
+    {
+      "case": "route_normalization_equivalence",
+      "is_equivalent": true,
+      "norm1": "https://api.openai.com/v1",
+      "norm2": "https://api.openai.com/v1"
+    },
+    {
+      "case": "route_port_or_host_difference",
+      "is_different": true,
+      "norm3": "http://127.0.0.1:8000/v1",
+      "norm4": "http://127.0.0.1:8001/v1"
+    }
+  ],
+  "startup_precedence_and_resolution": [
+    {
+      "api_key": "sk-explicit-1",
+      "base_url": "https://custom.deepseek.com/v1",
+      "case": "explicit_keys_override_pool_and_env",
+      "has_pool": false,
+      "provider": "deepseek",
+      "source": "explicit"
+    },
+    {
+      "api_key": "sk-ds-env-key",
+      "base_url": "https://proxy.deepseek.com/v1",
+      "case": "explicit_base_url_with_provider_default",
+      "has_pool": false,
+      "provider": "deepseek",
+      "source": "explicit"
+    },
+    {
+      "api_key": "sk-ds-active-pool",
+      "case": "active_pool_selected_over_env",
+      "has_pool": true,
+      "provider": "deepseek",
+      "selected_entry_id": "ds-active",
+      "source": "manual"
+    },
+    {
+      "base_url": "https://entry-endpoint.deepseek.internal/v1",
+      "case": "per_entry_base_url_overrides_provider_default",
+      "expected_base_url": "https://entry-endpoint.deepseek.internal/v1"
+    },
+    {
+      "base_url": "",
+      "case": "pool_entry_without_base_url_uses_config_default",
+      "expected_base_url": "https://config-endpoint.deepseek.com/v1"
+    },
+    {
+      "api_key": "sk-ds-from-env",
+      "case": "empty_pool_falls_back_to_env",
+      "has_pool": false,
+      "provider": "deepseek",
+      "source": "DEEPSEEK_API_KEY"
+    },
+    {
+      "api_key": "sk-ds-fallback-env",
+      "case": "exhausted_pool_falls_back_to_env",
+      "has_pool": false,
+      "provider": "deepseek",
+      "source": "DEEPSEEK_API_KEY"
+    },
+    {
+      "case": "profile_pool_shadows_root_pool",
+      "entries_count": 1,
+      "entry_id": "prof-1",
+      "provider": "openai",
+      "shadowed_global": true
+    },
+    {
+      "borrowed_from_global": true,
+      "case": "profile_without_provider_borrows_root_pool",
+      "entries_count": 1,
+      "entry_id": "glob-2",
+      "provider": "deepseek"
+    },
+    {
+      "case": "provider_alias_normalization_zai",
+      "input_alias": "z.ai",
+      "normalized_provider": "zai"
+    },
+    {
+      "case": "provider_alias_normalization_minimax",
+      "input_alias": "minimax-china",
+      "normalized_provider": "minimax-cn"
+    },
+    {
+      "candidates": [
+        "b-ai",
+        "custom:b-ai"
+      ],
+      "case": "custom_provider_slug_candidates",
+      "preferred_slug": "b-ai"
+    },
+    {
+      "case": "disabled_provider_fails_fast",
+      "error_contains_disabled": true,
+      "failed_fast": true
+    }
+  ],
+  "status_and_cooldown_outcomes": [
+    {
+      "case": "cooldown_401_default",
+      "expected": 300,
+      "ttl": 300
+    },
+    {
+      "case": "cooldown_429_multi_entry",
+      "expected": 3600,
+      "ttl": 3600
+    },
+    {
+      "case": "cooldown_429_sole_credential_shortened",
+      "expected": 60,
+      "ttl": 60
+    },
+    {
+      "case": "cooldown_402_multi_entry",
+      "expected": 3600,
+      "ttl": 3600
+    },
+    {
+      "case": "cooldown_402_sole_credential_not_shortened",
+      "expected": 3600,
+      "ttl": 3600
+    },
+    {
+      "case": "cooldown_billing_classified_sole_not_shortened",
+      "expected": 3600,
+      "ttl": 3600
+    },
+    {
+      "case": "cooldown_billing_unverified_non_402_shortened",
+      "expected": 60,
+      "ttl": 60
+    },
+    {
+      "case": "cooldown_billing_unverified_402_full_bench",
+      "expected": 3600,
+      "ttl": 3600
+    },
+    {
+      "case": "cooldown_retry_after_header_override",
+      "expected": 120.0,
+      "extracted_delay": 120.0
+    },
+    {
+      "case": "cooldown_parsed_hr_min_message_override",
+      "expected": 14700,
+      "extracted_delay": 14700
+    },
+    {
+      "case": "cooldown_quota_reset_delay_override",
+      "expected": 45.0,
+      "extracted_delay": 45.0
+    },
+    {
+      "case": "cooldown_expiry_revives_entry",
+      "selected_id": "rev-1",
+      "status_after_select": "ok"
+    }
+  ],
+  "unified_streaming_and_tool_loop_parity": [
+    {
+      "case": "streaming_failure_uses_same_recovery_contract",
+      "pool_exhausted_entry_id": "c1",
+      "shared_handler": true,
+      "stream_recovered": true,
+      "stream_retried": false
+    },
+    {
+      "case": "non_streaming_failure_uses_same_recovery_contract",
+      "non_stream_recovered": true,
+      "non_stream_retried": false,
+      "parity_with_streaming": true
+    },
+    {
+      "case": "wire_client_replacement_unified",
+      "client_replaced": true,
+      "replace_reason": "credential_rotation"
+    }
+  ]
+}

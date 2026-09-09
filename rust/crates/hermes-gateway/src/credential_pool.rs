@@ -1003,6 +1003,36 @@ impl PoolLocator {
         Ok(selected)
     }
 
+    /// Check the durable status of the exact credential that supplied a
+    /// failed request. This lets a new turn skip the otherwise normal first
+    /// same-key 429 retry when another process already quarantined that key.
+    pub fn credential_is_exhausted(
+        &self,
+        credential_id: &str,
+        api_key_hint: &str,
+    ) -> anyhow::Result<bool> {
+        let (pool, write_error) = self.load()?;
+        let matched_by_id = pool
+            .entries()
+            .iter()
+            .find(|entry| !credential_id.is_empty() && entry.id() == credential_id);
+        let matched = match matched_by_id {
+            Some(entry)
+                if api_key_hint.is_empty()
+                    || CredentialPool::runtime_api_key(entry) == api_key_hint =>
+            {
+                Some(entry)
+            }
+            _ => pool.entries().iter().find(|entry| {
+                !api_key_hint.is_empty() && CredentialPool::runtime_api_key(entry) == api_key_hint
+            }),
+        };
+        let exhausted = matched.is_some_and(|entry| entry.last_status() == Some(STATUS_EXHAUSTED));
+        drop(pool);
+        Self::check_write(&write_error)?;
+        Ok(exhausted)
+    }
+
     pub fn provider(&self) -> &str {
         &self.provider
     }
