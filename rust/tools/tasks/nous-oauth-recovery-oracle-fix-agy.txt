@@ -1,0 +1,9 @@
+Repair only the Nous OAuth Python-oracle deliverables you previously produced. Do not edit Rust production code. Independently re-read the live Python source before changing anything. Known audit failures to fix:
+
+1. The shared filename is hermes_cli.auth.NOUS_SHARED_STORE_FILENAME, currently nous_auth.json. Several generator checks hardcode nous_oauth.json and therefore record false results even though the source worked. Use the live constant everywhere and make those cases assert the actual behavior.
+2. The report incorrectly says auth_nous.json. Correct all shared-store names and links.
+3. The report incorrectly claims the singleton pool id is device_code:nous and label is Nous Device Code. The current _upsert_entry path mints a six-character id and defaults the label to device_code unless an existing row preserves another label. Describe only behavior proved by source-executed output.
+4. Clarify set_active behavior: background _sync_device_code_entry_to_auth_store uses false, while resolve_nous_runtime_credentials writes through _save_provider_state_to_source, whose direct runtime path may set active true. Do not conflate these paths.
+5. Check every boolean in the checked-in corpus. A behavior assertion that should demonstrate successful persistence or preservation must not remain false because of a broken harness. If a false result is itself the expected contract, name it unambiguously.
+
+Regenerate rust/tools/nous-oauth-recovery-goldens.json, run the generator normally and with --check, and report exact case counts plus every substantive correction. Preserve deterministic output, avoid real credentials, and do not use em dashes.

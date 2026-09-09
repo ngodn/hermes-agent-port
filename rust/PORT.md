@@ -1,5 +1,34 @@
 # Hermes Rust rewrite
 
+## Native Nous OAuth compression recovery: 2026-09-10
+
+Native auxiliary auto-discovery now includes the canonical Nous device-code
+grant in its reserved position after OpenRouter and before static providers.
+Resolution is lazy and profile-aware. It validates inference-scoped JWTs,
+preserves root ownership for borrowed credentials, and seeds the owned
+device-code pool row without putting secrets in shared process state.
+
+Nous single-use refresh now runs inside a profile-to-root-to-shared lock
+transaction. A waiter re-reads and adopts a peer's rotated pair before posting,
+and a successful response is durably written before validation or inference
+retry. Terminal reuse signals quarantine the singleton and shared mirror. The
+retry uses a fresh HTTP client while reusing the exact tool-free summary body.
+
+AGY owned the source-executed Python parity lane, which now has 87 cases across
+12 sections. Claude independently reviewed concurrency and security after the
+implementation. The primary lane corrected the helper reports, fixed every
+verified review finding, and validated the production integration. See
+[native-nous-oauth-recovery-resolution.md](analysis/native-nous-oauth-recovery-resolution.md).
+
+The refreshed weighted audit is **56.40 points, reported as about 56%**
+(judgment range 54% to 59%). This moves state/search from 74% to 75% and native
+agent core from 70% to 71%; gateway and tool/RPC estimates are unchanged.
+Pool-only Nous rows, interactive login, dynamic recommended-model selection,
+rate guards, main-provider recovery, other OAuth providers, and non-chat
+transports remain. Validation is **1,841 Rust tests passed, two ignored**.
+The 87-case Python corpus regenerates byte for byte. Rust and Python formatting,
+Ruff, workspace Clippy with warnings denied, and diff hygiene pass.
+
 ## Native compression API-key recovery: 2026-09-10
 
 Native auxiliary auto-discovery now chooses profile-scoped store-backed API

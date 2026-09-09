@@ -61,9 +61,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   frozen candidate plan. Store-backed static API-key routes now select before
   environment credentials, persist exact-key cooldowns under a cross-process
   lock, rebuild failed request clients, and perform bounded same-provider
-  recovery without changing prompt bytes. OAuth and Nous refresh, non-chat
-  transports, the general client cache, and dynamic provider plugins remain
-  open.
+  recovery without changing prompt bytes. Canonical Nous device-code discovery
+  now adds lazy cross-profile single-use refresh and byte-stable 401 recovery.
+  Other OAuth paths, non-chat transports, the general client cache, and dynamic
+  provider plugins remain open.
 - Structural full-compression no-ops arm a conversation-local, in-memory 300
   second guard shared across pre-turn and same-turn paths. They never strike or
   persist the durable ineffective breaker. Successful boundaries and forced
@@ -123,6 +124,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-nous-oauth-recovery-resolution.md](native-nous-oauth-recovery-resolution.md) | Production canonical Nous device-code discovery, cross-profile single-use refresh transaction, fail-closed persistence, prompt-stable retry, helper disposition, and explicit remaining model and pool scope |
+| [nous-oauth-recovery-contract-agy.md](nous-oauth-recovery-contract-agy.md) | AGY's source-executed Python contract, corrected and extended by the primary lane for shared paths, singleton identity, routing persistence, peer adoption, and corpus truthfulness |
+| [nous-oauth-recovery-rust-seam-claude.md](nous-oauth-recovery-rust-seam-claude.md) | Claude's pre-implementation Rust ownership and cancellation analysis, with primary corrections prominently recorded |
+| [nous-oauth-recovery-review-claude.md](nous-oauth-recovery-review-claude.md) | Claude's post-implementation security and concurrency review plus primary dispositions |
+| [nous-oauth-recovery-goldens.json](../tools/nous-oauth-recovery-goldens.json) | Source-executed 87-case profile, singleton, JWT, refresh, concurrency, persistence, quarantine, health, retry, and routing corpus |
 | [native-compression-credential-recovery-resolution.md](native-compression-credential-recovery-resolution.md) | Production static API-key pool selection and recovery, durable auth-store merge, fresh-client retry, prompt stability, live proof, and explicit OAuth limits |
 | [compression-credential-recovery-contract-agy.md](compression-credential-recovery-contract-agy.md) | AGY's source-executed Python pool and request-recovery contract, with retry and health summaries corrected against the source by the primary lane |
 | [compression-credential-recovery-rust-seam-claude.md](compression-credential-recovery-rust-seam-claude.md) | Claude's independent Rust ownership and concurrency map for request-local pools and profile isolation |

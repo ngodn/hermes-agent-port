@@ -1018,6 +1018,18 @@ pub struct RuntimeCredential {
 }
 
 impl RuntimeCredential {
+    pub(crate) fn new(
+        id: impl Into<String>,
+        api_key: impl Into<String>,
+        base_url: Option<String>,
+    ) -> Self {
+        Self {
+            id: id.into(),
+            api_key: api_key.into(),
+            base_url,
+        }
+    }
+
     pub fn id(&self) -> &str {
         &self.id
     }

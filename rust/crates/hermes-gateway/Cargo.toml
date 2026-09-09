@@ -22,7 +22,7 @@ async-trait = "0.1"
 unicode-general-category = "1"
 # Match the Python 3.12 reference Unicode 15.0 normalization tables.
 unicode-normalization = "=0.1.22"
-reqwest = { workspace = true, features = ["multipart"] }
+reqwest = { workspace = true, features = ["blocking", "multipart"] }
 serde_yaml_ng = "0.10"
 yaml-rust2 = { version = "0.11", default-features = false }
 yaml-edit = { package = "yaml-edit-rp", version = "0.3.1" }

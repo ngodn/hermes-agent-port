@@ -132,15 +132,14 @@ pub(crate) fn suppressed_in(store: &Value, provider: &str, source: &str) -> bool
     }
 }
 
-static WRITE_LOCK: Mutex<()> = Mutex::new(());
+pub(crate) struct AuthFileLock(std::fs::File);
 
-#[cfg(unix)]
-struct AuthFileLock(std::fs::File);
-
-#[cfg(unix)]
 impl AuthFileLock {
     fn acquire(auth_path: &Path) -> io::Result<Self> {
-        use std::os::fd::AsRawFd;
+        Self::acquire_for(auth_path, std::time::Duration::from_secs(15))
+    }
+
+    pub(crate) fn acquire_for(auth_path: &Path, timeout: std::time::Duration) -> io::Result<Self> {
         let lock_path = auth_path.with_extension("lock");
         if let Some(parent) = lock_path.parent() {
             std::fs::create_dir_all(parent)?;
@@ -151,49 +150,117 @@ impl AuthFileLock {
             .read(true)
             .write(true)
             .open(lock_path)?;
-        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
+        let started = std::time::Instant::now();
         loop {
-            // SAFETY: `file` owns a valid descriptor for the lock lifetime.
-            let status = unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) };
-            if status == 0 {
-                return Ok(Self(file));
+            match file.try_lock() {
+                Ok(()) => return Ok(Self(file)),
+                Err(std::fs::TryLockError::Error(error))
+                    if error.kind() != io::ErrorKind::Interrupted =>
+                {
+                    return Err(error)
+                }
+                Err(std::fs::TryLockError::Error(_) | std::fs::TryLockError::WouldBlock) => {}
             }
-            let error = io::Error::last_os_error();
-            if std::time::Instant::now() >= deadline {
+            if started.elapsed() >= timeout {
                 return Err(io::Error::new(
                     io::ErrorKind::TimedOut,
                     "timed out waiting for auth store lock",
                 ));
-            }
-            if !error.raw_os_error().is_some_and(|code| {
-                code == libc::EWOULDBLOCK || code == libc::EAGAIN || code == libc::EINTR
-            }) {
-                return Err(error);
             }
             std::thread::sleep(std::time::Duration::from_millis(50));
         }
     }
 }
 
-#[cfg(unix)]
 impl Drop for AuthFileLock {
     fn drop(&mut self) {
-        use std::os::fd::AsRawFd;
-        // SAFETY: `self.0` still owns the descriptor; close also releases it.
-        unsafe {
-            libc::flock(self.0.as_raw_fd(), libc::LOCK_UN);
-        }
+        let _ = std::fs::File::unlock(&self.0);
     }
 }
 
-#[cfg(not(unix))]
-struct AuthFileLock;
+static WRITE_LOCK: Mutex<()> = Mutex::new(());
 
-#[cfg(not(unix))]
-impl AuthFileLock {
-    fn acquire(_auth_path: &Path) -> io::Result<Self> {
-        Ok(Self)
+/// A provider-state read/modify/write lease whose file locks stay held across
+/// an OAuth refresh. The active profile is always locked before a distinct
+/// root fallback, matching Python's lock ordering for single-use grants.
+pub(crate) struct ProviderStateTransaction {
+    _locks: Vec<AuthFileLock>,
+    source_path: std::path::PathBuf,
+    store: Value,
+}
+
+impl ProviderStateTransaction {
+    pub(crate) fn store(&self) -> &Value {
+        &self.store
     }
+
+    pub(crate) fn store_mut(&mut self) -> &mut Value {
+        &mut self.store
+    }
+
+    pub(crate) fn source_path(&self) -> &Path {
+        &self.source_path
+    }
+
+    /// Persist the whole source store while the corresponding lease is held.
+    pub(crate) fn commit(&mut self) -> io::Result<()> {
+        let root = self.store.as_object_mut().ok_or_else(|| {
+            io::Error::new(io::ErrorKind::InvalidData, "auth store is not an object")
+        })?;
+        root.entry("providers").or_insert_with(|| json!({}));
+        root.insert("version".into(), json!(1));
+        root.insert(
+            "updated_at".into(),
+            Value::String(chrono::Utc::now().to_rfc3339()),
+        );
+        let mut bytes = serde_json::to_vec_pretty(&self.store)
+            .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+        bytes.push(b'\n');
+        crate::atomic_file::write_private_preserving_symlink(&self.source_path, &bytes)
+    }
+}
+
+fn provider_state_in<'a>(
+    store: &'a Value,
+    provider: &str,
+) -> Option<&'a serde_json::Map<String, Value>> {
+    store.get("providers")?.get(provider)?.as_object()
+}
+
+/// Lock and re-read the auth store that owns `providers.<provider>`.
+///
+/// A named profile may borrow provider state from the root auth store. The
+/// returned transaction writes back to the exact source it read, so rotating a
+/// single-use refresh token can never strand sibling profiles on the old pair.
+pub(crate) fn lock_provider_state(
+    profile_path: &Path,
+    root_path: Option<&Path>,
+    provider: &str,
+    timeout: std::time::Duration,
+) -> io::Result<Option<ProviderStateTransaction>> {
+    let profile_lock = AuthFileLock::acquire_for(profile_path, timeout)?;
+    let profile_store = load(profile_path)?;
+    if provider_state_in(&profile_store, provider).is_some() {
+        return Ok(Some(ProviderStateTransaction {
+            _locks: vec![profile_lock],
+            source_path: profile_path.to_path_buf(),
+            store: profile_store,
+        }));
+    }
+
+    let Some(root_path) = root_path.filter(|root| *root != profile_path) else {
+        return Ok(None);
+    };
+    let root_lock = AuthFileLock::acquire_for(root_path, timeout)?;
+    let root_store = load(root_path)?;
+    if provider_state_in(&root_store, provider).is_none() {
+        return Ok(None);
+    }
+    Ok(Some(ProviderStateTransaction {
+        _locks: vec![profile_lock, root_lock],
+        source_path: root_path.to_path_buf(),
+        store: root_store,
+    }))
 }
 
 fn merge_newer_disk_status(

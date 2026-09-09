@@ -105,6 +105,7 @@ mod native_image_content;
 mod native_process;
 mod native_terminal;
 mod native_tools;
+mod nous_credentials;
 mod ogg_opus_duration;
 mod pairing;
 mod partial_compress;
@@ -562,11 +563,7 @@ fn build_native_compression_discovery(
 
     type DiscoveryEntry = (
         serde_json::Value,
-        Option<(
-            credential_pool::PoolLocator,
-            credential_pool::RuntimeCredential,
-            String,
-        )>,
+        Option<native_agent::CompressionPoolCredential>,
     );
     let mut entries: Vec<DiscoveryEntry> = Vec::new();
     let openrouter_model = user_config["auxiliary"]["openrouter_model"]
@@ -590,8 +587,13 @@ fn build_native_compression_discovery(
                 .and_then(|(_, runtime)| runtime.base_url())
                 .unwrap_or(&fallback_base_url)
                 .to_owned();
-            let binding =
-                pooled.map(|(locator, runtime)| (locator, runtime, fallback_base_url.clone()));
+            let binding = pooled.map(|(locator, runtime)| {
+                native_agent::CompressionPoolCredential::new(
+                    locator,
+                    runtime,
+                    fallback_base_url.clone(),
+                )
+            });
             entries.push((
                 serde_json::json!({
                     "provider":"openrouter",
@@ -604,9 +606,47 @@ fn build_native_compression_discovery(
         }
     }
 
-    // Nous is intentionally absent here. Its built-in route requires live
-    // device-code token validation and refresh, which the native credential
-    // manager does not own yet.
+    let shared_auth = secret("HERMES_SHARED_AUTH_DIR", dotenv, environment)
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| {
+            root_auth
+                .as_ref()
+                .and_then(|path| path.parent())
+                .unwrap_or(home)
+                .join("shared")
+        })
+        .join("nous_auth.json");
+    let portal_override = secret("HERMES_PORTAL_BASE_URL", dotenv, environment)
+        .or_else(|| secret("NOUS_PORTAL_BASE_URL", dotenv, environment));
+    let inference_override = secret("NOUS_INFERENCE_BASE_URL", dotenv, environment);
+    let refresh_timeout = secret("HERMES_NOUS_TIMEOUT_SECONDS", dotenv, environment)
+        .and_then(|value| value.parse::<f64>().ok())
+        .and_then(|value| std::time::Duration::try_from_secs_f64(value).ok())
+        .filter(|value| !value.is_zero())
+        .unwrap_or_else(|| std::time::Duration::from_secs(15));
+    let nous_locator = nous_credentials::Locator::new(
+        profile_auth.clone(),
+        root_auth.clone(),
+        shared_auth,
+        portal_override,
+        inference_override,
+        refresh_timeout,
+    );
+    if nous_locator.is_configured() {
+        entries.push((
+            serde_json::json!({
+                "provider":"nous",
+                "model":nous_credentials::DEFAULT_MODEL,
+                "base_url":nous_credentials::DEFAULT_INFERENCE_URL,
+                "api_key":"oauth-resolved-before-request",
+            }),
+            Some(native_agent::CompressionPoolCredential::new_nous(
+                nous_locator,
+                nous_credentials::DEFAULT_INFERENCE_URL,
+            )),
+        ));
+    }
+
     let requested_main = user_config["model"]["provider"]
         .as_str()
         .unwrap_or("")
@@ -648,7 +688,9 @@ fn build_native_compression_discovery(
                 entry["base_url"] = serde_json::json!(base_url);
             }
         }
-        let binding = pooled.map(|(locator, runtime)| (locator, runtime, fallback_base_url));
+        let binding = pooled.map(|(locator, runtime)| {
+            native_agent::CompressionPoolCredential::new(locator, runtime, fallback_base_url)
+        });
         entries.push((entry, binding));
     }
 
@@ -674,16 +716,7 @@ fn build_native_compression_discovery(
                 environment,
                 home,
             ) {
-                Ok(Some(client)) => {
-                    let binding = binding.map(|(locator, runtime, fallback_base_url)| {
-                        native_agent::CompressionPoolCredential::new(
-                            locator,
-                            runtime,
-                            fallback_base_url,
-                        )
-                    });
-                    Some((client, binding))
-                }
+                Ok(Some(client)) => Some((client, binding.clone())),
                 Ok(None) => None,
                 Err(error) => {
                     tracing::debug!(
@@ -2507,6 +2540,130 @@ mod startup_tests {
         assert_eq!(body["route_marker"], "discovery-task");
         assert_eq!(body["messages"], main_guard[2].1["messages"]);
         assert!(body.get("tools").is_none());
+    }
+
+    #[tokio::test]
+    async fn auto_compression_discovers_nous_oauth_before_static_profiles() {
+        use axum::{http::HeaderMap, routing::post, Json, Router};
+        use base64::Engine as _;
+
+        type Captures = Arc<std::sync::Mutex<Vec<(HeaderMap, Value)>>>;
+        let requests: Captures = Default::default();
+        let captured = requests.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |headers: HeaderMap, Json(body): Json<Value>| {
+                captured.lock().unwrap().push((headers.clone(), body));
+                async move {
+                    if headers["authorization"] == "Bearer main-key" {
+                        Json(json!({
+                            "choices":[{"finish_reason":"length","message":{"content":"partial"}}]
+                        }))
+                    } else {
+                        Json(json!({
+                            "choices":[{"finish_reason":"stop","message":{"content":"nous summary"}}]
+                        }))
+                    }
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        });
+
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home =
+            TempHome(std::env::temp_dir().join(format!("hermes-nous-auto-discovery-{nonce}")));
+        std::fs::create_dir_all(&home.0).unwrap();
+        std::fs::write(
+            home.0.join(".env"),
+            format!(
+                "NOUS_INFERENCE_BASE_URL={base_url}\nGMI_API_KEY=gmi-key\nGMI_BASE_URL={base_url}\n"
+            ),
+        )
+        .unwrap();
+        let now = chrono::Utc::now().timestamp();
+        let header = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(br#"{"alg":"none"}"#);
+        let payload = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(
+            serde_json::to_vec(&json!({"exp":now + 3600,"scope":"inference:invoke"})).unwrap(),
+        );
+        let token = format!("{header}.{payload}.signature");
+        std::fs::write(
+            home.0.join("auth.json"),
+            serde_json::to_vec(&json!({"providers":{"nous":{
+                "access_token":token,
+                "refresh_token":"refresh",
+                "scope":"inference:invoke",
+                "inference_base_url":"https://inference-api.nousresearch.com/v1"
+            }}}))
+            .unwrap(),
+        )
+        .unwrap();
+
+        let mut config = native_config();
+        config.llm_api_key = Some("main-key".into());
+        config.llm_base_url = Some(base_url);
+        let user_config = json!({
+            "model":{"provider":"custom"},
+            "auxiliary":{"compression":{"provider":"auto"}}
+        });
+        let agent =
+            build_agent_client_for_home(&config, &user_config, Some("main-model"), &home.0, None)
+                .unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"next"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("nous-auto-session".into());
+        let history = [session_db::CompressionHistoryMessage {
+            id: 1,
+            message: session_db::HistoryMessage {
+                role: "user".into(),
+                content: "preserve this context".into(),
+                api_content: None,
+            },
+            tool_call_id: None,
+            tool_calls: None,
+            tool_name: None,
+            effect_disposition: None,
+            finish_reason: None,
+            reasoning: None,
+            reasoning_content: None,
+            reasoning_details: None,
+            codex_reasoning_items: None,
+            codex_message_items: None,
+            display_kind: None,
+            display_metadata: None,
+            timestamp: 0.0,
+            compressed_summary: false,
+        }];
+
+        let summary = agent
+            .summarize_context(agent::TurnContext::default(), &message, &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("nous summary"));
+        let requests = requests.lock().unwrap();
+        assert_eq!(requests.len(), 2);
+        assert_eq!(requests[0].0["authorization"], "Bearer main-key");
+        assert_eq!(requests[1].0["authorization"], format!("Bearer {token}"));
+        assert_eq!(requests[1].1["model"], nous_credentials::DEFAULT_MODEL);
+        assert_eq!(requests[1].1["messages"], requests[0].1["messages"]);
+        assert_eq!(requests[1].1["tags"][0], "product=hermes-agent");
+        assert!(requests[1].1.get("tools").is_none());
+        drop(requests);
+        server.abort();
     }
 
     #[tokio::test]

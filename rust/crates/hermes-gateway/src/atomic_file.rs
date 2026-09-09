@@ -19,6 +19,12 @@ pub(crate) fn write_private_preserving_symlink(path: &Path, bytes: &[u8]) -> std
     write_to(&target, bytes, true)
 }
 
+/// Atomically replace a private cache or mirror file. Unlike user-owned
+/// configuration, a symlink at this path is detached instead of followed.
+pub(crate) fn write_private_replacing_symlink(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
+    write_to(path, bytes, true)
+}
+
 fn resolve_symlink_target(path: &Path) -> std::io::Result<PathBuf> {
     match std::fs::symlink_metadata(path) {
         Ok(metadata) if metadata.file_type().is_symlink() => {

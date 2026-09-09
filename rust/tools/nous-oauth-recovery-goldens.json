@@ -1,0 +1,585 @@
+{
+  "profile_and_root_ownership": [
+    {
+      "case": "classic_mode_profile_is_root",
+      "is_classic_mode": true,
+      "global_path": null,
+      "ownership_classification": "classic_root_direct"
+    },
+    {
+      "case": "named_profile_borrowing_from_root",
+      "state_resolved": true,
+      "is_from_root": true,
+      "source_matches_global_root": true,
+      "ownership_classification": "borrowed_from_global_root"
+    },
+    {
+      "case": "borrowed_grant_refresh_syncs_to_root_only",
+      "root_refresh_token_updated": true,
+      "root_access_token_updated": true,
+      "ownership_classification": "write_through_to_root"
+    },
+    {
+      "case": "borrowed_grant_refresh_never_shadows_profile_store",
+      "profile_has_providers_nous": false,
+      "avoids_self_sealing_shadow": true,
+      "ownership_classification": "no_shadowing_key_created"
+    },
+    {
+      "case": "profile_owned_grant_syncs_to_profile_store",
+      "profile_refresh_token_updated": true,
+      "root_refresh_token_untouched": true,
+      "ownership_classification": "profile_owned_direct_save"
+    },
+    {
+      "case": "shared_store_mirrors_oauth_material",
+      "shared_file_exists": true,
+      "shared_refresh_token": "rt_shared_test",
+      "shared_portal_base_url": "https://portal.nousresearch.com",
+      "ownership_classification": "shared_store_mirroring"
+    },
+    {
+      "case": "shared_store_excludes_volatile_agent_key",
+      "agent_key_in_shared_store": false,
+      "agent_key_expires_at_in_shared_store": false,
+      "ownership_classification": "volatile_agent_key_exclusion"
+    },
+    {
+      "case": "try_import_shared_state_rehydrates_valid_grant",
+      "import_succeeded": true,
+      "rehydrated_refresh_token": "rt_imported_new",
+      "rehydrated_agent_key": true,
+      "ownership_classification": "shared_import_success"
+    },
+    {
+      "case": "try_import_shared_state_returns_none_when_empty",
+      "import_succeeded": false,
+      "result": null,
+      "ownership_classification": "shared_import_absent"
+    },
+    {
+      "case": "strip_cloned_single_use_grants_preserves_static_keys",
+      "stripped_pool_providers": [
+        "anthropic",
+        "xai-oauth"
+      ],
+      "stripped_singleton_providers": [
+        "openai-codex"
+      ],
+      "openai_static_retained": true,
+      "codex_singleton_dropped": true,
+      "ownership_classification": "cloning_hygiene_protection"
+    }
+  ],
+  "singleton_seeding_and_idempotence": [
+    {
+      "case": "persist_nous_credentials_populates_singleton_and_pool",
+      "singleton_populated": true,
+      "pool_populated": true,
+      "entry_returned": true,
+      "seeding_path": "dual_store_write"
+    },
+    {
+      "case": "persist_nous_credentials_canonical_device_code_source",
+      "entry_source": "device_code",
+      "is_canonical_device_code": true,
+      "seeding_path": "canonical_source_assignment"
+    },
+    {
+      "case": "persist_nous_credentials_is_idempotent_no_duplicate_rows",
+      "pool_row_count": 1,
+      "no_duplicate_accumulated": true,
+      "updated_agent_key": true,
+      "seeding_path": "upsert_in_place"
+    },
+    {
+      "case": "persist_nous_credentials_preserves_custom_label",
+      "singleton_label": "Custom Label Dedicated",
+      "pool_entry_label": "Custom Label Dedicated",
+      "label_matches_user_input": true,
+      "seeding_path": "custom_label_embedding"
+    },
+    {
+      "case": "persist_nous_credentials_auto_derives_label_when_unspecified",
+      "auto_derived_label": "Nous Peer",
+      "has_non_empty_label": true,
+      "seeding_path": "auto_token_fingerprint_label"
+    },
+    {
+      "case": "seed_from_singletons_materializes_pool_entry",
+      "pool_entry_count": 1,
+      "entry_source": "device_code",
+      "entry_auth_type": "oauth",
+      "seeding_path": "singleton_to_pool_materialization"
+    }
+  ],
+  "access_token_and_runtime_key_selection": [
+    {
+      "case": "runtime_api_key_prefers_valid_agent_key",
+      "returned_key_matches_agent_key": true,
+      "runtime_key_empty": false,
+      "selection_outcome": "agent_key_preferred"
+    },
+    {
+      "case": "runtime_api_key_falls_back_to_valid_access_token",
+      "returned_key_matches_access_token": true,
+      "runtime_key_empty": false,
+      "selection_outcome": "access_token_fallback"
+    },
+    {
+      "case": "runtime_api_key_empty_when_both_unusable",
+      "runtime_key_empty": true,
+      "returned_value": "",
+      "selection_outcome": "empty_string_returned"
+    },
+    {
+      "case": "runtime_base_url_prefers_inference_base_url",
+      "runtime_base_url": "https://inf.nousresearch.com/v1",
+      "selected_inference_url": true,
+      "selection_outcome": "inference_base_url_preferred"
+    },
+    {
+      "case": "runtime_base_url_falls_back_to_base_url",
+      "runtime_base_url": "https://base.nousresearch.com/v1",
+      "selected_fallback_url": true,
+      "selection_outcome": "base_url_fallback"
+    },
+    {
+      "case": "jwt_scope_validation_accepts_inference_invoke_in_scope_param",
+      "status": null,
+      "is_usable": true,
+      "scope_location": "parameter"
+    },
+    {
+      "case": "jwt_scope_validation_accepts_inference_invoke_in_claims_scope",
+      "status": null,
+      "is_usable": true,
+      "scope_location": "claims_scope"
+    },
+    {
+      "case": "jwt_scope_validation_accepts_inference_invoke_in_claims_scp",
+      "status": null,
+      "is_usable": true,
+      "scope_location": "claims_scp"
+    },
+    {
+      "case": "jwt_scope_validation_rejects_missing_invoke_scope",
+      "status": "missing_inference_invoke_scope",
+      "rejected_with_code": true,
+      "scope_location": "missing_invoke_scope"
+    },
+    {
+      "case": "select_invoke_jwt_mirrors_token_to_agent_key",
+      "agent_key_mirrored": true,
+      "agent_key_id_cleared": true,
+      "agent_key_reused_false": true,
+      "selection_outcome": "invoke_jwt_selected"
+    }
+  ],
+  "expiry_and_skew_semantics": [
+    {
+      "case": "jwt_status_valid_when_ttl_exceeds_120s_skew",
+      "ttl_seconds": 3600,
+      "status": null,
+      "usable": true,
+      "skew_evaluation": "outside_skew_window"
+    },
+    {
+      "case": "jwt_status_expiring_when_ttl_within_120s_skew",
+      "ttl_seconds": 100,
+      "status": "invoke_jwt_expiring",
+      "usable": false,
+      "skew_evaluation": "within_skew_window"
+    },
+    {
+      "case": "jwt_status_expiring_when_exp_in_past",
+      "ttl_seconds": -10,
+      "status": "invoke_jwt_expiring",
+      "usable": false,
+      "skew_evaluation": "past_timestamp"
+    },
+    {
+      "case": "jwt_status_non_jwt_format_returns_access_token_not_jwt",
+      "raw_token_format": "opaque_string",
+      "status": "access_token_not_jwt",
+      "usable": false,
+      "skew_evaluation": "malformed_token"
+    },
+    {
+      "case": "jwt_status_missing_exp_uses_expires_at_valid",
+      "has_exp_claim": false,
+      "expires_at_offset": 3600,
+      "status": null,
+      "usable": true,
+      "skew_evaluation": "expires_at_valid"
+    },
+    {
+      "case": "jwt_status_missing_exp_uses_expires_at_expiring",
+      "has_exp_claim": false,
+      "expires_at_offset": 60,
+      "status": "invoke_jwt_expiry_unknown_or_expiring",
+      "usable": false,
+      "skew_evaluation": "expires_at_within_skew"
+    },
+    {
+      "case": "jwt_status_missing_exp_and_unparseable_expires_at",
+      "has_exp_claim": false,
+      "expires_at_value": "invalid-date-format",
+      "status": "invoke_jwt_expiry_unknown_or_expiring",
+      "usable": false,
+      "skew_evaluation": "unparseable_expiry_unknown"
+    },
+    {
+      "case": "skew_constants_parity",
+      "access_token_refresh_skew_seconds": 120,
+      "nous_invoke_jwt_min_ttl_seconds": 120,
+      "constants_match": true,
+      "skew_evaluation": "constant_alignment"
+    }
+  ],
+  "forced_401_refresh_and_client_rebuild": [
+    {
+      "case": "forced_refresh_invokes_portal_token_endpoint",
+      "api_key_returned": true,
+      "portal_base_url": "https://portal.nousresearch.com",
+      "client_id": "hermes-cli",
+      "refresh_path": "forced_token_refresh"
+    },
+    {
+      "case": "refresh_request_sends_x_nous_refresh_token_header",
+      "has_custom_header": true,
+      "header_value": "rt_header_test",
+      "refresh_path": "proxy_friendly_headers"
+    },
+    {
+      "case": "refresh_request_sends_refresh_token_grant_and_client_id",
+      "grant_type": "refresh_token",
+      "client_id": "hermes-cli",
+      "refresh_path": "standard_oauth_token_request_body"
+    },
+    {
+      "case": "auxiliary_refresh_client_rebuilds_under_exact_lookup_key",
+      "client_rebuilt": true,
+      "cache_key_matched": true,
+      "cached_client_is_fresh": true,
+      "refresh_path": "exact_cache_key_alignment"
+    },
+    {
+      "case": "auxiliary_refresh_client_evicts_and_closes_stale_instance",
+      "stale_client_survived": false,
+      "fresh_client_stored": true,
+      "refresh_path": "poisoned_client_cache_eviction"
+    },
+    {
+      "case": "auxiliary_refresh_client_threads_task_dimension_for_auto_route",
+      "task_differentiates_auto_cache_key": true,
+      "task_in_auto_key": true,
+      "refresh_path": "task_dimension_threading"
+    }
+  ],
+  "peer_rotated_token_adoption": [
+    {
+      "case": "peer_rotated_token_adopted_when_stale_token_mismatches_on_disk",
+      "adopted_peer_token": true,
+      "refresh_post_call_count": 0,
+      "adoption_outcome": "adopted_without_post"
+    },
+    {
+      "case": "peer_rotation_skips_network_refresh_post",
+      "network_calls_skipped": true,
+      "post_calls": [],
+      "adoption_outcome": "stampede_mitigation_verified"
+    },
+    {
+      "case": "peer_rotation_without_stale_hint_forces_post",
+      "post_called_without_hint": true,
+      "token_refreshed": "rt_peer_rotated",
+      "adoption_outcome": "forced_post_when_hint_absent"
+    },
+    {
+      "case": "pool_refresh_impl_adopts_peer_token_before_refresh",
+      "adopted_synced_entry": true,
+      "skipped_resolve_call": true,
+      "adoption_outcome": "pool_level_proactive_adoption"
+    },
+    {
+      "case": "pool_refresh_impl_adopts_peer_token_after_refresh_failure",
+      "adopted_after_failure": true,
+      "status_reset_to_ok": true,
+      "adoption_outcome": "recovery_adoption_post_failure"
+    }
+  ],
+  "single_use_refresh_locking_expectations": [
+    {
+      "case": "refresh_execution_serialized_under_auth_store_lock",
+      "lock_held_during_post": true,
+      "locking_guarantee": "cross_process_flock_held"
+    },
+    {
+      "case": "lock_timeout_during_refresh_leaves_entry_untouched",
+      "entry_returned_unchanged": true,
+      "entry_last_status": null,
+      "locking_guarantee": "lock_busy_is_not_credential_failure"
+    },
+    {
+      "case": "lock_timeout_does_not_set_error_status_or_cooldown",
+      "status_is_none": true,
+      "error_code_is_none": true,
+      "locking_guarantee": "entry_preserved_for_subsequent_retry"
+    },
+    {
+      "case": "credential_pool_lock_guards_quarantine_rebind_atomically",
+      "device_code_removed": true,
+      "concurrent_write_preserved": true,
+      "locking_guarantee": "atomic_rebind_under_lock"
+    },
+    {
+      "case": "pool_rlock_permits_same_thread_reentrant_quarantine",
+      "reentrant_acquired": true,
+      "locking_guarantee": "rlock_reentrancy_verified"
+    }
+  ],
+  "persistence_before_retry": [
+    {
+      "case": "post_refresh_state_persisted_before_jwt_assertion",
+      "raised_error_code": "missing_inference_invoke_scope",
+      "persisted_before_assertion_failure": true,
+      "durability_guarantee": "single_use_token_saved_prior_to_validation"
+    },
+    {
+      "case": "post_refresh_state_persists_even_if_token_claims_invalid",
+      "access_token_on_disk": true,
+      "refresh_token_on_disk": true,
+      "durability_guarantee": "non_lossy_token_preservation"
+    },
+    {
+      "case": "post_refresh_state_mirrored_to_shared_store_before_return",
+      "shared_store_updated": true,
+      "shared_store_access_token": true,
+      "durability_guarantee": "cross_profile_store_updated_immediately"
+    },
+    {
+      "case": "post_refresh_state_updates_disk_with_new_refresh_token",
+      "disk_refresh_token": "rt_persist_new_rotated",
+      "matches_rotated_token": true,
+      "durability_guarantee": "disk_durability_confirmed"
+    }
+  ],
+  "terminal_and_relogin_classifications": [
+    {
+      "case": "terminal_error_invalid_grant_with_relogin_required",
+      "code": "invalid_grant",
+      "is_terminal": true,
+      "classification": "terminal_reauth_required"
+    },
+    {
+      "case": "terminal_error_invalid_token_with_relogin_required",
+      "code": "invalid_token",
+      "is_terminal": true,
+      "classification": "terminal_reauth_required"
+    },
+    {
+      "case": "terminal_error_refresh_token_reused_with_relogin_required",
+      "code": "refresh_token_reused",
+      "is_terminal": true,
+      "classification": "terminal_reauth_required"
+    },
+    {
+      "case": "transient_error_http_500_not_terminal",
+      "code": "server_error",
+      "is_terminal": false,
+      "classification": "transient_retryable"
+    },
+    {
+      "case": "transient_error_http_429_not_terminal",
+      "code": "rate_limited",
+      "is_terminal": false,
+      "classification": "transient_retryable"
+    },
+    {
+      "case": "refresh_token_reuse_surfaces_actionable_external_process_message",
+      "contains_external_process_guidance": true,
+      "contains_reauth_command": true,
+      "classification": "actionable_remediation_guidance"
+    },
+    {
+      "case": "terminal_refresh_clears_tokens_from_auth_store_provider",
+      "access_token_cleared": true,
+      "refresh_token_cleared": true,
+      "agent_key_cleared": true,
+      "classification": "terminal_state_sanitization"
+    },
+    {
+      "case": "terminal_refresh_records_last_auth_error_with_relogin_required",
+      "has_last_auth_error": true,
+      "relogin_required": true,
+      "recorded_code": "invalid_grant",
+      "classification": "forensic_error_recording"
+    },
+    {
+      "case": "terminal_refresh_quarantines_device_code_pool_entries",
+      "device_code_removed_from_store": true,
+      "manual_entry_preserved_in_store": true,
+      "classification": "pool_store_quarantine"
+    },
+    {
+      "case": "terminal_refresh_clears_shared_nous_state",
+      "shared_file_removed": true,
+      "classification": "shared_store_revocation"
+    },
+    {
+      "case": "terminal_refresh_removes_singleton_sources_from_memory_pool",
+      "refresh_impl_returned_none": true,
+      "device_code_removed_from_memory": true,
+      "manual_entry_retained_in_memory": true,
+      "classification": "in_memory_pool_quarantine"
+    }
+  ],
+  "provider_health_tracking": [
+    {
+      "case": "unconfigured_nous_marked_unhealthy_60s",
+      "is_unhealthy": true,
+      "unhealthy_ttl": 60,
+      "quarantine_category": "unconfigured_short_quarantine"
+    },
+    {
+      "case": "rate_limited_nous_marked_unhealthy_for_remaining_cooldown",
+      "marked_unhealthy_called": true,
+      "ttl_passed": 180.0,
+      "quarantine_category": "rate_limit_cooldown_alignment"
+    },
+    {
+      "case": "payment_error_nous_marked_unhealthy_600s",
+      "is_unhealthy": true,
+      "ttl_applied": 600,
+      "default_ttl_matches_600s": true,
+      "quarantine_category": "payment_error_standard_quarantine"
+    },
+    {
+      "case": "is_provider_unhealthy_returns_true_during_cooldown",
+      "provider_label": "nous",
+      "is_unhealthy": true,
+      "quarantine_category": "active_quarantine_enforcement"
+    },
+    {
+      "case": "is_provider_unhealthy_lazily_clears_after_ttl_expiry",
+      "is_unhealthy_after_expiry": false,
+      "key_popped_from_cache": true,
+      "quarantine_category": "lazy_cache_eviction"
+    },
+    {
+      "case": "log_skip_unhealthy_rate_limited_to_once_per_60s",
+      "first_log_time": 1770000000.0,
+      "second_log_time": 1770000000.0,
+      "throttle_held": true,
+      "quarantine_category": "log_spam_prevention"
+    }
+  ],
+  "request_bounds_and_retry_limits": [
+    {
+      "case": "compression_timeout_floor_applied_when_caller_timeout_none",
+      "effective_timeout": 300.0,
+      "floor_applied": true,
+      "floor_constant_seconds": 300.0,
+      "bound_category": "compression_timeout_floor"
+    },
+    {
+      "case": "compression_timeout_floor_bypassed_when_caller_provides_explicit_timeout",
+      "effective_timeout": 45.0,
+      "explicit_timeout_honored": true,
+      "bound_category": "explicit_timeout_preservation"
+    },
+    {
+      "case": "non_compression_task_does_not_apply_300s_floor",
+      "effective_timeout": 120.0,
+      "floor_not_applied": true,
+      "bound_category": "task_specific_floor_isolation"
+    },
+    {
+      "case": "compression_task_in_timeout_no_retry_tasks",
+      "in_no_retry_set": true,
+      "vision_in_no_retry_set": true,
+      "bound_category": "no_retry_task_set"
+    },
+    {
+      "case": "compression_timeout_skips_same_provider_retry",
+      "should_skip_retry": true,
+      "skips_user_visible_stall": true,
+      "bound_category": "stall_prevention_on_critical_path"
+    },
+    {
+      "case": "auxiliary_401_recovery_executes_at_most_one_retry",
+      "max_recovery_retries_per_401": 1,
+      "prevents_infinite_refresh_loop": true,
+      "bound_category": "retry_budget_enforcement"
+    }
+  ],
+  "model_and_base_url_selection": [
+    {
+      "case": "default_nous_model_is_gemini_3_6_flash",
+      "model_id": "google/gemini-3.6-flash",
+      "matches_gemini_flash": true,
+      "selection_type": "default_model_anchor"
+    },
+    {
+      "case": "portal_recommended_model_selected_when_available",
+      "selected_model": "xiaomi/mimo-v2-pro",
+      "matches_recommendation": true,
+      "selection_type": "dynamic_portal_recommendation"
+    },
+    {
+      "case": "portal_recommended_model_falls_back_to_default_on_error",
+      "selected_model": "google/gemini-3.6-flash",
+      "matches_default_model": true,
+      "selection_type": "recommended_model_error_fallback"
+    },
+    {
+      "case": "default_nous_base_url_is_inference_api_nousresearch_com_v1",
+      "default_base_url": "https://inference-api.nousresearch.com/v1",
+      "matches_canonical_endpoint": true,
+      "selection_type": "default_endpoint_anchor"
+    },
+    {
+      "case": "runtime_base_url_strips_trailing_slashes",
+      "raw_url": "https://inference-api.nousresearch.com/v1///",
+      "clean_url": "https://inference-api.nousresearch.com/v1",
+      "has_no_trailing_slash": true,
+      "selection_type": "url_normalization"
+    },
+    {
+      "case": "nous_inference_base_url_env_overrides_runtime_without_persisting",
+      "resolved_runtime_base_url": "https://custom-dev-inference.nousresearch.com/v1",
+      "env_override_honored": true,
+      "persisted_store_untainted": true,
+      "selection_type": "transient_env_overlay"
+    },
+    {
+      "case": "nous_portal_operator_override_persists_with_hermes_precedence",
+      "persisted_portal_base_url": "https://portal.staging-nousresearch.com",
+      "hermes_override_won": true,
+      "selection_type": "trusted_operator_route_persistence"
+    },
+    {
+      "case": "unencrypted_http_for_production_portal_heals_to_default_https",
+      "persisted_healed_portal_url": "https://portal.nousresearch.com",
+      "healed_to_secure_default": true,
+      "selection_type": "security_enforcement_allowlist"
+    },
+    {
+      "case": "nous_policy_blocks_disallowed_models",
+      "allowed_model_blocked": false,
+      "disallowed_model_blocked": true,
+      "policy_enforced": true,
+      "selection_type": "entitlement_policy_filter"
+    },
+    {
+      "case": "nous_extra_body_includes_portal_tags",
+      "extra_body_has_tags": true,
+      "tags_content": [
+        "product=hermes-agent",
+        "client=hermes-client-v0.21.0"
+      ],
+      "selection_type": "product_attribution_tags"
+    }
+  ]
+}

@@ -472,9 +472,15 @@ pub(crate) struct CompressionDiscovery {
 /// selected for the next request so a failed client is not reused.
 #[derive(Clone)]
 pub(crate) struct CompressionPoolCredential {
-    locator: crate::credential_pool::PoolLocator,
+    source: CompressionCredentialSource,
     current: std::sync::Arc<std::sync::Mutex<Option<crate::credential_pool::RuntimeCredential>>>,
     fallback_base_url: String,
+}
+
+#[derive(Clone)]
+enum CompressionCredentialSource {
+    ApiKey(crate::credential_pool::PoolLocator),
+    Nous(crate::nous_credentials::Locator),
 }
 
 impl CompressionPoolCredential {
@@ -484,8 +490,19 @@ impl CompressionPoolCredential {
         fallback_base_url: impl Into<String>,
     ) -> Self {
         Self {
-            locator,
+            source: CompressionCredentialSource::ApiKey(locator),
             current: std::sync::Arc::new(std::sync::Mutex::new(Some(current))),
+            fallback_base_url: fallback_base_url.into(),
+        }
+    }
+
+    pub(crate) fn new_nous(
+        locator: crate::nous_credentials::Locator,
+        fallback_base_url: impl Into<String>,
+    ) -> Self {
+        Self {
+            source: CompressionCredentialSource::Nous(locator),
+            current: std::sync::Arc::new(std::sync::Mutex::new(None)),
             fallback_base_url: fallback_base_url.into(),
         }
     }
@@ -501,6 +518,9 @@ impl CompressionPoolCredential {
         &self,
         error: &Error,
     ) -> anyhow::Result<Option<crate::credential_pool::RuntimeCredential>> {
+        let CompressionCredentialSource::ApiKey(locator) = &self.source else {
+            anyhow::bail!("synchronous rotation is only available for API-key pools");
+        };
         let failed = self.current().ok_or_else(|| {
             anyhow::anyhow!("credential pool has no dispatched credential to recover")
         })?;
@@ -508,7 +528,7 @@ impl CompressionPoolCredential {
         let safe_message = crate::compression_redact::redact(&error.to_string());
         let context = json!({"message":safe_message, "status_code":status});
         let payment = compression_payment_failure(error);
-        let next = self.locator.mark_exhausted_and_rotate(
+        let next = locator.mark_exhausted_and_rotate(
             status,
             Some(&context),
             Some(failed.api_key()),
@@ -520,6 +540,52 @@ impl CompressionPoolCredential {
             .lock()
             .unwrap_or_else(|error| error.into_inner()) = next.clone();
         Ok(next)
+    }
+
+    fn can_recover(&self, error: &Error) -> bool {
+        match self.source {
+            CompressionCredentialSource::ApiKey(_) => {
+                compression_auth_failure(error)
+                    || compression_payment_failure(error)
+                    || compression_rate_limit_failure(error)
+            }
+            CompressionCredentialSource::Nous(_) => compression_auth_failure(error),
+        }
+    }
+
+    async fn prepare(&self) -> Result<Option<crate::credential_pool::RuntimeCredential>> {
+        match &self.source {
+            CompressionCredentialSource::ApiKey(_) => Ok(self.current()),
+            CompressionCredentialSource::Nous(locator) => {
+                match locator.resolve(false, None).await {
+                    Ok(credential) => {
+                        *self
+                            .current
+                            .lock()
+                            .unwrap_or_else(|error| error.into_inner()) = Some(credential.clone());
+                        Ok(Some(credential))
+                    }
+                    Err(error) => {
+                        if matches!(
+                            error.kind(),
+                            crate::nous_credentials::FailureKind::Unavailable
+                                | crate::nous_credentials::FailureKind::Terminal
+                                | crate::nous_credentials::FailureKind::Persistence
+                        ) {
+                            *self
+                                .current
+                                .lock()
+                                .unwrap_or_else(|error| error.into_inner()) = None;
+                        }
+                        tracing::warn!(
+                            error = %crate::compression_redact::redact(&error.to_string()),
+                            "native Nous compression credential resolution failed"
+                        );
+                        Ok(None)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -555,10 +621,10 @@ impl CompressionDiscovery {
         })
     }
 
-    fn request_client(&self, index: usize) -> Result<Option<NativeAgentClient>> {
+    async fn request_client(&self, index: usize) -> Result<Option<NativeAgentClient>> {
         let client = self.candidates[index].clone();
         match &self.pool_credentials[index] {
-            Some(binding) => binding.current().map_or(Ok(None), |credential| {
+            Some(binding) => binding.prepare().await?.map_or(Ok(None), |credential| {
                 let base_url = credential
                     .base_url()
                     .unwrap_or(&binding.fallback_base_url)
@@ -605,20 +671,54 @@ impl CompressionDiscovery {
         };
         let candidate = self.candidates[index].clone();
         let fallback_base_url = binding.fallback_base_url.clone();
-        let owned_error = Error::Other(error.to_string());
-        tokio::task::spawn_blocking(move || {
-            let next = binding
-                .rotate_after_failure(&owned_error)
-                .map_err(|error| {
-                    Error::Other(format!("native compression credential recovery: {error}"))
-                })?;
-            next.map(|credential| {
-                candidate.with_runtime_credential(&credential, &fallback_base_url)
-            })
+        let next = match &binding.source {
+            CompressionCredentialSource::ApiKey(_) => {
+                let owned_error = Error::Other(error.to_string());
+                let binding = binding.clone();
+                tokio::task::spawn_blocking(move || binding.rotate_after_failure(&owned_error))
+                    .await
+                    .map_err(|error| {
+                        Error::Other(format!("compression credential worker failed: {error}"))
+                    })?
+                    .map_err(|error| {
+                        Error::Other(format!("native compression credential recovery: {error}"))
+                    })?
+            }
+            CompressionCredentialSource::Nous(locator) => {
+                let stale = binding
+                    .current()
+                    .map(|credential| credential.api_key().to_owned());
+                match locator.resolve(true, stale.as_deref()).await {
+                    Ok(credential) => {
+                        *binding
+                            .current
+                            .lock()
+                            .unwrap_or_else(|error| error.into_inner()) = Some(credential.clone());
+                        Some(credential)
+                    }
+                    Err(refresh_error) => {
+                        if matches!(
+                            refresh_error.kind(),
+                            crate::nous_credentials::FailureKind::Unavailable
+                                | crate::nous_credentials::FailureKind::Terminal
+                                | crate::nous_credentials::FailureKind::Persistence
+                        ) {
+                            *binding
+                                .current
+                                .lock()
+                                .unwrap_or_else(|error| error.into_inner()) = None;
+                        }
+                        tracing::warn!(
+                            error = %crate::compression_redact::redact(&refresh_error.to_string()),
+                            "native Nous compression credential refresh failed"
+                        );
+                        None
+                    }
+                }
+            }
+        };
+        next.map(|credential| candidate.with_runtime_credential(&credential, &fallback_base_url))
             .transpose()
-        })
-        .await
-        .map_err(|error| Error::Other(format!("compression credential worker failed: {error}")))?
     }
 
     fn pool_has_current(&self, index: usize) -> bool {
@@ -677,8 +777,20 @@ impl CompressionDiscovery {
                     || compression_rate_limit_failure(&error) =>
             {
                 // Account for the replacement immediately, but do not spend a
-                // third rotated-key request in this compression attempt.
-                self.rotate_after_failure_async(index, &error).await?;
+                // third rotated-key request in this compression attempt. Nous
+                // refresh tokens are single-use, so a failed retry must not
+                // consume a second refresh token without another inference
+                // attempt to justify it.
+                let api_key_pool = self
+                    .pool_credentials
+                    .get(index)
+                    .and_then(Option::as_ref)
+                    .is_some_and(|binding| {
+                        matches!(&binding.source, CompressionCredentialSource::ApiKey(_))
+                    });
+                if api_key_pool {
+                    self.rotate_after_failure_async(index, &error).await?;
+                }
                 Err(error)
             }
             Err(error) => Err(error),
@@ -1563,6 +1675,7 @@ impl NativeAgentClient {
         let mut summary_client = self.clone();
         summary_client.compression_routes = Default::default();
         summary_client.usage_bucket = UsageBucket::Auxiliary;
+        summary_client.apply_nous_summary_tags(database, session_id);
         summary_client.begin_auxiliary_usage();
         let summary = summary_client
             .full_summary_request(&[json!({"role":"user", "content":prompt})])
@@ -1570,6 +1683,35 @@ impl NativeAgentClient {
         let usage = summary_client.take_auxiliary_usage();
         summary_client.record_compression_usage(database, session_id, &usage);
         summary
+    }
+
+    fn apply_nous_summary_tags(
+        &mut self,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+    ) {
+        if !self.provider_name().eq_ignore_ascii_case("nous") {
+            return;
+        }
+        let conversation_id = database
+            .and_then(|database| database.compression_lineage_root(session_id).ok())
+            .filter(|value| !value.is_empty())
+            .unwrap_or_else(|| session_id.to_owned());
+        let extra = self
+            .request_overrides
+            .entry("extra_body")
+            .or_insert_with(|| json!({}));
+        let Some(extra) = extra.as_object_mut() else {
+            return;
+        };
+        extra.insert(
+            "tags".into(),
+            json!([
+                "product=hermes-agent",
+                format!("client=hermes-client-v{}", hermes_product_version()),
+                format!("conversation={conversation_id}"),
+            ]),
+        );
     }
 
     async fn summarize_history(
@@ -1706,8 +1848,8 @@ impl NativeAgentClient {
                     .discovery
                     .as_ref()
                     .map(|discovery| discovery.request_client(index))
-                    .transpose()?
-                    .flatten()
+                    .expect("built-in discovery exists")
+                    .await?
             } else {
                 None
             };
@@ -1881,7 +2023,8 @@ impl NativeAgentClient {
                                 && discovery
                                     .pool_credentials
                                     .get(index)
-                                    .is_some_and(Option::is_some)
+                                    .and_then(Option::as_ref)
+                                    .is_some_and(|binding| binding.can_recover(&error))
                             {
                                 match discovery
                                     .recover_summary(
@@ -2717,6 +2860,23 @@ impl NativeAgentClient {
         }
         Ok(())
     }
+}
+
+fn hermes_product_version() -> &'static str {
+    static VERSION: std::sync::LazyLock<String> = std::sync::LazyLock::new(|| {
+        include_str!("../../../../hermes_cli/__init__.py")
+            .lines()
+            .find_map(|line| {
+                line.trim()
+                    .strip_prefix("__version__ =")
+                    .map(str::trim)
+                    .map(|value| value.trim_matches(['\'', '"']))
+                    .filter(|value| !value.is_empty())
+                    .map(str::to_owned)
+            })
+            .unwrap_or_else(|| env!("CARGO_PKG_VERSION").to_owned())
+    });
+    VERSION.as_str()
 }
 
 #[async_trait]
@@ -4417,8 +4577,8 @@ mod tests {
         server.abort();
     }
 
-    #[test]
-    fn exhausted_compression_pool_drops_the_frozen_failed_client() {
+    #[tokio::test]
+    async fn exhausted_compression_pool_drops_the_frozen_failed_client() {
         let dir = std::env::temp_dir().join(format!(
             "hermes-compression-pool-empty-{}-{}",
             std::process::id(),
@@ -4470,7 +4630,7 @@ mod tests {
             )
             .unwrap()
             .is_none());
-        assert!(discovery.request_client(0).unwrap().is_none());
+        assert!(discovery.request_client(0).await.unwrap().is_none());
     }
 
     #[tokio::test]
@@ -4580,6 +4740,373 @@ mod tests {
             );
             assert_eq!(&*authorizations.lock().unwrap(), &expected);
         }
+        server.abort();
+    }
+
+    #[tokio::test]
+    async fn nous_compression_refresh_is_atomic_and_reuses_prompt_bytes() {
+        use axum::{
+            body::Bytes,
+            extract::State,
+            http::{HeaderMap, StatusCode, Uri},
+            response::IntoResponse,
+            routing::post,
+            Router,
+        };
+        use base64::Engine as _;
+        use std::sync::{Arc, Mutex};
+
+        fn jwt(exp: i64) -> String {
+            let header =
+                base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(br#"{"alg":"none"}"#);
+            let payload = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(
+                serde_json::to_vec(&json!({
+                    "exp":exp,
+                    "scope":"inference:invoke",
+                    "email":"fixture@example.com",
+                }))
+                .unwrap(),
+            );
+            format!("{header}.{payload}.signature")
+        }
+
+        #[derive(Clone)]
+        struct Capture {
+            auth_path: std::path::PathBuf,
+            old_token: String,
+            new_token: String,
+            sequence: Arc<Mutex<Vec<String>>>,
+            bodies: Arc<Mutex<Vec<Vec<u8>>>>,
+            persisted_before_retry: Arc<Mutex<bool>>,
+        }
+
+        async fn endpoint(
+            State(capture): State<Capture>,
+            uri: Uri,
+            headers: HeaderMap,
+            body: Bytes,
+        ) -> impl IntoResponse {
+            if uri.path() == "/api/oauth/token" {
+                capture.sequence.lock().unwrap().push("refresh".into());
+                assert_eq!(headers["x-nous-refresh-token"], "refresh-one");
+                assert!(std::str::from_utf8(&body)
+                    .unwrap()
+                    .contains("grant_type=refresh_token"));
+                return (
+                    StatusCode::OK,
+                    axum::Json(json!({
+                        "access_token":capture.new_token,
+                        "refresh_token":"refresh-two",
+                        "expires_in":3600,
+                        "scope":"inference:invoke",
+                        "inference_base_url":"https://attacker.invalid/v1",
+                    })),
+                )
+                    .into_response();
+            }
+
+            let authorization = headers
+                .get("authorization")
+                .and_then(|value| value.to_str().ok())
+                .unwrap_or("")
+                .to_owned();
+            capture.sequence.lock().unwrap().push(authorization.clone());
+            if authorization == "Bearer main-key" {
+                return (
+                    StatusCode::OK,
+                    axum::Json(json!({
+                        "choices":[{"finish_reason":"length","message":{"content":"partial"}}]
+                    })),
+                )
+                    .into_response();
+            }
+            capture.bodies.lock().unwrap().push(body.to_vec());
+            if authorization == format!("Bearer {}", capture.old_token) {
+                return (
+                    StatusCode::UNAUTHORIZED,
+                    axum::Json(json!({"error":"expired"})),
+                )
+                    .into_response();
+            }
+            assert_eq!(authorization, format!("Bearer {}", capture.new_token));
+            let persisted = crate::auth_store::load(&capture.auth_path)
+                .ok()
+                .is_some_and(|store| {
+                    store["providers"]["nous"]["refresh_token"] == "refresh-two"
+                        && store["credential_pool"]["nous"][0]["access_token"] == capture.new_token
+                });
+            *capture.persisted_before_retry.lock().unwrap() = persisted;
+            (
+                StatusCode::OK,
+                axum::Json(json!({
+                    "choices":[{"finish_reason":"stop","message":{"content":"nous summary"}}]
+                })),
+            )
+                .into_response()
+        }
+
+        let dir = std::env::temp_dir().join(format!(
+            "hermes-nous-compression-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&dir).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(dir.clone());
+        let auth_path = dir.join("auth.json");
+        let shared_path = dir.join("shared").join("nous_auth.json");
+        let now = chrono::Utc::now().timestamp();
+        let old_token = jwt(now + 3_600);
+        let new_token = jwt(now + 7_200);
+        std::fs::write(
+            &auth_path,
+            serde_json::to_vec(&json!({
+                "providers":{"nous":{
+                    "access_token":old_token,
+                    "refresh_token":"refresh-one",
+                    "expires_at":(chrono::Utc::now() + chrono::Duration::hours(1)).to_rfc3339(),
+                    "scope":"inference:invoke",
+                    "client_id":"hermes-cli",
+                    "portal_base_url":"https://portal.nousresearch.com",
+                    "inference_base_url":"https://inference-api.nousresearch.com/v1"
+                }},
+                "credential_pool":{"nous":[{
+                    "id":"nous-one","source":"device_code","auth_type":"oauth","priority":0,
+                    "access_token":old_token,"refresh_token":"refresh-one",
+                    "scope":"inference:invoke"
+                }]}
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let base_url = format!("http://{address}");
+        let capture = Capture {
+            auth_path: auth_path.clone(),
+            old_token: old_token.clone(),
+            new_token: new_token.clone(),
+            sequence: Default::default(),
+            bodies: Default::default(),
+            persisted_before_retry: Default::default(),
+        };
+        let application = Router::new()
+            .route("/chat/completions", post(endpoint))
+            .route("/api/oauth/token", post(endpoint))
+            .with_state(capture.clone());
+        let server = tokio::spawn(async move {
+            axum::serve(listener, application).await.unwrap();
+        });
+
+        let locator = crate::nous_credentials::Locator::new(
+            auth_path,
+            None,
+            shared_path.clone(),
+            Some(base_url.clone()),
+            Some(base_url.clone()),
+            std::time::Duration::from_secs(5),
+        );
+        let binding = super::CompressionPoolCredential::new_nous(locator, &base_url);
+        let overrides = json!({
+            "extra_body":{"tags":["product=hermes-agent","client=fixture"]}
+        });
+        let candidate = super::NativeAgentClient::new("summary-model", "placeholder", &base_url)
+            .unwrap()
+            .with_provider_identity("nous")
+            .with_request_overrides(overrides.as_object().unwrap().clone());
+        let discovery = super::CompressionDiscovery::new_with_pool_credentials(
+            &dir,
+            vec![(candidate, Some(binding))],
+            Arc::new(crate::compression_discovery::Health::default()),
+        );
+        let client = super::NativeAgentClient::new("main-model", "main-key", &base_url)
+            .unwrap()
+            .with_provider_identity("custom")
+            .with_compression_routes(None, Vec::new(), Vec::new(), discovery, true, None);
+        let history = [crate::session_db::CompressionHistoryMessage {
+            id: 1,
+            message: crate::session_db::HistoryMessage {
+                role: "user".into(),
+                content: "frozen Nous prompt".into(),
+                api_content: None,
+            },
+            tool_call_id: None,
+            tool_calls: None,
+            tool_name: None,
+            effect_disposition: None,
+            finish_reason: None,
+            reasoning: None,
+            reasoning_content: None,
+            reasoning_details: None,
+            codex_reasoning_items: None,
+            codex_message_items: None,
+            display_kind: None,
+            display_metadata: None,
+            timestamp: 0.0,
+            compressed_summary: false,
+        }];
+
+        let summary = client
+            .summarize_history(None, "nous-recovery", &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("nous summary"));
+        assert_eq!(
+            &*capture.sequence.lock().unwrap(),
+            &[
+                "Bearer main-key".to_owned(),
+                format!("Bearer {old_token}"),
+                "refresh".to_owned(),
+                format!("Bearer {new_token}"),
+            ]
+        );
+        assert!(*capture.persisted_before_retry.lock().unwrap());
+        assert_eq!(
+            crate::auth_store::load(&capture.auth_path).unwrap()["providers"]["nous"]
+                ["inference_base_url"],
+            crate::nous_credentials::DEFAULT_INFERENCE_URL
+        );
+        let bodies = capture.bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2);
+        assert_eq!(bodies[0], bodies[1]);
+        let body: serde_json::Value = serde_json::from_slice(&bodies[0]).unwrap();
+        assert!(body.get("tools").is_none());
+        assert_eq!(body["tags"][0], "product=hermes-agent");
+        drop(bodies);
+        let shared =
+            serde_json::from_slice::<serde_json::Value>(&std::fs::read(shared_path).unwrap())
+                .unwrap();
+        assert_eq!(shared["refresh_token"], "refresh-two");
+        server.abort();
+    }
+
+    #[tokio::test]
+    async fn failed_nous_retry_does_not_consume_a_second_refresh_token() {
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router,
+        };
+        use base64::Engine as _;
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        fn jwt(exp: i64) -> String {
+            let header =
+                base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(br#"{"alg":"none"}"#);
+            let payload = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(
+                serde_json::to_vec(&json!({"exp":exp,"scope":"inference:invoke"})).unwrap(),
+            );
+            format!("{header}.{payload}.signature")
+        }
+
+        #[derive(Clone)]
+        struct Counts {
+            refresh: Arc<AtomicUsize>,
+            inference: Arc<AtomicUsize>,
+            token: String,
+        }
+        let counts = Counts {
+            refresh: Default::default(),
+            inference: Default::default(),
+            token: jwt(chrono::Utc::now().timestamp() + 7_200),
+        };
+        let app = Router::new()
+            .route(
+                "/api/oauth/token",
+                post(|State(state): State<Counts>| async move {
+                    state.refresh.fetch_add(1, Ordering::SeqCst);
+                    Json(json!({
+                        "access_token":state.token,
+                        "refresh_token":"refresh-two",
+                        "expires_in":3600,
+                        "scope":"inference:invoke"
+                    }))
+                }),
+            )
+            .route(
+                "/chat/completions",
+                post(|State(state): State<Counts>| async move {
+                    state.inference.fetch_add(1, Ordering::SeqCst);
+                    (
+                        StatusCode::UNAUTHORIZED,
+                        Json(json!({"error":"still unauthorized"})),
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(counts.clone());
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        });
+
+        let dir = std::env::temp_dir().join(format!(
+            "hermes-nous-one-refresh-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(dir.clone());
+        let auth = dir.join("auth.json");
+        let old_token = jwt(chrono::Utc::now().timestamp() + 3_600);
+        std::fs::write(
+            &auth,
+            serde_json::to_vec(&json!({"providers":{"nous":{
+                "access_token":old_token,
+                "agent_key":old_token,
+                "refresh_token":"refresh-one",
+                "scope":"inference:invoke"
+            }}}))
+            .unwrap(),
+        )
+        .unwrap();
+        let locator = crate::nous_credentials::Locator::new(
+            auth,
+            None,
+            dir.join("shared/nous_auth.json"),
+            Some(base_url.clone()),
+            Some(base_url.clone()),
+            std::time::Duration::from_secs(2),
+        );
+        let binding = super::CompressionPoolCredential::new_nous(locator, &base_url);
+        let candidate = super::NativeAgentClient::new("summary-model", "placeholder", &base_url)
+            .unwrap()
+            .with_provider_identity("nous");
+        let discovery = super::CompressionDiscovery::new_with_pool_credentials(
+            &dir,
+            vec![(candidate, Some(binding))],
+            Default::default(),
+        )
+        .unwrap();
+        let failed_client = discovery.request_client(0).await.unwrap().unwrap();
+        let error = Error::Other("native full compression HTTP 401: expired".into());
+
+        assert!(discovery
+            .recover_summary(0, &failed_client, None, "session", "prompt", error)
+            .await
+            .is_err());
+        assert_eq!(counts.refresh.load(Ordering::SeqCst), 1);
+        assert_eq!(counts.inference.load(Ordering::SeqCst), 1);
         server.abort();
     }
 
