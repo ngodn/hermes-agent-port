@@ -1,0 +1,14 @@
+Read-only source-mapping task. Do not edit Rust, tests, PORT.md, INDEX.md, or any
+existing file. Write only:
+
+  rust/analysis/compression-handoff-anchors-agy.md
+
+Map the exact current Python behavior for full-compression synthetic user rows,
+multi-user tail anchoring, reference-only handoffs, todo snapshot insertion,
+role alternation, and restart/restored-handoff suppression. Focus on
+agent/context_compressor.py and agent/conversation_compression.py plus directly
+relevant tests. Identify precise decision order, metadata fields, mutation
+boundaries, persistence implications, and the narrowest safe Rust seams. Include
+file and line citations and a concrete test matrix. Do not investigate
+structural no-op backoff, provider routing, or implement anything. Call out
+ambiguous or stale behavior rather than guessing. Do not use em dashes.

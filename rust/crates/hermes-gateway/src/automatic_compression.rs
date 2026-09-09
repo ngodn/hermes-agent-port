@@ -31,6 +31,7 @@ pub const DEFAULT_PROACTIVE_PRUNE_MIN_RECLAIM_TOKENS: u64 = 4_096;
 pub const DEFAULT_MICRO_COMPACT: bool = false;
 pub const DEFAULT_MICRO_COMPACT_EVERY_N_TURNS: usize = 1;
 pub const DEFAULT_MICRO_COMPACT_DEFRAG_THRESHOLD_TOKENS: u64 = 2_000;
+pub const STRUCTURAL_NO_OP_BACKOFF: std::time::Duration = std::time::Duration::from_secs(300);
 
 /// Minimum valid value for `max_attempts`.
 pub const MIN_MAX_ATTEMPTS: u32 = 1;
@@ -798,6 +799,8 @@ pub async fn compress_before_turn(
 
     while attempts < policy.max_attempts {
         let session_id = admitted.entry.session_id.clone();
+        let context = crate::agent::TurnContext::from_database(Some(&database))
+            .with_session_finalizable(admitted.finalizable);
         let read_database = database.clone();
         let read_id = session_id.clone();
         let (snapshot, has_checkpoint, guard, prune_rearm) =
@@ -816,8 +819,6 @@ pub async fn compress_before_turn(
             .iter()
             .map(|item| item.message.clone())
             .collect::<Vec<_>>();
-        let context = crate::agent::TurnContext::from_database(Some(&database))
-            .with_session_finalizable(admitted.finalizable);
         let Some(preflight) = agent
             .compression_preflight(context, message, &history)
             .await?
@@ -892,13 +893,25 @@ pub async fn compress_before_turn(
             }
         }
         let now = now_secs();
-        let blocked = guard.cooldown_until.is_some_and(|deadline| deadline > now)
-            || (guard.ineffective_count >= 2 && guard.recovery_deadline > now);
+        let cooldown_active = guard.cooldown_until.is_some_and(|deadline| deadline > now);
+        let breaker_active = guard.ineffective_count >= 2 && guard.recovery_deadline > now;
+        let structural_remaining =
+            agent.compression_structural_backoff_remaining(context, &session_id);
+        let blocked = cooldown_active || structural_remaining.is_some() || breaker_active;
         if !phase_one_committed
             && !policy
                 .decide(threshold, preflight.request_tokens, attempts, blocked)
                 .should_compress()
         {
+            if !cooldown_active {
+                if let Some(remaining) = structural_remaining {
+                    tracing::debug!(
+                        %session_id,
+                        remaining_seconds = remaining.as_secs_f64(),
+                        "automatic compression deferred by structural no-op backoff"
+                    );
+                }
+            }
             return Ok(attempts);
         }
         if guard.ineffective_count >= 2 && guard.recovery_deadline <= now {
@@ -951,6 +964,11 @@ pub async fn compress_before_turn(
             preflight.stale_thinking_on_wire,
         ) else {
             tracing::warn!(%session_id, "automatic compression found no complete compressible region");
+            agent.record_compression_structural_no_op(
+                context,
+                &session_id,
+                "no complete compressible region",
+            );
             return Ok(attempts);
         };
         let middle = &snapshot.messages[prefix_end..tail_start];
@@ -1050,6 +1068,7 @@ pub async fn compress_before_turn(
             admitted.finalizable = deps.store.is_session_finalizable(&admitted.entry);
             message.resolved_session_id = Some(admitted.entry.session_id.clone());
         }
+        agent.clear_compression_structural_backoff(context, &admitted.entry.session_id);
         database.clear_compression_failure_cooldown(&admitted.entry.session_id)?;
         database.set_compression_breaker(&admitted.entry.session_id, 0, 0.0)?;
     }

@@ -1,8 +1,9 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **47.90% of the full native replacement**, reported as
+Current estimate: **48.10% of the full native replacement**, reported as
 **about 48%**, with a reasonable judgment range of **46% to 50%**. This
-supersedes the 47.50-point estimate recorded after same-turn full compression.
+supersedes the 47.90-point estimate recorded after auxiliary compression
+routing.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -20,10 +21,10 @@ audits.
 | Gateway | 35% | 64% | 22.40 |
 | Tool runtime and RPC | 30% | 13% | 3.90 |
 | State and search | 15% | 72% | 10.80 |
-| Native agent core | 20% | 54% | 10.80 |
-| Total | 100% | | **47.90** |
+| Native agent core | 20% | 55% | 11.00 |
+| Total | 100% | | **48.10** |
 
-`0.35 * 64 + 0.30 * 13 + 0.15 * 72 + 0.20 * 54 = 47.90`
+`0.35 * 64 + 0.30 * 13 + 0.15 * 72 + 0.20 * 55 = 48.10`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -162,8 +163,15 @@ exact-route fast-lane cap. A two-endpoint test proves that auxiliary controls do
 not leak into the main request, truncated output gets one uncapped main retry,
 and successful auxiliary output skips that retry.
 
+Structurally impossible full-compression attempts now arm a 300 second
+conversation-local monotonic guard instead of incrementing the durable
+ineffective breaker. Pre-turn and same-turn paths share the guard, a live
+HTTP and SQLite test proves it suppresses summary I/O after the transcript
+becomes large enough to compress, and successful or manually forced attempts
+clear it. The state is intentionally not persisted.
+
 Mid-turn rotation, exact synthetic-user and multi-user tail anchors,
-reference-only handoff suppression, structural no-op backoff, configurable
+reference-only handoff suppression, configurable
 multi-provider auxiliary fallback chains, non-chat auxiliary transports,
 provider failover and credential retry loops, delegation/subagents, full approval/clarification
 flows, memory and plugin managers, skill execution, context invalidation
@@ -173,8 +181,8 @@ helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,656 passing Rust tests and two expected ignores
-(1,655 gateway plus one core test).
+The workspace currently has 1,659 passing Rust tests and two expected ignores
+(1,658 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -182,11 +190,11 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,656 passed, two ignored (1,655 gateway plus one core).
-- Selected Python auxiliary compression contracts: 113 passed.
+- Full Rust workspace: 1,659 passed, two ignored (1,658 gateway plus one core).
+- Selected Python structural compression contracts: 46 passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
-  adoption, and 129 auxiliary routing/config cases.
+  adoption, 129 auxiliary routing/config, and 24 structural-backoff cases.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
 - The lower end of the range assumes native extension-host functionality earns
   little tool-runtime credit until managers and built-ins use it broadly.
@@ -195,8 +203,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Mid-turn rotation, exact remaining tail and handoff behavior, structural
-   backoff, auxiliary fallback chains, and checkpoint hooks complete the
+1. Mid-turn rotation, exact remaining tail and handoff behavior, auxiliary
+   fallback chains, overflow recovery, and checkpoint hooks complete the
    current compression cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.

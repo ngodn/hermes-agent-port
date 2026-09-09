@@ -1,5 +1,37 @@
 # Hermes Rust rewrite
 
+## Native compression structural backoff checkpoint: 2026-09-09
+
+Native full compression now treats an absent compressible window as a
+structural no-op, not a failed summary. The per-conversation native client arms
+a 300 second monotonic, process-local guard shared by its clones. Both pre-turn
+and same-turn automatic compression honor it before summary I/O, while the
+durable cooldown, ineffective strike count, and recovery deadline remain
+untouched.
+
+A committed compression boundary clears the guard. Manual `/compress` clears
+it before its forced attempt and rearms it only if the transcript is still too
+short. The bounded conversation cache forwards the state to the initialized
+client keyed by profile home and session ID, so one conversation never blocks
+another and no transient deadline enters SQLite.
+
+Claude produced only a 24-case source-executed backoff oracle and golden
+corpus. AGY separately mapped only the synthetic-user, multi-user tail,
+reference-handoff, todo, role-alternation, and restart contracts for the next
+checkpoint. The primary lane implemented the shared Rust state and live
+integration. See
+[native-compression-structural-backoff-resolution.md](analysis/native-compression-structural-backoff-resolution.md).
+
+Validation is **1,659 Rust tests passed, two ignored**, plus **46 selected
+Python tests passed**. Oracle regeneration, focused live tests, formatting,
+Clippy with warnings denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **48.10
+points, reported as about 48%** (judgment range 46% to 50%). Exact synthetic
+and multi-user tail anchors, reference-only handoff suppression, overflow
+recovery, memory checkpoints, notifications, and mid-turn rotation remain in
+the compression cluster. Native plugin, memory, tool, provider, and platform
+breadth remains the larger port.
+
 ## Native auxiliary compression routing checkpoint: 2026-09-09
 
 Native full-compression summaries now resolve the frozen

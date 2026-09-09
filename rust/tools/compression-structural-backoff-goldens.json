@@ -1,0 +1,517 @@
+{
+  "_meta": {
+    "authoritative_sources": [
+      "agent/context_compressor.py: ContextCompressor.__init__ / on_session_reset / on_session_end / bind_session_state",
+      "agent/context_compressor.py: _record_structural_no_op / _STRUCTURAL_NO_OP_BACKOFF_SECONDS",
+      "agent/context_compressor.py: _compression_block_reason / _automatic_compression_blocked_locally / _automatic_compression_blocked",
+      "agent/context_compressor.py: should_compress_info / compress / record_completed_compaction",
+      "agent/conversation_compression.py: no-progress commit-layer recorder call (dead-loop breaker, ~line 4467)"
+    ],
+    "backoff_seconds_const": 300.0,
+    "deferred_to_rust_integration": [
+      "the conversation_compression commit/rotate plumbing that wraps the no-progress recorder call (session split, telemetry emit)",
+      "the overflow-recovery loop in conversation_loop that consumes the ignore_cooldown gate result",
+      "durable-guard DB round-trips (backoff is in-memory only; no persistence leg exists to cover)"
+    ],
+    "description": "Golden oracle for the full-compression structural no-op backoff (#93022). Every value is the state or return of a real ContextCompressor method executed under a patched monotonic clock; no backoff decision is reimplemented.",
+    "fixed_window_tokens": 100000,
+    "mono_base": 10000.0,
+    "protect_first_n": 1,
+    "protect_last_n": 1,
+    "threshold_percent": 0.85
+  },
+  "caller_reasons": [
+    {
+      "backoff_seconds_const": 300.0,
+      "failure_class": "insufficient_messages",
+      "last_savings_pct": 0.0,
+      "mono_now": 10000.0,
+      "name": "caller_insufficient_messages",
+      "note": "compress() with too few messages arms the backoff via _record_structural_no_op without striking the breaker (failure_class=insufficient_messages).",
+      "result_unchanged": true,
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "failure_class": "no_compressible_window",
+      "last_savings_pct": 0.0,
+      "mono_now": 10000.0,
+      "name": "caller_no_compressible_window",
+      "note": "compress() where compress_start >= compress_end (transcript fits the tail budget) arms the backoff (failure_class=no_compressible_window).",
+      "result_unchanged": true,
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "failure_class": "empty_post_handoff_window",
+      "last_savings_pct": 0.0,
+      "mono_now": 10000.0,
+      "name": "caller_empty_post_handoff_window",
+      "note": "compress() where the window holds only already-summarized handoffs arms the backoff and skips the summary LLM entirely (failure_class=empty_post_handoff_window).",
+      "result_unchanged": true,
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      },
+      "summary_llm_called": false
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "ineffective_before": 0,
+      "mono_now": 10000.0,
+      "name": "caller_no_progress_commit_layer",
+      "note": "The conversation_compression no-progress commit path arms the backoff via _record_structural_no_op('...no_progress') without a strike; the commit/rotate plumbing around it is deferred to Rust integration.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    }
+  ],
+  "clearing": [
+    {
+      "armed_until": 10300.0,
+      "backoff_seconds_const": 300.0,
+      "mono_now": 10000.0,
+      "name": "completed_boundary_lifts",
+      "note": "record_completed_compaction() proves the transcript was compressible and zeroes _structural_no_op_backoff_until.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -10000.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 0.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "mono_now": 10000.0,
+      "name": "completed_feasibility_skip_lifts",
+      "note": "A pre-LLM feasibility-skip completion still lifts the backoff: the clear precedes the streak-neutral early return.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -10000.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 0.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "committed_boundary": true,
+      "mono_now": 10000.0,
+      "name": "forced_compress_overrides",
+      "note": "compress(force=True) (manual /compress) zeroes the backoff before running, so an explicit request always gets a real try; the forced pass committed a boundary here.",
+      "original_len": 8,
+      "result_len": 6,
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -10000.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 0.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    }
+  ],
+  "expiry": [
+    {
+      "backoff_seconds_const": 300.0,
+      "block_reason": null,
+      "blocked_locally": false,
+      "mono_now": 10301.0,
+      "name": "expired_lapses_and_resumes",
+      "note": "One second past the deadline the same over-threshold transcript compresses again: block reason None, gate unblocked, should True. _structural_no_op_backoff_until is still the old deadline; only the clock advanced.",
+      "over_threshold_reason": null,
+      "over_threshold_should": true,
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -1.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "block_reason": null,
+      "mono_now": 10300.0,
+      "name": "expired_exact_boundary_lapsed",
+      "note": "At exactly the deadline remaining is 0.0, which is not > 0, so the backoff has lapsed (strict-greater boundary).",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": 0.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    }
+  ],
+  "initialization": [
+    {
+      "backoff_seconds_const": 300.0,
+      "mono_now": 10000.0,
+      "name": "init_fresh_zero",
+      "note": "A freshly constructed compressor has the backoff cleared (0.0); the gate is not blocked by it.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -10000.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 0.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "armed_until_before_reset": 10300.0,
+      "backoff_seconds_const": 300.0,
+      "mono_now": 10000.0,
+      "name": "on_session_reset_clears",
+      "note": "on_session_reset() (/new, /reset) re-zeroes an armed backoff.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -10000.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 0.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "mono_now": 10000.0,
+      "name": "on_session_end_clears",
+      "note": "on_session_end() re-zeroes an armed backoff when the owning session ends.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -10000.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 0.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "mono_now": 10000.0,
+      "name": "bind_session_state_clears",
+      "note": "bind_session_state() re-zeroes the in-memory backoff; the durable loads are best-effort and no-op when the session is unbound.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -10000.0,
+        "block_reason": null,
+        "blocked_locally": false,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 0.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    }
+  ],
+  "non_interaction": [
+    {
+      "backoff_seconds_const": 300.0,
+      "ineffective_after": 1,
+      "ineffective_before": 1,
+      "mono_now": 10000.0,
+      "name": "structural_does_not_strike_breaker",
+      "note": "_record_structural_no_op arms the backoff but never increments the ineffective counter or the fallback streak; the two mechanisms are independent (that separation IS #93022's fix).",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 1,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "block_reason": "structural_backoff:300",
+      "mono_now": 10000.0,
+      "name": "structural_precedes_ineffective_in_reason",
+      "note": "When both the structural backoff and the latched ineffective breaker are active, _compression_block_reason reports structural_backoff (structural is checked before ineffective).",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 2,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "block_reason": "cooldown:100",
+      "mono_now": 10000.0,
+      "name": "cooldown_precedes_structural_in_reason",
+      "note": "When both the summary cooldown and the structural backoff are active, _compression_block_reason reports cooldown (cooldown is checked before structural).",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "cooldown:100",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 10100.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "block_reason": "ineffective",
+      "mono_now": 10301.0,
+      "name": "ineffective_survives_structural_expiry",
+      "note": "Once the structural backoff lapses, a latched ineffective breaker still reports 'ineffective': the structural timer never cleared or armed the breaker.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -1.0,
+        "block_reason": "ineffective",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 2,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    }
+  ],
+  "overflow_bypass": [
+    {
+      "backoff_seconds_const": 300.0,
+      "blocked": true,
+      "blocked_via_public": true,
+      "mono_now": 10000.0,
+      "name": "overflow_bypass_still_blocked_by_structural",
+      "note": "Provider-proven overflow recovery calls the gate with ignore_cooldown=True; the structural backoff is evaluated regardless, so an armed backoff still blocks the overflow attempt.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "blocked_default": true,
+      "blocked_ignore_cooldown": false,
+      "mono_now": 10000.0,
+      "name": "overflow_bypass_clears_cooldown_only",
+      "note": "With only the summary cooldown active, ignore_cooldown=True unblocks (the structural leg is untouched and inactive here) - contrast with the structural-active case, which stays blocked.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": false,
+        "backoff_remaining_seconds": -10000.0,
+        "block_reason": "cooldown:200",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": false,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 0.0,
+        "summary_failure_cooldown_until": 10200.0
+      }
+    }
+  ],
+  "record_duration": [
+    {
+      "backoff_seconds_const": 300.0,
+      "expected_until": 10300.0,
+      "fallback_before": 0,
+      "ineffective_before": 0,
+      "mono_now": 10000.0,
+      "name": "record_arms_backoff",
+      "note": "_record_structural_no_op sets _structural_no_op_backoff_until to monotonic() + _STRUCTURAL_NO_OP_BACKOFF_SECONDS (300s).",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "first_until": 10300.0,
+      "mono_now": 10000.0,
+      "name": "record_rearm_slides_deadline",
+      "note": "A second arming from a later monotonic reading replaces the deadline with now+300 (absolute, not additive).",
+      "second_armed_at_mono": 10050.0,
+      "second_until": 10350.0,
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 350.0,
+        "block_reason": "structural_backoff:350",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10350.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    }
+  ],
+  "status_while_active": [
+    {
+      "backoff_seconds_const": 300.0,
+      "block_reason": "structural_backoff:300",
+      "blocked_locally": true,
+      "mono_now": 10000.0,
+      "name": "active_blocks_and_defers",
+      "note": "While the backoff is live: _compression_block_reason() is structural_backoff:<remaining>, the local gate is blocked, and should_compress_info over threshold returns (False, structural_backoff:...).",
+      "over_threshold_reason": "structural_backoff:300",
+      "over_threshold_should": false,
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "block_reason": "structural_backoff:180",
+      "mono_now": 10120.0,
+      "name": "active_midwindow_remaining_shrinks",
+      "note": "120s into the window the reason reports the shrinking remainder (180s) and the gate is still blocked.",
+      "over_threshold_reason": "structural_backoff:180",
+      "over_threshold_should": false,
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 180.0,
+        "block_reason": "structural_backoff:180",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      }
+    },
+    {
+      "backoff_seconds_const": 300.0,
+      "below_threshold_reason": null,
+      "below_threshold_should": false,
+      "mono_now": 10000.0,
+      "name": "active_below_threshold_no_reason",
+      "note": "Under the token threshold should_compress_info returns (False, None) regardless of the backoff: the threshold check short-circuits first.",
+      "state": {
+        "anti_thrash_recovery_deadline": 0.0,
+        "backoff_active": true,
+        "backoff_remaining_seconds": 300.0,
+        "block_reason": "structural_backoff:300",
+        "blocked_locally": true,
+        "blocked_locally_ignore_cooldown": true,
+        "fallback_compression_streak": 0,
+        "ineffective_compression_count": 0,
+        "structural_no_op_backoff_until": 10300.0,
+        "summary_failure_cooldown_until": 0.0
+      },
+      "threshold_tokens": 85000
+    }
+  ]
+}

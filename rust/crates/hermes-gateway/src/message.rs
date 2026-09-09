@@ -497,6 +497,7 @@ pub async fn post_message(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::agent::AgentClient;
     use crate::native_agent::NativeAgentClient;
     use crate::native_tools::{Tool, ToolSpec};
     use axum::response::{IntoResponse, Response};
@@ -2029,7 +2030,10 @@ mod tests {
             .with_context_length(2_000);
         let config = json!({"compression": {
             "enabled": true,
-            "threshold_tokens": 250,
+            // Stay below threshold until the history has a complete middle
+            // region, so this test exercises a real summary rather than the
+            // separately covered structural no-op guard.
+            "threshold_tokens": 700,
             "protect_first_n": 2,
             "protect_last_n": 2,
             "max_attempts": 1,
@@ -2098,6 +2102,158 @@ mod tests {
         assert!(calls[final_index]
             .to_string()
             .contains(crate::compression_prompt::SUMMARY_PREFIX));
+    }
+
+    #[tokio::test]
+    async fn structural_no_op_backoff_defers_retry_without_touching_durable_breaker() {
+        async fn model(
+            State(calls): State<Arc<Mutex<Vec<Value>>>>,
+            Json(body): Json<Value>,
+        ) -> Response {
+            calls.lock().unwrap().push(body.clone());
+            if body["stream"] == false {
+                return Json(json!({"choices":[{"message":{"role":"assistant","content":"## Goal\nContinue after the structural retry window."}}]})).into_response();
+            }
+            (
+                [("content-type", "text/event-stream")],
+                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\ndata: [DONE]\n\n",
+            )
+                .into_response()
+        }
+
+        let home = TempHome::new();
+        let calls = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let (model_url, _model_server) = serve(
+            axum::Router::new()
+                .route("/chat/completions", post(model))
+                .with_state(calls.clone()),
+        )
+        .await;
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let config = json!({"compression": {
+            "enabled": true,
+            "threshold_tokens": 1,
+            "protect_first_n": 0,
+            "protect_last_n": 2,
+            "max_attempts": 1,
+            "in_place": true
+        }});
+        let agent = Arc::new(
+            NativeAgentClient::new("fixture-model", "fixture-key", model_url)
+                .unwrap()
+                .with_context_length(100_000),
+        );
+        let mut state = AppState::new(agent.clone(), Arc::new(config), None, Some(db.clone()));
+        state.session_store = Some((store.clone(), 3600.0));
+        let (gateway_url, _gateway_server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+        let client = reqwest::Client::new();
+        let send = |text: &str| {
+            client
+                .post(format!("{gateway_url}/message"))
+                .json(&json!({
+                    "channel_id":"structural-backoff-http",
+                    "sender_id":"local",
+                    "text":text
+                }))
+                .send()
+        };
+
+        assert_eq!(send("seed").await.unwrap().status(), StatusCode::OK);
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "structural-backoff-http")
+        };
+        let session_id = store.current_entry_for_source(&source).unwrap().session_id;
+        let context = crate::agent::TurnContext::from_database(Some(&db));
+        assert!(agent
+            .compression_structural_backoff_remaining(context, &session_id)
+            .is_some());
+        assert_eq!(
+            db.load_compression_guard_state(&session_id)
+                .unwrap()
+                .ineffective_count,
+            0
+        );
+
+        for index in 0..10 {
+            db.append_message(
+                &session_id,
+                "user",
+                &format!("old question {index} {}", "u".repeat(5_000)),
+            )
+            .unwrap();
+            db.append_message(
+                &session_id,
+                "assistant",
+                &format!("old answer {index} {}", "a".repeat(5_000)),
+            )
+            .unwrap();
+        }
+
+        assert_eq!(
+            send("blocked retry").await.unwrap().status(),
+            StatusCode::OK
+        );
+        assert_eq!(
+            calls
+                .lock()
+                .unwrap()
+                .iter()
+                .filter(|body| body["stream"] == false)
+                .count(),
+            0
+        );
+        assert_eq!(
+            db.load_compression_guard_state(&session_id)
+                .unwrap()
+                .ineffective_count,
+            0
+        );
+
+        agent.clear_compression_structural_backoff(context, &session_id);
+        assert!(agent
+            .compression_structural_backoff_remaining(context, &session_id)
+            .is_none());
+        assert_eq!(
+            send("retry after clear").await.unwrap().status(),
+            StatusCode::OK
+        );
+        assert_eq!(
+            calls
+                .lock()
+                .unwrap()
+                .iter()
+                .filter(|body| body["stream"] == false)
+                .count(),
+            1
+        );
+        assert!(agent
+            .compression_structural_backoff_remaining(context, &session_id)
+            .is_none());
+        assert_eq!(
+            db.load_compression_guard_state(&session_id)
+                .unwrap()
+                .ineffective_count,
+            0
+        );
     }
 
     #[tokio::test]

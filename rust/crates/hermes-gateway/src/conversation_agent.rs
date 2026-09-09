@@ -112,6 +112,22 @@ impl ConversationAgent {
         ))
     }
 
+    fn initialized_client(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        session_id: &str,
+    ) -> Option<Arc<dyn AgentClient>> {
+        let key = (context.home?.to_owned(), session_id.to_owned());
+        let cell = self
+            .state
+            .lock()
+            .unwrap()
+            .entries
+            .get(&key)
+            .map(|entry| entry.cell.clone())?;
+        cell.get().cloned()
+    }
+
     fn checkout(
         &self,
         key: &CacheKey,
@@ -759,6 +775,49 @@ impl AgentClient for ConversationAgent {
         result
     }
 
+    fn compression_structural_backoff_remaining(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        session_id: &str,
+    ) -> Option<Duration> {
+        match self.initialized_client(context, session_id) {
+            Some(client) => client.compression_structural_backoff_remaining(context, session_id),
+            None if context.home.is_none() => self
+                .fallback
+                .compression_structural_backoff_remaining(context, session_id),
+            None => None,
+        }
+    }
+
+    fn record_compression_structural_no_op(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        session_id: &str,
+        reason: &str,
+    ) {
+        match self.initialized_client(context, session_id) {
+            Some(client) => client.record_compression_structural_no_op(context, session_id, reason),
+            None if context.home.is_none() => self
+                .fallback
+                .record_compression_structural_no_op(context, session_id, reason),
+            None => {}
+        }
+    }
+
+    fn clear_compression_structural_backoff(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        session_id: &str,
+    ) {
+        match self.initialized_client(context, session_id) {
+            Some(client) => client.clear_compression_structural_backoff(context, session_id),
+            None if context.home.is_none() => self
+                .fallback
+                .clear_compression_structural_backoff(context, session_id),
+            None => {}
+        }
+    }
+
     async fn finalize_turn_after_persist(
         &self,
         context: crate::agent::TurnContext<'_>,
@@ -817,7 +876,7 @@ impl AgentClient for ConversationAgent {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 
     struct RecordedAgent {
         label: String,
@@ -949,6 +1008,90 @@ mod tests {
         agent
             .finalize_turn_after_persist(context, message, "answer", true)
             .await
+    }
+
+    #[tokio::test]
+    async fn structural_backoff_routes_to_the_initialized_conversation_client() {
+        struct BackoffAgent {
+            armed: Arc<AtomicBool>,
+        }
+
+        #[async_trait]
+        impl AgentClient for BackoffAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                _: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                Ok(())
+            }
+
+            fn compression_structural_backoff_remaining(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &str,
+            ) -> Option<Duration> {
+                self.armed
+                    .load(Ordering::SeqCst)
+                    .then_some(Duration::from_secs(300))
+            }
+
+            fn record_compression_structural_no_op(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &str,
+                _: &str,
+            ) {
+                self.armed.store(true, Ordering::SeqCst);
+            }
+
+            fn clear_compression_structural_backoff(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &str,
+            ) {
+                self.armed.store(false, Ordering::SeqCst);
+            }
+        }
+
+        let armed = Arc::new(AtomicBool::new(false));
+        let fallback = Arc::new(BackoffAgent {
+            armed: Arc::new(AtomicBool::new(false)),
+        });
+        let factory_armed = armed.clone();
+        let agent = ConversationAgent::new(
+            fallback,
+            move |_, _, _, _| {
+                let armed = factory_armed.clone();
+                Box::pin(
+                    async move { Ok(Arc::new(BackoffAgent { armed }) as Arc<dyn AgentClient>) },
+                )
+            },
+            AgentCacheBounds::default(),
+        );
+        let home = Path::new("structural-home");
+        let message = message("structural-session");
+        turn(&agent, home, &message).await.unwrap();
+        let context = context(home);
+
+        agent.record_compression_structural_no_op(
+            context,
+            "structural-session",
+            "no complete window",
+        );
+        assert_eq!(
+            agent.compression_structural_backoff_remaining(context, "structural-session"),
+            Some(Duration::from_secs(300))
+        );
+        assert!(armed.load(Ordering::SeqCst));
+
+        agent.clear_compression_structural_backoff(context, "structural-session");
+        assert_eq!(
+            agent.compression_structural_backoff_remaining(context, "structural-session"),
+            None
+        );
+        assert!(!armed.load(Ordering::SeqCst));
     }
 
     #[tokio::test]

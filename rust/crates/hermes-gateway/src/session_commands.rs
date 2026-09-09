@@ -183,8 +183,21 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
             .iter()
             .map(|item| item.message.clone())
             .collect::<Vec<_>>();
+        let context = crate::agent::TurnContext::from_database(Some(&database))
+            .with_session_finalizable(deps.store.is_session_finalizable(&entry));
+        let forced_attempt = !args.preview && !args.aggressive && !checkpoint_required;
+        if forced_attempt {
+            agent.clear_compression_structural_backoff(context, &session_id);
+        }
 
         let reply = if history.len() < 4 {
+            if forced_attempt {
+                agent.record_compression_structural_no_op(
+                    context,
+                    &session_id,
+                    "not enough conversation history for manual compression",
+                );
+            }
             "🗜️ Not enough conversation history to compress yet.".into()
         } else {
             let aggressive_note = "⚠️ --aggressive is not supported for gateway sessions. Use ordinary /compress so Hermes can preserve a context summary.";
@@ -212,8 +225,6 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                 let tail_start_id = boundary.map(|index| snapshot.messages[index].id);
                 let mut summary_message = message.clone();
                 summary_message.resolved_session_id = Some(session_id.clone());
-                let context = crate::agent::TurnContext::from_database(Some(&database))
-                    .with_session_finalizable(deps.store.is_session_finalizable(&entry));
                 let summary_body = match agent
                     .summarize_context(context, &summary_message, head, args.focus_topic.as_deref())
                     .await
@@ -1284,6 +1295,7 @@ mod tests {
     struct SummaryAgent {
         summaries: std::sync::atomic::AtomicUsize,
         releases: std::sync::atomic::AtomicUsize,
+        structural_backoff: std::sync::atomic::AtomicBool,
     }
 
     #[async_trait::async_trait]
@@ -1308,6 +1320,21 @@ mod tests {
                 .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
             assert_eq!(history.len(), 6);
             Ok(Some("## Goal\nPreserve the completed work.".into()))
+        }
+
+        fn compression_structural_backoff_remaining(
+            &self,
+            _: crate::agent::TurnContext<'_>,
+            _: &str,
+        ) -> Option<std::time::Duration> {
+            self.structural_backoff
+                .load(std::sync::atomic::Ordering::SeqCst)
+                .then_some(std::time::Duration::from_secs(300))
+        }
+
+        fn clear_compression_structural_backoff(&self, _: crate::agent::TurnContext<'_>, _: &str) {
+            self.structural_backoff
+                .store(false, std::sync::atomic::Ordering::SeqCst);
         }
 
         fn release_conversation(&self, _: crate::agent::TurnContext<'_>, _: &str) -> bool {
@@ -1752,6 +1779,7 @@ mod tests {
         let agent = Arc::new(SummaryAgent {
             summaries: std::sync::atomic::AtomicUsize::new(0),
             releases: std::sync::atomic::AtomicUsize::new(0),
+            structural_backoff: std::sync::atomic::AtomicBool::new(true),
         });
         let command_message = command_message("/compress here 1", "compress-live");
         let result = compress_session(CompressCommand {
@@ -1776,6 +1804,9 @@ mod tests {
         assert!(result.reply.contains("last 1 exchange"));
         assert_eq!(agent.summaries.load(std::sync::atomic::Ordering::SeqCst), 1);
         assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 1);
+        assert!(!agent
+            .structural_backoff
+            .load(std::sync::atomic::Ordering::SeqCst));
         let current = store.current_entry_for_source(&source).unwrap();
         assert_ne!(current.session_id, entry.session_id);
         assert_eq!(
@@ -1840,6 +1871,7 @@ mod tests {
         let agent = Arc::new(SummaryAgent {
             summaries: std::sync::atomic::AtomicUsize::new(0),
             releases: std::sync::atomic::AtomicUsize::new(0),
+            structural_backoff: std::sync::atomic::AtomicBool::new(true),
         });
         let result = compress_session(CompressCommand {
             deps: crate::session_admission::AdmissionDeps {
@@ -1863,6 +1895,9 @@ mod tests {
         assert!(result.reply.contains("compressed in place"));
         assert_eq!(agent.summaries.load(std::sync::atomic::Ordering::SeqCst), 1);
         assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 0);
+        assert!(!agent
+            .structural_backoff
+            .load(std::sync::atomic::Ordering::SeqCst));
         let current = store.current_entry_for_source(&source).unwrap();
         assert_eq!(current.session_id, entry.session_id);
         assert!(database.get_session(&entry.session_id).unwrap().unwrap()["ended_at"].is_null());

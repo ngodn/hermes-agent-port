@@ -42,6 +42,30 @@ struct SameTurnCompressionState {
     awaiting_usage: std::sync::atomic::AtomicBool,
 }
 
+#[derive(Default)]
+struct CompressionStructuralBackoff {
+    until: std::sync::Mutex<Option<std::time::Instant>>,
+}
+
+impl CompressionStructuralBackoff {
+    fn remaining_at(&self, now: std::time::Instant) -> Option<std::time::Duration> {
+        self.until
+            .lock()
+            .unwrap()
+            .and_then(|deadline| deadline.checked_duration_since(now))
+            .filter(|remaining| !remaining.is_zero())
+    }
+
+    fn record_at(&self, now: std::time::Instant) {
+        *self.until.lock().unwrap() =
+            Some(now + crate::automatic_compression::STRUCTURAL_NO_OP_BACKOFF);
+    }
+
+    fn clear(&self) {
+        *self.until.lock().unwrap() = None;
+    }
+}
+
 struct PendingMemoryTurn {
     clean_content: Value,
     messages: Vec<Value>,
@@ -429,6 +453,7 @@ pub struct NativeAgentClient {
     micro_compaction_state:
         std::sync::Arc<std::sync::Mutex<crate::micro_compaction::MicroCompactionState>>,
     usage_state: std::sync::Arc<std::sync::Mutex<UsageState>>,
+    structural_compression_backoff: std::sync::Arc<CompressionStructuralBackoff>,
     usage_bucket: UsageBucket,
     turn_limit: usize,
     max_concurrent_children: usize,
@@ -471,6 +496,7 @@ impl NativeAgentClient {
             pending_memory_turn: Default::default(),
             micro_compaction_state: Default::default(),
             usage_state: Default::default(),
+            structural_compression_backoff: Default::default(),
             usage_bucket: UsageBucket::Main,
             turn_limit: crate::turn_limit::UNLIMITED,
             max_concurrent_children: 10,
@@ -1168,6 +1194,26 @@ impl NativeAgentClient {
         result.map_err(|error| Error::Other(format!("same-turn compression {operation}: {error}")))
     }
 
+    fn compression_structural_backoff_remaining(&self) -> Option<std::time::Duration> {
+        self.structural_compression_backoff
+            .remaining_at(std::time::Instant::now())
+    }
+
+    fn record_compression_structural_no_op(&self, session_id: &str, reason: &str) {
+        self.structural_compression_backoff
+            .record_at(std::time::Instant::now());
+        tracing::warn!(
+            %session_id,
+            %reason,
+            backoff_seconds = crate::automatic_compression::STRUCTURAL_NO_OP_BACKOFF.as_secs(),
+            "native compression found a structural no-op; deferring automatic retries"
+        );
+    }
+
+    fn clear_compression_structural_backoff(&self) {
+        self.structural_compression_backoff.clear();
+    }
+
     fn refund_compression_attempt(attempts: &std::sync::atomic::AtomicU32) {
         let _ = attempts.fetch_update(
             std::sync::atomic::Ordering::AcqRel,
@@ -1219,6 +1265,7 @@ impl NativeAgentClient {
             .duration_since(std::time::UNIX_EPOCH)
             .map_or(0.0, |duration| duration.as_secs_f64());
         let blocked = guard.cooldown_until.is_some_and(|deadline| deadline > now)
+            || self.compression_structural_backoff_remaining().is_some()
             || (guard.ineffective_count >= 2 && guard.recovery_deadline > now);
         if !policy
             .decide(threshold, pressure_tokens, attempts_used, blocked)
@@ -1304,6 +1351,10 @@ impl NativeAgentClient {
                 charge_all_thinking,
             )
         else {
+            self.record_compression_structural_no_op(
+                session_id,
+                "no complete compressible region after tool batch",
+            );
             return Ok(SameTurnCompressionOutcome::Attempted);
         };
         let middle = &snapshot.messages[prefix_end..tail_start];
@@ -1386,6 +1437,7 @@ impl NativeAgentClient {
             Self::refund_compression_attempt(&compression.attempts);
             return Ok(SameTurnCompressionOutcome::Attempted);
         }
+        self.clear_compression_structural_backoff();
         Self::same_turn_db(
             database.clear_compression_failure_cooldown(session_id),
             "cooldown clear",
@@ -1849,6 +1901,27 @@ impl AgentClient for NativeAgentClient {
         }))
     }
 
+    fn compression_structural_backoff_remaining(
+        &self,
+        _: crate::agent::TurnContext<'_>,
+        _: &str,
+    ) -> Option<std::time::Duration> {
+        NativeAgentClient::compression_structural_backoff_remaining(self)
+    }
+
+    fn record_compression_structural_no_op(
+        &self,
+        _: crate::agent::TurnContext<'_>,
+        session_id: &str,
+        reason: &str,
+    ) {
+        NativeAgentClient::record_compression_structural_no_op(self, session_id, reason);
+    }
+
+    fn clear_compression_structural_backoff(&self, _: crate::agent::TurnContext<'_>, _: &str) {
+        NativeAgentClient::clear_compression_structural_backoff(self);
+    }
+
     async fn finalize_turn_after_persist(
         &self,
         context: crate::agent::TurnContext<'_>,
@@ -2106,6 +2179,48 @@ impl ChatModel for NativeAgentClient {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn structural_backoff_is_transient_absolute_and_shared_by_clones() {
+        let oracle: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-structural-backoff-goldens.json"
+        ))
+        .unwrap();
+        assert_eq!(
+            oracle["_meta"]["backoff_seconds_const"],
+            serde_json::json!(crate::automatic_compression::STRUCTURAL_NO_OP_BACKOFF.as_secs_f64())
+        );
+        let backoff = std::sync::Arc::new(super::CompressionStructuralBackoff::default());
+        let clone = backoff.clone();
+        let start = std::time::Instant::now();
+
+        assert_eq!(backoff.remaining_at(start), None);
+        backoff.record_at(start);
+        assert_eq!(
+            clone.remaining_at(start),
+            Some(crate::automatic_compression::STRUCTURAL_NO_OP_BACKOFF)
+        );
+        assert_eq!(
+            backoff.remaining_at(start + crate::automatic_compression::STRUCTURAL_NO_OP_BACKOFF),
+            None
+        );
+
+        let later = start + std::time::Duration::from_secs(10);
+        clone.record_at(later);
+        assert_eq!(
+            backoff.remaining_at(later),
+            Some(crate::automatic_compression::STRUCTURAL_NO_OP_BACKOFF)
+        );
+        assert_eq!(
+            backoff.remaining_at(start),
+            Some(
+                crate::automatic_compression::STRUCTURAL_NO_OP_BACKOFF
+                    + std::time::Duration::from_secs(10)
+            )
+        );
+        clone.clear();
+        assert_eq!(backoff.remaining_at(later), None);
+    }
+
     #[tokio::test]
     async fn compression_preflight_sizes_frozen_prompt_tools_and_output_reservation() {
         use crate::agent::AgentClient;

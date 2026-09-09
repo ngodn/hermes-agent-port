@@ -139,6 +139,35 @@ pub trait AgentClient: Send + Sync {
         Ok(None)
     }
 
+    /// Remaining transient delay after compression proved structurally
+    /// impossible for the current conversation. This guard is intentionally
+    /// process-local and must not be persisted with the durable anti-thrash
+    /// breaker.
+    fn compression_structural_backoff_remaining(
+        &self,
+        context: TurnContext<'_>,
+        session_id: &str,
+    ) -> Option<std::time::Duration> {
+        let _ = (context, session_id);
+        None
+    }
+
+    /// Defer automatic retries after finding no complete compressible region.
+    fn record_compression_structural_no_op(
+        &self,
+        context: TurnContext<'_>,
+        session_id: &str,
+        reason: &str,
+    ) {
+        let _ = (context, session_id, reason);
+    }
+
+    /// Lift the transient structural guard for a forced attempt or a committed
+    /// compression boundary.
+    fn clear_compression_structural_backoff(&self, context: TurnContext<'_>, session_id: &str) {
+        let _ = (context, session_id);
+    }
+
     /// Complete post-turn side effects after the gateway has durably recorded
     /// the assistant reply. Backends without such hooks keep the default no-op.
     async fn finalize_turn_after_persist(

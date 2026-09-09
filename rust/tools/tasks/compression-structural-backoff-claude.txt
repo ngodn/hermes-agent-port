@@ -1,0 +1,18 @@
+Oracle-only task. Do not edit Rust, PORT.md, INDEX.md, or any existing file.
+Create only these files:
+
+  rust/tools/compression-structural-backoff-oracle.py
+  rust/tools/compression-structural-backoff-goldens.json
+  rust/analysis/compression-structural-backoff-oracle-claude.md
+
+Build a deterministic source-executed Python oracle for full-compression
+structural no-op backoff. Exercise the real current implementation from
+agent/context_compressor.py and, where necessary, the actual caller behavior in
+agent/conversation_compression.py. Cover initialization, record duration,
+status/eligibility while active, expiry, clearing after real progress, overflow
+bypass interaction, breaker/ineffective-count non-interaction, and every caller
+reason that arms the backoff. Prefer monkeypatched monotonic time and real
+methods over reimplemented decisions. The generator must support --check and
+write stable JSON. Cite exact source and tests, distinguish runtime coverage
+from pure decisions, and list parity traps for Rust. Do not inspect or address
+synthetic-user or handoff anchoring. Do not use em dashes.
