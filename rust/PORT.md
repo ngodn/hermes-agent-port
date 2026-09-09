@@ -1,5 +1,54 @@
 # Hermes Rust rewrite
 
+## Native local foreground terminal: 2026-09-09
+
+The first production native execution tool is live. Explicit Unix-local profiles
+with `approvals.mode: off`, no user deny rules, and the existing native-tool
+opt-in receive one session-bound `terminal` tool. Smart, ask, manual, cron,
+single-query, and unattended approval modes, plus non-local backends, do not
+advertise the native tool. The Python agent path remains required for those
+policies until they are fully ported.
+
+The foreground runner streams stdout and stderr concurrently into bounded head
+and tail windows, creates unique private overflow spills, distinguishes exit,
+spawn, and timeout outcomes, reaps its child, and kills the process group on
+timeout or inherited-pipe linger. The terminal layer merges output, strips ANSI,
+redacts secrets before returning or exposing a spill, preserves partial timeout
+output, and returns structured command failures through the tool channel.
+
+Each frozen conversation owns a serialized cwd and private shell environment
+snapshot. Exported variables and completed `cd` changes survive later calls;
+explicit `workdir` remains transient. SQLite cwd persistence resolves the
+current route inside the update, so compression rotation moves later writes to
+the child without touching its ended parent. Profile subprocess environments
+now share one isolated builder with lifecycle hooks.
+
+The unconditional security floor blocks destructive filesystem, raw-device,
+fork-bomb, process-kill, shutdown, and unconfigured `sudo -S` commands even
+when approvals are off. A source-executed Python oracle pins 233 argument,
+validation, workdir, hardline, sudo, and approval-classification cases without
+executing candidate commands. A real local provider integration proves two
+same-turn terminal calls, exported-environment and cwd reuse, durable route cwd,
+and byte-stable tool schemas across three requests. See
+[native-local-terminal-resolution.md](analysis/native-local-terminal-resolution.md).
+
+AGY owned only the Python contract oracle under its single-flight auth lock.
+Claude owned only an independent foreground-runner draft. The primary lane
+replaced its unbounded capture and fixed-name spill behavior, added process and
+security hardening, implemented the terminal runtime, integrated it, and owned
+validation. The codebase-design skill kept foreground lifecycle behind one
+typed `run` interface and conversation state behind one tool.
+
+Validation is **1,752 Rust tests passed, two ignored**, plus **167 selected
+Python terminal and approval tests passed**. The 233-case oracle regenerates
+cleanly. Rust and Python formatting, Ruff, Clippy with warnings denied, and diff
+hygiene pass.
+
+The refreshed [weighted full-port audit](analysis/progress-audit-2026-09-08.md)
+is **52.10 points, reported as about 52%** (judgment range 50% to 54%). Native
+approval workflows, background process management, remote execution backends,
+file/browser/MCP tools, and native plugin and memory managers remain.
+
 ## Native same-turn compression rotation: 2026-09-09
 
 Rotation-mode full compression now commits during a live native tool turn. A

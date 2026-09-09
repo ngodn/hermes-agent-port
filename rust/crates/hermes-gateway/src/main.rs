@@ -60,6 +60,7 @@ mod environment_probe;
 mod environment_prompt;
 mod extension_host;
 mod file_read_safety;
+mod foreground_exec;
 mod gemini_thinking;
 mod git_probe;
 mod health;
@@ -98,6 +99,7 @@ mod mirror;
 mod models_dev;
 mod native_agent;
 mod native_image_content;
+mod native_terminal;
 mod native_tools;
 mod ogg_opus_duration;
 mod pairing;
@@ -172,6 +174,7 @@ mod stream_consumer;
 mod system_prompt;
 mod systemd_notify;
 mod telegram;
+mod terminal_guard;
 mod think_scrubber;
 mod threat_patterns;
 mod tool_arguments;
@@ -231,6 +234,23 @@ fn available_native_tools(config: &Config) -> Vec<Arc<dyn crate::native_tools::T
     } else {
         Vec::new()
     }
+}
+
+fn native_local_terminal_eligible(config: &serde_json::Value) -> bool {
+    let backend = config["terminal"]["backend"]
+        .as_str()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or("local");
+    let approval_mode = config["approvals"]["mode"]
+        .as_str()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or("smart");
+    let deny_is_empty = match config["approvals"].get("deny") {
+        None | Some(serde_json::Value::Null) => true,
+        Some(serde_json::Value::Array(rules)) => rules.is_empty(),
+        Some(_) => false,
+    };
+    cfg!(unix) && backend == "local" && approval_mode == "off" && deny_is_empty
 }
 
 fn extensions_configured(
@@ -309,9 +329,7 @@ fn merge_native_tools(
 ) -> Vec<Arc<dyn crate::native_tools::Tool>> {
     for extension in extensions {
         let name = extension.spec().name;
-        if let Some(slot) = base.iter().position(|tool| tool.spec().name == name) {
-            base[slot] = extension;
-        } else if !name.is_empty() {
+        if !name.is_empty() && !base.iter().any(|tool| tool.spec().name == name) {
             base.push(extension);
         }
     }
@@ -764,6 +782,9 @@ async fn build_conversation_client(
         "native profile construction requires a secret scope"
     );
     let selected = config_file::load_config_from(&home.join("config.yaml"));
+    let profile_env = profile_secrets
+        .clone()
+        .unwrap_or_else(|| config_file::load_dotenv(&home.join(".env")));
     let model = config
         .agent_model
         .clone()
@@ -804,6 +825,37 @@ async fn build_conversation_client(
         .unwrap_or(&session_id)
         .to_owned();
     let runtime_cwd = initializer.runtime_cwd(home, session_cwd)?;
+    let mut registered_base_tools = registered_native_tools();
+    if native_local_terminal_eligible(&selected) {
+        let route = database
+            .and_then(|database| database.gateway_route_for_session(&session_id).ok())
+            .flatten();
+        let terminal_database = database.and_then(|database| {
+            session_db::SessionDb::open_shared(database.database_path().to_path_buf())
+                .map_err(|error| {
+                    tracing::warn!(%error, %session_id, "Native terminal DB handle unavailable");
+                    error
+                })
+                .ok()
+        });
+        let default_timeout = selected["terminal"]["timeout"].as_u64().unwrap_or(180);
+        registered_base_tools.push(Arc::new(crate::native_terminal::TerminalTool::new(
+            crate::native_terminal::TerminalConfig {
+                cwd: runtime_cwd.clone().into(),
+                profile_env: &profile_env,
+                profile_home: home,
+                session_identity: &gateway_session_key,
+                default_timeout,
+                database: terminal_database,
+                route,
+            },
+        )));
+    }
+    let base_fresh_tools = if config.agent_tools {
+        registered_base_tools.clone()
+    } else {
+        Vec::new()
+    };
     let mut extension = if extensions_configured(&selected, &platform, &config.agent_cwd) {
         let params = extension_host::InitializeParams {
             home: home.to_string_lossy().into_owned(),
@@ -826,7 +878,7 @@ async fn build_conversation_client(
             chat_type: message.chat_type.clone(),
             thread_id: message.thread_id.clone(),
             gateway_session_key: Some(gateway_session_key),
-            native_tool_names: native_tools::tool_names(&registered_native_tools()),
+            native_tool_names: native_tools::tool_names(&registered_base_tools),
             profile_secrets: profile_secrets.clone(),
         };
         match extension_host::Client::spawn(&config.agent_python, &config.agent_cwd, home, params)
@@ -860,11 +912,9 @@ async fn build_conversation_client(
         .as_ref()
         .map(|(client, initialized)| initialized.available_tools(client))
         .unwrap_or_default();
-    let registered_tools =
-        merge_native_tools(registered_native_tools(), registered_extension_tools);
-    let base_fresh_tools = available_native_tools(config);
+    let registered_tools = merge_native_tools(registered_base_tools, registered_extension_tools);
     let base_fresh_tool_names = native_tools::tool_names(&base_fresh_tools);
-    let mut fresh_tools = merge_native_tools(base_fresh_tools, available_extension_tools);
+    let mut fresh_tools = merge_native_tools(base_fresh_tools.clone(), available_extension_tools);
     let fresh_tool_names = native_tools::tool_names(&fresh_tools);
     let extension_snapshot_failed = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
     let bot = initializer.bot_inputs(home, Some(&selected));
@@ -919,7 +969,7 @@ async fn build_conversation_client(
     )
     .await?;
     if !resolution.reused && extension_snapshot_failed.load(std::sync::atomic::Ordering::Acquire) {
-        fresh_tools = available_native_tools(config);
+        fresh_tools = base_fresh_tools.clone();
         extension = None;
         if let Some(database) = database {
             if let Err(error) =
@@ -957,9 +1007,6 @@ async fn build_conversation_client(
         .context_window(&provider, &model, &selected, true)
         .await
         .unwrap_or(256_000);
-    let profile_env = profile_secrets
-        .clone()
-        .unwrap_or_else(|| config_file::load_dotenv(&home.join(".env")));
     let mut hooks = hooks::HookRegistry::new().with_runtime(hooks::HookRuntime {
         profile_home: home.to_path_buf(),
         profile_env,
@@ -1399,6 +1446,30 @@ async fn wait_for_signal() {
 mod startup_tests {
     use super::*;
 
+    #[cfg(unix)]
+    #[test]
+    fn native_terminal_requires_explicit_local_no_approval_policy() {
+        assert!(native_local_terminal_eligible(&json!({
+            "terminal":{"backend":"local"},
+            "approvals":{"mode":"off","deny":[]}
+        })));
+        for config in [
+            json!({}),
+            json!({"terminal":{"backend":"docker"},"approvals":{"mode":"off"}}),
+            json!({"approvals":{"mode":"smart"}}),
+            json!({"approvals":{"mode":"off","deny":["rm *"]}}),
+            json!({"approvals":{"mode":"off","deny":"invalid"}}),
+        ] {
+            assert!(!native_local_terminal_eligible(&config), "{config}");
+        }
+    }
+
+    #[test]
+    fn native_tool_names_cannot_be_replaced_by_extension_collisions() {
+        let merged = merge_native_tools(registered_native_tools(), registered_native_tools());
+        assert_eq!(native_tools::tool_names(&merged), ["current_time"]);
+    }
+
     #[test]
     fn configured_auto_tool_backend_opens_extension_host_without_default_overhead() {
         let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../..");
@@ -1793,6 +1864,138 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
             assert_eq!(request["tools"][0]["function"]["name"], "current_time");
         }
         assert_eq!(requests[0]["tools"], requests[1]["tools"]);
+        server.abort();
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn native_terminal_runs_in_live_tool_loop_with_frozen_schema_and_durable_cwd() {
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+
+        type ModelState = (Arc<AtomicUsize>, Arc<std::sync::Mutex<Vec<Value>>>);
+        async fn model(
+            State((calls, requests)): State<ModelState>,
+            Json(body): Json<Value>,
+        ) -> Json<Value> {
+            let call = calls.fetch_add(1, Ordering::SeqCst);
+            requests.lock().unwrap().push(body.clone());
+            match call {
+                0 => Json(
+                    json!({"choices":[{"message":{"role":"assistant","content":null,"tool_calls":[{"id":"terminal-1","type":"function","function":{"name":"terminal","arguments":"{\"command\":\"cd child && export LIVE_NATIVE=yes && printf first\"}"}}]}}]}),
+                ),
+                1 => {
+                    assert!(body.to_string().contains("first"));
+                    Json(
+                        json!({"choices":[{"message":{"role":"assistant","content":null,"tool_calls":[{"id":"terminal-2","type":"function","function":{"name":"terminal","arguments":"{\"command\":\"printf '%s:%s' \\\"$PWD\\\" \\\"$LIVE_NATIVE\\\"\"}"}}]}}]}),
+                    )
+                }
+                2 => {
+                    assert!(body.to_string().contains("child:yes"));
+                    Json(json!({"choices":[{"message":{"role":"assistant","content":"done"}}]}))
+                }
+                _ => panic!("unexpected model request"),
+            }
+        }
+
+        struct TempDir(std::path::PathBuf);
+        impl Drop for TempDir {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home =
+            TempDir(std::env::temp_dir().join(format!("hermes-live-native-terminal-{nonce}")));
+        std::fs::create_dir_all(home.0.join("child")).unwrap();
+        std::fs::write(
+            home.0.join("config.yaml"),
+            "model:\n  default: fixture-model\n  provider: openrouter\nterminal:\n  backend: local\n  timeout: 5\napprovals:\n  mode: off\n  deny: []\n",
+        )
+        .unwrap();
+        let database = session_db::SessionDb::open_shared(home.0.join("state.db")).unwrap();
+        database
+            .create_session(
+                "terminal-session",
+                &session_db::SessionCreate {
+                    peer: session_db::GatewayPeer {
+                        source: "cli",
+                        session_key: Some("terminal-route"),
+                        ..Default::default()
+                    },
+                    cwd: home.0.to_str(),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        database
+            .save_gateway_routing_entry(
+                "profile",
+                "terminal-route",
+                r#"{"session_id":"terminal-session"}"#,
+            )
+            .unwrap();
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let requests = Arc::new(std::sync::Mutex::new(Vec::new()));
+        let app = Router::new()
+            .route("/chat/completions", post(model))
+            .with_state((calls.clone(), requests.clone()));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+
+        let mut config = native_config();
+        config.agent_model = Some("fixture-model".into());
+        config.llm_base_url = Some(base_url);
+        config.agent_cwd = home.0.clone();
+        config.agent_tools = true;
+        let mut message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"run"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("terminal-session".into());
+        let initializer =
+            conversation_prompt::Initializer::capture(home.0.clone(), home.0.clone()).unwrap();
+        let client = secret_scope::with_secret_scope(
+            Some(Default::default()),
+            build_conversation_client(
+                &config,
+                &initializer,
+                &home.0,
+                &message,
+                &[],
+                Some(&database),
+            ),
+        )
+        .await
+        .unwrap();
+        assert_eq!(
+            database.get_session("terminal-session").unwrap().unwrap()["tool_names"],
+            r#"["current_time","terminal"]"#
+        );
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(32);
+        client.run_turn(&message, &[], sender).await.unwrap();
+        while receiver.recv().await.is_some() {}
+        assert_eq!(calls.load(Ordering::SeqCst), 3);
+        assert_eq!(
+            database.get_session("terminal-session").unwrap().unwrap()["cwd"],
+            home.0.join("child").to_string_lossy().as_ref()
+        );
+        let requests = requests.lock().unwrap();
+        let schemas: Vec<_> = requests
+            .iter()
+            .map(|request| request["tools"].clone())
+            .collect();
+        assert!(schemas[0]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|tool| tool["function"]["name"] == "terminal"));
+        assert!(schemas.windows(2).all(|pair| pair[0] == pair[1]));
         server.abort();
     }
 

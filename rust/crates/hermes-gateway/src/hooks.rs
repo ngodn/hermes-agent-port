@@ -303,21 +303,11 @@ fn handler_command(handler: &Path, runtime: Option<&HookRuntime>) -> tokio::proc
 /// re-inherit only genuinely-global names, layer the prepared profile
 /// environment, then force `HERMES_HOME` to the selected profile home.
 fn apply_isolated_env(cmd: &mut tokio::process::Command, rt: &HookRuntime) {
-    cmd.env_clear();
-    for (key, value) in std::env::vars_os() {
-        let Some(name) = key.to_str() else {
-            continue;
-        };
-        if crate::secret_scope::is_global_env(name) {
-            cmd.env(key, value);
-        }
-    }
-    for (key, value) in &rt.profile_env {
-        cmd.env(key, value);
-    }
-    // HERMES_HOME is the last word on profile identity: a profile_env entry must
-    // not be able to point the handler at another profile's home.
-    cmd.env("HERMES_HOME", &rt.profile_home);
+    cmd.env_clear()
+        .envs(crate::secret_scope::isolated_profile_environment(
+            &rt.profile_env,
+            &rt.profile_home,
+        ));
 }
 
 #[cfg(unix)]

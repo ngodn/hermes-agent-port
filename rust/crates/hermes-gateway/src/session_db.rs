@@ -2834,6 +2834,31 @@ impl SessionDb {
         Ok(None)
     }
 
+    /// Persist the working directory on the session currently owned by a
+    /// durable gateway route. Resolving the route inside the write statement
+    /// means compression rotation cannot redirect this update to its ended
+    /// parent between lookup and write.
+    pub fn update_routed_session_cwd(
+        &self,
+        scope: &str,
+        session_key: &str,
+        cwd: &str,
+    ) -> rusqlite::Result<bool> {
+        if scope.is_empty() || session_key.is_empty() || cwd.is_empty() {
+            return Ok(false);
+        }
+        let changed = self.conn.lock().unwrap().execute(
+            "UPDATE sessions SET cwd = ?
+             WHERE id = (
+                 SELECT json_extract(entry_json, '$.session_id')
+                 FROM gateway_routing
+                 WHERE scope = ? AND session_key = ?
+             ) AND ended_at IS NULL",
+            params![cwd, scope, session_key],
+        )?;
+        Ok(changed == 1)
+    }
+
     /// Atomically add one or more main-loop provider calls to both the legacy
     /// session totals and the per-route usage table. This mirrors Python's
     /// incremental `update_token_counts` path. A missing session is a no-op so
@@ -8263,6 +8288,33 @@ mod tests {
         assert_eq!(state.cooldown_until, None);
         assert_eq!(state.ineffective_count, 4);
         assert_eq!(state.recovery_deadline, 1234.5);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn routed_cwd_update_follows_rotation_and_never_rehomes_ended_parent() {
+        let path = temp_db("routed_cwd");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("parent", "slack", Some("lane"), None, None)
+            .unwrap();
+        db.ensure_session("child", "slack", Some("lane"), None, None)
+            .unwrap();
+        db.save_gateway_routing_entry("profile", "lane", r#"{"session_id":"parent"}"#)
+            .unwrap();
+        assert!(db
+            .update_routed_session_cwd("profile", "lane", "/first")
+            .unwrap());
+        db.end_session("parent", "compression").unwrap();
+        db.save_gateway_routing_entry("profile", "lane", r#"{"session_id":"child"}"#)
+            .unwrap();
+        assert!(db
+            .update_routed_session_cwd("profile", "lane", "/second")
+            .unwrap());
+        assert_eq!(db.get_session("parent").unwrap().unwrap()["cwd"], "/first");
+        assert_eq!(db.get_session("child").unwrap().unwrap()["cwd"], "/second");
+        assert!(!db
+            .update_routed_session_cwd("profile", "missing", "/wrong")
+            .unwrap());
         let _ = std::fs::remove_dir_all(path.parent().unwrap());
     }
 }

@@ -25,7 +25,9 @@
 //! single-profile gateway installs no scope and reads the environment, exactly as
 //! Python does with multiplexing off.
 
+use std::collections::BTreeMap;
 use std::collections::HashMap;
+use std::ffi::OsString;
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -165,6 +167,28 @@ pub fn is_global_env(name: &str) -> bool {
         return true;
     }
     GLOBAL_ENV_PREFIXES.iter().any(|p| name.starts_with(p))
+}
+
+/// Build the complete subprocess environment for one selected profile.
+///
+/// Process-global runtime settings survive, profile values replace ambient
+/// credentials, and the selected profile home is forced last. Callers must
+/// pair this with `Command::env_clear()`.
+pub fn isolated_profile_environment(
+    profile_env: &HashMap<String, String>,
+    profile_home: &Path,
+) -> BTreeMap<OsString, OsString> {
+    let mut isolated = BTreeMap::new();
+    for (key, value) in std::env::vars_os() {
+        if key.to_str().is_some_and(is_global_env) {
+            isolated.insert(key, value);
+        }
+    }
+    for (key, value) in profile_env {
+        isolated.insert(key.into(), value.into());
+    }
+    isolated.insert("HERMES_HOME".into(), profile_home.as_os_str().into());
+    isolated
 }
 
 // ---------------------------------------------------------------------------
@@ -402,6 +426,23 @@ mod tests {
         // Python treats HERMES_TELEGRAM_TOKEN as global despite the "NOT the
         // token" comment on the prefix. Match that exactly (verified vs Python).
         assert!(is_global_env("HERMES_TELEGRAM_TOKEN"));
+    }
+
+    #[test]
+    fn isolated_profile_environment_forces_identity_and_keeps_scoped_values() {
+        let profile = HashMap::from([
+            ("HERMES_HOME".to_string(), "/wrong".to_string()),
+            ("ANTHROPIC_API_KEY".to_string(), "profile-key".to_string()),
+        ]);
+        let environment = isolated_profile_environment(&profile, Path::new("/selected"));
+        assert_eq!(
+            environment.get(&OsString::from("HERMES_HOME")),
+            Some(&OsString::from("/selected"))
+        );
+        assert_eq!(
+            environment.get(&OsString::from("ANTHROPIC_API_KEY")),
+            Some(&OsString::from("profile-key"))
+        );
     }
 
     #[test]

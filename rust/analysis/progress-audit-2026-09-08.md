@@ -1,10 +1,11 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **50.90% of the full native replacement**, reported as
-**about 51%**, with a reasonable judgment range of **49% to 53%**. Same-turn
-rotation closes a real native agent-loop gap. The estimate remains conservative
-because the underlying plugin and external-memory callbacks still run in the
-Python compatibility host.
+Current estimate: **52.10% of the full native replacement**, reported as
+**about 52%**, with a reasonable judgment range of **50% to 54%**. The first
+production native terminal slice now executes Unix-local foreground commands through
+the frozen conversation tool loop. The estimate remains conservative because
+approval workflows, background and remote execution, most tools, and the
+underlying plugin and external-memory managers are not native.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -20,12 +21,12 @@ audits.
 | Area | Full-port weight | Current area completion | Overall points |
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 65% | 22.75 |
-| Tool runtime and RPC | 30% | 14% | 4.20 |
+| Tool runtime and RPC | 30% | 18% | 5.40 |
 | State and search | 15% | 73% | 10.95 |
 | Native agent core | 20% | 65% | 13.00 |
-| Total | 100% | | **50.90** |
+| Total | 100% | | **52.10** |
 
-`0.35 * 65 + 0.30 * 14 + 0.15 * 73 + 0.20 * 65 = 50.90`
+`0.35 * 65 + 0.30 * 18 + 0.15 * 73 + 0.20 * 65 = 52.10`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -55,7 +56,7 @@ handlers, queue/steer/interrupt behavior, richer streaming delivery, adapter
 callbacks, topic management, and desktop/TUI protocol parity. Three substantial
 native adapters do not represent the roughly twenty Python platforms.
 
-### Tool runtime and RPC, 14%
+### Tool runtime and RPC, 18%
 
 The native model tool loop, schema projection, malformed-call repair, duplicate
 suppression, result framing, event emission, iteration-summary path, and a
@@ -80,9 +81,22 @@ profile-scoped initialization, and Rust admits it only when the plugin and
 memory capability projection exactly matches the conversation's first snapshot.
 This strengthens the existing RPC seam but does not increase its native scope.
 
-Terminal, file, browser, web, MCP, execution-environment backends, approval
-runtime, delegation execution, most service tools, plugin discovery/management,
-and full backend RPC account for most of this weighted area and remain.
+A session-bound native local foreground `terminal` tool now runs through the
+production provider loop for the explicitly safe configuration slice. One
+typed execution boundary owns process groups, concurrent pipe draining,
+streaming head and tail retention, private overflow spills, timeout cleanup,
+and reaping. The conversation runtime owns a profile-isolated persistent shell
+environment and cwd, with cwd updates following the active SQLite route across
+compression rotation. Visible and spilled output is ANSI-stripped and redacted.
+The unconditional hardline and `sudo -S` floor is source-checked against a
+Python-generated corpus, and extension-name collisions cannot replace native
+tools. Interactive approval modes, user deny rules, background management, and
+remote backends deliberately keep this native tool hidden.
+
+The remaining terminal modes, file, browser, web, MCP, execution-environment
+backends, approval runtime, delegation execution, most service tools, plugin
+discovery/management, and full backend RPC account for most of this weighted
+area and remain.
 
 ### State and search, 73%
 
@@ -255,8 +269,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,729 passing Rust tests and two expected ignores
-(1,728 gateway plus one core test).
+The workspace currently has 1,752 passing Rust tests and two expected ignores
+(1,751 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -264,13 +278,15 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,729 passed, two ignored (1,728 gateway plus one core).
-- Selected Python rotation and persistence contracts: 78 passed, one skipped.
+- Full Rust workspace: 1,752 passed, two ignored (1,751 gateway plus one core).
+- Selected Python terminal and approval contracts: 167 passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 24 structural-backoff, and 60
-  handoff-layer cases.
-- Formatting, Clippy with warnings denied, and `git diff --check`: passed.
+  handoff-layer cases, plus the 233-case terminal and approval corpus. The
+  current Rust terminal slice consumes 147 of those 233 cases.
+- Rust and Python formatting, Ruff, Clippy with warnings denied, and
+  `git diff --check`: passed.
 - The lower end of the range assumes the versioned extension-host boundary earns
   little tool-runtime credit until native managers and built-ins use it broadly.
 - The upper end gives more credit to the now-live prompt, memory and session
@@ -282,8 +298,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
    and context-engine adoption complete the current compression cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
-3. Native terminal/file/browser/MCP and approval/delegation execution move the
-   largest remaining weighted area.
+3. Native approval, background and remote terminal modes, then file, browser,
+   MCP and delegation execution move the largest remaining weighted area.
 
 Older audits remain useful historical snapshots, but their percentages are
 superseded by this document.

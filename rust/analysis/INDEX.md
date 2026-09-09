@@ -73,6 +73,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   in-place empty parent ID, clone-shared count, async failure isolation, Python
   function ABI, profile-secret boundary, and descendant timeout cleanup are
   live. Context-engine and relay-boundary adoption remain open.
+- A session-bound native Unix-local foreground terminal is live only for explicit
+  no-approval local configurations with no user deny rules. Its frozen schema,
+  profile-isolated persistent environment, routed cwd, bounded redacted output,
+  private spills, process-group cleanup, and unconditional security floor are
+  covered through the real provider loop. Approval modes, background process
+  management, and remote backends remain on the Python path.
 
 ## Rejected paths
 
@@ -94,6 +100,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-local-terminal-resolution.md](native-local-terminal-resolution.md) | Live local foreground terminal, safe eligibility gate, persistent profile-scoped runtime, routed cwd, bounded output, hardline security, helper disposition, and explicit deferrals |
+| [native-terminal-python-contract-agy.md](native-terminal-python-contract-agy.md) | AGY's source map of the Python schema, execution, cwd, timeout, cleanup, output, approval, and backend contracts |
+| [native-terminal-rust-seam-claude.md](native-terminal-rust-seam-claude.md) | Claude's independent Rust seam audit covering tool construction, prefix freezing, process primitives, state ownership, and safe first-checkpoint scope |
+| [terminal-contract-goldens.json](../tools/terminal-contract-goldens.json) | Source-executed 233-case Python contract for arguments, validation, workdirs, hardline commands, sudo stdin guessing, and approval classification |
 | [native-compression-hook-resolution.md](native-compression-hook-resolution.md) | Production `session:compress` dispatch, profile-safe subprocess runtime, Python function runner, exact payload and ordering, review disposition, and explicit context-engine and relay deferrals |
 | [compression-event-relay-claude.md](compression-event-relay-claude.md) | Source audit of the generic event payload, fire-and-forget bridge, rollback oddity, absent relay transport, dormant Rust registry, and safe wiring seam |
 | [compression-context-engine-boundary-agy.md](compression-context-engine-boundary-agy.md) | Source audit of context-engine boundary arguments, commit and memory ordering, deferred finalization, and full lifecycle requirements |
