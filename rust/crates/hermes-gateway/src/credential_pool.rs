@@ -1003,6 +1003,16 @@ impl PoolLocator {
         Ok(selected)
     }
 
+    /// Reload the durable pool and return its earliest usable reset. Errors are
+    /// left to the caller so turn-start restoration can deliberately fail open.
+    pub fn next_available_at(&self) -> anyhow::Result<Option<f64>> {
+        let (mut pool, write_error) = self.load()?;
+        let next_available_at = pool.next_available_at();
+        drop(pool);
+        Self::check_write(&write_error)?;
+        Ok(next_available_at)
+    }
+
     /// Check the durable status of the exact credential that supplied a
     /// failed request. This lets a new turn skip the otherwise normal first
     /// same-key 429 retry when another process already quarantined that key.

@@ -123,11 +123,13 @@ impl ChatModel for TranscriptModel<'_> {
     }
 
     fn supports_vision(&self) -> bool {
-        self.inner.supports_vision()
+        self.inner.active_main_route().supports_vision()
     }
 
     fn supports_vision_tool_messages(&self) -> bool {
-        self.inner.supports_vision_tool_messages()
+        self.inner
+            .active_main_route()
+            .supports_vision_tool_messages()
     }
 
     fn persist_tool_loop_message(&self, message: &Value) -> Result<()> {
@@ -157,6 +159,7 @@ impl ChatModel for TranscriptModel<'_> {
         tools: &[Value],
     ) -> Result<bool> {
         self.inner
+            .active_main_route()
             .maintain_after_tool_batch(self.turn, messages, tools, &self.compression)
             .await
     }
@@ -909,6 +912,59 @@ enum MainPoolFailure {
     Unrelated,
 }
 
+impl MainPoolFailure {
+    fn activates_provider_fallback(self) -> bool {
+        matches!(
+            self,
+            Self::Auth
+                | Self::Billing
+                | Self::BillingUnverified
+                | Self::RateLimit
+                | Self::UpstreamRateLimit
+        )
+    }
+
+    fn arms_primary_cooldown(self) -> bool {
+        matches!(
+            self,
+            Self::Billing | Self::BillingUnverified | Self::RateLimit | Self::UpstreamRateLimit
+        )
+    }
+}
+
+struct MainTerminal {
+    status: reqwest::StatusCode,
+    class: MainPoolFailure,
+    body: String,
+    label: String,
+}
+
+impl MainTerminal {
+    fn into_error(self) -> Error {
+        main_http_error(&self.label, self.status, &self.body)
+    }
+}
+
+enum MainRequestError {
+    Terminal(MainTerminal),
+    Internal(Error),
+}
+
+impl From<Error> for MainRequestError {
+    fn from(error: Error) -> Self {
+        Self::Internal(error)
+    }
+}
+
+impl MainRequestError {
+    fn into_error(self) -> Error {
+        match self {
+            Self::Terminal(terminal) => terminal.into_error(),
+            Self::Internal(error) => error,
+        }
+    }
+}
+
 impl MainPoolCredential {
     pub fn new(
         locator: crate::credential_pool::PoolLocator,
@@ -1262,6 +1318,52 @@ fn main_http_error(label: &str, status: reqwest::StatusCode, text: &str) -> Erro
     ))
 }
 
+fn rewrite_last_prompt_line(prompt: &mut String, label: &str, value: &str) {
+    if value.is_empty() {
+        return;
+    }
+    let needle = format!("{label}: ");
+    let Some(start) = prompt
+        .match_indices(&needle)
+        .filter_map(|(index, _)| {
+            (index == 0 || prompt.as_bytes().get(index.wrapping_sub(1)) == Some(&b'\n'))
+                .then_some(index)
+        })
+        .last()
+    else {
+        return;
+    };
+    let end = prompt[start..]
+        .find('\n')
+        .map_or(prompt.len(), |offset| start + offset);
+    prompt.replace_range(start..end, &format!("{label}: {value}"));
+}
+
+fn rewrite_prompt_identity(prompt: &str, model: &str, provider: &str) -> String {
+    let mut rewritten = prompt.to_owned();
+    rewrite_last_prompt_line(&mut rewritten, "Model", model);
+    rewrite_last_prompt_line(&mut rewritten, "Provider", provider);
+    rewritten
+}
+
+#[derive(Default)]
+struct MainFallbackState {
+    active: usize,
+    cooldown_until: Option<std::time::Instant>,
+    rate_limit_backoff_count: u32,
+}
+
+#[derive(Clone, Default)]
+struct MainFallbackRoutes {
+    fallbacks: std::sync::Arc<Vec<NativeAgentClient>>,
+    state: std::sync::Arc<std::sync::Mutex<MainFallbackState>>,
+}
+
+struct MainDispatch {
+    response: reqwest::Response,
+    provider: String,
+}
+
 #[derive(Clone)]
 pub struct NativeAgentClient {
     model: String,
@@ -1271,6 +1373,10 @@ pub struct NativeAgentClient {
     provider_headers: reqwest::header::HeaderMap,
     provider_default_headers: reqwest::header::HeaderMap,
     main_pool: Option<MainPoolCredential>,
+    /// Frozen cross-provider main-turn routes. Route clients carry an empty
+    /// plan, while the shared cursor keeps one selected route sticky for the
+    /// remainder of a tool loop and through any active cooldown.
+    main_fallback: MainFallbackRoutes,
     provider_profile: Option<crate::provider_registry::ProviderProfile>,
     provider_identity: Option<String>,
     reasoning_config: Option<Value>,
@@ -1333,6 +1439,7 @@ impl NativeAgentClient {
             provider_headers: reqwest::header::HeaderMap::new(),
             provider_default_headers: reqwest::header::HeaderMap::new(),
             main_pool: None,
+            main_fallback: Default::default(),
             provider_profile: None,
             provider_identity: None,
             reasoning_config: None,
@@ -1384,7 +1491,16 @@ impl NativeAgentClient {
     /// Prompt assembly and persisted-session restoration belong to the caller;
     /// this client keeps the supplied bytes unchanged throughout its lifetime.
     pub fn with_system_prompt(mut self, prompt: impl Into<String>) -> Self {
-        self.system_prompt = Some(std::sync::Arc::from(prompt.into()));
+        let prompt = prompt.into();
+        self.system_prompt = Some(std::sync::Arc::from(prompt.clone()));
+        let routes = std::sync::Arc::make_mut(&mut self.main_fallback.fallbacks);
+        for route in routes {
+            route.system_prompt = Some(std::sync::Arc::from(rewrite_prompt_identity(
+                &prompt,
+                &route.model,
+                route.provider_name(),
+            )));
+        }
         self
     }
 
@@ -1460,6 +1576,19 @@ impl NativeAgentClient {
         Ok(self)
     }
 
+    /// Apply provider-wide headers to every credential-pool endpoint. Route
+    /// headers remain separate so credentials for one custom host cannot leak
+    /// to another host after rotation.
+    pub fn with_provider_default_headers(
+        mut self,
+        headers: &serde_json::Map<String, Value>,
+    ) -> Result<Self> {
+        let headers = parse_header_map(headers)?;
+        merge_header_map(&mut self.provider_default_headers, &headers);
+        merge_header_map(&mut self.provider_headers, &headers);
+        Ok(self)
+    }
+
     /// Attach a profile-scoped static API-key pool to the main request path.
     /// The selected credential is shared by this conversation's clones, while
     /// every durable mutation reloads the store through the locator.
@@ -1469,6 +1598,31 @@ impl NativeAgentClient {
         self.base_url = route.base_url;
         self.client = route.client;
         self.main_pool = Some(pool);
+        self
+    }
+
+    /// Install the ordered static chat-completions fallback plan. Each route
+    /// receives a frozen prompt variant with only the final model/provider
+    /// identity lines changed; the stored primary prompt remains untouched.
+    pub(crate) fn with_main_fallback_routes(
+        mut self,
+        mut fallbacks: Vec<NativeAgentClient>,
+    ) -> Self {
+        for route in &mut fallbacks {
+            route.main_fallback = Default::default();
+            route.compression_routes = Default::default();
+            if let Some(prompt) = self.system_prompt.as_deref() {
+                route.system_prompt = Some(std::sync::Arc::from(rewrite_prompt_identity(
+                    prompt,
+                    &route.model,
+                    route.provider_name(),
+                )));
+            }
+        }
+        self.main_fallback = MainFallbackRoutes {
+            fallbacks: std::sync::Arc::new(fallbacks),
+            state: Default::default(),
+        };
         self
     }
 
@@ -1567,7 +1721,211 @@ impl NativeAgentClient {
         headers
     }
 
-    async fn send_main_request(&self, body: &Value, label: &str) -> Result<reqwest::Response> {
+    async fn restore_primary_route_for_turn(&self) {
+        let active = {
+            let state = self
+                .main_fallback
+                .state
+                .lock()
+                .unwrap_or_else(|error| error.into_inner());
+            if state.active == 0
+                || state
+                    .cooldown_until
+                    .is_some_and(|deadline| deadline > std::time::Instant::now())
+            {
+                return;
+            }
+            state.active
+        };
+
+        if let Some(pool) = &self.main_pool {
+            let locator = pool.locator.clone();
+            let next_available_at =
+                tokio::task::spawn_blocking(move || locator.next_available_at()).await;
+            match next_available_at {
+                Ok(Ok(Some(deadline))) => {
+                    let now = std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .map(|duration| duration.as_secs_f64())
+                        .unwrap_or(0.0);
+                    if deadline > now {
+                        return;
+                    }
+                }
+                Ok(Ok(None)) => {}
+                Ok(Err(error)) => tracing::debug!(
+                    error = %crate::compression_redact::redact(&error.to_string()),
+                    "primary pool reset check failed open"
+                ),
+                Err(error) => tracing::debug!(
+                    %error,
+                    "primary pool reset task failed open"
+                ),
+            }
+        }
+
+        let mut state = self
+            .main_fallback
+            .state
+            .lock()
+            .unwrap_or_else(|error| error.into_inner());
+        if state.active != active
+            || state
+                .cooldown_until
+                .is_some_and(|deadline| deadline > std::time::Instant::now())
+        {
+            return;
+        }
+        state.active = 0;
+        state.cooldown_until = None;
+        state.rate_limit_backoff_count = 0;
+    }
+
+    fn main_route(&self, index: usize) -> Option<Self> {
+        let mut route = if index == 0 {
+            self.clone()
+        } else {
+            self.main_fallback.fallbacks.get(index - 1)?.clone()
+        };
+        route.main_fallback = Default::default();
+        route.cache_scope = self.cache_scope.clone();
+        route.automatic_compression_policy = self.automatic_compression_policy.clone();
+        route.compression_routes = self.compression_routes.clone();
+        route.summary_timeout = self.summary_timeout;
+        route.summary_output_cap = self.summary_output_cap;
+        route._plugin_prompt = self._plugin_prompt.clone();
+        route._extension_host = self._extension_host.clone();
+        route.hooks = self.hooks.clone();
+        route.platform = self.platform.clone();
+        route.compression_count = self.compression_count.clone();
+        route.pending_memory_turn = self.pending_memory_turn.clone();
+        route.micro_compaction_state = self.micro_compaction_state.clone();
+        route.usage_state = self.usage_state.clone();
+        route.structural_compression_backoff = self.structural_compression_backoff.clone();
+        route.usage_bucket = self.usage_bucket;
+        route.turn_limit = self.turn_limit;
+        route.max_concurrent_children = self.max_concurrent_children;
+        route.tools = self.tools.clone();
+        Some(route)
+    }
+
+    fn active_main_route(&self) -> Self {
+        let index = self
+            .main_fallback
+            .state
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .active;
+        self.main_route(index)
+            .unwrap_or_else(|| self.main_route(0).expect("primary main route"))
+    }
+
+    fn route_messages(&self, messages: &[Value]) -> Vec<Value> {
+        let mut routed = messages.to_vec();
+        let Some(prompt) = self.system_prompt.as_deref() else {
+            return routed;
+        };
+        if let Some(system) = routed
+            .first_mut()
+            .filter(|message| message["role"] == "system")
+        {
+            system["content"] = json!(prompt);
+        }
+        routed
+    }
+
+    fn activate_main_fallback(
+        &self,
+        failed_index: usize,
+        failure: MainPoolFailure,
+    ) -> Option<usize> {
+        let failed = self.main_route(failed_index)?;
+        let mut next = failed_index + 1;
+        while let Some(candidate) = self.main_route(next) {
+            if !crate::compression_auxiliary::should_skip_candidate(
+                &candidate.compression_identity(),
+                &failed.compression_identity(),
+                crate::compression_auxiliary::FailureScope::Model,
+            ) {
+                let mut state = self
+                    .main_fallback
+                    .state
+                    .lock()
+                    .unwrap_or_else(|error| error.into_inner());
+                if failed_index == 0 && failure.arms_primary_cooldown() {
+                    let shift = state.rate_limit_backoff_count.min(8);
+                    let seconds = 60_u64.checked_shl(shift).unwrap_or(14_400).min(14_400);
+                    state.rate_limit_backoff_count =
+                        state.rate_limit_backoff_count.saturating_add(1);
+                    state.cooldown_until =
+                        Some(std::time::Instant::now() + std::time::Duration::from_secs(seconds));
+                }
+                state.active = next;
+                return Some(next);
+            }
+            next += 1;
+        }
+        if !self.main_fallback.fallbacks.is_empty() && !failure.arms_primary_cooldown() {
+            let floor = std::time::Instant::now() + std::time::Duration::from_secs(5);
+            let mut state = self
+                .main_fallback
+                .state
+                .lock()
+                .unwrap_or_else(|error| error.into_inner());
+            state.cooldown_until = Some(
+                state
+                    .cooldown_until
+                    .map_or(floor, |existing| existing.max(floor)),
+            );
+        }
+        None
+    }
+
+    async fn dispatch_main_turn<F>(&self, label: &str, build_body: F) -> Result<MainDispatch>
+    where
+        F: Fn(&NativeAgentClient) -> Result<Value>,
+    {
+        let mut index = self
+            .main_fallback
+            .state
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .active;
+        loop {
+            let route = self
+                .main_route(index)
+                .unwrap_or_else(|| self.main_route(0).expect("primary main route"));
+            let body = build_body(&route)?;
+            match route.send_main_request(&body, label).await {
+                Ok(response) => {
+                    self.main_fallback
+                        .state
+                        .lock()
+                        .unwrap_or_else(|error| error.into_inner())
+                        .active = index;
+                    return Ok(MainDispatch {
+                        response,
+                        provider: route.provider_name().to_owned(),
+                    });
+                }
+                Err(MainRequestError::Terminal(terminal))
+                    if terminal.class.activates_provider_fallback() =>
+                {
+                    let Some(next) = self.activate_main_fallback(index, terminal.class) else {
+                        return Err(terminal.into_error());
+                    };
+                    index = next;
+                }
+                Err(error) => return Err(error.into_error()),
+            }
+        }
+    }
+
+    async fn send_main_request(
+        &self,
+        body: &Value,
+        label: &str,
+    ) -> std::result::Result<reqwest::Response, MainRequestError> {
         let operation = if label.is_empty() { "" } else { " step" };
         let mut retried_429 = std::collections::HashSet::<(String, String)>::new();
         let mut attempts = std::collections::HashMap::<(String, String), usize>::new();
@@ -1591,7 +1949,8 @@ impl NativeAgentClient {
             if *count > 2 {
                 return Err(Error::Other(format!(
                     "native agent{operation} credential recovery repeated one pool entry"
-                )));
+                ))
+                .into());
             }
             let url = format!("{}/chat/completions", route.base_url);
             let response = route
@@ -1611,15 +1970,25 @@ impl NativeAgentClient {
             let status = response.status();
             let headers = response.headers().clone();
             let text = response.text().await.unwrap_or_default();
-            let Some(pool) = &self.main_pool else {
-                return Err(main_http_error(label, status, &text));
-            };
             let failure = main_pool_failure(status, &text, &headers, self.provider_name());
+            let Some(pool) = &self.main_pool else {
+                return Err(MainRequestError::Terminal(MainTerminal {
+                    status,
+                    class: failure,
+                    body: text,
+                    label: label.to_owned(),
+                }));
+            };
             if matches!(
                 failure,
                 MainPoolFailure::Unrelated | MainPoolFailure::UpstreamRateLimit
             ) {
-                return Err(main_http_error(label, status, &text));
+                return Err(MainRequestError::Terminal(MainTerminal {
+                    status,
+                    class: failure,
+                    body: text,
+                    label: label.to_owned(),
+                }));
             }
             let context = main_error_context(&text, &headers);
 
@@ -1670,10 +2039,20 @@ impl NativeAgentClient {
                 ))
             })??;
             let Some(replacement) = replacement else {
-                return Err(main_http_error(label, status, &text));
+                return Err(MainRequestError::Terminal(MainTerminal {
+                    status,
+                    class: failure,
+                    body: text,
+                    label: label.to_owned(),
+                }));
             };
             if replacement.id() == route.credential_id && replacement.api_key() == route.api_key {
-                return Err(main_http_error(label, status, &text));
+                return Err(MainRequestError::Terminal(MainTerminal {
+                    status,
+                    class: failure,
+                    body: text,
+                    label: label.to_owned(),
+                }));
             }
         }
     }
@@ -1825,12 +2204,17 @@ impl NativeAgentClient {
             .unwrap_or("")
     }
 
-    fn compression_identity(&self) -> crate::compression_auxiliary::BackendIdentity {
-        crate::compression_auxiliary::BackendIdentity::new(
+    pub(crate) fn backend_identity(&self) -> crate::compression_auxiliary::BackendIdentity {
+        crate::compression_auxiliary::BackendIdentity::new_with_provider_kind(
             self.provider_name(),
             &self.model,
             &self.base_url,
+            self.provider_profile.is_some(),
         )
+    }
+
+    fn compression_identity(&self) -> crate::compression_auxiliary::BackendIdentity {
+        self.backend_identity()
     }
 
     fn begin_main_usage(&self) {
@@ -3232,14 +3616,24 @@ impl NativeAgentClient {
             return Ok(Some(current_turn_messages(messages, prefix_len, content)));
         }
 
-        let mut body = build_request_body_from_messages(&self.model, &history, content);
-        self.apply_provider_extras(&mut body)?;
-        if supports_stream_usage(&self.base_url) {
-            body["stream_options"] = json!({"include_usage": true});
-        }
-        let resp = self.send_main_request(&body, "").await?;
+        let dispatched = self
+            .dispatch_main_turn("", |route| {
+                let messages = route.route_messages(&history);
+                let mut body = build_request_body_from_messages(&route.model, &messages, content);
+                route.apply_provider_extras(&mut body)?;
+                if supports_stream_usage(&route.base_url) {
+                    body["stream_options"] = json!({"include_usage": true});
+                }
+                Ok(body)
+            })
+            .await?;
 
-        let usage = forward_sse(resp.bytes_stream(), &events, self.provider_name()).await?;
+        let usage = forward_sse(
+            dispatched.response.bytes_stream(),
+            &events,
+            &dispatched.provider,
+        )
+        .await?;
         self.capture_usage(usage);
         Ok(None)
     }
@@ -3252,6 +3646,7 @@ impl NativeAgentClient {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()> {
         let mut turn_client = self.clone();
+        turn_client.restore_primary_route_for_turn().await;
         turn_client.begin_main_usage();
         let session_id = crate::session_db::message_session_id(msg);
         turn_client.cache_scope = Some(
@@ -3494,12 +3889,18 @@ impl AgentClient for NativeAgentClient {
         msg: &Message,
         history: &[crate::session_db::HistoryMessage],
     ) -> Result<Option<crate::agent::CompressionPreflight>> {
+        // Preflight is the first model-sensitive operation of an admitted
+        // turn, so apply the same turn-start restoration gate before sizing.
+        // An active cooldown keeps the fallback model and its smaller context
+        // window authoritative for compression decisions.
+        self.restore_primary_route_for_turn().await;
+        let serving = self.active_main_route();
         let session_id = crate::session_db::message_session_id(msg);
         let durable_history =
             build_messages_from_durable(context.database, &session_id, history, None);
-        let history = with_system_prompt(self.system_prompt.as_deref(), &durable_history);
+        let history = with_system_prompt(serving.system_prompt.as_deref(), &durable_history);
         let mut body =
-            build_request_body_from_messages(&self.model, &history, &msg.model_content());
+            build_request_body_from_messages(&serving.model, &history, &msg.model_content());
         if !self.tools.is_empty() {
             body["tools"] = Value::Array(
                 self.tools
@@ -3508,7 +3909,7 @@ impl AgentClient for NativeAgentClient {
                     .collect(),
             );
         }
-        self.apply_provider_extras(&mut body)?;
+        serving.apply_provider_extras(&mut body)?;
         let max_output_tokens = body
             .get("max_completion_tokens")
             .or_else(|| body.get("max_tokens"))
@@ -3522,18 +3923,19 @@ impl AgentClient for NativeAgentClient {
             .saturating_add(3)
             / 4;
         Ok(Some(crate::agent::CompressionPreflight {
-            model: self.model.clone(),
-            context_length: self.context_length,
+            model: serving.model.clone(),
+            context_length: serving.context_length,
             max_output_tokens,
             request_tokens,
-            stale_thinking_on_wire: self.reasoning_echo
+            stale_thinking_on_wire: serving.reasoning_echo
                 || crate::reasoning_replay::needs_echo(
-                    self.provider_profile
+                    serving
+                        .provider_profile
                         .as_ref()
                         .map(|profile| profile.name.as_str())
                         .unwrap_or(""),
-                    &self.model,
-                    &self.base_url,
+                    &serving.model,
+                    &serving.base_url,
                 ),
         }))
     }
@@ -3570,10 +3972,11 @@ impl AgentClient for NativeAgentClient {
         if usage.request_count > 0 {
             if let Some(database) = context.database {
                 let session_id = crate::session_db::message_session_id(msg);
+                let serving = self.active_main_route();
                 let route = crate::session_db::UsageRoute {
-                    model: &self.model,
-                    provider: self.provider_name(),
-                    base_url: &self.base_url,
+                    model: &serving.model,
+                    provider: serving.provider_name(),
+                    base_url: &serving.base_url,
                     billing_mode: "",
                 };
                 if let Err(error) = database.record_main_usage(&session_id, &route, &usage) {
@@ -3740,34 +4143,44 @@ impl ChatModel for NativeAgentClient {
     /// for the no-tools case.
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
         self.clear_last_main_prompt_tokens();
-        let mut body = json!({ "model": self.model, "messages": messages, "stream": false });
-        if !tools.is_empty() {
-            body["tools"] = Value::Array(tools.to_vec());
-        }
-        self.apply_provider_extras(&mut body)?;
-        if tools.is_empty() {
-            // Summary calls cannot regain tool access through request overrides.
-            if let Some(body) = body.as_object_mut() {
-                body.shift_remove("tools");
-                body.shift_remove("tool_choice");
-                body.shift_remove("parallel_tool_calls");
-                body.shift_remove("temperature");
-                body.shift_remove("max_tokens");
-                body.shift_remove("max_completion_tokens");
-                if let Some(temperature) = summary_temperature(&self.model) {
-                    body.insert("temperature".into(), json!(temperature));
+        let dispatched = self
+            .dispatch_main_turn("step", |route| {
+                let routed_messages = route.route_messages(messages);
+                let mut body = json!({
+                    "model": route.model,
+                    "messages": routed_messages,
+                    "stream": false
+                });
+                if !tools.is_empty() {
+                    body["tools"] = Value::Array(tools.to_vec());
                 }
-            }
-        }
-        let resp = self.send_main_request(&body, "step").await?;
-        let v: Value = resp
+                route.apply_provider_extras(&mut body)?;
+                if tools.is_empty() {
+                    // Summary calls cannot regain tool access through request overrides.
+                    if let Some(body) = body.as_object_mut() {
+                        body.shift_remove("tools");
+                        body.shift_remove("tool_choice");
+                        body.shift_remove("parallel_tool_calls");
+                        body.shift_remove("temperature");
+                        body.shift_remove("max_tokens");
+                        body.shift_remove("max_completion_tokens");
+                        if let Some(temperature) = summary_temperature(&route.model) {
+                            body.insert("temperature".into(), json!(temperature));
+                        }
+                    }
+                }
+                Ok(body)
+            })
+            .await?;
+        let v: Value = dispatched
+            .response
             .json()
             .await
             .map_err(|e| Error::Other(format!("native agent step decode: {e}")))?;
         self.capture_usage(crate::provider_usage::from_response(
             &v,
             crate::provider_usage::ApiMode::ChatCompletions,
-            Some(self.provider_name()),
+            Some(&dispatched.provider),
         ));
         let message = v
             .get("choices")
@@ -3799,6 +4212,187 @@ impl ChatModel for NativeAgentClient {
 
 #[cfg(test)]
 mod tests {
+    #[tokio::test]
+    async fn primary_pool_reset_deadline_keeps_the_active_fallback_sticky() {
+        use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
+
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        async fn serve(app: Router) -> (String, Server) {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let primary = Router::new().route(
+            "/chat/completions",
+            post(|| async {
+                (
+                    StatusCode::TOO_MANY_REQUESTS,
+                    [("retry-after", "3600")],
+                    Json(serde_json::json!({"error":{"message":"Usage limit reached"}})),
+                )
+                    .into_response()
+            }),
+        );
+        let fallback = Router::new().route(
+            "/chat/completions",
+            post(|| async { Json(serde_json::json!({"choices":[]})) }),
+        );
+        let (primary_url, _primary_server) = serve(primary).await;
+        let (fallback_url, _fallback_server) = serve(fallback).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = TempHome(std::env::temp_dir().join(format!(
+            "hermes-primary-reset-fallback-{}-{nonce}",
+            std::process::id()
+        )));
+        std::fs::create_dir_all(&home.0).unwrap();
+        std::fs::write(
+            home.0.join("auth.json"),
+            serde_json::to_vec(&serde_json::json!({
+                "credential_pool":{"gmi":[{
+                    "id":"primary", "auth_type":"api_key", "source":"manual",
+                    "access_token":"primary-key", "base_url":primary_url
+                }]}
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let locator = crate::credential_pool::PoolLocator::new(
+            home.0.join("auth.json"),
+            None,
+            "gmi",
+            "fill_first",
+        );
+        let runtime = locator.select_runtime().unwrap().unwrap();
+        let pool =
+            super::MainPoolCredential::new(locator, runtime, &primary_url, Vec::new()).unwrap();
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("custom");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", &primary_url)
+            .unwrap()
+            .with_provider_identity("gmi")
+            .with_provider_default_headers(
+                serde_json::json!({"X-Provider-Identity":"fixed"})
+                    .as_object()
+                    .unwrap(),
+            )
+            .unwrap()
+            .with_main_pool(pool)
+            .with_main_fallback_routes(vec![fallback]);
+        assert_eq!(
+            client.headers_for_main_route(&primary_url)["x-provider-identity"],
+            "fixed"
+        );
+
+        let dispatched = client
+            .dispatch_main_turn("", |route| {
+                Ok(serde_json::json!({"model":route.model,"messages":[]}))
+            })
+            .await
+            .unwrap();
+        assert_eq!(dispatched.provider, "custom");
+        {
+            let mut state = client.main_fallback.state.lock().unwrap();
+            assert_eq!(state.active, 1);
+            state.cooldown_until = Some(
+                std::time::Instant::now()
+                    .checked_sub(std::time::Duration::from_secs(1))
+                    .unwrap(),
+            );
+        }
+
+        client.restore_primary_route_for_turn().await;
+        assert_eq!(client.main_fallback.state.lock().unwrap().active, 1);
+    }
+
+    #[test]
+    fn non_rate_chain_exhaustion_arms_the_python_five_second_floor() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-fallback-goldens.json"
+        ))
+        .unwrap();
+        let expected = corpus["upstream_rate_limit_and_cooldown_escalation"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["case_name"] == "non_rate_chain_exhaustion_arms_replay_floor")
+            .unwrap()["expected_cooldown"]
+            .as_u64()
+            .unwrap();
+        let fallback = super::NativeAgentClient::new(
+            "fallback-model",
+            "fallback-key",
+            "https://fallback.invalid/v1",
+        )
+        .unwrap()
+        .with_provider_identity("custom");
+        let client = super::NativeAgentClient::new(
+            "primary-model",
+            "primary-key",
+            "https://primary.invalid/v1",
+        )
+        .unwrap()
+        .with_provider_identity("openrouter")
+        .with_main_fallback_routes(vec![fallback]);
+        client.main_fallback.state.lock().unwrap().active = 1;
+        let before = std::time::Instant::now() + std::time::Duration::from_secs(expected - 1);
+
+        assert_eq!(
+            client.activate_main_fallback(1, super::MainPoolFailure::Auth),
+            None
+        );
+        let deadline = client
+            .main_fallback
+            .state
+            .lock()
+            .unwrap()
+            .cooldown_until
+            .unwrap();
+        assert!(deadline > before);
+        assert!(deadline <= std::time::Instant::now() + std::time::Duration::from_secs(expected));
+    }
+
+    #[test]
+    fn fallback_prompt_identity_matches_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-fallback-goldens.json"
+        ))
+        .unwrap();
+        let case = corpus["request_body_and_system_prompt_stability"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["case_name"] == "rewrite_prompt_touches_only_last_identity_pair")
+            .unwrap();
+        assert_eq!(
+            super::rewrite_prompt_identity(
+                case["original_prompt"].as_str().unwrap(),
+                "glm-5.2",
+                "zai"
+            ),
+            case["rewritten_prompt"].as_str().unwrap()
+        );
+    }
+
     #[test]
     fn main_pool_failure_classification_preserves_credential_boundaries() {
         use super::MainPoolFailure;

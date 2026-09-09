@@ -1,5 +1,40 @@
 # Hermes Rust rewrite
 
+## Native ordinary main-provider fallback subset: 2026-09-10
+
+The native ordinary main chat-completions path now freezes and executes
+`fallback_providers` followed by legacy `fallback_model`. Each route owns its
+provider, model, endpoint, static credentials or credential pool, headers,
+request shaping, context window, and prompt identity. The active provider's
+credential pool always recovers first. Only a terminal auth, billing,
+rate-limit, or upstream-rate-limit response advances to the next provider.
+
+Streaming and tool rounds share one bounded dispatcher and one
+conversation-scoped route cursor. Fallback is sticky through later tool rounds
+and cooldown-gated turns. The primary system prompt remains byte-identical,
+while every fallback receives a frozen copy that changes only its final model
+and provider identity lines. Usage follows the serving route. Recovery stops at
+the successful response-status boundary, so partial streams and tool side
+effects are never replayed.
+
+Claude's separate review found two lifecycle gaps. Both were reproduced before
+repair. Turn-start restoration now reloads the primary pool's durable reset
+deadline without blocking the async executor, and a fully exhausted non-rate
+chain applies Python's actual five-second replay floor. AGY's independent
+source-executed oracle was corrected from a stale 10-second claim and expanded
+to 104 cases. See
+[native-main-provider-fallback-resolution.md](analysis/native-main-provider-fallback-resolution.md).
+
+The refreshed weighted audit is **57.35 points, reported as about 57%**
+(judgment range 55% to 61%). Native agent core moves from 73% to 75%; the other
+area estimates are unchanged. Transport retry triggers, malformed or safety
+responses, operator notices, non-chat and OAuth routes, dynamic providers,
+native plugin and external-memory managers, prompt invalidation, and broader
+client eviction remain. Validation is **1,854 Rust tests passed, two ignored**,
+plus **150 selected Python fallback tests passed**. The 104-case Python corpus
+regenerates byte for byte. Rust and Python formatting, Ruff, workspace Clippy
+with warnings denied, and diff hygiene pass.
+
 ## Native main-provider API-key recovery: 2026-09-10
 
 The native main chat-completions route now selects profile-scoped static

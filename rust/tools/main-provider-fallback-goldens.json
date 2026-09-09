@@ -1,0 +1,1253 @@
+{
+  "chain_traversal_bounds_and_skip_dedup": [
+    {
+      "candidate": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "model": "gpt-4o",
+        "provider": "openrouter"
+      },
+      "case_name": "same_exact_backend",
+      "failed_target": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "model": "gpt-4o",
+        "provider": "openrouter"
+      },
+      "matches_expected": true,
+      "should_skip": true
+    },
+    {
+      "candidate": {
+        "base_url": "",
+        "model": "gpt-4o",
+        "provider": "openai"
+      },
+      "case_name": "same_empty_base_urls",
+      "failed_target": {
+        "base_url": "",
+        "model": "gpt-4o",
+        "provider": "openai"
+      },
+      "matches_expected": true,
+      "should_skip": true
+    },
+    {
+      "candidate": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "model": "claude-3-5-sonnet",
+        "provider": "openrouter"
+      },
+      "case_name": "sibling_model_same_provider",
+      "failed_target": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "model": "gpt-4o",
+        "provider": "openrouter"
+      },
+      "matches_expected": true,
+      "should_skip": false
+    },
+    {
+      "candidate": {
+        "base_url": "https://backup-or.ai/api/v1",
+        "model": "gpt-4o",
+        "provider": "openrouter"
+      },
+      "case_name": "same_model_distinct_explicit_base_url",
+      "failed_target": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "model": "gpt-4o",
+        "provider": "openrouter"
+      },
+      "matches_expected": true,
+      "should_skip": false
+    },
+    {
+      "candidate": {
+        "base_url": "https://api.x.ai/v1",
+        "model": "grok-beta",
+        "provider": "xai"
+      },
+      "case_name": "distinct_first_class_providers_same_endpoint",
+      "failed_target": {
+        "base_url": "https://api.x.ai/v1",
+        "model": "grok-beta",
+        "provider": "xai-oauth"
+      },
+      "matches_expected": true,
+      "should_skip": false
+    },
+    {
+      "candidate": {
+        "base_url": "https://local:8000/v1",
+        "model": "meta-llama",
+        "provider": "shim-b"
+      },
+      "case_name": "custom_shim_aliases_same_endpoint",
+      "failed_target": {
+        "base_url": "https://local:8000/v1",
+        "model": "meta-llama",
+        "provider": "shim-a"
+      },
+      "matches_expected": true,
+      "should_skip": true
+    },
+    {
+      "case_name": "chain_traversal_bounds_exhaustion",
+      "chain_length": 2,
+      "final_index": 2,
+      "step_results": [
+        {
+          "call_step": 0,
+          "fallback_index": 1,
+          "returned_ok": true
+        },
+        {
+          "call_step": 1,
+          "fallback_index": 2,
+          "returned_ok": true
+        },
+        {
+          "call_step": 2,
+          "fallback_index": 2,
+          "returned_ok": false
+        },
+        {
+          "call_step": 3,
+          "fallback_index": 2,
+          "returned_ok": false
+        }
+      ]
+    },
+    {
+      "activated": true,
+      "case_name": "suppress_previously_unavailable_key",
+      "resolved_calls": [
+        [
+          "good",
+          "good-model"
+        ]
+      ],
+      "used_provider": "good"
+    }
+  ],
+  "chat_completions_safe_port_matrix": [
+    {
+      "feature": "fallback_providers_and_fallback_model_parsing",
+      "rationale": "Pure configuration parsing, normalization, and deduplication logic.",
+      "scope": "safe_native_chat_completions",
+      "status": "ready_to_port"
+    },
+    {
+      "feature": "static_api_key_and_key_env_resolution",
+      "rationale": "Inline secret or environment variable lookup requires no async daemon.",
+      "scope": "safe_native_chat_completions",
+      "status": "ready_to_port"
+    },
+    {
+      "feature": "primary_pool_rotation_before_fallback",
+      "rationale": "Gated by _pool_may_recover_from_rate_limit, exhausting primary pool before fallback.",
+      "scope": "safe_native_chat_completions",
+      "status": "ready_to_port"
+    },
+    {
+      "feature": "upstream_rate_limit_bypass",
+      "rationale": "OpenRouter upstream rate limit bypasses pool rotation and immediately triggers fallback.",
+      "scope": "safe_native_chat_completions",
+      "status": "ready_to_port"
+    },
+    {
+      "feature": "in_place_runtime_client_swap",
+      "rationale": "OpenAI-compatible HTTP client and endpoint reconfiguration.",
+      "scope": "safe_native_chat_completions",
+      "status": "ready_to_port"
+    },
+    {
+      "feature": "tool_loop_stickiness_and_per_turn_restore",
+      "rationale": "Single-turn stickiness with cooldown-gated restoration on next turn.",
+      "scope": "safe_native_chat_completions",
+      "status": "ready_to_port"
+    },
+    {
+      "feature": "oauth_token_refresh_and_device_flows",
+      "rationale": "Anthropic/Codex/Nous OAuth token refresh requires browser or device auth coordination.",
+      "scope": "deferred_advanced_transports",
+      "status": "deferred"
+    },
+    {
+      "feature": "native_anthropic_messages_protocol",
+      "rationale": "Native /v1/messages Anthropic wire protocol differs from chat/completions.",
+      "scope": "deferred_advanced_transports",
+      "status": "deferred"
+    },
+    {
+      "feature": "bedrock_converse_and_codex_responses_transports",
+      "rationale": "Proprietary AWS Bedrock and OpenAI Responses API wire formats.",
+      "scope": "deferred_advanced_transports",
+      "status": "deferred"
+    },
+    {
+      "feature": "dynamic_plugins_and_context_engines",
+      "rationale": "Plugin discovery and custom Python compressors require host runtime.",
+      "scope": "deferred_dynamic_systems",
+      "status": "deferred"
+    }
+  ],
+  "container_and_chain_parsing": [
+    {
+      "case_name": "modern_fallback_providers_list",
+      "entry_count": 2,
+      "input_config": {
+        "fallback_providers": [
+          {
+            "api_key": "synth-key-or",
+            "base_url": "https://openrouter.ai/api/v1",
+            "model": "meta-llama/llama-3-70b",
+            "provider": "openrouter",
+            "timeout": 45
+          },
+          {
+            "model": "claude-3-5-sonnet",
+            "provider": "anthropic"
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "api_key": "synth-key-or",
+          "base_url": "https://openrouter.ai/api/v1",
+          "model": "meta-llama/llama-3-70b",
+          "provider": "openrouter",
+          "timeout": 45
+        },
+        {
+          "model": "claude-3-5-sonnet",
+          "provider": "anthropic"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "openrouter",
+          "meta-llama/llama-3-70b",
+          "https://openrouter.ai/api/v1"
+        ],
+        [
+          "anthropic",
+          "claude-3-5-sonnet",
+          ""
+        ]
+      ]
+    },
+    {
+      "case_name": "modern_fallback_providers_single_dict",
+      "entry_count": 1,
+      "input_config": {
+        "fallback_providers": {
+          "base_url": "https://openrouter.ai/api/v1",
+          "model": "meta-llama/llama-3-70b",
+          "provider": "openrouter"
+        }
+      },
+      "resolved_chain": [
+        {
+          "base_url": "https://openrouter.ai/api/v1",
+          "model": "meta-llama/llama-3-70b",
+          "provider": "openrouter"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "openrouter",
+          "meta-llama/llama-3-70b",
+          "https://openrouter.ai/api/v1"
+        ]
+      ]
+    },
+    {
+      "case_name": "legacy_fallback_model_list",
+      "entry_count": 1,
+      "input_config": {
+        "fallback_model": [
+          {
+            "model": "claude-3-haiku",
+            "provider": "anthropic"
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "model": "claude-3-haiku",
+          "provider": "anthropic"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "anthropic",
+          "claude-3-haiku",
+          ""
+        ]
+      ]
+    },
+    {
+      "case_name": "legacy_fallback_model_single_dict",
+      "entry_count": 1,
+      "input_config": {
+        "fallback_model": {
+          "model": "claude-3-haiku",
+          "provider": "anthropic"
+        }
+      },
+      "resolved_chain": [
+        {
+          "model": "claude-3-haiku",
+          "provider": "anthropic"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "anthropic",
+          "claude-3-haiku",
+          ""
+        ]
+      ]
+    },
+    {
+      "case_name": "merged_order_modern_then_legacy",
+      "entry_count": 2,
+      "input_config": {
+        "fallback_model": [
+          {
+            "model": "claude-3-haiku",
+            "provider": "anthropic"
+          }
+        ],
+        "fallback_providers": [
+          {
+            "model": "meta-llama/llama-3-70b",
+            "provider": "openrouter"
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "model": "meta-llama/llama-3-70b",
+          "provider": "openrouter"
+        },
+        {
+          "model": "claude-3-haiku",
+          "provider": "anthropic"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "openrouter",
+          "meta-llama/llama-3-70b",
+          ""
+        ],
+        [
+          "anthropic",
+          "claude-3-haiku",
+          ""
+        ]
+      ]
+    },
+    {
+      "case_name": "deduplication_exact_match_modern_wins",
+      "entry_count": 1,
+      "input_config": {
+        "fallback_model": [
+          {
+            "model": "meta-llama/llama-3-70b",
+            "provider": "openrouter",
+            "timeout": 120
+          }
+        ],
+        "fallback_providers": [
+          {
+            "model": "meta-llama/llama-3-70b",
+            "provider": "openrouter",
+            "timeout": 60
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "model": "meta-llama/llama-3-70b",
+          "provider": "openrouter",
+          "timeout": 60
+        }
+      ],
+      "resolved_identities": [
+        [
+          "openrouter",
+          "meta-llama/llama-3-70b",
+          ""
+        ]
+      ]
+    },
+    {
+      "case_name": "deduplication_case_insensitivity",
+      "entry_count": 1,
+      "input_config": {
+        "fallback_model": [
+          {
+            "model": "meta-llama/llama-3-70b",
+            "provider": "openrouter"
+          }
+        ],
+        "fallback_providers": [
+          {
+            "model": "Meta-Llama/Llama-3-70b",
+            "provider": "OpenRouter"
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "model": "Meta-Llama/Llama-3-70b",
+          "provider": "OpenRouter"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "openrouter",
+          "meta-llama/llama-3-70b",
+          ""
+        ]
+      ]
+    },
+    {
+      "case_name": "deduplication_trailing_slashes_base_url",
+      "entry_count": 1,
+      "input_config": {
+        "fallback_model": [
+          {
+            "base_url": "https://local.test/v1",
+            "model": "llama3",
+            "provider": "custom"
+          }
+        ],
+        "fallback_providers": [
+          {
+            "base_url": "https://local.test/v1/",
+            "model": "llama3",
+            "provider": "custom"
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "base_url": "https://local.test/v1",
+          "model": "llama3",
+          "provider": "custom"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "custom",
+          "llama3",
+          "https://local.test/v1"
+        ]
+      ]
+    },
+    {
+      "case_name": "deduplication_distinct_models_kept",
+      "entry_count": 2,
+      "input_config": {
+        "fallback_model": [
+          {
+            "model": "model-beta",
+            "provider": "openrouter"
+          }
+        ],
+        "fallback_providers": [
+          {
+            "model": "model-alpha",
+            "provider": "openrouter"
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "model": "model-alpha",
+          "provider": "openrouter"
+        },
+        {
+          "model": "model-beta",
+          "provider": "openrouter"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "openrouter",
+          "model-alpha",
+          ""
+        ],
+        [
+          "openrouter",
+          "model-beta",
+          ""
+        ]
+      ]
+    },
+    {
+      "case_name": "deduplication_distinct_base_urls_kept",
+      "entry_count": 2,
+      "input_config": {
+        "fallback_model": [
+          {
+            "base_url": "https://host-b.internal/v1",
+            "model": "shared-model",
+            "provider": "custom"
+          }
+        ],
+        "fallback_providers": [
+          {
+            "base_url": "https://host-a.internal/v1",
+            "model": "shared-model",
+            "provider": "custom"
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "base_url": "https://host-a.internal/v1",
+          "model": "shared-model",
+          "provider": "custom"
+        },
+        {
+          "base_url": "https://host-b.internal/v1",
+          "model": "shared-model",
+          "provider": "custom"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "custom",
+          "shared-model",
+          "https://host-a.internal/v1"
+        ],
+        [
+          "custom",
+          "shared-model",
+          "https://host-b.internal/v1"
+        ]
+      ]
+    },
+    {
+      "case_name": "empty_config",
+      "entry_count": 0,
+      "input_config": {},
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "none_config",
+      "entry_count": 0,
+      "input_config": null,
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "invalid_container_string",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": "not-a-list"
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "invalid_container_int",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": 12345
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "invalid_container_bool",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": true
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "invalid_container_none_value",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": null
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "item_filtering_non_dict_elements",
+      "entry_count": 1,
+      "input_config": {
+        "fallback_providers": [
+          "invalid-string",
+          123,
+          true,
+          null,
+          [
+            "nested",
+            "list"
+          ],
+          {
+            "model": "valid-model",
+            "provider": "custom"
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "model": "valid-model",
+          "provider": "custom"
+        }
+      ],
+      "resolved_identities": [
+        [
+          "custom",
+          "valid-model",
+          ""
+        ]
+      ]
+    },
+    {
+      "case_name": "item_filtering_missing_provider",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": [
+          {
+            "model": "valid-model"
+          }
+        ]
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "item_filtering_empty_provider",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": [
+          {
+            "model": "valid-model",
+            "provider": ""
+          }
+        ]
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "item_filtering_whitespace_provider",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": [
+          {
+            "model": "valid-model",
+            "provider": "   "
+          }
+        ]
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "item_filtering_missing_model",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom"
+          }
+        ]
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "item_filtering_empty_model",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": [
+          {
+            "model": "",
+            "provider": "custom"
+          }
+        ]
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "item_filtering_whitespace_model",
+      "entry_count": 0,
+      "input_config": {
+        "fallback_providers": [
+          {
+            "model": "   ",
+            "provider": "custom"
+          }
+        ]
+      },
+      "resolved_chain": [],
+      "resolved_identities": []
+    },
+    {
+      "case_name": "extra_attributes_preserved",
+      "entry_count": 1,
+      "input_config": {
+        "fallback_providers": [
+          {
+            "api_mode": "chat_completions",
+            "extra_body": {
+              "custom_param": 1
+            },
+            "key_env": "CUSTOM_KEY",
+            "model": "llama-3",
+            "provider": "custom",
+            "reasoning_echo": true,
+            "timeout": 35
+          }
+        ]
+      },
+      "resolved_chain": [
+        {
+          "api_mode": "chat_completions",
+          "extra_body": {
+            "custom_param": 1
+          },
+          "key_env": "CUSTOM_KEY",
+          "model": "llama-3",
+          "provider": "custom",
+          "reasoning_echo": true,
+          "timeout": 35
+        }
+      ],
+      "resolved_identities": [
+        [
+          "custom",
+          "llama-3",
+          ""
+        ]
+      ]
+    }
+  ],
+  "endpoint_and_runtime_reconfiguration": [
+    {
+      "activated": true,
+      "api_mode": "chat_completions",
+      "base_url": "https://api.z.ai/v1",
+      "case_name": "in_place_runtime_mutation",
+      "client_kwargs_base_url": "https://api.z.ai/v1",
+      "client_kwargs_default_headers": {
+        "User-Agent": "HermesCustomAgent/1.0",
+        "X-Custom": "val"
+      },
+      "client_kwargs_timeout": 75,
+      "config_context_length_cleared": true,
+      "model": "glm-5.2",
+      "provider": "zai",
+      "reasoning_echo_flag": true,
+      "stale_stream_streak_reset": false
+    }
+  ],
+  "entry_validation_and_credentials": [
+    {
+      "case_name": "inline_api_key_preferred",
+      "entry": {
+        "api_key": "synth-inline-key",
+        "key_env": "ENV_FALLBACK_KEY"
+      },
+      "entry_key_tuple": [
+        "",
+        "",
+        ""
+      ],
+      "env_vars": {
+        "ENV_FALLBACK_KEY": "synth-env-key"
+      },
+      "resolved_api_key": "synth-inline-key"
+    },
+    {
+      "case_name": "inline_api_key_whitespace_trimmed",
+      "entry": {
+        "api_key": "   synth-inline-trimmed   "
+      },
+      "entry_key_tuple": [
+        "",
+        "",
+        ""
+      ],
+      "env_vars": {},
+      "resolved_api_key": "synth-inline-trimmed"
+    },
+    {
+      "case_name": "inline_api_key_whitespace_only_falls_through",
+      "entry": {
+        "api_key": "    ",
+        "key_env": "ENV_FALLBACK_KEY"
+      },
+      "entry_key_tuple": [
+        "",
+        "",
+        ""
+      ],
+      "env_vars": {
+        "ENV_FALLBACK_KEY": "synth-env-key"
+      },
+      "resolved_api_key": "synth-env-key"
+    },
+    {
+      "case_name": "key_env_resolved",
+      "entry": {
+        "key_env": "ENV_PRIMARY_VAR"
+      },
+      "entry_key_tuple": [
+        "",
+        "",
+        ""
+      ],
+      "env_vars": {
+        "ENV_PRIMARY_VAR": "synth-primary-var-key"
+      },
+      "resolved_api_key": "synth-primary-var-key"
+    },
+    {
+      "case_name": "api_key_env_alias_resolved",
+      "entry": {
+        "api_key_env": "ENV_ALIAS_VAR"
+      },
+      "entry_key_tuple": [
+        "",
+        "",
+        ""
+      ],
+      "env_vars": {
+        "ENV_ALIAS_VAR": "synth-alias-var-key"
+      },
+      "resolved_api_key": "synth-alias-var-key"
+    },
+    {
+      "case_name": "key_env_preferred_over_alias",
+      "entry": {
+        "api_key_env": "ENV_ALIAS_VAR",
+        "key_env": "ENV_KEY_VAR"
+      },
+      "entry_key_tuple": [
+        "",
+        "",
+        ""
+      ],
+      "env_vars": {
+        "ENV_ALIAS_VAR": "synth-alias-lost",
+        "ENV_KEY_VAR": "synth-key-preferred"
+      },
+      "resolved_api_key": "synth-key-preferred"
+    },
+    {
+      "case_name": "missing_credentials_returns_none",
+      "entry": {
+        "model": "llama",
+        "provider": "custom"
+      },
+      "entry_key_tuple": [
+        "custom",
+        "llama",
+        ""
+      ],
+      "env_vars": {},
+      "resolved_api_key": null
+    },
+    {
+      "case_name": "non_dict_entry_returns_none",
+      "entry": "not-a-dict",
+      "entry_key_tuple": null,
+      "env_vars": {},
+      "resolved_api_key": null
+    },
+    {
+      "auth_state": null,
+      "case_name": "local_availability_openrouter",
+      "entry": {
+        "model": "llama-3",
+        "provider": "openrouter"
+      },
+      "locally_usable": true,
+      "skip_reason": null
+    },
+    {
+      "auth_state": {},
+      "case_name": "local_availability_nous_without_token",
+      "entry": {
+        "model": "hermes-3",
+        "provider": "nous"
+      },
+      "locally_usable": false,
+      "skip_reason": "nous_token_missing"
+    },
+    {
+      "auth_state": {
+        "access_token": "synth-nous-token"
+      },
+      "case_name": "local_availability_nous_with_token",
+      "entry": {
+        "model": "hermes-3",
+        "provider": "nous"
+      },
+      "locally_usable": true,
+      "skip_reason": null
+    }
+  ],
+  "final_error_propagation_and_budgets": [
+    {
+      "case_name": "retry_budget_reset_on_fallback_activation",
+      "primary_recovery_reset": false,
+      "reset_compression_attempts": 0,
+      "reset_retry_count": 0,
+      "restart_with_rebuilt_messages": true
+    },
+    {
+      "case_name": "terminal_failure_dictionary_structure",
+      "terminal_result": {
+        "api_calls": 5,
+        "completed": false,
+        "error": "Connection refused",
+        "failed": true,
+        "final_response": "API call failed after 5 retries: Connection refused"
+      }
+    }
+  ],
+  "primary_pool_before_fallback_ordering": [
+    {
+      "case_name": "none_pool",
+      "expected_pool_recover": false,
+      "has_available": false,
+      "pool_entry_count": 0,
+      "pool_may_recover": false
+    },
+    {
+      "case_name": "empty_pool",
+      "expected_pool_recover": false,
+      "has_available": false,
+      "pool_entry_count": 0,
+      "pool_may_recover": false
+    },
+    {
+      "case_name": "single_entry_pool_available",
+      "expected_pool_recover": false,
+      "has_available": true,
+      "pool_entry_count": 1,
+      "pool_may_recover": false
+    },
+    {
+      "case_name": "single_entry_pool_exhausted",
+      "expected_pool_recover": false,
+      "has_available": false,
+      "pool_entry_count": 1,
+      "pool_may_recover": false
+    },
+    {
+      "case_name": "multi_entry_pool_exhausted",
+      "expected_pool_recover": false,
+      "has_available": false,
+      "pool_entry_count": 3,
+      "pool_may_recover": false
+    },
+    {
+      "case_name": "multi_entry_pool_available",
+      "expected_pool_recover": true,
+      "has_available": true,
+      "pool_entry_count": 3,
+      "pool_may_recover": true
+    },
+    {
+      "activates_fallback_immediately": false,
+      "case_name": "upstream_bypass_rate_limit",
+      "is_upstream": false,
+      "pool_may_recover": true,
+      "reason": "rate_limit"
+    },
+    {
+      "activates_fallback_immediately": true,
+      "case_name": "upstream_bypass_upstream_rate_limit",
+      "is_upstream": true,
+      "pool_may_recover": false,
+      "reason": "upstream_rate_limit"
+    },
+    {
+      "activates_fallback_immediately": false,
+      "case_name": "upstream_bypass_billing",
+      "is_upstream": false,
+      "pool_may_recover": true,
+      "reason": "billing"
+    }
+  ],
+  "provider_mismatch_isolation_and_pool_rebinding": [
+    {
+      "case_name": "cross_provider_clears_mismatched_primary_pool",
+      "current_provider": "zai",
+      "pool_cleared": true,
+      "pool_entry_id_cleared": true
+    },
+    {
+      "case_name": "same_provider_fallback_preserves_pool",
+      "current_provider": "openrouter",
+      "pool_entry_id": "or-entry-1",
+      "pool_preserved": true
+    },
+    {
+      "case_name": "restore_primary_reloads_and_reselects_pool",
+      "fallback_activated_reset": false,
+      "fallback_index_reset": 0,
+      "reselected_entry_id": "openai-fresh-1",
+      "restore_success": true,
+      "swap_credential_called": false
+    }
+  ],
+  "request_body_and_system_prompt_stability": [
+    {
+      "case_name": "rewrite_prompt_touches_only_last_identity_pair",
+      "legacy_provider_preserved": true,
+      "original_prompt": "Instructions for agent.\nUser says: Model: gpt-3.5-turbo\nProvider: legacy-provider\nSystem Header:\nModel: gpt-4o\nProvider: openai",
+      "rewritten_prompt": "Instructions for agent.\nUser says: Model: gpt-3.5-turbo\nProvider: legacy-provider\nSystem Header:\nModel: glm-5.2\nProvider: zai",
+      "tail_updated_model": true,
+      "tail_updated_provider": true,
+      "user_mention_preserved": true
+    },
+    {
+      "assistant_turn_untouched": true,
+      "case_name": "sync_failover_updates_api_messages_system_block",
+      "returned_system_prompt": "Header:\nModel: glm-5.2\nProvider: zai",
+      "updated_system_message": "Header:\nModel: glm-5.2\nProvider: zai",
+      "user_turn_untouched": true
+    }
+  ],
+  "tool_loop_carryover_and_turn_lifecycle": [
+    {
+      "case_name": "fallback_sticks_across_tool_rounds_within_turn",
+      "pending_notices": [
+        "\u26a0\ufe0f Model fallback: gpt-4o via openai unavailable (rate limit); using glm-5.2 via zai."
+      ],
+      "round_0_model": "glm-5.2",
+      "round_0_provider": "zai",
+      "round_1_model": "glm-5.2",
+      "round_1_provider": "zai",
+      "stickiness_verified": true
+    },
+    {
+      "case_name": "multi_turn_restoration_gate",
+      "cooldown_active_restore_result": false,
+      "cooldown_active_stays_fallback": false,
+      "cooldown_expired_restore_result": true,
+      "fallback_activated_cleared": false,
+      "fallback_index_cleared": 0,
+      "restored_model": "gpt-4o",
+      "restored_provider": "openai"
+    },
+    {
+      "case_name": "unactivated_turn_resets_stranded_index",
+      "index_after_restore": 0,
+      "restore_returned": false
+    }
+  ],
+  "trigger_reasons_and_explanations": [
+    {
+      "activation_category": "eager_rate_limit_or_billing",
+      "operator_friendly_text": "rate limit",
+      "reason_name": "rate_limit",
+      "reason_value": "rate_limit"
+    },
+    {
+      "activation_category": "eager_rate_limit_or_billing",
+      "operator_friendly_text": "billing or quota exhausted",
+      "reason_name": "billing",
+      "reason_value": "billing"
+    },
+    {
+      "activation_category": "eager_rate_limit_or_billing",
+      "operator_friendly_text": "upstream model rate limit",
+      "reason_name": "upstream_rate_limit",
+      "reason_value": "upstream_rate_limit"
+    },
+    {
+      "activation_category": "transport_retry_then_fallback",
+      "operator_friendly_text": "provider overloaded",
+      "reason_name": "overloaded",
+      "reason_value": "overloaded"
+    },
+    {
+      "activation_category": "general_retry_then_fallback",
+      "operator_friendly_text": "provider server error",
+      "reason_name": "server_error",
+      "reason_value": "server_error"
+    },
+    {
+      "activation_category": "transport_retry_then_fallback",
+      "operator_friendly_text": "request timeout",
+      "reason_name": "timeout",
+      "reason_value": "timeout"
+    },
+    {
+      "activation_category": "auth_failover_after_refresh",
+      "operator_friendly_text": "authentication failed",
+      "reason_name": "auth",
+      "reason_value": "auth"
+    },
+    {
+      "activation_category": "auth_failover_after_refresh",
+      "operator_friendly_text": "authentication permanently failed",
+      "reason_name": "auth_permanent",
+      "reason_value": "auth_permanent"
+    },
+    {
+      "activation_category": "non_retryable_client_error",
+      "operator_friendly_text": "TLS certificate verification failed",
+      "reason_name": "ssl_cert_verification",
+      "reason_value": "ssl_cert_verification"
+    },
+    {
+      "activation_category": "non_retryable_client_error",
+      "operator_friendly_text": "content policy blocked the request",
+      "reason_name": "content_policy_blocked",
+      "reason_value": "content_policy_blocked"
+    },
+    {
+      "activation_category": "general_retry_then_fallback",
+      "operator_friendly_text": "model not found",
+      "reason_name": "model_not_found",
+      "reason_value": "model_not_found"
+    },
+    {
+      "activation_category": "general_retry_then_fallback",
+      "operator_friendly_text": "context window exceeded",
+      "reason_name": "context_overflow",
+      "reason_value": "context_overflow"
+    },
+    {
+      "activation_category": "general_retry_then_fallback",
+      "operator_friendly_text": "request payload too large",
+      "reason_name": "payload_too_large",
+      "reason_value": "payload_too_large"
+    },
+    {
+      "activation_category": "general_retry_then_fallback",
+      "operator_friendly_text": "image payload too large",
+      "reason_name": "image_too_large",
+      "reason_value": "image_too_large"
+    },
+    {
+      "activation_category": "general_retry_then_fallback",
+      "operator_friendly_text": "request format rejected",
+      "reason_name": "format_error",
+      "reason_value": "format_error"
+    },
+    {
+      "activation_category": "general_retry_then_fallback",
+      "operator_friendly_text": "provider failure",
+      "reason_name": "unknown",
+      "reason_value": "unknown"
+    },
+    {
+      "activation_category": "unspecified_failure",
+      "operator_friendly_text": "provider failure",
+      "reason_name": "None_sentinel",
+      "reason_value": null
+    },
+    {
+      "activation_category": "unrecognized_value",
+      "operator_friendly_text": "custom provider outage",
+      "reason_name": "custom_unrecognized_reason",
+      "reason_value": "custom_provider_outage"
+    }
+  ],
+  "upstream_rate_limit_and_cooldown_escalation": [
+    {
+      "backoff_level": 0,
+      "backoff_minutes": 1.0,
+      "backoff_seconds": 60,
+      "capped_at_4_hours": false
+    },
+    {
+      "backoff_level": 1,
+      "backoff_minutes": 2.0,
+      "backoff_seconds": 120,
+      "capped_at_4_hours": false
+    },
+    {
+      "backoff_level": 2,
+      "backoff_minutes": 4.0,
+      "backoff_seconds": 240,
+      "capped_at_4_hours": false
+    },
+    {
+      "backoff_level": 3,
+      "backoff_minutes": 8.0,
+      "backoff_seconds": 480,
+      "capped_at_4_hours": false
+    },
+    {
+      "backoff_level": 4,
+      "backoff_minutes": 16.0,
+      "backoff_seconds": 960,
+      "capped_at_4_hours": false
+    },
+    {
+      "backoff_level": 5,
+      "backoff_minutes": 32.0,
+      "backoff_seconds": 1920,
+      "capped_at_4_hours": false
+    },
+    {
+      "backoff_level": 6,
+      "backoff_minutes": 64.0,
+      "backoff_seconds": 3840,
+      "capped_at_4_hours": false
+    },
+    {
+      "backoff_level": 7,
+      "backoff_minutes": 128.0,
+      "backoff_seconds": 7680,
+      "capped_at_4_hours": false
+    },
+    {
+      "backoff_level": 8,
+      "backoff_minutes": 240.0,
+      "backoff_seconds": 14400,
+      "capped_at_4_hours": true
+    },
+    {
+      "activated": true,
+      "backoff_count": 1,
+      "case_name": "first_failover_arms_primary_cooldown",
+      "cooldown_duration_approx": 60.0,
+      "expected_cooldown": 60,
+      "fallback_activated": true
+    },
+    {
+      "activated": true,
+      "backoff_count": 1,
+      "case_name": "consecutive_failover_on_fallback_retains_cooldown",
+      "cooldown_unchanged": true,
+      "fallback_activated": true
+    },
+    {
+      "case_name": "reset_aware_gate_blocks_restore_when_future_reset",
+      "reset_time_offset": 3600,
+      "restore_result": false,
+      "stays_on_fallback": true
+    },
+    {
+      "case_name": "non_rate_chain_exhaustion_arms_replay_floor",
+      "cooldown_duration_approx": 5.0,
+      "exhausted_result": false,
+      "expected_cooldown": 5,
+      "first_activated": true,
+      "stays_on_fallback": true
+    }
+  ]
+}

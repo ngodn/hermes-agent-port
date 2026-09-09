@@ -901,7 +901,7 @@ fn build_native_compression_client(
         client = client.with_provider_profile(profile)?;
     }
     if actual_provider.eq_ignore_ascii_case("openrouter") {
-        client = client.with_extra_headers(
+        client = client.with_provider_default_headers(
             serde_json::json!({
                 "HTTP-Referer":"https://hermes-agent.nousresearch.com",
                 "X-Title":"Hermes Agent",
@@ -930,6 +930,210 @@ fn build_native_compression_client(
             "extra_body".into(),
             serde_json::Value::Object(extra_body),
         )]));
+    }
+    Ok(Some(client))
+}
+
+/// Build one frozen ordinary main-turn fallback route. This intentionally
+/// shares provider/profile request shaping with the main client, but excludes
+/// auxiliary summary policy and rejects transports that are not yet native.
+#[allow(clippy::too_many_arguments)]
+fn build_native_main_fallback_client(
+    entry: &compression_auxiliary::FallbackChainEntry,
+    user_config: &serde_json::Value,
+    profiles: &provider_registry::ProviderRegistry,
+    dotenv: &std::collections::HashMap<String, String>,
+    environment: &mut impl FnMut(&str) -> Option<String>,
+    home: &std::path::Path,
+) -> anyhow::Result<Option<NativeAgentClient>> {
+    let Some(model) = entry.model.as_deref() else {
+        return Ok(None);
+    };
+    let requested_provider = entry.provider.trim();
+    let profile = profiles
+        .get(requested_provider)
+        .map(|profile| profile.read().unwrap().clone());
+    let named = custom_provider_config::named(
+        user_config,
+        requested_provider,
+        profile.as_ref().map(|profile| profile.name.as_str()),
+        |name| {
+            environment(name)
+                .or_else(|| dotenv.get(name).cloned())
+                .unwrap_or_default()
+        },
+    );
+    let api_mode = entry
+        .api_mode
+        .clone()
+        .or_else(|| {
+            named
+                .as_ref()
+                .and_then(|value| value["api_mode"].as_str())
+                .map(str::to_owned)
+        })
+        .or_else(|| profile.as_ref().map(|profile| profile.api_mode.clone()))
+        .unwrap_or_else(|| "chat_completions".into());
+    if api_mode != "chat_completions" {
+        return Ok(None);
+    }
+
+    let profile_base_url = profile.as_ref().and_then(|profile| {
+        profile
+            .env_vars
+            .iter()
+            .find(|name| name.ends_with("_URL"))
+            .and_then(|name| dotenv.get(name).cloned().or_else(|| environment(name)))
+            .map(|value| value.trim().to_owned())
+            .filter(|value| !value.is_empty())
+            .or_else(|| (!profile.base_url.is_empty()).then(|| profile.base_url.clone()))
+    });
+    let fallback_base_url = entry
+        .base_url
+        .clone()
+        .or_else(|| {
+            named
+                .as_ref()
+                .and_then(|value| value["base_url"].as_str())
+                .map(str::to_owned)
+        })
+        .or(profile_base_url)
+        .ok_or_else(|| anyhow::anyhow!("main fallback route has no endpoint"))?;
+
+    let direct_key = entry.direct_api_key(dotenv, &mut *environment);
+    let named_key = named
+        .as_ref()
+        .and_then(|value| value["api_key"].as_str())
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(str::to_owned);
+    let static_key = direct_key.or(named_key);
+    let actual_provider = profile
+        .as_ref()
+        .map(|profile| profile.name.as_str())
+        .filter(|provider| !provider.is_empty())
+        .unwrap_or(requested_provider);
+    let pool_provider = actual_provider.trim().to_lowercase();
+    let pool_supported = !matches!(
+        pool_provider.as_str(),
+        "" | "auto" | "custom" | "anthropic" | "openai-codex" | "xai-oauth" | "nous"
+    ) && !pool_provider.starts_with("custom:");
+    let profile_auth = home.join("auth.json");
+    let root = config_file::hermes_root();
+    let root_auth =
+        (home.parent() == Some(root.join("profiles").as_path())).then(|| root.join("auth.json"));
+    let pool_runtime = (static_key.is_none() && pool_supported)
+        .then(|| {
+            let locator = credential_pool::PoolLocator::new(
+                profile_auth,
+                root_auth,
+                &pool_provider,
+                credential_pool::pool_strategy(&pool_provider, user_config),
+            );
+            match locator.select_runtime() {
+                Ok(Some(runtime)) => Some((locator, runtime)),
+                Ok(None) => None,
+                Err(error) => {
+                    tracing::debug!(
+                        provider = pool_provider,
+                        error = %compression_redact::redact(&error.to_string()),
+                        "main fallback credential pool unavailable"
+                    );
+                    None
+                }
+            }
+        })
+        .flatten();
+    let api_key = static_key
+        .or_else(|| {
+            pool_runtime
+                .as_ref()
+                .map(|(_, runtime)| runtime.api_key().to_owned())
+        })
+        .or_else(|| {
+            profile.as_ref().and_then(|profile| {
+                config_file::resolve_profile_api_key(profile, dotenv, &mut *environment)
+            })
+        })
+        .or_else(|| {
+            config_file::resolve_provider_api_key_with_env(
+                &fallback_base_url,
+                dotenv,
+                &mut *environment,
+            )
+        })
+        .or_else(|| {
+            local_probe::is_local_endpoint(&fallback_base_url).then(|| "no-key-required".into())
+        })
+        .ok_or_else(|| anyhow::anyhow!("no API key resolved for main fallback route"))?;
+    let base_url = pool_runtime
+        .as_ref()
+        .and_then(|(_, runtime)| runtime.base_url())
+        .unwrap_or(&fallback_base_url)
+        .to_owned();
+
+    let reasoning_config = reasoning_effort::resolve_config(user_config, model);
+    let mut client = NativeAgentClient::new(model, api_key, &base_url)?
+        .with_provider_identity(actual_provider)
+        .with_reasoning_config(reasoning_config)
+        .with_reasoning_echo(
+            entry.reasoning_echo || reasoning_replay::needs_echo(actual_provider, model, &base_url),
+        )
+        .with_output_cap(native_agent::resolve_output_cap(
+            &user_config["model"]["max_tokens"],
+            environment("HERMES_MAX_TOKENS").as_deref(),
+            named
+                .as_ref()
+                .and_then(|value| value.get("max_output_tokens")),
+        ));
+    if let Some(context_length) = models_dev::ModelsDev::new(home.to_path_buf(), user_config)
+        .cached_context_window(actual_provider, model, user_config)
+    {
+        client = client.with_context_length(context_length);
+    }
+    if let Some(profile) = &profile {
+        client = client.with_provider_profile(profile)?;
+    }
+    if actual_provider.eq_ignore_ascii_case("openrouter") {
+        client = client.with_provider_default_headers(
+            serde_json::json!({
+                "HTTP-Referer":"https://hermes-agent.nousresearch.com",
+                "X-Title":"Hermes Agent",
+                "X-OpenRouter-Categories":"productivity,cli-agent",
+            })
+            .as_object()
+            .unwrap(),
+        )?;
+    }
+    client = client.with_extra_headers(&custom_provider_config::extra_headers(
+        user_config,
+        &base_url,
+    ))?;
+    let named_overrides = named
+        .as_ref()
+        .and_then(|value| value["extra_body"].as_object())
+        .filter(|body| !body.is_empty())
+        .cloned();
+    if let Some(extra) = named_overrides.or_else(|| {
+        custom_request_config::select_extra_body(
+            requested_provider,
+            model,
+            &base_url,
+            &custom_provider_config::compatible(user_config),
+        )
+    }) {
+        client = client.with_request_overrides(serde_json::Map::from_iter([(
+            "extra_body".into(),
+            serde_json::Value::Object(extra),
+        )]));
+    }
+    if let Some((locator, runtime)) = pool_runtime {
+        client = client.with_main_pool(native_agent::MainPoolCredential::new(
+            locator,
+            runtime,
+            fallback_base_url,
+            custom_provider_config::extra_header_routes(user_config),
+        )?);
     }
     Ok(Some(client))
 }
@@ -1139,6 +1343,19 @@ fn build_agent_client_for_home_with_discovery(
                         Some(profile) => client.with_provider_profile(profile)?,
                         None => client,
                     };
+                    let client = if provider_identity.eq_ignore_ascii_case("openrouter") {
+                        client.with_provider_default_headers(
+                            serde_json::json!({
+                                "HTTP-Referer":"https://hermes-agent.nousresearch.com",
+                                "X-Title":"Hermes Agent",
+                                "X-OpenRouter-Categories":"productivity,cli-agent",
+                            })
+                            .as_object()
+                            .unwrap(),
+                        )?
+                    } else {
+                        client
+                    };
                     client.with_extra_headers(&custom_provider_config::extra_headers(
                         user_config,
                         &base_url,
@@ -1207,6 +1424,53 @@ fn build_agent_client_for_home_with_discovery(
                             .as_ref()
                             .and_then(|entry| entry.get("max_output_tokens")),
                     ));
+                    let primary_identity = c.backend_identity();
+                    let mut main_fallbacks = Vec::new();
+                    for (index, entry) in compression_auxiliary::main_fallback_chain(user_config)
+                        .iter()
+                        .enumerate()
+                    {
+                        match build_native_main_fallback_client(
+                            entry,
+                            user_config,
+                            &profiles,
+                            &dotenv,
+                            &mut environment,
+                            home,
+                        ) {
+                            Ok(Some(fallback))
+                                if compression_auxiliary::should_skip_candidate(
+                                    &fallback.backend_identity(),
+                                    &primary_identity,
+                                    compression_auxiliary::FailureScope::Model,
+                                ) =>
+                            {
+                                tracing::debug!(
+                                    route_index = index,
+                                    provider = entry.provider,
+                                    "main fallback resolves to the primary backend; skipping"
+                                );
+                            }
+                            Ok(Some(fallback)) => main_fallbacks.push(fallback),
+                            Ok(None) => tracing::debug!(
+                                route_index = index,
+                                provider = entry.provider,
+                                "main fallback requires an unsupported native transport; skipping"
+                            ),
+                            Err(error) => {
+                                let error = compression_redact::redact(&error.to_string());
+                                tracing::warn!(
+                                    %error,
+                                    route_index = index,
+                                    provider = entry.provider,
+                                    "main fallback route unavailable; trying the next entry"
+                                );
+                            }
+                        }
+                    }
+                    if !main_fallbacks.is_empty() {
+                        c = c.with_main_fallback_routes(main_fallbacks);
+                    }
                     let mut primary_compression = None;
                     let mut primary_compression_unavailable = false;
                     let mut compression_fallbacks = Vec::new();
@@ -2264,6 +2528,473 @@ mod startup_tests {
             agent_cli_prompt_flag: None,
             agent_tools: false,
         }
+    }
+
+    #[tokio::test]
+    async fn native_main_provider_fallback_preserves_static_prompt_prefix() {
+        use axum::{
+            http::{HeaderMap, StatusCode},
+            response::IntoResponse,
+            routing::post,
+            Json, Router,
+        };
+
+        type Captures = Arc<std::sync::Mutex<Vec<(HeaderMap, Value)>>>;
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+
+        async fn primary(captures: Captures) -> (String, Server) {
+            let app = Router::new().route(
+                "/chat/completions",
+                post(move |headers: HeaderMap, Json(body): Json<Value>| {
+                    let captures = captures.clone();
+                    async move {
+                        captures.lock().unwrap().push((headers, body));
+                        (
+                            StatusCode::TOO_MANY_REQUESTS,
+                            Json(json!({"error":{"message":"rate limit"}})),
+                        )
+                            .into_response()
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        async fn fallback(captures: Captures) -> (String, Server) {
+            let app = Router::new().route(
+                "/chat/completions",
+                post(move |headers: HeaderMap, Json(body): Json<Value>| {
+                    let captures = captures.clone();
+                    async move {
+                        captures.lock().unwrap().push((headers, body));
+                        (
+                            [("content-type", "text/event-stream")],
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"rescued\"}}]}\n\ndata: [DONE]\n\n",
+                        )
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let primary_requests: Captures = Default::default();
+        let fallback_requests: Captures = Default::default();
+        let (primary_url, _primary_server) = primary(primary_requests.clone()).await;
+        let (fallback_url, _fallback_server) = fallback(fallback_requests.clone()).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home =
+            TempHome(std::env::temp_dir().join(format!("hermes-main-provider-fallback-{nonce}")));
+        std::fs::create_dir_all(&home.0).unwrap();
+
+        let mut config = native_config();
+        config.llm_api_key = Some("primary-key".into());
+        config.llm_base_url = Some(primary_url);
+        let user_config = json!({
+            "model":{"provider":"openrouter"},
+            "fallback_providers":[{
+                "provider":"custom",
+                "model":"fallback-model",
+                "base_url":fallback_url,
+                "api_key":"fallback-key"
+            }]
+        });
+        let primary_prompt = "stable cached prefix\n\nModel: primary-model\nProvider: openrouter";
+        let agent = build_agent_client_for_home(
+            &config,
+            &user_config,
+            Some("primary-model"),
+            &home.0,
+            Some(NativeConversationState {
+                system_prompt: primary_prompt.into(),
+                tools: Vec::new(),
+                plugin_prompt: Default::default(),
+                extension_host: None,
+                hooks: None,
+                platform: "cli".into(),
+                context_length: 256_000,
+            }),
+        )
+        .unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"hello"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("fallback-session".into());
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+        agent.run_turn(&message, &[], sender).await.unwrap();
+        let mut reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+        assert_eq!(reply, "rescued");
+
+        let preflight = agent
+            .compression_preflight(agent::TurnContext::default(), &message, &[])
+            .await
+            .unwrap()
+            .unwrap();
+        assert_eq!(preflight.model, "fallback-model");
+
+        message.text = "still there?".into();
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+        agent.run_turn(&message, &[], sender).await.unwrap();
+        let mut second_reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                second_reply.push_str(&text);
+            }
+        }
+        assert_eq!(second_reply, "rescued");
+
+        let primary_requests = primary_requests.lock().unwrap();
+        let fallback_requests = fallback_requests.lock().unwrap();
+        assert_eq!(primary_requests.len(), 1);
+        assert_eq!(fallback_requests.len(), 2);
+        assert_eq!(primary_requests[0].0["authorization"], "Bearer primary-key");
+        assert_eq!(
+            fallback_requests[0].0["authorization"],
+            "Bearer fallback-key"
+        );
+        assert_eq!(primary_requests[0].1["model"], "primary-model");
+        assert_eq!(fallback_requests[0].1["model"], "fallback-model");
+        assert_eq!(
+            primary_requests[0].1["messages"][0]["content"],
+            primary_prompt
+        );
+        assert_eq!(
+            fallback_requests[0].1["messages"][0]["content"],
+            "stable cached prefix\n\nModel: fallback-model\nProvider: custom"
+        );
+    }
+
+    #[tokio::test]
+    async fn native_main_provider_fallback_sticks_across_tool_rounds() {
+        use axum::{
+            http::{HeaderMap, StatusCode},
+            response::IntoResponse,
+            routing::post,
+            Json, Router,
+        };
+
+        type Captures = Arc<std::sync::Mutex<Vec<(HeaderMap, Value)>>>;
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        async fn serve_primary(captures: Captures) -> (String, Server) {
+            let app = Router::new().route(
+                "/chat/completions",
+                post(move |headers: HeaderMap, Json(body): Json<Value>| {
+                    let captures = captures.clone();
+                    async move {
+                        let index = {
+                            let mut requests = captures.lock().unwrap();
+                            let index = requests.len();
+                            requests.push((headers, body));
+                            index
+                        };
+                        if index == 0 {
+                            Json(json!({"choices":[{"message":{
+                                "role":"assistant",
+                                "content":null,
+                                "tool_calls":[{"id":"primary-time","type":"function","function":{
+                                    "name":"current_time", "arguments":"{}"
+                                }}]
+                            }}]}))
+                            .into_response()
+                        } else {
+                            (
+                                StatusCode::TOO_MANY_REQUESTS,
+                                Json(json!({"error":{"message":"rate limit"}})),
+                            )
+                                .into_response()
+                        }
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+        async fn serve_fallback(captures: Captures) -> (String, Server) {
+            let app = Router::new().route(
+                "/chat/completions",
+                post(move |headers: HeaderMap, Json(body): Json<Value>| {
+                    let captures = captures.clone();
+                    async move {
+                        let index = {
+                            let mut requests = captures.lock().unwrap();
+                            let index = requests.len();
+                            requests.push((headers, body));
+                            index
+                        };
+                        if index == 0 {
+                            Json(json!({"choices":[{"message":{
+                                "role":"assistant",
+                                "content":null,
+                                "tool_calls":[{"id":"fallback-time","type":"function","function":{
+                                    "name":"current_time", "arguments":"{}"
+                                }}]
+                            }}]}))
+                        } else {
+                            Json(json!({"choices":[{"message":{
+                                "role":"assistant", "content":"tool fallback complete"
+                            }}]}))
+                        }
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let primary_requests: Captures = Default::default();
+        let fallback_requests: Captures = Default::default();
+        let (primary_url, _primary_server) = serve_primary(primary_requests.clone()).await;
+        let (fallback_url, _fallback_server) = serve_fallback(fallback_requests.clone()).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = std::env::temp_dir().join(format!("hermes-tool-provider-fallback-{nonce}"));
+        std::fs::create_dir_all(&home).unwrap();
+
+        let mut config = native_config();
+        config.llm_api_key = Some("primary-key".into());
+        config.llm_base_url = Some(primary_url);
+        config.agent_tools = true;
+        let selected = json!({
+            "model":{"provider":"openrouter"},
+            "fallback_model":{
+                "provider":"custom",
+                "model":"fallback-model",
+                "base_url":fallback_url,
+                "api_key":"fallback-key"
+            }
+        });
+        let client = build_agent_client_for_home(
+            &config,
+            &selected,
+            Some("primary-model"),
+            &home,
+            Some(NativeConversationState {
+                system_prompt: "stable prefix\n\nModel: primary-model\nProvider: openrouter".into(),
+                tools: vec![Arc::new(native_tools::CurrentTimeTool)],
+                plugin_prompt: Default::default(),
+                extension_host: None,
+                hooks: None,
+                platform: "cli".into(),
+                context_length: 256_000,
+            }),
+        )
+        .unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"time"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("tool-fallback-session".into());
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(64);
+        client.run_turn(&message, &[], sender).await.unwrap();
+        let mut reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+        assert_eq!(reply, "tool fallback complete");
+
+        let primary_requests = primary_requests.lock().unwrap();
+        let fallback_requests = fallback_requests.lock().unwrap();
+        assert_eq!(primary_requests.len(), 2);
+        assert_eq!(fallback_requests.len(), 2);
+        assert_eq!(
+            fallback_requests[0].0["authorization"],
+            "Bearer fallback-key"
+        );
+        assert_eq!(fallback_requests[0].1["model"], "fallback-model");
+        assert_eq!(
+            fallback_requests[0].1["tools"],
+            primary_requests[1].1["tools"]
+        );
+        assert!(fallback_requests[0].1["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|message| message["tool_call_id"] == "primary-time"));
+        assert!(fallback_requests[1].1["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|message| message["tool_call_id"] == "fallback-time"));
+        assert_eq!(
+            fallback_requests[0].1["messages"][0]["content"],
+            "stable prefix\n\nModel: fallback-model\nProvider: custom"
+        );
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn native_auth_fallback_restores_primary_on_the_next_turn() {
+        use axum::{
+            http::{HeaderMap, StatusCode},
+            response::IntoResponse,
+            routing::post,
+            Json, Router,
+        };
+
+        type Captures = Arc<std::sync::Mutex<Vec<(HeaderMap, Value)>>>;
+        let requests: Captures = Default::default();
+        let captured = requests.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |headers: HeaderMap, Json(body): Json<Value>| {
+                let captured = captured.clone();
+                async move {
+                    let authorization = headers["authorization"].clone();
+                    let primary_attempt = {
+                        let mut requests = captured.lock().unwrap();
+                        let primary_attempt = requests
+                            .iter()
+                            .filter(|(headers, _)| {
+                                headers["authorization"] == "Bearer primary-key"
+                            })
+                            .count();
+                        requests.push((headers, body));
+                        primary_attempt
+                    };
+                    if authorization == "Bearer primary-key" && primary_attempt == 0 {
+                        (
+                            StatusCode::UNAUTHORIZED,
+                            Json(json!({"error":{"message":"invalid key"}})),
+                        )
+                            .into_response()
+                    } else {
+                        let text = if authorization == "Bearer primary-key" {
+                            "primary restored"
+                        } else {
+                            "fallback response"
+                        };
+                        (
+                            [("content-type", "text/event-stream")],
+                            format!(
+                                "data: {{\"choices\":[{{\"delta\":{{\"content\":{}}}}}]}}\n\ndata: [DONE]\n\n",
+                                serde_json::to_string(text).unwrap()
+                            ),
+                        )
+                            .into_response()
+                    }
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        });
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = std::env::temp_dir().join(format!("hermes-auth-fallback-{nonce}"));
+        std::fs::create_dir_all(&home).unwrap();
+
+        let mut config = native_config();
+        config.llm_api_key = Some("primary-key".into());
+        config.llm_base_url = Some(base_url.clone());
+        let selected = json!({
+            "model":{"provider":"openrouter"},
+            "fallback_providers":[{
+                "provider":"custom",
+                "model":"fallback-model",
+                "base_url":base_url,
+                "api_key":"fallback-key"
+            }]
+        });
+        let client = build_agent_client_for_home(
+            &config,
+            &selected,
+            Some("primary-model"),
+            &home,
+            Some(NativeConversationState {
+                system_prompt: "stable prefix\n\nModel: primary-model\nProvider: openrouter".into(),
+                tools: Vec::new(),
+                plugin_prompt: Default::default(),
+                extension_host: None,
+                hooks: None,
+                platform: "cli".into(),
+                context_length: 256_000,
+            }),
+        )
+        .unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"first"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("auth-fallback-session".into());
+
+        for (text, expected) in [
+            ("first", "fallback response"),
+            ("second", "primary restored"),
+        ] {
+            message.text = text.into();
+            let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+            client.run_turn(&message, &[], sender).await.unwrap();
+            let mut reply = String::new();
+            while let Some(event) = receiver.recv().await {
+                if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                    reply.push_str(&text);
+                }
+            }
+            assert_eq!(reply, expected);
+        }
+
+        let requests = requests.lock().unwrap();
+        assert_eq!(requests.len(), 3);
+        assert_eq!(requests[0].0["authorization"], "Bearer primary-key");
+        assert_eq!(requests[1].0["authorization"], "Bearer fallback-key");
+        assert_eq!(requests[2].0["authorization"], "Bearer primary-key");
+        assert_eq!(requests[2].1["model"], "primary-model");
+        assert_eq!(
+            requests[2].1["messages"][0]["content"],
+            "stable prefix\n\nModel: primary-model\nProvider: openrouter"
+        );
+        server.abort();
+        std::fs::remove_dir_all(home).unwrap();
     }
 
     #[tokio::test]
@@ -4024,5 +4755,175 @@ def register(ctx):
                 assert_eq!(next_body["messages"][0], first_body["messages"][0]);
             }
         }
+    }
+
+    #[tokio::test]
+    async fn native_main_pool_exhausts_before_cross_provider_fallback() {
+        use axum::{
+            body::Bytes,
+            http::{HeaderMap, StatusCode},
+            routing::post,
+            Json, Router,
+        };
+
+        type Captures = Arc<std::sync::Mutex<Vec<(HeaderMap, Vec<u8>)>>>;
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        async fn failing(captures: Captures) -> (String, Server) {
+            let app = Router::new().route(
+                "/chat/completions",
+                post(move |headers: HeaderMap, body: Bytes| {
+                    captures.lock().unwrap().push((headers, body.to_vec()));
+                    async move {
+                        (
+                            StatusCode::TOO_MANY_REQUESTS,
+                            Json(json!({"error":{"message":"Usage limit reached"}})),
+                        )
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let first_requests: Captures = Default::default();
+        let second_requests: Captures = Default::default();
+        let fallback_requests: Captures = Default::default();
+        let (first_url, _first_server) = failing(first_requests.clone()).await;
+        let (second_url, _second_server) = failing(second_requests.clone()).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = TempHome(std::env::temp_dir().join(format!(
+            "hermes-main-pool-fallback-{}-{nonce}",
+            std::process::id()
+        )));
+        std::fs::create_dir_all(&home.0).unwrap();
+        let auth_path = home.0.join("auth.json");
+        std::fs::write(
+            &auth_path,
+            serde_json::to_vec(&json!({
+                "credential_pool":{"gmi":[
+                    {"id":"first","auth_type":"api_key","source":"manual",
+                     "priority":0,"access_token":"pool-key-one","base_url":first_url},
+                    {"id":"second","auth_type":"api_key","source":"manual",
+                     "priority":1,"access_token":"pool-key-two","base_url":second_url}
+                ]}
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        std::fs::write(home.0.join(".env"), "GMI_API_KEY=environment-key\n").unwrap();
+
+        let persisted_before_fallback = Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let captured = fallback_requests.clone();
+        let persisted = persisted_before_fallback.clone();
+        let persisted_path = auth_path.clone();
+        let fallback_app = Router::new().route(
+            "/chat/completions",
+            post(move |headers: HeaderMap, body: Bytes| {
+                let captured = captured.clone();
+                let persisted = persisted.clone();
+                let persisted_path = persisted_path.clone();
+                async move {
+                    let auth: Value = serde_json::from_slice(
+                        &std::fs::read(persisted_path).expect("persisted auth store"),
+                    )
+                    .unwrap();
+                    persisted.store(
+                        auth["credential_pool"]["gmi"]
+                            .as_array()
+                            .unwrap()
+                            .iter()
+                            .all(|entry| entry["last_status"] == "exhausted"),
+                        std::sync::atomic::Ordering::Release,
+                    );
+                    captured.lock().unwrap().push((headers, body.to_vec()));
+                    (
+                        [("content-type", "text/event-stream")],
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"pool fallback\"}}]}\n\ndata: [DONE]\n\n",
+                    )
+                }
+            }),
+        );
+        let fallback_listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let fallback_url = format!("http://{}", fallback_listener.local_addr().unwrap());
+        let _fallback_server = Server(tokio::spawn(async move {
+            axum::serve(fallback_listener, fallback_app).await.unwrap();
+        }));
+
+        let mut config = native_config();
+        config.llm_api_key = None;
+        config.llm_base_url = None;
+        let selected = json!({
+            "model":{"provider":"gmi","base_url":first_url},
+            "fallback_providers":[{
+                "provider":"custom", "model":"fallback-model",
+                "base_url":fallback_url, "api_key":"fallback-key"
+            }]
+        });
+        let client = build_agent_client_for_home(
+            &config,
+            &selected,
+            Some("primary-model"),
+            &home.0,
+            Some(NativeConversationState {
+                system_prompt: "stable\n\nModel: primary-model\nProvider: gmi".into(),
+                tools: Vec::new(),
+                plugin_prompt: Default::default(),
+                extension_host: None,
+                hooks: None,
+                platform: "cli".into(),
+                context_length: 256_000,
+            }),
+        )
+        .unwrap();
+        let message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"hello"
+        }))
+        .unwrap();
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+        client.run_turn(&message, &[], sender).await.unwrap();
+        let mut reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+        assert_eq!(reply, "pool fallback");
+        assert!(persisted_before_fallback.load(std::sync::atomic::Ordering::Acquire));
+
+        let first = first_requests.lock().unwrap();
+        let second = second_requests.lock().unwrap();
+        let fallback = fallback_requests.lock().unwrap();
+        assert_eq!(first.len(), 1);
+        assert_eq!(second.len(), 1);
+        assert_eq!(fallback.len(), 1);
+        assert_eq!(first[0].0["authorization"], "Bearer pool-key-one");
+        assert_eq!(second[0].0["authorization"], "Bearer pool-key-two");
+        assert_eq!(fallback[0].0["authorization"], "Bearer fallback-key");
+        assert_eq!(first[0].1, second[0].1);
+        let primary_body: Value = serde_json::from_slice(&first[0].1).unwrap();
+        let fallback_body: Value = serde_json::from_slice(&fallback[0].1).unwrap();
+        assert_eq!(
+            &primary_body["messages"].as_array().unwrap()[1..],
+            &fallback_body["messages"].as_array().unwrap()[1..]
+        );
+        assert_eq!(fallback_body["model"], "fallback-model");
     }
 }

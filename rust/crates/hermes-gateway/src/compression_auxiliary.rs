@@ -21,10 +21,20 @@ pub(crate) struct BackendIdentity {
     pub provider: String,
     pub model: String,
     pub base_url: String,
+    first_class_provider: bool,
 }
 
 impl BackendIdentity {
     pub fn new(provider: &str, model: &str, base_url: &str) -> Self {
+        Self::new_with_provider_kind(provider, model, base_url, false)
+    }
+
+    pub fn new_with_provider_kind(
+        provider: &str,
+        model: &str,
+        base_url: &str,
+        first_class_provider: bool,
+    ) -> Self {
         Self {
             provider: provider
                 .trim_matches(crate::python_value::python_whitespace)
@@ -36,6 +46,7 @@ impl BackendIdentity {
                 .trim_matches(crate::python_value::python_whitespace)
                 .trim_end_matches('/')
                 .to_lowercase(),
+            first_class_provider,
         }
     }
 }
@@ -65,12 +76,14 @@ pub(crate) fn should_skip_candidate(
             }
         }
         FailureScope::Model => {
-            if candidate.provider != failed.provider
-                || candidate.provider.is_empty()
-                || candidate.model != failed.model
-                || candidate.model.is_empty()
-            {
+            if candidate.model.is_empty() || candidate.model != failed.model {
                 return false;
+            }
+            if candidate.provider != failed.provider || candidate.provider.is_empty() {
+                return !candidate.first_class_provider
+                    && !failed.first_class_provider
+                    && !candidate.base_url.is_empty()
+                    && candidate.base_url == failed.base_url;
             }
             candidate.base_url.is_empty()
                 || failed.base_url.is_empty()
@@ -120,6 +133,9 @@ pub(crate) struct FallbackChainEntry {
     pub timeout: Option<std::time::Duration>,
     pub reasoning_config: Option<Value>,
     pub max_output_tokens: Option<u64>,
+    /// Main-turn provider fallback carries this provider-local replay opt-in.
+    /// Auxiliary compression ignores it because summaries have no replay.
+    pub reasoning_echo: bool,
 }
 
 impl FallbackChainEntry {
@@ -161,6 +177,9 @@ impl FallbackChainEntry {
             .filter(|value| !value.is_null() && value.as_str() != Some(""))
             .and_then(crate::reasoning_effort::parse_value);
         let max_output_tokens = positive_integer(object.get("max_output_tokens"));
+        let reasoning_echo = object
+            .get("reasoning_echo")
+            .is_some_and(crate::python_value::truthy);
 
         Some(Self {
             provider,
@@ -172,6 +191,7 @@ impl FallbackChainEntry {
             timeout,
             reasoning_config,
             max_output_tokens,
+            reasoning_echo,
         })
     }
 
@@ -619,6 +639,79 @@ mod tests {
                     assert_eq!(actual.base_url, expected_base, "{case}");
                 }
             }
+        }
+    }
+
+    #[test]
+    fn main_turn_fallback_parser_matches_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-fallback-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["container_and_chain_parsing"].as_array().unwrap() {
+            let chain = main_fallback_chain(&case["input_config"]);
+            let identities: Vec<_> = chain
+                .iter()
+                .map(|entry| {
+                    json!([
+                        entry.provider.to_lowercase(),
+                        entry.model.as_deref().unwrap_or("").to_lowercase(),
+                        entry
+                            .base_url
+                            .as_deref()
+                            .unwrap_or("")
+                            .trim_end_matches('/')
+                            .to_lowercase(),
+                    ])
+                })
+                .collect();
+            assert_eq!(
+                chain.len(),
+                case["entry_count"].as_u64().unwrap() as usize,
+                "{case}"
+            );
+            assert_eq!(
+                identities,
+                *case["resolved_identities"].as_array().unwrap(),
+                "{case}"
+            );
+        }
+    }
+
+    #[test]
+    fn main_turn_backend_skip_matches_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-fallback-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["chain_traversal_bounds_and_skip_dedup"]
+            .as_array()
+            .unwrap()
+        {
+            let Some(candidate) = case.get("candidate") else {
+                continue;
+            };
+            let failed = &case["failed_target"];
+            let first_class = |provider: &str| matches!(provider, "xai" | "xai-oauth");
+            let candidate_provider = candidate["provider"].as_str().unwrap_or("");
+            let failed_provider = failed["provider"].as_str().unwrap_or("");
+            let candidate = BackendIdentity::new_with_provider_kind(
+                candidate_provider,
+                candidate["model"].as_str().unwrap_or(""),
+                candidate["base_url"].as_str().unwrap_or(""),
+                first_class(candidate_provider),
+            );
+            let failed = BackendIdentity::new_with_provider_kind(
+                failed_provider,
+                failed["model"].as_str().unwrap_or(""),
+                failed["base_url"].as_str().unwrap_or(""),
+                first_class(failed_provider),
+            );
+            assert_eq!(
+                should_skip_candidate(&candidate, &failed, FailureScope::Model),
+                case["should_skip"].as_bool().unwrap(),
+                "{case}"
+            );
         }
     }
 

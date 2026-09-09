@@ -1,7 +1,7 @@
 # Full Rust port progress audit, updated 2026-09-10
 
-Current estimate: **56.95% of the full native replacement**, reported as
-**about 57%**, with a reasonable judgment range of **55% to 60%**. The native
+Current estimate: **57.35% of the full native replacement**, reported as
+**about 57%**, with a reasonable judgment range of **55% to 61%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
 static user deny rules with live last-known-good reload and manual approval on
@@ -13,8 +13,10 @@ auth, payment, and rate failures with durable cooldowns and fresh request
 clients. Canonical Nous device-code discovery and its cross-profile single-use
 OAuth refresh are now native for compression. The main chat-completions route
 also selects and recovers store-backed static API keys across streaming and
-tool rounds without rebuilding its frozen request. The estimate remains
-conservative because other OAuth paths, general provider fallback, non-chat provider transports,
+tool rounds without rebuilding its frozen request. It now traverses frozen
+static chat-completions fallback providers after that pool recovery, with
+tool-round stickiness and reset-aware primary restoration. The estimate remains
+conservative because other OAuth paths, retry-triggered fallback, non-chat provider transports,
 smart approval, PTY and notification
 support, remote execution, most tools, and the underlying plugin and
 external-memory managers are not native.
@@ -35,10 +37,10 @@ audits.
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 76% | 11.40 |
-| Native agent core | 20% | 73% | 14.60 |
-| Total | 100% | | **56.95** |
+| Native agent core | 20% | 75% | 15.00 |
+| Total | 100% | | **57.35** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 73 = 56.95`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 75 = 57.35`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -202,7 +204,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 73%
+### Native agent core, 75%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -322,6 +324,18 @@ that redundant retry. Each replacement gets a fresh HTTP client and its own
 endpoint-specific headers. The shared cursor survives turn clones, while the
 already-built request, system prompt, and tool schema remain stable.
 
+Ordinary main requests now continue into a frozen cross-provider route plan
+after same-provider recovery cannot serve. The modern and legacy configuration
+containers merge and deduplicate in Python order. Static chat-completions
+fallbacks carry isolated endpoints, keys, pools, headers, request policy, and a
+prompt copy whose stable prefix is unchanged. The shared cursor is sticky
+through later tool rounds and local cooldowns. Turn-start restoration also
+honors provider reset timestamps reloaded from the durable primary pool, while
+non-rate chain exhaustion applies the live five-second replay floor. Auth,
+billing, rate-limit, and upstream-rate-limit status paths are live. Transport
+retry, malformed-success, safety, non-chat, OAuth, and dynamic-provider paths
+remain.
+
 Canonical Nous discovery resolves its OAuth material lazily before the first
 auxiliary request. Valid inference JWTs avoid both network and shared-lock
 contention. Refresh-due callers serialize profile, borrowed-root, and shared
@@ -376,7 +390,7 @@ and hook execution never delays or rolls back compression.
 Other OAuth providers, pool-only Nous
 credentials and interactive login, non-chat auxiliary transports, dynamic provider-plugin
 discovery, the general auxiliary client cache, context-engine and
-relay-boundary notifications, overflow recovery, broader provider failover loops,
+relay-boundary notifications, overflow recovery, remaining provider failover triggers,
 delegation/subagents, full
 smart approval and clarification flows, memory and plugin managers, skill execution,
 context invalidation policy, and several agent-loop recovery behaviors remain.
@@ -385,8 +399,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,845 passing Rust tests and two expected ignores
-(1,844 gateway plus one core test).
+The workspace currently has 1,854 passing Rust tests and two expected ignores
+(1,853 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -394,14 +408,16 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,845 passed, two ignored (1,844 gateway plus one core).
+- Full Rust workspace: 1,854 passed, two ignored (1,853 gateway plus one core).
 - Selected Python main-provider classifier, credential-pool, provider-boundary,
-  and runtime-resolution contracts: 256 passed.
+  and runtime-resolution contracts: 256 passed at the preceding pool
+  checkpoint. The focused main-provider fallback and restore suite adds 150
+  passing tests for this checkpoint.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 112 task fallback-chain, 76 top-level
   fallback-chain, 97 built-in discovery, 64 compression credential-recovery,
-  86 main-provider credential-recovery, 87 Nous OAuth, 24
+  86 main-provider credential-recovery, 104 main-provider fallback, 87 Nous OAuth, 24
   structural-backoff, and 60 handoff-layer cases, plus the 233-case terminal and approval corpus, 76
   interactive-approval cases, and 251 exhaustive dangerous-command cases.
 - Rust and Python formatting, Ruff, Clippy with warnings denied, and
@@ -413,8 +429,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Remaining OAuth providers, general provider fallback, remaining discovery
-   transports, overflow recovery, repeated-compression status, and
+1. Remaining OAuth providers, main-provider transport and response fallback
+   triggers, remaining discovery transports, overflow recovery, and
    context-engine adoption complete the current compression cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.

@@ -52,8 +52,15 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   recovery dispatcher across streaming and tool rounds. Durable rotation,
   per-entry endpoints, fresh clients, route-header isolation, usage-limit and
   pre-exhausted 429 behavior, and frozen request bytes are live. OAuth,
-  non-chat transports, and general provider fallback remain open. See
+  non-chat transports, and cross-provider fallback remain open. See
   [native-main-provider-pool-resolution.md](native-main-provider-pool-resolution.md).
+- The ordinary native main path now freezes and traverses top-level
+  `fallback_providers` plus legacy `fallback_model` after same-provider pool
+  recovery is exhausted. Static chat-completions routes preserve prompt bytes,
+  remain sticky across tool rounds, honor local and durable reset gates, and
+  attribute usage to the serving route. Retry-triggered transport failures,
+  non-chat and OAuth routes, and operator notices remain open. See
+  [native-main-provider-fallback-resolution.md](native-main-provider-fallback-resolution.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -131,6 +138,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-main-provider-fallback-resolution.md](native-main-provider-fallback-resolution.md) | Production static chat-completions main fallback, pool-first ordering, sticky route ownership, prompt stability, durable restore gates, review disposition, and explicit transport limits |
+| [main-provider-fallback-contract-agy.md](main-provider-fallback-contract-agy.md) | AGY's independent Python contract and source map, corrected by the primary lane to the live five-second exhaustion floor |
+| [main-provider-fallback-seam-claude.md](main-provider-fallback-seam-claude.md) | Claude's separate Rust ownership and shared-dispatch design for safe pre-body provider switching |
+| [main-provider-fallback-review-claude.md](main-provider-fallback-review-claude.md) | Claude's post-implementation review that found the fixed durable reset gate and non-rate exhaustion floor |
+| [main-provider-fallback-goldens.json](../tools/main-provider-fallback-goldens.json) | Source-executed 104-case parser, credential, trigger, pool, cooldown, identity, request, lifecycle, and scope corpus |
 | [native-main-provider-pool-resolution.md](native-main-provider-pool-resolution.md) | Production main-provider static API-key selection and recovery, shared streaming/tool dispatch, exact-key durability, endpoint/header isolation, helper disposition, and explicit transport limits |
 | [main-provider-pool-contract-agy.md](main-provider-pool-contract-agy.md) | AGY's Python behavior contract, corrected and extended by the primary lane for executable precedence, persistence, cooldown, and raw-classifier evidence |
 | [main-provider-pool-seam-claude.md](main-provider-pool-seam-claude.md) | Claude's independent Rust ownership, concurrency, cancellation, and shared-dispatch seam analysis |
