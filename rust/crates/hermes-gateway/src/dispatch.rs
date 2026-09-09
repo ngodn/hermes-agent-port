@@ -1398,6 +1398,7 @@ mod tests {
             turns: Arc<AtomicUsize>,
             summaries: Arc<AtomicUsize>,
             checkpoints: Arc<AtomicUsize>,
+            boundaries: Arc<Mutex<Vec<(String, String, bool)>>>,
         }
         #[async_trait]
         impl crate::agent::AgentClient for PressureAgent {
@@ -1486,6 +1487,29 @@ mod tests {
                 assert_eq!(memory_context, Some("provider checkpoint facts"));
                 Ok(Some("## Goal\nContinue the active task.".into()))
             }
+
+            async fn notify_compression_boundary(
+                &self,
+                context: crate::agent::TurnContext<'_>,
+                old_session_id: &str,
+                new_session_id: &str,
+                in_place: bool,
+            ) -> Result<()> {
+                assert!(
+                    context
+                        .database
+                        .expect("compression database")
+                        .has_compression_checkpoint(new_session_id)
+                        .unwrap(),
+                    "notification must follow durable publication"
+                );
+                self.boundaries.lock().unwrap().push((
+                    old_session_id.to_owned(),
+                    new_session_id.to_owned(),
+                    in_place,
+                ));
+                Ok(())
+            }
         }
 
         let home = std::env::temp_dir().join(format!(
@@ -1512,10 +1536,12 @@ mod tests {
         let turns = Arc::new(AtomicUsize::new(0));
         let summaries = Arc::new(AtomicUsize::new(0));
         let checkpoints = Arc::new(AtomicUsize::new(0));
+        let boundaries = Arc::new(Mutex::new(Vec::new()));
         let agent = Arc::new(PressureAgent {
             turns: turns.clone(),
             summaries: summaries.clone(),
             checkpoints: checkpoints.clone(),
+            boundaries: boundaries.clone(),
         });
         let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(
             home.join("dead.json"),
@@ -1550,6 +1576,10 @@ mod tests {
         assert_eq!(turns.load(Ordering::SeqCst), 5);
         assert_eq!(summaries.load(Ordering::SeqCst), 1);
         assert_eq!(checkpoints.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            *boundaries.lock().unwrap(),
+            [(parent.clone(), child.clone(), false)]
+        );
         let db = store
             .database_for_key(&store.session_key_for_source(&source))
             .unwrap();

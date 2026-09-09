@@ -2660,6 +2660,92 @@ mod tests {
             )
             .unwrap(),
         );
+        let plugin = home.0.join("plugins/boundary-fixture");
+        std::fs::create_dir_all(&plugin).unwrap();
+        std::fs::write(
+            home.0.join("config.yaml"),
+            "plugins:\n  enabled: [boundary-fixture]\nmemory:\n  provider: boundary-fixture\n",
+        )
+        .unwrap();
+        std::fs::write(
+            plugin.join("plugin.yaml"),
+            "name: boundary-fixture\nversion: 1.0.0\nkind: exclusive\n",
+        )
+        .unwrap();
+        std::fs::write(
+            plugin.join("__init__.py"),
+            r#"import json
+from pathlib import Path
+from agent.memory_provider import MemoryProvider
+
+class BoundaryProvider(MemoryProvider):
+    name = "boundary-fixture"
+    def is_available(self): return True
+    def initialize(self, session_id, **kwargs):
+        self.session_id = session_id
+        self.home = kwargs["hermes_home"]
+    def get_tool_schemas(self): return []
+    def on_session_switch(self, new_session_id, *, parent_session_id="", reset=False, **kwargs):
+        event = {
+            "old_session_id": self.session_id,
+            "new_session_id": new_session_id,
+            "parent_session_id": parent_session_id,
+            "reset": reset,
+            "extra": kwargs,
+        }
+        with Path(self.home, "compression-boundary.jsonl").open("a") as stream:
+            stream.write(json.dumps(event, sort_keys=True) + "\n")
+        self.session_id = new_session_id
+
+def register(ctx):
+    ctx.register_memory_provider(BoundaryProvider())
+"#,
+        )
+        .unwrap();
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "same-turn-full-compression")
+        };
+        let session_id = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap()
+            .session_id;
+        let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../..")
+            .canonicalize()
+            .unwrap();
+        let python = repo.join(".venv/bin/python");
+        let (extension, initialized) = crate::extension_host::Client::spawn(
+            python.to_str().unwrap(),
+            &repo,
+            &home.0,
+            crate::extension_host::InitializeParams {
+                home: home.0.to_string_lossy().into_owned(),
+                session_id: session_id.clone(),
+                model: "fixture-model".into(),
+                provider: "fixture-provider".into(),
+                platform: "cli".into(),
+                profile_name: "default".into(),
+                cwd: home.0.to_string_lossy().into_owned(),
+                session_title: None,
+                user_id: Some("local".into()),
+                user_id_alt: None,
+                user_name: None,
+                chat_id: Some("same-turn-full-compression".into()),
+                chat_name: None,
+                chat_type: Some("dm".into()),
+                thread_id: None,
+                gateway_session_key: Some("local:same-turn-full-compression".into()),
+                native_tool_names: vec!["terminal".into()],
+                profile_secrets: Some(Default::default()),
+            },
+        )
+        .await
+        .unwrap();
+        assert_eq!(
+            initialized.active_memory_provider.as_deref(),
+            Some("boundary-fixture")
+        );
         let config = json!({"compression": {
             "enabled": true,
             "threshold_tokens": 40_000,
@@ -2674,7 +2760,8 @@ mod tests {
             .with_system_prompt("FROZEN_SYSTEM_PROMPT_BYTES")
             .with_tools(vec![Arc::new(BuildProbe)])
             .with_context_length(100_000)
-            .with_automatic_compression_policy(policy);
+            .with_automatic_compression_policy(policy)
+            .with_extension_host(Some(extension));
         let mut state = AppState::new(Arc::new(agent), Arc::new(config), None, Some(db.clone()));
         state.session_store = Some((store.clone(), 3600.0));
         let (gateway_url, _gateway_server) = serve(
@@ -2696,11 +2783,10 @@ mod tests {
         };
         assert_eq!(send("seed").await.unwrap().status(), StatusCode::OK);
 
-        let source = crate::session::SessionSource {
-            user_id: Some("local".into()),
-            ..crate::session::SessionSource::new("local", "same-turn-full-compression")
-        };
-        let session_id = store.current_entry_for_source(&source).unwrap().session_id;
+        assert_eq!(
+            store.current_entry_for_source(&source).unwrap().session_id,
+            session_id
+        );
         for index in 0..10 {
             let marker = if index == 0 {
                 "EARLYCOMPRESSDETAIL "
@@ -2754,6 +2840,21 @@ mod tests {
                 .filter(|hit| hit.session_id == session_id)
                 .count(),
             1
+        );
+        let boundaries = std::fs::read_to_string(home.0.join("compression-boundary.jsonl"))
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str::<Value>(line).unwrap())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            boundaries,
+            [json!({
+                "old_session_id": session_id,
+                "new_session_id": session_id,
+                "parent_session_id": session_id,
+                "reset": false,
+                "extra": {"reason": "compression"}
+            })]
         );
     }
 

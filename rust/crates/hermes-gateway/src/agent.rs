@@ -164,6 +164,21 @@ pub trait AgentClient: Send + Sync {
             .await
     }
 
+    /// Notify conversation-scoped extensions after a full-compression
+    /// publication commits. Rotation changes the physical session id while
+    /// preserving the logical conversation; in-place publication reports the
+    /// same id on both sides. Observer failures must never undo the commit.
+    async fn notify_compression_boundary(
+        &self,
+        context: TurnContext<'_>,
+        old_session_id: &str,
+        new_session_id: &str,
+        in_place: bool,
+    ) -> Result<()> {
+        let _ = (context, old_session_id, new_session_id, in_place);
+        Ok(())
+    }
+
     /// Measure the provider-visible request before any provider I/O. Native
     /// clients include the frozen system prompt, history, inbound content and
     /// frozen tool schemas. `None` keeps bridge backends on their existing
@@ -239,8 +254,8 @@ pub trait AgentClient: Send + Sync {
     }
 
     /// Evict conversation-local provider state without declaring a true
-    /// session end. Compression uses this after publishing its replacement
-    /// transcript so the next turn rebuilds the allowed prompt-cache prefix.
+    /// session end. Callers use this for non-boundary invalidation; successful
+    /// compression rotation transfers a byte-stable client instead.
     fn release_conversation(&self, context: TurnContext<'_>, session_id: &str) -> bool {
         let _ = (context, session_id);
         false

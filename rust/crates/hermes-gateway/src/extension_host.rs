@@ -27,6 +27,10 @@ const MODULE: &str = "hermes_cli.rust_extension_host";
 const INITIALIZE_TIMEOUT: Duration = Duration::from_secs(60);
 const SNAPSHOT_TIMEOUT: Duration = Duration::from_secs(30);
 const TURN_START_TIMEOUT: Duration = Duration::from_secs(30);
+// Conversation rebinding only re-points observers/providers at a new session
+// id; it never calls the model, so a short bound is enough while still leaving
+// room for a provider that touches memory state on rebind.
+const SESSION_SWITCH_TIMEOUT: Duration = Duration::from_secs(15);
 const PRE_COMPRESS_TIMEOUT: Duration = Duration::from_secs(310);
 pub const PRE_COMPRESS_CHECKPOINT_API_VERSION: u32 = 2;
 const TURN_COMPLETE_TIMEOUT: Duration = Duration::from_secs(5);
@@ -327,6 +331,42 @@ impl Client {
             .await?;
         serde_json::from_value(value)
             .map_err(|error| Error::Other(format!("extension host pre_compress decode: {error}")))
+    }
+
+    /// Rebind the extension host's observers and providers to a new session id
+    /// within the same conversation. `reset` marks a genuinely new logical
+    /// conversation, while compression rotation and in-place compression keep
+    /// it false. `rewound` marks a rewind to an earlier point. The
+    /// Python endpoint returns JSON null on success and reports malformed input
+    /// as a protocol error, so only a null result is accepted here.
+    pub async fn session_switch(
+        &self,
+        new_session_id: &str,
+        parent_session_id: &str,
+        reset: bool,
+        rewound: bool,
+        reason: &str,
+    ) -> Result<()> {
+        let value = self
+            .request(
+                "session_switch",
+                json!({
+                    "new_session_id": new_session_id,
+                    "parent_session_id": parent_session_id,
+                    "reset": reset,
+                    "rewound": rewound,
+                    "reason": reason,
+                }),
+                SESSION_SWITCH_TIMEOUT,
+            )
+            .await?;
+        if value.is_null() {
+            Ok(())
+        } else {
+            Err(Error::Other(
+                "extension host session_switch returned a non-null result".into(),
+            ))
+        }
     }
 
     pub async fn turn_complete(
@@ -898,6 +938,106 @@ mod tests {
             assert!(error.to_string().contains("pre_compress decode"));
             worker.await.unwrap();
         }
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn session_switch_sends_exact_request_for_compression_rotation() {
+        let (client, mut receiver) = capture_client();
+        let worker = tokio::spawn(async move {
+            let command = receiver.recv().await.unwrap();
+            command.response.send(Ok(Value::Null)).unwrap();
+            command.request
+        });
+
+        client
+            .session_switch("session-two", "session-one", false, false, "compression")
+            .await
+            .unwrap();
+
+        let request = worker.await.unwrap();
+        assert_eq!(request["method"], "session_switch");
+        assert_eq!(
+            request["params"],
+            json!({
+                "new_session_id": "session-two",
+                "parent_session_id": "session-one",
+                "reset": false,
+                "rewound": false,
+                "reason": "compression",
+            })
+        );
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn session_switch_sends_exact_request_for_same_id_in_place_rebind() {
+        let (client, mut receiver) = capture_client();
+        let worker = tokio::spawn(async move {
+            let command = receiver.recv().await.unwrap();
+            command.response.send(Ok(Value::Null)).unwrap();
+            command.request
+        });
+
+        client
+            .session_switch("session-one", "session-one", false, false, "compression")
+            .await
+            .unwrap();
+
+        let request = worker.await.unwrap();
+        assert_eq!(request["method"], "session_switch");
+        assert_eq!(
+            request["params"],
+            json!({
+                "new_session_id": "session-one",
+                "parent_session_id": "session-one",
+                "reset": false,
+                "rewound": false,
+                "reason": "compression",
+            })
+        );
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn session_switch_propagates_remote_failure() {
+        let (client, mut receiver) = capture_client();
+        let worker = tokio::spawn(async move {
+            let command = receiver.recv().await.unwrap();
+            command
+                .response
+                .send(Err(Error::Other(
+                    "session_switch requires a nonempty new_session_id".into(),
+                )))
+                .unwrap();
+        });
+
+        let error = client
+            .session_switch("", "session-one", true, false, "compression")
+            .await
+            .unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("session_switch requires a nonempty new_session_id"));
+        worker.await.unwrap();
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn session_switch_rejects_non_null_result() {
+        let (client, mut receiver) = capture_client();
+        let worker = tokio::spawn(async move {
+            let command = receiver.recv().await.unwrap();
+            command
+                .response
+                .send(Ok(json!({"switched": true})))
+                .unwrap();
+        });
+
+        let error = client
+            .session_switch("session-two", "session-one", true, true, "rewound")
+            .await
+            .unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("session_switch returned a non-null result"));
+        worker.await.unwrap();
     }
 
     #[tokio::test(flavor = "current_thread")]

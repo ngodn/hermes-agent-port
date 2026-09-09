@@ -1,5 +1,42 @@
 # Hermes Rust rewrite
 
+## Native compression-boundary rebinding: 2026-09-09
+
+Every committed native full-compression path now notifies the real Python
+`MemoryManager` through the persistent extension host. Rotation sends the
+published child ID and archived parent ID. In-place publication sends the same
+ID on both sides. Both use `reset=false`, omit a false `rewound` value from
+provider kwargs, and report `reason="compression"` exactly like Python.
+
+Notification happens after the SQLite commit and never rolls it back. The
+bounded conversation cache pins the initialized client while the callback is
+in flight, then atomically rekeys that exact frozen client to a rotating child.
+Transport failure or an occupied target releases the stale parent. A pending
+hard retirement follows a successful rekey and finalizes the child identity
+once. This preserves the immutable prompt, tool/plugin snapshot, provider
+route, and extension process across physical compression segments.
+
+A live HTTP, SQLite, Python-child, and temporary memory-provider test proves
+the same-turn callback and exact provider arguments. Manual and automatic
+rotation tests independently read the committed checkpoint inside the observer.
+Focused cache tests cover success, in-place retention, failure, target safety,
+and the retirement race.
+
+AGY ran once behind its auth lock and owned only the Python host endpoint and
+tests. Claude owned only the Rust protocol client. The primary lane owned cache
+transfer, caller integration, race handling, live proof, review, and validation.
+See
+[native-compression-boundary-rebind-resolution.md](analysis/native-compression-boundary-rebind-resolution.md).
+
+Validation is **1,713 Rust tests passed, two ignored**, plus **110 selected
+Python tests passed**. Formatting, Ruff lint, Clippy with warnings denied, and
+diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **49.75
+points, reported as about 50%** (judgment range 48% to 52%). Context-engine,
+relay, and generic compression-event notifications, transparent extension-host
+recovery, same-turn rotation, overflow recovery, and native plugin and memory
+managers remain.
+
 ## Native pre-compression memory checkpoint: 2026-09-09
 
 Native manual, automatic pre-turn, and same-turn full compression now call the

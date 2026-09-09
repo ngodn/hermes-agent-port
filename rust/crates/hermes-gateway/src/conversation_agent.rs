@@ -128,6 +128,92 @@ impl ConversationAgent {
         cell.get().cloned()
     }
 
+    /// Pin an already-built conversation client across an observer call. A
+    /// compression notification must not race TTL, pressure, or explicit
+    /// retirement after its durable publication has committed.
+    fn checkout_initialized_session(
+        &self,
+        home: &Path,
+        session_id: &str,
+    ) -> Option<(CacheKey, Arc<ClientCell>, Arc<dyn AgentClient>)> {
+        let _gate = self.retirement_gate.lock().unwrap();
+        let mut state = self.state.lock().unwrap();
+        if state.shutting_down {
+            return None;
+        }
+        state.recency = state.recency.wrapping_add(1);
+        let recency = state.recency;
+        let key = (home.to_owned(), session_id.to_owned());
+        let entry = state
+            .entries
+            .get_mut(&key)
+            .filter(|entry| entry.retirement.is_none())?;
+        let client = entry.cell.get()?.clone();
+        entry.last_used = Instant::now();
+        entry.recency = recency;
+        entry.pending_turns = entry.pending_turns.saturating_add(1);
+        Some((key, entry.cell.clone(), client))
+    }
+
+    /// Finish a compression-boundary observer and, on a successful physical
+    /// rotation, atomically transfer the frozen client to the child session
+    /// key. A transport/protocol failure retires the stale host so the child
+    /// can rebuild cleanly on its next turn.
+    fn finish_compression_boundary(
+        &self,
+        old_key: CacheKey,
+        new_key: CacheKey,
+        cell: &Arc<ClientCell>,
+        notification_succeeded: bool,
+    ) {
+        let _gate = self.retirement_gate.lock().unwrap();
+        let retired = {
+            let mut state = self.state.lock().unwrap();
+            let Some(current) = state
+                .entries
+                .get(&old_key)
+                .filter(|entry| Arc::ptr_eq(&entry.cell, cell))
+            else {
+                self.changed.notify_one();
+                return;
+            };
+            let existing_retirement = current.retirement;
+            let mut entry = state.entries.remove(&old_key).unwrap();
+            entry.pending_turns = entry.pending_turns.saturating_sub(1);
+            entry.last_used = Instant::now();
+
+            let target_occupied = old_key != new_key && state.entries.contains_key(&new_key);
+            if !notification_succeeded || target_occupied {
+                let kind = RetirementKind::Release;
+                entry.retirement = Some(kind);
+                if entry.pending_turns == 0 {
+                    Some(Self::retired(old_key, entry, kind))
+                } else {
+                    state.entries.insert(old_key, entry);
+                    None
+                }
+            } else if let Some(kind) = existing_retirement {
+                entry.retirement = Some(kind);
+                if entry.pending_turns == 0 {
+                    // The host already observes the child identity. A pending
+                    // hard retirement must therefore finalize the child
+                    // transcript, not the archived compression parent.
+                    Some(Self::retired(new_key, entry, kind))
+                } else {
+                    state.entries.insert(new_key, entry);
+                    None
+                }
+            } else {
+                state.entries.insert(new_key, entry);
+                None
+            }
+        };
+        self.changed.notify_one();
+        if let Some(retired) = retired {
+            self.schedule_retirements(vec![retired]);
+        }
+    }
+
     fn checkout(
         &self,
         key: &CacheKey,
@@ -799,6 +885,35 @@ impl AgentClient for ConversationAgent {
         result
     }
 
+    async fn notify_compression_boundary(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        old_session_id: &str,
+        new_session_id: &str,
+        in_place: bool,
+    ) -> Result<()> {
+        let Some(home) = context.home else {
+            return self
+                .fallback
+                .notify_compression_boundary(context, old_session_id, new_session_id, in_place)
+                .await;
+        };
+        let Some((old_key, cell, client)) = self.checkout_initialized_session(home, old_session_id)
+        else {
+            return Ok(());
+        };
+        let result = client
+            .notify_compression_boundary(context, old_session_id, new_session_id, in_place)
+            .await;
+        self.finish_compression_boundary(
+            old_key,
+            (home.to_owned(), new_session_id.to_owned()),
+            &cell,
+            result.is_ok(),
+        );
+        result
+    }
+
     async fn compression_preflight(
         &self,
         context: crate::agent::TurnContext<'_>,
@@ -1004,6 +1119,20 @@ mod tests {
                 self.label
             ));
             Ok(Some("summary".into()))
+        }
+
+        async fn notify_compression_boundary(
+            &self,
+            _context: crate::agent::TurnContext<'_>,
+            old_session_id: &str,
+            new_session_id: &str,
+            in_place: bool,
+        ) -> Result<()> {
+            self.calls.lock().unwrap().push(format!(
+                "boundary:{old_session_id}:{new_session_id}:{in_place}:{}",
+                self.label
+            ));
+            Ok(())
         }
 
         async fn compression_preflight(
@@ -1219,6 +1348,280 @@ mod tests {
             ["red:0", "red:0", "blue:1", "red:2", "red:0", "fallback"]
         );
         assert_eq!(builds.load(Ordering::SeqCst), 3);
+    }
+
+    #[tokio::test]
+    async fn compression_boundary_rekeys_the_frozen_client_after_notification() {
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        let closes = Arc::new(Mutex::new(Vec::new()));
+        let builds = Arc::new(AtomicUsize::new(0));
+        let agent = ConversationAgent::new(
+            Arc::new(RecordedAgent {
+                label: "fallback".into(),
+                calls: calls.clone(),
+                closes: closes.clone(),
+            }),
+            recorded_factory(calls.clone(), closes.clone(), builds.clone()),
+            AgentCacheBounds::default(),
+        );
+        let home = Path::new("rotation-home");
+        turn(&agent, home, &message("parent")).await.unwrap();
+
+        agent
+            .notify_compression_boundary(context(home), "parent", "child", false)
+            .await
+            .unwrap();
+
+        assert!(!agent.contains(home, "parent"));
+        assert!(agent.contains(home, "child"));
+        turn(&agent, home, &message("child")).await.unwrap();
+        assert_eq!(builds.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            *calls.lock().unwrap(),
+            [
+                "rotation-home:0",
+                "boundary:parent:child:false:rotation-home:0",
+                "rotation-home:0"
+            ]
+        );
+        assert!(closes.lock().unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn in_place_boundary_keeps_the_existing_cache_key() {
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        let closes = Arc::new(Mutex::new(Vec::new()));
+        let builds = Arc::new(AtomicUsize::new(0));
+        let agent = ConversationAgent::new(
+            Arc::new(RecordedAgent {
+                label: "fallback".into(),
+                calls: calls.clone(),
+                closes: closes.clone(),
+            }),
+            recorded_factory(calls.clone(), closes.clone(), builds.clone()),
+            AgentCacheBounds::default(),
+        );
+        let home = Path::new("in-place-home");
+        turn(&agent, home, &message("same")).await.unwrap();
+
+        agent
+            .notify_compression_boundary(context(home), "same", "same", true)
+            .await
+            .unwrap();
+
+        assert!(agent.contains(home, "same"));
+        assert_eq!(builds.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            *calls.lock().unwrap(),
+            ["in-place-home:0", "boundary:same:same:true:in-place-home:0"]
+        );
+        assert!(closes.lock().unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn failed_boundary_retires_the_stale_client_without_rekeying() {
+        struct FailingBoundaryAgent {
+            closes: Arc<Mutex<Vec<bool>>>,
+        }
+
+        #[async_trait]
+        impl AgentClient for FailingBoundaryAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                _: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                Ok(())
+            }
+
+            async fn notify_compression_boundary(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &str,
+                _: &str,
+                _: bool,
+            ) -> Result<()> {
+                Err(Error::Other("extension host transport failed".into()))
+            }
+
+            async fn close_conversation(
+                &self,
+                messages: Option<&[serde_json::Value]>,
+            ) -> Result<()> {
+                self.closes.lock().unwrap().push(messages.is_some());
+                Ok(())
+            }
+        }
+
+        let closes = Arc::new(Mutex::new(Vec::new()));
+        let fallback = Arc::new(FailingBoundaryAgent {
+            closes: Arc::new(Mutex::new(Vec::new())),
+        });
+        let factory_closes = closes.clone();
+        let agent = ConversationAgent::new(
+            fallback,
+            move |_, _, _, _| {
+                let closes = factory_closes.clone();
+                Box::pin(async move {
+                    Ok(Arc::new(FailingBoundaryAgent { closes }) as Arc<dyn AgentClient>)
+                })
+            },
+            AgentCacheBounds::default(),
+        );
+        let home = Path::new("failed-boundary-home");
+        turn(&agent, home, &message("parent")).await.unwrap();
+
+        let error = agent
+            .notify_compression_boundary(context(home), "parent", "child", false)
+            .await
+            .unwrap_err();
+        assert!(error.to_string().contains("transport failed"));
+        tokio::task::yield_now().await;
+
+        assert!(!agent.contains(home, "parent"));
+        assert!(!agent.contains(home, "child"));
+        assert_eq!(*closes.lock().unwrap(), [false]);
+    }
+
+    #[tokio::test]
+    async fn occupied_child_key_wins_over_a_boundary_rekey() {
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        let closes = Arc::new(Mutex::new(Vec::new()));
+        let builds = Arc::new(AtomicUsize::new(0));
+        let agent = ConversationAgent::new(
+            Arc::new(RecordedAgent {
+                label: "fallback".into(),
+                calls: calls.clone(),
+                closes: closes.clone(),
+            }),
+            recorded_factory(calls.clone(), closes.clone(), builds.clone()),
+            AgentCacheBounds::default(),
+        );
+        let home = Path::new("occupied-child-home");
+        turn(&agent, home, &message("parent")).await.unwrap();
+        turn(&agent, home, &message("child")).await.unwrap();
+
+        agent
+            .notify_compression_boundary(context(home), "parent", "child", false)
+            .await
+            .unwrap();
+        tokio::task::yield_now().await;
+
+        assert!(!agent.contains(home, "parent"));
+        assert!(agent.contains(home, "child"));
+        turn(&agent, home, &message("child")).await.unwrap();
+        assert_eq!(builds.load(Ordering::SeqCst), 2);
+        assert_eq!(*closes.lock().unwrap(), [false]);
+        assert_eq!(
+            *calls.lock().unwrap(),
+            [
+                "occupied-child-home:0",
+                "occupied-child-home:1",
+                "boundary:parent:child:false:occupied-child-home:0",
+                "occupied-child-home:1"
+            ]
+        );
+    }
+
+    #[tokio::test]
+    async fn pending_hard_retirement_follows_a_successful_boundary_rekey() {
+        struct BlockingBoundaryAgent {
+            entered: Arc<Notify>,
+            release: Arc<Notify>,
+            closed: Arc<Notify>,
+            closes: Arc<Mutex<Vec<bool>>>,
+        }
+
+        #[async_trait]
+        impl AgentClient for BlockingBoundaryAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                _: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                Ok(())
+            }
+
+            async fn notify_compression_boundary(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &str,
+                _: &str,
+                _: bool,
+            ) -> Result<()> {
+                self.entered.notify_one();
+                self.release.notified().await;
+                Ok(())
+            }
+
+            async fn close_conversation(
+                &self,
+                messages: Option<&[serde_json::Value]>,
+            ) -> Result<()> {
+                self.closes.lock().unwrap().push(messages.is_some());
+                self.closed.notify_one();
+                Ok(())
+            }
+        }
+
+        let entered = Arc::new(Notify::new());
+        let release = Arc::new(Notify::new());
+        let closed = Arc::new(Notify::new());
+        let closes = Arc::new(Mutex::new(Vec::new()));
+        let factory_entered = entered.clone();
+        let factory_release = release.clone();
+        let factory_closed = closed.clone();
+        let factory_closes = closes.clone();
+        let agent = Arc::new(ConversationAgent::new(
+            Arc::new(RecordedAgent {
+                label: "fallback".into(),
+                calls: Arc::new(Mutex::new(Vec::new())),
+                closes: Arc::new(Mutex::new(Vec::new())),
+            }),
+            move |_, _, _, _| {
+                let entered = factory_entered.clone();
+                let release = factory_release.clone();
+                let closed = factory_closed.clone();
+                let closes = factory_closes.clone();
+                Box::pin(async move {
+                    Ok(Arc::new(BlockingBoundaryAgent {
+                        entered,
+                        release,
+                        closed,
+                        closes,
+                    }) as Arc<dyn AgentClient>)
+                })
+            },
+            AgentCacheBounds::default(),
+        ));
+        let home = Path::new("retired-boundary-home");
+        turn(&agent, home, &message("parent")).await.unwrap();
+
+        let notifying_agent = agent.clone();
+        let notification = tokio::spawn(async move {
+            notifying_agent
+                .notify_compression_boundary(
+                    context(Path::new("retired-boundary-home")),
+                    "parent",
+                    "child",
+                    false,
+                )
+                .await
+        });
+        entered.notified().await;
+
+        assert_eq!(agent.pending(home, "parent"), Some(1));
+        assert!(agent.retire_session(home, "parent"));
+        assert!(agent.contains(home, "parent"));
+        release.notify_one();
+        notification.await.unwrap().unwrap();
+        closed.notified().await;
+
+        assert!(!agent.contains(home, "parent"));
+        assert!(!agent.contains(home, "child"));
+        assert_eq!(*closes.lock().unwrap(), [true]);
     }
 
     #[tokio::test]

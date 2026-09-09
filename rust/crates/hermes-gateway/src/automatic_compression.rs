@@ -1116,6 +1116,13 @@ pub async fn compress_before_turn(
             if !committed {
                 return Ok(attempts);
             }
+            if let Err(error) = agent
+                .notify_compression_boundary(context, &session_id, &session_id, true)
+                .await
+            {
+                let error = crate::compression_redact::redact(&error.to_string());
+                tracing::warn!(%error, %session_id, "in-place automatic compression boundary notification failed after commit");
+            }
         } else {
             let Some(published) = deps.store.publish_compression(
                 source,
@@ -1139,7 +1146,18 @@ pub async fn compress_before_turn(
                     );
                 }
             }
-            agent.release_conversation(context, &session_id);
+            if let Err(error) = agent
+                .notify_compression_boundary(
+                    context,
+                    &session_id,
+                    &published.entry.session_id,
+                    false,
+                )
+                .await
+            {
+                let error = crate::compression_redact::redact(&error.to_string());
+                tracing::warn!(%error, old_session = %session_id, new_session = %published.entry.session_id, "rotating automatic compression boundary notification failed after commit");
+            }
             admitted.entry = published.entry;
             admitted.finalizable = deps.store.is_session_finalizable(&admitted.entry);
             message.resolved_session_id = Some(admitted.entry.session_id.clone());

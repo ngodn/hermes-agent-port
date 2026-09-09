@@ -1,9 +1,9 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **49.55% of the full native replacement**, reported as
+Current estimate: **49.75% of the full native replacement**, reported as
 **about 50%**, with a reasonable judgment range of **48% to 52%**. This
-supersedes the 48.85-point estimate recorded after handoff framing and tail
-anchors.
+supersedes the 49.55-point estimate recorded after the external-memory
+pre-compression checkpoint.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -21,10 +21,10 @@ audits.
 | Gateway | 35% | 64% | 22.40 |
 | Tool runtime and RPC | 30% | 14% | 4.20 |
 | State and search | 15% | 73% | 10.95 |
-| Native agent core | 20% | 60% | 12.00 |
-| Total | 100% | | **49.55** |
+| Native agent core | 20% | 61% | 12.20 |
+| Total | 100% | | **49.75** |
 
-`0.35 * 64 + 0.30 * 14 + 0.15 * 73 + 0.20 * 60 = 49.55`
+`0.35 * 64 + 0.30 * 14 + 0.15 * 73 + 0.20 * 61 = 49.75`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -117,7 +117,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 60%
+### Native agent core, 61%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -205,19 +205,28 @@ preserves the compressed-summary marker so resumed derivative context is never
 misclassified as direct evidence. Preflight, checkpoint, summary, and ordinary
 turns reuse the same frozen per-conversation client.
 
+After a full-compression publication commits, every live native path now
+notifies the real Python `MemoryManager` of the boundary. Rotation rekeys the
+same initialized client from parent to child instead of rebuilding its frozen
+prompt and extension process. In-place publication notifies with the same ID.
+Protocol failure cannot roll back SQLite and retires the stale host so the next
+child turn can recover cleanly. Cache tests cover target contention and a hard
+retirement racing the asynchronous observer, while a live Python-child test
+proves the exact provider callback.
+
 Mid-turn rotation, configurable multi-provider auxiliary fallback chains,
-non-chat auxiliary transports, extension notifications, overflow recovery,
-provider failover and credential retry loops, delegation/subagents, full
+non-chat auxiliary transports, context-engine and generic compression-event
+notifications, transparent extension-host recovery, overflow recovery, provider
+failover and credential retry loops, delegation/subagents, full
 approval/clarification flows, memory and plugin managers, skill execution,
-context invalidation
-policy, and several agent-loop recovery behaviors remain. These are large
-behavioral systems, which is why the core score remains low despite broad
-helper and oracle coverage.
+context invalidation policy, and several agent-loop recovery behaviors remain.
+These are large behavioral systems, which is why the core score remains low
+despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,704 passing Rust tests and two expected ignores
-(1,703 gateway plus one core test).
+The workspace currently has 1,713 passing Rust tests and two expected ignores
+(1,712 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -225,8 +234,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,704 passed, two ignored (1,703 gateway plus one core).
-- Selected Python checkpoint, memory-context, and extension-hook contracts: 78
+- Full Rust workspace: 1,713 passed, two ignored (1,712 gateway plus one core).
+- Selected Python checkpoint, session-switch, memory-context, and
+  extension-hook contracts: 110
   passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and

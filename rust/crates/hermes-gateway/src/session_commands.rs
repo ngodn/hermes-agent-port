@@ -362,6 +362,13 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                             reply: "⚠️ The conversation changed while its summary was being prepared, so this compression result was not applied. Inspect the current session and retry if it still needs compression.".into(),
                         });
                     }
+                    if let Err(error) = agent
+                        .notify_compression_boundary(context, &session_id, &session_id, true)
+                        .await
+                    {
+                        let error = crate::compression_redact::redact(&error.to_string());
+                        tracing::warn!(%error, session = %session_id, "in-place compression boundary notification failed after commit");
+                    }
                     let tail_count = history.len().saturating_sub(head_end);
                     let mut lines = vec![format!(
                         "🗜️ Conversation compressed in place: {head_end} message(s) summarized into a durable checkpoint."
@@ -415,7 +422,18 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                         );
                     }
                 }
-                agent.release_conversation(context, &session_id);
+                if let Err(error) = agent
+                    .notify_compression_boundary(
+                        context,
+                        &session_id,
+                        &published.entry.session_id,
+                        false,
+                    )
+                    .await
+                {
+                    let error = crate::compression_redact::redact(&error.to_string());
+                    tracing::warn!(%error, old_session = %session_id, new_session = %published.entry.session_id, "rotating compression boundary notification failed after commit");
+                }
                 let tail_count = history.len().saturating_sub(head_end);
                 let mut lines = vec![format!(
                     "🗜️ Conversation compressed: {head_end} message(s) summarized into a durable checkpoint."
@@ -1332,6 +1350,8 @@ mod tests {
         summaries: std::sync::atomic::AtomicUsize,
         checkpoints: std::sync::atomic::AtomicUsize,
         memory_contexts: std::sync::Mutex<Vec<Option<String>>>,
+        boundaries: std::sync::Mutex<Vec<(String, String, bool)>>,
+        fail_boundary: bool,
         releases: std::sync::atomic::AtomicUsize,
         structural_backoff: std::sync::atomic::AtomicBool,
     }
@@ -1397,6 +1417,32 @@ mod tests {
                 .unwrap()
                 .push(memory_context.map(str::to_owned));
             Ok(Some("## Goal\nPreserve the completed work.".into()))
+        }
+
+        async fn notify_compression_boundary(
+            &self,
+            context: crate::agent::TurnContext<'_>,
+            old_session_id: &str,
+            new_session_id: &str,
+            in_place: bool,
+        ) -> hermes_core::Result<()> {
+            let database = context.database.expect("compression database");
+            assert!(
+                database.has_compression_checkpoint(new_session_id).unwrap(),
+                "boundary observer must run after durable publication"
+            );
+            self.boundaries.lock().unwrap().push((
+                old_session_id.to_owned(),
+                new_session_id.to_owned(),
+                in_place,
+            ));
+            if self.fail_boundary {
+                Err(hermes_core::Error::Other(
+                    "synthetic boundary observer failure".into(),
+                ))
+            } else {
+                Ok(())
+            }
         }
 
         fn compression_structural_backoff_remaining(
@@ -1814,7 +1860,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn compression_summarizes_then_atomically_rotates_and_releases_the_old_client() {
+    async fn compression_rotation_survives_post_commit_notification_failure() {
         let home = temp_home("compress-live");
         let store = Arc::new(
             crate::session_store::SessionStore::open(
@@ -1857,6 +1903,8 @@ mod tests {
             summaries: std::sync::atomic::AtomicUsize::new(0),
             checkpoints: std::sync::atomic::AtomicUsize::new(0),
             memory_contexts: std::sync::Mutex::new(Vec::new()),
+            boundaries: std::sync::Mutex::new(Vec::new()),
+            fail_boundary: true,
             releases: std::sync::atomic::AtomicUsize::new(0),
             structural_backoff: std::sync::atomic::AtomicBool::new(true),
         });
@@ -1890,12 +1938,16 @@ mod tests {
             *agent.memory_contexts.lock().unwrap(),
             vec![Some("durable memory checkpoint".into())]
         );
-        assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 1);
+        assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 0);
         assert!(!agent
             .structural_backoff
             .load(std::sync::atomic::Ordering::SeqCst));
         let current = store.current_entry_for_source(&source).unwrap();
         assert_ne!(current.session_id, entry.session_id);
+        assert_eq!(
+            *agent.boundaries.lock().unwrap(),
+            vec![(entry.session_id.clone(), current.session_id.clone(), false)]
+        );
         assert_eq!(
             database.get_session(&entry.session_id).unwrap().unwrap()["end_reason"],
             "compression"
@@ -1959,6 +2011,8 @@ mod tests {
             summaries: std::sync::atomic::AtomicUsize::new(0),
             checkpoints: std::sync::atomic::AtomicUsize::new(0),
             memory_contexts: std::sync::Mutex::new(Vec::new()),
+            boundaries: std::sync::Mutex::new(Vec::new()),
+            fail_boundary: false,
             releases: std::sync::atomic::AtomicUsize::new(0),
             structural_backoff: std::sync::atomic::AtomicBool::new(true),
         });
@@ -1992,6 +2046,10 @@ mod tests {
             vec![Some("durable memory checkpoint".into())]
         );
         assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 0);
+        assert_eq!(
+            *agent.boundaries.lock().unwrap(),
+            vec![(entry.session_id.clone(), entry.session_id.clone(), true)]
+        );
         assert!(!agent
             .structural_backoff
             .load(std::sync::atomic::Ordering::SeqCst));

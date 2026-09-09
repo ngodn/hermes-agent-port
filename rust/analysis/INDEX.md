@@ -64,6 +64,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   native full-compression path. Required failures preserve the exact transcript;
   optional failures proceed without context. The durable projection retains the
   derivative-summary marker, and sanitized provider context is fenced as data.
+- Every committed native full-compression boundary now rebinds the real Python
+  memory manager after publication. Rotation atomically moves the same frozen
+  conversation client to the child cache key; in-place notification keeps the
+  key. Observer failure never rolls back SQLite. Context-engine, relay, and
+  generic compression-event notifications remain open.
 
 ## Rejected paths
 
@@ -81,6 +86,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-compression-boundary-rebind-resolution.md](native-compression-boundary-rebind-resolution.md) | Post-commit memory-provider rebinding, frozen-client cache transfer, retirement races, live Python-child proof, helper disposition, and explicit notification deferrals |
 | [native-pre-compress-checkpoint-resolution.md](native-pre-compress-checkpoint-resolution.md) | Versioned Python host protocol, complete-snapshot ordering, required and optional failure semantics, sanitized summary context, helper disposition, and proof |
 | [native-compression-handoff-tail-resolution.md](native-compression-handoff-tail-resolution.md) | Live N-user tails, complete handoff planner, summary rehydration, exact replacement publication, call suppression, helper disposition, and proof |
 | [compression-handoff-oracle-claude.md](compression-handoff-oracle-claude.md) | Source-executed 60-case handoff contract, runtime coverage, and parity traps |

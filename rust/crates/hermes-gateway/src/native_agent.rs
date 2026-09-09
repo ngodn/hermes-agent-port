@@ -1496,6 +1496,18 @@ impl NativeAgentClient {
             Self::refund_compression_attempt(&compression.attempts);
             return Ok(SameTurnCompressionOutcome::Attempted);
         }
+        if let Err(error) = <Self as AgentClient>::notify_compression_boundary(
+            self,
+            crate::agent::TurnContext::from_database(Some(database)),
+            session_id,
+            session_id,
+            true,
+        )
+        .await
+        {
+            let error = crate::compression_redact::redact(&error.to_string());
+            tracing::warn!(%error, %session_id, "same-turn compression boundary notification failed after commit");
+        }
         self.clear_compression_structural_backoff();
         Self::same_turn_db(
             database.clear_compression_failure_cooldown(session_id),
@@ -1921,6 +1933,30 @@ impl AgentClient for NativeAgentClient {
         require_checkpoint: bool,
     ) -> Result<crate::agent::PreCompressionCheckpoint> {
         self.prepare_compression_memory(history, require_checkpoint)
+            .await
+    }
+
+    async fn notify_compression_boundary(
+        &self,
+        _: crate::agent::TurnContext<'_>,
+        old_session_id: &str,
+        new_session_id: &str,
+        in_place: bool,
+    ) -> Result<()> {
+        if old_session_id.is_empty() || new_session_id.is_empty() {
+            return Err(Error::Other(
+                "compression boundary requires nonempty session ids".into(),
+            ));
+        }
+        if in_place && old_session_id != new_session_id {
+            return Err(Error::Other(
+                "in-place compression boundary cannot change session id".into(),
+            ));
+        }
+        let Some(host) = &self._extension_host else {
+            return Ok(());
+        };
+        host.session_switch(new_session_id, old_session_id, false, false, "compression")
             .await
     }
 

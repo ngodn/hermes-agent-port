@@ -392,6 +392,60 @@ class ExtensionHost:
                 session_id=self._session_info["session_id"],
             )
 
+    def session_switch(self, params: Mapping[str, Any]) -> None:
+        """Switch the conversation-scoped session identity and notify memory."""
+        if not self._initialized:
+            raise RuntimeError("extension host is not initialized")
+
+        if not isinstance(params, Mapping):
+            raise ValueError("session_switch requires a params mapping")
+
+        if "new_session_id" not in params:
+            raise ValueError("session_switch requires a nonempty new_session_id")
+        new_session_id = params["new_session_id"]
+        if not isinstance(new_session_id, str) or not new_session_id.strip():
+            raise ValueError("session_switch requires a nonempty new_session_id")
+
+        if "parent_session_id" not in params:
+            raise ValueError("session_switch requires parent_session_id")
+        parent_session_id = params["parent_session_id"]
+        if not isinstance(parent_session_id, str):
+            raise ValueError("session_switch parent_session_id must be a string")
+
+        if "reset" not in params:
+            raise ValueError("session_switch reset must be a boolean")
+        reset = params["reset"]
+        if type(reset) is not bool:
+            raise ValueError("session_switch reset must be a boolean")
+
+        if "rewound" not in params:
+            raise ValueError("session_switch rewound must be a boolean")
+        rewound = params["rewound"]
+        if type(rewound) is not bool:
+            raise ValueError("session_switch rewound must be a boolean")
+
+        if "reason" not in params:
+            raise ValueError("session_switch requires a nonempty reason")
+        reason = params["reason"]
+        if not isinstance(reason, str) or not reason.strip():
+            raise ValueError("session_switch requires a nonempty reason")
+
+        self._session_info["session_id"] = new_session_id
+
+        if self._memory_manager is not None:
+            switch_kwargs: dict[str, Any] = {
+                "parent_session_id": parent_session_id,
+                "reset": reset,
+                "reason": reason,
+            }
+            if rewound:
+                switch_kwargs["rewound"] = True
+            self._memory_manager.on_session_switch(
+                new_session_id,
+                **switch_kwargs,
+            )
+        return None
+
     def session_end(self, params: Mapping[str, Any]) -> None:
         """Commit end-of-session provider state without unloading the host."""
         if not self._initialized:
@@ -579,6 +633,8 @@ def main() -> int:
                     result = host.turn_start(params)
                 elif method == "turn_complete":
                     result = host.turn_complete(params)
+                elif method == "session_switch":
+                    result = host.session_switch(params)
                 elif method == "session_end":
                     result = host.session_end(params)
                 elif method == "flush_pending":
