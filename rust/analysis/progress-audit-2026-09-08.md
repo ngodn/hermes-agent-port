@@ -1,9 +1,10 @@
 # Full Rust port progress audit, updated 2026-09-09
 
 Current estimate: **50.30% of the full native replacement**, reported as
-**about 50%**, with a reasonable judgment range of **48% to 52%**. This
-supersedes the 49.75-point estimate recorded after compression-boundary memory
-rebinding.
+**about 50%**, with a reasonable judgment range of **48% to 52%**. This remains
+unchanged after the extension-host recovery checkpoint. That work closes a
+production reliability gap, but the recovered process is still a Python
+compatibility host and does not replace additional native scope.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -72,6 +73,12 @@ legacy raw-transcript callbacks, gives version 2 providers normalized direct
 evidence, sanitizes returned context, and differentiates required fail-closed
 requests from optional best-effort requests. This is a production extension
 protocol seam, but not yet a native plugin or memory manager.
+
+Fatal extension-host transport failures no longer strand a frozen conversation.
+The failed request is not replayed, a replacement child receives the original
+profile-scoped initialization, and Rust admits it only when the plugin and
+memory capability projection exactly matches the conversation's first snapshot.
+This strengthens the existing RPC seam but does not increase its native scope.
 
 Terminal, file, browser, web, MCP, execution-environment backends, approval
 runtime, delegation execution, most service tools, plugin discovery/management,
@@ -229,7 +236,7 @@ and hook execution never delays or rolls back compression.
 
 Mid-turn rotation, configurable multi-provider auxiliary fallback chains,
 non-chat auxiliary transports, context-engine and relay-boundary notifications,
-transparent extension-host recovery, overflow recovery, provider
+overflow recovery, provider
 failover and credential retry loops, delegation/subagents, full
 approval/clarification flows, memory and plugin managers, skill execution,
 context invalidation policy, and several agent-loop recovery behaviors remain.
@@ -238,8 +245,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,720 passing Rust tests and two expected ignores
-(1,719 gateway plus one core test).
+The workspace currently has 1,724 passing Rust tests and two expected ignores
+(1,723 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -247,9 +254,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,720 passed, two ignored (1,719 gateway plus one core).
-- Selected Python hook-runner, gateway-hook, compression-boundary,
-  session-switch, and memory-checkpoint contracts: 157 passed.
+- Full Rust workspace: 1,724 passed, two ignored (1,723 gateway plus one core).
+- Selected Python extension-host pre-compression and session-switch protocol
+  contracts: 101 passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 24 structural-backoff, and 60
@@ -265,8 +272,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 1. Mid-turn rotation, auxiliary fallback chains, overflow recovery,
    repeated-compression status, and context-engine adoption complete the current
    compression cluster.
-2. Transparent extension-host recovery plus native plugin and memory managers
-   turn the existing protocol into a broader production capability.
+2. Native plugin and memory managers replace the now-recoverable compatibility
+   host with a broader native production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the
    largest remaining weighted area.
 

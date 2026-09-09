@@ -287,6 +287,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [wire-reasoning-goldens.json](../tools/wire-reasoning-goldens.json) | 51 pre-hook normalization comparisons |
 
 | [session-entry-verification.md](session-entry-verification.md) | Persisted entry codec, 124 Python comparisons and integration limits |
+| [extension-host-recovery-resolution.md](extension-host-recovery-resolution.md) | No-replay child recovery, frozen capability checks, session rebinding, teardown policy and proof |
+| [extension-host-recovery-review-claude.md](extension-host-recovery-review-claude.md) | Independent recovery correctness and security review; identified tests resolved before publication |
+| [native-terminal-python-contract-agy.md](native-terminal-python-contract-agy.md) | Python terminal schema, approval, foreground execution, persistence, timeout, output and process contract |
+| [native-terminal-rust-seam-claude.md](native-terminal-rust-seam-claude.md) | Rust terminal construction seam, reusable primitives, routing constraints and registration blockers |
 
 Raw local helper outputs: `port-inbound-media.claude.json` and `.stderr`,
 `inbound-media-review.claude.json` and `.stderr`, `tier2-source-audit.agy.log`.

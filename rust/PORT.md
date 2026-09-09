@@ -1,5 +1,40 @@
 # Hermes Rust rewrite
 
+## Frozen extension-host recovery: 2026-09-09
+
+Conversation-scoped plugin and external-memory hosts now recover after a fatal
+transport failure without rebuilding the Rust client, prompt, provider route,
+or frozen tool schema. The ambiguous failed operation returns an error and is
+never replayed. A replacement child repeats only initialization, then serves
+later queued requests.
+
+Recovery reuses the original profile-cleared process launch and selected secret
+snapshot. It retains a successfully acknowledged compression-rebound session
+ID and accepts the child only when its complete plugin and memory capability
+projection exactly matches the first initialization. Capability drift kills the
+replacement instead of mutating the conversation's provider-visible prefix.
+Failed recovery is rate-limited, and teardown failures never initialize a fresh
+provider merely to shut it down.
+
+A crash-after-side-effect fixture proves no request replay, queue continuity,
+session rebinding, scoped secret reuse, and foreign-profile secret isolation.
+Other tests reject changed capabilities, reject malformed switch
+acknowledgements, and prove flush failure does not respawn. The existing real
+plugin and memory integration now also recovers from a timed-out plugin call. See
+[extension-host-recovery-resolution.md](analysis/extension-host-recovery-resolution.md).
+
+Full workspace validation is **1,724 passed, two ignored** (1,723 gateway plus
+one core test). The selected Python extension-host protocol suites are **101
+passed**. Formatting, Clippy with warnings denied, and diff hygiene pass.
+
+The weighted native-replacement estimate remains **50.30 points, reported as
+about 50%**. This checkpoint closes a production reliability gap but still uses
+the Python compatibility host, so it would be misleading to count it as native
+replacement scope. AGY and Claude prepared distinct Python-contract and
+Rust-seam audits for native terminal work. They confirm that approval,
+process-tree, persistent environment, output-spill, and single-owner routing
+must land before registering a native shell.
+
 ## Native compression lifecycle hooks: 2026-09-09
 
 Every committed native full-compression path now emits the generic

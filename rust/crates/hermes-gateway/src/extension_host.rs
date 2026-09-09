@@ -8,6 +8,7 @@
 
 use std::collections::HashMap;
 use std::path::Path;
+use std::path::PathBuf;
 use std::process::Stdio;
 use std::sync::{
     atomic::{AtomicU64, Ordering},
@@ -38,6 +39,7 @@ const MEMORY_FLUSH_TIMEOUT: Duration = Duration::from_secs(10);
 const SESSION_END_TIMEOUT: Duration = Duration::from_secs(15);
 const TOOL_TIMEOUT: Duration = Duration::from_secs(310);
 const SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(7);
+const RECOVERY_RETRY_DELAY: Duration = Duration::from_secs(5);
 const MAX_RESPONSE_BYTES: usize = 4 * 1024 * 1024;
 const MAX_CONTAMINATED_BYTES: usize = 64 * 1024;
 const MAX_CONTAMINATED_LINES: usize = 32;
@@ -155,6 +157,14 @@ struct WorkerCommand {
     response: oneshot::Sender<Result<Value>>,
 }
 
+#[derive(Clone)]
+struct ProcessConfig {
+    python: String,
+    repo: PathBuf,
+    home: PathBuf,
+    clear_environment: bool,
+}
+
 struct Process {
     child: Child,
     stdin: Option<ChildStdin>,
@@ -209,52 +219,17 @@ impl Client {
         home: &Path,
         params: InitializeParams,
     ) -> Result<(Self, InitializeResult)> {
-        let mut command = Command::new(python);
-        if params.profile_secrets.is_some() {
-            command.env_clear();
-            for (name, value) in std::env::vars_os() {
-                let Some(name_text) = name.to_str() else {
-                    continue;
-                };
-                if inherited_child_env_is_global(name_text) {
-                    command.env(&name, value);
-                }
-            }
-        }
-        command
-            .arg("-m")
-            .arg(MODULE)
-            .current_dir(repo)
-            .env("HERMES_HOME", home)
-            .env("PYTHONUNBUFFERED", "1")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
-            .kill_on_drop(true);
-        #[cfg(unix)]
-        command.process_group(0);
-        #[cfg(windows)]
-        command.creation_flags(0x08000000);
-        let mut child = command
-            .spawn()
-            .map_err(|error| Error::Other(format!("extension host spawn failed: {error}")))?;
-        let stdin = child
-            .stdin
-            .take()
-            .ok_or_else(|| Error::Other("extension host stdin was not captured".into()))?;
-        let stdout = child
-            .stdout
-            .take()
-            .ok_or_else(|| Error::Other("extension host stdout was not captured".into()))?;
-        let process = Process {
-            child,
-            stdin: Some(stdin),
-            stdout: BufReader::new(stdout),
+        let process_config = ProcessConfig {
+            python: python.to_owned(),
+            repo: repo.to_owned(),
+            home: home.to_owned(),
+            clear_environment: params.profile_secrets.is_some(),
         };
+        let process = spawn_process(&process_config)?;
         let (sender, receiver) = mpsc::channel(16);
         let (worker_done_tx, worker_done) = watch::channel(false);
         tokio::spawn(async move {
-            run_worker(process, receiver).await;
+            run_worker(process, process_config, receiver).await;
             let _ = worker_done_tx.send(true);
         });
         let client = Self {
@@ -480,6 +455,51 @@ impl Client {
     }
 }
 
+fn spawn_process(config: &ProcessConfig) -> Result<Process> {
+    let mut command = Command::new(&config.python);
+    if config.clear_environment {
+        command.env_clear();
+        for (name, value) in std::env::vars_os() {
+            let Some(name_text) = name.to_str() else {
+                continue;
+            };
+            if inherited_child_env_is_global(name_text) {
+                command.env(&name, value);
+            }
+        }
+    }
+    command
+        .arg("-m")
+        .arg(MODULE)
+        .current_dir(&config.repo)
+        .env("HERMES_HOME", &config.home)
+        .env("PYTHONUNBUFFERED", "1")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::inherit())
+        .kill_on_drop(true);
+    #[cfg(unix)]
+    command.process_group(0);
+    #[cfg(windows)]
+    command.creation_flags(0x08000000);
+    let mut child = command
+        .spawn()
+        .map_err(|error| Error::Other(format!("extension host spawn failed: {error}")))?;
+    let stdin = child
+        .stdin
+        .take()
+        .ok_or_else(|| Error::Other("extension host stdin was not captured".into()))?;
+    let stdout = child
+        .stdout
+        .take()
+        .ok_or_else(|| Error::Other("extension host stdout was not captured".into()))?;
+    Ok(Process {
+        child,
+        stdin: Some(stdin),
+        stdout: BufReader::new(stdout),
+    })
+}
+
 /// Keep OS/interpreter settings and values that Hermes already classifies as
 /// process-global. Everything else is supplied by the selected profile scope.
 fn inherited_child_env_is_global(name: &str) -> bool {
@@ -523,13 +543,99 @@ fn inherited_child_env_is_global(name: &str) -> bool {
         || name == "LD_LIBRARY_PATH"
 }
 
-async fn run_worker(mut process: Process, mut receiver: mpsc::Receiver<WorkerCommand>) {
-    let mut healthy = true;
+fn frozen_capability_snapshot(value: &Value) -> Value {
+    let mut snapshot = Map::new();
+    for key in [
+        "active_memory_provider",
+        "registered_plugin_tools",
+        "plugin_tools",
+        "memory_tools",
+        "memory_exposed",
+    ] {
+        snapshot.insert(key.into(), value.get(key).cloned().unwrap_or(Value::Null));
+    }
+    Value::Object(snapshot)
+}
+
+async fn recover_process(
+    config: &ProcessConfig,
+    initialize_params: &Value,
+    frozen_capabilities: &Value,
+) -> Result<Process> {
+    let mut process = spawn_process(config)?;
+    let request = json!({
+        "id": 0,
+        "method": "initialize",
+        "params": initialize_params,
+    });
+    let initialized = match exchange(&mut process, &request, INITIALIZE_TIMEOUT).await {
+        Ok(value) => value,
+        Err(error) => {
+            kill_process_tree(&mut process.child).await;
+            return Err(error.into_error());
+        }
+    };
+    if frozen_capability_snapshot(&initialized) != *frozen_capabilities {
+        kill_process_tree(&mut process.child).await;
+        return Err(Error::Other(
+            "extension host recovery changed the frozen capability snapshot".into(),
+        ));
+    }
+    Ok(process)
+}
+
+fn update_recovery_session(initialize_params: &mut Value, request: &Value, result: &Value) {
+    if request["method"] != "session_switch" || !result.is_null() {
+        return;
+    }
+    let Some(new_session_id) = request["params"]["new_session_id"].as_str() else {
+        return;
+    };
+    if let Some(params) = initialize_params.as_object_mut() {
+        params.insert("session_id".into(), json!(new_session_id));
+    }
+}
+
+async fn run_worker(
+    process: Process,
+    process_config: ProcessConfig,
+    mut receiver: mpsc::Receiver<WorkerCommand>,
+) {
+    let mut process = Some(process);
+    let mut initialize_params = None;
+    let mut frozen_capabilities = None;
+    let mut last_recovery_failure = None;
     let mut shutdown_sent = false;
+    let mut closing = false;
     while let Some(command) = receiver.recv().await {
         let is_shutdown = command.request["method"] == "shutdown";
-        let (result, transport_failed) = if healthy {
-            match exchange(&mut process, &command.request, command.timeout).await {
+        if command.request["method"] == "flush_pending" {
+            closing = true;
+        }
+        if process.is_none() && !closing {
+            let retry_ready = last_recovery_failure
+                .is_none_or(|failed: std::time::Instant| failed.elapsed() >= RECOVERY_RETRY_DELAY);
+            if retry_ready {
+                if let (Some(params), Some(capabilities)) =
+                    (&initialize_params, &frozen_capabilities)
+                {
+                    match recover_process(&process_config, params, capabilities).await {
+                        Ok(recovered) => {
+                            process = Some(recovered);
+                            last_recovery_failure = None;
+                            tracing::info!("extension host recovered before the next request");
+                        }
+                        Err(_) => {
+                            last_recovery_failure = Some(std::time::Instant::now());
+                            tracing::warn!("extension host recovery attempt failed");
+                        }
+                    }
+                }
+            }
+        }
+
+        let (result, transport_failed) = if let Some(active) = process.as_mut() {
+            match exchange(active, &command.request, command.timeout).await {
                 Ok(value) => (Ok(value), false),
                 Err(error) => {
                     let fatal = error.is_transport();
@@ -542,29 +648,61 @@ async fn run_worker(mut process: Process, mut receiver: mpsc::Receiver<WorkerCom
                 false,
             )
         };
+        if let Ok(value) = &result {
+            if command.request["method"] == "initialize" {
+                initialize_params = Some(command.request["params"].clone());
+                frozen_capabilities = Some(frozen_capability_snapshot(value));
+            } else if let Some(params) = initialize_params.as_mut() {
+                update_recovery_session(params, &command.request, value);
+            }
+        }
         let shutdown_succeeded = is_shutdown && result.is_ok();
         let _ = command.response.send(result);
-        if shutdown_succeeded {
-            shutdown_sent = true;
+        if is_shutdown {
+            if transport_failed {
+                if let Some(mut failed) = process.take() {
+                    kill_process_tree(&mut failed.child).await;
+                }
+            }
+            shutdown_sent = shutdown_succeeded;
             break;
         }
         if transport_failed {
-            healthy = false;
-            kill_process_tree(&mut process.child).await;
-            break;
+            if let Some(mut failed) = process.take() {
+                kill_process_tree(&mut failed.child).await;
+            }
+            if !closing {
+                if let (Some(params), Some(capabilities)) =
+                    (&initialize_params, &frozen_capabilities)
+                {
+                    match recover_process(&process_config, params, capabilities).await {
+                        Ok(recovered) => {
+                            process = Some(recovered);
+                            last_recovery_failure = None;
+                            tracing::info!("extension host recovered after a transport failure");
+                        }
+                        Err(_) => {
+                            last_recovery_failure = Some(std::time::Instant::now());
+                            tracing::warn!("extension host recovery attempt failed");
+                        }
+                    }
+                }
+            }
         }
     }
 
-    if healthy && !shutdown_sent {
-        let request = json!({"id": 0, "method": "shutdown", "params": {}});
-        let _ = exchange(&mut process, &request, SHUTDOWN_TIMEOUT).await;
-    }
-    process.stdin.take();
-    if tokio::time::timeout(SHUTDOWN_TIMEOUT, process.child.wait())
-        .await
-        .is_err()
-    {
-        kill_process_tree(&mut process.child).await;
+    if let Some(mut process) = process {
+        if !shutdown_sent {
+            let request = json!({"id": 0, "method": "shutdown", "params": {}});
+            let _ = exchange(&mut process, &request, SHUTDOWN_TIMEOUT).await;
+        }
+        process.stdin.take();
+        if tokio::time::timeout(SHUTDOWN_TIMEOUT, process.child.wait())
+            .await
+            .is_err()
+        {
+            kill_process_tree(&mut process.child).await;
+        }
     }
 }
 
@@ -780,6 +918,145 @@ mod tests {
         }
     }
 
+    struct RestoreEnv {
+        name: &'static str,
+        value: Option<std::ffi::OsString>,
+    }
+
+    impl RestoreEnv {
+        fn capture(name: &'static str) -> Self {
+            Self {
+                name,
+                value: std::env::var_os(name),
+            }
+        }
+    }
+
+    impl Drop for RestoreEnv {
+        fn drop(&mut self) {
+            match self.value.take() {
+                Some(value) => std::env::set_var(self.name, value),
+                None => std::env::remove_var(self.name),
+            }
+        }
+    }
+
+    fn recovery_params(home: &Path) -> InitializeParams {
+        InitializeParams {
+            home: home.to_string_lossy().into_owned(),
+            session_id: "session-one".into(),
+            model: "fixture-model".into(),
+            provider: "fixture-provider".into(),
+            platform: "cli".into(),
+            profile_name: "default".into(),
+            cwd: home.to_string_lossy().into_owned(),
+            session_title: None,
+            user_id: None,
+            user_id_alt: None,
+            user_name: None,
+            chat_id: None,
+            chat_name: None,
+            chat_type: None,
+            thread_id: None,
+            gateway_session_key: None,
+            native_tool_names: vec!["current_time".into()],
+            profile_secrets: Some(HashMap::from([(
+                "RECOVERY_PROFILE_SECRET".into(),
+                "right-profile".into(),
+            )])),
+        }
+    }
+
+    #[cfg(unix)]
+    fn recovery_fixture(home: &Path) -> PathBuf {
+        use std::os::unix::fs::PermissionsExt;
+
+        let repo = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../..")
+            .canonicalize()
+            .unwrap();
+        let python = repo.join(".venv/bin/python");
+        let executable = home.join("extension-host-fixture");
+        let script = format!(
+            r#"#!{}
+import json
+import os
+import sys
+from pathlib import Path
+
+root = Path(__file__).parent
+starts_path = root / "starts"
+starts = int(starts_path.read_text() or "0") + 1 if starts_path.exists() else 1
+starts_path.write_text(str(starts))
+session_id = ""
+profile_secret = ""
+foreign_secret_absent = False
+
+def respond(request, result=None, error=None):
+    payload = {{"id": request["id"], "ok": error is None, "result": result}}
+    if error is not None:
+        payload["error"] = error
+    print(json.dumps(payload), flush=True)
+
+for raw in sys.stdin:
+    request = json.loads(raw)
+    method = request["method"]
+    params = request["params"]
+    if method == "initialize":
+        session_id = params["session_id"]
+        profile_secret = params["profile_secrets"]["RECOVERY_PROFILE_SECRET"]
+        foreign_secret_absent = "FOREIGN_EXTENSION_SECRET" not in os.environ
+        result = {{
+            "active_memory_provider": None,
+            "registered_plugin_tools": [],
+            "plugin_tools": [],
+            "memory_tools": [],
+            "memory_exposed": False,
+        }}
+        if starts > 1 and (root / "drift").exists():
+            result["plugin_tools"] = [{{
+                "type": "function",
+                "function": {{"name": "changed", "parameters": {{"type": "object"}}}},
+            }}]
+        respond(request, result)
+    elif method == "session_switch":
+        session_id = params["new_session_id"]
+        respond(request)
+    elif method == "call_tool":
+        with (root / "calls.jsonl").open("a") as stream:
+            stream.write(json.dumps(params) + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        crash = root / "crashed"
+        if not crash.exists():
+            crash.touch()
+            os._exit(17)
+        respond(request, {{
+            "session_id": session_id,
+            "profile_secret": profile_secret,
+            "foreign_secret_absent": foreign_secret_absent,
+            "args": params["args"],
+        }})
+    elif method == "flush_pending":
+        if (root / "crash-on-flush").exists():
+            os._exit(18)
+        respond(request, True)
+    elif method in ("session_end", "shutdown"):
+        respond(request)
+        if method == "shutdown":
+            break
+    else:
+        respond(request, error="unsupported fixture method")
+"#,
+            python.display()
+        );
+        std::fs::write(&executable, script).unwrap();
+        let mut permissions = std::fs::metadata(&executable).unwrap().permissions();
+        permissions.set_mode(0o700);
+        std::fs::set_permissions(&executable, permissions).unwrap();
+        executable
+    }
+
     #[test]
     fn extension_tool_preserves_extra_schema_fields() {
         let (sender, _receiver) = mpsc::channel(1);
@@ -833,6 +1110,134 @@ mod tests {
         )
         .unwrap();
         assert_eq!(normalized.spec().parameters, json!({"type":"object"}));
+    }
+
+    #[test]
+    fn recovery_session_advances_only_after_an_exact_switch_acknowledgement() {
+        let mut initialize = json!({"session_id": "old"});
+        let request = json!({
+            "method": "session_switch",
+            "params": {"new_session_id": "new"},
+        });
+        update_recovery_session(&mut initialize, &request, &json!({"switched": true}));
+        assert_eq!(initialize["session_id"], "old");
+
+        update_recovery_session(&mut initialize, &request, &Value::Null);
+        assert_eq!(initialize["session_id"], "new");
+
+        update_recovery_session(
+            &mut initialize,
+            &json!({"method":"turn_start", "params":{"new_session_id":"wrong"}}),
+            &Value::Null,
+        );
+        assert_eq!(initialize["session_id"], "new");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn transport_failure_recovers_without_replaying_and_keeps_rebound_session() {
+        let _environment_lock = crate::secret_scope::GLOBAL_TEST_LOCK.lock().unwrap();
+        let _restore = RestoreEnv::capture("FOREIGN_EXTENSION_SECRET");
+        std::env::set_var("FOREIGN_EXTENSION_SECRET", "must-not-cross-profile");
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(async {
+                let home = TempHome::new("recover");
+                let fixture = recovery_fixture(&home.0);
+                let (client, initialized) = Client::spawn(
+                    fixture.to_str().unwrap(),
+                    &home.0,
+                    &home.0,
+                    recovery_params(&home.0),
+                )
+                .await
+                .unwrap();
+                assert!(initialized.active_memory_provider.is_none());
+                assert!(initialized.registered_plugin_tools.is_empty());
+                assert!(initialized.plugin_tools.is_empty());
+                assert!(initialized.memory_tools.is_empty());
+                assert!(!initialized.memory_exposed);
+
+                client
+                    .session_switch("session-two", "session-one", false, false, "compression")
+                    .await
+                    .unwrap();
+                let first = client.call_tool("fixture", &json!({"attempt": 1})).await;
+                assert!(first
+                    .unwrap_err()
+                    .to_string()
+                    .contains("exited without a response"));
+
+                let second = client
+                    .call_tool("fixture", &json!({"attempt": 2}))
+                    .await
+                    .unwrap();
+                assert_eq!(second["session_id"], "session-two");
+                assert_eq!(second["profile_secret"], "right-profile");
+                assert_eq!(second["foreign_secret_absent"], true);
+                assert_eq!(second["args"], json!({"attempt": 2}));
+                assert_eq!(std::fs::read_to_string(home.0.join("starts")).unwrap(), "2");
+                let calls = std::fs::read_to_string(home.0.join("calls.jsonl")).unwrap();
+                assert_eq!(calls.lines().count(), 2, "the failed mutation was replayed");
+                let calls = calls
+                    .lines()
+                    .map(|line| serde_json::from_str::<Value>(line).unwrap())
+                    .collect::<Vec<_>>();
+                assert_eq!(calls[0]["args"], json!({"attempt": 1}));
+                assert_eq!(calls[1]["args"], json!({"attempt": 2}));
+                client.close(None).await.unwrap();
+            });
+    }
+
+    #[cfg(unix)]
+    #[tokio::test(flavor = "current_thread")]
+    async fn recovery_rejects_a_changed_capability_snapshot() {
+        let home = TempHome::new("recover-drift");
+        let fixture = recovery_fixture(&home.0);
+        let (client, _) = Client::spawn(
+            fixture.to_str().unwrap(),
+            &home.0,
+            &home.0,
+            recovery_params(&home.0),
+        )
+        .await
+        .unwrap();
+        std::fs::write(home.0.join("drift"), "1").unwrap();
+
+        assert!(client
+            .call_tool("fixture", &json!({"attempt": 1}))
+            .await
+            .is_err());
+        let error = client
+            .call_tool("fixture", &json!({"attempt": 2}))
+            .await
+            .unwrap_err();
+        assert!(error.to_string().contains("extension host is not running"));
+        assert_eq!(std::fs::read_to_string(home.0.join("starts")).unwrap(), "2");
+        drop(client);
+    }
+
+    #[cfg(unix)]
+    #[tokio::test(flavor = "current_thread")]
+    async fn teardown_transport_failure_does_not_respawn_the_provider() {
+        let home = TempHome::new("recover-close");
+        let fixture = recovery_fixture(&home.0);
+        let (client, _) = Client::spawn(
+            fixture.to_str().unwrap(),
+            &home.0,
+            &home.0,
+            recovery_params(&home.0),
+        )
+        .await
+        .unwrap();
+        std::fs::write(home.0.join("crash-on-flush"), "1").unwrap();
+
+        let error = client.close(None).await.unwrap_err();
+        assert!(error.to_string().contains("exited without a response"));
+        assert!(*client.worker_done.borrow());
+        assert_eq!(std::fs::read_to_string(home.0.join("starts")).unwrap(), "1");
     }
 
     /// Build a client whose worker side is a plain channel receiver, so a test
@@ -1090,26 +1495,8 @@ sys.stdin.readline()
             .build()
             .unwrap()
             .block_on(async {
-        struct RestoreEnv {
-            name: &'static str,
-            value: Option<std::ffi::OsString>,
-        }
-        impl Drop for RestoreEnv {
-            fn drop(&mut self) {
-                match self.value.take() {
-                    Some(value) => std::env::set_var(self.name, value),
-                    None => std::env::remove_var(self.name),
-                }
-            }
-        }
-        let _restore = RestoreEnv {
-            name: "FOREIGN_EXTENSION_SECRET",
-            value: std::env::var_os("FOREIGN_EXTENSION_SECRET"),
-        };
-        let _restore_setting = RestoreEnv {
-            name: "FOREIGN_EXTENSION_SETTING",
-            value: std::env::var_os("FOREIGN_EXTENSION_SETTING"),
-        };
+        let _restore = RestoreEnv::capture("FOREIGN_EXTENSION_SECRET");
+        let _restore_setting = RestoreEnv::capture("FOREIGN_EXTENSION_SETTING");
         std::env::set_var("FOREIGN_EXTENSION_SECRET", "must-not-cross-profile");
         std::env::set_var("FOREIGN_EXTENSION_SETTING", "must-not-cross-profile");
         let home = TempHome::new("real");
@@ -1401,12 +1788,15 @@ def register(ctx):
             .await
             .unwrap_err();
         assert!(timeout.to_string().contains("timed out"));
-        let unavailable = gated_client
+        let recovered = gated_client
             .call_tool("fixture_plugin_tool", &json!({}))
             .await
-            .unwrap_err();
-        assert!(unavailable.to_string().contains("not running"));
-                drop(gated_client);
+            .unwrap();
+        assert_eq!(
+            recovered,
+            json!({"_multimodal":true,"content":[{"type":"text","text":"session-gated:"}]})
+        );
+        gated_client.close(None).await.unwrap();
             });
     }
 }
