@@ -42,13 +42,6 @@ pub struct ExplicitSessionSwitch {
     pub predecessor_id: String,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub struct CompressionRanges {
-    pub prefix_end_id: Option<i64>,
-    pub tail_start_id: Option<i64>,
-    pub watermark: i64,
-}
-
 struct SessionOrigin<'a> {
     source: &'a crate::session::SessionSource,
     legacy: Option<(&'a str, &'a str)>,
@@ -282,8 +275,8 @@ impl SessionStore {
         &self,
         source: &crate::session::SessionSource,
         expected: &crate::session_entry::SessionEntry,
-        compacted_messages: &[crate::session_db::HistoryMessage],
-        ranges: CompressionRanges,
+        original_messages: &[crate::session_db::CompressionHistoryMessage],
+        rows: &[crate::session_db::CompressionReplacementRow],
         turn_lease_holder: Option<&str>,
     ) -> anyhow::Result<Option<ExplicitSessionSwitch>> {
         let key = self.session_key_for_source(source);
@@ -312,10 +305,8 @@ impl SessionStore {
                     entry_json: &entry_json,
                     parent_id: &current.session_id,
                     child_id: &candidate.session_id,
-                    compacted_messages,
-                    prefix_end_id: ranges.prefix_end_id,
-                    tail_start_id: ranges.tail_start_id,
-                    watermark: ranges.watermark,
+                    original_messages,
+                    rows,
                     turn_lease_holder,
                 })?;
             if !published {
@@ -339,8 +330,8 @@ impl SessionStore {
         &self,
         source: &crate::session::SessionSource,
         expected: &crate::session_entry::SessionEntry,
-        compacted_messages: &[crate::session_db::HistoryMessage],
-        ranges: CompressionRanges,
+        original_messages: &[crate::session_db::CompressionHistoryMessage],
+        rows: &[crate::session_db::CompressionReplacementRow],
         turn_lease_holder: Option<&str>,
     ) -> anyhow::Result<bool> {
         let key = self.session_key_for_source(source);
@@ -360,10 +351,8 @@ impl SessionStore {
                 scope: index.scope(),
                 session_key: &key,
                 session_id: &current.session_id,
-                compacted_messages,
-                prefix_end_id: ranges.prefix_end_id,
-                tail_start_id: ranges.tail_start_id,
-                watermark: ranges.watermark,
+                original_messages,
+                rows,
                 turn_lease_holder,
             },
         )?)

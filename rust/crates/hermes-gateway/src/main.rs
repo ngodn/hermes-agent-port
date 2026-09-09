@@ -26,6 +26,7 @@ mod coding_project_facts;
 mod coding_prompt;
 mod command_catalog;
 mod compression_auxiliary;
+mod compression_handoff;
 mod compression_prompt;
 mod compression_redact;
 mod config;
@@ -1527,11 +1528,16 @@ mod startup_tests {
             tool_call_id: None,
             tool_calls: None,
             tool_name: None,
+            effect_disposition: None,
+            finish_reason: None,
             reasoning: None,
             reasoning_content: None,
             reasoning_details: None,
             codex_reasoning_items: None,
             codex_message_items: None,
+            display_kind: None,
+            display_metadata: None,
+            timestamp: 0.0,
             compressed_summary: false,
         }];
         let summary = agent

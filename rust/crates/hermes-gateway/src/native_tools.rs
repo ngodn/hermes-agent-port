@@ -157,9 +157,9 @@ pub trait ChatModel: Send + Sync {
         &self,
         messages: &mut Vec<Value>,
         tools: &[Value],
-    ) -> Result<()> {
+    ) -> Result<bool> {
         let _ = (messages, tools);
-        Ok(())
+        Ok(false)
     }
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step>;
 }
@@ -783,11 +783,18 @@ pub async fn run_tool_loop_with_messages(
                     model.persist_tool_loop_message(&result)?;
                     messages.push(result);
                 }
-                if let Err(error) = model
+                match model
                     .maintain_tool_loop_messages(&mut messages, &tool_specs)
                     .await
                 {
-                    warn!(%error, "same-turn tool-history maintenance failed open");
+                    Ok(true) => {
+                        let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                        return Ok(());
+                    }
+                    Ok(false) => {}
+                    Err(error) => {
+                        warn!(%error, "same-turn tool-history maintenance failed open");
+                    }
                 }
             }
         }
@@ -1860,6 +1867,53 @@ mod tests {
                 .pop_front()
                 .unwrap_or(Step::Final(String::new())))
         }
+    }
+
+    struct SuppressAfterMaintenanceModel {
+        steps: std::sync::atomic::AtomicUsize,
+    }
+
+    #[async_trait]
+    impl ChatModel for SuppressAfterMaintenanceModel {
+        async fn maintain_tool_loop_messages(
+            &self,
+            _: &mut Vec<Value>,
+            _: &[Value],
+        ) -> Result<bool> {
+            Ok(true)
+        }
+
+        async fn step(&self, _: &[Value], _: &[Value]) -> Result<Step> {
+            let step = self.steps.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            assert_eq!(
+                step, 0,
+                "reference-only maintenance must suppress a second call"
+            );
+            Ok(tool_step(vec![ToolCall {
+                id: "clock".into(),
+                name: "current_time".into(),
+                arguments: json!({}),
+            }]))
+        }
+    }
+
+    #[tokio::test]
+    async fn reference_only_maintenance_suppresses_the_followup_model_call() {
+        let model = SuppressAfterMaintenanceModel {
+            steps: std::sync::atomic::AtomicUsize::new(0),
+        };
+        let tools: Vec<Arc<dyn Tool>> = vec![Arc::new(CurrentTimeTool)];
+        let (tx, mut rx) = mpsc::channel(8);
+        run_tool_loop(&model, &tools, &[], "work", &tx, 4)
+            .await
+            .unwrap();
+        drop(tx);
+        assert_eq!(model.steps.load(std::sync::atomic::Ordering::SeqCst), 1);
+        let mut stopped = false;
+        while let Some(event) = rx.recv().await {
+            stopped |= matches!(event, StreamEvent::MessageStop { final_: true });
+        }
+        assert!(stopped);
     }
 
     fn collect(mut rx: mpsc::Receiver<StreamEvent>) -> Vec<StreamEvent> {

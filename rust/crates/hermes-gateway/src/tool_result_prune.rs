@@ -1700,11 +1700,16 @@ mod tests {
             tool_call_id: tool_call_id.map(str::to_string),
             tool_calls: tool_calls.map(str::to_string),
             tool_name: None,
+            effect_disposition: None,
+            finish_reason: None,
             reasoning: None,
             reasoning_content: None,
             reasoning_details: None,
             codex_reasoning_items: None,
             codex_message_items: None,
+            display_kind: None,
+            display_metadata: None,
+            timestamp: 0.0,
             compressed_summary: false,
         }
     }
@@ -2215,6 +2220,14 @@ mod tests {
                 .or_else(|| value.get("name"))
                 .and_then(Value::as_str)
                 .map(str::to_owned),
+            effect_disposition: value
+                .get("effect_disposition")
+                .and_then(Value::as_str)
+                .map(str::to_owned),
+            finish_reason: value
+                .get("finish_reason")
+                .and_then(Value::as_str)
+                .map(str::to_owned),
             reasoning: value
                 .get("reasoning")
                 .and_then(Value::as_str)
@@ -2226,6 +2239,15 @@ mod tests {
             reasoning_details: raw_json("reasoning_details"),
             codex_reasoning_items: raw_json("codex_reasoning_items"),
             codex_message_items: raw_json("codex_message_items"),
+            display_kind: value
+                .get("display_kind")
+                .and_then(Value::as_str)
+                .map(str::to_owned),
+            display_metadata: raw_json("display_metadata"),
+            timestamp: value
+                .get("timestamp")
+                .and_then(Value::as_f64)
+                .unwrap_or_default(),
             compressed_summary: value
                 .get("_compressed_summary")
                 .is_some_and(crate::python_value::truthy),

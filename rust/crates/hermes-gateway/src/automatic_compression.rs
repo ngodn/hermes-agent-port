@@ -1033,10 +1033,17 @@ pub async fn compress_before_turn(
         };
         let middle = &snapshot.messages[prefix_end..tail_start];
         let source_chars = structured_chars(middle);
+        let Some(summary_history) = crate::compression_prompt::history_for_window(
+            &snapshot.messages,
+            prefix_end,
+            tail_start,
+        ) else {
+            return Ok(attempts);
+        };
         let mut summary_message = message.clone();
         summary_message.resolved_session_id = Some(session_id.clone());
         let summary_body = match agent
-            .summarize_context(context, &summary_message, middle, None)
+            .summarize_context(context, &summary_message, &summary_history, None)
             .await
         {
             Ok(Some(summary)) if !summary.trim().is_empty() => {
@@ -1062,35 +1069,21 @@ pub async fn compress_before_turn(
             tracing::warn!(%session_id, strikes, "automatic compression refused a non-shrinking summary");
             return Ok(attempts);
         }
-        let summary = crate::compression_prompt::wrap(&summary_body)
-            .expect("non-empty summary body must wrap");
-        let compacted = [
-            crate::session_db::HistoryMessage {
-                role: "user".into(),
-                content: summary,
-                api_content: None,
-            },
-            crate::session_db::HistoryMessage {
-                role: "assistant".into(),
-                content: crate::compression_prompt::SUMMARY_ACK.into(),
-                api_content: None,
-            },
-        ];
-        let prefix_end_id = prefix_end
-            .checked_sub(1)
-            .map(|index| snapshot.messages[index].id);
-        let tail_start_id = snapshot.messages.get(tail_start).map(|item| item.id);
+        let Some(replacement) = crate::compression_handoff::plan_replacement(
+            &snapshot.messages,
+            prefix_end,
+            tail_start,
+            &summary_body,
+        ) else {
+            return Ok(attempts);
+        };
         let holder = admitted.durable_lease.as_ref().map(|lease| lease.holder());
         if in_place {
             let committed = deps.store.publish_in_place_compression(
                 source,
                 &admitted.entry,
-                &compacted,
-                crate::session_store::CompressionRanges {
-                    prefix_end_id,
-                    tail_start_id,
-                    watermark: snapshot.watermark,
-                },
+                &snapshot.messages,
+                &replacement,
                 holder,
             )?;
             if !committed {
@@ -1100,12 +1093,8 @@ pub async fn compress_before_turn(
             let Some(published) = deps.store.publish_compression(
                 source,
                 &admitted.entry,
-                &compacted,
-                crate::session_store::CompressionRanges {
-                    prefix_end_id,
-                    tail_start_id,
-                    watermark: snapshot.watermark,
-                },
+                &snapshot.messages,
+                &replacement,
                 holder,
             )?
             else {
@@ -2167,11 +2156,16 @@ mod tests {
                 tool_call_id: None,
                 tool_calls: None,
                 tool_name: None,
+                effect_disposition: None,
+                finish_reason: None,
                 reasoning: None,
                 reasoning_content: None,
                 reasoning_details: None,
                 codex_reasoning_items: None,
                 codex_message_items: None,
+                display_kind: None,
+                display_metadata: None,
+                timestamp: 0.0,
                 compressed_summary: false,
             }
         }

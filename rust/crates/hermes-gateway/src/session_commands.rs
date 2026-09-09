@@ -222,11 +222,24 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                 let effective_partial = args.partial && boundary.is_some();
                 let head_end = boundary.unwrap_or(history.len());
                 let head = &snapshot.messages[..head_end];
-                let tail_start_id = boundary.map(|index| snapshot.messages[index].id);
+                let Some(summary_history) =
+                    crate::compression_prompt::history_for_window(&snapshot.messages, 0, head_end)
+                else {
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(CompressResult {
+                        reply: "🗜️ Not enough conversation history to compress yet.".into(),
+                    });
+                };
                 let mut summary_message = message.clone();
                 summary_message.resolved_session_id = Some(session_id.clone());
                 let summary_body = match agent
-                    .summarize_context(context, &summary_message, head, args.focus_topic.as_deref())
+                    .summarize_context(
+                        context,
+                        &summary_message,
+                        &summary_history,
+                        args.focus_topic.as_deref(),
+                    )
                     .await
                 {
                     Ok(Some(summary)) if !summary.trim().is_empty() => summary,
@@ -279,35 +292,30 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                         reply: "⚠️ Compression refused because the generated checkpoint would not shrink the selected history. The conversation was not changed.".into(),
                     });
                 }
-                let summary = crate::compression_prompt::wrap(&summary_body)
-                    .expect("non-empty summary body must wrap");
-                let compacted = [
-                    crate::session_db::HistoryMessage {
-                        role: "user".into(),
-                        content: summary,
-                        api_content: None,
-                    },
-                    crate::session_db::HistoryMessage {
-                        role: "assistant".into(),
-                        content: crate::compression_prompt::SUMMARY_ACK.into(),
-                        api_content: None,
-                    },
-                ];
+                let Some(replacement) = crate::compression_handoff::plan_replacement(
+                    &snapshot.messages,
+                    0,
+                    head_end,
+                    &summary_body,
+                ) else {
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(CompressResult {
+                        reply: "⚠️ Compression could not assemble a valid replacement transcript. The conversation was not changed.".into(),
+                    });
+                };
                 if in_place {
                     let publish_store = deps.store.clone();
                     let publish_source = source.clone();
                     let publish_entry = entry.clone();
-                    let watermark = snapshot.watermark;
+                    let original_messages = snapshot.messages.clone();
+                    let replacement_rows = replacement.clone();
                     let committed = tokio::task::spawn_blocking(move || {
                         publish_store.publish_in_place_compression(
                             &publish_source,
                             &publish_entry,
-                            &compacted,
-                            crate::session_store::CompressionRanges {
-                                prefix_end_id: None,
-                                tail_start_id,
-                                watermark,
-                            },
+                            &original_messages,
+                            &replacement_rows,
                             _durable_lease.as_ref().map(|lease| lease.holder()),
                         )
                     })
@@ -344,17 +352,13 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                 let publish_store = deps.store.clone();
                 let publish_source = source.clone();
                 let publish_entry = entry.clone();
-                let watermark = snapshot.watermark;
+                let original_messages = snapshot.messages;
                 let published = tokio::task::spawn_blocking(move || {
                     publish_store.publish_compression(
                         &publish_source,
                         &publish_entry,
-                        &compacted,
-                        crate::session_store::CompressionRanges {
-                            prefix_end_id: None,
-                            tail_start_id,
-                            watermark,
-                        },
+                        &original_messages,
+                        &replacement,
                         _durable_lease.as_ref().map(|lease| lease.holder()),
                     )
                 })
@@ -1814,14 +1818,14 @@ mod tests {
             "compression"
         );
         let child = database.load_history(&current.session_id, 0).unwrap();
-        assert_eq!(child.len(), 4);
+        assert_eq!(child.len(), 3);
         assert_eq!(child[0].role, "user");
         assert!(child[0]
             .content
             .contains(crate::compression_prompt::SUMMARY_PREFIX));
         assert_eq!(child[1].role, "assistant");
+        assert!(child[1].content.starts_with("a3 "));
         assert!(child[2].content.starts_with("u3 "));
-        assert!(child[3].content.starts_with("a3 "));
         assert_eq!(current.fields["last_prompt_tokens"], 0);
         drop(database);
         drop(store);
@@ -1902,12 +1906,12 @@ mod tests {
         assert_eq!(current.session_id, entry.session_id);
         assert!(database.get_session(&entry.session_id).unwrap().unwrap()["ended_at"].is_null());
         let live = database.load_history(&entry.session_id, 0).unwrap();
-        assert_eq!(live.len(), 4);
+        assert_eq!(live.len(), 3);
         assert!(live[0]
             .content
             .contains(crate::compression_prompt::SUMMARY_PREFIX));
+        assert!(live[1].content.starts_with("a3 "));
         assert!(live[2].content.starts_with("u3 "));
-        assert!(live[3].content.starts_with("a3 "));
         drop(database);
         drop(store);
         std::fs::remove_dir_all(home).unwrap();

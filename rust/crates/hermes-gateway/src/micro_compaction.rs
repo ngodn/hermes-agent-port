@@ -571,11 +571,16 @@ mod tests {
             tool_call_id: None,
             tool_calls: None,
             tool_name: None,
+            effect_disposition: None,
+            finish_reason: None,
             reasoning: None,
             reasoning_content: None,
             reasoning_details: None,
             codex_reasoning_items: None,
             codex_message_items: None,
+            display_kind: None,
+            display_metadata: None,
+            timestamp: 0.0,
             compressed_summary: false,
         }
     }
@@ -642,11 +647,16 @@ mod tests {
                         .and_then(|row| row.tool_calls)
                 }),
                 tool_name: None,
+                effect_disposition: None,
+                finish_reason: None,
                 reasoning: None,
                 reasoning_content: None,
                 reasoning_details: None,
                 codex_reasoning_items: None,
                 codex_message_items: None,
+                display_kind: None,
+                display_metadata: None,
+                timestamp: 0.0,
                 compressed_summary: candidate.compressed_summary,
             })
             .collect()

@@ -1955,7 +1955,7 @@ mod tests {
         assert!(db.get_session(&parent).unwrap().unwrap()["end_reason"].is_null());
         assert!(reply.contains("compressed in place"));
         let compacted = db.load_history(&parent, 0).unwrap();
-        assert_eq!(compacted.len(), 4);
+        assert_eq!(compacted.len(), 3);
         assert!(compacted[0]
             .content
             .starts_with(crate::compression_prompt::SUMMARY_PREFIX));
@@ -1981,6 +1981,16 @@ mod tests {
         assert!(wire.iter().any(|message| message["content"]
             .as_str()
             .is_some_and(|text| text.starts_with(crate::compression_prompt::SUMMARY_PREFIX))));
+        assert_eq!(
+            wire.iter()
+                .filter_map(|message| message["role"].as_str())
+                .filter(|role| *role != "system")
+                .collect::<Vec<_>>(),
+            ["user", "assistant", "user"]
+        );
+        assert!(wire.last().unwrap()["content"]
+            .as_str()
+            .is_some_and(|text| text.contains("after compression")));
         assert!(wire.iter().all(|message| !message["content"]
             .as_str()
             .is_some_and(|text| text.starts_with("turn 0 "))));
@@ -2068,7 +2078,7 @@ mod tests {
         };
         let session_id = store.current_entry_for_source(&source).unwrap().session_id;
         let live = db.load_history(&session_id, 0).unwrap();
-        assert_eq!(live.len(), 10);
+        assert_eq!(live.len(), 8);
         assert_eq!(
             live[0]
                 .content
@@ -2079,9 +2089,9 @@ mod tests {
         );
         assert!(live[2]
             .content
-            .starts_with(crate::compression_prompt::SUMMARY_PREFIX));
-        assert!(live[8].content.starts_with("turn 4 "));
-        assert_eq!(live[9].content, "answer");
+            .contains(crate::compression_prompt::SUMMARY_PREFIX));
+        assert!(live[6].content.starts_with("turn 4 "));
+        assert_eq!(live[7].content, "answer");
 
         let calls = calls.lock().unwrap();
         assert_eq!(
@@ -2598,7 +2608,7 @@ mod tests {
             if has_live_result {
                 assert!(messages.iter().any(|message| {
                     message["content"].as_str().is_some_and(|content| {
-                        content.starts_with(crate::compression_prompt::SUMMARY_PREFIX)
+                        content.contains(crate::compression_prompt::SUMMARY_PREFIX)
                     })
                 }));
                 assert!(messages
@@ -2737,11 +2747,14 @@ mod tests {
             active.messages.last().unwrap().message.content,
             "build handled"
         );
-        assert!(db
-            .search("EARLYCOMPRESSDETAIL", 10)
-            .unwrap()
-            .iter()
-            .any(|hit| hit.session_id == session_id));
+        assert_eq!(
+            db.search("EARLYCOMPRESSDETAIL", 10)
+                .unwrap()
+                .iter()
+                .filter(|hit| hit.session_id == session_id)
+                .count(),
+            1
+        );
     }
 
     #[tokio::test]

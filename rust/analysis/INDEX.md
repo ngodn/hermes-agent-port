@@ -56,10 +56,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   persist the durable ineffective breaker. Successful boundaries and forced
   manual compression clear the guard.
 - Full compression now honors the configured minimum count of real actionable
-  user turns in both pre-turn and same-turn tails. Persisted handoffs use the
-  current Python framing and recognize legacy, frozen historical, earlier
-  native, and merged carriers during re-compression. Dynamic role and carrier
-  assembly remains open.
+  user turns and publishes the complete Python-compatible handoff plan in
+  manual, pre-turn, and same-turn paths. Dynamic template-visible roles,
+  collision merges, old-carrier normalization, zero-user anchors, exact wide
+  row cloning, and reference-only call suppression are live.
 
 ## Rejected paths
 
@@ -77,7 +77,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
-| [native-compression-handoff-tail-resolution.md](native-compression-handoff-tail-resolution.md) | Live N-user tail anchoring, exact handoff framing and historical normalization, helper split, proof, and remaining assembly seam |
+| [native-compression-handoff-tail-resolution.md](native-compression-handoff-tail-resolution.md) | Live N-user tails, complete handoff planner, summary rehydration, exact replacement publication, call suppression, helper disposition, and proof |
 | [compression-handoff-oracle-claude.md](compression-handoff-oracle-claude.md) | Source-executed 60-case handoff contract, runtime coverage, and parity traps |
 | [compression-handoff-goldens.json](../tools/compression-handoff-goldens.json) | Exact constants plus classification, role, carrier, anchor, and call-suppression outputs |
 | [native-compression-structural-backoff-resolution.md](native-compression-structural-backoff-resolution.md) | Live conversation-local structural retry guard, manual and successful clearing, durable-breaker separation, validation, and explicit deferrals |
@@ -136,7 +136,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 48.10-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 48.85-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |

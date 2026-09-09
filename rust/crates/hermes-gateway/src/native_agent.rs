@@ -137,7 +137,7 @@ impl ChatModel for TranscriptModel<'_> {
         &self,
         messages: &mut Vec<Value>,
         tools: &[Value],
-    ) -> Result<()> {
+    ) -> Result<bool> {
         self.inner
             .maintain_after_tool_batch(
                 self.database,
@@ -1360,8 +1360,15 @@ impl NativeAgentClient {
         };
         let middle = &snapshot.messages[prefix_end..tail_start];
         let source_chars = crate::automatic_compression::structured_chars(middle);
+        let Some(summary_history) = crate::compression_prompt::history_for_window(
+            &snapshot.messages,
+            prefix_end,
+            tail_start,
+        ) else {
+            return Ok(SameTurnCompressionOutcome::Attempted);
+        };
         let summary_body = match self
-            .summarize_history(Some(database), session_id, middle, None)
+            .summarize_history(Some(database), session_id, &summary_history, None)
             .await
         {
             Ok(Some(summary)) => crate::compression_redact::redact(summary.trim()),
@@ -1400,35 +1407,22 @@ impl NativeAgentClient {
             tracing::warn!(%session_id, strikes, "same-turn compression refused a non-shrinking summary");
             return Ok(SameTurnCompressionOutcome::Attempted);
         }
-        let Some(summary) = crate::compression_prompt::wrap(&summary_body) else {
+        let Some(replacement) = crate::compression_handoff::plan_replacement(
+            &snapshot.messages,
+            prefix_end,
+            tail_start,
+            &summary_body,
+        ) else {
             return Ok(SameTurnCompressionOutcome::Attempted);
         };
-        let compacted = [
-            crate::session_db::HistoryMessage {
-                role: "user".into(),
-                content: summary,
-                api_content: None,
-            },
-            crate::session_db::HistoryMessage {
-                role: "assistant".into(),
-                content: crate::compression_prompt::SUMMARY_ACK.into(),
-                api_content: None,
-            },
-        ];
-        let prefix_end_id = prefix_end
-            .checked_sub(1)
-            .map(|index| snapshot.messages[index].id);
-        let tail_start_id = snapshot.messages.get(tail_start).map(|item| item.id);
         let published = Self::same_turn_db(
             database.publish_gateway_in_place_compression(
                 &crate::session_db::GatewayInPlaceCompressionPublish {
                     scope: &route.0,
                     session_key: &route.1,
                     session_id,
-                    compacted_messages: &compacted,
-                    prefix_end_id,
-                    tail_start_id,
-                    watermark: snapshot.watermark,
+                    original_messages: &snapshot.messages,
+                    rows: &replacement,
                     turn_lease_holder: Some(holder),
                 },
             ),
@@ -1474,7 +1468,7 @@ impl NativeAgentClient {
         messages: &mut Vec<Value>,
         tools: &[Value],
         compression: &SameTurnCompressionState,
-    ) -> Result<()> {
+    ) -> Result<bool> {
         if self
             .full_compress_after_tool_batch(
                 database,
@@ -1487,7 +1481,9 @@ impl NativeAgentClient {
             .await?
             == SameTurnCompressionOutcome::Attempted
         {
-            return Ok(());
+            return Ok(
+                crate::compression_handoff::reference_handoff_would_drive_next_model_call(messages),
+            );
         }
         self.proactive_prune_after_tool_batch(
             database,
@@ -1495,7 +1491,8 @@ impl NativeAgentClient {
             turn_lease_holder,
             messages,
             tools,
-        )
+        )?;
+        Ok(false)
     }
 
     fn proactive_prune_after_tool_batch(
@@ -2401,11 +2398,16 @@ mod tests {
                         tool_call_id: None,
                         tool_calls: None,
                         tool_name: None,
+                        effect_disposition: None,
+                        finish_reason: None,
                         reasoning: None,
                         reasoning_content: None,
                         reasoning_details: None,
                         codex_reasoning_items: None,
                         codex_message_items: None,
+                        display_kind: None,
+                        display_metadata: None,
+                        timestamp: 0.0,
                         compressed_summary: false,
                     },
                     crate::session_db::CompressionHistoryMessage {
@@ -2418,11 +2420,16 @@ mod tests {
                         tool_call_id: None,
                         tool_calls: None,
                         tool_name: None,
+                        effect_disposition: None,
+                        finish_reason: None,
                         reasoning: None,
                         reasoning_content: None,
                         reasoning_details: None,
                         codex_reasoning_items: None,
                         codex_message_items: None,
+                        display_kind: None,
+                        display_metadata: None,
+                        timestamp: 0.0,
                         compressed_summary: false,
                     },
                 ],
@@ -2846,11 +2853,16 @@ mod tests {
                     tool_call_id: None,
                     tool_calls: None,
                     tool_name: None,
+                    effect_disposition: None,
+                    finish_reason: None,
                     reasoning: None,
                     reasoning_content: None,
                     reasoning_details: None,
                     codex_reasoning_items: None,
                     codex_message_items: None,
+                    display_kind: None,
+                    display_metadata: None,
+                    timestamp: 0.0,
                     compressed_summary: false,
                 }],
                 None,

@@ -1,36 +1,42 @@
 # Hermes Rust rewrite
 
-## Native compression handoff framing and tail anchors: 2026-09-09
+## Native compression handoff assembly and tail anchors: 2026-09-09
 
-Native full compression now honors `compression.min_tail_user_messages` on
-both pre-turn and same-turn paths. Values above one preserve the last N real
-actionable user turns despite token pressure, excluding persisted summary
-carriers, continuation and retry scaffolding, background notices, todo
-snapshots, and blank echoes. The default one-user path keeps its existing
-causal-coupling behavior unchanged, and final tool-group alignment still
-prevents split call/result sequences.
+Native manual, automatic pre-turn, and same-turn full compression now publish
+the Python-compatible transcript plan instead of a fixed summary and
+acknowledgment pair. The pure planner keeps protected head and tail rows,
+normalizes old handoffs, selects the summary role against template-visible
+neighbors, merges unavoidable collisions into the correct retained carrier,
+and restores a real user anchor or the exact continuation placeholder.
 
-Persisted native handoffs now use Python's byte-exact current prefix, heading,
-end marker, and continuation strings. Current, legacy, all five frozen Python
-generations, the earlier native prefix, and merged carriers normalize before
-re-compression. Micro-compaction now shares that recognition instead of
-matching only the newest prefix.
+Previous summary bodies are rehydrated separately from newly selected turns,
+including structured content, without summarizing retained live carrier text a
+second time. SQLite clones retained rows in planned order, preserves every
+durable wide column, and rewrites only content, API content, and the summary
+marker. Its exact CAS now includes replay, display, and timestamp fields.
+In-place archive/search and immutable-parent rotation behavior remain atomic.
 
-The helpers had separate deliverables. AGY handled only the tail draft under
-its exclusive auth lock. Claude produced only the 60-case source-executed
-handoff oracle. The primary lane corrected and integrated the draft, consumed
-the oracle, and owned validation and publication. See
+The live tool loop suppresses a follow-up provider request when only a
+reference handoff would drive it. Real user input and in-flight tool exchanges
+continue normally. Stored adjacent summary and anchor user rows are admitted
+because the provider-bound repair merges them, while incomplete tool groups
+remain rejected.
+
+AGY implemented only the pure planner under its exclusive auth lock. Claude
+worked only on the SQLite publisher and store interface, timing out after a
+substantial draft. The primary lane reviewed and corrected that draft,
+integrated every caller, and added prompt rehydration, suppression, and full
+validation. See
 [native-compression-handoff-tail-resolution.md](analysis/native-compression-handoff-tail-resolution.md).
 
-Validation is **1,669 Rust tests passed, two ignored**, plus **62 selected
-Python tests passed**. Oracle regeneration, formatting, Clippy with warnings
+Validation is **1,698 Rust tests passed, two ignored**, plus **73 selected
+Python tests passed**. The 60-case oracle, formatting, Clippy with warnings
 denied, and diff hygiene pass. The refreshed
-[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **48.30
-points, reported as about 48%** (judgment range 46% to 50%). Dynamic
-template-visible summary role selection, merge-into-tail publication,
-zero-user anchor insertion, and reference-only provider-call suppression remain
-the next compression seam. Native plugin, memory, tool, provider, and platform
-breadth remains the larger port.
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **48.85
+points, reported as about 49%** (judgment range 47% to 51%). Mid-turn rotation,
+memory checkpoints, extension notifications, overflow recovery, and auxiliary
+fallback breadth remain in the compression cluster. Native plugin, memory,
+tool, provider, and platform breadth remains the larger port.
 
 ## Native compression structural backoff checkpoint: 2026-09-09
 

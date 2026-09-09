@@ -1378,7 +1378,7 @@ mod tests {
             db.get_session(&parent).unwrap().unwrap()["end_reason"],
             "compression"
         );
-        assert_eq!(db.load_history(&child, 0).unwrap().len(), 4);
+        assert_eq!(db.load_history(&child, 0).unwrap().len(), 3);
         assert!(sent
             .lock()
             .unwrap()
@@ -1515,11 +1515,11 @@ mod tests {
             "compression"
         );
         let live = db.load_history(&child, 0).unwrap();
-        assert_eq!(live.len(), 10);
+        assert_eq!(live.len(), 8);
         assert!(live[2]
             .content
-            .starts_with(crate::compression_prompt::SUMMARY_PREFIX));
-        assert!(live[8].content.starts_with("turn 4"));
+            .contains(crate::compression_prompt::SUMMARY_PREFIX));
+        assert!(live[6].content.starts_with("turn 4"));
         drop(db);
         drop(dispatcher);
         drop(store);

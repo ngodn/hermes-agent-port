@@ -1,9 +1,9 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **48.30% of the full native replacement**, reported as
-**about 48%**, with a reasonable judgment range of **46% to 50%**. This
-supersedes the 48.10-point estimate recorded after structural compression
-backoff.
+Current estimate: **48.85% of the full native replacement**, reported as
+**about 49%**, with a reasonable judgment range of **47% to 51%**. This
+supersedes the 48.30-point estimate recorded after handoff framing and tail
+anchors.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -20,11 +20,11 @@ audits.
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 64% | 22.40 |
 | Tool runtime and RPC | 30% | 13% | 3.90 |
-| State and search | 15% | 72% | 10.80 |
-| Native agent core | 20% | 56% | 11.20 |
-| Total | 100% | | **48.30** |
+| State and search | 15% | 73% | 10.95 |
+| Native agent core | 20% | 58% | 11.60 |
+| Total | 100% | | **48.85** |
 
-`0.35 * 64 + 0.30 * 13 + 0.15 * 72 + 0.20 * 56 = 48.30`
+`0.35 * 64 + 0.30 * 13 + 0.15 * 73 + 0.20 * 58 = 48.85`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -63,7 +63,7 @@ Terminal, file, browser, web, MCP, execution-environment backends, approval
 runtime, delegation execution, most service tools, plugin discovery/management,
 and full backend RPC account for most of this weighted area and remain.
 
-### State and search, 72%
+### State and search, 73%
 
 SQLite history, structured content replay, FTS foundations, route persistence,
 legacy recovery, peer ownership, lineage, conversation generations, prompt
@@ -92,17 +92,25 @@ hides carried-forward duplicate originals, persists the summary marker, and
 reconciles live counters atomically. An injected insert failure proves the
 archive, clones, marker, and counters roll back together.
 
-In-place publication now also accepts the live partial-turn shape ending in a
-fully answered tool-call group, while rejecting dangling or mismatched calls.
-This enables same-turn full summary publication without weakening the
-complete-turn checks used by rotation.
+Compression publication accepts transcripts ending after a user, a completed
+assistant reply, or a fully answered tool-call group. It rejects dangling or
+mismatched calls in both in-place and rotation modes. This covers the restored
+user-anchor shape used before the next provider request.
+
+Full-compression publication now consumes a complete replacement plan instead
+of fixed summary rows plus ID ranges. Retained rows are cloned in plan order,
+all durable message columns survive, and only content, API content, and the
+summary marker may change. The transaction compares replay fields, display
+metadata, and timestamps as part of its exact snapshot CAS. Stored adjacent
+summary and anchor user rows are accepted only through the same provider repair
+used on outbound requests, while incomplete tool-call groups remain invalid.
 
 Full schema and migration parity, session search projection, archive/pin/read
 state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 56%
+### Native agent core, 58%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -170,21 +178,20 @@ HTTP and SQLite test proves it suppresses summary I/O after the transcript
 becomes large enough to compress, and successful or manually forced attempts
 clear it. The state is intentionally not persisted.
 
-Both pre-turn and same-turn full compression now honor
-`min_tail_user_messages`. Values above one retain the last N real actionable
-user turns while excluding persisted handoffs, continuation and retry
-scaffolding, background notices, todo snapshots, and blank echoes. The default
-single-user anchor remains behaviorally unchanged. Native handoffs now use the
-current Python prefix, heading, end marker, and continuation strings, and
-re-compression recognizes every frozen Python prefix generation plus legacy,
-earlier native, and merged carriers. A 60-case source-executed oracle pins the
-larger role, carrier, anchor, and provider-call contract without counting the
-still-unwired branches as complete.
+Manual, pre-turn, and same-turn full compression now share a pure durable
+handoff planner. It rehydrates prior summary bodies separately from new turns,
+normalizes old standalone and merged carriers, selects roles against
+template-visible neighbors, merges collisions into retained tail rows, and
+restores a real user anchor or deterministic continuation marker. String and
+structured content are supported. The active tool loop suppresses a provider
+request if only a reference handoff would drive it, but continues for real user
+input and in-flight tool traffic. A 60-case source-executed oracle pins the
+role, carrier, anchor, and call-suppression contract.
 
-Mid-turn rotation, template-visible role and merge-into-tail assembly,
-zero-user anchor insertion, reference-only handoff suppression, configurable
-multi-provider auxiliary fallback chains, non-chat auxiliary transports,
-provider failover and credential retry loops, delegation/subagents, full approval/clarification
+Mid-turn rotation, configurable multi-provider auxiliary fallback chains,
+non-chat auxiliary transports, required memory checkpoints, extension
+notifications, overflow recovery, provider failover and credential retry
+loops, delegation/subagents, full approval/clarification
 flows, memory and plugin managers, skill execution, context invalidation
 policy, and several agent-loop recovery behaviors remain. These are large
 behavioral systems, which is why the core score remains low despite broad
@@ -192,8 +199,8 @@ helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,669 passing Rust tests and two expected ignores
-(1,668 gateway plus one core test).
+The workspace currently has 1,698 passing Rust tests and two expected ignores
+(1,697 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -201,8 +208,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,669 passed, two ignored (1,668 gateway plus one core).
-- Selected Python handoff and tail contracts: 62 passed.
+- Full Rust workspace: 1,698 passed, two ignored (1,697 gateway plus one core).
+- Selected Python handoff contracts: 73 passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 24 structural-backoff, and 60
@@ -215,9 +222,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Dynamic handoff role/carrier publication, reference-only suppression,
-   mid-turn rotation, auxiliary fallback chains, overflow recovery, and
-   checkpoint hooks complete the current compression cluster.
+1. Mid-turn rotation, auxiliary fallback chains, overflow recovery, memory
+   checkpoints, and extension notifications complete the current compression
+   cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the
