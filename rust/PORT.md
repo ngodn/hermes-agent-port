@@ -1,5 +1,46 @@
 # Hermes Rust rewrite
 
+## Native same-turn compression rotation: 2026-09-09
+
+Rotation-mode full compression now commits during a live native tool turn. A
+shared `TurnSession` advances the physical session only after the existing
+SQLite and routing transaction publishes the child, then aliases the held
+process-local transcript lease to that child. The durable lease continues under
+the unchanged compression-lineage root.
+
+Every later tool persistence and maintenance pass reads the shared child ID.
+HTTP and push owners refresh their message identity before final assistant
+persistence, usage accounting, memory completion, and cache release. The
+conversation wrapper observes the committed boundary and moves the exact frozen
+client to the child key, preserving prompt bytes, tool ordering, plugin state,
+provider routing, and the extension process. Multi-rotation finalization searches
+the committed lineage newest-first, so a later notification failure cannot leak
+an intermediate cached client.
+
+Current-turn memory capture now anchors on the live user payload instead of a
+prefix length that becomes stale after compaction. A full-suite failure also
+exposed and corrected eager lease extraction on uncoordinated turns, preserving
+the detached HTTP and push cancellation contract.
+
+A public HTTP integration test runs both in-place and rotation modes through
+real SQLite, a local provider, a Python extension host, a memory provider, and a
+user hook. It executes one tool before compression and a second afterward,
+proving parent closure, child routing, compacted follow-up input, child-only
+post-boundary writes, child usage and callbacks, exact memory tool history, and
+frozen-client reuse on the next turn. Focused tests cover CAS rejection,
+two-rotation lease aliasing, and cache-observer failure after an intermediate
+rekey. See
+[native-same-turn-rotation-resolution.md](analysis/native-same-turn-rotation-resolution.md).
+
+Validation is **1,729 Rust tests passed, two ignored**, plus **78 selected Python
+rotation and persistence tests passed, one skipped**. Formatting, Clippy with
+warnings denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **50.90
+points, reported as about 51%** (judgment range 49% to 53%). Native terminal,
+file and browser execution, plugin and memory managers, provider breadth,
+remaining gateway platforms, interruption and overflow recovery remain larger
+open areas.
+
 ## Frozen extension-host recovery: 2026-09-09
 
 Conversation-scoped plugin and external-memory hosts now recover after a fatal

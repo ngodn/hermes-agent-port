@@ -30,10 +30,25 @@ use crate::native_tools::{parse_message_step, ChatModel, Step};
 struct TranscriptModel<'a> {
     inner: &'a NativeAgentClient,
     last_messages: std::sync::Mutex<Vec<Value>>,
-    database: Option<&'a crate::session_db::SessionDb>,
-    session_id: &'a str,
-    turn_lease_holder: Option<&'a str>,
+    turn: NativeToolTurnContext<'a>,
     compression: SameTurnCompressionState,
+}
+
+#[derive(Clone, Copy)]
+struct NativeToolTurnContext<'a> {
+    database: Option<&'a crate::session_db::SessionDb>,
+    initial_session_id: &'a str,
+    turn_session: Option<&'a crate::turn_session::TurnSession>,
+    compression_observer: Option<&'a dyn AgentClient>,
+    turn_lease_holder: Option<&'a str>,
+}
+
+impl NativeToolTurnContext<'_> {
+    fn session_id(&self) -> String {
+        self.turn_session
+            .map(crate::turn_session::TurnSession::session_id)
+            .unwrap_or_else(|| self.initial_session_id.to_owned())
+    }
 }
 
 #[derive(Default)]
@@ -114,11 +129,12 @@ impl ChatModel for TranscriptModel<'_> {
     }
 
     fn persist_tool_loop_message(&self, message: &Value) -> Result<()> {
-        let Some(database) = self.database else {
+        let Some(database) = self.turn.database else {
             return Ok(());
         };
+        let session_id = self.turn.session_id();
         let inserted = database
-            .append_native_tool_message(self.session_id, message, self.turn_lease_holder)
+            .append_native_tool_message(&session_id, message, self.turn.turn_lease_holder)
             .map_err(|error| {
                 Error::Other(format!(
                     "native tool transcript persistence failed: {error}"
@@ -139,14 +155,7 @@ impl ChatModel for TranscriptModel<'_> {
         tools: &[Value],
     ) -> Result<bool> {
         self.inner
-            .maintain_after_tool_batch(
-                self.database,
-                self.session_id,
-                self.turn_lease_holder,
-                messages,
-                tools,
-                &self.compression,
-            )
+            .maintain_after_tool_batch(self.turn, messages, tools, &self.compression)
             .await
     }
 
@@ -191,6 +200,24 @@ fn same_turn_compression_pressure(
     } else {
         provider_prompt_tokens.unwrap_or(rough_request_tokens)
     }
+}
+
+/// Recover the current turn from the tool loop's final in-memory transcript.
+/// Full compression can replace the prefix with a shorter handoff, so the
+/// original history length is only a fallback. The current user payload is the
+/// stable anchor preserved by the compression planner.
+fn current_turn_messages(
+    messages: Vec<Value>,
+    original_prefix_len: usize,
+    user_content: &Value,
+) -> Vec<Value> {
+    let start = messages
+        .iter()
+        .rposition(|message| {
+            message["role"] == "user" && message.get("content") == Some(user_content)
+        })
+        .unwrap_or_else(|| original_prefix_len.min(messages.len()));
+    messages.into_iter().skip(start).collect()
 }
 
 /// One decoded SSE line.
@@ -1301,20 +1328,20 @@ impl NativeAgentClient {
 
     async fn full_compress_after_tool_batch(
         &self,
-        database: Option<&crate::session_db::SessionDb>,
-        session_id: &str,
-        turn_lease_holder: Option<&str>,
+        turn: NativeToolTurnContext<'_>,
         messages: &mut Vec<Value>,
         tools: &[Value],
         compression: &SameTurnCompressionState,
     ) -> Result<SameTurnCompressionOutcome> {
         let policy = &self.automatic_compression_policy;
-        let (Some(database), Some(holder)) = (database, turn_lease_holder) else {
+        let (Some(database), Some(holder)) = (turn.database, turn.turn_lease_holder) else {
             return Ok(SameTurnCompressionOutcome::NotTriggered);
         };
-        if !policy.enabled || !policy.in_place {
+        if !policy.enabled || (!policy.in_place && turn.turn_session.is_none()) {
             return Ok(SameTurnCompressionOutcome::NotTriggered);
         }
+        let session_id = turn.session_id();
+        let session_id = session_id.as_str();
         let (rough_request_tokens, output_cap) = self.tool_request_pressure(messages, tools)?;
         let threshold = policy.compute_effective_threshold_with_output_for(
             self.context_length,
@@ -1518,47 +1545,89 @@ impl NativeAgentClient {
         ) else {
             return Ok(SameTurnCompressionOutcome::Attempted);
         };
-        let published = Self::same_turn_db(
-            database.publish_gateway_in_place_compression(
-                &crate::session_db::GatewayInPlaceCompressionPublish {
-                    scope: &route.0,
-                    session_key: &route.1,
-                    session_id,
-                    original_messages: &snapshot.messages,
-                    rows: &replacement,
-                    turn_lease_holder: Some(holder),
-                },
+        let rotation = if policy.in_place {
+            let published = Self::same_turn_db(
+                database.publish_gateway_in_place_compression(
+                    &crate::session_db::GatewayInPlaceCompressionPublish {
+                        scope: &route.0,
+                        session_key: &route.1,
+                        session_id,
+                        original_messages: &snapshot.messages,
+                        rows: &replacement,
+                        turn_lease_holder: Some(holder),
+                    },
+                ),
+                "in-place publication",
+            )?;
+            if !published {
+                Self::refund_compression_attempt(&compression.attempts);
+                return Ok(SameTurnCompressionOutcome::Attempted);
+            }
+            None
+        } else {
+            let published = turn
+                .turn_session
+                .expect("rotation mode checked above")
+                .publish_compression(&snapshot.messages, &replacement, Some(holder))
+                .map_err(|error| {
+                    Error::Other(format!(
+                        "same-turn compression rotation publication: {error}"
+                    ))
+                })?;
+            let Some(rotation) = published else {
+                Self::refund_compression_attempt(&compression.attempts);
+                return Ok(SameTurnCompressionOutcome::Attempted);
+            };
+            Some(rotation)
+        };
+        let (old_session_id, active_session_id, in_place) = match &rotation {
+            Some(rotation) => (
+                rotation.parent_session_id.as_str(),
+                rotation.child_session_id.as_str(),
+                false,
             ),
-            "in-place publication",
-        )?;
-        if !published {
-            Self::refund_compression_attempt(&compression.attempts);
-            return Ok(SameTurnCompressionOutcome::Attempted);
-        }
-        if let Err(error) = <Self as AgentClient>::notify_compression_boundary(
-            self,
-            crate::agent::TurnContext::from_database(Some(database)),
-            session_id,
-            session_id,
-            true,
-        )
-        .await
-        {
+            None => (session_id, session_id, true),
+        };
+        let notification_context = crate::agent::TurnContext::from_database(Some(database))
+            .with_turn_session(turn.turn_session);
+        let notification = match turn.compression_observer {
+            Some(observer) => {
+                observer
+                    .notify_compression_boundary(
+                        notification_context,
+                        old_session_id,
+                        active_session_id,
+                        in_place,
+                    )
+                    .await
+            }
+            None => {
+                <Self as AgentClient>::notify_compression_boundary(
+                    self,
+                    notification_context,
+                    old_session_id,
+                    active_session_id,
+                    in_place,
+                )
+                .await
+            }
+        };
+        if let Err(error) = notification {
             let error = crate::compression_redact::redact(&error.to_string());
-            tracing::warn!(%error, %session_id, "same-turn compression boundary notification failed after commit");
+            tracing::warn!(%error, session_id = %active_session_id, "same-turn compression boundary notification failed after commit");
         }
         self.clear_compression_structural_backoff();
         Self::same_turn_db(
-            database.clear_compression_failure_cooldown(session_id),
+            database.clear_compression_failure_cooldown(active_session_id),
             "cooldown clear",
         )?;
         Self::same_turn_db(
-            database.set_compression_breaker(session_id, 0, 0.0),
+            database.set_compression_breaker(active_session_id, 0, 0.0),
             "breaker clear",
         )?;
         Self::adopt_durable_tool_loop_transcript(
             database,
-            session_id,
+            active_session_id,
             messages,
             "same-turn compression",
         )?;
@@ -1566,7 +1635,7 @@ impl NativeAgentClient {
             .awaiting_usage
             .store(true, std::sync::atomic::Ordering::Release);
         tracing::info!(
-            %session_id,
+            session_id = %active_session_id,
             pressure_tokens,
             threshold,
             attempt = attempts_used + 1,
@@ -1577,22 +1646,13 @@ impl NativeAgentClient {
 
     async fn maintain_after_tool_batch(
         &self,
-        database: Option<&crate::session_db::SessionDb>,
-        session_id: &str,
-        turn_lease_holder: Option<&str>,
+        turn: NativeToolTurnContext<'_>,
         messages: &mut Vec<Value>,
         tools: &[Value],
         compression: &SameTurnCompressionState,
     ) -> Result<bool> {
         if self
-            .full_compress_after_tool_batch(
-                database,
-                session_id,
-                turn_lease_holder,
-                messages,
-                tools,
-                compression,
-            )
+            .full_compress_after_tool_batch(turn, messages, tools, compression)
             .await?
             == SameTurnCompressionOutcome::Attempted
         {
@@ -1600,10 +1660,11 @@ impl NativeAgentClient {
                 crate::compression_handoff::reference_handoff_would_drive_next_model_call(messages),
             );
         }
+        let session_id = turn.session_id();
         self.proactive_prune_after_tool_batch(
-            database,
-            session_id,
-            turn_lease_holder,
+            turn.database,
+            &session_id,
+            turn.turn_lease_holder,
             messages,
             tools,
         )?;
@@ -1749,9 +1810,7 @@ impl NativeAgentClient {
         &self,
         content: &Value,
         history: &[Value],
-        database: Option<&crate::session_db::SessionDb>,
-        session_id: &str,
-        turn_lease_holder: Option<&str>,
+        turn: NativeToolTurnContext<'_>,
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<Option<Vec<Value>>> {
         let history = with_system_prompt(self.system_prompt.as_deref(), history);
@@ -1761,9 +1820,7 @@ impl NativeAgentClient {
             let model = TranscriptModel {
                 inner: self,
                 last_messages: std::sync::Mutex::new(Vec::new()),
-                database,
-                session_id,
-                turn_lease_holder,
+                turn,
                 compression: SameTurnCompressionState::default(),
             };
             crate::native_tools::run_tool_loop_with_messages(
@@ -1776,7 +1833,7 @@ impl NativeAgentClient {
             )
             .await?;
             let messages = model.last_messages.into_inner().unwrap();
-            return Ok(Some(messages.into_iter().skip(prefix_len).collect()));
+            return Ok(Some(current_turn_messages(messages, prefix_len, content)));
         }
 
         let url = format!("{}/chat/completions", self.base_url);
@@ -1887,14 +1944,15 @@ impl NativeAgentClient {
             history,
             Some(&clean_content),
         );
-        let model = turn_client.run_model_turn(
-            &model_content,
-            &durable_history,
-            context.database,
-            &session_id,
-            context.turn_lease_holder,
-            inner_tx,
-        );
+        let native_turn = NativeToolTurnContext {
+            database: context.database,
+            initial_session_id: &session_id,
+            turn_session: context.turn_session,
+            compression_observer: context.compression_observer,
+            turn_lease_holder: context.turn_lease_holder,
+        };
+        let model =
+            turn_client.run_model_turn(&model_content, &durable_history, native_turn, inner_tx);
         let forward = async {
             let mut response = String::new();
             while let Some(event) = inner_rx.recv().await {
@@ -2970,6 +3028,27 @@ mod tests {
         );
         assert!(!awaiting.load(Ordering::Acquire));
         assert_eq!(attempts.load(Ordering::Acquire), 0);
+    }
+
+    #[test]
+    fn current_turn_capture_survives_a_shorter_compression_handoff() {
+        let user = serde_json::json!("current question");
+        let messages = vec![
+            serde_json::json!({"role":"user", "content":"compressed history"}),
+            serde_json::json!({"role":"user", "content":"current question"}),
+            serde_json::json!({"role":"assistant", "content":null, "tool_calls":[{
+                "id":"call", "type":"function",
+                "function":{"name":"terminal", "arguments":"{}"}
+            }]}),
+            serde_json::json!({"role":"tool", "tool_call_id":"call", "content":"result"}),
+        ];
+
+        let current = super::current_turn_messages(messages, 20, &user);
+
+        assert_eq!(current.len(), 3);
+        assert_eq!(current[0]["role"], "user");
+        assert_eq!(current[1]["role"], "assistant");
+        assert_eq!(current[2]["role"], "tool");
     }
 
     #[tokio::test]

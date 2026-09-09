@@ -42,11 +42,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   user bytes, supersedes only contained rolling markers, bounds failures and
   defrag, and publishes through an exact-snapshot plus lineage-lease SQLite
   transaction.
-- Default in-place full compression now runs after durable tool-result batches
-  and before the next same-turn provider request. It uses real prompt usage,
-  sentinel/rearm attempt semantics, guarded summary publication, durable
-  transcript adoption, and byte-stable system prompts. Mid-turn rotation
-  remains open.
+- Full compression now runs after durable tool-result batches and before the
+  next same-turn provider request in both in-place and rotation modes. It uses
+  real prompt usage, sentinel/rearm attempt semantics, guarded publication,
+  durable transcript adoption, byte-stable system prompts, and a shared
+  physical-session identity that follows the committed child.
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Configured
@@ -289,6 +289,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [session-entry-verification.md](session-entry-verification.md) | Persisted entry codec, 124 Python comparisons and integration limits |
 | [extension-host-recovery-resolution.md](extension-host-recovery-resolution.md) | No-replay child recovery, frozen capability checks, session rebinding, teardown policy and proof |
 | [extension-host-recovery-review-claude.md](extension-host-recovery-review-claude.md) | Independent recovery correctness and security review; identified tests resolved before publication |
+| [native-same-turn-rotation-contract-agy.md](native-same-turn-rotation-contract-agy.md) | Authoritative Python mid-turn rotation ordering, transaction, lease, callback and rollback contract |
+| [native-same-turn-rotation-seam-claude.md](native-same-turn-rotation-seam-claude.md) | Independent Rust stale-reference map, reusable primitives, seam alternatives and test plan |
+| [native-same-turn-rotation-resolution.md](native-same-turn-rotation-resolution.md) | Shared turn identity, atomic child adoption, lease and cache continuity, failure handling and live proof |
 | [native-terminal-python-contract-agy.md](native-terminal-python-contract-agy.md) | Python terminal schema, approval, foreground execution, persistence, timeout, output and process contract |
 | [native-terminal-rust-seam-claude.md](native-terminal-rust-seam-claude.md) | Rust terminal construction seam, reusable primitives, routing constraints and registration blockers |
 

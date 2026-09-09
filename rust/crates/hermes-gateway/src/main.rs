@@ -186,6 +186,7 @@ mod transcription_enrichment;
 mod transcription_http;
 mod turn_lease;
 mod turn_limit;
+mod turn_session;
 mod visible_response;
 mod vision_enrichment;
 mod wake;

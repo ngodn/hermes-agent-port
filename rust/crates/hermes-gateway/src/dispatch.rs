@@ -53,6 +53,14 @@ pub struct Dispatcher {
     slash_confirmations: Arc<crate::slash_confirm::SlashConfirmations>,
 }
 
+struct AdmittedTurnOwnership {
+    routing_key: Option<String>,
+    session_finalizable: bool,
+    turn_session: Option<crate::turn_session::TurnSession>,
+    transcript_lease: Option<crate::turn_lease::TurnLeaseToken>,
+    durable_lease: Option<crate::durable_turn_lease::DurableTurnLease>,
+}
+
 impl Dispatcher {
     pub fn new(
         agent: Arc<dyn AgentClient>,
@@ -491,6 +499,7 @@ impl Dispatcher {
         let mut session_finalizable = false;
         let mut admitted_lease = None;
         let mut admitted_durable_lease = None;
+        let mut turn_session = None;
         if !manages {
             if let Some((store, freshness)) = &self.session_store {
                 let source = crate::session::source_from_message(&msg);
@@ -526,6 +535,11 @@ impl Dispatcher {
                             warn!(%error, "automatic compression preflight failed open");
                         }
                         drop(resolved.route_lease.take());
+                        turn_session = Some(crate::turn_session::TurnSession::new(
+                            store.clone(),
+                            source,
+                            resolved.entry.clone(),
+                        ));
                         msg.resolved_session_id = Some(resolved.entry.session_id);
                         routing_key = Some(resolved.entry.session_key);
                         turn_db = resolved.database;
@@ -555,7 +569,7 @@ impl Dispatcher {
         // A held lease means a same-session turn is in flight; fail closed on
         // timeout rather than run two turns unserialized on one transcript.
         let session_id = crate::session_db::message_session_id(&msg);
-        let _lease = if admitted_lease.is_some() {
+        let mut turn_lease = if admitted_lease.is_some() {
             admitted_lease
         } else {
             let generation = self.generation.fetch_add(1, Ordering::Relaxed);
@@ -571,6 +585,11 @@ impl Dispatcher {
                 }
             }
         };
+        if let Some(turn_session) = &turn_session {
+            if let Some(token) = turn_lease.take() {
+                turn_session.bind_transcript_lease(self.lease.clone(), token);
+            }
+        }
 
         // An admitted turn outlives cancellation of its ingress waiter. Keep
         // its configured adapters and shared state alive through persistence
@@ -582,9 +601,13 @@ impl Dispatcher {
                     msg,
                     turn_db,
                     manages,
-                    routing_key,
-                    session_finalizable,
-                    (_lease, admitted_durable_lease),
+                    AdmittedTurnOwnership {
+                        routing_key,
+                        session_finalizable,
+                        turn_session,
+                        transcript_lease: turn_lease,
+                        durable_lease: admitted_durable_lease,
+                    },
                 )
                 .await;
         })
@@ -596,17 +619,18 @@ impl Dispatcher {
 
     async fn run_admitted_turn(
         &self,
-        msg: Message,
+        mut msg: Message,
         turn_db: Option<Arc<crate::session_db::SessionDb>>,
         manages: bool,
-        routing_key: Option<String>,
-        session_finalizable: bool,
-        _leases: (
-            Option<crate::turn_lease::TurnLeaseToken>,
-            Option<crate::durable_turn_lease::DurableTurnLease>,
-        ),
+        ownership: AdmittedTurnOwnership,
     ) {
-        let (_turn_lease, durable_turn_lease) = _leases;
+        let AdmittedTurnOwnership {
+            routing_key,
+            session_finalizable,
+            turn_session,
+            transcript_lease: _transcript_lease,
+            durable_lease: durable_turn_lease,
+        } = ownership;
         let turn_lease_holder = durable_turn_lease
             .as_ref()
             .map(|lease| lease.holder().to_owned());
@@ -622,12 +646,14 @@ impl Dispatcher {
         let agent_db = turn_db.clone();
         let msg_for_agent = msg.clone();
         let agent_turn_lease_holder = turn_lease_holder.clone();
+        let agent_turn_session = turn_session.clone();
         let agent_task = tokio::spawn(async move {
             turn_agent
                 .run_turn_with_context(
                     crate::agent::TurnContext::from_database(agent_db.as_deref())
                         .with_session_finalizable(session_finalizable)
-                        .with_turn_lease_holder(agent_turn_lease_holder.as_deref()),
+                        .with_turn_lease_holder(agent_turn_lease_holder.as_deref())
+                        .with_turn_session(agent_turn_session.as_ref()),
                     &msg_for_agent,
                     &history,
                     tx,
@@ -673,6 +699,10 @@ impl Dispatcher {
             Ok(Ok(())) => true,
         };
 
+        if let Some(turn_session) = &turn_session {
+            msg.resolved_session_id = Some(turn_session.session_id());
+        }
+
         // Record the assistant reply for stateless backends (before the silence
         // gate: a silence marker is still part of the transcript history).
         crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
@@ -680,7 +710,8 @@ impl Dispatcher {
             .finalize_turn_after_persist(
                 crate::agent::TurnContext::from_database(turn_db.as_deref())
                     .with_session_finalizable(session_finalizable)
-                    .with_turn_lease_holder(turn_lease_holder.as_deref()),
+                    .with_turn_lease_holder(turn_lease_holder.as_deref())
+                    .with_turn_session(turn_session.as_ref()),
                 &msg,
                 &reply,
                 succeeded,

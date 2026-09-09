@@ -764,7 +764,12 @@ impl AgentClient for ConversationAgent {
             }
         };
         client
-            .run_turn_with_context(context, msg, history, events)
+            .run_turn_with_context(
+                context.with_compression_observer(self),
+                msg,
+                history,
+                events,
+            )
             .await?;
         // The pending count stays armed through durable persistence and the
         // separate post-persist finalizer.
@@ -1009,13 +1014,28 @@ impl AgentClient for ConversationAgent {
                 .finalize_turn_after_persist(context, msg, reply, succeeded)
                 .await;
         };
-        let cell = self
-            .state
-            .lock()
-            .unwrap()
-            .entries
-            .get(&key)
-            .map(|entry| entry.cell.clone());
+        let mut finish_candidates = vec![key.clone()];
+        if let Some(turn_session) = context.turn_session {
+            finish_candidates.extend(
+                turn_session
+                    .cache_session_candidates()
+                    .into_iter()
+                    .filter(|session_id| session_id != &key.1)
+                    .map(|session_id| (key.0.clone(), session_id)),
+            );
+        }
+        let (finish_key, cell) = {
+            let state = self.state.lock().unwrap();
+            finish_candidates
+                .into_iter()
+                .find_map(|candidate| {
+                    state
+                        .entries
+                        .get(&candidate)
+                        .map(|entry| (candidate, Some(entry.cell.clone())))
+                })
+                .unwrap_or_else(|| (key.clone(), None))
+        };
         let result = match cell.as_ref().and_then(|cell| cell.get().cloned()) {
             Some(client) => {
                 client
@@ -1025,7 +1045,7 @@ impl AgentClient for ConversationAgent {
             None => Ok(()),
         };
         if let Some(cell) = &cell {
-            self.finish_turn(&key, cell, false);
+            self.finish_turn(&finish_key, cell, false);
         }
         result
     }
@@ -1176,6 +1196,8 @@ mod tests {
         crate::agent::TurnContext {
             home: Some(home),
             database: None,
+            turn_session: None,
+            compression_observer: None,
             turn_lease_holder: None,
             session_finalizable: false,
         }
@@ -1482,6 +1504,192 @@ mod tests {
         assert!(!agent.contains(home, "parent"));
         assert!(!agent.contains(home, "child"));
         assert_eq!(*closes.lock().unwrap(), [false]);
+    }
+
+    #[tokio::test]
+    async fn multiply_rotated_turn_finalizer_releases_intermediate_key_after_boundary_failure() {
+        struct LaterFailingBoundaryAgent {
+            boundaries: Arc<AtomicUsize>,
+            closes: Arc<Mutex<Vec<bool>>>,
+        }
+
+        #[async_trait]
+        impl AgentClient for LaterFailingBoundaryAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                _: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                Ok(())
+            }
+
+            async fn notify_compression_boundary(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &str,
+                _: &str,
+                _: bool,
+            ) -> Result<()> {
+                if self.boundaries.fetch_add(1, Ordering::SeqCst) == 0 {
+                    Ok(())
+                } else {
+                    Err(Error::Other("extension host transport failed".into()))
+                }
+            }
+
+            async fn close_conversation(
+                &self,
+                messages: Option<&[serde_json::Value]>,
+            ) -> Result<()> {
+                self.closes.lock().unwrap().push(messages.is_some());
+                Ok(())
+            }
+        }
+
+        let stamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = std::env::temp_dir().join(format!(
+            "hermes-rotated-finalizer-{}-{stamp}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(&home).unwrap();
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let source = crate::session::SessionSource::new("local", "rotation-failure");
+        let entry = store
+            .get_or_create_session(&source, false, false, 3600.0, |_| Ok(false))
+            .unwrap();
+        let parent_id = entry.session_id.clone();
+        let database = store.database_for_key(&entry.session_key).unwrap();
+        database
+            .append_message(&parent_id, "user", "question")
+            .unwrap();
+        let snapshot = database.load_compression_snapshot(&parent_id).unwrap();
+        let turn_session = crate::turn_session::TurnSession::new(store, source, entry);
+        let context = crate::agent::TurnContext::from_database(Some(&database))
+            .with_turn_session(Some(&turn_session));
+        assert_eq!(context.home, Some(home.as_path()));
+
+        let closes = Arc::new(Mutex::new(Vec::new()));
+        let boundaries = Arc::new(AtomicUsize::new(0));
+        let factory_closes = closes.clone();
+        let factory_boundaries = boundaries.clone();
+        let agent = ConversationAgent::new(
+            Arc::new(LaterFailingBoundaryAgent {
+                boundaries: Arc::new(AtomicUsize::new(0)),
+                closes: Arc::new(Mutex::new(Vec::new())),
+            }),
+            move |_, _, _, _| {
+                let closes = factory_closes.clone();
+                let boundaries = factory_boundaries.clone();
+                Box::pin(async move {
+                    Ok(Arc::new(LaterFailingBoundaryAgent { boundaries, closes })
+                        as Arc<dyn AgentClient>)
+                })
+            },
+            AgentCacheBounds::default(),
+        );
+        let parent_message = message(&parent_id);
+        let (tx, _rx) = mpsc::channel(8);
+        agent
+            .run_turn_with_context(context, &parent_message, &[], tx)
+            .await
+            .unwrap();
+        assert_eq!(agent.pending(&home, &parent_id), Some(1));
+
+        let first_rotation = turn_session
+            .publish_compression(
+                &snapshot.messages,
+                &[crate::session_db::CompressionReplacementRow {
+                    source_id: None,
+                    role: "user".into(),
+                    content: "compressed handoff".into(),
+                    api_content: None,
+                    compressed_summary: true,
+                }],
+                None,
+            )
+            .unwrap()
+            .unwrap();
+        agent
+            .notify_compression_boundary(
+                context,
+                &parent_id,
+                &first_rotation.child_session_id,
+                false,
+            )
+            .await
+            .unwrap();
+        assert_eq!(
+            agent.pending(&home, &first_rotation.child_session_id),
+            Some(1)
+        );
+
+        let child_snapshot = database
+            .load_compression_snapshot(&first_rotation.child_session_id)
+            .unwrap();
+        let second_rotation = turn_session
+            .publish_compression(
+                &child_snapshot.messages,
+                &[crate::session_db::CompressionReplacementRow {
+                    source_id: None,
+                    role: "user".into(),
+                    content: "second compressed handoff".into(),
+                    api_content: None,
+                    compressed_summary: true,
+                }],
+                None,
+            )
+            .unwrap()
+            .unwrap();
+        agent
+            .notify_compression_boundary(
+                context,
+                &first_rotation.child_session_id,
+                &second_rotation.child_session_id,
+                false,
+            )
+            .await
+            .unwrap_err();
+        assert_eq!(
+            agent.pending(&home, &first_rotation.child_session_id),
+            Some(1)
+        );
+
+        let child_message = message(&second_rotation.child_session_id);
+        agent
+            .finalize_turn_after_persist(context, &child_message, "answer", true)
+            .await
+            .unwrap();
+        tokio::time::timeout(Duration::from_secs(5), async {
+            while closes.lock().unwrap().is_empty() {
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .unwrap();
+        assert!(!agent.contains(&home, &parent_id));
+        assert!(!agent.contains(&home, &first_rotation.child_session_id));
+        assert!(!agent.contains(&home, &second_rotation.child_session_id));
+        assert_eq!(*closes.lock().unwrap(), [false]);
+
+        drop(database);
+        drop(agent);
+        std::fs::remove_dir_all(home).unwrap();
     }
 
     #[tokio::test]

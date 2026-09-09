@@ -300,6 +300,7 @@ pub async fn post_message(
     let mut session_finalizable = false;
     let mut admitted_lease = None;
     let mut admitted_durable_lease = None;
+    let mut turn_session = None;
     if !manages {
         if let Some((store, freshness)) = &state.session_store {
             let source = crate::session::source_from_message(&msg);
@@ -340,6 +341,11 @@ pub async fn post_message(
                 warn!(%error, "automatic compression preflight failed open");
             }
             drop(resolved.route_lease.take());
+            turn_session = Some(crate::turn_session::TurnSession::new(
+                store.clone(),
+                source,
+                resolved.entry.clone(),
+            ));
             msg.resolved_session_id = Some(resolved.entry.session_id);
             routing_key = Some(resolved.entry.session_key);
             turn_db = resolved.database;
@@ -361,7 +367,7 @@ pub async fn post_message(
     // Serialize before history reads. The same registry is passed to push
     // dispatchers, so routes that resolve to one transcript cannot interleave.
     let session_id = crate::session_db::message_session_id(&msg);
-    let _lease = if admitted_lease.is_some() {
+    let mut turn_lease = if admitted_lease.is_some() {
         admitted_lease
     } else {
         let generation = state
@@ -384,11 +390,16 @@ pub async fn post_message(
                 )
             })?
     };
+    if let Some(turn_session) = &turn_session {
+        if let Some(token) = turn_lease.take() {
+            turn_session.bind_transcript_lease(state.turn_leases.clone(), token);
+        }
+    }
     // Once admitted, the turn owns the lease and persistence independently of
     // the HTTP waiter. Dropping a client request must not detach a live agent
     // from its transcript lock or discard its completed assistant message.
     tokio::spawn(async move {
-        let _turn_lease = _lease;
+        let _turn_lease = turn_lease;
         let _durable_turn_lease = admitted_durable_lease;
         let turn_lease_holder = _durable_turn_lease
             .as_ref()
@@ -401,12 +412,14 @@ pub async fn post_message(
         let agent_db = turn_db.clone();
         let msg_for_agent = msg.clone();
         let agent_turn_lease_holder = turn_lease_holder.clone();
+        let agent_turn_session = turn_session.clone();
         let turn = tokio::spawn(async move {
             turn_agent
                 .run_turn_with_context(
                     crate::agent::TurnContext::from_database(agent_db.as_deref())
                         .with_session_finalizable(session_finalizable)
-                        .with_turn_lease_holder(agent_turn_lease_holder.as_deref()),
+                        .with_turn_lease_holder(agent_turn_lease_holder.as_deref())
+                        .with_turn_session(agent_turn_session.as_ref()),
                     &msg_for_agent,
                     &history,
                     tx,
@@ -439,12 +452,16 @@ pub async fn post_message(
         // Keep ownership until it has stopped, including on error paths.
         let outcome = turn.await;
         let succeeded = matches!(&outcome, Ok(Ok(())));
+        if let Some(turn_session) = &turn_session {
+            msg.resolved_session_id = Some(turn_session.session_id());
+        }
         crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
         if let Err(error) = agent
             .finalize_turn_after_persist(
                 crate::agent::TurnContext::from_database(turn_db.as_deref())
                     .with_session_finalizable(session_finalizable)
-                    .with_turn_lease_holder(turn_lease_holder.as_deref()),
+                    .with_turn_lease_holder(turn_lease_holder.as_deref())
+                    .with_turn_session(turn_session.as_ref()),
                 &msg,
                 &reply,
                 succeeded,
@@ -2543,8 +2560,7 @@ mod tests {
             .any(|hit| hit.session_id == session_id));
     }
 
-    #[tokio::test]
-    async fn full_compression_commits_after_tools_before_the_same_turn_followup() {
+    async fn full_compression_commits_after_tools_before_the_same_turn_followup(in_place: bool) {
         #[derive(Clone)]
         struct ModelState {
             calls: Arc<Mutex<Vec<Value>>>,
@@ -2602,10 +2618,13 @@ mod tests {
                 }))
                 .into_response();
             }
-            let has_live_result = messages.iter().any(|message| {
+            let has_first_result = messages.iter().any(|message| {
                 message["role"] == "tool" && message["tool_call_id"] == "same-turn-full-compression"
             });
-            if has_live_result {
+            let has_second_result = messages.iter().any(|message| {
+                message["role"] == "tool" && message["tool_call_id"] == "after-rotation"
+            });
+            if has_first_result {
                 assert!(messages.iter().any(|message| {
                     message["content"].as_str().is_some_and(|content| {
                         content.contains(crate::compression_prompt::SUMMARY_PREFIX)
@@ -2614,9 +2633,26 @@ mod tests {
                 assert!(messages
                     .iter()
                     .all(|message| !message.to_string().contains("EARLYCOMPRESSDETAIL")));
+            }
+            if has_second_result {
                 return Json(json!({
                     "choices":[{"message":{"role":"assistant","content":"build handled"}}],
-                    "usage":{"prompt_tokens":4000,"completion_tokens":3}
+                    "usage":{"prompt_tokens":3000,"completion_tokens":3}
+                }))
+                .into_response();
+            }
+            if has_first_result {
+                return Json(json!({
+                    "choices":[{"message":{
+                        "role":"assistant",
+                        "content":null,
+                        "tool_calls":[{
+                            "id":"after-rotation",
+                            "type":"function",
+                            "function":{"name":"terminal","arguments":"{\"command\":\"cargo check\"}"}
+                        }]
+                    }}],
+                    "usage":{"prompt_tokens":4000,"completion_tokens":8}
                 }))
                 .into_response();
             }
@@ -2685,6 +2721,15 @@ class BoundaryProvider(MemoryProvider):
         self.session_id = session_id
         self.home = kwargs["hermes_home"]
     def get_tool_schemas(self): return []
+    def sync_turn(self, user_content, assistant_content, *, session_id="", messages=None):
+        event = {
+            "user_content": user_content,
+            "assistant_content": assistant_content,
+            "session_id": session_id,
+            "messages": messages,
+        }
+        with Path(self.home, "memory-turns.jsonl").open("a") as stream:
+            stream.write(json.dumps(event, sort_keys=True) + "\n")
     def on_session_switch(self, new_session_id, *, parent_session_id="", reset=False, **kwargs):
         event = {
             "old_session_id": self.session_id,
@@ -2785,17 +2830,34 @@ async def handle(event_type, context):
             "protect_first_n": 2,
             "protect_last_n": 2,
             "max_attempts": 1,
-            "in_place": true
+            "in_place": in_place
         }});
         let policy = crate::automatic_compression::AutomaticCompressionPolicy::from_value(&config);
-        let agent = NativeAgentClient::new("fixture-model", "fixture-key", model_url)
-            .unwrap()
-            .with_system_prompt("FROZEN_SYSTEM_PROMPT_BYTES")
-            .with_tools(vec![Arc::new(BuildProbe)])
-            .with_context_length(100_000)
-            .with_automatic_compression_policy(policy)
-            .with_extension_host(Some(extension))
-            .with_hooks(Some(Arc::new(hooks)), "cli");
+        let selected: Arc<dyn AgentClient> = Arc::new(
+            NativeAgentClient::new("fixture-model", "fixture-key", model_url)
+                .unwrap()
+                .with_system_prompt("FROZEN_SYSTEM_PROMPT_BYTES")
+                .with_tools(vec![Arc::new(BuildProbe)])
+                .with_context_length(100_000)
+                .with_automatic_compression_policy(policy)
+                .with_extension_host(Some(extension))
+                .with_hooks(Some(Arc::new(hooks)), "cli"),
+        );
+        let builds = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let factory_client = selected.clone();
+        let factory_builds = builds.clone();
+        let agent = crate::conversation_agent::ConversationAgent::new(
+            selected,
+            move |_, _, _, _| {
+                let client = factory_client.clone();
+                let builds = factory_builds.clone();
+                Box::pin(async move {
+                    builds.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+                    Ok(client)
+                })
+            },
+            crate::agent_cache_pressure::AgentCacheBounds::default(),
+        );
         let mut state = AppState::new(Arc::new(agent), Arc::new(config), None, Some(db.clone()));
         state.session_store = Some((store.clone(), 3600.0));
         let (gateway_url, _gateway_server) = serve(
@@ -2850,12 +2912,22 @@ async def handle(event_type, context):
 
         {
             let requests = calls.lock().unwrap();
-            assert_eq!(requests.len(), 4);
+            assert_eq!(requests.len(), 5);
             assert!(requests[2].get("tools").is_none());
             assert!(requests[3].get("tools").is_some());
+            assert!(requests[4].get("tools").is_some());
         }
 
-        let active = db.load_compression_snapshot(&session_id).unwrap();
+        let active_session_id = store.current_entry_for_source(&source).unwrap().session_id;
+        if in_place {
+            assert_eq!(active_session_id, session_id);
+        } else {
+            assert_ne!(active_session_id, session_id);
+            let parent = db.get_session(&session_id).unwrap().unwrap();
+            assert_eq!(parent["end_reason"], "compression");
+            assert!(parent["ended_at"].is_number());
+        }
+        let active = db.load_compression_snapshot(&active_session_id).unwrap();
         assert_eq!(
             active
                 .messages
@@ -2868,6 +2940,17 @@ async def handle(event_type, context):
             active.messages.last().unwrap().message.content,
             "build handled"
         );
+        assert!(active
+            .messages
+            .iter()
+            .any(|message| message.tool_call_id.as_deref() == Some("after-rotation")));
+        if !in_place {
+            let parent = db.load_compression_snapshot(&session_id).unwrap();
+            assert!(parent
+                .messages
+                .iter()
+                .all(|message| message.tool_call_id.as_deref() != Some("after-rotation")));
+        }
         assert_eq!(
             db.search("EARLYCOMPRESSDETAIL", 10)
                 .unwrap()
@@ -2881,16 +2964,12 @@ async def handle(event_type, context):
             .lines()
             .map(|line| serde_json::from_str::<Value>(line).unwrap())
             .collect::<Vec<_>>();
-        assert_eq!(
-            boundaries,
-            [json!({
-                "old_session_id": session_id,
-                "new_session_id": session_id,
-                "parent_session_id": session_id,
-                "reset": false,
-                "extra": {"reason": "compression"}
-            })]
-        );
+        assert_eq!(boundaries.len(), 1);
+        assert_eq!(boundaries[0]["old_session_id"], session_id);
+        assert_eq!(boundaries[0]["new_session_id"], active_session_id);
+        assert_eq!(boundaries[0]["parent_session_id"], session_id);
+        assert_eq!(boundaries[0]["reset"], false);
+        assert_eq!(boundaries[0]["extra"], json!({"reason": "compression"}));
         let hook_path = home.0.join("hook-boundary.jsonl");
         tokio::time::timeout(std::time::Duration::from_secs(5), async {
             while !hook_path.exists() {
@@ -2904,20 +2983,98 @@ async def handle(event_type, context):
             .lines()
             .map(|line| serde_json::from_str::<Value>(line).unwrap())
             .collect::<Vec<_>>();
+        assert_eq!(hook_boundaries.len(), 1);
+        let hook = &hook_boundaries[0];
+        assert_eq!(hook["event"], "session:compress");
+        assert_eq!(hook["context"]["platform"], "cli");
+        assert_eq!(hook["context"]["session_id"], active_session_id);
         assert_eq!(
-            hook_boundaries,
-            [json!({
-                "event": "session:compress",
-                "context": {
-                    "platform": "cli",
-                    "session_id": session_id,
-                    "old_session_id": "",
-                    "in_place": true,
-                    "compression_count": 1,
-                },
-                "memory_completed": true,
-            })]
+            hook["context"]["old_session_id"],
+            if in_place { "" } else { session_id.as_str() }
         );
+        assert_eq!(hook["context"]["in_place"], in_place);
+        assert_eq!(hook["context"]["compression_count"], 1);
+        assert_eq!(hook["memory_completed"], true);
+
+        let memory_path = home.0.join("memory-turns.jsonl");
+        let memory_turns = tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            loop {
+                if let Ok(contents) = std::fs::read_to_string(&memory_path) {
+                    let turns = contents
+                        .lines()
+                        .map(|line| serde_json::from_str::<Value>(line).unwrap())
+                        .collect::<Vec<_>>();
+                    if turns.len() >= 2 {
+                        break turns;
+                    }
+                }
+                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+            }
+        })
+        .await
+        .expect("external-memory sync did not finish");
+        let compressed_turn = memory_turns
+            .iter()
+            .find(|turn| turn["user_content"] == "run the build")
+            .unwrap();
+        assert_eq!(compressed_turn["session_id"], active_session_id);
+        let memory_messages = compressed_turn["messages"].as_array().unwrap();
+        assert!(memory_messages.iter().any(|message| {
+            message["role"] == "assistant" && message.get("tool_calls").is_some()
+        }));
+        assert!(memory_messages.iter().any(|message| {
+            message["role"] == "tool"
+                && message["tool_call_id"] == "after-rotation"
+                && message["content"]
+                    .as_str()
+                    .is_some_and(|content| content.contains("LIVE_TOOL_RESULT"))
+        }));
+
+        let connection = rusqlite::Connection::open(home.0.join("state.db")).unwrap();
+        let main_calls = |target: &str| {
+            connection
+                .query_row(
+                    "SELECT COALESCE(SUM(api_call_count), 0) FROM session_model_usage
+                     WHERE session_id = ? AND task = ''",
+                    [target],
+                    |row| row.get::<_, i64>(0),
+                )
+                .unwrap()
+        };
+        if in_place {
+            assert_eq!(main_calls(&session_id), 4);
+        } else {
+            assert_eq!(main_calls(&session_id), 1);
+            assert_eq!(main_calls(&active_session_id), 3);
+        }
+        drop(connection);
+
+        assert_eq!(
+            builds.load(std::sync::atomic::Ordering::SeqCst),
+            1,
+            "one frozen client should serve the parent and committed child"
+        );
+        let response = send("follow up after compression").await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json::<Value>().await.unwrap()["reply"],
+            "build handled"
+        );
+        assert_eq!(
+            builds.load(std::sync::atomic::Ordering::SeqCst),
+            1,
+            "the child route must reuse the rekeyed frozen client"
+        );
+    }
+
+    #[tokio::test]
+    async fn in_place_full_compression_commits_before_the_same_turn_followup() {
+        full_compression_commits_after_tools_before_the_same_turn_followup(true).await;
+    }
+
+    #[tokio::test]
+    async fn rotating_full_compression_commits_before_the_same_turn_followup() {
+        full_compression_commits_after_tools_before_the_same_turn_followup(false).await;
     }
 
     #[tokio::test]

@@ -1,10 +1,10 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **50.30% of the full native replacement**, reported as
-**about 50%**, with a reasonable judgment range of **48% to 52%**. This remains
-unchanged after the extension-host recovery checkpoint. That work closes a
-production reliability gap, but the recovered process is still a Python
-compatibility host and does not replace additional native scope.
+Current estimate: **50.90% of the full native replacement**, reported as
+**about 51%**, with a reasonable judgment range of **49% to 53%**. Same-turn
+rotation closes a real native agent-loop gap. The estimate remains conservative
+because the underlying plugin and external-memory callbacks still run in the
+Python compatibility host.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -22,10 +22,10 @@ audits.
 | Gateway | 35% | 65% | 22.75 |
 | Tool runtime and RPC | 30% | 14% | 4.20 |
 | State and search | 15% | 73% | 10.95 |
-| Native agent core | 20% | 62% | 12.40 |
-| Total | 100% | | **50.30** |
+| Native agent core | 20% | 65% | 13.00 |
+| Total | 100% | | **50.90** |
 
-`0.35 * 65 + 0.30 * 14 + 0.15 * 73 + 0.20 * 62 = 50.30`
+`0.35 * 65 + 0.30 * 14 + 0.15 * 73 + 0.20 * 65 = 50.90`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -131,7 +131,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 62%
+### Native agent core, 65%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -185,6 +185,16 @@ breaker state, and exact-snapshot publication. The live HTTP and SQLite test
 proves persistence-before-summary, adoption-before-follow-up, archived-source
 search, and byte-identical system prompts across every main request.
 
+Explicit rotation now runs at that same mid-turn boundary. A shared physical
+session authority publishes the child through the existing atomic store,
+rebinds the held process-local lease, and routes later tool rows, provider
+requests, the final assistant, usage, memory completion, and hook events to the
+child. The bounded conversation cache rekeys the exact frozen client instead of
+rebuilding it. Committed lineage fallback covers repeated rotations followed by
+a callback failure. A live two-tool integration proves the first batch is
+durable before rotation and the second batch never writes back to the closed
+parent.
+
 Full summary requests now use a separately constructed, conversation-frozen
 `auxiliary.compression` route. Startup resolves its provider, model, endpoint,
 credentials, request fields, reasoning controls, 300 second timeout floor, and
@@ -234,9 +244,9 @@ retain Python's empty `old_session_id`; rotation events carry the archived
 parent. A clone-shared conversation counter survives frozen-client cache rekeys,
 and hook execution never delays or rolls back compression.
 
-Mid-turn rotation, configurable multi-provider auxiliary fallback chains,
-non-chat auxiliary transports, context-engine and relay-boundary notifications,
-overflow recovery, provider
+Configurable multi-provider auxiliary fallback chains, non-chat auxiliary
+transports, context-engine and relay-boundary notifications, overflow recovery,
+provider
 failover and credential retry loops, delegation/subagents, full
 approval/clarification flows, memory and plugin managers, skill execution,
 context invalidation policy, and several agent-loop recovery behaviors remain.
@@ -245,8 +255,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,724 passing Rust tests and two expected ignores
-(1,723 gateway plus one core test).
+The workspace currently has 1,729 passing Rust tests and two expected ignores
+(1,728 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -254,9 +264,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,724 passed, two ignored (1,723 gateway plus one core).
-- Selected Python extension-host pre-compression and session-switch protocol
-  contracts: 101 passed.
+- Full Rust workspace: 1,729 passed, two ignored (1,728 gateway plus one core).
+- Selected Python rotation and persistence contracts: 78 passed, one skipped.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 24 structural-backoff, and 60
@@ -269,9 +278,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Mid-turn rotation, auxiliary fallback chains, overflow recovery,
-   repeated-compression status, and context-engine adoption complete the current
-   compression cluster.
+1. Auxiliary fallback chains, overflow recovery, repeated-compression status,
+   and context-engine adoption complete the current compression cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the

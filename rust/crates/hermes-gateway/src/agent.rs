@@ -37,6 +37,12 @@ use tracing::warn;
 pub struct TurnContext<'a> {
     pub home: Option<&'a std::path::Path>,
     pub database: Option<&'a crate::session_db::SessionDb>,
+    /// Shared physical identity for a routed turn that may publish a
+    /// compression child before the provider loop finishes.
+    pub turn_session: Option<&'a crate::turn_session::TurnSession>,
+    /// Owning conversation wrapper. Post-commit compression notification must
+    /// pass through it so the frozen client cache follows a rotated session.
+    pub compression_observer: Option<&'a dyn AgentClient>,
     /// Owner token for the cross-process conversation lease held by this
     /// admitted turn. Transcript mutations can recheck it inside SQLite.
     pub turn_lease_holder: Option<&'a str>,
@@ -71,6 +77,8 @@ impl<'a> TurnContext<'a> {
         Self {
             home: database.and_then(|db| db.profile_home()),
             database,
+            turn_session: None,
+            compression_observer: None,
             turn_lease_holder: None,
             session_finalizable: false,
         }
@@ -83,6 +91,19 @@ impl<'a> TurnContext<'a> {
 
     pub fn with_turn_lease_holder(mut self, holder: Option<&'a str>) -> Self {
         self.turn_lease_holder = holder;
+        self
+    }
+
+    pub fn with_turn_session(
+        mut self,
+        turn_session: Option<&'a crate::turn_session::TurnSession>,
+    ) -> Self {
+        self.turn_session = turn_session;
+        self
+    }
+
+    pub fn with_compression_observer(mut self, observer: &'a dyn AgentClient) -> Self {
+        self.compression_observer = Some(observer);
         self
     }
 }
