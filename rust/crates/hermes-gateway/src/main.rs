@@ -370,9 +370,116 @@ fn build_agent_client(
     })
 }
 
+enum CompressionRouteConfig<'a> {
+    Primary(&'a compression_auxiliary::Config),
+    Fallback {
+        entry: &'a compression_auxiliary::FallbackChainEntry,
+        task: &'a compression_auxiliary::Config,
+    },
+}
+
+impl CompressionRouteConfig<'_> {
+    fn provider(&self) -> &str {
+        match self {
+            Self::Primary(config) => &config.provider,
+            Self::Fallback { entry, .. } => &entry.provider,
+        }
+    }
+
+    fn is_fallback(&self) -> bool {
+        matches!(self, Self::Fallback { .. })
+    }
+
+    fn model(&self) -> Option<&str> {
+        match self {
+            Self::Primary(config) => config.model.as_deref(),
+            Self::Fallback { entry, .. } => entry.model.as_deref(),
+        }
+    }
+
+    fn base_url(&self) -> Option<&str> {
+        match self {
+            Self::Primary(config) => config.base_url.as_deref(),
+            Self::Fallback { entry, .. } => entry.base_url.as_deref(),
+        }
+    }
+
+    fn api_mode(&self) -> Option<&str> {
+        match self {
+            Self::Primary(config) => config.api_mode.as_deref(),
+            Self::Fallback { entry, .. } => entry.api_mode.as_deref(),
+        }
+    }
+
+    fn timeout(&self) -> std::time::Duration {
+        match self {
+            Self::Primary(config) => config.timeout,
+            Self::Fallback { entry, task } => entry.timeout.unwrap_or(task.timeout),
+        }
+    }
+
+    fn reasoning_config(
+        &self,
+        actual_provider: &str,
+        actual_model: &str,
+    ) -> Option<serde_json::Value> {
+        match self {
+            Self::Primary(config) => config.reasoning_config.clone(),
+            Self::Fallback { entry, .. }
+                if entry.certifies_route(actual_provider, actual_model) =>
+            {
+                Some(serde_json::json!({"enabled": false, "effort": "none"}))
+            }
+            Self::Fallback { .. } => None,
+        }
+    }
+
+    fn request_extra_body(
+        &self,
+        actual_provider: &str,
+        actual_model: &str,
+    ) -> serde_json::Map<String, serde_json::Value> {
+        match self {
+            Self::Primary(config) => config.extra_body.clone(),
+            Self::Fallback { entry, task } => {
+                let certified = entry.certifies_route(actual_provider, actual_model);
+                let mut body = task.extra_body.clone();
+                if task.claims_fast_lane() && !certified {
+                    body.shift_remove("reasoning");
+                }
+                if certified {
+                    body.entry("reasoning")
+                        .or_insert_with(|| serde_json::json!({"enabled": false, "effort": "none"}));
+                }
+                body
+            }
+        }
+    }
+
+    fn direct_api_key(
+        &self,
+        dotenv: &std::collections::HashMap<String, String>,
+        environment: &mut impl FnMut(&str) -> Option<String>,
+    ) -> Option<String> {
+        match self {
+            Self::Primary(config) => config.direct_api_key(dotenv, environment),
+            Self::Fallback { entry, .. } => entry.direct_api_key(dotenv, environment),
+        }
+    }
+
+    fn certified_output_cap(&self, actual_provider: &str, actual_model: &str) -> Option<u64> {
+        match self {
+            Self::Primary(config) => config.certified_output_cap(actual_provider, actual_model),
+            Self::Fallback { entry, .. } => {
+                entry.certified_output_cap(actual_provider, actual_model)
+            }
+        }
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 fn build_native_compression_client(
-    policy: &compression_auxiliary::Config,
+    route: CompressionRouteConfig<'_>,
     user_config: &serde_json::Value,
     main_model: &str,
     main_key: &str,
@@ -381,24 +488,27 @@ fn build_native_compression_client(
     profiles: &provider_registry::ProviderRegistry,
     dotenv: &std::collections::HashMap<String, String>,
     environment: &mut impl FnMut(&str) -> Option<String>,
+    home: &std::path::Path,
 ) -> anyhow::Result<Option<NativeAgentClient>> {
-    if !policy.needs_separate_client {
+    // Python retains provider-only entries while parsing, then skips them at
+    // route resolution because compression fallbacks require both fields.
+    if route.is_fallback() && route.model().is_none() {
         return Ok(None);
     }
-
     let configured_main_provider = user_config["model"]["provider"]
         .as_str()
         .unwrap_or("")
         .trim();
-    let requested_provider = if policy.provider == "auto" {
+    let inherits_main = matches!(route.provider(), "auto" | "main");
+    let requested_provider = if inherits_main {
         main_profile
             .map(|profile| profile.name.as_str())
             .filter(|provider| !provider.is_empty())
             .unwrap_or(configured_main_provider)
     } else {
-        policy.provider.as_str()
+        route.provider()
     };
-    let auxiliary_profile = if policy.provider == "auto" {
+    let auxiliary_profile = if inherits_main {
         main_profile.cloned()
     } else {
         profiles
@@ -418,7 +528,7 @@ fn build_native_compression_client(
         },
     );
 
-    let same_as_main = policy.provider == "auto"
+    let same_as_main = inherits_main
         || requested_provider.eq_ignore_ascii_case(configured_main_provider)
         || main_profile.is_some_and(|profile| {
             profile.name.eq_ignore_ascii_case(requested_provider)
@@ -437,9 +547,9 @@ fn build_native_compression_client(
             .filter(|value| !value.is_empty())
             .or_else(|| (!profile.base_url.is_empty()).then(|| profile.base_url.clone()))
     });
-    let base_url = policy
-        .base_url
-        .clone()
+    let base_url = route
+        .base_url()
+        .map(str::to_owned)
         .or_else(|| {
             named
                 .as_ref()
@@ -450,9 +560,9 @@ fn build_native_compression_client(
         .or_else(|| same_as_main.then(|| main_base_url.to_owned()))
         .ok_or_else(|| anyhow::anyhow!("auxiliary compression route has no endpoint"))?;
 
-    let model = policy
-        .model
-        .clone()
+    let model = route
+        .model()
+        .map(str::to_owned)
         .or_else(|| {
             auxiliary_profile
                 .as_ref()
@@ -470,9 +580,9 @@ fn build_native_compression_client(
         })
         .unwrap_or_else(|| main_model.to_owned());
 
-    let api_mode = policy
-        .api_mode
-        .clone()
+    let api_mode = route
+        .api_mode()
+        .map(str::to_owned)
         .or_else(|| {
             named
                 .as_ref()
@@ -490,7 +600,7 @@ fn build_native_compression_client(
         "auxiliary compression provider requires unsupported native API mode {api_mode}"
     );
 
-    let direct_key = policy.direct_api_key(dotenv, |name| environment(name));
+    let direct_key = route.direct_api_key(dotenv, environment);
     let named_key = named
         .as_ref()
         .and_then(|entry| entry["api_key"].as_str())
@@ -519,13 +629,19 @@ fn build_native_compression_client(
         .map(|profile| profile.name.as_str())
         .or_else(|| (!requested_provider.is_empty()).then_some(requested_provider))
         .unwrap_or("custom");
+    let reasoning_config = route.reasoning_config(actual_provider, &model);
     let mut client = NativeAgentClient::new(&model, api_key, &base_url)?
         .with_provider_identity(actual_provider)
-        .with_reasoning_config(policy.reasoning_config.clone())
+        .with_reasoning_config(reasoning_config.clone())
         .with_summary_request_policy(
-            policy.timeout,
-            policy.certified_output_cap(actual_provider, &model),
+            route.timeout(),
+            route.certified_output_cap(actual_provider, &model),
         );
+    if let Some(context_length) = models_dev::ModelsDev::new(home.to_path_buf(), user_config)
+        .cached_context_window(actual_provider, &model, user_config)
+    {
+        client = client.with_context_length(context_length);
+    }
     if let Some(profile) = &auxiliary_profile {
         client = client.with_provider_profile(profile)?;
     }
@@ -539,11 +655,9 @@ fn build_native_compression_client(
         .and_then(|entry| entry["extra_body"].as_object())
         .cloned()
         .unwrap_or_default();
-    extra_body.extend(policy.extra_body.clone());
-    if let Some(reasoning) = &policy.reasoning_config {
-        extra_body
-            .entry("reasoning")
-            .or_insert_with(|| reasoning.clone());
+    extra_body.extend(route.request_extra_body(actual_provider, &model));
+    if let Some(reasoning) = reasoning_config {
+        extra_body.entry("reasoning").or_insert(reasoning);
     }
     if !extra_body.is_empty() {
         client = client.with_request_overrides(serde_json::Map::from_iter([(
@@ -724,23 +838,80 @@ fn build_agent_client_for_home(
                             .as_ref()
                             .and_then(|entry| entry.get("max_output_tokens")),
                     ));
-                    match build_native_compression_client(
-                        &compression_policy,
-                        user_config,
-                        model,
-                        &key,
-                        &base_url,
-                        profile.as_ref(),
-                        &profiles,
-                        &dotenv,
-                        &mut environment,
-                    ) {
-                        Ok(Some(auxiliary)) => c = c.with_compression_client(auxiliary),
-                        Ok(None) => {}
-                        Err(error) => tracing::warn!(
-                            %error,
-                            "auxiliary compression route unavailable; using main native route"
-                        ),
+                    let mut primary_compression = None;
+                    let mut primary_compression_unavailable = false;
+                    let mut compression_fallbacks = Vec::new();
+                    if compression_policy.needs_separate_client {
+                        match build_native_compression_client(
+                            CompressionRouteConfig::Primary(&compression_policy),
+                            user_config,
+                            model,
+                            &key,
+                            &base_url,
+                            profile.as_ref(),
+                            &profiles,
+                            &dotenv,
+                            &mut environment,
+                            home,
+                        ) {
+                            Ok(Some(auxiliary)) => primary_compression = Some(auxiliary),
+                            Ok(None) => primary_compression_unavailable = true,
+                            Err(error) => {
+                                primary_compression_unavailable = true;
+                                let error = compression_redact::redact(&error.to_string());
+                                tracing::warn!(
+                                    %error,
+                                    "primary auxiliary compression route unavailable; continuing to configured fallbacks"
+                                );
+                            }
+                        }
+                    }
+                    for (index, entry) in compression_policy.fallback_chain.iter().enumerate() {
+                        match build_native_compression_client(
+                            CompressionRouteConfig::Fallback {
+                                entry,
+                                task: &compression_policy,
+                            },
+                            user_config,
+                            model,
+                            &key,
+                            &base_url,
+                            profile.as_ref(),
+                            &profiles,
+                            &dotenv,
+                            &mut environment,
+                            home,
+                        ) {
+                            Ok(Some(fallback)) => compression_fallbacks.push(fallback),
+                            Ok(None) => tracing::debug!(
+                                route_index = index,
+                                "compression fallback entry has no resolvable model; skipping"
+                            ),
+                            Err(error) => {
+                                let error = compression_redact::redact(&error.to_string());
+                                tracing::warn!(
+                                    %error,
+                                    route_index = index,
+                                    provider = entry.provider,
+                                    "compression fallback route unavailable; trying the next entry"
+                                );
+                            }
+                        }
+                    }
+                    if primary_compression.is_some() || !compression_fallbacks.is_empty() {
+                        let unavailable_primary = primary_compression_unavailable.then(|| {
+                            compression_auxiliary::BackendIdentity::new(
+                                &compression_policy.provider,
+                                compression_policy.model.as_deref().unwrap_or(model),
+                                compression_policy.base_url.as_deref().unwrap_or(""),
+                            )
+                        });
+                        c = c.with_compression_routes(
+                            primary_compression,
+                            compression_fallbacks,
+                            !compression_policy.needs_separate_client,
+                            unavailable_primary,
+                        );
                     }
                     c = c.with_automatic_compression_policy(
                         automatic_compression::AutomaticCompressionPolicy::from_value(user_config),
@@ -1506,6 +1677,32 @@ async fn wait_for_signal() {
 mod startup_tests {
     use super::*;
 
+    #[test]
+    fn fallback_fast_lane_controls_require_candidate_certification() {
+        let task = compression_auxiliary::Config::from_value(&serde_json::json!({
+            "auxiliary":{"compression":{
+                "provider":"custom", "model":"primary-model",
+                "reasoning_effort":false, "max_output_tokens":777,
+                "extra_body":{"reasoning":{"enabled":false}, "route_marker":"task"},
+                "fallback_chain":[
+                    {"provider":"openrouter", "model":"fallback-model"}
+                ]
+            }}
+        }));
+        let route = CompressionRouteConfig::Fallback {
+            entry: &task.fallback_chain[0],
+            task: &task,
+        };
+
+        assert!(route
+            .reasoning_config("openrouter", "fallback-model")
+            .is_none());
+        assert_eq!(
+            route.request_extra_body("openrouter", "fallback-model"),
+            serde_json::Map::from_iter([("route_marker".into(), serde_json::json!("task"))])
+        );
+    }
+
     #[cfg(unix)]
     #[test]
     fn native_terminal_requires_supported_local_approval_surface() {
@@ -1623,7 +1820,7 @@ mod startup_tests {
     }
 
     #[tokio::test]
-    async fn compression_route_uses_auxiliary_policy_then_falls_back_once_to_main() {
+    async fn compression_routes_preserve_explicit_and_auto_fallback_order() {
         use axum::{http::HeaderMap, routing::post, Json, Router};
 
         type Captures = Arc<std::sync::Mutex<Vec<(HeaderMap, Value)>>>;
@@ -1671,6 +1868,7 @@ mod startup_tests {
         }
 
         let auxiliary_requests: Captures = Default::default();
+        let fallback_requests: Captures = Default::default();
         let main_requests: Captures = Default::default();
         let (auxiliary_url, _auxiliary_server) = serve(
             auxiliary_requests.clone(),
@@ -1686,12 +1884,26 @@ mod startup_tests {
             ],
         )
         .await;
+        let (fallback_url, _fallback_server) = serve(
+            fallback_requests.clone(),
+            vec![json!({
+                "choices":[{"finish_reason":"stop","message":{"content":"chain summary"}}],
+                "usage":{"prompt_tokens":29,"completion_tokens":6}
+            })],
+        )
+        .await;
         let (main_url, _main_server) = serve(
             main_requests.clone(),
-            vec![json!({
-                "choices":[{"finish_reason":"stop","message":{"content":"main summary"}}],
-                "usage":{"prompt_tokens":34,"completion_tokens":8}
-            })],
+            vec![
+                json!({
+                    "choices":[{"finish_reason":"length","message":{"content":"partial"}}],
+                    "usage":{"prompt_tokens":34,"completion_tokens":8}
+                }),
+                json!({
+                    "choices":[{"finish_reason":"stop","message":{"content":"main summary"}}],
+                    "usage":{"prompt_tokens":35,"completion_tokens":8}
+                }),
+            ],
         )
         .await;
 
@@ -1715,7 +1927,15 @@ mod startup_tests {
                 "key_env":"AUX_COMPRESSION_KEY",
                 "reasoning_effort":false,
                 "max_output_tokens":777,
-                "extra_body":{"route_marker":"auxiliary-only"}
+                "extra_body":{"route_marker":"auxiliary-only"},
+                "fallback_chain":[
+                    {"model":"missing-provider"},
+                    {"provider":"openrouter"},
+                    {"provider":"openrouter", "model":"fallback-model",
+                     "base_url":fallback_url.clone(), "api_key":"fallback-key",
+                     "timeout":45, "reasoning_effort":false,
+                     "max_output_tokens":333}
+                ]
             }}
         });
         let agent =
@@ -1752,34 +1972,62 @@ mod startup_tests {
             .summarize_context(agent::TurnContext::default(), &message, &history, None)
             .await
             .unwrap();
-        assert_eq!(summary.as_deref(), Some("main summary"));
+        assert_eq!(summary.as_deref(), Some("chain summary"));
         let summary = agent
             .summarize_context(agent::TurnContext::default(), &message, &history, None)
             .await
             .unwrap();
         assert_eq!(summary.as_deref(), Some("auxiliary summary"));
 
-        let auxiliary_requests = auxiliary_requests.lock().unwrap();
-        assert_eq!(auxiliary_requests.len(), 2);
-        let (headers, body) = &auxiliary_requests[0];
-        assert_eq!(headers["authorization"], "Bearer aux-key");
-        assert_eq!(body["model"], "aux-model");
-        assert_eq!(body["max_tokens"], 777);
-        assert_eq!(body["reasoning"], json!({"enabled":false}));
-        assert_eq!(body["route_marker"], "auxiliary-only");
-        assert_eq!(body["messages"].as_array().unwrap().len(), 1);
-        assert!(body.get("tools").is_none());
+        {
+            let auxiliary_guard = auxiliary_requests.lock().unwrap();
+            assert_eq!(auxiliary_guard.len(), 2);
+            let (headers, body) = &auxiliary_guard[0];
+            assert_eq!(headers["authorization"], "Bearer aux-key");
+            assert_eq!(body["model"], "aux-model");
+            assert_eq!(body["max_tokens"], 777);
+            assert_eq!(body["reasoning"], json!({"enabled":false}));
+            assert_eq!(body["route_marker"], "auxiliary-only");
+            assert_eq!(body["messages"].as_array().unwrap().len(), 1);
+            assert!(body.get("tools").is_none());
 
-        let main_requests = main_requests.lock().unwrap();
-        assert_eq!(main_requests.len(), 1);
-        let (headers, body) = &main_requests[0];
-        assert_eq!(headers["authorization"], "Bearer main-key");
-        assert_eq!(body["model"], "main-model");
-        assert!(body.get("max_tokens").is_none());
-        assert!(body.get("max_completion_tokens").is_none());
-        assert!(body.get("reasoning").is_none());
-        assert!(body.get("route_marker").is_none());
-        assert!(body.get("tools").is_none());
+            let fallback_guard = fallback_requests.lock().unwrap();
+            assert_eq!(fallback_guard.len(), 1);
+            let (headers, body) = &fallback_guard[0];
+            assert_eq!(headers["authorization"], "Bearer fallback-key");
+            assert_eq!(body["model"], "fallback-model");
+            assert_eq!(body["max_tokens"], 333);
+            assert_eq!(body["reasoning"], json!({"enabled":false,"effort":"none"}));
+            assert_eq!(body["route_marker"], "auxiliary-only");
+            assert!(body.get("tools").is_none());
+        }
+        assert!(main_requests.lock().unwrap().is_empty());
+
+        let inherited_config = json!({
+            "model":{"provider":"custom"},
+            "auxiliary":{"compression":{
+                "provider":"auto",
+                "fallback_chain":[
+                    {"provider":"openrouter", "model":"fallback-model",
+                     "base_url":fallback_url, "api_key":"fallback-key"}
+                ]
+            }}
+        });
+        let inherited = build_agent_client_for_home(
+            &config,
+            &inherited_config,
+            Some("main-model"),
+            &home.0,
+            None,
+        )
+        .unwrap();
+        let summary = inherited
+            .summarize_context(agent::TurnContext::default(), &message, &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("chain summary"));
+        assert_eq!(main_requests.lock().unwrap().len(), 1);
+        assert_eq!(fallback_requests.lock().unwrap().len(), 2);
     }
 
     #[tokio::test]

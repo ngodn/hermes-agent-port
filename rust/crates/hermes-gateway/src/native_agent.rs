@@ -446,6 +446,29 @@ pub fn parse_sse_line(line: &str) -> SseEvent {
 }
 
 /// Native OpenAI-compatible chat client.
+#[derive(Default)]
+struct CompressionRoutes {
+    primary: Option<NativeAgentClient>,
+    fallbacks: Vec<NativeAgentClient>,
+    main_first: bool,
+    initial_failure: Option<(
+        crate::compression_auxiliary::BackendIdentity,
+        crate::compression_auxiliary::FailureScope,
+    )>,
+}
+
+fn compression_failure_scope(error: &Error) -> crate::compression_auxiliary::FailureScope {
+    let text = error.to_string().to_lowercase();
+    let reason = if text.contains("http 401") {
+        "auth error"
+    } else if text.contains("http 402") {
+        "payment error"
+    } else {
+        "error"
+    };
+    crate::compression_auxiliary::classify_failure_reason(reason)
+}
+
 #[derive(Clone)]
 pub struct NativeAgentClient {
     model: String,
@@ -460,10 +483,10 @@ pub struct NativeAgentClient {
     output_cap: Option<Value>,
     context_length: u64,
     automatic_compression_policy: crate::automatic_compression::AutomaticCompressionPolicy,
-    /// Optional task-scoped route for full compression summaries. It never
-    /// carries another auxiliary route, so fallback returns directly to this
-    /// conversation client without recursion.
-    compression_client: Option<std::sync::Arc<NativeAgentClient>>,
+    /// Task-scoped full-compression routes before and after the main route.
+    /// Route clients never carry their own plan, which prevents recursive
+    /// fallback while preserving the configured order.
+    compression_routes: std::sync::Arc<CompressionRoutes>,
     summary_timeout: std::time::Duration,
     summary_output_cap: Option<u64>,
     request_overrides: serde_json::Map<String, Value>,
@@ -520,7 +543,7 @@ impl NativeAgentClient {
             output_cap: None,
             context_length: 256_000,
             automatic_compression_policy: Default::default(),
-            compression_client: None,
+            compression_routes: Default::default(),
             summary_timeout: std::time::Duration::from_secs(300),
             summary_output_cap: None,
             request_overrides: Default::default(),
@@ -664,8 +687,28 @@ impl NativeAgentClient {
         self
     }
 
-    pub fn with_compression_client(mut self, client: NativeAgentClient) -> Self {
-        self.compression_client = Some(std::sync::Arc::new(client));
+    /// Install a frozen compression failover plan. Explicit auxiliary mode
+    /// runs its primary and one eligible configured fallback before the main
+    /// conversation model. Auto mode uses the main model first, then one
+    /// eligible task fallback.
+    pub fn with_compression_routes(
+        mut self,
+        primary: Option<NativeAgentClient>,
+        fallbacks: Vec<NativeAgentClient>,
+        main_first: bool,
+        unavailable_primary: Option<crate::compression_auxiliary::BackendIdentity>,
+    ) -> Self {
+        self.compression_routes = std::sync::Arc::new(CompressionRoutes {
+            primary,
+            fallbacks,
+            main_first,
+            initial_failure: unavailable_primary.map(|identity| {
+                (
+                    identity,
+                    crate::compression_auxiliary::FailureScope::Credential,
+                )
+            }),
+        });
         self
     }
 
@@ -829,6 +872,14 @@ impl NativeAgentClient {
             .map(|profile| profile.name.as_str())
             .or(self.provider_identity.as_deref())
             .unwrap_or("")
+    }
+
+    fn compression_identity(&self) -> crate::compression_auxiliary::BackendIdentity {
+        crate::compression_auxiliary::BackendIdentity::new(
+            self.provider_name(),
+            &self.model,
+            &self.base_url,
+        )
     }
 
     fn begin_main_usage(&self) {
@@ -1192,7 +1243,7 @@ impl NativeAgentClient {
         prompt: &str,
     ) -> Result<Option<String>> {
         let mut summary_client = self.clone();
-        summary_client.compression_client = None;
+        summary_client.compression_routes = Default::default();
         summary_client.usage_bucket = UsageBucket::Auxiliary;
         summary_client.begin_auxiliary_usage();
         let summary = summary_client
@@ -1224,28 +1275,154 @@ impl NativeAgentClient {
     ) -> Result<Option<String>> {
         let prompt =
             crate::compression_prompt::build_with_memory(history, focus_topic, memory_context);
-        if let Some(auxiliary) = self.compression_client.as_deref() {
-            match auxiliary
+        enum PlannedRoute<'a> {
+            Main,
+            Auxiliary {
+                client: &'a NativeAgentClient,
+                label: &'static str,
+                index: usize,
+            },
+        }
+        let mut routes = Vec::new();
+        if !self.compression_routes.main_first {
+            if let Some(primary) = self.compression_routes.primary.as_ref() {
+                routes.push(PlannedRoute::Auxiliary {
+                    client: primary,
+                    label: "primary auxiliary",
+                    index: 0,
+                });
+            }
+            routes.extend(self.compression_routes.fallbacks.iter().enumerate().map(
+                |(index, client)| PlannedRoute::Auxiliary {
+                    client,
+                    label: "configured fallback",
+                    index,
+                },
+            ));
+            routes.push(PlannedRoute::Main);
+        } else {
+            routes.push(PlannedRoute::Main);
+            routes.extend(self.compression_routes.fallbacks.iter().enumerate().map(
+                |(index, client)| PlannedRoute::Auxiliary {
+                    client,
+                    label: "configured fallback",
+                    index,
+                },
+            ));
+        }
+
+        let mut first_error = None;
+        let mut saw_unusable_response = false;
+        let mut first_failure = self.compression_routes.initial_failure.clone();
+        let mut configured_fallback_attempted = false;
+        for route in routes {
+            let (client, label, index, configured_fallback) = match route {
+                PlannedRoute::Main => (self, "main", 0, false),
+                PlannedRoute::Auxiliary {
+                    client,
+                    label,
+                    index,
+                } => (client, label, index, label == "configured fallback"),
+            };
+            if configured_fallback {
+                if configured_fallback_attempted {
+                    continue;
+                }
+                if client.context_length < 64_000 {
+                    tracing::info!(
+                        %session_id,
+                        route_index = index,
+                        provider = client.provider_name(),
+                        model = client.model,
+                        context_length = client.context_length,
+                        "compression fallback context is below 64000 tokens; skipping"
+                    );
+                    continue;
+                }
+                if first_failure.as_ref().is_some_and(|(failed, scope)| {
+                    crate::compression_auxiliary::should_skip_candidate(
+                        &client.compression_identity(),
+                        failed,
+                        *scope,
+                    )
+                }) {
+                    tracing::info!(
+                        %session_id,
+                        route_index = index,
+                        provider = client.provider_name(),
+                        model = client.model,
+                        "compression fallback repeats the failed route surface; skipping"
+                    );
+                    continue;
+                }
+                configured_fallback_attempted = true;
+            } else if label == "main"
+                && !self.compression_routes.main_first
+                && first_failure.as_ref().is_some_and(|(failed, scope)| {
+                    crate::compression_auxiliary::should_skip_candidate(
+                        &client.compression_identity(),
+                        failed,
+                        *scope,
+                    )
+                })
+            {
+                tracing::info!(
+                    %session_id,
+                    provider = client.provider_name(),
+                    model = client.model,
+                    "main compression safety route repeats the failed route surface; skipping"
+                );
+                continue;
+            }
+            match client
                 .summarize_history_on(database, session_id, &prompt)
                 .await
             {
                 Ok(Some(summary)) => return Ok(Some(summary)),
-                Ok(None) => tracing::warn!(
-                    %session_id,
-                    "auxiliary compression route returned no usable summary; retrying once on main route"
-                ),
-                Err(error) => {
-                    let error = crate::compression_redact::redact(&error.to_string());
+                Ok(None) => {
+                    first_failure.get_or_insert_with(|| {
+                        (
+                            client.compression_identity(),
+                            crate::compression_auxiliary::FailureScope::Model,
+                        )
+                    });
+                    saw_unusable_response = true;
                     tracing::warn!(
-                        %error,
                         %session_id,
-                        "auxiliary compression route failed; retrying once on main route"
+                        route = label,
+                        route_index = index,
+                        provider = client.provider_name(),
+                        model = client.model,
+                        "compression route returned no usable summary; trying the next route"
                     );
+                }
+                Err(error) => {
+                    first_failure.get_or_insert_with(|| {
+                        (
+                            client.compression_identity(),
+                            compression_failure_scope(&error),
+                        )
+                    });
+                    let safe_error = crate::compression_redact::redact(&error.to_string());
+                    tracing::warn!(
+                        error = %safe_error,
+                        %session_id,
+                        route = label,
+                        route_index = index,
+                        provider = client.provider_name(),
+                        model = client.model,
+                        "compression route failed; trying the next route"
+                    );
+                    first_error.get_or_insert(error);
                 }
             }
         }
-        self.summarize_history_on(database, session_id, &prompt)
-            .await
+
+        match (saw_unusable_response, first_error) {
+            (true, _) => Ok(None),
+            (false, Some(error)) => Err(error),
+            (false, None) => Ok(None),
+        }
     }
 
     async fn prepare_compression_memory(
@@ -2428,6 +2605,30 @@ impl ChatModel for NativeAgentClient {
 #[cfg(test)]
 mod tests {
     #[test]
+    fn compression_http_auth_and_payment_failures_are_credential_scoped() {
+        use crate::compression_auxiliary::FailureScope;
+
+        assert_eq!(
+            super::compression_failure_scope(&hermes_core::Error::Other(
+                "native full compression HTTP 401 Unauthorized".into()
+            )),
+            FailureScope::Credential
+        );
+        assert_eq!(
+            super::compression_failure_scope(&hermes_core::Error::Other(
+                "native full compression HTTP 402 Payment Required".into()
+            )),
+            FailureScope::Credential
+        );
+        assert_eq!(
+            super::compression_failure_scope(&hermes_core::Error::Other(
+                "native full compression request: timed out".into()
+            )),
+            FailureScope::Model
+        );
+    }
+
+    #[test]
     fn compression_hook_payload_uses_python_ids_and_clone_shared_count() {
         let client = super::NativeAgentClient::new("fixture", "key", "http://localhost")
             .unwrap()
@@ -3002,6 +3203,237 @@ mod tests {
             None
         );
         assert_eq!(*calls.lock().unwrap(), 4);
+    }
+
+    #[tokio::test]
+    async fn compression_route_plan_preserves_before_main_and_after_main_order() {
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+
+        async fn serve(
+            label: &'static str,
+            order: Arc<Mutex<Vec<&'static str>>>,
+            response: Value,
+        ) -> (String, Server) {
+            let app = Router::new().route(
+                "/chat/completions",
+                post(move || {
+                    let order = order.clone();
+                    let response = response.clone();
+                    async move {
+                        order.lock().unwrap().push(label);
+                        Json(response)
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (url, server)
+        }
+
+        let order = Arc::new(Mutex::new(Vec::new()));
+        let unusable = json!({
+            "choices":[{"finish_reason":"length","message":{"content":"partial"}}]
+        });
+        let (before_url, _before_server) = serve("before", order.clone(), unusable.clone()).await;
+        let (main_url, _main_server) = serve("main", order.clone(), unusable).await;
+        let (after_url, _after_server) = serve(
+            "after",
+            order.clone(),
+            json!({"choices":[{"finish_reason":"stop","message":{
+                "content":"fallback summary"
+            }}]}),
+        )
+        .await;
+
+        let before = super::NativeAgentClient::new("before-model", "key", before_url).unwrap();
+        let after = super::NativeAgentClient::new("after-model", "key", after_url).unwrap();
+        let client = super::NativeAgentClient::new("main-model", "key", main_url.clone())
+            .unwrap()
+            .with_compression_routes(Some(before), vec![after.clone()], false, None);
+        let history = [crate::session_db::CompressionHistoryMessage {
+            id: 1,
+            message: crate::session_db::HistoryMessage {
+                role: "user".into(),
+                content: "compress this history".into(),
+                api_content: None,
+            },
+            tool_call_id: None,
+            tool_calls: None,
+            tool_name: None,
+            effect_disposition: None,
+            finish_reason: None,
+            reasoning: None,
+            reasoning_content: None,
+            reasoning_details: None,
+            codex_reasoning_items: None,
+            codex_message_items: None,
+            display_kind: None,
+            display_metadata: None,
+            timestamp: 0.0,
+            compressed_summary: false,
+        }];
+
+        let summary = client
+            .summarize_history(None, "route-order", &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("fallback summary"));
+        assert_eq!(&*order.lock().unwrap(), &["before", "after"]);
+
+        order.lock().unwrap().clear();
+        let inherited = super::NativeAgentClient::new("main-model", "key", main_url)
+            .unwrap()
+            .with_compression_routes(None, vec![after], true, None);
+        let summary = inherited
+            .summarize_history(None, "route-order", &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("fallback summary"));
+        assert_eq!(&*order.lock().unwrap(), &["main", "after"]);
+    }
+
+    #[tokio::test]
+    async fn compression_route_plan_skips_failed_and_small_routes_and_attempts_one_candidate() {
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+
+        async fn serve(
+            label: &'static str,
+            order: Arc<Mutex<Vec<&'static str>>>,
+            response: Value,
+        ) -> (String, Server) {
+            let app = Router::new().route(
+                "/chat/completions",
+                post(move || {
+                    let order = order.clone();
+                    let response = response.clone();
+                    async move {
+                        order.lock().unwrap().push(label);
+                        Json(response)
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (url, server)
+        }
+
+        let order = Arc::new(Mutex::new(Vec::new()));
+        let unusable = json!({
+            "choices":[{"finish_reason":"length","message":{"content":"partial"}}]
+        });
+        let success = json!({
+            "choices":[{"finish_reason":"stop","message":{"content":"main summary"}}]
+        });
+        let (primary_url, _primary_server) =
+            serve("primary", order.clone(), unusable.clone()).await;
+        let (small_url, _small_server) = serve("small", order.clone(), success.clone()).await;
+        let (candidate_url, _candidate_server) = serve("candidate", order.clone(), unusable).await;
+        let (unused_url, _unused_server) = serve("unused", order.clone(), success.clone()).await;
+        let (main_url, _main_server) = serve("main", order.clone(), success).await;
+
+        let primary = super::NativeAgentClient::new("failed-model", "key", &primary_url)
+            .unwrap()
+            .with_provider_identity("openrouter");
+        let duplicate = super::NativeAgentClient::new("failed-model", "key", &primary_url)
+            .unwrap()
+            .with_provider_identity("openrouter");
+        let small = super::NativeAgentClient::new("small-model", "key", &small_url)
+            .unwrap()
+            .with_provider_identity("custom")
+            .with_context_length(8_192);
+        let candidate = super::NativeAgentClient::new("sibling-model", "key", &candidate_url)
+            .unwrap()
+            .with_provider_identity("openrouter");
+        let unused = super::NativeAgentClient::new("unused-model", "key", &unused_url)
+            .unwrap()
+            .with_provider_identity("anthropic");
+        let client = super::NativeAgentClient::new("main-model", "key", &main_url)
+            .unwrap()
+            .with_provider_identity("custom")
+            .with_compression_routes(
+                Some(primary),
+                vec![duplicate, small, candidate, unused],
+                false,
+                None,
+            );
+        let history = [crate::session_db::CompressionHistoryMessage {
+            id: 1,
+            message: crate::session_db::HistoryMessage {
+                role: "user".into(),
+                content: "compress this history".into(),
+                api_content: None,
+            },
+            tool_call_id: None,
+            tool_calls: None,
+            tool_name: None,
+            effect_disposition: None,
+            finish_reason: None,
+            reasoning: None,
+            reasoning_content: None,
+            reasoning_details: None,
+            codex_reasoning_items: None,
+            codex_message_items: None,
+            display_kind: None,
+            display_metadata: None,
+            timestamp: 0.0,
+            compressed_summary: false,
+        }];
+
+        let summary = client
+            .summarize_history(None, "route-selection", &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("main summary"));
+        assert_eq!(&*order.lock().unwrap(), &["primary", "candidate", "main"]);
+
+        order.lock().unwrap().clear();
+        let same_credential = super::NativeAgentClient::new("sibling-model", "key", candidate_url)
+            .unwrap()
+            .with_provider_identity("openrouter");
+        let distinct_credential = super::NativeAgentClient::new("unused-model", "key", unused_url)
+            .unwrap()
+            .with_provider_identity("anthropic");
+        let unavailable =
+            crate::compression_auxiliary::BackendIdentity::new("openrouter", "failed-model", "");
+        let client = super::NativeAgentClient::new("main-model", "key", main_url)
+            .unwrap()
+            .with_provider_identity("custom")
+            .with_compression_routes(
+                None,
+                vec![same_credential, distinct_credential],
+                false,
+                Some(unavailable),
+            );
+        let summary = client
+            .summarize_history(None, "unavailable-route-selection", &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("main summary"));
+        assert_eq!(&*order.lock().unwrap(), &["unused"]);
     }
 
     #[test]

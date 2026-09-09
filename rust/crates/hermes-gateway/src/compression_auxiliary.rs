@@ -10,6 +10,75 @@ use std::collections::HashMap;
 const DEFAULT_TIMEOUT_SECONDS: f64 = 120.0;
 const COMPRESSION_TIMEOUT_FLOOR_SECONDS: f64 = 300.0;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum FailureScope {
+    Model,
+    Credential,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct BackendIdentity {
+    pub provider: String,
+    pub model: String,
+    pub base_url: String,
+}
+
+impl BackendIdentity {
+    pub fn new(provider: &str, model: &str, base_url: &str) -> Self {
+        Self {
+            provider: provider
+                .trim_matches(crate::python_value::python_whitespace)
+                .to_lowercase(),
+            model: model
+                .trim_matches(crate::python_value::python_whitespace)
+                .to_lowercase(),
+            base_url: base_url
+                .trim_matches(crate::python_value::python_whitespace)
+                .trim_end_matches('/')
+                .to_lowercase(),
+        }
+    }
+}
+
+pub(crate) fn classify_failure_reason(reason: &str) -> FailureScope {
+    match reason
+        .trim_matches(crate::python_value::python_whitespace)
+        .to_lowercase()
+        .as_str()
+    {
+        "auth error" | "payment error" => FailureScope::Credential,
+        _ => FailureScope::Model,
+    }
+}
+
+pub(crate) fn should_skip_candidate(
+    candidate: &BackendIdentity,
+    failed: &BackendIdentity,
+    scope: FailureScope,
+) -> bool {
+    match scope {
+        FailureScope::Credential => {
+            if !candidate.provider.is_empty() && !failed.provider.is_empty() {
+                candidate.provider == failed.provider
+            } else {
+                !candidate.base_url.is_empty() && candidate.base_url == failed.base_url
+            }
+        }
+        FailureScope::Model => {
+            if candidate.provider != failed.provider
+                || candidate.provider.is_empty()
+                || candidate.model != failed.model
+                || candidate.model.is_empty()
+            {
+                return false;
+            }
+            candidate.base_url.is_empty()
+                || failed.base_url.is_empty()
+                || candidate.base_url == failed.base_url
+        }
+    }
+}
+
 #[derive(Clone)]
 pub(crate) struct Config {
     pub provider: String,
@@ -24,6 +93,132 @@ pub(crate) struct Config {
     pub reasoning_config: Option<Value>,
     pub max_output_tokens: Option<u64>,
     pub needs_separate_client: bool,
+    /// Ordered `auxiliary.compression.fallback_chain` entries, parsed in
+    /// source order. The primary lane resolves these into native clients at
+    /// startup; this lane only owns the typed shape and coercion.
+    pub fallback_chain: Vec<FallbackChainEntry>,
+}
+
+/// One ordered `auxiliary.compression.fallback_chain` entry.
+///
+/// Mirrors the fields the Python summary fallback path reads off each entry
+/// dict (`agent/auxiliary_client.py`): `provider` is required, the rest are
+/// optional. Resolution into a client, provider-profile lookup, credential
+/// pool rotation, and OAuth refresh all stay in startup; this struct carries
+/// only the parsed configuration plus the direct/key-env credential lookup.
+#[derive(Clone, Debug, PartialEq)]
+pub(crate) struct FallbackChainEntry {
+    pub provider: String,
+    pub model: Option<String>,
+    pub base_url: Option<String>,
+    pub api_key: Option<String>,
+    pub key_env: Option<String>,
+    pub api_mode: Option<String>,
+    /// Per-entry timeout. Independent of the task-level compression timeout
+    /// floor: the ordinary Python fallback path (`_coerce_positive_timeout`
+    /// plus `_fallback_entry_timeout`) applies no 300s floor here.
+    pub timeout: Option<std::time::Duration>,
+    pub reasoning_config: Option<Value>,
+    pub max_output_tokens: Option<u64>,
+}
+
+impl FallbackChainEntry {
+    /// Parse one chain element. Returns `None` for non-object entries and for
+    /// entries without a nonempty `provider`, matching the Python loop in
+    /// `_try_configured_fallback_chain` which skips both.
+    pub fn from_value(value: &Value) -> Option<Self> {
+        let object = value.as_object()?;
+        // Python keeps the entry's original case in the dict but every routing
+        // consumer (`resolve_compression_fast_lane`, `BackendIdentity`) lowercases
+        // before comparing, so lowercasing here is behavior preserving and matches
+        // the primary `Config` provider convention above.
+        let provider = text(object.get("provider"))?.to_lowercase();
+        if provider.is_empty() {
+            return None;
+        }
+        // Unlike the primary section, a fallback entry keeps a literal "auto"
+        // model; Python passes it straight to the router rather than dropping it.
+        let model = text(object.get("model"));
+        let base_url = text(object.get("base_url"));
+        let api_key = text(object.get("api_key"));
+        let key_env = object
+            .get("key_env")
+            .filter(|value| crate::python_value::truthy(value))
+            .or_else(|| {
+                object
+                    .get("api_key_env")
+                    .filter(|value| crate::python_value::truthy(value))
+            })
+            .and_then(|value| text(Some(value)));
+        // `api_mode` wins over the `transport` alias, matching the Python
+        // `entry.get("api_mode") or entry.get("transport")` precedence.
+        let api_mode = text(object.get("api_mode"))
+            .or_else(|| text(object.get("transport")))
+            .map(normalize_api_mode);
+        let timeout = entry_timeout_seconds(object.get("timeout"));
+        let reasoning_config = object
+            .get("reasoning_effort")
+            .filter(|value| !value.is_null() && value.as_str() != Some(""))
+            .and_then(crate::reasoning_effort::parse_value);
+        let max_output_tokens = positive_integer(object.get("max_output_tokens"));
+
+        Some(Self {
+            provider,
+            model,
+            base_url,
+            api_key,
+            key_env,
+            api_mode,
+            timeout,
+            reasoning_config,
+            max_output_tokens,
+        })
+    }
+
+    /// Candidate-local fast-lane controls are valid only when the configured
+    /// provider and model resolve to this exact non-reasoning route.
+    pub fn certifies_route(&self, actual_provider: &str, actual_model: &str) -> bool {
+        let requested_provider = normalize_provider(&self.provider);
+        let actual_provider = normalize_provider(actual_provider);
+        let non_reasoning = self
+            .reasoning_config
+            .as_ref()
+            .is_some_and(|value| value.get("enabled").and_then(Value::as_bool) == Some(false));
+        requested_provider == actual_provider
+            && self
+                .model
+                .as_deref()
+                .is_some_and(|model| model.eq_ignore_ascii_case(actual_model))
+            && non_reasoning
+    }
+
+    pub fn certified_output_cap(&self, actual_provider: &str, actual_model: &str) -> Option<u64> {
+        self.certifies_route(actual_provider, actual_model)
+            .then_some(self.max_output_tokens)
+            .flatten()
+    }
+
+    /// Resolve the entry's API key from an inline `api_key` or a `key_env` /
+    /// `api_key_env` name, mirroring `Config::direct_api_key`. Provider-profile
+    /// and pool credential resolution stay in startup by design.
+    pub fn direct_api_key(
+        &self,
+        dotenv: &HashMap<String, String>,
+        mut environment: impl FnMut(&str) -> Option<String>,
+    ) -> Option<String> {
+        self.api_key.clone().or_else(|| {
+            self.key_env.as_ref().and_then(|name| {
+                environment(name)
+                    .or_else(|| dotenv.get(name).cloned())
+                    .map(|value| {
+                        value
+                            .trim_matches(crate::python_value::python_whitespace)
+                            .to_owned()
+                    })
+                    .filter(|value| !value.is_empty())
+            })
+        })
+    }
 }
 
 impl Config {
@@ -63,6 +258,16 @@ impl Config {
             .and_then(crate::reasoning_effort::parse_value);
         let max_output_tokens = positive_integer(section.get("max_output_tokens"));
         let timeout = timeout_seconds(section.get("timeout"));
+        let fallback_chain = section
+            .get("fallback_chain")
+            .and_then(Value::as_array)
+            .map(|entries| {
+                entries
+                    .iter()
+                    .filter_map(FallbackChainEntry::from_value)
+                    .collect()
+            })
+            .unwrap_or_default();
         if provider == "openai" {
             provider = "custom".into();
             base_url.get_or_insert_with(|| "https://api.openai.com/v1".into());
@@ -96,6 +301,7 @@ impl Config {
             reasoning_config,
             max_output_tokens,
             needs_separate_client,
+            fallback_chain,
         }
     }
 
@@ -117,6 +323,17 @@ impl Config {
                 .as_deref()
                 .is_some_and(|model| model.eq_ignore_ascii_case(actual_model))
             && non_reasoning
+    }
+
+    pub fn claims_fast_lane(&self) -> bool {
+        let provider = normalize_provider(&self.fast_lane_provider);
+        !matches!(provider.as_str(), "" | "auto")
+            && self.model.is_some()
+            && self
+                .reasoning_config
+                .as_ref()
+                .is_some_and(|value| value.get("enabled").and_then(Value::as_bool) == Some(false))
+            && self.max_output_tokens.is_some()
     }
 
     pub fn certified_output_cap(&self, actual_provider: &str, actual_model: &str) -> Option<u64> {
@@ -184,6 +401,27 @@ fn timeout_seconds(value: Option<&Value>) -> std::time::Duration {
     std::time::Duration::from_secs_f64(parsed)
 }
 
+/// Per-entry timeout coercion for a fallback-chain entry.
+///
+/// Faithful to Python `_coerce_positive_timeout`: accept only a positive,
+/// finite numeric value; reject booleans, non-positive numbers, strings,
+/// null, and containers. Unlike the task-level `timeout_seconds`, no default
+/// is substituted and the 300s compression floor is never applied, so an
+/// entry either carries its own independent budget or `None` (keep the
+/// task-level timeout).
+fn entry_timeout_seconds(value: Option<&Value>) -> Option<std::time::Duration> {
+    let value = value?;
+    if value.is_boolean() {
+        return None;
+    }
+    let parsed = match value {
+        Value::Number(number) => number.as_f64(),
+        _ => None,
+    }
+    .filter(|value| value.is_finite() && *value > 0.0)?;
+    Some(std::time::Duration::from_secs_f64(parsed))
+}
+
 pub(crate) fn normalize_api_mode(value: String) -> String {
     match value.to_lowercase().as_str() {
         "openai" | "openai_chat" | "openai-chat" | "chat-completions" | "chatcompletions" => {
@@ -221,8 +459,414 @@ fn normalize_provider(value: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::Config;
+    use super::{
+        classify_failure_reason, entry_timeout_seconds, normalize_api_mode, should_skip_candidate,
+        BackendIdentity, Config, FailureScope, FallbackChainEntry,
+    };
     use serde_json::json;
+
+    #[test]
+    fn fallback_chain_defaults_empty_and_ignores_non_list() {
+        assert!(Config::from_value(&json!({})).fallback_chain.is_empty());
+        let non_list = Config::from_value(&json!({"auxiliary":{"compression":{
+            "fallback_chain":"none"
+        }}}));
+        assert!(non_list.fallback_chain.is_empty());
+    }
+
+    #[test]
+    fn fallback_chain_keeps_source_order_and_rejects_invalid_entries() {
+        let config = Config::from_value(&json!({"auxiliary":{"compression":{
+            "fallback_chain":[
+                "openrouter/llama-3",
+                {"model":"gpt-4o"},
+                {"provider":"   "},
+                {"provider":"OpenRouter","model":"a"},
+                42,
+                {"provider":"nous","model":"b"}
+            ]
+        }}}));
+        let providers: Vec<&str> = config
+            .fallback_chain
+            .iter()
+            .map(|entry| entry.provider.as_str())
+            .collect();
+        assert_eq!(providers, ["openrouter", "nous"]);
+        assert_eq!(config.fallback_chain[0].model.as_deref(), Some("a"));
+        assert_eq!(config.fallback_chain[1].model.as_deref(), Some("b"));
+    }
+
+    #[test]
+    fn fallback_entry_preserves_auto_model_and_normalizes_provider() {
+        let entry = FallbackChainEntry::from_value(&json!({
+            "provider":"  OpenRouter  ", "model":"auto"
+        }))
+        .unwrap();
+        assert_eq!(entry.provider, "openrouter");
+        assert_eq!(entry.model.as_deref(), Some("auto"));
+        assert!(entry.base_url.is_none());
+    }
+
+    #[test]
+    fn fallback_entry_timeout_is_independent_and_unfloored() {
+        let integer = FallbackChainEntry::from_value(&json!({
+            "provider":"p", "timeout":45
+        }))
+        .unwrap();
+        assert_eq!(
+            integer.timeout,
+            Some(std::time::Duration::from_secs_f64(45.0))
+        );
+
+        let fractional = FallbackChainEntry::from_value(&json!({
+            "provider":"p", "timeout":60.5
+        }))
+        .unwrap();
+        assert_eq!(
+            fractional.timeout,
+            Some(std::time::Duration::from_secs_f64(60.5))
+        );
+
+        for rejected in [json!("45"), json!(true), json!(0), json!(-10), json!(null)] {
+            let entry = FallbackChainEntry::from_value(&json!({
+                "provider":"p", "timeout":rejected
+            }))
+            .unwrap();
+            assert!(entry.timeout.is_none(), "timeout {rejected} should reject");
+        }
+
+        let omitted = FallbackChainEntry::from_value(&json!({"provider":"p"})).unwrap();
+        assert!(omitted.timeout.is_none());
+    }
+
+    #[test]
+    fn fallback_entry_api_mode_precedence_and_canonicalization() {
+        let both = FallbackChainEntry::from_value(&json!({
+            "provider":"p", "api_mode":"anthropic", "transport":"responses"
+        }))
+        .unwrap();
+        assert_eq!(both.api_mode.as_deref(), Some("anthropic_messages"));
+
+        let transport_only = FallbackChainEntry::from_value(&json!({
+            "provider":"p", "transport":"chat-completions"
+        }))
+        .unwrap();
+        assert_eq!(transport_only.api_mode.as_deref(), Some("chat_completions"));
+    }
+
+    #[test]
+    fn fallback_entry_credential_precedence() {
+        let inline = FallbackChainEntry::from_value(&json!({
+            "provider":"p", "api_key":"sk-inline", "key_env":"VAR"
+        }))
+        .unwrap();
+        assert_eq!(
+            inline.direct_api_key(&Default::default(), |_| Some("env".into())),
+            Some("sk-inline".into())
+        );
+
+        let key_env = FallbackChainEntry::from_value(&json!({
+            "provider":"p", "key_env":"PRIMARY", "api_key_env":"ALIAS"
+        }))
+        .unwrap();
+        assert_eq!(key_env.key_env.as_deref(), Some("PRIMARY"));
+        assert_eq!(
+            key_env.direct_api_key(&Default::default(), |name| (name == "PRIMARY")
+                .then(|| "  from-env  ".into())),
+            Some("from-env".into())
+        );
+
+        let alias = FallbackChainEntry::from_value(&json!({
+            "provider":"p", "api_key_env":"ALIAS"
+        }))
+        .unwrap();
+        assert_eq!(alias.key_env.as_deref(), Some("ALIAS"));
+        assert!(alias
+            .direct_api_key(&Default::default(), |_| None)
+            .is_none());
+    }
+
+    #[test]
+    fn fallback_entry_retains_reasoning_and_output_cap() {
+        let entry = FallbackChainEntry::from_value(&json!({
+            "provider":"custom", "model":"m",
+            "reasoning_effort":false, "max_output_tokens":"2048"
+        }))
+        .unwrap();
+        assert_eq!(entry.reasoning_config, Some(json!({"enabled": false})));
+        assert_eq!(entry.max_output_tokens, Some(2_048));
+        assert_eq!(entry.certified_output_cap("custom", "m"), Some(2_048));
+        assert_eq!(entry.certified_output_cap("custom", "other"), None);
+
+        let bool_cap = FallbackChainEntry::from_value(&json!({
+            "provider":"p", "max_output_tokens":true
+        }))
+        .unwrap();
+        assert!(bool_cap.max_output_tokens.is_none());
+    }
+
+    #[test]
+    fn fallback_entries_match_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-fallback-chain-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["entry_acceptance_and_coercion"].as_array().unwrap() {
+            if case["case"] == "source_order_and_filtering_preserved" {
+                let config = Config::from_value(&json!({"auxiliary":{"compression":{
+                    "fallback_chain":case["raw"].clone()
+                }}}));
+                let expected = case["parsed"].as_array().unwrap();
+                assert_eq!(config.fallback_chain.len(), expected.len(), "{case}");
+                for (actual, expected) in config.fallback_chain.iter().zip(expected) {
+                    assert_eq!(
+                        actual.provider,
+                        expected["provider"].as_str().unwrap(),
+                        "{case}"
+                    );
+                    assert_eq!(
+                        actual.model.as_deref(),
+                        expected["model"].as_str(),
+                        "{case}"
+                    );
+                }
+                continue;
+            }
+            let actual = FallbackChainEntry::from_value(&case["raw"]);
+            assert_eq!(
+                actual.is_some(),
+                case["accepted"].as_bool().unwrap(),
+                "{case}"
+            );
+            let (Some(actual), Some(expected)) = (actual, case["parsed"].as_object()) else {
+                continue;
+            };
+            assert_eq!(
+                actual.provider,
+                expected["provider"].as_str().unwrap(),
+                "{case}"
+            );
+            assert_eq!(
+                actual.model.as_deref(),
+                expected["model"].as_str(),
+                "{case}"
+            );
+            assert_eq!(
+                actual.base_url.as_deref(),
+                expected["base_url"].as_str(),
+                "{case}"
+            );
+            assert_eq!(
+                actual.api_key.as_deref(),
+                expected["api_key"].as_str(),
+                "{case}"
+            );
+            assert_eq!(
+                actual.key_env.as_deref(),
+                expected["key_env"].as_str(),
+                "{case}"
+            );
+            assert_eq!(
+                actual.api_mode.as_deref(),
+                expected["api_mode"].as_str(),
+                "{case}"
+            );
+            assert_eq!(
+                actual.timeout.map(|timeout| timeout.as_secs_f64()),
+                expected["timeout"].as_f64(),
+                "{case}"
+            );
+            let expected_reasoning = expected
+                .get("reasoning_effort")
+                .filter(|value| !value.is_null());
+            assert_eq!(
+                actual.reasoning_config.as_ref(),
+                expected_reasoning,
+                "{case}"
+            );
+            assert_eq!(
+                actual.max_output_tokens,
+                expected["max_output_tokens"].as_u64(),
+                "{case}"
+            );
+        }
+    }
+
+    #[test]
+    fn fallback_scalar_rules_match_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-fallback-chain-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["timeout_coercion"].as_array().unwrap() {
+            let actual =
+                entry_timeout_seconds(case.get("raw_value")).map(|timeout| timeout.as_secs_f64());
+            assert_eq!(actual, case["coerced_timeout"].as_f64(), "{case}");
+        }
+        for case in corpus["api_mode_normalization"].as_array().unwrap() {
+            let raw = case["raw_api_mode"].as_str().unwrap().trim().to_owned();
+            assert_eq!(
+                normalize_api_mode(raw),
+                case["canonical_api_mode"].as_str().unwrap(),
+                "{case}"
+            );
+        }
+        for case in corpus["credential_resolution"].as_array().unwrap() {
+            let Some(mut entry) = case["entry"].as_object().cloned() else {
+                assert!(case["resolved_api_key"].is_null(), "{case}");
+                continue;
+            };
+            entry.insert("provider".into(), json!("custom"));
+            let entry = FallbackChainEntry::from_value(&serde_json::Value::Object(entry)).unwrap();
+            let actual = entry.direct_api_key(&Default::default(), |name| match name {
+                "SYNTHETIC_PRIMARY_KEY" => Some("sk-synthetic-env-key-1".into()),
+                "SYNTHETIC_SECONDARY_KEY" => Some("sk-synthetic-env-key-2".into()),
+                "EMPTY_KEY_VAR" => Some(String::new()),
+                "WHITESPACE_KEY_VAR" => Some("   ".into()),
+                _ => None,
+            });
+            assert_eq!(
+                actual.as_deref(),
+                case["resolved_api_key"].as_str(),
+                "{case}"
+            );
+        }
+    }
+
+    #[test]
+    fn fallback_route_skipping_matches_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-fallback-chain-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["failed_route_skipping"].as_array().unwrap() {
+            if let Some(reason) = case["reason"].as_str() {
+                let expected = match case["classified_scope"].as_str().unwrap() {
+                    "credential" => FailureScope::Credential,
+                    _ => FailureScope::Model,
+                };
+                assert_eq!(classify_failure_reason(reason), expected, "{case}");
+                continue;
+            }
+            let candidate = BackendIdentity::new(
+                case["candidate"]["provider"].as_str().unwrap_or(""),
+                case["candidate"]["model"].as_str().unwrap_or(""),
+                case["candidate"]["base_url"].as_str().unwrap_or(""),
+            );
+            let failed = BackendIdentity::new(
+                case["failed_identity"]["provider"].as_str().unwrap_or(""),
+                case["failed_identity"]["model"].as_str().unwrap_or(""),
+                case["failed_identity"]["base_url"].as_str().unwrap_or(""),
+            );
+            let scope = match case["failure_scope"].as_str().unwrap() {
+                "credential" => FailureScope::Credential,
+                _ => FailureScope::Model,
+            };
+            assert_eq!(
+                should_skip_candidate(&candidate, &failed, scope),
+                case["should_skip"].as_bool().unwrap(),
+                "{case}"
+            );
+        }
+    }
+
+    #[test]
+    fn fallback_traversal_matches_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-fallback-chain-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["chain_traversal_and_exhaustion"].as_array().unwrap() {
+            let name = case["case"].as_str().unwrap();
+            if name == "stall_fallback_route_first_structurally_complete" {
+                let selected = case["chain"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(index, raw)| {
+                        FallbackChainEntry::from_value(raw)
+                            .filter(|entry| entry.model.is_some())
+                            .map(|entry| (index, entry))
+                    })
+                    .next()
+                    .unwrap();
+                assert_eq!(selected.0, 3, "{case}");
+                assert_eq!(
+                    selected.1.provider,
+                    case["selected_route"]["provider"].as_str().unwrap(),
+                    "{case}"
+                );
+                assert_eq!(
+                    selected.1.model.as_deref(),
+                    case["selected_route"]["model"].as_str(),
+                    "{case}"
+                );
+                continue;
+            }
+            let failed_model = case["failed_model"].as_str().unwrap_or("");
+            let failed = BackendIdentity::new(
+                case["failed_provider"].as_str().unwrap_or(""),
+                failed_model,
+                "",
+            );
+            let scope = if failed_model.is_empty() {
+                FailureScope::Credential
+            } else {
+                FailureScope::Model
+            };
+            if let Some(chain) = case["chain"].as_array() {
+                let selected = chain.iter().enumerate().find_map(|(index, raw)| {
+                    let entry = FallbackChainEntry::from_value(raw)?;
+                    let model = entry.model.as_deref()?;
+                    let candidate = BackendIdentity::new(
+                        &entry.provider,
+                        model,
+                        entry.base_url.as_deref().unwrap_or(""),
+                    );
+                    let context = match model {
+                        "small-8k-model" => Some(8_192),
+                        "large-128k-model" => Some(131_072),
+                        "unknown-context-model" => None,
+                        _ => Some(256_000),
+                    };
+                    (!should_skip_candidate(&candidate, &failed, scope)
+                        && context.is_none_or(|tokens| tokens >= 64_000))
+                    .then_some((index, model.to_owned()))
+                });
+                assert_eq!(
+                    selected.is_some(),
+                    case["success"].as_bool().unwrap(),
+                    "{case}"
+                );
+                assert_eq!(
+                    selected.as_ref().map(|(_, model)| model.as_str()),
+                    case["resolved_model"].as_str(),
+                    "{case}"
+                );
+                if let Some((index, _)) = &selected {
+                    assert!(
+                        case["resolved_label"]
+                            .as_str()
+                            .unwrap()
+                            .starts_with(&format!("fallback_chain[{index}]")),
+                        "{case}"
+                    );
+                }
+                continue;
+            }
+            let main = BackendIdentity::new(
+                case["main_provider"].as_str().unwrap_or(""),
+                case["main_model"].as_str().unwrap_or(""),
+                "",
+            );
+            assert_eq!(
+                !should_skip_candidate(&main, &failed, scope),
+                case["success"].as_bool().unwrap(),
+                "{case}"
+            );
+        }
+    }
 
     #[test]
     fn defaults_inherit_main_route_and_apply_compression_timeout_floor() {

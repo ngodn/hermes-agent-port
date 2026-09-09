@@ -521,6 +521,26 @@ fn resolve_capabilities(
 }
 
 impl ModelsDev {
+    /// Resolve from explicit overrides and the last durable catalog snapshot
+    /// without starting network work. Unknown models deliberately return
+    /// `None`, so callers can preserve Python's allow-unknown fallback rule.
+    pub fn cached_context_window(
+        &self,
+        provider: &str,
+        model: &str,
+        config: &Value,
+    ) -> Option<u64> {
+        if let Some(context) = explicit_context(config, provider, model) {
+            return Some(context);
+        }
+        let registry = if mapped_provider(provider).is_some() {
+            self.load_disk().unwrap_or_else(|| json!({}))
+        } else {
+            json!({})
+        };
+        resolve_context(&registry, config, provider, model)
+    }
+
     pub async fn context_window(
         self: &Arc<Self>,
         provider: &str,
@@ -1014,6 +1034,14 @@ mod tests {
                 .context_window("openai", "other", &config, true)
                 .await,
             Some(9999)
+        );
+        assert_eq!(
+            f.catalog.cached_context_window("openai", "other", &config),
+            Some(9999)
+        );
+        assert_eq!(
+            f.catalog.cached_context_window("openai", "m", &config),
+            Some(1234)
         );
         assert_eq!(
             f.catalog

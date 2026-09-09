@@ -49,8 +49,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   physical-session identity that follows the committed child.
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
-  unusable auxiliary output gets one clean main-route retry. Configured
-  fallback chains and non-chat-completions transports remain open.
+  unusable auxiliary output gets one clean main-route retry. Its ordered task
+  fallback chain is also frozen at startup, applies failure-scoped and 64k
+  context eligibility, and calls at most one configured candidate before the
+  main safety route. Top-level and built-in provider discovery, credential
+  rotation, and non-chat transports remain open.
 - Structural full-compression no-ops arm a conversation-local, in-memory 300
   second guard shared across pre-turn and same-turn paths. They never strike or
   persist the durable ineffective breaker. Successful boundaries and forced
@@ -110,6 +113,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [compression-fallback-chain-resolution.md](compression-fallback-chain-resolution.md) | Production frozen task fallback plan, Python-compatible one-candidate selection, failure and context eligibility, request isolation, helper review disposition, and deferrals |
+| [compression-fallback-chain-contract-agy.md](compression-fallback-chain-contract-agy.md) | AGY audit and source-executed corpus for fallback entry coercion, route identity, selection, context filtering, and exhaustion |
+| [compression-fallback-chain-config-claude.md](compression-fallback-chain-config-claude.md) | Claude's isolated Rust configuration-model lane plus the primary correction removing the draft-only per-entry extra-body field |
+| [compression-fallback-chain-review-agy.md](compression-fallback-chain-review-agy.md) | AGY's adversarial production review, including the fixed reasoning, boundedness, failure-scope, context, and redaction findings and two source-rejected extra-body findings |
+| [compression-fallback-chain-goldens.json](../tools/compression-fallback-chain-goldens.json) | Source-executed fallback configuration, timeout, transport, credential, identity, and traversal corpus |
 | [native-interactive-approval-resolution.md](native-interactive-approval-resolution.md) | Live manual terminal approval on native push adapters, route broker ownership, pre-lease control replies, current-sender authorization, policy persistence, validation, and explicit deferrals |
 | [native-interactive-approval-contract-agy.md](native-interactive-approval-contract-agy.md) | AGY's 76-case Python contract for prompt text, reply parsing, authorization, scopes, timeout, cancellation, overload, and batch behavior |
 | [native-dangerous-command-contract-agy.md](native-dangerous-command-contract-agy.md) | AGY's exhaustive Python classifier audit, extended by the primary lane to 251 option-ownership and wrapper cases |

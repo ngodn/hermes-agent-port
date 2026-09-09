@@ -1,5 +1,48 @@
 # Hermes Rust rewrite
 
+## Native auxiliary compression fallback chain: 2026-09-10
+
+Native full-compression summaries now resolve and freeze the ordered
+`auxiliary.compression.fallback_chain` at conversation startup. Explicit mode
+tries its auxiliary route, one eligible configured candidate, then the main
+conversation model. Auto mode tries main first, then one eligible candidate.
+The one-candidate bound matches the current Python call path and prevents a
+long chain from accumulating every per-entry timeout.
+
+Entry parsing, transport aliases, direct and env-backed credentials,
+independent unfloored timeouts, and exact-route fast-lane controls follow the
+source-executed Python corpus. Runtime selection skips the failed credential
+surface after 401 or 402, skips only the exact deployment for model-scoped
+failures, preserves sibling models and distinct endpoints, rejects known
+context windows below 64,000 tokens, and allows unknown windows. A primary
+route that cannot be built seeds the same credential-scoped selection.
+
+Fallback reasoning controls require independent provider and model
+certification. Task-level vendor request extensions retain Python behavior,
+while primary fast-lane reasoning is stripped from uncertified candidates.
+Each route remains tool-free, recursion-free, independently accounted in the
+auxiliary usage ledger, and redacted in logs. The compression prompt is built
+once and reused byte for byte, so the frozen system prompt and provider tool
+prefix remain unchanged. See
+[compression-fallback-chain-resolution.md](analysis/compression-fallback-chain-resolution.md).
+
+AGY owned the Python contract and deterministic corpus in one serialized lane.
+Claude owned the isolated Rust configuration model in a different lane. A
+later serialized AGY run adversarially reviewed production integration. The
+primary lane fixed its verified reasoning, boundedness, failure-scope,
+context-window, and redaction findings, and rejected two extra-body findings
+that contradicted the live Python request path. The codebase-design skill kept
+the result as a frozen route plan with no new prompt or core-tool surface.
+
+Validation is **1,810 Rust tests passed, two ignored**, plus **20 selected
+Python fallback tests passed**. The 112-case fallback corpus regenerates byte
+for byte. Rust formatting, Ruff, Clippy with warnings denied, and diff hygiene
+pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **55.10
+points, reported as about 55%** (judgment range 53% to 57%). Top-level and
+built-in auxiliary discovery, credential rotation and OAuth refresh, non-chat
+auxiliary transports, and stall-fence route pinning remain.
+
 ## Native interactive terminal approval: 2026-09-09
 
 Manual approval is live for native Unix-local terminal conversations on

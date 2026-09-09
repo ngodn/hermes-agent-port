@@ -1,0 +1,1246 @@
+{
+  "entry_acceptance_and_coercion": [
+    {
+      "case": "valid_full_entry",
+      "raw": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b",
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-synthetic-inline",
+        "key_env": "FALLBACK_KEY",
+        "api_mode": "chat-completions",
+        "timeout": 45,
+        "extra_body": {
+          "route": "fast"
+        },
+        "reasoning_effort": "low",
+        "max_output_tokens": 2048
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b",
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-synthetic-inline",
+        "key_env": "FALLBACK_KEY",
+        "api_mode": "chat_completions",
+        "timeout": 45.0,
+        "extra_body": {
+          "route": "fast"
+        },
+        "reasoning_effort": {
+          "enabled": true,
+          "effort": "low"
+        },
+        "max_output_tokens": 2048
+      }
+    },
+    {
+      "case": "valid_minimal_entry",
+      "raw": {
+        "provider": "custom"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_provider_and_model",
+      "raw": {
+        "provider": "anthropic",
+        "model": "claude-3-5-sonnet"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "anthropic",
+        "model": "claude-3-5-sonnet",
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_with_base_url",
+      "raw": {
+        "provider": "custom",
+        "model": "local-model",
+        "base_url": "https://internal/v1"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": "local-model",
+        "base_url": "https://internal/v1",
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_with_api_key",
+      "raw": {
+        "provider": "custom",
+        "api_key": "sk-mock-key"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": "sk-mock-key",
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_with_key_env",
+      "raw": {
+        "provider": "custom",
+        "key_env": "MY_KEY_ENV"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": "MY_KEY_ENV",
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_with_api_key_env_alias",
+      "raw": {
+        "provider": "custom",
+        "api_key_env": "MY_API_KEY_ENV"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": "MY_API_KEY_ENV",
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_with_transport_alias",
+      "raw": {
+        "provider": "custom",
+        "transport": "responses"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": "codex_responses",
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_api_mode_precedence",
+      "raw": {
+        "provider": "custom",
+        "api_mode": "anthropic",
+        "transport": "responses"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": "anthropic_messages",
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_extra_body_dict",
+      "raw": {
+        "provider": "custom",
+        "extra_body": {
+          "custom_tag": "val"
+        }
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {
+          "custom_tag": "val"
+        },
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_reasoning_effort_low",
+      "raw": {
+        "provider": "custom",
+        "reasoning_effort": "low"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": {
+          "enabled": true,
+          "effort": "low"
+        },
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_reasoning_effort_none",
+      "raw": {
+        "provider": "custom",
+        "reasoning_effort": "none"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": {
+          "enabled": false
+        },
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_reasoning_effort_false",
+      "raw": {
+        "provider": "custom",
+        "reasoning_effort": false
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": {
+          "enabled": false
+        },
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "valid_max_output_tokens_int",
+      "raw": {
+        "provider": "custom",
+        "max_output_tokens": 4096
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": 4096
+      }
+    },
+    {
+      "case": "valid_max_output_tokens_str_coerced",
+      "raw": {
+        "provider": "custom",
+        "max_output_tokens": "8192"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": 8192
+      }
+    },
+    {
+      "case": "invalid_max_output_tokens_bool",
+      "raw": {
+        "provider": "custom",
+        "max_output_tokens": true
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "invalid_max_output_tokens_zero",
+      "raw": {
+        "provider": "custom",
+        "max_output_tokens": 0
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "invalid_max_output_tokens_negative",
+      "raw": {
+        "provider": "custom",
+        "max_output_tokens": -50
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "invalid_extra_body_list",
+      "raw": {
+        "provider": "custom",
+        "extra_body": [
+          "not",
+          "a",
+          "dict"
+        ]
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "invalid_extra_body_string",
+      "raw": {
+        "provider": "custom",
+        "extra_body": "not_a_dict"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "invalid_non_dict_string",
+      "raw": "openrouter/llama-3",
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "invalid_non_dict_int",
+      "raw": 999,
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "invalid_non_dict_list",
+      "raw": [
+        "openrouter",
+        "llama-3"
+      ],
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "invalid_non_dict_bool",
+      "raw": true,
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "invalid_non_dict_null",
+      "raw": null,
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "invalid_missing_provider",
+      "raw": {
+        "model": "m"
+      },
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "invalid_empty_provider",
+      "raw": {
+        "provider": "",
+        "model": "m"
+      },
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "invalid_whitespace_provider",
+      "raw": {
+        "provider": "   ",
+        "model": "m"
+      },
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "invalid_null_provider",
+      "raw": {
+        "provider": null,
+        "model": "m"
+      },
+      "accepted": false,
+      "parsed": null
+    },
+    {
+      "case": "model_auto_handling",
+      "raw": {
+        "provider": "openrouter",
+        "model": "auto"
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "openrouter",
+        "model": "auto",
+        "base_url": null,
+        "api_key": null,
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "whitespace_trimmed",
+      "raw": {
+        "provider": "  custom  ",
+        "model": "  m  ",
+        "base_url": "  https://api.example.com/v1  ",
+        "api_key": "  sk-mock-trimmed  "
+      },
+      "accepted": true,
+      "parsed": {
+        "provider": "custom",
+        "model": "m",
+        "base_url": "https://api.example.com/v1",
+        "api_key": "sk-mock-trimmed",
+        "key_env": null,
+        "api_mode": null,
+        "timeout": null,
+        "extra_body": {},
+        "reasoning_effort": null,
+        "max_output_tokens": null
+      }
+    },
+    {
+      "case": "source_order_and_filtering_preserved",
+      "raw": [
+        "invalid_string_entry",
+        {
+          "provider": "openrouter",
+          "model": "first-candidate",
+          "timeout": 45
+        },
+        {
+          "model": "missing-provider"
+        },
+        null,
+        {
+          "provider": "anthropic",
+          "model": "second-candidate",
+          "timeout": 60
+        },
+        {
+          "provider": "   ",
+          "model": "whitespace-provider"
+        },
+        {
+          "provider": "custom",
+          "model": "third-candidate",
+          "timeout": 90
+        }
+      ],
+      "accepted": true,
+      "parsed": [
+        {
+          "provider": "openrouter",
+          "model": "first-candidate",
+          "base_url": null,
+          "api_key": null,
+          "key_env": null,
+          "api_mode": null,
+          "timeout": 45.0,
+          "extra_body": {},
+          "reasoning_effort": null,
+          "max_output_tokens": null
+        },
+        {
+          "provider": "anthropic",
+          "model": "second-candidate",
+          "base_url": null,
+          "api_key": null,
+          "key_env": null,
+          "api_mode": null,
+          "timeout": 60.0,
+          "extra_body": {},
+          "reasoning_effort": null,
+          "max_output_tokens": null
+        },
+        {
+          "provider": "custom",
+          "model": "third-candidate",
+          "base_url": null,
+          "api_key": null,
+          "key_env": null,
+          "api_mode": null,
+          "timeout": 90.0,
+          "extra_body": {},
+          "reasoning_effort": null,
+          "max_output_tokens": null
+        }
+      ]
+    }
+  ],
+  "timeout_coercion": [
+    {
+      "case": "int_positive_short",
+      "raw_value": 45,
+      "coerced_timeout": 45.0
+    },
+    {
+      "case": "int_positive_standard",
+      "raw_value": 120,
+      "coerced_timeout": 120.0
+    },
+    {
+      "case": "int_positive_floor_value",
+      "raw_value": 300,
+      "coerced_timeout": 300.0
+    },
+    {
+      "case": "int_positive_long",
+      "raw_value": 600,
+      "coerced_timeout": 600.0
+    },
+    {
+      "case": "float_positive_fractional",
+      "raw_value": 45.5,
+      "coerced_timeout": 45.5
+    },
+    {
+      "case": "float_positive_subsecond",
+      "raw_value": 0.5,
+      "coerced_timeout": 0.5
+    },
+    {
+      "case": "float_positive_large",
+      "raw_value": 300.0,
+      "coerced_timeout": 300.0
+    },
+    {
+      "case": "zero_int_rejected",
+      "raw_value": 0,
+      "coerced_timeout": null
+    },
+    {
+      "case": "zero_float_rejected",
+      "raw_value": 0.0,
+      "coerced_timeout": null
+    },
+    {
+      "case": "negative_int_rejected",
+      "raw_value": -1,
+      "coerced_timeout": null
+    },
+    {
+      "case": "negative_float_rejected",
+      "raw_value": -45.0,
+      "coerced_timeout": null
+    },
+    {
+      "case": "bool_true_rejected",
+      "raw_value": true,
+      "coerced_timeout": null
+    },
+    {
+      "case": "bool_false_rejected",
+      "raw_value": false,
+      "coerced_timeout": null
+    },
+    {
+      "case": "string_int_rejected",
+      "raw_value": "45",
+      "coerced_timeout": null
+    },
+    {
+      "case": "string_float_rejected",
+      "raw_value": "120.0",
+      "coerced_timeout": null
+    },
+    {
+      "case": "string_non_numeric_rejected",
+      "raw_value": "timeout",
+      "coerced_timeout": null
+    },
+    {
+      "case": "none_rejected",
+      "raw_value": null,
+      "coerced_timeout": null
+    },
+    {
+      "case": "dict_rejected",
+      "raw_value": {},
+      "coerced_timeout": null
+    },
+    {
+      "case": "list_rejected",
+      "raw_value": [],
+      "coerced_timeout": null
+    },
+    {
+      "case": "independence::entry_has_independent_short_timeout",
+      "raw_value": 45,
+      "coerced_timeout": 45.0,
+      "expected_entry_timeout": 45.0,
+      "effective_request_timeout": 45.0
+    },
+    {
+      "case": "independence::entry_has_independent_long_timeout",
+      "raw_value": 600,
+      "coerced_timeout": 600.0,
+      "expected_entry_timeout": 600.0,
+      "effective_request_timeout": 600.0
+    },
+    {
+      "case": "independence::entry_omits_timeout_inherits_task_floor",
+      "raw_value": null,
+      "coerced_timeout": null,
+      "expected_entry_timeout": null,
+      "effective_request_timeout": 300.0
+    }
+  ],
+  "api_mode_normalization": [
+    {
+      "case": "openai_legacy",
+      "raw_api_mode": "openai",
+      "canonical_api_mode": "chat_completions"
+    },
+    {
+      "case": "openai_chat_snake",
+      "raw_api_mode": "openai_chat",
+      "canonical_api_mode": "chat_completions"
+    },
+    {
+      "case": "openai_chat_kebab",
+      "raw_api_mode": "openai-chat",
+      "canonical_api_mode": "chat_completions"
+    },
+    {
+      "case": "chat_completions_kebab",
+      "raw_api_mode": "chat-completions",
+      "canonical_api_mode": "chat_completions"
+    },
+    {
+      "case": "chat_completions_concat",
+      "raw_api_mode": "chatcompletions",
+      "canonical_api_mode": "chat_completions"
+    },
+    {
+      "case": "chat_completions_canonical",
+      "raw_api_mode": "chat_completions",
+      "canonical_api_mode": "chat_completions"
+    },
+    {
+      "case": "responses_shorthand",
+      "raw_api_mode": "responses",
+      "canonical_api_mode": "codex_responses"
+    },
+    {
+      "case": "openai_responses_snake",
+      "raw_api_mode": "openai_responses",
+      "canonical_api_mode": "codex_responses"
+    },
+    {
+      "case": "openai_responses_kebab",
+      "raw_api_mode": "openai-responses",
+      "canonical_api_mode": "codex_responses"
+    },
+    {
+      "case": "codex_responses_canonical",
+      "raw_api_mode": "codex_responses",
+      "canonical_api_mode": "codex_responses"
+    },
+    {
+      "case": "anthropic_shorthand",
+      "raw_api_mode": "anthropic",
+      "canonical_api_mode": "anthropic_messages"
+    },
+    {
+      "case": "anthropic_messages_kebab",
+      "raw_api_mode": "anthropic-messages",
+      "canonical_api_mode": "anthropic_messages"
+    },
+    {
+      "case": "messages_shorthand",
+      "raw_api_mode": "messages",
+      "canonical_api_mode": "anthropic_messages"
+    },
+    {
+      "case": "anthropic_messages_canonical",
+      "raw_api_mode": "anthropic_messages",
+      "canonical_api_mode": "anthropic_messages"
+    },
+    {
+      "case": "bedrock_shorthand",
+      "raw_api_mode": "bedrock",
+      "canonical_api_mode": "bedrock_converse"
+    },
+    {
+      "case": "bedrock_converse_kebab",
+      "raw_api_mode": "bedrock-converse",
+      "canonical_api_mode": "bedrock_converse"
+    },
+    {
+      "case": "bedrock_converse_canonical",
+      "raw_api_mode": "bedrock_converse",
+      "canonical_api_mode": "bedrock_converse"
+    },
+    {
+      "case": "case_insensitive_uppercase",
+      "raw_api_mode": "CHAT-COMPLETIONS",
+      "canonical_api_mode": "chat_completions"
+    },
+    {
+      "case": "whitespace_trimmed",
+      "raw_api_mode": "  anthropic  ",
+      "canonical_api_mode": "anthropic_messages"
+    },
+    {
+      "case": "custom_unknown_passthrough",
+      "raw_api_mode": "custom_transport_protocol",
+      "canonical_api_mode": "custom_transport_protocol"
+    }
+  ],
+  "credential_resolution": [
+    {
+      "case": "inline_api_key_only",
+      "entry": {
+        "api_key": "sk-synthetic-inline-only"
+      },
+      "resolved_api_key": "sk-synthetic-inline-only"
+    },
+    {
+      "case": "inline_api_key_with_whitespace",
+      "entry": {
+        "api_key": "  sk-synthetic-trimmed  "
+      },
+      "resolved_api_key": "sk-synthetic-trimmed"
+    },
+    {
+      "case": "key_env_resolution",
+      "entry": {
+        "key_env": "SYNTHETIC_PRIMARY_KEY"
+      },
+      "resolved_api_key": "sk-synthetic-env-key-1"
+    },
+    {
+      "case": "api_key_env_alias_resolution",
+      "entry": {
+        "api_key_env": "SYNTHETIC_SECONDARY_KEY"
+      },
+      "resolved_api_key": "sk-synthetic-env-key-2"
+    },
+    {
+      "case": "api_key_precedence_over_key_env",
+      "entry": {
+        "api_key": "sk-synthetic-inline-priority",
+        "key_env": "SYNTHETIC_PRIMARY_KEY"
+      },
+      "resolved_api_key": "sk-synthetic-inline-priority"
+    },
+    {
+      "case": "api_key_precedence_over_api_key_env",
+      "entry": {
+        "api_key": "sk-synthetic-inline-priority",
+        "api_key_env": "SYNTHETIC_SECONDARY_KEY"
+      },
+      "resolved_api_key": "sk-synthetic-inline-priority"
+    },
+    {
+      "case": "key_env_precedence_over_api_key_env",
+      "entry": {
+        "key_env": "SYNTHETIC_PRIMARY_KEY",
+        "api_key_env": "SYNTHETIC_SECONDARY_KEY"
+      },
+      "resolved_api_key": "sk-synthetic-env-key-1"
+    },
+    {
+      "case": "missing_key_env_returns_none",
+      "entry": {
+        "key_env": "NONEXISTENT_KEY_VARIABLE"
+      },
+      "resolved_api_key": null
+    },
+    {
+      "case": "empty_key_env_returns_none",
+      "entry": {
+        "key_env": "EMPTY_KEY_VAR"
+      },
+      "resolved_api_key": null
+    },
+    {
+      "case": "whitespace_key_env_returns_none",
+      "entry": {
+        "key_env": "WHITESPACE_KEY_VAR"
+      },
+      "resolved_api_key": null
+    },
+    {
+      "case": "no_credentials_returns_none",
+      "entry": {
+        "provider": "openrouter",
+        "model": "m"
+      },
+      "resolved_api_key": null
+    },
+    {
+      "case": "non_dict_returns_none",
+      "entry": null,
+      "resolved_api_key": null
+    }
+  ],
+  "failed_route_skipping": [
+    {
+      "case": "model_scope::exact_match_skipped",
+      "candidate": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b"
+      },
+      "failed_identity": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b"
+      },
+      "failure_scope": "model",
+      "should_skip": true
+    },
+    {
+      "case": "model_scope::sibling_model_allowed",
+      "candidate": {
+        "provider": "openrouter",
+        "model": "google/gemini-2.5-flash"
+      },
+      "failed_identity": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b"
+      },
+      "failure_scope": "model",
+      "should_skip": false
+    },
+    {
+      "case": "model_scope::different_provider_allowed",
+      "candidate": {
+        "provider": "anthropic",
+        "model": "claude-3-5-sonnet"
+      },
+      "failed_identity": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b"
+      },
+      "failure_scope": "model",
+      "should_skip": false
+    },
+    {
+      "case": "model_scope::case_insensitive_match_skipped",
+      "candidate": {
+        "provider": "OpenRouter",
+        "model": "Meta-Llama/Llama-3-70B"
+      },
+      "failed_identity": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b"
+      },
+      "failure_scope": "model",
+      "should_skip": true
+    },
+    {
+      "case": "model_scope::distinct_explicit_endpoints_allowed",
+      "candidate": {
+        "provider": "custom",
+        "model": "m",
+        "base_url": "https://host-b/v1"
+      },
+      "failed_identity": {
+        "provider": "custom",
+        "model": "m",
+        "base_url": "https://host-a/v1"
+      },
+      "failure_scope": "model",
+      "should_skip": false
+    },
+    {
+      "case": "model_scope::same_explicit_endpoints_skipped",
+      "candidate": {
+        "provider": "custom",
+        "model": "m",
+        "base_url": "https://host-a/v1"
+      },
+      "failed_identity": {
+        "provider": "custom",
+        "model": "m",
+        "base_url": "https://host-a/v1"
+      },
+      "failure_scope": "model",
+      "should_skip": true
+    },
+    {
+      "case": "credential_scope::same_provider_any_model_skipped",
+      "candidate": {
+        "provider": "openrouter",
+        "model": "google/gemini-2.5-flash"
+      },
+      "failed_identity": {
+        "provider": "openrouter",
+        "model": null
+      },
+      "failure_scope": "credential",
+      "should_skip": true
+    },
+    {
+      "case": "credential_scope::same_provider_same_model_skipped",
+      "candidate": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b"
+      },
+      "failed_identity": {
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b"
+      },
+      "failure_scope": "credential",
+      "should_skip": true
+    },
+    {
+      "case": "credential_scope::different_provider_allowed",
+      "candidate": {
+        "provider": "anthropic",
+        "model": "claude-3-5-sonnet"
+      },
+      "failed_identity": {
+        "provider": "openrouter",
+        "model": null
+      },
+      "failure_scope": "credential",
+      "should_skip": false
+    },
+    {
+      "case": "reason_classification::auth error",
+      "reason": "auth error",
+      "classified_scope": "credential"
+    },
+    {
+      "case": "reason_classification::payment error",
+      "reason": "payment error",
+      "classified_scope": "credential"
+    },
+    {
+      "case": "reason_classification::rate limit",
+      "reason": "rate limit",
+      "classified_scope": "model"
+    },
+    {
+      "case": "reason_classification::model incompatible with route",
+      "reason": "model incompatible with route",
+      "classified_scope": "model"
+    },
+    {
+      "case": "reason_classification::invalid provider response",
+      "reason": "invalid provider response",
+      "classified_scope": "model"
+    },
+    {
+      "case": "reason_classification::connection error",
+      "reason": "connection error",
+      "classified_scope": "model"
+    },
+    {
+      "case": "reason_classification::timeout",
+      "reason": "timeout",
+      "classified_scope": "model"
+    },
+    {
+      "case": "reason_classification::unrecognized failure string",
+      "reason": "unrecognized failure string",
+      "classified_scope": "model"
+    }
+  ],
+  "chain_traversal_and_exhaustion": [
+    {
+      "case": "model_timeout_selects_sibling_candidate",
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemini-2.5-flash"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-3-5-sonnet"
+        }
+      ],
+      "failed_provider": "openrouter",
+      "reason": "timeout",
+      "failed_model": "meta-llama/llama-3-70b",
+      "resolved_model": "google/gemini-2.5-flash",
+      "resolved_label": "fallback_chain[1](openrouter)",
+      "success": true
+    },
+    {
+      "case": "auth_error_skips_provider_selects_next",
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemini-2.5-flash"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-3-5-sonnet"
+        }
+      ],
+      "failed_provider": "openrouter",
+      "reason": "auth error",
+      "failed_model": null,
+      "resolved_model": "claude-3-5-sonnet",
+      "resolved_label": "fallback_chain[2](anthropic)",
+      "success": true
+    },
+    {
+      "case": "context_window_filter_skips_small_model",
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "small-8k-model"
+        },
+        {
+          "provider": "custom",
+          "model": "large-128k-model"
+        }
+      ],
+      "failed_provider": "other",
+      "reason": "timeout",
+      "resolved_model": "large-128k-model",
+      "resolved_label": "fallback_chain[1](custom)",
+      "success": true
+    },
+    {
+      "case": "unknown_context_passes_through",
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "unknown-context-model"
+        }
+      ],
+      "failed_provider": "other",
+      "reason": "timeout",
+      "resolved_model": "unknown-context-model",
+      "resolved_label": "fallback_chain[0](custom)",
+      "success": true
+    },
+    {
+      "case": "exhaustion_all_candidates_unavailable",
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b"
+        },
+        {
+          "provider": "custom",
+          "model": "small-8k-model"
+        }
+      ],
+      "failed_provider": "openrouter",
+      "reason": "timeout",
+      "resolved_model": null,
+      "resolved_label": "",
+      "success": false
+    },
+    {
+      "case": "secondary_main_agent_fallback_distinct_route",
+      "failed_provider": "custom",
+      "failed_model": "kimi-k2",
+      "reason": "rate limit",
+      "main_provider": "openrouter",
+      "main_model": "anthropic/claude-3-opus",
+      "resolved_model": "anthropic/claude-3-opus",
+      "resolved_label": "main-agent(openrouter)",
+      "success": true
+    },
+    {
+      "case": "secondary_main_agent_fallback_skips_same_model",
+      "failed_provider": "openrouter",
+      "failed_model": "anthropic/claude-3-opus",
+      "reason": "timeout",
+      "main_provider": "openrouter",
+      "main_model": "anthropic/claude-3-opus",
+      "resolved_model": null,
+      "resolved_label": "",
+      "success": false
+    },
+    {
+      "case": "secondary_main_agent_fallback_skips_same_provider_auth",
+      "failed_provider": "openrouter",
+      "failed_model": null,
+      "reason": "auth error",
+      "main_provider": "openrouter",
+      "main_model": "anthropic/claude-3-opus",
+      "resolved_model": null,
+      "resolved_label": "",
+      "success": false
+    },
+    {
+      "case": "stall_fallback_route_first_structurally_complete",
+      "chain": [
+        "invalid_entry",
+        {
+          "provider": ""
+        },
+        {
+          "provider": "custom"
+        },
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b",
+          "timeout": 45
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-3-5-sonnet",
+          "timeout": 120
+        }
+      ],
+      "selected_route": {
+        "label": "fallback_chain[3](openrouter)",
+        "provider": "openrouter",
+        "model": "meta-llama/llama-3-70b",
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null,
+        "timeout": 45.0
+      }
+    }
+  ]
+}

@@ -1,12 +1,14 @@
-# Full Rust port progress audit, updated 2026-09-09
+# Full Rust port progress audit, updated 2026-09-10
 
-Current estimate: **54.90% of the full native replacement**, reported as
+Current estimate: **55.10% of the full native replacement**, reported as
 **about 55%**, with a reasonable judgment range of **53% to 57%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
 static user deny rules with live last-known-good reload and manual approval on
-the three native push adapters. The estimate remains conservative because smart
-approval, Tirith findings, PTY and notification support, remote execution, most
+the three native push adapters. Full-compression summaries also use a frozen,
+failure-scoped configured task fallback chain. The estimate remains
+conservative because top-level and built-in provider discovery, credential
+recovery, smart approval, PTY and notification support, remote execution, most
 tools, and the underlying plugin and external-memory managers are not native.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
@@ -25,10 +27,10 @@ audits.
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 73% | 10.95 |
-| Native agent core | 20% | 65% | 13.00 |
-| Total | 100% | | **54.90** |
+| Native agent core | 20% | 66% | 13.20 |
+| Total | 100% | | **55.10** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 73 + 0.20 * 65 = 54.90`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 73 + 0.20 * 66 = 55.10`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -249,6 +251,16 @@ exact-route fast-lane cap. A two-endpoint test proves that auxiliary controls do
 not leak into the main request, truncated output gets one uncapped main retry,
 and successful auxiliary output skips that retry.
 
+The same frozen route plan now includes the ordered task-level configured
+fallback chain. Explicit auxiliary mode tries one eligible candidate before
+its main-model safety route; auto mode tries main first. Selection applies
+model-versus-credential failure scope, preserves sibling models and distinct
+endpoints, skips known context windows below 64,000 tokens, and calls no more
+than one configured candidate per summary attempt. Per-entry timeouts remain
+independent of the task floor. Exact-route reasoning controls cannot leak to an
+uncertified candidate, and all attempts remain tool-free, non-recursive, and
+separately attributed to auxiliary usage.
+
 Structurally impossible full-compression attempts now arm a 300 second
 conversation-local monotonic guard instead of incrementing the durable
 ineffective breaker. Pre-turn and same-turn paths share the guard, a live
@@ -291,10 +303,10 @@ retain Python's empty `old_session_id`; rotation events carry the archived
 parent. A clone-shared conversation counter survives frozen-client cache rekeys,
 and hook execution never delays or rolls back compression.
 
-Configurable multi-provider auxiliary fallback chains, non-chat auxiliary
-transports, context-engine and relay-boundary notifications, overflow recovery,
-provider
-failover and credential retry loops, delegation/subagents, full
+Top-level and built-in auxiliary provider discovery, credential rotation and
+OAuth refresh, non-chat auxiliary transports, context-engine and relay-boundary
+notifications, overflow recovery, broader provider failover loops,
+delegation/subagents, full
 smart approval and clarification flows, memory and plugin managers, skill execution,
 context invalidation policy, and several agent-loop recovery behaviors remain.
 These are large behavioral systems, which is why the core score remains low
@@ -302,8 +314,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,795 passing Rust tests and two expected ignores
-(1,794 gateway plus one core test).
+The workspace currently has 1,810 passing Rust tests and two expected ignores
+(1,809 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -311,14 +323,12 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,795 passed, two ignored (1,794 gateway plus one core).
-- Selected Python approval and gateway contracts: 305 passed across isolated
-  commands. The optional Slack adapter module was excluded because this
-  checkout's virtual environment does not contain `aiohttp`.
+- Full Rust workspace: 1,810 passed, two ignored (1,809 gateway plus one core).
+- Selected Python fallback contracts: 20 passed across isolated commands.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
-  adoption, 129 auxiliary routing/config, 24 structural-backoff, and 60
-  handoff-layer cases, plus the 233-case terminal and approval corpus, 76
+  adoption, 129 auxiliary routing/config, 112 compression fallback-chain, 24
+  structural-backoff, and 60 handoff-layer cases, plus the 233-case terminal and approval corpus, 76
   interactive-approval cases, and 251 exhaustive dangerous-command cases.
 - Rust and Python formatting, Ruff, Clippy with warnings denied, and
   `git diff --check`: passed.
@@ -329,8 +339,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Auxiliary fallback chains, overflow recovery, repeated-compression status,
-   and context-engine adoption complete the current compression cluster.
+1. Top-level and built-in auxiliary discovery, credential recovery, overflow
+   recovery, repeated-compression status, and context-engine adoption complete
+   the current compression cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
 3. Smart and Tirith approval, PTY and remote terminal modes, then file, browser,
