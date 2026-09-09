@@ -1,0 +1,27 @@
+Inspect the existing Rust gateway only and design the narrowest production
+seam for built-in auxiliary provider discovery after the frozen task-specific
+and top-level compression fallback tiers are exhausted. This is an independent
+Rust ownership and interface lane, not a Python contract audit and not an
+implementation lane.
+
+Read rust/crates/hermes-gateway/src/compression_auxiliary.rs, main.rs,
+native_agent.rs, provider_registry.rs, config_file.rs, auth_store.rs,
+conversation_agent.rs, and related credential/cache modules. Determine which
+provider discovery logic can reuse existing profile and custom-provider
+resolution, which state must remain live across frozen conversation clients,
+where unhealthy TTL, credential refresh, and client eviction should be owned,
+and how one discovery request can be selected without adding a parallel route
+executor. Preserve prompt byte stability, profile secret isolation, auxiliary
+usage attribution, and the rule that route clients cannot recursively own
+plans.
+
+Recommend a bounded implementation sequence and local HTTP plus stateful tests
+that prove provider order, health expiry, one-request execution, credential
+recovery, and conversation isolation. Clearly identify any behavior that
+should be split into a later checkpoint because the required transport is not
+native. Flag shallow or speculative interface growth.
+
+Do not edit Rust or Python source, PORT.md, INDEX.md, generators, goldens, or
+existing reports. Write only
+rust/analysis/compression-builtin-discovery-rust-seam-claude.md. Use concrete
+file and symbol references. Avoid em dash characters in all prose.

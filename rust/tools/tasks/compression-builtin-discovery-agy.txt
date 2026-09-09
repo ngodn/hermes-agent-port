@@ -1,0 +1,30 @@
+Audit the authoritative Python contract for built-in auxiliary provider
+discovery as consumed by full compression after auto mode exhausts the
+task-specific and top-level configured fallback tiers. This is the Python
+contract and oracle lane. Do not edit Rust source, PORT.md, INDEX.md, existing
+reports, or existing generators.
+
+Trace agent/auxiliary_client.py `_get_provider_chain`, `_resolve_auto_route`,
+`_try_payment_fallback`, sync and async `call_llm`, provider health state,
+credential refresh, cached-client eviction, and every provider-specific try
+function reachable by this compression path. Establish exact provider order,
+configuration and credential gates, model choice, aliases, endpoint and
+transport behavior, 64,000-token context filtering if any, unhealthy TTL and
+mutation rules, startup-resolution versus request-failure paths, and the
+maximum number of discovery candidates that can perform model I/O. Separate
+pure resolution probes from actual LLM requests. Distinguish current runtime
+behavior from comments or desired behavior, and identify which parts require
+process-shared mutable state rather than a frozen per-conversation plan.
+
+Write a report to
+rust/analysis/compression-builtin-discovery-contract-agy.md. Create a
+deterministic source-executed generator at
+rust/tools/gen_compression_builtin_discovery_goldens.py and JSON output at
+rust/tools/compression-builtin-discovery-goldens.json. Use synthetic
+credentials and local mocks only, support `--check`, exercise real Python
+decision functions wherever practical, and make no network calls. Run once
+normally and once with `--check`.
+
+Include exact source references, provider and case counts, validation commands,
+and explicit parity requirements for a production native checkpoint. Avoid em
+dash characters in every file you write.

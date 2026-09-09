@@ -54,8 +54,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   context eligibility, and calls at most one configured candidate before the
   main safety route. Auto mode now continues from the task chain into the
   frozen top-level `fallback_providers` / legacy `fallback_model` policy while
-  preserving one configured request across both tiers. Built-in discovery,
-  unhealthy-provider state, credential rotation, and non-chat transports
+  preserving one configured request across both tiers. Its final native tier
+  now discovers the ordered chat-compatible OpenRouter, custom, and registered
+  API-key subset without a context floor. Profile-qualified shared health
+  suppresses recent quota or unrefreshable-auth failures without mutating the
+  frozen candidate plan. Credential rotation, OAuth and Nous refresh,
+  non-chat transports, client-cache eviction, and dynamic provider plugins
   remain open.
 - Structural full-compression no-ops arm a conversation-local, in-memory 300
   second guard shared across pre-turn and same-turn paths. They never strike or
@@ -116,6 +120,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [compression-builtin-discovery-resolution.md](compression-builtin-discovery-resolution.md) | Production native built-in discovery subset, profile-scoped health ownership, two-request auth budget, live HTTP proof, and explicit transport and credential deferrals |
+| [compression-builtin-discovery-contract-agy.md](compression-builtin-discovery-contract-agy.md) | AGY's Python discovery, health, credential-refresh, cache-eviction, and traversal contract, corrected against current source by the primary lane |
+| [compression-builtin-discovery-rust-seam-claude.md](compression-builtin-discovery-rust-seam-claude.md) | Claude's independent Rust ownership review and the primary disposition that retained shared health but froze secret-bearing candidates per conversation |
+| [compression-builtin-discovery-goldens.json](../tools/compression-builtin-discovery-goldens.json) | Source-executed 97-case provider order, gating, context, health, credential, cache, and request-budget corpus |
 | [compression-main-fallback-chain-resolution.md](compression-main-fallback-chain-resolution.md) | Production top-level compression fallback tier, auto-with-request-settings correction, frozen one-shot route order, helper disposition, and deferrals |
 | [compression-main-fallback-chain-contract-agy.md](compression-main-fallback-chain-contract-agy.md) | AGY source audit corrected and extended by the primary lane for Python parsing, skip, context, timeout, and execution-budget behavior |
 | [compression-main-fallback-rust-seam-claude.md](compression-main-fallback-rust-seam-claude.md) | Claude's independent narrow Rust seam review, including reusable parser and client-builder boundaries plus the superseded auto predicate |

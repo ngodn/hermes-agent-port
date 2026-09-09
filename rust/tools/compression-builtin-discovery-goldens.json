@@ -1,0 +1,687 @@
+{
+  "provider_chain_and_order": [
+    {
+      "case": "provider_chain_exact_order_and_callables",
+      "length": 4,
+      "chain": [
+        [
+          "openrouter",
+          "_try_openrouter"
+        ],
+        [
+          "nous",
+          "_try_nous"
+        ],
+        [
+          "local/custom",
+          "_try_custom_endpoint"
+        ],
+        [
+          "api-key",
+          "_resolve_api_key_provider"
+        ]
+      ],
+      "labels": [
+        "openrouter",
+        "nous",
+        "local/custom",
+        "api-key"
+      ],
+      "codex_included": false
+    },
+    {
+      "case": "codex_omission_from_chain",
+      "docstring_mentions_codex": true,
+      "codex_in_chain_labels": false
+    },
+    {
+      "case": "label_normalization_openrouter",
+      "raw_label": "openrouter",
+      "normalized_label": "openrouter",
+      "expected_normalized": "openrouter",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_openrouter",
+      "raw_label": "OPENROUTER",
+      "normalized_label": "openrouter",
+      "expected_normalized": "openrouter",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_nous",
+      "raw_label": "nous",
+      "normalized_label": "nous",
+      "expected_normalized": "nous",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_nous",
+      "raw_label": "NOUS",
+      "normalized_label": "nous",
+      "expected_normalized": "nous",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_custom",
+      "raw_label": "custom",
+      "normalized_label": "local/custom",
+      "expected_normalized": "local/custom",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_local/custom",
+      "raw_label": "local/custom",
+      "normalized_label": "local/custom",
+      "expected_normalized": "local/custom",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_openai-codex",
+      "raw_label": "openai-codex",
+      "normalized_label": "openai-codex",
+      "expected_normalized": "openai-codex",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_codex",
+      "raw_label": "codex",
+      "normalized_label": "openai-codex",
+      "expected_normalized": "openai-codex",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_deepseek",
+      "raw_label": "deepseek",
+      "normalized_label": "deepseek",
+      "expected_normalized": "deepseek",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_gemini",
+      "raw_label": "gemini",
+      "normalized_label": "gemini",
+      "expected_normalized": "gemini",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_anthropic",
+      "raw_label": "anthropic",
+      "normalized_label": "anthropic",
+      "expected_normalized": "anthropic",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_",
+      "raw_label": "",
+      "normalized_label": "",
+      "expected_normalized": "",
+      "matches_expected": true
+    },
+    {
+      "case": "label_normalization_none",
+      "raw_label": null,
+      "normalized_label": "",
+      "expected_normalized": "",
+      "matches_expected": true
+    },
+    {
+      "case": "payment_fallback_alias_map",
+      "mapping": {
+        "openrouter": "openrouter",
+        "nous": "nous",
+        "openai-codex": "openai-codex",
+        "codex": "openai-codex",
+        "custom": "local/custom",
+        "local/custom": "local/custom"
+      },
+      "custom_maps_to_local_custom": true,
+      "codex_maps_to_openai_codex": true
+    },
+    {
+      "case": "auto_provider_labels_mapping",
+      "mapping": {
+        "_try_openrouter": "openrouter",
+        "_try_nous": "nous",
+        "_try_custom_endpoint": "local/custom",
+        "_resolve_api_key_provider": "api-key"
+      }
+    },
+    {
+      "case": "fallback_skip_label_auto_targeting_openrouter",
+      "failed_provider": "auto",
+      "target_chain_label": "openrouter",
+      "skipped_by_chain_label": false,
+      "matches_expected": true
+    },
+    {
+      "case": "fallback_skip_label_openrouter_targeting_openrouter",
+      "failed_provider": "openrouter",
+      "target_chain_label": "openrouter",
+      "skipped_by_chain_label": true,
+      "matches_expected": true
+    },
+    {
+      "case": "fallback_skip_label_nous_targeting_nous",
+      "failed_provider": "nous",
+      "target_chain_label": "nous",
+      "skipped_by_chain_label": true,
+      "matches_expected": true
+    },
+    {
+      "case": "fallback_skip_label_custom_targeting_local/custom",
+      "failed_provider": "custom",
+      "target_chain_label": "local/custom",
+      "skipped_by_chain_label": true,
+      "matches_expected": true
+    },
+    {
+      "case": "fallback_skip_label_local/custom_targeting_local/custom",
+      "failed_provider": "local/custom",
+      "target_chain_label": "local/custom",
+      "skipped_by_chain_label": true,
+      "matches_expected": true
+    },
+    {
+      "case": "fallback_skip_label_deepseek_targeting_api-key",
+      "failed_provider": "deepseek",
+      "target_chain_label": "api-key",
+      "skipped_by_chain_label": false,
+      "matches_expected": true
+    }
+  ],
+  "openrouter_discovery_gates": [
+    {
+      "case": "is_free_model_nvidia_nemotron-3-ultra-550b-a55b:free",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "is_free": true,
+      "expected": true,
+      "matches": true
+    },
+    {
+      "case": "is_free_model_meta-llama_llama-3-70b-instruct:free",
+      "model": "meta-llama/llama-3-70b-instruct:free",
+      "is_free": true,
+      "expected": true,
+      "matches": true
+    },
+    {
+      "case": "is_free_model_stealth_test-model",
+      "model": "stealth/test-model",
+      "is_free": true,
+      "expected": true,
+      "matches": true
+    },
+    {
+      "case": "is_free_model_anthropic_claude-3.5-sonnet",
+      "model": "anthropic/claude-3.5-sonnet",
+      "is_free": false,
+      "expected": false,
+      "matches": true
+    },
+    {
+      "case": "is_free_model_meta-llama_llama-3-70b",
+      "model": "meta-llama/llama-3-70b",
+      "is_free": false,
+      "expected": false,
+      "matches": true
+    },
+    {
+      "case": "is_free_model_",
+      "model": "",
+      "is_free": false,
+      "expected": false,
+      "matches": true
+    },
+    {
+      "case": "is_free_model_None",
+      "model": null,
+      "is_free": false,
+      "expected": false,
+      "matches": true
+    },
+    {
+      "case": "free_only_rejects_non_free_model",
+      "free_only": true,
+      "configured_model": "paid/model-123",
+      "returned_client": false,
+      "returned_model": null,
+      "marked_unhealthy": false
+    },
+    {
+      "case": "free_only_accepts_free_model",
+      "free_only": true,
+      "configured_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "returned_client": true,
+      "returned_model": "nvidia/nemotron-3-ultra-550b-a55b:free"
+    },
+    {
+      "case": "openrouter_pool_resolution_active",
+      "source": "pool",
+      "client_resolved": true,
+      "model_resolved": "nvidia/nemotron-3-ultra-550b-a55b:free"
+    },
+    {
+      "case": "openrouter_pool_exhausted_falls_to_env",
+      "client_resolved": true,
+      "model_resolved": "nvidia/nemotron-3-ultra-550b-a55b:free"
+    },
+    {
+      "case": "openrouter_missing_credentials_marks_unhealthy_60s",
+      "client_resolved": false,
+      "model_resolved": null,
+      "marked_unhealthy": true,
+      "ttl_seconds_approx": 59
+    },
+    {
+      "case": "openrouter_built_in_default_model",
+      "default_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "is_free_sku": true
+    }
+  ],
+  "nous_discovery_gates": [
+    {
+      "case": "nous_cross_session_rate_limit_marks_unhealthy",
+      "client_resolved": false,
+      "model_resolved": null,
+      "marked_unhealthy": true
+    },
+    {
+      "case": "nous_missing_auth_marks_unhealthy_60s",
+      "client_resolved": false,
+      "model_resolved": null,
+      "marked_unhealthy": true
+    },
+    {
+      "case": "nous_successful_resolution_sets_global_flag",
+      "client_resolved": true,
+      "model_resolved": "google/gemini-3.6-flash",
+      "auxiliary_is_nous_global": true
+    },
+    {
+      "case": "nous_live_recommended_model_selection",
+      "model_resolved": "portal-recommended-model",
+      "matches_recommended": true
+    },
+    {
+      "case": "nous_portal_none_falls_to_default_model",
+      "model_resolved": "google/gemini-3.6-flash",
+      "matches_default": true,
+      "default_model": "google/gemini-3.6-flash"
+    },
+    {
+      "case": "nous_stored_auth_missing_jwt_marks_unhealthy",
+      "client_resolved": false,
+      "marked_unhealthy": true
+    }
+  ],
+  "custom_endpoint_discovery_gates": [
+    {
+      "case": "custom_missing_base_url_returns_none",
+      "client_resolved": false,
+      "model_resolved": null
+    },
+    {
+      "case": "custom_rejects_openrouter_host",
+      "base_url": "https://openrouter.ai/api/v1",
+      "rejected_by_runtime_resolver": true
+    },
+    {
+      "case": "custom_rejects_codex_endpoint",
+      "client_resolved": true,
+      "model_resolved": "anthropic/claude-opus-4.6"
+    },
+    {
+      "case": "custom_local_unauthenticated_default_key",
+      "client_resolved": true,
+      "model_resolved": "llama3:latest"
+    },
+    {
+      "case": "custom_model_default_fallback",
+      "model_resolved": "gpt-4o-mini",
+      "matches_fallback": true
+    },
+    {
+      "case": "custom_codex_responses_wrapper",
+      "client_type": "CodexAuxiliaryClient",
+      "is_codex_aux_client": true
+    },
+    {
+      "case": "custom_anthropic_messages_wrapper",
+      "client_type": "AnthropicAuxiliaryClient",
+      "is_anthropic_aux_client": true
+    },
+    {
+      "case": "custom_failure_does_not_mark_unhealthy",
+      "marked_unhealthy": false
+    }
+  ],
+  "api_key_catalog_discovery": [
+    {
+      "case": "catalog_non_api_key_providers_skipped",
+      "count": 8,
+      "sample_providers": [
+        "nous",
+        "openai-codex",
+        "xai-oauth",
+        "qwen-oauth",
+        "copilot-acp"
+      ]
+    },
+    {
+      "case": "catalog_aux_model_filtering",
+      "total_api_key_providers": 71,
+      "with_aux_model_count": 47,
+      "without_aux_model_count": 24,
+      "sample_without_aux": [
+        "openai-api",
+        "lmstudio",
+        "copilot",
+        "arcee",
+        "actual"
+      ]
+    },
+    {
+      "case": "catalog_aux_model_gemini",
+      "provider": "gemini",
+      "resolved_model": "gemini-3.6-flash",
+      "expected_model": "gemini-3.6-flash",
+      "matches_expected": true
+    },
+    {
+      "case": "catalog_aux_model_zai",
+      "provider": "zai",
+      "resolved_model": "glm-4.5-flash",
+      "expected_model": "glm-4.5-flash",
+      "matches_expected": true
+    },
+    {
+      "case": "catalog_aux_model_kimi-coding",
+      "provider": "kimi-coding",
+      "resolved_model": "kimi-k2-turbo-preview",
+      "expected_model": "kimi-k2-turbo-preview",
+      "matches_expected": true
+    },
+    {
+      "case": "catalog_aux_model_stepfun",
+      "provider": "stepfun",
+      "resolved_model": "step-3.5-flash",
+      "expected_model": "step-3.5-flash",
+      "matches_expected": true
+    },
+    {
+      "case": "catalog_aux_model_anthropic",
+      "provider": "anthropic",
+      "resolved_model": "claude-haiku-4-5-20251001",
+      "expected_model": "claude-haiku-4-5-20251001",
+      "matches_expected": true
+    },
+    {
+      "case": "catalog_aux_model_deepseek",
+      "provider": "deepseek",
+      "resolved_model": "deepseek-v4-flash",
+      "expected_model": "deepseek-v4-flash",
+      "matches_expected": true
+    },
+    {
+      "case": "catalog_aux_model_opencode-go",
+      "provider": "opencode-go",
+      "resolved_model": "glm-5",
+      "expected_model": "glm-5",
+      "matches_expected": true
+    },
+    {
+      "case": "catalog_aux_model_ollama-cloud",
+      "provider": "ollama-cloud",
+      "resolved_model": "nemotron-3-nano:30b",
+      "expected_model": "nemotron-3-nano:30b",
+      "matches_expected": true
+    },
+    {
+      "case": "anthropic_gate_skips_unconfigured",
+      "explicitly_configured": false,
+      "client_resolved": false
+    },
+    {
+      "case": "anthropic_gate_accepts_configured",
+      "explicitly_configured": true,
+      "client_resolved": true,
+      "model_resolved": "claude-haiku-4-5-20251001"
+    },
+    {
+      "case": "first_valid_provider_wins",
+      "winner_model": "gemini-3.6-flash",
+      "client_resolved": true
+    },
+    {
+      "case": "catalog_skips_unhealthy_provider",
+      "gemini_unhealthy": true,
+      "winner_model": "glm-4.5-flash",
+      "matches_next_healthy": true
+    }
+  ],
+  "context_window_filtering_contrast": [
+    {
+      "case": "task_minimum_context_compression",
+      "task": "compression",
+      "minimum_context_length": 64000,
+      "expected": 64000,
+      "matches": true
+    },
+    {
+      "case": "task_minimum_context_title_generation",
+      "task": "title_generation",
+      "minimum_context_length": null,
+      "expected": null,
+      "matches": true
+    },
+    {
+      "case": "task_minimum_context_vision",
+      "task": "vision",
+      "minimum_context_length": null,
+      "expected": null,
+      "matches": true
+    },
+    {
+      "case": "task_minimum_context_skills_hub",
+      "task": "skills_hub",
+      "minimum_context_length": null,
+      "expected": null,
+      "matches": true
+    },
+    {
+      "case": "task_minimum_context_mcp",
+      "task": "mcp",
+      "minimum_context_length": null,
+      "expected": null,
+      "matches": true
+    },
+    {
+      "case": "task_minimum_context_session_search",
+      "task": "session_search",
+      "minimum_context_length": null,
+      "expected": null,
+      "matches": true
+    },
+    {
+      "case": "task_minimum_context_none",
+      "task": "",
+      "minimum_context_length": null,
+      "expected": null,
+      "matches": true
+    },
+    {
+      "case": "task_minimum_context_none",
+      "task": null,
+      "minimum_context_length": null,
+      "expected": null,
+      "matches": true
+    },
+    {
+      "case": "configured_fallback_chain_filters_small_context",
+      "candidate_context": 8192,
+      "required_floor": 64000,
+      "candidate_accepted": false
+    },
+    {
+      "case": "main_fallback_chain_filters_small_context",
+      "candidate_context": 16384,
+      "required_floor": 64000,
+      "candidate_accepted": false
+    },
+    {
+      "case": "builtin_discovery_omits_context_filtering",
+      "candidate_context": 8192,
+      "candidate_accepted": true,
+      "candidate_label": "openrouter",
+      "retains_small_model": true
+    },
+    {
+      "case": "startup_step3_omits_context_filtering",
+      "candidate_context": 8192,
+      "candidate_accepted": true,
+      "candidate_label": "openrouter",
+      "retains_small_model": true
+    }
+  ],
+  "unhealthy_cache_mutation_and_ttl": [
+    {
+      "case": "default_unhealthy_ttl_is_600s",
+      "provider": "openrouter",
+      "is_unhealthy": true,
+      "ttl_seconds_approx": 599,
+      "matches_600s": true
+    },
+    {
+      "case": "custom_unhealthy_ttl_60s",
+      "provider": "nous",
+      "ttl_seconds_approx": 59,
+      "matches_60s": true
+    },
+    {
+      "case": "lazy_eviction_on_expired_ttl",
+      "is_unhealthy": false,
+      "key_removed_from_cache": true
+    },
+    {
+      "case": "reset_cache_clears_all",
+      "cache_len": 0,
+      "logged_len": 0
+    },
+    {
+      "case": "error_predicate_payment_error",
+      "is_payment": true,
+      "is_auth": false,
+      "is_rate_limit": false,
+      "is_connection": false
+    },
+    {
+      "case": "error_predicate_auth_error",
+      "is_payment": false,
+      "is_auth": true,
+      "is_rate_limit": false,
+      "is_connection": false
+    },
+    {
+      "case": "error_predicate_connection_error",
+      "is_payment": false,
+      "is_auth": false,
+      "is_rate_limit": false,
+      "is_connection": true
+    },
+    {
+      "case": "error_predicate_rate_limit_error",
+      "is_payment": false,
+      "is_auth": false,
+      "is_rate_limit": true,
+      "is_connection": false
+    }
+  ],
+  "credential_refresh_and_eviction": [
+    {
+      "case": "auth_refresh_infer_openrouter_openrouter",
+      "resolved_provider": "openrouter",
+      "client_base_url": "https://openrouter.ai/api/v1",
+      "inferred_provider": "openrouter",
+      "matches_expected": true
+    },
+    {
+      "case": "auth_refresh_infer_auto_copilot",
+      "resolved_provider": "auto",
+      "client_base_url": "https://api.githubcopilot.com",
+      "inferred_provider": "copilot",
+      "matches_expected": true
+    },
+    {
+      "case": "auth_refresh_infer_auto_openai-codex",
+      "resolved_provider": "auto",
+      "client_base_url": "https://chatgpt.com/backend-api",
+      "inferred_provider": "openai-codex",
+      "matches_expected": true
+    },
+    {
+      "case": "auth_refresh_infer_auto_anthropic",
+      "resolved_provider": "auto",
+      "client_base_url": "https://api.anthropic.com",
+      "inferred_provider": "anthropic",
+      "matches_expected": true
+    },
+    {
+      "case": "auth_refresh_infer_auto_nous",
+      "resolved_provider": "auto",
+      "client_base_url": "https://inference-api.nousresearch.com/v1",
+      "inferred_provider": "nous",
+      "matches_expected": true
+    },
+    {
+      "case": "auth_refresh_infer_auto_auto",
+      "resolved_provider": "auto",
+      "client_base_url": "https://api.unknown.com/v1",
+      "inferred_provider": "auto",
+      "matches_expected": true
+    },
+    {
+      "case": "evict_cached_clients_by_provider",
+      "openrouter_evicted": true,
+      "anthropic_retained": true
+    },
+    {
+      "case": "evict_cached_client_instance_poisoned",
+      "evicted_flag": true,
+      "cache_cleared": true
+    }
+  ],
+  "startup_vs_runtime_paths_and_budget": [
+    {
+      "case": "startup_auto_route_step3_discovery",
+      "resolved_label": "openrouter",
+      "resolved_model": "or-model",
+      "model_io_requests_executed": 0
+    },
+    {
+      "case": "candidate_non_auth_error_aborts_chain",
+      "candidate_io_attempts": 1,
+      "maximum_io_candidates_reached": 1,
+      "exception_caught": true
+    },
+    {
+      "case": "candidate_auth_error_second_discovery_attempt",
+      "candidate_io_attempts": 2,
+      "maximum_discovery_candidates_io": 2,
+      "final_response_received": true,
+      "total_fallback_selections": 2
+    },
+    {
+      "case": "two_candidate_failures_halt_without_third_attempt",
+      "candidate_io_attempts": 2,
+      "final_response_is_none": true,
+      "maximum_io_candidates_bounded_at_two": true
+    },
+    {
+      "case": "compression_timeout_skips_same_provider_retry",
+      "task": "compression",
+      "exception_type": "TimeoutError",
+      "skips_retry_to_fallback": true
+    }
+  ]
+}

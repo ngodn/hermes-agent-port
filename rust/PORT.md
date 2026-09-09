@@ -1,5 +1,41 @@
 # Hermes Rust rewrite
 
+## Native compression built-in discovery subset: 2026-09-10
+
+Native full compression in auxiliary auto mode now continues from the frozen
+task-specific and top-level configured fallback tiers into built-in provider
+discovery. The production subset preserves Python's ordering for OpenRouter,
+the active custom endpoint, and registered API-key providers whose auxiliary
+models use the native chat-completions transport. Nous keeps its reserved
+position but is not exposed until native device-code refresh exists. Codex
+Responses, Anthropic Messages, Gemini native, and other unsupported wires are
+also excluded instead of being sent through an incompatible client.
+
+Each conversation freezes profile-scoped candidate clients while the gateway
+shares a profile-qualified provider-health table. Main-route quota failures and
+unrefreshable candidate 401s quarantine only the affected profile for 600
+seconds. Discovered providers deliberately skip the configured-chain 64K
+context floor. A non-auth failure stops traversal, while a 401 permits at most
+one more discovered request. All attempts reuse the same summary messages byte
+for byte and remain tool-free, recursion-free, and separately attributed. See
+[compression-builtin-discovery-resolution.md](analysis/compression-builtin-discovery-resolution.md).
+
+AGY owned the 97-case source-executed Python contract and oracle in one
+serialized lane. Claude independently mapped the Rust ownership seam. The
+primary lane verified both reports against the source, corrected stale model,
+endpoint, catalog-count, and corpus claims, rejected a live resolver interface
+that could not safely recover profile secrets, and integrated the narrow native
+subset. The codebase-design skill kept discovery inside the existing frozen
+compression route executor instead of creating a second request engine.
+
+The weighted audit is now **55.50 points, reported as about 56%** (judgment
+range 53% to 58%). Credential-pool rotation, OAuth and Nous refresh, poisoned
+client eviction, bounded cross-conversation client caching, non-chat provider
+transports, and dynamic provider-plugin discovery remain. Validation is
+**1,820 Rust tests passed, two ignored**. The 97-case Python corpus regenerates
+byte for byte. Rust and Python formatting, Ruff, workspace Clippy with warnings
+denied, and diff hygiene pass.
+
 ## Native compression top-level fallback chain: 2026-09-10
 
 Native full-compression summaries in auxiliary auto mode now freeze and honor

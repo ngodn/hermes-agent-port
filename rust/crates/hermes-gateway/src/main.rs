@@ -27,6 +27,7 @@ mod coding_project_facts;
 mod coding_prompt;
 mod command_catalog;
 mod compression_auxiliary;
+mod compression_discovery;
 mod compression_handoff;
 mod compression_prompt;
 mod compression_redact;
@@ -380,13 +381,19 @@ enum CompressionRouteConfig<'a> {
         entry: &'a compression_auxiliary::FallbackChainEntry,
         task: &'a compression_auxiliary::Config,
     },
+    BuiltinDiscovery {
+        entry: &'a compression_auxiliary::FallbackChainEntry,
+        task: &'a compression_auxiliary::Config,
+    },
 }
 
 impl CompressionRouteConfig<'_> {
     fn provider(&self) -> &str {
         match self {
             Self::Primary(config) => &config.provider,
-            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => &entry.provider,
+            Self::TaskFallback { entry, .. }
+            | Self::MainFallback { entry, .. }
+            | Self::BuiltinDiscovery { entry, .. } => &entry.provider,
         }
     }
 
@@ -397,27 +404,27 @@ impl CompressionRouteConfig<'_> {
     fn model(&self) -> Option<&str> {
         match self {
             Self::Primary(config) => config.model.as_deref(),
-            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => {
-                entry.model.as_deref()
-            }
+            Self::TaskFallback { entry, .. }
+            | Self::MainFallback { entry, .. }
+            | Self::BuiltinDiscovery { entry, .. } => entry.model.as_deref(),
         }
     }
 
     fn base_url(&self) -> Option<&str> {
         match self {
             Self::Primary(config) => config.base_url.as_deref(),
-            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => {
-                entry.base_url.as_deref()
-            }
+            Self::TaskFallback { entry, .. }
+            | Self::MainFallback { entry, .. }
+            | Self::BuiltinDiscovery { entry, .. } => entry.base_url.as_deref(),
         }
     }
 
     fn api_mode(&self) -> Option<&str> {
         match self {
             Self::Primary(config) => config.api_mode.as_deref(),
-            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => {
-                entry.api_mode.as_deref()
-            }
+            Self::TaskFallback { entry, .. }
+            | Self::MainFallback { entry, .. }
+            | Self::BuiltinDiscovery { entry, .. } => entry.api_mode.as_deref(),
         }
     }
 
@@ -428,7 +435,7 @@ impl CompressionRouteConfig<'_> {
             // Python's `_fallback_entry_timeout` only resolves
             // `auxiliary.<task>.fallback_chain` labels. Top-level main-chain
             // entries retain the task timeout even if they carry this key.
-            Self::MainFallback { task, .. } => task.timeout,
+            Self::MainFallback { task, .. } | Self::BuiltinDiscovery { task, .. } => task.timeout,
         }
     }
 
@@ -444,7 +451,9 @@ impl CompressionRouteConfig<'_> {
             {
                 Some(serde_json::json!({"enabled": false, "effort": "none"}))
             }
-            Self::TaskFallback { .. } | Self::MainFallback { .. } => None,
+            Self::TaskFallback { .. }
+            | Self::MainFallback { .. }
+            | Self::BuiltinDiscovery { .. } => None,
         }
     }
 
@@ -455,7 +464,9 @@ impl CompressionRouteConfig<'_> {
     ) -> serde_json::Map<String, serde_json::Value> {
         match self {
             Self::Primary(config) => config.extra_body.clone(),
-            Self::TaskFallback { entry, task } | Self::MainFallback { entry, task } => {
+            Self::TaskFallback { entry, task }
+            | Self::MainFallback { entry, task }
+            | Self::BuiltinDiscovery { entry, task } => {
                 let certified = matches!(self, Self::TaskFallback { .. })
                     && entry.certifies_route(actual_provider, actual_model);
                 let mut body = task.extra_body.clone();
@@ -478,9 +489,9 @@ impl CompressionRouteConfig<'_> {
     ) -> Option<String> {
         match self {
             Self::Primary(config) => config.direct_api_key(dotenv, environment),
-            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => {
-                entry.direct_api_key(dotenv, environment)
-            }
+            Self::TaskFallback { entry, .. }
+            | Self::MainFallback { entry, .. }
+            | Self::BuiltinDiscovery { entry, .. } => entry.direct_api_key(dotenv, environment),
         }
     }
 
@@ -490,9 +501,117 @@ impl CompressionRouteConfig<'_> {
             Self::TaskFallback { entry, .. } => {
                 entry.certified_output_cap(actual_provider, actual_model)
             }
-            Self::MainFallback { .. } => None,
+            Self::MainFallback { .. } | Self::BuiltinDiscovery { .. } => None,
         }
     }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn build_native_compression_discovery(
+    task: &compression_auxiliary::Config,
+    user_config: &serde_json::Value,
+    main_model: &str,
+    main_key: &str,
+    main_base_url: &str,
+    main_profile: Option<&provider_registry::ProviderProfile>,
+    profiles: &provider_registry::ProviderRegistry,
+    dotenv: &std::collections::HashMap<String, String>,
+    environment: &mut impl FnMut(&str) -> Option<String>,
+    home: &std::path::Path,
+) -> Vec<NativeAgentClient> {
+    fn secret(
+        name: &str,
+        dotenv: &std::collections::HashMap<String, String>,
+        environment: &mut impl FnMut(&str) -> Option<String>,
+    ) -> Option<String> {
+        dotenv
+            .get(name)
+            .cloned()
+            .or_else(|| environment(name))
+            .map(|value| value.trim().to_owned())
+            .filter(|value| !value.is_empty())
+    }
+
+    let mut entries = Vec::new();
+    let openrouter_model = user_config["auxiliary"]["openrouter_model"]
+        .as_str()
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .unwrap_or("nvidia/nemotron-3-ultra-550b-a55b:free");
+    let free_only = python_value::truthy(&user_config["auxiliary"]["free_only"]);
+    let openrouter_free =
+        openrouter_model.ends_with(":free") || openrouter_model.starts_with("stealth/");
+    if !free_only || openrouter_free {
+        if let Some(api_key) = secret("OPENROUTER_API_KEY", dotenv, environment) {
+            entries.push(serde_json::json!({
+                "provider":"openrouter",
+                "model":openrouter_model,
+                "base_url":"https://openrouter.ai/api/v1",
+                "api_key":api_key,
+            }));
+        }
+    }
+
+    // Nous is intentionally absent here. Its built-in route requires live
+    // device-code token validation and refresh, which the native credential
+    // manager does not own yet.
+    let requested_main = user_config["model"]["provider"]
+        .as_str()
+        .unwrap_or("")
+        .trim()
+        .to_lowercase();
+    if (requested_main == "custom" || requested_main.starts_with("custom:"))
+        && !main_base_url
+            .to_lowercase()
+            .starts_with("https://chatgpt.com/backend-api/codex")
+    {
+        entries.push(serde_json::json!({
+            "provider":requested_main,
+            "model":main_model,
+            "base_url":main_base_url,
+            "api_key":main_key,
+        }));
+    }
+
+    for profile in compression_discovery::ordered_native_profiles(profiles) {
+        entries.push(serde_json::json!({
+            "provider":profile.name,
+            "model":profile.default_aux_model,
+        }));
+    }
+
+    entries
+        .iter()
+        .filter_map(compression_auxiliary::FallbackChainEntry::from_value)
+        .filter_map(|entry| {
+            match build_native_compression_client(
+                CompressionRouteConfig::BuiltinDiscovery {
+                    entry: &entry,
+                    task,
+                },
+                user_config,
+                main_model,
+                main_key,
+                main_base_url,
+                main_profile,
+                profiles,
+                dotenv,
+                environment,
+                home,
+            ) {
+                Ok(Some(client)) => Some(client),
+                Ok(None) => None,
+                Err(error) => {
+                    tracing::debug!(
+                        provider = entry.provider,
+                        error = %compression_redact::redact(&error.to_string()),
+                        "built-in compression provider is unavailable"
+                    );
+                    None
+                }
+            }
+        })
+        .collect()
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -560,7 +679,7 @@ fn build_native_compression_client(
             .env_vars
             .iter()
             .find(|name| name.ends_with("_URL"))
-            .and_then(|name| environment(name))
+            .and_then(|name| dotenv.get(name).cloned().or_else(|| environment(name)))
             .map(|value| value.trim().to_owned())
             .filter(|value| !value.is_empty())
             .or_else(|| (!profile.base_url.is_empty()).then(|| profile.base_url.clone()))
@@ -664,6 +783,17 @@ fn build_native_compression_client(
     if let Some(profile) = &auxiliary_profile {
         client = client.with_provider_profile(profile)?;
     }
+    if actual_provider.eq_ignore_ascii_case("openrouter") {
+        client = client.with_extra_headers(
+            serde_json::json!({
+                "HTTP-Referer":"https://hermes-agent.nousresearch.com",
+                "X-Title":"Hermes Agent",
+                "X-OpenRouter-Categories":"productivity,cli-agent",
+            })
+            .as_object()
+            .unwrap(),
+        )?;
+    }
     client = client.with_extra_headers(&custom_provider_config::extra_headers(
         user_config,
         &base_url,
@@ -696,6 +826,24 @@ fn build_agent_client_for_home(
     model: Option<&str>,
     home: &std::path::Path,
     conversation: Option<NativeConversationState>,
+) -> anyhow::Result<Arc<dyn AgentClient>> {
+    build_agent_client_for_home_with_discovery(
+        config,
+        user_config,
+        model,
+        home,
+        conversation,
+        Arc::new(compression_discovery::Health::default()),
+    )
+}
+
+fn build_agent_client_for_home_with_discovery(
+    config: &Config,
+    user_config: &serde_json::Value,
+    model: Option<&str>,
+    home: &std::path::Path,
+    conversation: Option<NativeConversationState>,
+    compression_health: Arc<compression_discovery::Health>,
 ) -> anyhow::Result<Arc<dyn AgentClient>> {
     // Highest precedence: a CLI backend (Claude Code / Antigravity / any print-
     // mode LLM CLI). Turns run via that CLI, no Python and no HTTP key needed.
@@ -780,6 +928,21 @@ fn build_agent_client_for_home(
                 config_file::resolve_provider_api_key_with_env(&base_url, &dotenv, &mut environment)
             }
         });
+        let configured_provider = user_config["model"]["provider"]
+            .as_str()
+            .map(str::trim)
+            .filter(|provider| !provider.is_empty());
+        let provider_identity = profile
+            .as_ref()
+            .map(|profile| profile.name.as_str())
+            .or(configured_provider)
+            .unwrap_or_else(|| {
+                if local_probe::urlparse_hostname(&base_url).ends_with("openrouter.ai") {
+                    "openrouter"
+                } else {
+                    "custom"
+                }
+            });
 
         match (key, model) {
             (Some(key), Some(model)) => match NativeAgentClient::new(model, &key, base_url.clone())
@@ -788,12 +951,13 @@ fn build_agent_client_for_home(
                         user_config,
                         environment("HERMES_MAX_ITERATIONS").as_deref(),
                     )?;
-                    let client = client.with_turn_limit(limit).with_max_concurrent_children(
-                        delegation_policy::max_children(
+                    let client = client
+                        .with_provider_identity(provider_identity)
+                        .with_turn_limit(limit)
+                        .with_max_concurrent_children(delegation_policy::max_children(
                             user_config,
                             environment("DELEGATION_MAX_CONCURRENT_CHILDREN").as_deref(),
-                        ),
-                    );
+                        ));
                     let client = match &profile {
                         Some(profile) => client.with_provider_profile(profile)?,
                         None => client,
@@ -862,6 +1026,7 @@ fn build_agent_client_for_home(
                     let mut primary_compression_unavailable = false;
                     let mut compression_fallbacks = Vec::new();
                     let mut main_compression_fallbacks = Vec::new();
+                    let mut compression_discovery = None;
                     if compression_policy.needs_separate_client {
                         match build_native_compression_client(
                             CompressionRouteConfig::Primary(&compression_policy),
@@ -963,10 +1128,28 @@ fn build_agent_client_for_home(
                                 }
                             }
                         }
+                        let candidates = build_native_compression_discovery(
+                            &compression_policy,
+                            user_config,
+                            model,
+                            &key,
+                            &base_url,
+                            profile.as_ref(),
+                            &profiles,
+                            &dotenv,
+                            &mut environment,
+                            home,
+                        );
+                        compression_discovery = native_agent::CompressionDiscovery::new(
+                            home,
+                            candidates,
+                            compression_health.clone(),
+                        );
                     }
                     if primary_compression.is_some()
                         || !compression_fallbacks.is_empty()
                         || !main_compression_fallbacks.is_empty()
+                        || compression_discovery.is_some()
                     {
                         let unavailable_primary = primary_compression_unavailable.then(|| {
                             compression_auxiliary::BackendIdentity::new(
@@ -979,6 +1162,7 @@ fn build_agent_client_for_home(
                             primary_compression,
                             compression_fallbacks,
                             main_compression_fallbacks,
+                            compression_discovery,
                             compression_auto,
                             unavailable_primary,
                         );
@@ -1025,6 +1209,7 @@ struct ConversationRuntime<'a> {
     database: Option<&'a session_db::SessionDb>,
     process_registry: Arc<background_process::Registry>,
     tool_approvals: Arc<tool_approval::ApprovalBroker>,
+    compression_health: Arc<compression_discovery::Health>,
 }
 
 async fn build_conversation_client(
@@ -1039,6 +1224,7 @@ async fn build_conversation_client(
         database,
         process_registry,
         tool_approvals,
+        compression_health,
     } = runtime;
     let profile_secrets = secret_scope::current_secret_scope().as_deref().cloned();
     anyhow::ensure!(
@@ -1296,7 +1482,7 @@ async fn build_conversation_client(
         tracing::info!(count = hooks.loaded_hooks().len(), %session_id, "Native lifecycle hooks activated");
         Some(Arc::new(hooks))
     };
-    build_agent_client_for_home(
+    build_agent_client_for_home_with_discovery(
         config,
         &selected,
         Some(&model),
@@ -1310,6 +1496,7 @@ async fn build_conversation_client(
             platform,
             context_length,
         }),
+        compression_health,
     )
 }
 
@@ -1464,6 +1651,7 @@ async fn main() -> anyhow::Result<()> {
     });
     let background_processes = Arc::new(background_process::Registry::new());
     let tool_approvals = Arc::new(tool_approval::ApprovalBroker::new());
+    let compression_health = Arc::new(compression_discovery::Health::default());
 
     // Choose the agent backend. Native (in-Rust LLM) is opt-in and needs a key +
     // a model; otherwise fall back to the Python subprocess bridge (default).
@@ -1474,6 +1662,7 @@ async fn main() -> anyhow::Result<()> {
             let captured = config.clone();
             let captured_processes = background_processes.clone();
             let captured_approvals = tool_approvals.clone();
+            let captured_compression_health = compression_health.clone();
             let prompt_initializer = Arc::new(conversation_prompt::Initializer::capture(
                 config_file::hermes_root(),
                 config.agent_cwd.clone(),
@@ -1488,6 +1677,7 @@ async fn main() -> anyhow::Result<()> {
                     let prompt_initializer = prompt_initializer.clone();
                     let process_registry = captured_processes.clone();
                     let approvals = captured_approvals.clone();
+                    let compression_health = captured_compression_health.clone();
                     Box::pin(async move {
                         build_conversation_client(
                             &captured,
@@ -1499,6 +1689,7 @@ async fn main() -> anyhow::Result<()> {
                                 database,
                                 process_registry,
                                 tool_approvals: approvals,
+                                compression_health,
                             },
                         )
                         .await
@@ -1941,6 +2132,7 @@ mod startup_tests {
         let fallback_requests: Captures = Default::default();
         let main_fallback_requests: Captures = Default::default();
         let main_requests: Captures = Default::default();
+        let discovery_requests: Captures = Default::default();
         let (auxiliary_url, _auxiliary_server) = serve(
             auxiliary_requests.clone(),
             vec![
@@ -1982,7 +2174,19 @@ mod startup_tests {
                     "choices":[{"finish_reason":"length","message":{"content":"partial again"}}],
                     "usage":{"prompt_tokens":35,"completion_tokens":8}
                 }),
+                json!({
+                    "choices":[{"finish_reason":"length","message":{"content":"discovery handoff"}}],
+                    "usage":{"prompt_tokens":36,"completion_tokens":8}
+                }),
             ],
+        )
+        .await;
+        let (discovery_url, _discovery_server) = serve(
+            discovery_requests.clone(),
+            vec![json!({
+                "choices":[{"finish_reason":"stop","message":{"content":"discovered summary"}}],
+                "usage":{"prompt_tokens":41,"completion_tokens":5}
+            })],
         )
         .await;
 
@@ -1996,7 +2200,13 @@ mod startup_tests {
         let home =
             TempHome(std::env::temp_dir().join(format!("hermes-compression-aux-route-{nonce}")));
         std::fs::create_dir_all(&home.0).unwrap();
-        std::fs::write(home.0.join(".env"), "AUX_COMPRESSION_KEY=aux-key\n").unwrap();
+        std::fs::write(
+            home.0.join(".env"),
+            format!(
+                "AUX_COMPRESSION_KEY=aux-key\nGMI_API_KEY=gmi-key\nGMI_BASE_URL={discovery_url}\n"
+            ),
+        )
+        .unwrap();
         let user_config = json!({
             "model":{"provider":"custom"},
             "auxiliary":{"compression":{
@@ -2063,6 +2273,12 @@ mod startup_tests {
             assert_eq!(auxiliary_guard.len(), 2);
             let (headers, body) = &auxiliary_guard[0];
             assert_eq!(headers["authorization"], "Bearer aux-key");
+            assert_eq!(
+                headers["http-referer"],
+                "https://hermes-agent.nousresearch.com"
+            );
+            assert_eq!(headers["x-title"], "Hermes Agent");
+            assert_eq!(headers["x-openrouter-categories"], "productivity,cli-agent");
             assert_eq!(body["model"], "aux-model");
             assert_eq!(body["max_tokens"], 777);
             assert_eq!(body["reasoning"], json!({"enabled":false}));
@@ -2148,15 +2364,48 @@ mod startup_tests {
         );
         assert_eq!(main_requests.lock().unwrap().len(), 2);
         assert_eq!(main_requests.lock().unwrap()[1].1["model"], "main-model");
-        let main_fallback_guard = main_fallback_requests.lock().unwrap();
-        assert_eq!(main_fallback_guard.len(), 1);
-        let (headers, body) = &main_fallback_guard[0];
-        assert_eq!(headers["authorization"], "Bearer main-fallback-key");
-        assert_eq!(body["model"], "main-fallback-model");
-        assert_eq!(body["route_marker"], "auto-task");
-        assert!(body.get("max_tokens").is_none());
-        assert!(body.get("max_completion_tokens").is_none());
-        assert!(body.get("reasoning").is_none());
+        {
+            let main_fallback_guard = main_fallback_requests.lock().unwrap();
+            assert_eq!(main_fallback_guard.len(), 1);
+            let (headers, body) = &main_fallback_guard[0];
+            assert_eq!(headers["authorization"], "Bearer main-fallback-key");
+            assert_eq!(body["model"], "main-fallback-model");
+            assert_eq!(body["route_marker"], "auto-task");
+            assert!(body.get("max_tokens").is_none());
+            assert!(body.get("max_completion_tokens").is_none());
+            assert!(body.get("reasoning").is_none());
+            assert!(body.get("tools").is_none());
+        }
+
+        let discovery_config = json!({
+            "model":{"provider":"openrouter"},
+            "auxiliary":{"compression":{
+                "provider":"auto",
+                "extra_body":{"route_marker":"discovery-task"}
+            }}
+        });
+        let discovered = build_agent_client_for_home(
+            &config,
+            &discovery_config,
+            Some("main-model"),
+            &home.0,
+            None,
+        )
+        .unwrap();
+        let summary = discovered
+            .summarize_context(agent::TurnContext::default(), &message, &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("discovered summary"));
+        let main_guard = main_requests.lock().unwrap();
+        let discovery_guard = discovery_requests.lock().unwrap();
+        assert_eq!(main_guard.len(), 3);
+        assert_eq!(discovery_guard.len(), 1);
+        let (headers, body) = &discovery_guard[0];
+        assert_eq!(headers["authorization"], "Bearer gmi-key");
+        assert_eq!(body["model"], "google/gemini-3.1-flash-lite-preview");
+        assert_eq!(body["route_marker"], "discovery-task");
+        assert_eq!(body["messages"], main_guard[2].1["messages"]);
         assert!(body.get("tools").is_none());
     }
 
@@ -2270,6 +2519,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                     database: Some(&database),
                     process_registry: Arc::new(background_process::Registry::new()),
                     tool_approvals: Arc::new(tool_approval::ApprovalBroker::new()),
+                    compression_health: Arc::new(compression_discovery::Health::default()),
                 },
             ),
         )
@@ -2346,6 +2596,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                     database: Some(&database),
                     process_registry: Arc::new(background_process::Registry::new()),
                     tool_approvals: Arc::new(tool_approval::ApprovalBroker::new()),
+                    compression_health: Arc::new(compression_discovery::Health::default()),
                 },
             ),
         )
@@ -2489,6 +2740,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                     database: Some(&database),
                     process_registry: Arc::new(background_process::Registry::new()),
                     tool_approvals: approvals.clone(),
+                    compression_health: Arc::new(compression_discovery::Health::default()),
                 },
             ),
         )
@@ -2760,6 +3012,7 @@ def register(ctx):
                     database: Some(&database),
                     process_registry: Arc::new(background_process::Registry::new()),
                     tool_approvals: Arc::new(tool_approval::ApprovalBroker::new()),
+                    compression_health: Arc::new(compression_discovery::Health::default()),
                 },
             ),
         )
@@ -2839,6 +3092,7 @@ def register(ctx):
                     database: Some(&database),
                     process_registry: Arc::new(background_process::Registry::new()),
                     tool_approvals: Arc::new(tool_approval::ApprovalBroker::new()),
+                    compression_health: Arc::new(compression_discovery::Health::default()),
                 },
             ),
         )
