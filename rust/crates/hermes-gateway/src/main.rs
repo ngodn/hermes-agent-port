@@ -12,6 +12,7 @@ mod audio_process;
 mod auth_store;
 mod authz;
 mod automatic_compression;
+mod background_process;
 mod bot_mode;
 mod browser_control_artifacts;
 mod browser_control_broker;
@@ -99,6 +100,7 @@ mod mirror;
 mod models_dev;
 mod native_agent;
 mod native_image_content;
+mod native_process;
 mod native_terminal;
 mod native_tools;
 mod ogg_opus_duration;
@@ -775,6 +777,7 @@ async fn build_conversation_client(
     message: &hermes_core::Message,
     history: &[session_db::HistoryMessage],
     database: Option<&session_db::SessionDb>,
+    process_registry: Arc<background_process::Registry>,
 ) -> anyhow::Result<Arc<dyn AgentClient>> {
     let profile_secrets = secret_scope::current_secret_scope().as_deref().cloned();
     anyhow::ensure!(
@@ -848,7 +851,13 @@ async fn build_conversation_client(
                 default_timeout,
                 database: terminal_database,
                 route,
+                process_registry: process_registry.clone(),
             },
+        )));
+        registered_base_tools.push(Arc::new(crate::native_process::ProcessTool::new(
+            process_registry,
+            crate::background_process::Owner::new(home, &gateway_session_key),
+            default_timeout,
         )));
     }
     let base_fresh_tools = if config.agent_tools {
@@ -877,7 +886,7 @@ async fn build_conversation_client(
             chat_name: None,
             chat_type: message.chat_type.clone(),
             thread_id: message.thread_id.clone(),
-            gateway_session_key: Some(gateway_session_key),
+            gateway_session_key: Some(gateway_session_key.clone()),
             native_tool_names: native_tools::tool_names(&registered_base_tools),
             profile_secrets: profile_secrets.clone(),
         };
@@ -1185,6 +1194,7 @@ async fn main() -> anyhow::Result<()> {
             .and_then(|v| v.as_str())
             .map(str::to_string)
     });
+    let background_processes = Arc::new(background_process::Registry::new());
 
     // Choose the agent backend. Native (in-Rust LLM) is opt-in and needs a key +
     // a model; otherwise fall back to the Python subprocess bridge (default).
@@ -1193,6 +1203,7 @@ async fn main() -> anyhow::Result<()> {
     let agent: Arc<dyn AgentClient> =
         if config.agent_native && config.agent_cli.is_none() && !agent.manages_history() {
             let captured = config.clone();
+            let captured_processes = background_processes.clone();
             let prompt_initializer = Arc::new(conversation_prompt::Initializer::capture(
                 config_file::hermes_root(),
                 config.agent_cwd.clone(),
@@ -1205,6 +1216,7 @@ async fn main() -> anyhow::Result<()> {
                     let message = message.clone();
                     let history = history.to_vec();
                     let prompt_initializer = prompt_initializer.clone();
+                    let process_registry = captured_processes.clone();
                     Box::pin(async move {
                         build_conversation_client(
                             &captured,
@@ -1213,6 +1225,7 @@ async fn main() -> anyhow::Result<()> {
                             &message,
                             &history,
                             database,
+                            process_registry,
                         )
                         .await
                     })
@@ -1246,14 +1259,19 @@ async fn main() -> anyhow::Result<()> {
                 .ok()
                 .as_deref(),
         );
+        let process_probe = background_processes.clone();
         let store = tokio::task::spawn_blocking(move || {
             let profile = profile_name::active_profile_name(&home, &root)
                 .unwrap_or_else(|_| "default".into());
             let gateway_config = config_loader::load_gateway_config_from(&home);
-            // The native tool runtime has no process registry yet. This is
-            // Python's missing-registry case; wire its liveness probe when
-            // background process execution becomes available.
-            session_store::SessionStore::open(gateway_config, root, home, profile, |_| Ok(false))
+            let max_age = session_reset::process_age_limit(&gateway_config.default_reset_policy)?
+                .map(std::time::Duration::try_from_secs_f64)
+                .transpose()
+                .map_err(|error| anyhow::anyhow!("invalid background process age: {error}"))?;
+            let process_home = home.clone();
+            session_store::SessionStore::open(gateway_config, root, home, profile, move |key| {
+                Ok(process_probe.has_active_for_session(&process_home, key, max_age))
+            })
         })
         .await??;
         state.session_store = Some((Arc::new(store), freshness));
@@ -1398,6 +1416,7 @@ async fn main() -> anyhow::Result<()> {
     if let Some(cache) = conversation_cache {
         cache.shutdown(std::time::Duration::from_secs(45)).await;
     }
+    background_processes.shutdown().await;
     server_result?;
 
     // Graceful shutdown finished: record it and release the singleton claims.
@@ -1774,6 +1793,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                 &message,
                 &history,
                 Some(&database),
+                Arc::new(background_process::Registry::new()),
             ),
         )
         .await
@@ -1846,6 +1866,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                 &message,
                 &history,
                 Some(&database),
+                Arc::new(background_process::Registry::new()),
             ),
         )
         .await
@@ -1892,6 +1913,21 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                 }
                 2 => {
                     assert!(body.to_string().contains("child:yes"));
+                    Json(
+                        json!({"choices":[{"message":{"role":"assistant","content":null,"tool_calls":[{"id":"terminal-background","type":"function","function":{"name":"terminal","arguments":"{\"command\":\"sleep 0.1; printf background-complete\",\"background\":true}"}}]}}]}),
+                    )
+                }
+                3 => {
+                    let content = &body["messages"].as_array().unwrap().last().unwrap()["content"];
+                    let session_id = content["session_id"]
+                        .as_str()
+                        .expect("background session id");
+                    Json(
+                        json!({"choices":[{"message":{"role":"assistant","content":null,"tool_calls":[{"id":"process-wait","type":"function","function":{"name":"process_manage","arguments":serde_json::to_string(&json!({"action":"wait","session_id":session_id,"timeout":5})).unwrap()}}]}}]}),
+                    )
+                }
+                4 => {
+                    assert!(body.to_string().contains("background-complete"));
                     Json(json!({"choices":[{"message":{"role":"assistant","content":"done"}}]}))
                 }
                 _ => panic!("unexpected model request"),
@@ -1969,18 +2005,19 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                 &message,
                 &[],
                 Some(&database),
+                Arc::new(background_process::Registry::new()),
             ),
         )
         .await
         .unwrap();
         assert_eq!(
             database.get_session("terminal-session").unwrap().unwrap()["tool_names"],
-            r#"["current_time","terminal"]"#
+            r#"["current_time","terminal","process_manage"]"#
         );
         let (sender, mut receiver) = tokio::sync::mpsc::channel(32);
         client.run_turn(&message, &[], sender).await.unwrap();
         while receiver.recv().await.is_some() {}
-        assert_eq!(calls.load(Ordering::SeqCst), 3);
+        assert_eq!(calls.load(Ordering::SeqCst), 5);
         assert_eq!(
             database.get_session("terminal-session").unwrap().unwrap()["cwd"],
             home.0.join("child").to_string_lossy().as_ref()
@@ -1995,6 +2032,11 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
             .unwrap()
             .iter()
             .any(|tool| tool["function"]["name"] == "terminal"));
+        assert!(schemas[0]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|tool| tool["function"]["name"] == "process_manage"));
         assert!(schemas.windows(2).all(|pair| pair[0] == pair[1]));
         server.abort();
     }
@@ -2206,6 +2248,7 @@ def register(ctx):
                 &message,
                 &history,
                 Some(&database),
+                Arc::new(background_process::Registry::new()),
             ),
         )
         .await
@@ -2281,6 +2324,7 @@ def register(ctx):
                 &message,
                 &history,
                 Some(&database),
+                Arc::new(background_process::Registry::new()),
             ),
         )
         .await

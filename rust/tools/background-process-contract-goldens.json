@@ -1,0 +1,1067 @@
+{
+  "_meta": {
+    "authoritative_sources": [
+      "tools/process_registry.py: ProcessRegistry, ProcessSession, spawn_local, _reader_loop, poll, read_log, wait, kill_process, write_stdin, submit_stdin, close_stdin, list_sessions, _resolve_prefix, _handle_process",
+      "tools/terminal_tool.py: terminal_tool (background=true path), _handle_terminal, _validate_workdir",
+      "agent/redact.py: redact_terminal_output, redact_sensitive_text"
+    ],
+    "description": "Golden reference contract for bounded local non-PTY background process execution, process registry lifecycle, prefix resolution, ownership filtering, stdin handling, and secret redaction. Every value is source-executed from real Python repository code.",
+    "exclusions": {
+      "delegation_attribution": "Async subagent delegation tracking and durable task attribution are excluded from this slice.",
+      "notifications_watchers": "notify=true completion queue delivery, watch_patterns regex matches, and gateway watcher intervals are excluded.",
+      "platform_windows": "Windows-specific pywinpty, ConPTY CRLF cooked input, taskkill /T /F tree kill, and ASLR crash recovery are excluded.",
+      "pty": "Pseudo-terminal allocation (ptyprocess) and interactive terminal TUI escape handling are excluded; local pipe mode is authoritative.",
+      "remote_backends": "Docker, Singularity, Modal, Daytona, and SSH remote sandboxes are excluded; local host execution is authoritative.",
+      "restart_adoption": "Crash recovery and orphan adoption from processes.json across gateway restarts are excluded.",
+      "systemd_cgroup_isolation": "systemd-run --user --scope transient cgroup wrapping and systemd-oomd protection are excluded."
+    },
+    "schema_version": "1.0.0"
+  },
+  "bounded_wait": [
+    {
+      "id": "wait_fast_process_exits_cleanly",
+      "input": {
+        "session_id": "proc_000000000001",
+        "timeout": 5
+      },
+      "observed": {
+        "command": "echo 'job done'",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output": "job done\n",
+        "status": "exited",
+        "termination_source": ""
+      }
+    },
+    {
+      "id": "wait_timeout_expires_on_slow_process",
+      "input": {
+        "session_id": "proc_000000000002",
+        "timeout": 1
+      },
+      "observed": {
+        "command": "python3 -u -c 'import time; print(\"WAITING\", flush=True); time.sleep(10)'",
+        "output": "WAITING\n",
+        "process_running": true,
+        "status": "timeout",
+        "timeout_note": "Wait window of 1s elapsed - the process is still running. This is not an error. Uptime: 0s. Poll again later or use terminal(background=true, notify_on_complete=true) next time for automatic notification."
+      }
+    },
+    {
+      "id": "wait_rejects_zero_timeout",
+      "input": {
+        "session_id": "proc_000000000001",
+        "timeout": 0
+      },
+      "observed": {
+        "error": "timeout must be positive (got 0)",
+        "status": "error"
+      }
+    },
+    {
+      "id": "wait_rejects_negative_timeout",
+      "input": {
+        "session_id": "proc_000000000001",
+        "timeout": -5
+      },
+      "observed": {
+        "error": "timeout must be positive (got -5)",
+        "status": "error"
+      }
+    },
+    {
+      "id": "wait_timeout_clamped_to_configured_max",
+      "input": {
+        "configured_terminal_timeout": 5,
+        "session_id": "proc_000000000003",
+        "timeout": 10
+      },
+      "observed": {
+        "command": "echo 'clamped'",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output": "clamped\n",
+        "status": "exited",
+        "termination_source": "",
+        "timeout_note": "Requested wait of 10s was clamped to configured limit of 5s"
+      }
+    }
+  ],
+  "exit_semantics": [
+    {
+      "id": "natural_exit_zero",
+      "input": {
+        "command": "echo 'natural exit 0'"
+      },
+      "observed": {
+        "command": "echo 'natural exit 0'",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output_preview": "natural exit 0\n",
+        "pid": 9004,
+        "session_id": "proc_000000000004",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "natural_exit_non_zero_42",
+      "input": {
+        "command": "sh -c 'exit 42'"
+      },
+      "observed": {
+        "command": "sh -c 'exit 42'",
+        "completion_reason": "exited",
+        "exit_code": 42,
+        "output_preview": "",
+        "pid": 9005,
+        "session_id": "proc_000000000005",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "explicit_kill_via_kill_process",
+      "input": {
+        "action": "kill",
+        "session_id": "proc_000000000006"
+      },
+      "observed": {
+        "completion_reason": "killed",
+        "output": "READY\n",
+        "session_id": "proc_000000000006",
+        "status": "killed",
+        "termination_source": "process.kill"
+      }
+    },
+    {
+      "id": "redundant_kill_already_exited",
+      "input": {
+        "action": "kill",
+        "session_id": "proc_000000000006"
+      },
+      "observed": {
+        "command": "python3 -u -c 'import time; print(\"READY\", flush=True); time.sleep(10)'",
+        "completion_reason": "killed",
+        "exit_code": -15,
+        "output": "READY\n",
+        "status": "already_exited",
+        "termination_source": "process.kill"
+      }
+    },
+    {
+      "id": "external_signal_sigkill",
+      "input": {
+        "signal": "SIGKILL",
+        "target_pid": 9007
+      },
+      "observed": {
+        "command": "python3 -u -c 'import time; print(\"READY\", flush=True); time.sleep(10)'",
+        "completion_reason": "exited",
+        "exit_code": -9,
+        "output_preview": "READY\n",
+        "pid": 9007,
+        "session_id": "proc_000000000007",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    }
+  ],
+  "handle_process_envelopes": [
+    {
+      "id": "handle_process_unknown_action",
+      "input": {
+        "action": "bad_action"
+      },
+      "observed": {
+        "error": "Unknown process action: bad_action. Use: list, poll, log, wait, kill, write, submit, close"
+      }
+    },
+    {
+      "id": "handle_process_empty_action",
+      "input": {},
+      "observed": {
+        "error": "Unknown process action: . Use: list, poll, log, wait, kill, write, submit, close"
+      }
+    },
+    {
+      "id": "handle_process_missing_session_id_poll",
+      "input": {
+        "action": "poll"
+      },
+      "observed": {
+        "error": "session_id is required for poll"
+      }
+    },
+    {
+      "id": "handle_process_missing_session_id_log",
+      "input": {
+        "action": "log"
+      },
+      "observed": {
+        "error": "session_id is required for log"
+      }
+    },
+    {
+      "id": "handle_process_missing_session_id_wait",
+      "input": {
+        "action": "wait"
+      },
+      "observed": {
+        "error": "session_id is required for wait"
+      }
+    },
+    {
+      "id": "handle_process_missing_session_id_kill",
+      "input": {
+        "action": "kill"
+      },
+      "observed": {
+        "error": "session_id is required for kill"
+      }
+    },
+    {
+      "id": "handle_process_missing_session_id_write",
+      "input": {
+        "action": "write"
+      },
+      "observed": {
+        "error": "session_id is required for write"
+      }
+    },
+    {
+      "id": "handle_process_missing_session_id_submit",
+      "input": {
+        "action": "submit"
+      },
+      "observed": {
+        "error": "session_id is required for submit"
+      }
+    },
+    {
+      "id": "handle_process_missing_session_id_close",
+      "input": {
+        "action": "close"
+      },
+      "observed": {
+        "error": "session_id is required for close"
+      }
+    },
+    {
+      "id": "handle_process_integer_session_id_coercion",
+      "input": {
+        "action": "poll",
+        "session_id": 9999
+      },
+      "observed": {
+        "error": "No process with ID 9999",
+        "status": "not_found"
+      }
+    },
+    {
+      "id": "handle_process_ambiguous_prefix_resolution",
+      "input": {
+        "action": "poll",
+        "session_id": "disp"
+      },
+      "observed": {
+        "error": "No process with ID disp",
+        "status": "not_found"
+      }
+    },
+    {
+      "id": "handle_process_successful_poll_dispatch",
+      "input": {
+        "action": "poll",
+        "session_id": "disp1"
+      },
+      "observed": {
+        "command": "echo dispatch_test",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output_preview": "dispatch output line\n",
+        "pid": null,
+        "session_id": "proc_disp11112222",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "handle_process_successful_log_dispatch",
+      "input": {
+        "action": "log",
+        "limit": 10,
+        "offset": 0,
+        "session_id": "disp1"
+      },
+      "observed": {
+        "command": "echo dispatch_test",
+        "output": "dispatch output line",
+        "session_id": "proc_disp11112222",
+        "showing": "1 lines",
+        "status": "exited",
+        "total_lines": 1
+      }
+    },
+    {
+      "id": "handle_process_successful_list_dispatch",
+      "input": {
+        "action": "list",
+        "task_id": "task_disp"
+      },
+      "observed": {
+        "processes": [
+          {
+            "command": "echo dispatch_test2",
+            "cwd": null,
+            "output_preview": "",
+            "pid": null,
+            "session_id": "proc_disp22223333",
+            "started_at": "2026-09-09T12:00:00",
+            "status": "running",
+            "uptime_seconds": 0
+          },
+          {
+            "command": "echo dispatch_test",
+            "cwd": null,
+            "exit_code": 0,
+            "output_preview": "dispatch output line\n",
+            "pid": null,
+            "session_id": "proc_disp11112222",
+            "started_at": "2026-09-09T12:00:00",
+            "status": "exited",
+            "uptime_seconds": 0
+          }
+        ]
+      }
+    }
+  ],
+  "ownership_filtering": [
+    {
+      "id": "list_all_unfiltered",
+      "input": {
+        "session_key": null,
+        "task_id": null
+      },
+      "observed": [
+        {
+          "command": "cmd 1",
+          "cwd": "[TEMPDIR]",
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0001",
+          "started_at": "2026-09-09T12:00:00",
+          "status": "running",
+          "uptime_seconds": 0
+        },
+        {
+          "command": "cmd 3",
+          "cwd": "[TEMPDIR]",
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0003",
+          "started_at": "2026-09-09T12:00:00",
+          "status": "running",
+          "uptime_seconds": 0
+        },
+        {
+          "command": "cmd 4",
+          "cwd": "[TEMPDIR]",
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0004",
+          "started_at": "2026-09-09T12:00:00",
+          "status": "running",
+          "uptime_seconds": 0
+        },
+        {
+          "command": "cmd 2",
+          "cwd": "[TEMPDIR]",
+          "exit_code": 0,
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0002",
+          "started_at": "2026-09-09T12:00:00",
+          "status": "exited",
+          "uptime_seconds": 0
+        }
+      ]
+    },
+    {
+      "id": "list_filter_by_task_id",
+      "input": {
+        "session_key": null,
+        "task_id": "task_parent"
+      },
+      "observed": [
+        {
+          "command": "cmd 1",
+          "cwd": "[TEMPDIR]",
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0001",
+          "started_at": "2026-09-09T12:00:00",
+          "status": "running",
+          "uptime_seconds": 0
+        },
+        {
+          "command": "cmd 2",
+          "cwd": "[TEMPDIR]",
+          "exit_code": 0,
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0002",
+          "started_at": "2026-09-09T12:00:00",
+          "status": "exited",
+          "uptime_seconds": 0
+        }
+      ]
+    },
+    {
+      "id": "list_filter_by_task_and_session_key_cross_task",
+      "input": {
+        "session_key": "gw_sess_1",
+        "task_id": "task_parent"
+      },
+      "observed": [
+        {
+          "command": "cmd 1",
+          "cwd": "[TEMPDIR]",
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0001",
+          "started_at": "2026-09-09T12:00:00",
+          "status": "running",
+          "uptime_seconds": 0
+        },
+        {
+          "command": "cmd 3",
+          "cwd": "[TEMPDIR]",
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0003",
+          "session_scoped": true,
+          "started_at": "2026-09-09T12:00:00",
+          "status": "running",
+          "uptime_seconds": 0
+        },
+        {
+          "command": "cmd 2",
+          "cwd": "[TEMPDIR]",
+          "exit_code": 0,
+          "output_preview": "",
+          "pid": null,
+          "session_id": "proc_own_0002",
+          "started_at": "2026-09-09T12:00:00",
+          "status": "exited",
+          "uptime_seconds": 0
+        }
+      ]
+    },
+    {
+      "id": "list_filter_by_nonexistent_task",
+      "input": {
+        "session_key": null,
+        "task_id": "task_nonexistent"
+      },
+      "observed": []
+    },
+    {
+      "id": "has_active_processes_checks",
+      "observed": {
+        "task_foreign": true,
+        "task_parent": true,
+        "task_unknown": false
+      }
+    },
+    {
+      "id": "has_active_for_session_checks",
+      "observed": {
+        "gw_sess_1": true,
+        "gw_sess_2": true,
+        "gw_sess_unknown": false
+      }
+    },
+    {
+      "id": "kill_all_by_task_id",
+      "input": {
+        "task_id": "task_parent"
+      },
+      "observed": {
+        "has_active_after_kill": true,
+        "killed_count": 0
+      }
+    }
+  ],
+  "poll_and_log": [
+    {
+      "id": "poll_running_process",
+      "input": {
+        "action": "poll",
+        "session_id": "proc_000000000008"
+      },
+      "observed": {
+        "command": "python3 -u -c 'import time; print(\"RUNNING\", flush=True); time.sleep(10)'",
+        "output_preview": "RUNNING\n",
+        "pid": 9008,
+        "session_id": "proc_000000000008",
+        "status": "running",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "poll_exited_process_with_output",
+      "input": {
+        "action": "poll",
+        "session_id": "proc_000000000009"
+      },
+      "observed": {
+        "command": "python3 -c 'print(\"line 1\"); print(\"line 2\")'",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output_preview": "line 1\nline 2\n",
+        "pid": 9009,
+        "session_id": "proc_000000000009",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "poll_strips_ansi_color_codes",
+      "input": {
+        "action": "poll",
+        "session_id": "proc_00000000000a"
+      },
+      "observed": {
+        "command": "printf '\\033[31mRed\\033[0m \\033[32mGreen\\033[0m\\n'",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output_preview": "Red Green\n",
+        "pid": 9010,
+        "session_id": "proc_00000000000a",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "read_log_full_default",
+      "input": {
+        "action": "log",
+        "limit": 200,
+        "offset": null,
+        "session_id": "proc_00000000000b"
+      },
+      "observed": {
+        "command": "printf 'alpha\\nbeta\\ngamma\\ndelta\\nepsilon\\n'",
+        "output": "alpha\nbeta\ngamma\ndelta\nepsilon",
+        "session_id": "proc_00000000000b",
+        "showing": "5 lines",
+        "status": "exited",
+        "total_lines": 5
+      }
+    },
+    {
+      "id": "read_log_paged_from_start",
+      "input": {
+        "action": "log",
+        "limit": 2,
+        "offset": 0,
+        "session_id": "proc_00000000000b"
+      },
+      "observed": {
+        "command": "printf 'alpha\\nbeta\\ngamma\\ndelta\\nepsilon\\n'",
+        "output": "alpha\nbeta",
+        "session_id": "proc_00000000000b",
+        "showing": "2 lines",
+        "status": "exited",
+        "total_lines": 5
+      }
+    },
+    {
+      "id": "read_log_paged_middle",
+      "input": {
+        "action": "log",
+        "limit": 2,
+        "offset": 2,
+        "session_id": "proc_00000000000b"
+      },
+      "observed": {
+        "command": "printf 'alpha\\nbeta\\ngamma\\ndelta\\nepsilon\\n'",
+        "output": "gamma\ndelta",
+        "session_id": "proc_00000000000b",
+        "showing": "2 lines",
+        "status": "exited",
+        "total_lines": 5
+      }
+    },
+    {
+      "id": "read_log_tail_default",
+      "input": {
+        "action": "log",
+        "limit": 2,
+        "offset": null,
+        "session_id": "proc_00000000000b"
+      },
+      "observed": {
+        "command": "printf 'alpha\\nbeta\\ngamma\\ndelta\\nepsilon\\n'",
+        "output": "delta\nepsilon",
+        "session_id": "proc_00000000000b",
+        "showing": "2 lines",
+        "status": "exited",
+        "total_lines": 5
+      }
+    },
+    {
+      "id": "read_log_offset_past_end",
+      "input": {
+        "action": "log",
+        "limit": 5,
+        "offset": 10,
+        "session_id": "proc_00000000000b"
+      },
+      "observed": {
+        "command": "printf 'alpha\\nbeta\\ngamma\\ndelta\\nepsilon\\n'",
+        "output": "",
+        "session_id": "proc_00000000000b",
+        "showing": "0 lines",
+        "status": "exited",
+        "total_lines": 5
+      }
+    }
+  ],
+  "prefix_lookup": [
+    {
+      "id": "exact_full_id",
+      "input": {
+        "query": "proc_bbbb55556666"
+      },
+      "observed": {
+        "matched": true,
+        "resolved_session_id": "proc_bbbb55556666"
+      }
+    },
+    {
+      "id": "unique_4char_prefix_with_proc",
+      "input": {
+        "query": "proc_bbbb"
+      },
+      "observed": {
+        "matched": true,
+        "resolved_session_id": "proc_bbbb55556666"
+      }
+    },
+    {
+      "id": "unique_4char_bare_suffix",
+      "input": {
+        "query": "bbbb"
+      },
+      "observed": {
+        "matched": true,
+        "resolved_session_id": "proc_bbbb55556666"
+      }
+    },
+    {
+      "id": "too_short_prefix_3chars",
+      "input": {
+        "query": "proc_bbb"
+      },
+      "observed": {
+        "matched": false,
+        "resolved_session_id": null
+      }
+    },
+    {
+      "id": "too_short_bare_suffix_3chars",
+      "input": {
+        "query": "bbb"
+      },
+      "observed": {
+        "matched": false,
+        "resolved_session_id": null
+      }
+    },
+    {
+      "id": "ambiguous_prefix_with_proc",
+      "input": {
+        "query": "proc_aaaa"
+      },
+      "observed": {
+        "matched": false,
+        "resolved_session_id": null
+      }
+    },
+    {
+      "id": "ambiguous_bare_suffix",
+      "input": {
+        "query": "aaaa"
+      },
+      "observed": {
+        "matched": false,
+        "resolved_session_id": null
+      }
+    },
+    {
+      "id": "disambiguated_longer_prefix_a1",
+      "input": {
+        "query": "aaaa1"
+      },
+      "observed": {
+        "matched": true,
+        "resolved_session_id": "proc_aaaa11112222"
+      }
+    },
+    {
+      "id": "disambiguated_longer_prefix_a2",
+      "input": {
+        "query": "proc_aaaa3"
+      },
+      "observed": {
+        "matched": true,
+        "resolved_session_id": "proc_aaaa33334444"
+      }
+    },
+    {
+      "id": "nonexistent_id",
+      "input": {
+        "query": "cccc"
+      },
+      "observed": {
+        "matched": false,
+        "resolved_session_id": null
+      }
+    },
+    {
+      "id": "empty_string",
+      "input": {
+        "query": ""
+      },
+      "observed": {
+        "matched": false,
+        "resolved_session_id": null
+      }
+    },
+    {
+      "id": "whitespace_only",
+      "input": {
+        "query": "   "
+      },
+      "observed": {
+        "matched": false,
+        "resolved_session_id": null
+      }
+    }
+  ],
+  "secret_redaction": [
+    {
+      "id": "secret_redaction_env_dump_opaque_token",
+      "input": {
+        "action": "log",
+        "session_id": "proc_sec_env01"
+      },
+      "observed": {
+        "command": "printenv",
+        "output": "SERVICE_TOKEN=***\nHOME=/home/user",
+        "session_id": "proc_sec_env01",
+        "showing": "2 lines",
+        "status": "exited",
+        "total_lines": 2
+      }
+    },
+    {
+      "id": "secret_redaction_command_inline_bearer_token",
+      "input": {
+        "action": "poll",
+        "session_id": "proc_sec_cmd02"
+      },
+      "observed": {
+        "command": "curl -H 'Authorization: Bearer ***'",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output_preview": "connected\n",
+        "pid": null,
+        "session_id": "proc_sec_cmd02",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "secret_redaction_output_provider_key",
+      "input": {
+        "action": "poll",
+        "session_id": "proc_sec_out03"
+      },
+      "observed": {
+        "command": "python test.py",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output_preview": "Leaked key: sk-ant...ZZZZ inside output\n",
+        "pid": null,
+        "session_id": "proc_sec_out03",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "secret_redaction_list_command_and_output",
+      "input": {
+        "action": "list"
+      },
+      "observed": {
+        "processes": [
+          {
+            "command": "printenv",
+            "cwd": null,
+            "exit_code": 0,
+            "output_preview": "SERVICE_TOKEN=***\nHOME=/home/user\n",
+            "pid": null,
+            "session_id": "proc_sec_env01",
+            "started_at": "2026-09-09T12:00:00",
+            "status": "exited",
+            "uptime_seconds": 0
+          },
+          {
+            "command": "curl -H 'Authorization: Bearer ***'",
+            "cwd": null,
+            "exit_code": 0,
+            "output_preview": "connected\n",
+            "pid": null,
+            "session_id": "proc_sec_cmd02",
+            "started_at": "2026-09-09T12:00:00",
+            "status": "exited",
+            "uptime_seconds": 0
+          },
+          {
+            "command": "python test.py",
+            "cwd": null,
+            "exit_code": 0,
+            "output_preview": "Leaked key: sk-ant...ZZZZ inside output\n",
+            "pid": null,
+            "session_id": "proc_sec_out03",
+            "started_at": "2026-09-09T12:00:00",
+            "status": "exited",
+            "uptime_seconds": 0
+          }
+        ]
+      }
+    }
+  ],
+  "spawn_and_status": [
+    {
+      "id": "spawn_local_basic_session",
+      "input": {
+        "command": "echo 'hello background'",
+        "cwd": "[TEMPDIR]",
+        "session_key": "gw_sess_alpha",
+        "task_id": "task_alpha",
+        "use_pty": false
+      },
+      "observed": {
+        "command": "echo 'hello background'",
+        "cwd": "[TEMPDIR]",
+        "exit_code": 0,
+        "exited": true,
+        "id": "proc_00000000000c",
+        "owner_task_id": "task_alpha",
+        "pid": 9012,
+        "session_key": "gw_sess_alpha",
+        "task_id": "task_alpha"
+      }
+    },
+    {
+      "id": "terminal_tool_background_success",
+      "input": {
+        "background": true,
+        "command": "echo 'spawned via terminal'",
+        "workdir": "[TEMPDIR]"
+      },
+      "observed": {
+        "error": null,
+        "exit_code": 0,
+        "hint": "background=true without notify_on_complete=true means this process runs SILENTLY - you will not be told when it exits. If this is a bounded task (test suite, build, CI poller, deploy, anything with a defined end), you almost certainly wanted notify_on_complete=true so the system pings you on exit. Re-launch with notify_on_complete=true, or call process(action='poll') / process(action='wait') yourself to learn the outcome. Only ignore this hint for genuine long-lived processes that never exit (servers, watchers, daemons).",
+        "output": "Background process started",
+        "pid": 9013,
+        "session_id": "proc_00000000000e"
+      }
+    },
+    {
+      "id": "terminal_tool_invalid_command_type",
+      "input": {
+        "background": true,
+        "command": 12345
+      },
+      "observed": {
+        "error": "Invalid command: expected string, got int",
+        "exit_code": -1,
+        "output": "",
+        "status": "error"
+      }
+    },
+    {
+      "id": "terminal_tool_forbidden_workdir_metachar",
+      "input": {
+        "background": true,
+        "command": "echo safe",
+        "workdir": "/tmp/test;rm -rf"
+      },
+      "observed": {
+        "error": "Blocked: workdir contains disallowed character ';'. Use a simple filesystem path without shell metacharacters.",
+        "exit_code": -1,
+        "output": "",
+        "status": "blocked"
+      }
+    },
+    {
+      "id": "handle_terminal_code_misplaced_parameter",
+      "input": {
+        "background": true,
+        "code": "print('hello')"
+      },
+      "observed": {
+        "error": "terminal received a 'code' parameter, but it requires a shell command in 'command'. Use execute_code(code=...) for Python; for shell, retry as terminal(command=...)."
+      }
+    },
+    {
+      "id": "handle_terminal_notify_on_foreground_rejected",
+      "input": {
+        "background": false,
+        "command": "ls",
+        "notify": true
+      },
+      "observed": {
+        "error": "notify only applies to background commands (foreground results return directly). Either drop notify, or run as terminal(command=..., background=true, notify=...)."
+      }
+    },
+    {
+      "id": "handle_terminal_pty_on_foreground_rejected",
+      "input": {
+        "background": false,
+        "command": "ls",
+        "pty": true
+      },
+      "observed": {
+        "error": "pty requires background=true (a PTY session is interacted with via process(action='write'/'submit'), which needs a tracked background process). Retry as terminal(command=..., background=true, pty=true)."
+      }
+    }
+  ],
+  "stdin_lifecycle": [
+    {
+      "id": "non_pty_default_write_stdin_error",
+      "input": {
+        "action": "write",
+        "data": "data",
+        "session_id": "proc_00000000000f"
+      },
+      "observed": {
+        "error": "Process stdin not available (non-local backend or stdin closed)",
+        "status": "error"
+      }
+    },
+    {
+      "id": "non_pty_default_submit_stdin_error",
+      "input": {
+        "action": "submit",
+        "data": "data",
+        "session_id": "proc_00000000000f"
+      },
+      "observed": {
+        "error": "Process stdin not available (non-local backend or stdin closed)",
+        "status": "error"
+      }
+    },
+    {
+      "id": "non_pty_default_close_stdin_error",
+      "input": {
+        "action": "close",
+        "session_id": "proc_00000000000f"
+      },
+      "observed": {
+        "error": "Process stdin not available (non-local backend or stdin closed)",
+        "status": "error"
+      }
+    },
+    {
+      "id": "pipe_stdin_write_raw_bytes",
+      "input": {
+        "action": "write",
+        "data": "part1 ",
+        "session_id": "proc_pipetest01"
+      },
+      "observed": {
+        "bytes_written": 6,
+        "status": "ok"
+      }
+    },
+    {
+      "id": "pipe_stdin_submit_appends_newline",
+      "input": {
+        "action": "submit",
+        "data": "line1",
+        "session_id": "proc_pipetest01"
+      },
+      "observed": {
+        "bytes_written": 6,
+        "status": "ok"
+      }
+    },
+    {
+      "id": "pipe_stdin_close_sends_eof",
+      "input": {
+        "action": "close",
+        "session_id": "proc_pipetest01"
+      },
+      "observed": {
+        "message": "stdin closed",
+        "status": "ok"
+      }
+    },
+    {
+      "id": "pipe_stdin_poll_after_eof_exit",
+      "input": {
+        "action": "poll",
+        "session_id": "proc_pipetest01"
+      },
+      "observed": {
+        "command": "python stdin pipe test",
+        "completion_reason": "exited",
+        "exit_code": 0,
+        "output_preview": "GOT:part1 line1\nEOF_DONE\n",
+        "pid": 9015,
+        "session_id": "proc_pipetest01",
+        "status": "exited",
+        "termination_source": "",
+        "uptime_seconds": 0
+      }
+    },
+    {
+      "id": "pipe_stdin_write_after_exit",
+      "input": {
+        "action": "write",
+        "data": "after exit",
+        "session_id": "proc_pipetest01"
+      },
+      "observed": {
+        "error": "Process has already finished",
+        "status": "already_exited"
+      }
+    },
+    {
+      "id": "stdin_missing_session_id",
+      "input": {
+        "action": "write",
+        "session_id": "proc_nonexistent"
+      },
+      "observed": {
+        "error": "No process with ID proc_nonexistent",
+        "status": "not_found"
+      }
+    }
+  ]
+}

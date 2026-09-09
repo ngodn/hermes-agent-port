@@ -1,11 +1,12 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **52.10% of the full native replacement**, reported as
-**about 52%**, with a reasonable judgment range of **50% to 54%**. The first
-production native terminal slice now executes Unix-local foreground commands through
-the frozen conversation tool loop. The estimate remains conservative because
-approval workflows, background and remote execution, most tools, and the
-underlying plugin and external-memory managers are not native.
+Current estimate: **53.35% of the full native replacement**, reported as
+**about 53%**, with a reasonable judgment range of **51% to 55%**. The native
+terminal now executes Unix-local foreground commands and managed non-PTY
+background commands through the frozen conversation tool loop. The estimate
+remains conservative because approval workflows, PTY and notification support,
+remote execution, most tools, and the underlying plugin and external-memory
+managers are not native.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -20,13 +21,13 @@ audits.
 
 | Area | Full-port weight | Current area completion | Overall points |
 | --- | ---: | ---: | ---: |
-| Gateway | 35% | 65% | 22.75 |
-| Tool runtime and RPC | 30% | 18% | 5.40 |
+| Gateway | 35% | 66% | 23.10 |
+| Tool runtime and RPC | 30% | 21% | 6.30 |
 | State and search | 15% | 73% | 10.95 |
 | Native agent core | 20% | 65% | 13.00 |
-| Total | 100% | | **52.10** |
+| Total | 100% | | **53.35** |
 
-`0.35 * 65 + 0.30 * 18 + 0.15 * 73 + 0.20 * 65 = 52.10`
+`0.35 * 66 + 0.30 * 21 + 0.15 * 73 + 0.20 * 65 = 53.35`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -34,7 +35,7 @@ small range would imply false precision.
 
 ## Evidence behind the scores
 
-### Gateway, 65%
+### Gateway, 66%
 
 Production startup, profile-aware client construction, HTTP and push dispatch,
 Telegram, Discord and Slack, session admission, delivery state, routing,
@@ -56,7 +57,13 @@ handlers, queue/steer/interrupt behavior, richer streaming delivery, adapter
 callbacks, topic management, and desktop/TUI protocol parity. Three substantial
 native adapters do not represent the roughly twenty Python platforms.
 
-### Tool runtime and RPC, 18%
+The gateway now owns one bounded native background-process registry. Its
+stable session-key liveness probe prevents reset and pruning from orphaning
+active work, and graceful shutdown terminates all owned groups within shared
+bounded grace windows. Restart adoption and autonomous completion delivery
+remain Python-only.
+
+### Tool runtime and RPC, 21%
 
 The native model tool loop, schema projection, malformed-call repair, duplicate
 suppression, result framing, event emission, iteration-summary path, and a
@@ -81,17 +88,26 @@ profile-scoped initialization, and Rust admits it only when the plugin and
 memory capability projection exactly matches the conversation's first snapshot.
 This strengthens the existing RPC seam but does not increase its native scope.
 
-A session-bound native local foreground `terminal` tool now runs through the
-production provider loop for the explicitly safe configuration slice. One
-typed execution boundary owns process groups, concurrent pipe draining,
-streaming head and tail retention, private overflow spills, timeout cleanup,
-and reaping. The conversation runtime owns a profile-isolated persistent shell
-environment and cwd, with cwd updates following the active SQLite route across
-compression rotation. Visible and spilled output is ANSI-stripped and redacted.
-The unconditional hardline and `sudo -S` floor is source-checked against a
+A session-bound native local `terminal` tool now runs through the production
+provider loop for the explicitly safe configuration slice. Its foreground
+boundary owns process groups, concurrent pipe draining, streaming head and tail
+retention, private overflow spills, timeout cleanup, and reaping. The
+conversation runtime owns a profile-isolated persistent shell environment and
+cwd, with cwd updates following the active SQLite route across compression
+rotation. Visible and spilled output is ANSI-stripped and redacted. The
+unconditional hardline and `sudo -S` floor is source-checked against a
 Python-generated corpus, and extension-name collisions cannot replace native
-tools. Interactive approval modes, user deny rules, background management, and
-remote backends deliberately keep this native tool hidden.
+tools. Interactive approval modes, user deny rules, and remote backends
+deliberately keep this native tool hidden.
+
+Eligible conversations also expose managed local non-PTY background execution
+plus an owner-isolated `process_manage` surface for list, poll, log, wait, and
+kill. The gateway registry survives conversation-client eviction, uses
+character-bounded incremental output capture, retains results from exit time,
+protects active session routes, and owns bounded process-group shutdown. The
+live provider loop starts a delayed process and retrieves its result through
+the frozen schema. PTY input, notifications, restart adoption, systemd cgroup
+isolation, remote processes, and delegation attribution remain open.
 
 The remaining terminal modes, file, browser, web, MCP, execution-environment
 backends, approval runtime, delegation execution, most service tools, plugin

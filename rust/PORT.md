@@ -1,5 +1,46 @@
 # Hermes Rust rewrite
 
+## Native managed background processes: 2026-09-09
+
+The production native Unix-local terminal now starts managed non-PTY background
+commands and exposes owner-scoped `list`, `poll`, `log`, `wait`, and `kill`
+through `process_manage`. One gateway-owned registry survives frozen-client
+eviction and compression rotation, while profile home plus stable gateway
+session key prevent cross-conversation access. Active work now protects its
+session route from pruning under the configured maximum-age policy.
+
+The registry owns process groups, null stdin, concurrent output draining,
+incremental UTF-8 decoding, a rolling 200,000-character buffer, exact status
+publication, unique-prefix lookup, bounded wait and termination escalation, and
+retention measured for 30 minutes after exit. Gateway shutdown signals all
+groups in two shared grace windows. Background commands inherit the
+conversation's isolated profile environment, persisted exports, cwd, redaction,
+and unconditional terminal security floor.
+
+The frozen model schema advertises only implemented capability. PTY input,
+notifications and watchers, remote execution, restart adoption, systemd cgroup
+isolation, and delegation attribution remain explicit later slices. A live
+provider and SQLite integration performs foreground state changes, starts a
+delayed background command, waits by returned process ID, observes its output,
+and proves byte-identical schemas across all five provider requests. See
+[native-background-process-resolution.md](analysis/native-background-process-resolution.md).
+
+AGY owned the 71-case source-executed Python oracle and a separate parity
+review. Claude owned an isolated Rust draft and a separate process-safety
+review. The primary lane rejected incompatible draft choices, integrated the
+gateway-owned boundary, and fixed the review's long-running-process retention
+bug. The codebase-design skill informed the registry ownership and narrow
+provider-facing interface.
+
+Validation is **1,767 Rust tests passed, two ignored**, plus **197 selected
+Python process, terminal, and session-reset tests passed, seven platform skips**.
+The 71-case oracle regenerates byte-for-byte. Rust and Python formatting, Ruff,
+Clippy with warnings denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is
+**53.35 points, reported as about 53%** (judgment range 51% to 55%). Native
+approval workflows, PTY and notification support, remote execution, file and
+browser tools, and native plugin and memory managers remain.
+
 ## Native local foreground terminal: 2026-09-09
 
 The first production native execution tool is live. Explicit Unix-local profiles

@@ -1,8 +1,9 @@
-//! Session-bound native local foreground terminal tool.
+//! Session-bound native local terminal tool.
 //!
 //! The provider schema is immutable for the conversation. Runtime state behind
-//! it serializes calls, persists cwd and exported variables, bounds output while
-//! streaming, and never weakens the unconditional command-security floor.
+//! it serializes calls, persists foreground cwd and exported variables, starts
+//! managed non-PTY background work, bounds output while streaming, and never
+//! weakens the unconditional command-security floor.
 
 use std::collections::{BTreeMap, HashMap};
 use std::ffi::OsString;
@@ -41,6 +42,8 @@ pub struct TerminalTool {
     shell: OsString,
     default_timeout: u64,
     route_cwd: Option<RouteCwd>,
+    process_registry: Arc<crate::background_process::Registry>,
+    process_owner: crate::background_process::Owner,
 }
 
 pub struct TerminalConfig<'a> {
@@ -51,6 +54,7 @@ pub struct TerminalConfig<'a> {
     pub default_timeout: u64,
     pub database: Option<Arc<crate::session_db::SessionDb>>,
     pub route: Option<(String, String)>,
+    pub process_registry: Arc<crate::background_process::Registry>,
 }
 
 impl TerminalTool {
@@ -87,6 +91,11 @@ impl TerminalTool {
             },
             default_timeout: config.default_timeout.clamp(1, MAX_FOREGROUND_TIMEOUT),
             route_cwd,
+            process_registry: config.process_registry,
+            process_owner: crate::background_process::Owner::new(
+                config.profile_home,
+                config.session_identity,
+            ),
         }
     }
 
@@ -131,10 +140,22 @@ impl TerminalTool {
                 "notify must be true/false (notify on exit) or a list of strings (notify on output pattern match).",
             );
         }
-        if background {
-            return execution_error(
-                "Native terminal currently supports foreground commands only. Retry without background=true.",
-                "error",
+        if background && args.get("pty").and_then(Value::as_bool) == Some(true) {
+            return error_only(
+                "Native background PTY sessions are not available yet. Omit pty for a non-interactive background process.",
+            );
+        }
+        if background
+            && (args.get("notify").is_some_and(crate::python_value::truthy)
+                || args
+                    .get("notify_on_complete")
+                    .is_some_and(crate::python_value::truthy)
+                || args
+                    .get("watch_patterns")
+                    .is_some_and(crate::python_value::truthy))
+        {
+            return error_only(
+                "Native background notifications are not available yet. Omit notify and use process_manage(action='poll' or 'wait').",
             );
         }
         let timeout = match args.get("timeout") {
@@ -149,13 +170,15 @@ impl TerminalTool {
                 None => return error_only("timeout must be a positive integer number of seconds."),
             },
         };
-        if timeout > MAX_FOREGROUND_TIMEOUT {
+        if !background && timeout > MAX_FOREGROUND_TIMEOUT {
             return error_only(&format!(
-                "Foreground timeout {timeout}s exceeds the maximum of {MAX_FOREGROUND_TIMEOUT}s. Use background=true with notify_on_complete=true for long-running commands."
+                "Foreground timeout {timeout}s exceeds the maximum of {MAX_FOREGROUND_TIMEOUT}s. Use background=true for long-running commands."
             ));
         }
-        if let Some(guidance) = foreground_guidance(command) {
-            return execution_error(guidance, "error");
+        if !background {
+            if let Some(guidance) = foreground_guidance(command) {
+                return execution_error(guidance, "error");
+            }
         }
         if let Some(block) = crate::terminal_guard::unconditional_block(
             command,
@@ -191,6 +214,42 @@ impl TerminalTool {
         let command_cwd = explicit_workdir.as_ref().unwrap_or(&session_cwd).clone();
         if let Err(error) = prepare_private_parent(&self.snapshot_path) {
             return error_only(&format!("Failed to prepare terminal state: {error}"));
+        }
+        if background {
+            let mut environment = self.environment.clone();
+            environment.insert("PYTHONUNBUFFERED".into(), "1".into());
+            let request = crate::background_process::SpawnSpec::with_default_bounds(
+                self.process_owner.clone(),
+                command.clone(),
+                self.shell.clone(),
+                vec![
+                    "--noprofile".into(),
+                    "--norc".into(),
+                    "-c".into(),
+                    background_wrapper().into(),
+                    "hermes-terminal-background".into(),
+                    command.into(),
+                    self.snapshot_path.as_os_str().into(),
+                    self.profile_home.as_os_str().into(),
+                ],
+                command_cwd,
+                environment,
+            );
+            return match self.process_registry.spawn(request) {
+                Ok(spawned) => json!({
+                    "output":"Background process started",
+                    "session_id":spawned.id,
+                    "pid":spawned.pid,
+                    "exit_code":0,
+                    "error":Value::Null,
+                    "hint":"This process runs silently. Use process_manage(action='poll' or 'wait') to observe completion.",
+                }),
+                Err(error) => json!({
+                    "output":"",
+                    "exit_code":-1,
+                    "error":redact_output(&format!("Failed to start background process: {error}")),
+                }),
+            };
         }
         let marker = marker(command);
         let wrapper = terminal_wrapper();
@@ -290,12 +349,13 @@ impl Tool for TerminalTool {
     fn spec(&self) -> ToolSpec {
         ToolSpec {
             name: "terminal".into(),
-            description: "Execute a foreground shell command in this conversation's local working directory. The working directory and exported environment variables persist between calls.".into(),
+            description: "Execute a local shell command in the foreground or start a managed background process. Foreground calls persist completed working-directory and exported-environment changes. Background calls return a session id for process_manage.".into(),
             parameters: json!({
                 "type": "object",
                 "properties": {
                     "command": {"type":"string", "description":"The shell command to execute"},
-                    "timeout": {"type":"integer", "minimum":1, "maximum":MAX_FOREGROUND_TIMEOUT, "description":"Maximum seconds to wait. The command returns immediately when it finishes."},
+                    "background": {"type":"boolean", "default":false, "description":"Run as a managed non-interactive background process and return a session id."},
+                    "timeout": {"type":"integer", "minimum":1, "description":"Maximum seconds to wait for foreground execution. Background commands return immediately, so this value is ignored for them."},
                     "workdir": {"type":"string", "description":"Working directory for this command. Defaults to the session working directory."}
                 },
                 "required": ["command"],
@@ -308,6 +368,19 @@ impl Tool for TerminalTool {
     async fn call(&self, args: &Value) -> Result<Value> {
         Ok(self.invoke(args).await)
     }
+}
+
+fn background_wrapper() -> &'static str {
+    r#"exec 2>&1
+snapshot=$2
+if [ -f "$snapshot" ]; then . "$snapshot"; fi
+export HERMES_HOME=$3
+eval "$1"
+hermes_status=$?
+wait
+wait_status=$?
+if [ "$hermes_status" -eq 0 ]; then hermes_status=$wait_status; fi
+exit "$hermes_status""#
 }
 
 fn terminal_wrapper() -> &'static str {
@@ -505,7 +578,7 @@ fn prepare_private_parent(path: &Path) -> std::io::Result<()> {
     Ok(())
 }
 
-fn redact_output(output: &str) -> String {
+pub(crate) fn redact_output(output: &str) -> String {
     crate::compression_redact::redact(&strip_ansi(output))
 }
 
@@ -607,6 +680,7 @@ mod tests {
             default_timeout: 5,
             database: None,
             route: None,
+            process_registry: Arc::new(crate::background_process::Registry::new()),
         })
     }
 
@@ -628,6 +702,76 @@ mod tests {
             .await;
         assert_eq!(second["exit_code"], 0);
         assert_eq!(second["output"], format!("{}:value", child.display()));
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn background_uses_persisted_environment_and_shared_registry() {
+        let home = temp_dir("background");
+        let registry = Arc::new(crate::background_process::Registry::new());
+        let profile = HashMap::from([("PROFILE_SECRET".into(), "only-this-profile".into())]);
+        let terminal = TerminalTool::new(TerminalConfig {
+            cwd: home.clone(),
+            profile_env: &profile,
+            profile_home: &home,
+            session_identity: "background-route",
+            default_timeout: 5,
+            database: None,
+            route: None,
+            process_registry: registry.clone(),
+        });
+        let exported = terminal
+            .invoke(&json!({"command":"export SAVED=background-value"}))
+            .await;
+        assert_eq!(exported["exit_code"], 0);
+        let launched = terminal
+            .invoke(&json!({
+                "command":"printf '%s:%s' \"$SAVED\" \"$PROFILE_SECRET\"",
+                "background":true
+            }))
+            .await;
+        let id = launched["session_id"].as_str().unwrap();
+        let owner = crate::background_process::Owner::new(&home, "background-route");
+        match registry
+            .wait(&owner, id, Duration::from_secs(5))
+            .await
+            .unwrap()
+        {
+            crate::background_process::WaitOutcome::Finished { output, .. } => {
+                assert_eq!(output, "background-value:only-this-profile")
+            }
+            crate::background_process::WaitOutcome::TimedOut { .. } => {
+                panic!("background command did not finish")
+            }
+        }
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn background_refuses_unimplemented_notification_and_pty_promises() {
+        let home = temp_dir("background-options");
+        let terminal = tool(&home, &home);
+        let notify = terminal
+            .invoke(&json!({"command":"true", "background":true, "notify":true}))
+            .await;
+        assert!(notify["error"].as_str().unwrap().contains("notifications"));
+        let pty = terminal
+            .invoke(&json!({"command":"true", "background":true, "pty":true}))
+            .await;
+        assert!(pty["error"].as_str().unwrap().contains("PTY"));
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[test]
+    fn schema_advertises_managed_background_without_unimplemented_options() {
+        let home = temp_dir("background-schema");
+        let terminal = tool(&home, &home);
+        let properties = terminal.spec().parameters["properties"].clone();
+        assert_eq!(properties["background"]["type"], "boolean");
+        assert!(properties["timeout"].get("maximum").is_none());
+        assert!(properties.get("pty").is_none());
+        assert!(properties.get("notify").is_none());
         std::fs::remove_dir_all(home).unwrap();
     }
 
@@ -687,11 +831,11 @@ mod tests {
                     "timeout": case["timeout"].clone(),
                 }))
                 .await;
-            assert_eq!(
-                actual["error"], case["terminal_tool_envelope"]["error"],
-                "{}",
-                case["id"]
-            );
+            let expected = case["terminal_tool_envelope"]["error"]
+                .as_str()
+                .unwrap()
+                .replace(" with notify_on_complete=true", "");
+            assert_eq!(actual["error"], expected, "{}", case["id"]);
         }
         std::fs::remove_dir_all(home).unwrap();
     }

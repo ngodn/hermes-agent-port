@@ -73,12 +73,16 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   in-place empty parent ID, clone-shared count, async failure isolation, Python
   function ABI, profile-secret boundary, and descendant timeout cleanup are
   live. Context-engine and relay-boundary adoption remain open.
-- A session-bound native Unix-local foreground terminal is live only for explicit
+- A session-bound native Unix-local terminal is live only for explicit
   no-approval local configurations with no user deny rules. Its frozen schema,
   profile-isolated persistent environment, routed cwd, bounded redacted output,
   private spills, process-group cleanup, and unconditional security floor are
-  covered through the real provider loop. Approval modes, background process
-  management, and remote backends remain on the Python path.
+  covered through the real provider loop. Managed non-PTY background execution
+  shares one gateway registry across client eviction and adds owner-isolated
+  list, poll, log, wait, kill, reset-liveness, and bounded-shutdown behavior.
+  Approval modes, PTY and notification support, restart adoption, and remote
+  backends remain on the Python path. See
+  [native-background-process-resolution.md](native-background-process-resolution.md).
 
 ## Rejected paths
 
@@ -100,6 +104,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-background-process-resolution.md](native-background-process-resolution.md) | Live managed non-PTY background terminal, gateway registry ownership, frozen `process_manage` surface, review fixes, validation, and explicit deferrals |
+| [native-background-python-contract.md](native-background-python-contract.md) | Source-executed Python spawn, process management, retention, ownership, redaction, and exclusion contract |
+| [native-background-parity-review-agy.md](native-background-parity-review-agy.md) | AGY's separate review of envelopes, prefix resolution, output tails, pagination, wait, kill, liveness, ownership, and deliberate scope differences |
+| [native-background-safety-review-claude.md](native-background-safety-review-claude.md) | Claude's separate process-safety review and the primary fixes for exit-based retention and bounded whole-registry shutdown |
 | [native-local-terminal-resolution.md](native-local-terminal-resolution.md) | Live local foreground terminal, safe eligibility gate, persistent profile-scoped runtime, routed cwd, bounded output, hardline security, helper disposition, and explicit deferrals |
 | [native-terminal-python-contract-agy.md](native-terminal-python-contract-agy.md) | AGY's source map of the Python schema, execution, cwd, timeout, cleanup, output, approval, and backend contracts |
 | [native-terminal-rust-seam-claude.md](native-terminal-rust-seam-claude.md) | Claude's independent Rust seam audit covering tool construction, prefix freezing, process primitives, state ownership, and safe first-checkpoint scope |
@@ -170,7 +178,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 50.30-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 53.35-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |
