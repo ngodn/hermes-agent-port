@@ -120,6 +120,8 @@ pub struct CompressionHistoryMessage {
     pub codex_reasoning_items: Option<String>,
     /// JSON-encoded Codex Responses message replay items.
     pub codex_message_items: Option<String>,
+    /// Durable handoff marker used by batch and rolling compaction.
+    pub compressed_summary: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -745,6 +747,17 @@ pub struct GatewayToolPrunePublish<'a> {
     pub pruned_messages: &'a [CompressionHistoryMessage],
     pub rearm_tokens: u64,
     pub turn_lease_holder: Option<&'a str>,
+}
+
+pub struct GatewayMicroCompactionPublish<'a> {
+    pub session_id: &'a str,
+    /// Exact active snapshot used to select and summarize one exchange.
+    pub original_messages: &'a [CompressionHistoryMessage],
+    /// Complete replacement transcript. Source rows are cloned byte-exact,
+    /// then only the fields named here may be rewritten.
+    pub rows: &'a [crate::micro_compaction::MicroCompactionRow],
+    /// The active durable turn lease is mandatory for this post-turn rewrite.
+    pub turn_lease_holder: &'a str,
 }
 
 const COMPRESSION_PEER_CTE: &str = r#"
@@ -2167,6 +2180,7 @@ impl SessionDb {
                         || before.reasoning_details != after.reasoning_details
                         || before.codex_reasoning_items != after.codex_reasoning_items
                         || before.codex_message_items != after.codex_message_items
+                        || before.compressed_summary != after.compressed_summary
                 })
             || change.original_messages == change.pruned_messages
         {
@@ -2236,7 +2250,7 @@ impl SessionDb {
             let mut query = tx.prepare(
                 "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name,
                         reasoning, reasoning_content, reasoning_details,
-                        codex_reasoning_items, codex_message_items
+                        codex_reasoning_items, codex_message_items, _compressed_summary
                  FROM messages WHERE session_id = ? AND active = 1 ORDER BY id",
             )?;
             let rows = query
@@ -2256,6 +2270,7 @@ impl SessionDb {
                         reasoning_details: row.get(9)?,
                         codex_reasoning_items: row.get(10)?,
                         codex_message_items: row.get(11)?,
+                        compressed_summary: row.get(12)?,
                     })
                 })?
                 .collect::<rusqlite::Result<Vec<_>>>()?;
@@ -2317,6 +2332,316 @@ impl SessionDb {
             "UPDATE sessions SET message_count = ?, tool_call_count = ?, model_config = ?
              WHERE id = ?",
             params![active, tool_calls, config, change.session_id],
+        )?;
+        tx.commit()?;
+        Ok(true)
+    }
+
+    /// Atomically replace one live transcript with a micro-compacted form.
+    ///
+    /// The summary request happens before this method. The write transaction
+    /// accepts its result only while the same turn lease is live and the exact
+    /// source snapshot is still active. Carried-forward originals are hidden
+    /// as superseded duplicates, while absorbed assistant/tool rows remain
+    /// searchable as compression archive history.
+    pub fn publish_gateway_micro_compaction(
+        &self,
+        change: &GatewayMicroCompactionPublish<'_>,
+    ) -> rusqlite::Result<bool> {
+        use std::collections::HashSet;
+
+        if change.session_id.is_empty()
+            || change.turn_lease_holder.is_empty()
+            || change.original_messages.is_empty()
+            || change.rows.is_empty()
+        {
+            return Ok(false);
+        }
+        let original_ids = change
+            .original_messages
+            .iter()
+            .map(|message| message.id)
+            .collect::<HashSet<_>>();
+        if original_ids.len() != change.original_messages.len() {
+            return Ok(false);
+        }
+        let mut source_ids = HashSet::new();
+        let mut retained_ids = HashSet::new();
+        let mut new_markers = 0_usize;
+        for row in change.rows {
+            if !matches!(row.role.as_str(), "user" | "assistant" | "tool")
+                || row.retained_ids.iter().any(|id| !original_ids.contains(id))
+                || row.retained_ids.iter().any(|id| !retained_ids.insert(*id))
+            {
+                return Ok(false);
+            }
+            match row.source_id {
+                Some(id) => {
+                    let Some(source) = change
+                        .original_messages
+                        .iter()
+                        .find(|message| message.id == id)
+                    else {
+                        return Ok(false);
+                    };
+                    if !source_ids.insert(id)
+                        || source.message.role != row.role
+                        || !row.retained_ids.contains(&id)
+                    {
+                        return Ok(false);
+                    }
+                }
+                None => {
+                    new_markers += 1;
+                    if row.role != "assistant"
+                        || !row.compressed_summary
+                        || row.api_content.is_some()
+                        || !row.retained_ids.is_empty()
+                    {
+                        return Ok(false);
+                    }
+                }
+            }
+        }
+        if new_markers > 1 {
+            return Ok(false);
+        }
+        if change
+            .original_messages
+            .iter()
+            .filter(|message| message.message.role == "user" && !message.compressed_summary)
+            .any(|message| !retained_ids.contains(&message.id))
+        {
+            return Ok(false);
+        }
+        for row in change.rows.iter().filter(|row| row.source_id.is_some()) {
+            let source_id = row.source_id.expect("filtered source row");
+            let source = change
+                .original_messages
+                .iter()
+                .find(|message| message.id == source_id)
+                .expect("source identity validated above");
+            if row.role == "user" {
+                let retained_users = row
+                    .retained_ids
+                    .iter()
+                    .filter_map(|id| {
+                        change
+                            .original_messages
+                            .iter()
+                            .position(|message| message.id == *id)
+                            .map(|index| (index, &change.original_messages[index]))
+                    })
+                    .collect::<Vec<_>>();
+                let ordered = retained_users.windows(2).all(|pair| pair[0].0 < pair[1].0);
+                if retained_users.len() != row.retained_ids.len()
+                    || retained_users
+                        .iter()
+                        .any(|(_, message)| message.message.role != "user")
+                    || !ordered
+                    || row.retained_ids.first() != Some(&source_id)
+                {
+                    return Ok(false);
+                }
+                if retained_users.len() == 1 {
+                    if row.content != source.message.content
+                        || row.api_content != source.message.api_content
+                        || row.compressed_summary != source.compressed_summary
+                    {
+                        return Ok(false);
+                    }
+                } else {
+                    let expected = retained_users
+                        .iter()
+                        .map(|(_, message)| message.message.content.as_str())
+                        .collect::<Vec<_>>()
+                        .join("\n\n");
+                    if row.content != expected
+                        || row.api_content.is_some()
+                        || row.compressed_summary
+                    {
+                        return Ok(false);
+                    }
+                }
+            } else if row.retained_ids != [source_id]
+                || (!source.compressed_summary
+                    && (row.content != source.message.content
+                        || row.api_content != source.message.api_content
+                        || row.compressed_summary != source.compressed_summary))
+            {
+                return Ok(false);
+            }
+        }
+        let absorbed = retained_ids.len() < original_ids.len();
+        let rewrites_existing_marker = new_markers == 0
+            && !absorbed
+            && change.rows.iter().any(|row| {
+                row.source_id
+                    .and_then(|id| {
+                        change
+                            .original_messages
+                            .iter()
+                            .find(|message| message.id == id)
+                    })
+                    .is_some_and(|source| {
+                        source.compressed_summary
+                            && row.compressed_summary
+                            && (source.message.content != row.content
+                                || source.message.api_content != row.api_content)
+                    })
+            });
+        if (new_markers == 1 && !absorbed) || (new_markers == 0 && !rewrites_existing_marker) {
+            return Ok(false);
+        }
+        let roles = change
+            .rows
+            .iter()
+            .map(|row| {
+                let source = row.source_id.and_then(|id| {
+                    change
+                        .original_messages
+                        .iter()
+                        .find(|message| message.id == id)
+                });
+                (
+                    row.role.clone(),
+                    source.and_then(|message| message.tool_calls.clone()),
+                    source.and_then(|message| message.tool_call_id.clone()),
+                )
+            })
+            .collect::<Vec<_>>();
+        let valid_sequence = if change.rows.first().is_some_and(|row| {
+            row.role == "assistant" && row.compressed_summary && row.source_id.is_none()
+        }) {
+            prunable_turn_sequence(&roles[1..])
+        } else {
+            prunable_turn_sequence(&roles)
+        };
+        if !valid_sequence {
+            return Ok(false);
+        }
+
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let now = now_secs();
+        let conversation_id = compression_lineage_root_on(&tx, change.session_id)?;
+        let owner = tx
+            .query_row(
+                "SELECT holder FROM session_turn_leases
+                 WHERE conversation_id = ? AND expires_at >= ?",
+                params![conversation_id, now],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()?;
+        if owner.as_deref() != Some(change.turn_lease_holder) {
+            return Ok(false);
+        }
+        let live = tx
+            .query_row(
+                "SELECT ended_at IS NULL FROM sessions WHERE id = ?",
+                [change.session_id],
+                |row| row.get::<_, bool>(0),
+            )
+            .optional()?;
+        if live != Some(true) {
+            return Ok(false);
+        }
+
+        let durable = {
+            let mut query = tx.prepare(
+                "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name,
+                        reasoning, reasoning_content, reasoning_details,
+                        codex_reasoning_items, codex_message_items, _compressed_summary
+                 FROM messages WHERE session_id = ? AND active = 1 ORDER BY id",
+            )?;
+            let rows = query
+                .query_map([change.session_id], |row| {
+                    Ok(CompressionHistoryMessage {
+                        id: row.get(0)?,
+                        message: HistoryMessage {
+                            role: row.get(1)?,
+                            content: row.get::<_, Option<String>>(2)?.unwrap_or_default(),
+                            api_content: row.get(3)?,
+                        },
+                        tool_call_id: row.get(4)?,
+                        tool_calls: row.get(5)?,
+                        tool_name: row.get(6)?,
+                        reasoning: row.get(7)?,
+                        reasoning_content: row.get(8)?,
+                        reasoning_details: row.get(9)?,
+                        codex_reasoning_items: row.get(10)?,
+                        codex_message_items: row.get(11)?,
+                        compressed_summary: row.get(12)?,
+                    })
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        if durable != change.original_messages {
+            return Ok(false);
+        }
+
+        tx.execute(
+            "UPDATE messages SET active = 0, compacted = 1
+             WHERE session_id = ? AND active = 1",
+            [change.session_id],
+        )?;
+        if !retained_ids.is_empty() {
+            let placeholders = std::iter::repeat_n("?", retained_ids.len())
+                .collect::<Vec<_>>()
+                .join(",");
+            let sql = format!(
+                "UPDATE messages SET compacted = 0 WHERE session_id = ? AND id IN ({placeholders})"
+            );
+            let mut values = Vec::<rusqlite::types::Value>::with_capacity(retained_ids.len() + 1);
+            values.push(change.session_id.to_owned().into());
+            values.extend(retained_ids.iter().copied().map(Into::into));
+            tx.execute(&sql, rusqlite::params_from_iter(values))?;
+        }
+
+        for row in change.rows {
+            let id = if let Some(source_id) = row.source_id {
+                clone_messages_by_id(&tx, change.session_id, &[source_id])?;
+                tx.last_insert_rowid()
+            } else {
+                tx.execute(
+                    "INSERT INTO messages
+                     (session_id, role, content, api_content, timestamp, active,
+                      compacted, _compressed_summary)
+                     VALUES (?, ?, ?, ?, ?, 1, 0, ?)",
+                    params![
+                        change.session_id,
+                        row.role,
+                        row.content,
+                        row.api_content,
+                        now,
+                        row.compressed_summary,
+                    ],
+                )?;
+                tx.last_insert_rowid()
+            };
+            if row.source_id.is_some() {
+                let updated = tx.execute(
+                    "UPDATE messages SET content = ?, api_content = ?, _compressed_summary = ?
+                     WHERE id = ? AND session_id = ? AND active = 1",
+                    params![
+                        row.content,
+                        row.api_content,
+                        row.compressed_summary,
+                        id,
+                        change.session_id,
+                    ],
+                )?;
+                if updated != 1 {
+                    return Ok(false);
+                }
+            }
+        }
+        let (active, tool_calls) = active_transcript_counts(&tx, change.session_id)?;
+        tx.execute(
+            "UPDATE sessions SET message_count = ?, tool_call_count = ?, last_activity_at = ?
+             WHERE id = ?",
+            params![active, tool_calls, now, change.session_id],
         )?;
         tx.commit()?;
         Ok(true)
@@ -3804,7 +4129,7 @@ impl SessionDb {
         let mut statement = conn.prepare(
             "SELECT id, role, content, api_content, tool_call_id, tool_calls, tool_name,
                     reasoning, reasoning_content, reasoning_details,
-                    codex_reasoning_items, codex_message_items
+                    codex_reasoning_items, codex_message_items, _compressed_summary
              FROM messages
              WHERE session_id = ? AND active = 1 ORDER BY id ASC",
         )?;
@@ -3825,6 +4150,7 @@ impl SessionDb {
                     reasoning_details: row.get(9)?,
                     codex_reasoning_items: row.get(10)?,
                     codex_message_items: row.get(11)?,
+                    compressed_summary: row.get(12)?,
                 })
             })?
             .collect::<rusqlite::Result<Vec<_>>>()?;
@@ -4033,6 +4359,233 @@ impl SessionDb {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn micro_compaction_publish_is_lease_and_snapshot_guarded() {
+        use super::{GatewayMicroCompactionPublish, SessionDb};
+        use crate::micro_compaction::MicroCompactionRow;
+
+        let path = temp_db("micro_compaction_publish");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("micro", "local", None, None, None)
+            .unwrap();
+        for (role, content) in [
+            ("user", "question zero"),
+            ("assistant", "absorbed answer"),
+            ("user", "question one"),
+            ("assistant", "latest answer"),
+        ] {
+            db.append_message("micro", role, content).unwrap();
+        }
+        let original = db.load_compression_snapshot("micro").unwrap();
+        let rows = vec![
+            MicroCompactionRow::from_source_for_test(&original.messages[0]),
+            MicroCompactionRow::summary_for_test("rolling summary"),
+            MicroCompactionRow::from_source_for_test(&original.messages[2]),
+            MicroCompactionRow::from_source_for_test(&original.messages[3]),
+        ];
+        assert!(db
+            .try_acquire_session_turn_lease("micro", "micro-holder", 60.0)
+            .unwrap());
+        assert!(!db
+            .publish_gateway_micro_compaction(&GatewayMicroCompactionPublish {
+                session_id: "micro",
+                original_messages: &original.messages,
+                rows: &rows,
+                turn_lease_holder: "wrong-holder",
+            })
+            .unwrap());
+        assert_eq!(db.load_compression_snapshot("micro").unwrap(), original);
+
+        assert!(db
+            .publish_gateway_micro_compaction(&GatewayMicroCompactionPublish {
+                session_id: "micro",
+                original_messages: &original.messages,
+                rows: &rows,
+                turn_lease_holder: "micro-holder",
+            })
+            .unwrap());
+        let active = db.load_compression_snapshot("micro").unwrap();
+        assert_eq!(active.messages.len(), 4);
+        assert!(active.messages[1].compressed_summary);
+        assert!(active.messages[1]
+            .message
+            .content
+            .contains("rolling summary"));
+        let conn = db.conn.lock().unwrap();
+        let absorbed = conn
+            .query_row(
+                "SELECT active, compacted FROM messages WHERE id = ?",
+                [original.messages[1].id],
+                |row| Ok((row.get::<_, i64>(0)?, row.get::<_, i64>(1)?)),
+            )
+            .unwrap();
+        assert_eq!(absorbed, (0, 1));
+        let retained_archives = conn
+            .query_row(
+                "SELECT COUNT(*) FROM messages
+                 WHERE session_id='micro' AND active=0 AND compacted=0",
+                [],
+                |row| row.get::<_, i64>(0),
+            )
+            .unwrap();
+        assert_eq!(retained_archives, 3);
+        let counts = conn
+            .query_row(
+                "SELECT message_count, tool_call_count FROM sessions WHERE id='micro'",
+                [],
+                |row| Ok((row.get::<_, i64>(0)?, row.get::<_, i64>(1)?)),
+            )
+            .unwrap();
+        assert_eq!(counts, (4, 0));
+        drop(conn);
+
+        assert!(!db
+            .publish_gateway_micro_compaction(&GatewayMicroCompactionPublish {
+                session_id: "micro",
+                original_messages: &original.messages,
+                rows: &rows,
+                turn_lease_holder: "micro-holder",
+            })
+            .unwrap());
+        assert_eq!(db.load_compression_snapshot("micro").unwrap(), active);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn micro_compaction_publish_rolls_back_an_insert_failure() {
+        use super::{GatewayMicroCompactionPublish, SessionDb};
+        use crate::micro_compaction::MicroCompactionRow;
+
+        let path = temp_db("micro_compaction_rollback");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("micro", "local", None, None, None)
+            .unwrap();
+        for (role, content) in [
+            ("user", "question zero"),
+            ("assistant", "answer zero"),
+            ("user", "question one"),
+            ("assistant", "answer one"),
+        ] {
+            db.append_message("micro", role, content).unwrap();
+        }
+        let original = db.load_compression_snapshot("micro").unwrap();
+        let rows = vec![
+            MicroCompactionRow::from_source_for_test(&original.messages[0]),
+            MicroCompactionRow::summary_for_test("summary"),
+            MicroCompactionRow::from_source_for_test(&original.messages[2]),
+            MicroCompactionRow::from_source_for_test(&original.messages[3]),
+        ];
+        assert!(db
+            .try_acquire_session_turn_lease("micro", "holder", 60.0)
+            .unwrap());
+        db.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "CREATE TRIGGER reject_micro_summary
+                 BEFORE INSERT ON messages
+                 WHEN NEW._compressed_summary = 1
+                 BEGIN SELECT RAISE(ABORT, 'injected micro failure'); END;",
+            )
+            .unwrap();
+        assert!(db
+            .publish_gateway_micro_compaction(&GatewayMicroCompactionPublish {
+                session_id: "micro",
+                original_messages: &original.messages,
+                rows: &rows,
+                turn_lease_holder: "holder",
+            })
+            .is_err());
+        assert_eq!(db.load_compression_snapshot("micro").unwrap(), original);
+        let archived = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM messages
+                 WHERE session_id='micro' AND active=0",
+                [],
+                |row| row.get::<_, i64>(0),
+            )
+            .unwrap();
+        assert_eq!(archived, 0);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn micro_compaction_can_adopt_and_replace_a_batch_marker() {
+        use super::{GatewayMicroCompactionPublish, SessionDb};
+        use crate::micro_compaction::{
+            build_publication, prepare, MicroCompactionConfig, MicroCompactionState,
+        };
+
+        let path = temp_db("micro_compaction_batch_marker");
+        let db = SessionDb::open(path.clone()).unwrap();
+        db.ensure_session("micro", "local", None, None, None)
+            .unwrap();
+        let batch = format!(
+            "{}\n\n## Historical Task Snapshot\nbatch history\n\n{}",
+            crate::compression_prompt::SUMMARY_PREFIX,
+            crate::compression_prompt::SUMMARY_END
+        );
+        db.append_message("micro", "user", &batch).unwrap();
+        db.append_message("micro", "assistant", crate::compression_prompt::SUMMARY_ACK)
+            .unwrap();
+        for index in 1..=3 {
+            db.append_message("micro", "user", &format!("question {index}"))
+                .unwrap();
+            db.append_message("micro", "assistant", &format!("answer {index}"))
+                .unwrap();
+        }
+        db.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE messages SET _compressed_summary=1
+                 WHERE session_id='micro' AND id=(
+                    SELECT MIN(id) FROM messages WHERE session_id='micro'
+                 )",
+                [],
+            )
+            .unwrap();
+        let original = db.load_compression_snapshot("micro").unwrap();
+        let mut state = MicroCompactionState::default();
+        let work = prepare(
+            &original.messages,
+            MicroCompactionConfig {
+                protect_head: 0,
+                protect_last: 2,
+                tail_token_budget: 30,
+                charge_all_thinking: false,
+                every_n_turns: 1,
+                defrag_threshold_tokens: 2_000,
+            },
+            &mut state,
+        )
+        .unwrap();
+        let publication = build_publication(&original.messages, &work, "batch plus ack").unwrap();
+        assert_eq!(publication.rows[0].role, "assistant");
+        assert!(db
+            .try_acquire_session_turn_lease("micro", "holder", 60.0)
+            .unwrap());
+        assert!(db
+            .publish_gateway_micro_compaction(&GatewayMicroCompactionPublish {
+                session_id: "micro",
+                original_messages: &original.messages,
+                rows: &publication.rows,
+                turn_lease_holder: "holder",
+            })
+            .unwrap());
+        let active = db.load_compression_snapshot("micro").unwrap();
+        assert_eq!(active.messages[0].message.role, "assistant");
+        assert!(active.messages[0].compressed_summary);
+        assert!(active.messages[0]
+            .message
+            .content
+            .contains("batch plus ack"));
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
     #[test]
     fn tool_prune_publish_archives_and_clones_wide_rows_with_cas() {
         use super::{AppendOptions, GatewayToolPrunePublish, SessionDb};

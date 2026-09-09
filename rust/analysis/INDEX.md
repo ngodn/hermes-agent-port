@@ -37,6 +37,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   exact-snapshot CAS and durable hysteresis. Full compression now also uses the
   Python token estimator, protected-tail pressure passes, and token-aware
   summary-tail selection. Auxiliary routing and hooks remain open.
+- Opt-in native micro-compaction runs after reply persistence and before
+  external-memory completion or the next provider request. It preserves all
+  user bytes, supersedes only contained rolling markers, bounds failures and
+  defrag, and publishes through an exact-snapshot plus lineage-lease SQLite
+  transaction.
 
 ## Rejected paths
 
@@ -54,6 +59,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-micro-compaction-resolution.md](native-micro-compaction-resolution.md) | Live post-turn rolling compaction, guarded SQLite publication, helper dispositions, validation, and remaining compression work |
+| [micro-compaction-oracle-claude.md](micro-compaction-oracle-claude.md) | Claude's independent 21-case source-executed Python state-machine oracle |
+| [micro-compaction-runtime-agy.md](micro-compaction-runtime-agy.md) | Corrected AGY source map of configuration, post-turn ordering, auxiliary calls, state transitions, and transaction invariants |
 | [native-token-budget-compression-resolution.md](native-token-budget-compression-resolution.md) | Live token-aware Phase 1 pruning and summary-tail selection, replay-sidecar estimator parity, guarded publication, differential proof, and remaining compression work |
 | [token-budget-prune-oracle-claude.md](token-budget-prune-oracle-claude.md) | Claude's independent source-executed oracle covering 17 estimator, 14 prune, and 3 tail-cut cases |
 | [native-same-turn-pruning-resolution.md](native-same-turn-pruning-resolution.md) | Live post-tool prune ordering, partial-turn transaction safety, fail-open adoption, cache behavior, validation, and explicit remaining work |
@@ -98,7 +106,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 45.60-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 46.75-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |

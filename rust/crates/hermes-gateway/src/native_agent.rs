@@ -375,6 +375,8 @@ pub struct NativeAgentClient {
     /// external-memory tool calls. Dropping the final clone closes its worker.
     _extension_host: Option<crate::extension_host::Client>,
     pending_memory_turn: std::sync::Arc<std::sync::Mutex<Option<PendingMemoryTurn>>>,
+    micro_compaction_state:
+        std::sync::Arc<std::sync::Mutex<crate::micro_compaction::MicroCompactionState>>,
     usage_state: std::sync::Arc<std::sync::Mutex<UsageState>>,
     usage_bucket: UsageBucket,
     turn_limit: usize,
@@ -412,6 +414,7 @@ impl NativeAgentClient {
             _plugin_prompt: crate::plugin_prompt::Snapshot::default(),
             _extension_host: None,
             pending_memory_turn: Default::default(),
+            micro_compaction_state: Default::default(),
             usage_state: Default::default(),
             usage_bucket: UsageBucket::Main,
             turn_limit: crate::turn_limit::UNLIMITED,
@@ -690,6 +693,258 @@ impl NativeAgentClient {
             &mut self.usage_state.lock().unwrap().auxiliary,
             crate::provider_usage::CanonicalUsage::accumulator(),
         )
+    }
+
+    fn record_compression_usage(
+        &self,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        usage: &crate::provider_usage::CanonicalUsage,
+    ) {
+        if usage.request_count == 0 {
+            return;
+        }
+        let Some(database) = database else {
+            return;
+        };
+        let route = crate::session_db::UsageRoute {
+            model: &self.model,
+            provider: self.provider_name(),
+            base_url: &self.base_url,
+            billing_mode: "",
+        };
+        if let Err(error) =
+            database.record_auxiliary_usage(session_id, "compression", &route, usage)
+        {
+            tracing::warn!(%error, %session_id, "compression usage persistence failed");
+        }
+    }
+
+    async fn micro_summary_request(&self, messages: &[Value]) -> Result<Option<String>> {
+        let url = format!("{}/chat/completions", self.base_url);
+        let mut body = json!({ "model": self.model, "messages": messages, "stream": false });
+        self.apply_provider_extras(&mut body)?;
+        let configured_cap = 1_500_u64;
+        let temperature = match self
+            .provider_profile
+            .as_ref()
+            .map(|profile| &profile.fixed_temperature)
+        {
+            Some(crate::provider_registry::Temperature::Omit) => None,
+            Some(crate::provider_registry::Temperature::Fixed(value)) => Some(value.clone()),
+            Some(crate::provider_registry::Temperature::Inherit) | None => Some(json!(0.1)),
+        };
+        if let Some(object) = body.as_object_mut() {
+            object.shift_remove("tools");
+            object.shift_remove("tool_choice");
+            object.shift_remove("parallel_tool_calls");
+            object.shift_remove("max_tokens");
+            object.shift_remove("max_completion_tokens");
+            object.shift_remove("temperature");
+            if let Some(temperature) = temperature {
+                object.insert("temperature".into(), temperature);
+            }
+            object.insert(
+                output_cap_parameter(&self.model, &self.base_url).into(),
+                Value::from(configured_cap),
+            );
+        }
+        let response = self
+            .client
+            .post(&url)
+            .bearer_auth(&self.api_key)
+            .headers(self.provider_headers.clone())
+            .json(&body)
+            .send()
+            .await
+            .map_err(|error| Error::Other(format!("native micro-compaction request: {error}")))?;
+        if !response.status().is_success() {
+            let status = response.status();
+            let text = response.text().await.unwrap_or_default();
+            return Err(Error::Other(format!(
+                "native micro-compaction HTTP {status}: {}",
+                text.chars().take(300).collect::<String>()
+            )));
+        }
+        let response: Value = response
+            .json()
+            .await
+            .map_err(|error| Error::Other(format!("native micro-compaction decode: {error}")))?;
+        self.capture_usage(crate::provider_usage::from_response(
+            &response,
+            crate::provider_usage::ApiMode::ChatCompletions,
+            Some(self.provider_name()),
+        ));
+        let choice = response.get("choices").and_then(|choices| choices.get(0));
+        if choice
+            .and_then(|choice| choice.get("finish_reason"))
+            .and_then(Value::as_str)
+            == Some("length")
+        {
+            return Ok(None);
+        }
+        let Some(message) = choice.and_then(|choice| choice.get("message")) else {
+            return Err(Error::Other(
+                "native micro-compaction response has no choices[0].message".into(),
+            ));
+        };
+        if message
+            .get("tool_calls")
+            .and_then(Value::as_array)
+            .is_some_and(|calls| !calls.is_empty())
+        {
+            return Ok(None);
+        }
+        let answer = message
+            .get("content")
+            .and_then(Value::as_str)
+            .and_then(crate::visible_response::answer)
+            .map(|answer| crate::compression_redact::redact(&answer));
+        Ok(answer.filter(|answer| !answer.trim().is_empty()))
+    }
+
+    async fn micro_compact_after_turn(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        reply: &str,
+        succeeded: bool,
+    ) {
+        let policy = &self.automatic_compression_policy;
+        let (Some(database), Some(holder)) = (context.database, context.turn_lease_holder) else {
+            return;
+        };
+        if !policy.micro_compact || !succeeded || reply.is_empty() {
+            return;
+        }
+        let session_id = crate::session_db::message_session_id(msg);
+        let snapshot = match database.load_compression_snapshot(&session_id) {
+            Ok(snapshot) => snapshot,
+            Err(error) => {
+                tracing::debug!(%error, %session_id, "micro-compaction snapshot failed open");
+                return;
+            }
+        };
+        let protect_head = match database.has_compression_checkpoint(&session_id) {
+            Ok(true) => 0,
+            Ok(false) => policy.protect_first_n,
+            Err(error) => {
+                tracing::debug!(%error, %session_id, "micro-compaction checkpoint read failed open");
+                return;
+            }
+        };
+        let output_cap = self
+            .output_cap
+            .as_ref()
+            .and_then(crate::python_value::integer)
+            .and_then(|value| value.as_u64())
+            .filter(|value| *value > 0)
+            .or_else(|| {
+                self.provider_profile
+                    .as_ref()
+                    .and_then(|profile| profile.default_max_tokens)
+                    .and_then(|value| u64::try_from(value).ok())
+                    .filter(|value| *value > 0)
+            });
+        let threshold = policy.compute_effective_threshold_with_output_for(
+            self.context_length,
+            output_cap,
+            Some(&self.model),
+        );
+        let tail_budget = policy.tail_token_budget(self.context_length, threshold);
+        let charge_all_thinking = self.reasoning_echo
+            || crate::reasoning_replay::needs_echo(
+                self.provider_name(),
+                &self.model,
+                &self.base_url,
+            );
+        let work = {
+            let mut state = self.micro_compaction_state.lock().unwrap();
+            crate::micro_compaction::prepare(
+                &snapshot.messages,
+                crate::micro_compaction::MicroCompactionConfig {
+                    protect_head,
+                    protect_last: policy.protect_last_n,
+                    tail_token_budget: tail_budget,
+                    charge_all_thinking,
+                    every_n_turns: policy.micro_compact_every_n_turns,
+                    defrag_threshold_tokens: policy.micro_compact_defrag_threshold_tokens,
+                },
+                &mut state,
+            )
+        };
+        let Some(work) = work else {
+            return;
+        };
+        let (existing_summary, exchange_text) = match &work {
+            crate::micro_compaction::MicroCompactionWork::Summarize {
+                existing_summary,
+                exchange_text,
+                ..
+            } => (existing_summary.as_str(), exchange_text.as_str()),
+            crate::micro_compaction::MicroCompactionWork::Defrag { old_summary, .. } => {
+                ("", old_summary.as_str())
+            }
+        };
+        let prompt = crate::micro_compaction::build_prompt(existing_summary, exchange_text);
+        let mut auxiliary = self.clone();
+        auxiliary.usage_bucket = UsageBucket::Auxiliary;
+        auxiliary.begin_auxiliary_usage();
+        let summary = match auxiliary.micro_summary_request(&prompt).await {
+            Ok(Some(summary)) => summary,
+            Ok(None) => {
+                let usage = auxiliary.take_auxiliary_usage();
+                auxiliary.record_compression_usage(Some(database), &session_id, &usage);
+                crate::micro_compaction::record_failure(
+                    &mut self.micro_compaction_state.lock().unwrap(),
+                    &work,
+                );
+                return;
+            }
+            Err(error) => {
+                let usage = auxiliary.take_auxiliary_usage();
+                auxiliary.record_compression_usage(Some(database), &session_id, &usage);
+                crate::micro_compaction::record_failure(
+                    &mut self.micro_compaction_state.lock().unwrap(),
+                    &work,
+                );
+                tracing::debug!(%error, %session_id, "micro-compaction auxiliary call failed open");
+                return;
+            }
+        };
+        let usage = auxiliary.take_auxiliary_usage();
+        auxiliary.record_compression_usage(Some(database), &session_id, &usage);
+        let Some(publication) =
+            crate::micro_compaction::build_publication(&snapshot.messages, &work, &summary)
+        else {
+            crate::micro_compaction::record_failure(
+                &mut self.micro_compaction_state.lock().unwrap(),
+                &work,
+            );
+            return;
+        };
+        match database.publish_gateway_micro_compaction(
+            &crate::session_db::GatewayMicroCompactionPublish {
+                session_id: &session_id,
+                original_messages: &snapshot.messages,
+                rows: &publication.rows,
+                turn_lease_holder: holder,
+            },
+        ) {
+            Ok(true) => {
+                crate::micro_compaction::commit_success(
+                    &mut self.micro_compaction_state.lock().unwrap(),
+                    &publication,
+                );
+                tracing::info!(%session_id, "native micro-compaction committed");
+            }
+            Ok(false) => {
+                tracing::debug!(%session_id, "stale native micro-compaction discarded");
+            }
+            Err(error) => {
+                tracing::warn!(%error, %session_id, "micro-compaction commit failed open");
+            }
+        }
     }
 
     fn tool_request_pressure(
@@ -1081,22 +1336,8 @@ impl AgentClient for NativeAgentClient {
         )
         .await?;
         let usage = summary_client.take_auxiliary_usage();
-        if usage.request_count > 0 {
-            if let Some(database) = context.database {
-                let session_id = crate::session_db::message_session_id(msg);
-                let route = crate::session_db::UsageRoute {
-                    model: &summary_client.model,
-                    provider: summary_client.provider_name(),
-                    base_url: &summary_client.base_url,
-                    billing_mode: "",
-                };
-                if let Err(error) =
-                    database.record_auxiliary_usage(&session_id, "compression", &route, &usage)
-                {
-                    tracing::warn!(%error, %session_id, "compression usage persistence failed");
-                }
-            }
-        }
+        let session_id = crate::session_db::message_session_id(msg);
+        summary_client.record_compression_usage(context.database, &session_id, &usage);
         match step {
             Step::Final(summary) => Ok((!summary.trim().is_empty()).then(|| summary.trim().into())),
             Step::ToolCalls { .. } => Err(Error::Other(
@@ -1177,6 +1418,8 @@ impl AgentClient for NativeAgentClient {
                 }
             }
         }
+        self.micro_compact_after_turn(context, msg, reply, succeeded)
+            .await;
         let pending = self.pending_memory_turn.lock().unwrap().take();
         let Some(mut pending) = pending.filter(|_| succeeded && !reply.is_empty()) else {
             return Ok(());
@@ -1593,6 +1836,7 @@ mod tests {
                         reasoning_details: None,
                         codex_reasoning_items: None,
                         codex_message_items: None,
+                        compressed_summary: false,
                     },
                     crate::session_db::CompressionHistoryMessage {
                         id: 2,
@@ -1609,6 +1853,7 @@ mod tests {
                         reasoning_details: None,
                         codex_reasoning_items: None,
                         codex_message_items: None,
+                        compressed_summary: false,
                     },
                 ],
                 Some("database state"),
@@ -1625,6 +1870,268 @@ mod tests {
         assert!(prompt.contains("original question"));
         assert!(prompt.contains("FOCUS TOPIC: \"database state\""));
         assert!(!prompt.contains("ordinary frozen prompt"));
+    }
+
+    #[tokio::test]
+    async fn post_turn_micro_compaction_publishes_before_the_next_provider_request() {
+        use crate::agent::AgentClient;
+        use crate::native_tools::ChatModel;
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+
+        let root = std::env::temp_dir().join(format!(
+            "hermes-native-micro-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = Arc::new(crate::session_db::SessionDb::open(root.join("state.db")).unwrap());
+        database
+            .ensure_session("micro-live", "local", None, None, None)
+            .unwrap();
+        database
+            .append_message("micro-live", "user", "question 0")
+            .unwrap();
+        let tool_calls = json!([{"id":"micro-call","type":"function","function":{
+            "name":"terminal","arguments":"{\"command\":\"pwd\"}"
+        }}])
+        .to_string();
+        database
+            .append_message_with(
+                "micro-live",
+                "assistant",
+                "",
+                &crate::session_db::AppendOptions {
+                    tool_calls: Some(&tool_calls),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        database
+            .append_message_with(
+                "micro-live",
+                "tool",
+                "unique archived tool payload",
+                &crate::session_db::AppendOptions {
+                    tool_call_id: Some("micro-call"),
+                    tool_name: Some("terminal"),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        database
+            .append_message("micro-live", "assistant", "absorbed answer 0")
+            .unwrap();
+        for index in 1..5 {
+            database
+                .append_message("micro-live", "user", &format!("question {index}"))
+                .unwrap();
+            database
+                .append_message(
+                    "micro-live",
+                    "assistant",
+                    &format!("absorbed answer {index}"),
+                )
+                .unwrap();
+        }
+        let holder = "micro-live-holder";
+        assert!(database
+            .try_acquire_session_turn_lease("micro-live", holder, 60.0)
+            .unwrap());
+
+        let captures = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = captures.clone();
+        let observed_database = database.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                let call = {
+                    let mut captures = captured.lock().unwrap();
+                    captures.push(body.clone());
+                    captures.len()
+                };
+                let database = observed_database.clone();
+                async move {
+                    if call == 1 {
+                        let durable = database.load_lifecycle_messages("micro-live").unwrap();
+                        assert_eq!(durable.last().unwrap()["content"], "absorbed answer 4");
+                        assert!(body["messages"][1]["content"]
+                            .as_str()
+                            .unwrap()
+                            .contains("Next Exchange to Merge"));
+                        assert!(body.get("tools").is_none());
+                        assert_eq!(body["temperature"], 0.1);
+                        assert_eq!(body["max_tokens"], 1_500);
+                        Json(json!({
+                            "choices":[{"finish_reason":"stop","message":{
+                                "role":"assistant",
+                                "content":"<think>private</think>rolling safe summary"
+                            }}],
+                            "usage":{"prompt_tokens":19,"completion_tokens":7,"total_tokens":26}
+                        }))
+                    } else {
+                        Json(json!({"choices":[{"finish_reason":"stop","message":{
+                            "role":"assistant","content":"next answer"
+                        }}]}))
+                    }
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+
+        let policy = crate::automatic_compression::AutomaticCompressionPolicy {
+            micro_compact: true,
+            protect_first_n: 1,
+            protect_last_n: 2,
+            ..Default::default()
+        };
+        let client = super::NativeAgentClient::new("fixture", "key", format!("http://{address}"))
+            .unwrap()
+            .with_automatic_compression_policy(policy);
+        let message = Message {
+            resolved_session_id: Some("micro-live".into()),
+            platform: hermes_core::Platform::Cli,
+            channel_id: "channel".into(),
+            sender_id: "user".into(),
+            text: "question 4".into(),
+            content_parts: None,
+            chat_type: Some("dm".into()),
+            audio_paths: Vec::new(),
+            video_paths: Vec::new(),
+            workspace_id: None,
+            message_id: None,
+            thread_id: None,
+        };
+        let context = crate::agent::TurnContext::from_database(Some(&database))
+            .with_turn_lease_holder(Some(holder));
+        client
+            .finalize_turn_after_persist(context, &message, "absorbed answer 4", true)
+            .await
+            .unwrap();
+
+        let active = database.load_compression_snapshot("micro-live").unwrap();
+        assert_eq!(
+            active
+                .messages
+                .iter()
+                .filter(|message| message.compressed_summary)
+                .count(),
+            1
+        );
+        let marker = active
+            .messages
+            .iter()
+            .find(|message| message.compressed_summary)
+            .unwrap();
+        assert!(marker.message.content.contains("rolling safe summary"));
+        assert!(!marker.message.content.contains("private"));
+        assert_eq!(database.search("absorbed", 50).unwrap().len(), 5);
+        assert_eq!(database.search("question", 50).unwrap().len(), 5);
+        assert_eq!(database.search("payload", 50).unwrap().len(), 1);
+
+        database
+            .append_message("micro-live", "user", "question 5")
+            .unwrap();
+        let replay = database.load_lifecycle_messages("micro-live").unwrap();
+        let step = client
+            .step(
+                &replay,
+                &[json!({"type":"function","function":{
+                    "name":"current_time","parameters":{"type":"object"}
+                }})],
+            )
+            .await
+            .unwrap();
+        assert!(
+            matches!(step, crate::native_tools::Step::Final(ref text) if text == "next answer")
+        );
+        let captures = captures.lock().unwrap();
+        assert_eq!(captures.len(), 2);
+        let next_messages = captures[1]["messages"].as_array().unwrap();
+        assert!(next_messages.iter().any(|row| row["content"]
+            .as_str()
+            .is_some_and(|content| content.contains("rolling safe summary"))));
+        assert!(!next_messages
+            .iter()
+            .any(|row| row["content"] == "absorbed answer 0"));
+        drop(captures);
+        let conn = rusqlite::Connection::open(root.join("state.db")).unwrap();
+        let compression_requests = conn
+            .query_row(
+                "SELECT api_call_count FROM session_model_usage
+                 WHERE session_id='micro-live' AND task='compression'",
+                [],
+                |row| row.get::<_, i64>(0),
+            )
+            .unwrap();
+        assert_eq!(compression_requests, 1);
+        drop(conn);
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn micro_summary_rejects_partial_and_reasoning_only_responses() {
+        use axum::{routing::post, Json, Router};
+        use serde_json::{json, Value};
+        use std::sync::{Arc, Mutex};
+
+        let calls = Arc::new(Mutex::new(0_usize));
+        let observed = calls.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                assert!(body.get("tools").is_none());
+                let call = {
+                    let mut calls = observed.lock().unwrap();
+                    let call = *calls;
+                    *calls += 1;
+                    call
+                };
+                async move {
+                    if call == 0 {
+                        Json(json!({"choices":[{"finish_reason":"length","message":{
+                            "role":"assistant","content":"partial summary"
+                        }}]}))
+                    } else {
+                        Json(json!({"choices":[{"finish_reason":"stop","message":{
+                            "role":"assistant","content":"<think>reasoning only</think>"
+                        }}]}))
+                    }
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        let _server = Server(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let client =
+            super::NativeAgentClient::new("fixture", "key", format!("http://{address}")).unwrap();
+        let prompt = crate::micro_compaction::build_prompt("", "exchange");
+        assert_eq!(client.micro_summary_request(&prompt).await.unwrap(), None);
+        assert_eq!(client.micro_summary_request(&prompt).await.unwrap(), None);
+        assert_eq!(*calls.lock().unwrap(), 2);
     }
 
     #[tokio::test]
@@ -1726,6 +2233,7 @@ mod tests {
                     reasoning_details: None,
                     codex_reasoning_items: None,
                     codex_message_items: None,
+                    compressed_summary: false,
                 }],
                 None,
             )

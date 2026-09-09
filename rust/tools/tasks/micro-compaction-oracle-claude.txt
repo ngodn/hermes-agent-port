@@ -1,0 +1,23 @@
+You are one helper on a coordinated Rust port. Work only in these new files:
+
+- rust/tools/micro-compaction-oracle.py
+- rust/tools/micro-compaction-goldens.json
+- rust/analysis/micro-compaction-oracle-claude.md
+
+Do not edit Rust source, PORT.md, INDEX.md, existing tests, or any other file. Do not run another helper.
+
+Build a deterministic source-executed oracle for the Python ContextCompressor micro-compaction state machine in agent/context_compressor.py. Call the real implementation, patch only the auxiliary summarizer and any time or persistence dependencies needed for deterministic pure execution, and emit JSON-compatible input, per-pass output, and observable compressor state. Cover at least:
+
+- disabled and short transcript no-ops
+- every-N-turn cadence
+- exactly one complete assistant/tool exchange absorbed per due pass
+- protected head and token-selected tail preservation
+- cumulative marker supersession while retaining every user byte and strict role alternation
+- cursor relocation after tool-bearing splices
+- resume rehydration from a micro marker and failed-rehydration preservation
+- bounded repeated-summary failure and poison-exchange cursor skip
+- defrag success, defrag failure, and batch-marker non-rewrite
+- marker rendering and rolling-summary extraction
+- stale api_content removal when adjacent user turns merge
+
+Use the actual Python constants and methods. No timestamps, random data, absolute paths, network, or credentials may enter the golden. Include a --check mode that re-derives and compares the checked-in corpus. Run the generator and directly relevant Python micro-compaction tests. In the report, cite exact authoritative local functions and record test output. Do not use em dashes.

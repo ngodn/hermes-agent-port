@@ -28,6 +28,9 @@ pub const DEFAULT_MAX_ATTEMPTS: u32 = 3;
 pub const DEFAULT_PROACTIVE_PRUNE_TOKENS: u64 = 0;
 pub const DEFAULT_PROACTIVE_PRUNE_MIN_RESULT_CHARS: usize = 8_000;
 pub const DEFAULT_PROACTIVE_PRUNE_MIN_RECLAIM_TOKENS: u64 = 4_096;
+pub const DEFAULT_MICRO_COMPACT: bool = false;
+pub const DEFAULT_MICRO_COMPACT_EVERY_N_TURNS: usize = 1;
+pub const DEFAULT_MICRO_COMPACT_DEFRAG_THRESHOLD_TOKENS: u64 = 2_000;
 
 /// Minimum valid value for `max_attempts`.
 pub const MIN_MAX_ATTEMPTS: u32 = 1;
@@ -70,6 +73,14 @@ pub struct AutomaticCompressionPolicy {
     pub proactive_prune_min_result_chars: usize,
     /// Minimum estimated savings required before a cache-breaking prune commits.
     pub proactive_prune_min_reclaim_tokens: u64,
+    /// Opt-in rolling post-turn compaction. Disabled when checkpoint-required
+    /// policy is armed because this path has no memory checkpoint hook yet.
+    pub micro_compact: bool,
+    /// Completed-turn cadence between rolling compaction attempts.
+    pub micro_compact_every_n_turns: usize,
+    /// Rolling-summary size that makes the next pass rewrite the summary
+    /// instead of absorbing another exchange.
+    pub micro_compact_defrag_threshold_tokens: u64,
 }
 
 impl Default for AutomaticCompressionPolicy {
@@ -87,6 +98,9 @@ impl Default for AutomaticCompressionPolicy {
             proactive_prune_tokens: DEFAULT_PROACTIVE_PRUNE_TOKENS,
             proactive_prune_min_result_chars: DEFAULT_PROACTIVE_PRUNE_MIN_RESULT_CHARS,
             proactive_prune_min_reclaim_tokens: DEFAULT_PROACTIVE_PRUNE_MIN_RECLAIM_TOKENS,
+            micro_compact: DEFAULT_MICRO_COMPACT,
+            micro_compact_every_n_turns: DEFAULT_MICRO_COMPACT_EVERY_N_TURNS,
+            micro_compact_defrag_threshold_tokens: DEFAULT_MICRO_COMPACT_DEFRAG_THRESHOLD_TOKENS,
         }
     }
 }
@@ -200,6 +214,25 @@ impl AutomaticCompressionPolicy {
             .max(0),
         )
         .unwrap_or(u64::MAX);
+        let checkpoint_required = parse_truthy_value(map.get("checkpoint_required"), false);
+        let micro_compact = parse_truthy_value(map.get("micro_compact"), DEFAULT_MICRO_COMPACT)
+            && !checkpoint_required;
+        let micro_compact_every_n_turns = usize::try_from(
+            parse_prune_integer(
+                map.get("micro_compact_every_n_turns"),
+                DEFAULT_MICRO_COMPACT_EVERY_N_TURNS as i128,
+            )
+            .max(1),
+        )
+        .unwrap_or(usize::MAX);
+        let micro_compact_defrag_threshold_tokens = u64::try_from(
+            parse_prune_integer(
+                map.get("micro_compact_defrag_threshold_tokens"),
+                DEFAULT_MICRO_COMPACT_DEFRAG_THRESHOLD_TOKENS as i128,
+            )
+            .max(1),
+        )
+        .unwrap_or(u64::MAX);
 
         Self {
             enabled,
@@ -214,6 +247,9 @@ impl AutomaticCompressionPolicy {
             proactive_prune_tokens,
             proactive_prune_min_result_chars,
             proactive_prune_min_reclaim_tokens,
+            micro_compact,
+            micro_compact_every_n_turns,
+            micro_compact_defrag_threshold_tokens,
         }
     }
 
@@ -418,6 +454,20 @@ fn parse_enabled(raw: Option<&Value>, default: bool) -> bool {
             matches!(s.trim().to_ascii_lowercase().as_str(), "true" | "1" | "yes")
         }
         _ => false,
+    }
+}
+
+fn parse_truthy_value(raw: Option<&Value>, default: bool) -> bool {
+    match raw {
+        None | Some(Value::Null) => default,
+        Some(Value::Bool(value)) => *value,
+        Some(Value::String(value)) => matches!(
+            value.trim().to_ascii_lowercase().as_str(),
+            "1" | "true" | "yes" | "on"
+        ),
+        Some(Value::Number(value)) => value.as_f64().is_some_and(|value| value != 0.0),
+        Some(Value::Array(value)) => !value.is_empty(),
+        Some(Value::Object(value)) => !value.is_empty(),
     }
 }
 
@@ -1040,6 +1090,33 @@ mod tests {
         assert_eq!(malformed.proactive_prune_tokens, 0);
         assert_eq!(malformed.proactive_prune_min_result_chars, 8_000);
         assert_eq!(malformed.proactive_prune_min_reclaim_tokens, 4_096);
+    }
+
+    #[test]
+    fn micro_compaction_config_matches_python_coercion_and_checkpoint_gate() {
+        let enabled = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "micro_compact": "on",
+            "micro_compact_every_n_turns": "5",
+            "micro_compact_defrag_threshold_tokens": 4096.0
+        }}));
+        assert!(enabled.micro_compact);
+        assert_eq!(enabled.micro_compact_every_n_turns, 5);
+        assert_eq!(enabled.micro_compact_defrag_threshold_tokens, 4_096);
+
+        let malformed = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "micro_compact": 2,
+            "micro_compact_every_n_turns": true,
+            "micro_compact_defrag_threshold_tokens": -20
+        }}));
+        assert!(malformed.micro_compact);
+        assert_eq!(malformed.micro_compact_every_n_turns, 1);
+        assert_eq!(malformed.micro_compact_defrag_threshold_tokens, 1);
+
+        let checkpointed = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "micro_compact": true,
+            "checkpoint_required": true
+        }}));
+        assert!(!checkpointed.micro_compact);
     }
 
     #[test]

@@ -1,5 +1,47 @@
 # Hermes Rust rewrite
 
+## Native micro-compaction checkpoint: 2026-09-09
+
+Opt-in rolling micro-compaction now runs on the native conversation client
+after a successful assistant reply is durable, before external-memory
+completion and before the next provider request. A due pass makes at most one
+tool-free auxiliary call. It absorbs one complete assistant/tool exchange,
+preserves every user byte, keeps tool groups whole, advances past poison
+exchanges after three failures, rehydrates cumulative state on resume, and
+defragments only a proven-contained marker.
+
+The auxiliary boundary uses bounded Python-compatible exchange serialization,
+secret and media-directive redaction, reasoning removal, a 1,500-token ceiling,
+provider-aware temperature rules, and `compression` usage attribution. Empty,
+reasoning-only, tool-calling, and length-truncated outputs are discarded. The
+configuration remains disabled by default and is forcibly disabled when
+checkpoint-required policy is armed.
+
+SQLite publication runs in one immediate transaction after provider I/O. It
+requires the exact active snapshot and unexpired lineage turn lease, validates
+the complete candidate sequence, clones retained wide rows byte-exact, keeps
+absorbed assistant/tool originals searchable, hides carried-forward duplicate
+originals, persists the summary marker, and reconciles counters. An injected
+failure proves the entire rewrite rolls back. A live HTTP and SQLite test proves
+persistence-before-summary, one-call behavior, search semantics, usage
+attribution, and marker adoption on the next provider request.
+
+Claude produced only the 21-case source-executed Python oracle. AGY ran once
+behind its exclusive auth lock and produced only the runtime contract map. The
+primary lane owned production code, integration, corrections, validation,
+documentation, and publication. The full disposition is recorded in
+[native-micro-compaction-resolution.md](analysis/native-micro-compaction-resolution.md).
+
+Validation is **1,647 Rust tests passed, two ignored**, plus **249 selected
+Python tests passed, one skipped**. Oracle regeneration, formatting, Clippy with
+warnings denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **46.75
+points, reported as about 47%** (judgment range 45% to 49%). The next
+compression seam is same-turn LLM summary compression, followed by remaining
+tail anchors, configurable auxiliary summary caps, routing/fallback,
+checkpoints, notifications, overflow recovery, and structural backoff. Native
+plugin, memory, tool, provider, and platform breadth remain the larger port.
+
 ## Native token-budget compression checkpoint: 2026-09-09
 
 Native full compression now runs Python-compatible deterministic Phase 1

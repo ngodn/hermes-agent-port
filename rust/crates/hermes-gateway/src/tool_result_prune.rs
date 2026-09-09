@@ -1602,6 +1602,7 @@ mod tests {
             reasoning_details: None,
             codex_reasoning_items: None,
             codex_message_items: None,
+            compressed_summary: false,
         }
     }
 
@@ -2122,6 +2123,9 @@ mod tests {
             reasoning_details: raw_json("reasoning_details"),
             codex_reasoning_items: raw_json("codex_reasoning_items"),
             codex_message_items: raw_json("codex_message_items"),
+            compressed_summary: value
+                .get("_compressed_summary")
+                .is_some_and(crate::python_value::truthy),
         }
     }
 

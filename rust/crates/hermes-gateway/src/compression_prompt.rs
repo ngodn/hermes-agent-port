@@ -113,6 +113,7 @@ mod tests {
             reasoning_details: None,
             codex_reasoning_items: None,
             codex_message_items: None,
+            compressed_summary: false,
         }
     }
 

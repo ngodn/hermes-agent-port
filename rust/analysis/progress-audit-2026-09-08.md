@@ -1,8 +1,8 @@
-# Full Rust port progress audit, 2026-09-08
+# Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **46.20% of the full native replacement**, reported as
-**about 46%**, with a reasonable judgment range of **44% to 49%**. This
-supersedes the 45.60-point estimate recorded after same-turn proactive pruning
+Current estimate: **46.75% of the full native replacement**, reported as
+**about 47%**, with a reasonable judgment range of **45% to 49%**. This
+supersedes the 46.20-point estimate recorded after token-budget compression
 landed.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
@@ -20,11 +20,11 @@ audits.
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 64% | 22.40 |
 | Tool runtime and RPC | 30% | 13% | 3.90 |
-| State and search | 15% | 70% | 10.50 |
-| Native agent core | 20% | 47% | 9.40 |
-| Total | 100% | | **46.20** |
+| State and search | 15% | 71% | 10.65 |
+| Native agent core | 20% | 49% | 9.80 |
+| Total | 100% | | **46.75** |
 
-`0.35 * 64 + 0.30 * 13 + 0.15 * 70 + 0.20 * 47 = 46.20`
+`0.35 * 64 + 0.30 * 13 + 0.15 * 71 + 0.20 * 49 = 46.75`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -63,7 +63,7 @@ Terminal, file, browser, web, MCP, execution-environment backends, approval
 runtime, delegation execution, most service tools, plugin discovery/management,
 and full backend RPC account for most of this weighted area and remain.
 
-### State and search, 70%
+### State and search, 71%
 
 SQLite history, structured content replay, FTS foundations, route persistence,
 legacy recovery, peer ownership, lineage, conversation generations, prompt
@@ -85,12 +85,19 @@ every wide column, rewrites only candidate content/tool arguments, merges the
 durable rearm watermark, and checks the exact snapshot plus turn lease before
 commit.
 
+Post-turn micro-compaction now has its own guarded in-place publication. It
+requires the live lineage turn lease and exact active snapshot, preserves wide
+columns through SQL cloning, keeps absorbed assistant/tool rows searchable,
+hides carried-forward duplicate originals, persists the summary marker, and
+reconciles live counters atomically. An injected insert failure proves the
+archive, clones, marker, and counters roll back together.
+
 Full schema and migration parity, session search projection, archive/pin/read
 state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 47%
+### Native agent core, 49%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -124,18 +131,29 @@ SQLite publication path. A source-executed Python corpus proves 17 estimator,
 14 prune, and 3 tail-cut cases, while a live oversized-tool test proves the
 rewrite commits before the triggering turn.
 
-Micro-compaction, same-turn LLM summary compression, exact synthetic-user and
-multi-user tail anchors, auxiliary summary model routing, provider failover and
-credential retry loops,
-delegation/subagents, full approval/clarification flows, memory and plugin
-managers, skill execution, context invalidation policy, and several agent-loop
-recovery behaviors remain. These are large behavioral systems, which is why the
+Opt-in rolling micro-compaction now runs after the completed assistant reply is
+durable and before external-memory completion or the next provider request. It
+absorbs one complete assistant/tool exchange per due pass while preserving all
+user bytes, rehydrates cumulative state on resume, supersedes only contained
+markers, skips a poison exchange after three failures, and gives one-call
+defragmentation priority when the rolling summary grows too large. Its bounded,
+redacted auxiliary request rejects truncated, empty, tool-call, and
+reasoning-only output. A source-executed Python oracle covers 21 state-machine
+scenarios, and a live HTTP plus SQLite test proves post-persist ordering,
+search semantics, auxiliary usage attribution, and next-request adoption.
+
+Same-turn LLM summary compression, exact synthetic-user and multi-user tail
+anchors, configurable auxiliary summary caps, auxiliary model routing and
+fallback, provider failover and credential retry loops, delegation/subagents,
+full approval/clarification flows, memory and plugin managers, skill execution,
+context invalidation policy, and several agent-loop recovery behaviors remain.
+These are large behavioral systems, which is why the
 core score remains low despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,633 passing Rust tests and two expected ignores
-(1,632 gateway plus one core test).
+The workspace currently has 1,647 passing Rust tests and two expected ignores
+(1,646 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -143,11 +161,11 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,633 passed, two ignored (1,632 gateway plus one core).
-- Selected Python compression estimator, pruning, tail-selection, and replay
-  accounting contract: 200 passed.
-- Source-executed differential corpus: 17 estimator, 14 pruning, and 3
-  tail-selection cases.
+- Full Rust workspace: 1,647 passed, two ignored (1,646 gateway plus one core).
+- Selected Python compression and micro-compaction contracts: 249 passed, one
+  skipped.
+- Source-executed differential corpora: 17 estimator, 14 pruning, 3
+  tail-selection, and 21 micro-compaction state-machine cases.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
 - The lower end of the range assumes native extension-host functionality earns
   little tool-runtime credit until managers and built-ins use it broadly.
@@ -156,9 +174,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Micro-compaction, same-turn full compression, exact remaining tail anchors,
-   auxiliary model policy, and checkpoint hooks complete the current
-   compression cluster.
+1. Same-turn full compression, exact remaining tail anchors, auxiliary model
+   routing/fallback, and checkpoint hooks complete the current compression
+   cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the

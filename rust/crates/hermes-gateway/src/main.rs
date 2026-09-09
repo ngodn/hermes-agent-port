@@ -90,6 +90,7 @@ mod memory_status;
 mod message;
 mod message_repair;
 mod message_timestamps;
+mod micro_compaction;
 mod mime_types;
 mod mirror;
 mod models_dev;

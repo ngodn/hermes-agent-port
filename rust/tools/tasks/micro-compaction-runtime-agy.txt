@@ -1,0 +1,19 @@
+You are one helper on a coordinated Rust port. This is a read-only source-mapping lane. Create exactly one new report:
+
+- rust/analysis/micro-compaction-runtime-agy.md
+
+Do not edit Rust source, PORT.md, INDEX.md, tests, tools, or any other file. Do not run another helper.
+
+Trace the complete Python production path for opt-in micro-compaction and defragmentation. Focus on facts the primary implementer needs for a native Rust port:
+
+- config parsing, coercion, defaults, checkpoint-required incompatibility, and where state is attached
+- post-turn call ordering relative to assistant persistence, external-memory finalization, delivery, and the next provider request
+- one-aux-call-per-pass behavior, model selection, request shape, finish_reason and empty-output rejection, think-block stripping, and usage task attribution
+- exact protected head/tail and exchange eligibility rules, cursor/cadence/failure state, resume rehydration, supersession, user-byte and role-alternation invariants
+- defrag trigger and marker rewrite constraints
+- SQLite archive_and_compact semantics, active/compacted flags, wide-column fidelity, counter reconciliation, failure behavior, and concurrency authority
+- prompt-cache consequences and what must happen before the next provider call
+- the safest existing Rust ownership and publication seams, naming exact files, types, and methods
+- directly relevant Python tests and any parity traps or deliberately deferred behavior
+
+Use only current local source as authority. Distinguish verified behavior from recommendations. Keep the report concise but complete, and do not use em dashes.
