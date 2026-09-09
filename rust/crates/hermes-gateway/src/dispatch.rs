@@ -1397,6 +1397,7 @@ mod tests {
         struct PressureAgent {
             turns: Arc<AtomicUsize>,
             summaries: Arc<AtomicUsize>,
+            checkpoints: Arc<AtomicUsize>,
         }
         #[async_trait]
         impl crate::agent::AgentClient for PressureAgent {
@@ -1447,6 +1448,44 @@ mod tests {
                     .all(|message| !message.message.content.starts_with("turn 3")));
                 Ok(Some("## Goal\nContinue the active task.".into()))
             }
+
+            async fn prepare_pre_compression_checkpoint(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &Message,
+                history: &[crate::session_db::CompressionHistoryMessage],
+                require_checkpoint: bool,
+            ) -> Result<crate::agent::PreCompressionCheckpoint> {
+                assert!(require_checkpoint);
+                self.checkpoints.fetch_add(1, Ordering::SeqCst);
+                assert_eq!(history.len(), 8);
+                assert!(history
+                    .iter()
+                    .all(|message| !message.message.content.starts_with("turn 4")));
+                Ok(crate::agent::PreCompressionCheckpoint {
+                    checkpoint_supported: true,
+                    memory_context: Some("provider checkpoint facts".into()),
+                })
+            }
+
+            async fn summarize_context_with_memory(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &Message,
+                history: &[crate::session_db::CompressionHistoryMessage],
+                _: Option<&str>,
+                memory_context: Option<&str>,
+            ) -> Result<Option<String>> {
+                assert_eq!(
+                    self.checkpoints.load(Ordering::SeqCst),
+                    1,
+                    "checkpoint must finish before automatic summary I/O"
+                );
+                self.summaries.fetch_add(1, Ordering::SeqCst);
+                assert_eq!(history.len(), 2);
+                assert_eq!(memory_context, Some("provider checkpoint facts"));
+                Ok(Some("## Goal\nContinue the active task.".into()))
+            }
         }
 
         let home = std::env::temp_dir().join(format!(
@@ -1472,9 +1511,11 @@ mod tests {
         );
         let turns = Arc::new(AtomicUsize::new(0));
         let summaries = Arc::new(AtomicUsize::new(0));
+        let checkpoints = Arc::new(AtomicUsize::new(0));
         let agent = Arc::new(PressureAgent {
             turns: turns.clone(),
             summaries: summaries.clone(),
+            checkpoints: checkpoints.clone(),
         });
         let dead = Arc::new(crate::dead_targets::DeadTargetRegistry::new(
             home.join("dead.json"),
@@ -1484,7 +1525,8 @@ mod tests {
             "protect_first_n": 2,
             "protect_last_n": 2,
             "max_attempts": 1,
-            "in_place": false
+            "in_place": false,
+            "checkpoint_required": true
         }});
         let mut dispatcher = Dispatcher::with_deps(agent, Arc::new(config), dead, None, None);
         let sent = Arc::new(Mutex::new(Vec::new()));
@@ -1507,6 +1549,7 @@ mod tests {
         assert_ne!(child, parent);
         assert_eq!(turns.load(Ordering::SeqCst), 5);
         assert_eq!(summaries.load(Ordering::SeqCst), 1);
+        assert_eq!(checkpoints.load(Ordering::SeqCst), 1);
         let db = store
             .database_for_key(&store.session_key_for_source(&source))
             .unwrap();

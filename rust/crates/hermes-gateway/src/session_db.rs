@@ -129,6 +129,64 @@ pub struct CompressionHistoryMessage {
     pub compressed_summary: bool,
 }
 
+impl CompressionHistoryMessage {
+    /// Reconstruct the raw active transcript shape used by lifecycle hooks.
+    /// This intentionally keeps clean and API content separate and retains
+    /// tool/reasoning metadata. Display-only database columns stay private.
+    pub fn lifecycle_value(&self) -> Value {
+        let mut message = serde_json::Map::new();
+        message.insert("role".into(), Value::String(self.message.role.clone()));
+        message.insert("content".into(), self.message.model_content());
+        if let Some(api_content) = &self.message.api_content {
+            message.insert("api_content".into(), Value::String(api_content.clone()));
+        }
+        if let Some(tool_call_id) = &self.tool_call_id {
+            message.insert("tool_call_id".into(), Value::String(tool_call_id.clone()));
+        }
+        if let Some(tool_calls) = &self.tool_calls {
+            message.insert(
+                "tool_calls".into(),
+                serde_json::from_str(tool_calls)
+                    .unwrap_or_else(|_| Value::String(tool_calls.clone())),
+            );
+        }
+        if let Some(tool_name) = &self.tool_name {
+            message.insert("name".into(), Value::String(tool_name.clone()));
+            message.insert("tool_name".into(), Value::String(tool_name.clone()));
+        }
+        if let Some(effect_disposition) = &self.effect_disposition {
+            message.insert(
+                "effect_disposition".into(),
+                Value::String(effect_disposition.clone()),
+            );
+        }
+        if self.compressed_summary {
+            message.insert("_compressed_summary".into(), Value::Bool(true));
+        }
+        if self.message.role == "assistant" {
+            for (key, value) in [
+                ("finish_reason", self.finish_reason.as_ref()),
+                ("reasoning", self.reasoning.as_ref()),
+                ("reasoning_content", self.reasoning_content.as_ref()),
+            ] {
+                if let Some(value) = value {
+                    message.insert(key.into(), Value::String(value.clone()));
+                }
+            }
+            for (key, raw) in [
+                ("reasoning_details", self.reasoning_details.as_ref()),
+                ("codex_reasoning_items", self.codex_reasoning_items.as_ref()),
+                ("codex_message_items", self.codex_message_items.as_ref()),
+            ] {
+                if let Some(raw) = raw {
+                    message.insert(key.into(), serde_json::from_str(raw).unwrap_or(Value::Null));
+                }
+            }
+        }
+        Value::Object(message)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct CompressionSnapshot {
     pub watermark: i64,
@@ -7729,21 +7787,46 @@ mod tests {
             .execute("UPDATE messages SET active=0 WHERE id=?", [inactive])
             .unwrap();
 
+        let expected = vec![
+            serde_json::json!({
+                "role":"user",
+                "content":clean,
+                "api_content":"look\n\nRelevant memory"
+            }),
+            serde_json::json!({"role":"assistant","content":"","tool_calls":calls}),
+            serde_json::json!({
+                "role":"tool","content":"tool result",
+                "tool_call_id":"call-1","name":"fixture_tool",
+                "tool_name":"fixture_tool"
+            }),
+        ];
+        assert_eq!(db.load_lifecycle_messages("s1").unwrap(), expected);
         assert_eq!(
-            db.load_lifecycle_messages("s1").unwrap(),
-            vec![
-                serde_json::json!({
-                    "role":"user",
-                    "content":clean,
-                    "api_content":"look\n\nRelevant memory"
-                }),
-                serde_json::json!({"role":"assistant","content":"","tool_calls":calls}),
-                serde_json::json!({
-                    "role":"tool","content":"tool result",
-                    "tool_call_id":"call-1","name":"fixture_tool",
-                    "tool_name":"fixture_tool"
-                }),
-            ]
+            db.load_compression_snapshot("s1")
+                .unwrap()
+                .messages
+                .iter()
+                .map(super::CompressionHistoryMessage::lifecycle_value)
+                .collect::<Vec<_>>(),
+            expected
+        );
+    }
+
+    #[test]
+    fn compression_snapshot_lifecycle_value_preserves_summary_marker() {
+        let path = temp_db("checkpoint_summary_marker");
+        let db = super::SessionDb::open(path).unwrap();
+        db.ensure_session("s1", "local", None, None, None).unwrap();
+        let id = db.append_message("s1", "assistant", "derivative").unwrap();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute("UPDATE messages SET _compressed_summary=1 WHERE id=?", [id])
+            .unwrap();
+        let snapshot = db.load_compression_snapshot("s1").unwrap();
+        assert_eq!(
+            snapshot.messages[0].lifecycle_value()["_compressed_summary"],
+            true
         );
     }
 

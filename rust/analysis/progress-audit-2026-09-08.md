@@ -1,8 +1,8 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **48.85% of the full native replacement**, reported as
-**about 49%**, with a reasonable judgment range of **47% to 51%**. This
-supersedes the 48.30-point estimate recorded after handoff framing and tail
+Current estimate: **49.55% of the full native replacement**, reported as
+**about 50%**, with a reasonable judgment range of **48% to 52%**. This
+supersedes the 48.85-point estimate recorded after handoff framing and tail
 anchors.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
@@ -19,12 +19,12 @@ audits.
 | Area | Full-port weight | Current area completion | Overall points |
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 64% | 22.40 |
-| Tool runtime and RPC | 30% | 13% | 3.90 |
+| Tool runtime and RPC | 30% | 14% | 4.20 |
 | State and search | 15% | 73% | 10.95 |
-| Native agent core | 20% | 58% | 11.60 |
-| Total | 100% | | **48.85** |
+| Native agent core | 20% | 60% | 12.00 |
+| Total | 100% | | **49.55** |
 
-`0.35 * 64 + 0.30 * 13 + 0.15 * 73 + 0.20 * 58 = 48.85`
+`0.35 * 64 + 0.30 * 14 + 0.15 * 73 + 0.20 * 60 = 49.55`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -47,7 +47,7 @@ handlers, queue/steer/interrupt behavior, richer streaming delivery, adapter
 callbacks, topic management, and desktop/TUI protocol parity. Three substantial
 native adapters do not represent the roughly twenty Python platforms.
 
-### Tool runtime and RPC, 13%
+### Tool runtime and RPC, 14%
 
 The native model tool loop, schema projection, malformed-call repair, duplicate
 suppression, result framing, event emission, iteration-summary path, and a
@@ -58,6 +58,13 @@ Live native tool rounds now persist assistant call rows before side effects,
 persist each result before the next provider request, and replay complete tool
 groups on later turns. Deterministic old-result pruning can summarize those
 durable rows without changing their call/result identity.
+
+The persistent host also exposes the real `MemoryManager` pre-compression
+boundary with strict versioned request and response validation. It preserves
+legacy raw-transcript callbacks, gives version 2 providers normalized direct
+evidence, sanitizes returned context, and differentiates required fail-closed
+requests from optional best-effort requests. This is a production extension
+protocol seam, but not yet a native plugin or memory manager.
 
 Terminal, file, browser, web, MCP, execution-environment backends, approval
 runtime, delegation execution, most service tools, plugin discovery/management,
@@ -110,7 +117,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 58%
+### Native agent core, 60%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -188,19 +195,29 @@ request if only a reference handoff would drive it, but continues for real user
 input and in-flight tool traffic. A 60-case source-executed oracle pins the
 role, carrier, anchor, and call-suppression contract.
 
+Every native full-compression path now invokes the version 2 external-memory
+checkpoint before summary I/O. The hook sees the complete exact durable
+snapshot, while the summary still sees only the selected history plus sanitized,
+data-fenced provider context. Required failures stop before any transcript
+mutation, optional failures proceed without context, and successful empty
+returns still count as completed checkpoints. The wide lifecycle projection
+preserves the compressed-summary marker so resumed derivative context is never
+misclassified as direct evidence. Preflight, checkpoint, summary, and ordinary
+turns reuse the same frozen per-conversation client.
+
 Mid-turn rotation, configurable multi-provider auxiliary fallback chains,
-non-chat auxiliary transports, required memory checkpoints, extension
-notifications, overflow recovery, provider failover and credential retry
-loops, delegation/subagents, full approval/clarification
-flows, memory and plugin managers, skill execution, context invalidation
+non-chat auxiliary transports, extension notifications, overflow recovery,
+provider failover and credential retry loops, delegation/subagents, full
+approval/clarification flows, memory and plugin managers, skill execution,
+context invalidation
 policy, and several agent-loop recovery behaviors remain. These are large
 behavioral systems, which is why the core score remains low despite broad
 helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,698 passing Rust tests and two expected ignores
-(1,697 gateway plus one core test).
+The workspace currently has 1,704 passing Rust tests and two expected ignores
+(1,703 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -208,23 +225,23 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,698 passed, two ignored (1,697 gateway plus one core).
-- Selected Python handoff contracts: 73 passed.
+- Full Rust workspace: 1,704 passed, two ignored (1,703 gateway plus one core).
+- Selected Python checkpoint, memory-context, and extension-hook contracts: 78
+  passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 24 structural-backoff, and 60
   handoff-layer cases.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
-- The lower end of the range assumes native extension-host functionality earns
-  little tool-runtime credit until managers and built-ins use it broadly.
+- The lower end of the range assumes the versioned extension-host boundary earns
+  little tool-runtime credit until native managers and built-ins use it broadly.
 - The upper end gives more credit to the now-live prompt, memory and session
   lifecycle verticals, but still does not count Python fallback behavior.
 
 ## What moves the estimate next
 
-1. Mid-turn rotation, auxiliary fallback chains, overflow recovery, memory
-   checkpoints, and extension notifications complete the current compression
-   cluster.
+1. Mid-turn rotation, auxiliary fallback chains, overflow recovery, and
+   extension notifications complete the current compression cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the

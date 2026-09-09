@@ -413,6 +413,119 @@ class ExtensionHost:
             raise ValueError("flush_pending timeout must be numeric")
         return self._memory_manager.flush_pending(timeout=timeout)
 
+    def pre_compress(self, params: Mapping[str, Any]) -> dict[str, Any]:
+        """Execute pre-compression memory checkpointing and collect context."""
+        if not self._initialized:
+            raise RuntimeError("extension host is not initialized")
+
+        messages = params.get("messages")
+        if not isinstance(messages, list):
+            raise ValueError("pre_compress requires a messages list")
+
+        require_checkpoint = params.get("require_checkpoint")
+        if not isinstance(require_checkpoint, bool):
+            raise ValueError("pre_compress require_checkpoint must be a boolean")
+
+        checkpoint_api_version = params.get("checkpoint_api_version")
+        if (
+            isinstance(checkpoint_api_version, bool)
+            or not isinstance(checkpoint_api_version, int)
+            or checkpoint_api_version <= 0
+        ):
+            raise ValueError(
+                "pre_compress checkpoint_api_version must be a positive integer"
+            )
+
+        manager = self._memory_manager
+        if manager is None:
+            if require_checkpoint:
+                raise RuntimeError(
+                    "pre_compress checkpoint required but no memory manager is active"
+                )
+            return {
+                "checkpoint_supported": False,
+                "memory_context": None,
+            }
+
+        probe_fn = getattr(manager, "supports_pre_compress_checkpoint", None)
+        supported = False
+        if callable(probe_fn):
+            try:
+                supported = bool(probe_fn(checkpoint_api_version))
+            except Exception as exc:
+                if require_checkpoint:
+                    _LOG.warning(
+                        "Memory provider checkpoint capability probe failed (%s)",
+                        type(exc).__name__,
+                    )
+                    raise RuntimeError(
+                        "pre_compress checkpoint capability probe failed"
+                    ) from None
+                _LOG.warning(
+                    "Memory provider checkpoint capability probe failed (non-fatal, %s)",
+                    type(exc).__name__,
+                )
+                return {
+                    "checkpoint_supported": False,
+                    "memory_context": None,
+                }
+        elif require_checkpoint:
+            raise RuntimeError(
+                "memory manager does not implement supports_pre_compress_checkpoint"
+            )
+
+        if require_checkpoint and not supported:
+            raise RuntimeError(
+                f"pre_compress checkpoint required but active provider does not support API v{checkpoint_api_version}"
+            )
+
+        from agent.conversation_compression import (
+            _direct_messages_for_pre_compress_memory,
+        )
+
+        evidence_messages = _direct_messages_for_pre_compress_memory(messages)
+
+        if require_checkpoint:
+            try:
+                raw_context = manager.on_pre_compress(
+                    messages,
+                    evidence_messages=evidence_messages,
+                    require_checkpoint=True,
+                    checkpoint_api_version=checkpoint_api_version,
+                )
+            except Exception as exc:
+                _LOG.warning("Pre-compress checkpoint failed (%s)", type(exc).__name__)
+                raise RuntimeError("pre_compress checkpoint failed") from None
+            checkpoint_supported = True
+        else:
+            try:
+                raw_context = manager.on_pre_compress(
+                    messages,
+                    evidence_messages=evidence_messages,
+                    require_checkpoint=False,
+                    checkpoint_api_version=checkpoint_api_version,
+                )
+            except Exception:
+                _LOG.exception("Memory provider on_pre_compress failed (non-fatal)")
+                return {
+                    "checkpoint_supported": False,
+                    "memory_context": None,
+                }
+            checkpoint_supported = supported
+
+        memory_context = None
+        if isinstance(raw_context, str) and raw_context.strip():
+            from agent.context_engine import sanitize_memory_context
+
+            sanitized = sanitize_memory_context(raw_context)
+            if sanitized and sanitized.strip():
+                memory_context = sanitized
+
+        return {
+            "checkpoint_supported": checkpoint_supported,
+            "memory_context": memory_context,
+        }
+
     def shutdown(self) -> None:
         if self._memory_manager is not None:
             self._memory_manager.shutdown_all()
@@ -470,6 +583,8 @@ def main() -> int:
                     result = host.session_end(params)
                 elif method == "flush_pending":
                     result = host.flush_pending(params)
+                elif method == "pre_compress":
+                    result = host.pre_compress(params)
                 elif method == "shutdown":
                     host.shutdown()
                     result = None

@@ -27,6 +27,8 @@ const MODULE: &str = "hermes_cli.rust_extension_host";
 const INITIALIZE_TIMEOUT: Duration = Duration::from_secs(60);
 const SNAPSHOT_TIMEOUT: Duration = Duration::from_secs(30);
 const TURN_START_TIMEOUT: Duration = Duration::from_secs(30);
+const PRE_COMPRESS_TIMEOUT: Duration = Duration::from_secs(310);
+pub const PRE_COMPRESS_CHECKPOINT_API_VERSION: u32 = 2;
 const TURN_COMPLETE_TIMEOUT: Duration = Duration::from_secs(5);
 const MEMORY_FLUSH_TIMEOUT: Duration = Duration::from_secs(10);
 const SESSION_END_TIMEOUT: Duration = Duration::from_secs(15);
@@ -112,6 +114,28 @@ pub struct PromptSnapshot {
 pub struct TurnStartResult {
     pub api_content: Option<String>,
     pub recall_indicator: Option<String>,
+}
+
+/// Outcome of a native pre-compression memory checkpoint. `checkpoint_supported`
+/// reports whether an active memory provider advertises the requested API, and
+/// `memory_context` carries any provider-supplied context to seed the compressed
+/// transcript. Decoding is strict: an unexpected field or a missing/mistyped
+/// `checkpoint_supported` is rejected rather than silently defaulted.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PreCompressResult {
+    pub checkpoint_supported: bool,
+    #[serde(deserialize_with = "deserialize_nullable_string")]
+    pub memory_context: Option<String>,
+}
+
+fn deserialize_nullable_string<'de, D>(
+    deserializer: D,
+) -> std::result::Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    Option::<String>::deserialize(deserializer)
 }
 
 #[derive(Clone)]
@@ -277,6 +301,32 @@ impl Client {
             .await?;
         serde_json::from_value(value)
             .map_err(|error| Error::Other(format!("extension host turn start decode: {error}")))
+    }
+
+    /// Ask the extension host to run a memory checkpoint before compression.
+    /// The provider decides whether it can checkpoint; when `require_checkpoint`
+    /// is set and it cannot deliver, the host reports a protocol error that
+    /// surfaces here as `Err`. A required failure is never masked as a
+    /// successful "unsupported" result.
+    pub async fn pre_compress(
+        &self,
+        messages: &[Value],
+        require_checkpoint: bool,
+        checkpoint_api_version: u32,
+    ) -> Result<PreCompressResult> {
+        let value = self
+            .request(
+                "pre_compress",
+                json!({
+                    "messages": messages,
+                    "require_checkpoint": require_checkpoint,
+                    "checkpoint_api_version": checkpoint_api_version,
+                }),
+                PRE_COMPRESS_TIMEOUT,
+            )
+            .await?;
+        serde_json::from_value(value)
+            .map_err(|error| Error::Other(format!("extension host pre_compress decode: {error}")))
     }
 
     pub async fn turn_complete(
@@ -743,6 +793,111 @@ mod tests {
         )
         .unwrap();
         assert_eq!(normalized.spec().parameters, json!({"type":"object"}));
+    }
+
+    /// Build a client whose worker side is a plain channel receiver, so a test
+    /// can capture the exact request and hand back a canned response.
+    fn capture_client() -> (Client, mpsc::Receiver<WorkerCommand>) {
+        let (sender, receiver) = mpsc::channel(4);
+        let (_worker_done_tx, worker_done) = watch::channel(false);
+        let client = Client {
+            sender,
+            next_id: Arc::new(AtomicU64::new(1)),
+            worker_done,
+        };
+        (client, receiver)
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn pre_compress_sends_exact_request_and_decodes() {
+        let (client, mut receiver) = capture_client();
+        let worker = tokio::spawn(async move {
+            let command = receiver.recv().await.unwrap();
+            command
+                .response
+                .send(Ok(
+                    json!({"checkpoint_supported": true, "memory_context": "saved"}),
+                ))
+                .unwrap();
+            command.request
+        });
+
+        let messages = vec![
+            json!({"role": "user", "content": "hi"}),
+            json!({"role": "assistant", "content": "there"}),
+        ];
+        let result = client.pre_compress(&messages, true, 2).await.unwrap();
+        assert!(result.checkpoint_supported);
+        assert_eq!(result.memory_context.as_deref(), Some("saved"));
+
+        let request = worker.await.unwrap();
+        assert_eq!(request["method"], "pre_compress");
+        assert_eq!(
+            request["params"],
+            json!({
+                "messages": messages,
+                "require_checkpoint": true,
+                "checkpoint_api_version": 2,
+            })
+        );
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn pre_compress_decodes_null_memory_context() {
+        let (client, mut receiver) = capture_client();
+        let worker = tokio::spawn(async move {
+            let command = receiver.recv().await.unwrap();
+            command
+                .response
+                .send(Ok(
+                    json!({"checkpoint_supported": false, "memory_context": null}),
+                ))
+                .unwrap();
+        });
+
+        let result = client.pre_compress(&[], false, 2).await.unwrap();
+        assert!(!result.checkpoint_supported);
+        assert!(result.memory_context.is_none());
+        worker.await.unwrap();
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn pre_compress_propagates_remote_failure() {
+        let (client, mut receiver) = capture_client();
+        let worker = tokio::spawn(async move {
+            let command = receiver.recv().await.unwrap();
+            command
+                .response
+                .send(Err(Error::Other(
+                    "checkpoint required but memory provider is unavailable".into(),
+                )))
+                .unwrap();
+        });
+
+        let error = client.pre_compress(&[], true, 2).await.unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("checkpoint required but memory provider is unavailable"));
+        worker.await.unwrap();
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn pre_compress_rejects_malformed_result() {
+        for malformed in [
+            json!({"checkpoint_supported": "yes", "memory_context": null}),
+            json!({"memory_context": "saved"}),
+            json!({"checkpoint_supported": true}),
+            json!({"checkpoint_supported": true, "memory_context": "saved", "extra": 1}),
+        ] {
+            let (client, mut receiver) = capture_client();
+            let worker = tokio::spawn(async move {
+                let command = receiver.recv().await.unwrap();
+                command.response.send(Ok(malformed)).unwrap();
+            });
+            let error = client.pre_compress(&[], true, 2).await.unwrap_err();
+            assert!(error.to_string().contains("pre_compress decode"));
+            worker.await.unwrap();
+        }
     }
 
     #[tokio::test(flavor = "current_thread")]

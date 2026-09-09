@@ -1,5 +1,38 @@
 # Hermes Rust rewrite
 
+## Native pre-compression memory checkpoint: 2026-09-09
+
+Native manual, automatic pre-turn, and same-turn full compression now call the
+versioned external-memory checkpoint before summary provider I/O. The Python
+extension host delegates to the real `MemoryManager`: legacy providers receive
+the raw transcript, version 2 providers receive the shared direct-evidence
+projection, and returned context is sanitized before crossing JSONL.
+
+Every caller checkpoints the complete exact durable snapshot while summarizing
+only its selected compression region. Required capability or callback failures
+stop summary and publication without changing the transcript. Optional failures
+continue without provider context. Successful context is encoded as a JSON
+string in a source-material fence, not trusted as prompt instructions.
+
+The wide-row lifecycle projection preserves tool, reasoning, replay, API-content,
+and derivative-summary metadata. Preflight, checkpoint, summary, and normal turn
+work reuse the same bounded per-conversation client, so this boundary does not
+rebuild the frozen prompt or tool snapshot.
+
+AGY ran once behind its auth lock and owned only the Python host endpoint and
+tests. Claude owned only the Rust client protocol. The primary lane integrated
+the three compression paths, corrected strict decoding, timeout, summary-marker,
+and error-disclosure issues, and completed validation. See
+[native-pre-compress-checkpoint-resolution.md](analysis/native-pre-compress-checkpoint-resolution.md).
+
+Validation is **1,704 Rust tests passed, two ignored**, plus **78 selected
+Python tests passed**. Both relevant source oracles, Rust formatting, Ruff lint,
+Clippy with warnings denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **49.55
+points, reported as about 50%** (judgment range 48% to 52%). Session-switch and
+compression-boundary notifications, mid-turn rotation, overflow recovery,
+auxiliary fallback breadth, and native plugin and memory managers remain.
+
 ## Native compression handoff assembly and tail anchors: 2026-09-09
 
 Native manual, automatic pre-turn, and same-turn full compression now publish

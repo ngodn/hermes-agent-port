@@ -57,6 +57,15 @@ pub struct CompressionPreflight {
     pub stale_thinking_on_wire: bool,
 }
 
+/// Result of the external-memory boundary that runs before full compression.
+/// A required checkpoint may proceed only when `checkpoint_supported` is true
+/// and the request itself completed successfully.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct PreCompressionCheckpoint {
+    pub checkpoint_supported: bool,
+    pub memory_context: Option<String>,
+}
+
 impl<'a> TurnContext<'a> {
     pub fn from_database(database: Option<&'a crate::session_db::SessionDb>) -> Self {
         Self {
@@ -123,6 +132,36 @@ pub trait AgentClient: Send + Sync {
     ) -> Result<Option<String>> {
         let _ = (context, msg, history, focus_topic);
         Ok(None)
+    }
+
+    /// Notify external memory before a full compression can discard direct
+    /// evidence. Backends without an extension manager report unsupported;
+    /// callers decide whether that is a best-effort no-op or a required gate.
+    async fn prepare_pre_compression_checkpoint(
+        &self,
+        context: TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        require_checkpoint: bool,
+    ) -> Result<PreCompressionCheckpoint> {
+        let _ = (context, msg, history, require_checkpoint);
+        Ok(PreCompressionCheckpoint::default())
+    }
+
+    /// Summary boundary with optional provider-supplied memory context. The
+    /// default preserves compatibility for backends that own summarization but
+    /// have no native memory manager.
+    async fn summarize_context_with_memory(
+        &self,
+        context: TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+        memory_context: Option<&str>,
+    ) -> Result<Option<String>> {
+        let _ = memory_context;
+        self.summarize_context(context, msg, history, focus_topic)
+            .await
     }
 
     /// Measure the provider-visible request before any provider I/O. Native

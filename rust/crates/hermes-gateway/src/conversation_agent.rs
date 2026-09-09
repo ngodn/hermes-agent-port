@@ -692,10 +692,22 @@ impl AgentClient for ConversationAgent {
         history: &[crate::session_db::CompressionHistoryMessage],
         focus_topic: Option<&str>,
     ) -> Result<Option<String>> {
+        self.summarize_context_with_memory(context, msg, history, focus_topic, None)
+            .await
+    }
+
+    async fn summarize_context_with_memory(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+        memory_context: Option<&str>,
+    ) -> Result<Option<String>> {
         let Some(key) = Self::key(context, msg) else {
             return self
                 .fallback
-                .summarize_context(context, msg, history, focus_topic)
+                .summarize_context_with_memory(context, msg, history, focus_topic, memory_context)
                 .await;
         };
         let cell = self.checkout(
@@ -730,7 +742,58 @@ impl AgentClient for ConversationAgent {
             }
         };
         let result = client
-            .summarize_context(context, msg, history, focus_topic)
+            .summarize_context_with_memory(context, msg, history, focus_topic, memory_context)
+            .await;
+        self.finish_turn(&key, &cell, result.is_err());
+        result
+    }
+
+    async fn prepare_pre_compression_checkpoint(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        require_checkpoint: bool,
+    ) -> Result<crate::agent::PreCompressionCheckpoint> {
+        let Some(key) = Self::key(context, msg) else {
+            return self
+                .fallback
+                .prepare_pre_compression_checkpoint(context, msg, history, require_checkpoint)
+                .await;
+        };
+        let cell = self.checkout(
+            &key,
+            context.database,
+            context.session_finalizable,
+            Instant::now(),
+        )?;
+        let conversation_history = history
+            .iter()
+            .map(|item| item.message.clone())
+            .collect::<Vec<_>>();
+        let initialized = cell
+            .get_or_try_init(|| async {
+                (self.factory)(
+                    key.0.as_path(),
+                    msg,
+                    &conversation_history,
+                    context.database,
+                )
+                .await
+                .map_err(|error| {
+                    Error::Other(format!("conversation agent initialization failed: {error}"))
+                })
+            })
+            .await;
+        let client = match initialized {
+            Ok(client) => client.clone(),
+            Err(error) => {
+                self.finish_turn(&key, &cell, true);
+                return Err(error);
+            }
+        };
+        let result = client
+            .prepare_pre_compression_checkpoint(context, msg, history, require_checkpoint)
             .await;
         self.finish_turn(&key, &cell, result.is_err());
         result
@@ -907,6 +970,39 @@ mod tests {
                 .lock()
                 .unwrap()
                 .push(format!("summary:{}", self.label));
+            Ok(Some("summary".into()))
+        }
+
+        async fn prepare_pre_compression_checkpoint(
+            &self,
+            _context: crate::agent::TurnContext<'_>,
+            _msg: &Message,
+            _history: &[crate::session_db::CompressionHistoryMessage],
+            require_checkpoint: bool,
+        ) -> Result<crate::agent::PreCompressionCheckpoint> {
+            self.calls
+                .lock()
+                .unwrap()
+                .push(format!("checkpoint:{require_checkpoint}:{}", self.label));
+            Ok(crate::agent::PreCompressionCheckpoint {
+                checkpoint_supported: true,
+                memory_context: Some("memory".into()),
+            })
+        }
+
+        async fn summarize_context_with_memory(
+            &self,
+            _context: crate::agent::TurnContext<'_>,
+            _msg: &Message,
+            _history: &[crate::session_db::CompressionHistoryMessage],
+            _focus_topic: Option<&str>,
+            memory_context: Option<&str>,
+        ) -> Result<Option<String>> {
+            self.calls.lock().unwrap().push(format!(
+                "summary-memory:{}:{}",
+                memory_context.unwrap_or("none"),
+                self.label
+            ));
             Ok(Some("summary".into()))
         }
 
@@ -1157,6 +1253,26 @@ mod tests {
                 .as_deref(),
             Some("summary")
         );
+        let checkpoint = agent
+            .prepare_pre_compression_checkpoint(context(Path::new("home")), &message, &[], true)
+            .await
+            .unwrap();
+        assert!(checkpoint.checkpoint_supported);
+        assert_eq!(checkpoint.memory_context.as_deref(), Some("memory"));
+        assert_eq!(
+            agent
+                .summarize_context_with_memory(
+                    context(Path::new("home")),
+                    &message,
+                    &[],
+                    Some("focus"),
+                    checkpoint.memory_context.as_deref(),
+                )
+                .await
+                .unwrap()
+                .as_deref(),
+            Some("summary")
+        );
         assert!(agent.contains(Path::new("home"), "compressed"));
         assert!(agent.release_conversation(context(Path::new("home")), "compressed"));
         tokio::task::yield_now().await;
@@ -1164,7 +1280,12 @@ mod tests {
         assert_eq!(builds.load(Ordering::SeqCst), 1);
         assert_eq!(
             *calls.lock().unwrap(),
-            ["preflight:home:0", "summary:home:0"]
+            [
+                "preflight:home:0",
+                "summary-memory:none:home:0",
+                "checkpoint:true:home:0",
+                "summary-memory:memory:home:0"
+            ]
         );
         assert_eq!(*closes.lock().unwrap(), [false]);
     }

@@ -74,8 +74,8 @@ pub struct AutomaticCompressionPolicy {
     /// Keep compression in the current durable conversation. Active tool-loop
     /// compression requires this because its client identity is immutable.
     pub in_place: bool,
-    /// Refuse compression until a required pre-compress memory checkpoint can
-    /// be produced. The native checkpoint hook is not connected yet.
+    /// Refuse full compression unless the active memory provider completes the
+    /// versioned pre-compress checkpoint boundary.
     pub checkpoint_required: bool,
     /// Opt-in request-pressure trigger for deterministic tool-result pruning.
     /// Zero disables the path.
@@ -840,11 +840,7 @@ pub async fn compress_before_turn(
     admitted: &mut crate::session_admission::AdmittedSession,
 ) -> anyhow::Result<u32> {
     let policy = AutomaticCompressionPolicy::from_value(user_config);
-    if !policy.enabled
-        || policy.checkpoint_required
-        || admitted.database.is_none()
-        || admitted.route_lease.is_none()
-    {
+    if !policy.enabled || admitted.database.is_none() || admitted.route_lease.is_none() {
         return Ok(0);
     }
     let database = admitted.database.as_ref().expect("checked").clone();
@@ -1042,8 +1038,39 @@ pub async fn compress_before_turn(
         };
         let mut summary_message = message.clone();
         summary_message.resolved_session_id = Some(session_id.clone());
+        let checkpoint = match agent
+            .prepare_pre_compression_checkpoint(
+                context,
+                &summary_message,
+                &snapshot.messages,
+                policy.checkpoint_required,
+            )
+            .await
+        {
+            Ok(checkpoint) => checkpoint,
+            Err(error) if policy.checkpoint_required => {
+                let error = crate::compression_redact::redact(&error.to_string());
+                tracing::warn!(%error, %session_id, "required automatic compression checkpoint failed closed");
+                return Ok(attempts);
+            }
+            Err(error) => {
+                let error = crate::compression_redact::redact(&error.to_string());
+                tracing::warn!(%error, %session_id, "optional automatic compression checkpoint failed open");
+                crate::agent::PreCompressionCheckpoint::default()
+            }
+        };
+        if policy.checkpoint_required && !checkpoint.checkpoint_supported {
+            tracing::warn!(%session_id, "required automatic compression checkpoint is unsupported");
+            return Ok(attempts);
+        }
         let summary_body = match agent
-            .summarize_context(context, &summary_message, &summary_history, None)
+            .summarize_context_with_memory(
+                context,
+                &summary_message,
+                &summary_history,
+                None,
+                checkpoint.memory_context.as_deref(),
+            )
             .await
         {
             Ok(Some(summary)) if !summary.trim().is_empty() => {

@@ -125,7 +125,7 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
         .map_err(|error| anyhow::anyhow!("compress session materializer failed: {error}"))??;
         let session_id = entry.session_id.clone();
         let args = crate::partial_compress::parse(&raw_args);
-        let _durable_lease = if !args.preview && !args.aggressive && !checkpoint_required {
+        let _durable_lease = if !args.preview && !args.aggressive {
             match crate::durable_turn_lease::acquire(
                 database.clone(),
                 &session_id,
@@ -185,7 +185,7 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
             .collect::<Vec<_>>();
         let context = crate::agent::TurnContext::from_database(Some(&database))
             .with_session_finalizable(deps.store.is_session_finalizable(&entry));
-        let forced_attempt = !args.preview && !args.aggressive && !checkpoint_required;
+        let forced_attempt = !args.preview && !args.aggressive;
         if forced_attempt {
             agent.clear_compression_structural_backoff(context, &session_id);
         }
@@ -212,8 +212,6 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                 lines.join("\n")
             } else if args.aggressive {
                 aggressive_note.into()
-            } else if checkpoint_required {
-                "⚠️ Compression is blocked because compression.checkpoint_required is enabled and the native pre-compression memory checkpoint hook is not connected yet. The conversation was not changed.".into()
             } else {
                 let boundary = args
                     .partial
@@ -233,12 +231,46 @@ pub async fn compress_session(command: CompressCommand<'_>) -> anyhow::Result<Co
                 };
                 let mut summary_message = message.clone();
                 summary_message.resolved_session_id = Some(session_id.clone());
+                let checkpoint = match agent
+                    .prepare_pre_compression_checkpoint(
+                        context,
+                        &summary_message,
+                        &snapshot.messages,
+                        checkpoint_required,
+                    )
+                    .await
+                {
+                    Ok(checkpoint) => checkpoint,
+                    Err(error) if checkpoint_required => {
+                        let error = crate::compression_redact::redact(&error.to_string());
+                        tracing::warn!(%error, session = %session_id, "required manual compression checkpoint failed closed");
+                        drop(transcript_token);
+                        drop(route_token);
+                        return Ok(CompressResult {
+                            reply: "⚠️ Compression is blocked because the required pre-compression memory checkpoint failed. The conversation was not changed. Check the gateway logs, then retry.".into(),
+                        });
+                    }
+                    Err(error) => {
+                        let error = crate::compression_redact::redact(&error.to_string());
+                        tracing::warn!(%error, session = %session_id, "optional manual compression checkpoint failed open");
+                        crate::agent::PreCompressionCheckpoint::default()
+                    }
+                };
+                if checkpoint_required && !checkpoint.checkpoint_supported {
+                    tracing::warn!(session = %session_id, "required manual compression checkpoint is unsupported");
+                    drop(transcript_token);
+                    drop(route_token);
+                    return Ok(CompressResult {
+                        reply: "⚠️ Compression is blocked because no active memory provider supports the required pre-compression checkpoint. The conversation was not changed.".into(),
+                    });
+                }
                 let summary_body = match agent
-                    .summarize_context(
+                    .summarize_context_with_memory(
                         context,
                         &summary_message,
                         &summary_history,
                         args.focus_topic.as_deref(),
+                        checkpoint.memory_context.as_deref(),
                     )
                     .await
                 {
@@ -1298,6 +1330,8 @@ mod tests {
 
     struct SummaryAgent {
         summaries: std::sync::atomic::AtomicUsize,
+        checkpoints: std::sync::atomic::AtomicUsize,
+        memory_contexts: std::sync::Mutex<Vec<Option<String>>>,
         releases: std::sync::atomic::AtomicUsize,
         structural_backoff: std::sync::atomic::AtomicBool,
     }
@@ -1323,6 +1357,45 @@ mod tests {
             self.summaries
                 .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
             assert_eq!(history.len(), 6);
+            Ok(Some("## Goal\nPreserve the completed work.".into()))
+        }
+
+        async fn prepare_pre_compression_checkpoint(
+            &self,
+            _: crate::agent::TurnContext<'_>,
+            _: &hermes_core::Message,
+            history: &[crate::session_db::CompressionHistoryMessage],
+            _: bool,
+        ) -> hermes_core::Result<crate::agent::PreCompressionCheckpoint> {
+            self.checkpoints
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            assert_eq!(history.len(), 8);
+            Ok(crate::agent::PreCompressionCheckpoint {
+                checkpoint_supported: true,
+                memory_context: Some("durable memory checkpoint".into()),
+            })
+        }
+
+        async fn summarize_context_with_memory(
+            &self,
+            _: crate::agent::TurnContext<'_>,
+            _: &hermes_core::Message,
+            history: &[crate::session_db::CompressionHistoryMessage],
+            _: Option<&str>,
+            memory_context: Option<&str>,
+        ) -> hermes_core::Result<Option<String>> {
+            assert_eq!(
+                self.checkpoints.load(std::sync::atomic::Ordering::SeqCst),
+                1,
+                "checkpoint must finish before summary I/O"
+            );
+            self.summaries
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            assert_eq!(history.len(), 6);
+            self.memory_contexts
+                .lock()
+                .unwrap()
+                .push(memory_context.map(str::to_owned));
             Ok(Some("## Goal\nPreserve the completed work.".into()))
         }
 
@@ -1676,7 +1749,7 @@ mod tests {
             generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
         };
         let cases: [(Arc<dyn crate::agent::AgentClient>, bool, &str); 4] = [
-            (Arc::new(NoSummary), true, "checkpoint_required"),
+            (Arc::new(NoSummary), true, "no active memory provider"),
             (
                 Arc::new(RefusingSummary("none")),
                 false,
@@ -1782,6 +1855,8 @@ mod tests {
         }
         let agent = Arc::new(SummaryAgent {
             summaries: std::sync::atomic::AtomicUsize::new(0),
+            checkpoints: std::sync::atomic::AtomicUsize::new(0),
+            memory_contexts: std::sync::Mutex::new(Vec::new()),
             releases: std::sync::atomic::AtomicUsize::new(0),
             structural_backoff: std::sync::atomic::AtomicBool::new(true),
         });
@@ -1807,6 +1882,14 @@ mod tests {
         assert!(result.reply.contains("6 message(s) summarized"));
         assert!(result.reply.contains("last 1 exchange"));
         assert_eq!(agent.summaries.load(std::sync::atomic::Ordering::SeqCst), 1);
+        assert_eq!(
+            agent.checkpoints.load(std::sync::atomic::Ordering::SeqCst),
+            1
+        );
+        assert_eq!(
+            *agent.memory_contexts.lock().unwrap(),
+            vec![Some("durable memory checkpoint".into())]
+        );
         assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 1);
         assert!(!agent
             .structural_backoff
@@ -1874,6 +1957,8 @@ mod tests {
         }
         let agent = Arc::new(SummaryAgent {
             summaries: std::sync::atomic::AtomicUsize::new(0),
+            checkpoints: std::sync::atomic::AtomicUsize::new(0),
+            memory_contexts: std::sync::Mutex::new(Vec::new()),
             releases: std::sync::atomic::AtomicUsize::new(0),
             structural_backoff: std::sync::atomic::AtomicBool::new(true),
         });
@@ -1890,7 +1975,7 @@ mod tests {
             owner_key: "user".into(),
             raw_args: "here 1".into(),
             freshness_seconds: 3600.0,
-            checkpoint_required: false,
+            checkpoint_required: true,
             in_place: true,
         })
         .await
@@ -1898,6 +1983,14 @@ mod tests {
 
         assert!(result.reply.contains("compressed in place"));
         assert_eq!(agent.summaries.load(std::sync::atomic::Ordering::SeqCst), 1);
+        assert_eq!(
+            agent.checkpoints.load(std::sync::atomic::Ordering::SeqCst),
+            1
+        );
+        assert_eq!(
+            *agent.memory_contexts.lock().unwrap(),
+            vec![Some("durable memory checkpoint".into())]
+        );
         assert_eq!(agent.releases.load(std::sync::atomic::Ordering::SeqCst), 0);
         assert!(!agent
             .structural_backoff

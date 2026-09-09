@@ -1142,7 +1142,20 @@ impl NativeAgentClient {
         history: &[crate::session_db::CompressionHistoryMessage],
         focus_topic: Option<&str>,
     ) -> Result<Option<String>> {
-        let prompt = crate::compression_prompt::build(history, focus_topic);
+        self.summarize_history_with_memory(database, session_id, history, focus_topic, None)
+            .await
+    }
+
+    async fn summarize_history_with_memory(
+        &self,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+        memory_context: Option<&str>,
+    ) -> Result<Option<String>> {
+        let prompt =
+            crate::compression_prompt::build_with_memory(history, focus_topic, memory_context);
         if let Some(auxiliary) = self.compression_client.as_deref() {
             match auxiliary
                 .summarize_history_on(database, session_id, &prompt)
@@ -1165,6 +1178,31 @@ impl NativeAgentClient {
         }
         self.summarize_history_on(database, session_id, &prompt)
             .await
+    }
+
+    async fn prepare_compression_memory(
+        &self,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        require_checkpoint: bool,
+    ) -> Result<crate::agent::PreCompressionCheckpoint> {
+        let Some(host) = &self._extension_host else {
+            return Ok(crate::agent::PreCompressionCheckpoint::default());
+        };
+        let messages = history
+            .iter()
+            .map(crate::session_db::CompressionHistoryMessage::lifecycle_value)
+            .collect::<Vec<_>>();
+        let result = host
+            .pre_compress(
+                &messages,
+                require_checkpoint,
+                crate::extension_host::PRE_COMPRESS_CHECKPOINT_API_VERSION,
+            )
+            .await?;
+        Ok(crate::agent::PreCompressionCheckpoint {
+            checkpoint_supported: result.checkpoint_supported,
+            memory_context: result.memory_context,
+        })
     }
 
     fn adopt_durable_tool_loop_transcript(
@@ -1235,7 +1273,7 @@ impl NativeAgentClient {
         let (Some(database), Some(holder)) = (database, turn_lease_holder) else {
             return Ok(SameTurnCompressionOutcome::NotTriggered);
         };
-        if !policy.enabled || !policy.in_place || policy.checkpoint_required {
+        if !policy.enabled || !policy.in_place {
             return Ok(SameTurnCompressionOutcome::NotTriggered);
         }
         let (rough_request_tokens, output_cap) = self.tool_request_pressure(messages, tools)?;
@@ -1367,8 +1405,34 @@ impl NativeAgentClient {
         ) else {
             return Ok(SameTurnCompressionOutcome::Attempted);
         };
+        let checkpoint = match self
+            .prepare_compression_memory(&snapshot.messages, policy.checkpoint_required)
+            .await
+        {
+            Ok(checkpoint) => checkpoint,
+            Err(error) if policy.checkpoint_required => {
+                let error = crate::compression_redact::redact(&error.to_string());
+                tracing::warn!(%error, %session_id, "required same-turn compression checkpoint failed closed");
+                return Ok(SameTurnCompressionOutcome::Attempted);
+            }
+            Err(error) => {
+                let error = crate::compression_redact::redact(&error.to_string());
+                tracing::warn!(%error, %session_id, "optional same-turn compression checkpoint failed open");
+                crate::agent::PreCompressionCheckpoint::default()
+            }
+        };
+        if policy.checkpoint_required && !checkpoint.checkpoint_supported {
+            tracing::warn!(%session_id, "required same-turn compression checkpoint is unsupported");
+            return Ok(SameTurnCompressionOutcome::Attempted);
+        }
         let summary_body = match self
-            .summarize_history(Some(database), session_id, &summary_history, None)
+            .summarize_history_with_memory(
+                Some(database),
+                session_id,
+                &summary_history,
+                None,
+                checkpoint.memory_context.as_deref(),
+            )
             .await
         {
             Ok(Some(summary)) => crate::compression_redact::redact(summary.trim()),
@@ -1847,6 +1911,36 @@ impl AgentClient for NativeAgentClient {
         let session_id = crate::session_db::message_session_id(msg);
         self.summarize_history(context.database, &session_id, history, focus_topic)
             .await
+    }
+
+    async fn prepare_pre_compression_checkpoint(
+        &self,
+        _: crate::agent::TurnContext<'_>,
+        _: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        require_checkpoint: bool,
+    ) -> Result<crate::agent::PreCompressionCheckpoint> {
+        self.prepare_compression_memory(history, require_checkpoint)
+            .await
+    }
+
+    async fn summarize_context_with_memory(
+        &self,
+        context: crate::agent::TurnContext<'_>,
+        msg: &Message,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+        memory_context: Option<&str>,
+    ) -> Result<Option<String>> {
+        let session_id = crate::session_db::message_session_id(msg);
+        self.summarize_history_with_memory(
+            context.database,
+            &session_id,
+            history,
+            focus_topic,
+            memory_context,
+        )
+        .await
     }
 
     async fn compression_preflight(
