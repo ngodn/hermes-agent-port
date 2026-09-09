@@ -1,0 +1,676 @@
+{
+  "command_coverage_and_boundaries": [
+    {
+      "command": "git push --force",
+      "detection_variants": [
+        "git push --force"
+      ],
+      "label": "bare_command",
+      "leading_anchored_match": "git push*",
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "echo 'starting' && git push --force",
+      "detection_variants": [
+        "echo 'starting' && git push --force",
+        "echo 'starting' && \ngit push --force"
+      ],
+      "label": "compound_and",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "echo 'starting' ; git push --force",
+      "detection_variants": [
+        "echo 'starting' ; git push --force",
+        "echo 'starting' ; \ngit push --force"
+      ],
+      "label": "compound_semicolon",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "false || git push --force",
+      "detection_variants": [
+        "false || git push --force",
+        "false || \ngit push --force"
+      ],
+      "label": "compound_or",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "cat changes.patch | git push --force",
+      "detection_variants": [
+        "cat changes.patch | git push --force",
+        "cat changes.patch | \ngit push --force"
+      ],
+      "label": "pipeline",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "(git push --force)",
+      "detection_variants": [
+        "(git push --force)",
+        "(\ngit push --force)"
+      ],
+      "label": "subshell_parens",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "{ git push --force; }",
+      "detection_variants": [
+        "{ git push --force; }",
+        "{ \ngit push --force; \n}"
+      ],
+      "label": "brace_group",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "GIT_TRACE=1 git push --force",
+      "detection_variants": [
+        "GIT_TRACE=1 git push --force"
+      ],
+      "label": "env_prefix",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "sudo git push --force",
+      "detection_variants": [
+        "sudo git push --force"
+      ],
+      "label": "sudo_wrapper",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    },
+    {
+      "command": "sudo -u deployer git push --force",
+      "detection_variants": [
+        "sudo -u deployer git push --force"
+      ],
+      "label": "sudo_with_options",
+      "leading_anchored_match": null,
+      "wildcard_wrapped_match": "*git push*"
+    }
+  ],
+  "config_reload_and_lkg": [
+    {
+      "deny_rules": [
+        "git push*"
+      ],
+      "mode": "off",
+      "stage": "initial_valid"
+    },
+    {
+      "deny_rules": [
+        "git push*",
+        "rm *"
+      ],
+      "mode": "off",
+      "stage": "updated_mtime"
+    },
+    {
+      "deny_rules": [
+        "git push*",
+        "rm *"
+      ],
+      "matches_previous": true,
+      "mode": "off",
+      "stage": "corrupt_yaml_lkg_retained"
+    }
+  ],
+  "fnmatch_glob_semantics": [
+    {
+      "command": "git push",
+      "id": "glob_star_prefix",
+      "matched": true,
+      "matched_pattern": "*push",
+      "rule": "*push"
+    },
+    {
+      "command": "git push origin main",
+      "id": "glob_star_prefix_fails_without_suffix_star",
+      "matched": false,
+      "matched_pattern": null,
+      "rule": "*push"
+    },
+    {
+      "command": "git push origin main",
+      "id": "glob_star_suffix",
+      "matched": true,
+      "matched_pattern": "git push*",
+      "rule": "git push*"
+    },
+    {
+      "command": "git push origin main",
+      "id": "glob_star_infix",
+      "matched": true,
+      "matched_pattern": "git*main",
+      "rule": "git*main"
+    },
+    {
+      "command": "rm -rf /etc/hosts",
+      "id": "glob_star_matches_slashes_and_flags",
+      "matched": true,
+      "matched_pattern": "rm -rf *",
+      "rule": "rm -rf *"
+    },
+    {
+      "command": "rm -r foo",
+      "id": "glob_question_mark_single_char",
+      "matched": true,
+      "matched_pattern": "rm -? foo",
+      "rule": "rm -? foo"
+    },
+    {
+      "command": "rm -rf foo",
+      "id": "glob_question_mark_does_not_match_two_chars",
+      "matched": false,
+      "matched_pattern": null,
+      "rule": "rm -? foo"
+    },
+    {
+      "command": "rm -r foo",
+      "id": "glob_bracket_character_class",
+      "matched": true,
+      "matched_pattern": "rm -[rf]* foo",
+      "rule": "rm -[rf]* foo"
+    },
+    {
+      "command": "rm -f foo",
+      "id": "glob_bracket_negation_class_reject",
+      "matched": false,
+      "matched_pattern": null,
+      "rule": "rm -[!f]* foo"
+    },
+    {
+      "command": "rm -r foo",
+      "id": "glob_bracket_negation_class_accept",
+      "matched": true,
+      "matched_pattern": "rm -[!f]* foo",
+      "rule": "rm -[!f]* foo"
+    },
+    {
+      "command": "git push origin main",
+      "id": "glob_exact_match_without_wildcard_rejects_arguments",
+      "matched": false,
+      "matched_pattern": null,
+      "rule": "git push"
+    },
+    {
+      "command": "git push",
+      "id": "glob_exact_match_without_wildcard_accepts_exact",
+      "matched": true,
+      "matched_pattern": "git push",
+      "rule": "git push"
+    }
+  ],
+  "metadata": {
+    "authority_sources": [
+      "tools/approval.py: _match_user_deny_rule",
+      "tools/approval.py: _user_deny_block_result",
+      "tools/approval.py: _command_detection_variants",
+      "tools/approval.py: check_all_command_guards",
+      "tools/terminal_tool.py: terminal_tool pre-execution gate",
+      "hermes_cli/config.py: load_config_readonly and LKG fallback"
+    ],
+    "description": "Deterministic goldens for approvals.deny matching, mode: off, and terminal tool integration",
+    "test_counts": {
+      "command_coverage_and_boundaries": 10,
+      "config_reload_and_lkg": 3,
+      "fnmatch_glob_semantics": 12,
+      "normalization_and_variants": 13,
+      "precedence_and_bypass": 9,
+      "rule_parsing": 8,
+      "terminal_tool_envelopes": 4,
+      "total_cases": 59
+    }
+  },
+  "normalization_and_variants": [
+    {
+      "command": "GIT PUSH --FORCE ORIGIN MAIN",
+      "deny_config": [
+        "git push*"
+      ],
+      "id": "norm_case_insensitivity_upper_command",
+      "matched_pattern": "git push*",
+      "variants_evaluated": [
+        "GIT PUSH --FORCE ORIGIN MAIN"
+      ]
+    },
+    {
+      "command": "GiT pUsH --force",
+      "deny_config": [
+        "gIt PuSh*"
+      ],
+      "id": "norm_case_insensitivity_mixed_rule_and_command",
+      "matched_pattern": "gIt PuSh*",
+      "variants_evaluated": [
+        "GiT pUsH --force"
+      ]
+    },
+    {
+      "command": "git pu\"\"sh --force origin main",
+      "deny_config": [
+        "git push*"
+      ],
+      "id": "norm_empty_double_quotes_stripped",
+      "matched_pattern": "git push*",
+      "variants_evaluated": [
+        "git push --force origin main"
+      ]
+    },
+    {
+      "command": "r''m -rf /tmp/scratch",
+      "deny_config": [
+        "rm *"
+      ],
+      "id": "norm_empty_single_quotes_stripped",
+      "matched_pattern": "rm *",
+      "variants_evaluated": [
+        "rm -rf /tmp/scratch"
+      ]
+    },
+    {
+      "command": "git p\\ush --force origin main",
+      "deny_config": [
+        "git push*"
+      ],
+      "id": "norm_backslash_escape_stripped",
+      "matched_pattern": "git push*",
+      "variants_evaluated": [
+        "git push --force origin main"
+      ]
+    },
+    {
+      "command": "r\\m -rf /tmp/scratch",
+      "deny_config": [
+        "rm *"
+      ],
+      "id": "norm_word_deobfuscation_rm",
+      "matched_pattern": "rm *",
+      "variants_evaluated": [
+        "rm -rf /tmp/scratch"
+      ]
+    },
+    {
+      "command": "git push \\\n --force origin main",
+      "deny_config": [
+        "git push*"
+      ],
+      "id": "norm_line_continuation_collapsed",
+      "matched_pattern": "git push*",
+      "variants_evaluated": [
+        "git push  --force origin main"
+      ]
+    },
+    {
+      "command": "rm${IFS}-rf${IFS}/tmp/scratch",
+      "deny_config": [
+        "rm *"
+      ],
+      "id": "norm_ifs_variable_expanded",
+      "matched_pattern": "rm *",
+      "variants_evaluated": [
+        "rm -rf /tmp/scratch"
+      ]
+    },
+    {
+      "command": "del C:\\Users\\alice\\.ssh\\id_rsa",
+      "deny_config": [
+        "del c:/users/*"
+      ],
+      "id": "norm_windows_path_flattened",
+      "matched_pattern": "del c:/users/*",
+      "variants_evaluated": [
+        "del C:Usersalice.sshid_rsa",
+        "del C:/Users/alice/.ssh/id_rsa"
+      ]
+    },
+    {
+      "command": "bash -c \"git push origin main\"",
+      "deny_config": [
+        "git push*"
+      ],
+      "id": "norm_bash_c_payload_extracted",
+      "matched_pattern": "git push*",
+      "variants_evaluated": [
+        "bash -c \"git push origin main\"",
+        "git push origin main"
+      ]
+    },
+    {
+      "command": "sh -lc \"rm -rf /tmp/foo\"",
+      "deny_config": [
+        "rm *"
+      ],
+      "id": "norm_sh_lc_payload_extracted",
+      "matched_pattern": "rm *",
+      "variants_evaluated": [
+        "sh -lc \"rm -rf /tmp/foo\"",
+        "rm -rf /tmp/foo"
+      ]
+    },
+    {
+      "command": "bash -c \"bash -c \\\"git push origin main\\\"\"",
+      "deny_config": [
+        "git push*"
+      ],
+      "id": "norm_nested_bash_in_bash",
+      "matched_pattern": null,
+      "variants_evaluated": [
+        "bash -c \"bash -c \"git push origin main",
+        "bash -c git",
+        "git"
+      ]
+    },
+    {
+      "command": "grep -E \"git push origin\" /var/log/syslog",
+      "deny_config": [
+        "git push*"
+      ],
+      "id": "norm_grep_quoted_pattern_masked",
+      "matched_pattern": null,
+      "variants_evaluated": [
+        "grep -E \"git push origin\" /var/log/syslog"
+      ]
+    }
+  ],
+  "precedence_and_bypass": [
+    {
+      "allowlist": [],
+      "classified_verdict": "approved",
+      "command": "git push --force origin main",
+      "deny_rules": [
+        "git push*"
+      ],
+      "env_type": "docker",
+      "guard_result": {
+        "approved": true,
+        "message": null
+      },
+      "has_host_access": false,
+      "id": "container_isolated_docker_skips_deny_rule",
+      "mode": "manual",
+      "yolo": false
+    },
+    {
+      "allowlist": [],
+      "classified_verdict": "blocked",
+      "command": "git push --force origin main",
+      "deny_rules": [
+        "git push*"
+      ],
+      "env_type": "docker",
+      "guard_result": {
+        "approved": false,
+        "message": "BLOCKED: this command matches the user-defined deny rule 'git push*' (approvals.deny in config.yaml). It cannot be executed via the agent - not even with --yolo, /yolo, or approvals.mode=off. Do NOT retry or rephrase this command; the user has explicitly forbidden it.",
+        "user_deny": true
+      },
+      "has_host_access": true,
+      "id": "container_docker_with_host_access_enforces_deny_rule",
+      "mode": "manual",
+      "yolo": false
+    },
+    {
+      "allowlist": [
+        "rm -rf /"
+      ],
+      "classified_verdict": "hardline_blocked",
+      "command": "rm -rf /",
+      "deny_rules": [
+        "*"
+      ],
+      "env_type": "local",
+      "guard_result": {
+        "approved": false,
+        "hardline": true,
+        "message": "BLOCKED (hardline): recursive delete of root filesystem. This command is on the unconditional blocklist and cannot be executed via the agent - not even with --yolo, /yolo, approvals.mode=off, or cron approve mode. If you genuinely need to run it, run it yourself in a terminal outside the agent."
+      },
+      "has_host_access": false,
+      "id": "hardline_beats_deny_rule",
+      "mode": "off",
+      "yolo": true
+    },
+    {
+      "allowlist": [],
+      "classified_verdict": "sudo_stdin_blocked",
+      "command": "echo secret | sudo -S ls",
+      "deny_rules": [
+        "*"
+      ],
+      "env_type": "local",
+      "guard_result": {
+        "approved": false,
+        "message": "BLOCKED: sudo password guessing via stdin (sudo -S). Do not pipe passwords to 'sudo -S' - this is a brute-force attack vector. Set SUDO_PASSWORD in your .env file if the agent needs passwordless sudo, or run the sudo command manually in your own terminal."
+      },
+      "has_host_access": false,
+      "id": "sudo_stdin_guessing_beats_deny_rule",
+      "mode": "off",
+      "yolo": true
+    },
+    {
+      "allowlist": [],
+      "classified_verdict": "blocked",
+      "command": "git push --force origin main",
+      "deny_rules": [
+        "git push*"
+      ],
+      "env_type": "local",
+      "guard_result": {
+        "approved": false,
+        "message": "BLOCKED: this command matches the user-defined deny rule 'git push*' (approvals.deny in config.yaml). It cannot be executed via the agent - not even with --yolo, /yolo, or approvals.mode=off. Do NOT retry or rephrase this command; the user has explicitly forbidden it.",
+        "user_deny": true
+      },
+      "has_host_access": false,
+      "id": "deny_beats_yolo_mode",
+      "mode": "manual",
+      "yolo": true
+    },
+    {
+      "allowlist": [],
+      "classified_verdict": "blocked",
+      "command": "git push --force origin main",
+      "deny_rules": [
+        "git push*"
+      ],
+      "env_type": "local",
+      "guard_result": {
+        "approved": false,
+        "message": "BLOCKED: this command matches the user-defined deny rule 'git push*' (approvals.deny in config.yaml). It cannot be executed via the agent - not even with --yolo, /yolo, or approvals.mode=off. Do NOT retry or rephrase this command; the user has explicitly forbidden it.",
+        "user_deny": true
+      },
+      "has_host_access": false,
+      "id": "deny_beats_mode_off",
+      "mode": "off",
+      "yolo": false
+    },
+    {
+      "allowlist": [
+        "git push --force origin main"
+      ],
+      "classified_verdict": "blocked",
+      "command": "git push --force origin main",
+      "deny_rules": [
+        "git push*"
+      ],
+      "env_type": "local",
+      "guard_result": {
+        "approved": false,
+        "message": "BLOCKED: this command matches the user-defined deny rule 'git push*' (approvals.deny in config.yaml). It cannot be executed via the agent - not even with --yolo, /yolo, or approvals.mode=off. Do NOT retry or rephrase this command; the user has explicitly forbidden it.",
+        "user_deny": true
+      },
+      "has_host_access": false,
+      "id": "deny_beats_permanent_allowlist",
+      "mode": "manual",
+      "yolo": false
+    },
+    {
+      "allowlist": [],
+      "classified_verdict": "approved",
+      "command": "chmod -R 777 /workspace",
+      "deny_rules": [
+        "git push*"
+      ],
+      "env_type": "local",
+      "guard_result": {
+        "approved": true,
+        "message": null
+      },
+      "has_host_access": false,
+      "id": "mode_off_allows_non_denied_dangerous_command",
+      "mode": "off",
+      "yolo": false
+    },
+    {
+      "allowlist": [],
+      "classified_verdict": "approved",
+      "command": "ls -la /workspace",
+      "deny_rules": [
+        "git push*"
+      ],
+      "env_type": "local",
+      "guard_result": {
+        "approved": true,
+        "message": null
+      },
+      "has_host_access": false,
+      "id": "mode_off_allows_safe_command",
+      "mode": "off",
+      "yolo": false
+    }
+  ],
+  "rule_parsing": [
+    {
+      "command": "git push --force",
+      "deny_config": [],
+      "id": "parsing_empty_list",
+      "matched_pattern": null
+    },
+    {
+      "command": "git push --force",
+      "deny_config": null,
+      "id": "parsing_none_value",
+      "matched_pattern": null
+    },
+    {
+      "command": "git push --force",
+      "deny_config": [
+        ""
+      ],
+      "id": "parsing_empty_string_entry",
+      "matched_pattern": null
+    },
+    {
+      "command": "git push --force",
+      "deny_config": [
+        "   ",
+        "\t\n"
+      ],
+      "id": "parsing_whitespace_only_entry",
+      "matched_pattern": null
+    },
+    {
+      "command": "git push --force origin main",
+      "deny_config": [
+        "  git push*  "
+      ],
+      "id": "parsing_whitespace_stripped_entry",
+      "matched_pattern": "git push*"
+    },
+    {
+      "command": "rm -rf /tmp/foo",
+      "deny_config": [
+        123,
+        null,
+        true,
+        {
+          "bad": "type"
+        },
+        "rm *"
+      ],
+      "id": "parsing_mixed_non_strings_filtered",
+      "matched_pattern": "rm *"
+    },
+    {
+      "command": "git push origin main",
+      "deny_config": [
+        "git push origin *",
+        "git push*",
+        "*git*"
+      ],
+      "id": "parsing_first_rule_wins_order",
+      "matched_pattern": "git push origin *"
+    },
+    {
+      "command": "git push --force",
+      "deny_config": [
+        "Git Push *"
+      ],
+      "id": "parsing_preserves_original_pattern_case_in_return",
+      "matched_pattern": "Git Push *"
+    }
+  ],
+  "terminal_tool_envelopes": [
+    {
+      "command": "git push --force origin main",
+      "deny_rules": [
+        "git push*"
+      ],
+      "id": "envelope_user_deny_block",
+      "mode": "off",
+      "raw_envelope": {
+        "error": "BLOCKED: this command matches the user-defined deny rule 'git push*' (approvals.deny in config.yaml). It cannot be executed via the agent - not even with --yolo, /yolo, or approvals.mode=off. Do NOT retry or rephrase this command; the user has explicitly forbidden it.",
+        "exit_code": -1,
+        "output": "",
+        "status": "blocked"
+      }
+    },
+    {
+      "command": "rm -rf /",
+      "deny_rules": [
+        "*"
+      ],
+      "id": "envelope_hardline_block_over_deny",
+      "mode": "off",
+      "raw_envelope": {
+        "error": "BLOCKED (hardline): recursive delete of root filesystem. This command is on the unconditional blocklist and cannot be executed via the agent - not even with --yolo, /yolo, approvals.mode=off, or cron approve mode. If you genuinely need to run it, run it yourself in a terminal outside the agent.",
+        "exit_code": -1,
+        "output": "",
+        "status": "blocked"
+      }
+    },
+    {
+      "command": "echo pass | sudo -S whoami",
+      "deny_rules": [
+        "*"
+      ],
+      "id": "envelope_sudo_stdin_block_over_deny",
+      "mode": "off",
+      "raw_envelope": {
+        "error": "BLOCKED: sudo password guessing via stdin (sudo -S). Do not pipe passwords to 'sudo -S' - this is a brute-force attack vector. Set SUDO_PASSWORD in your .env file if the agent needs passwordless sudo, or run the sudo command manually in your own terminal.",
+        "exit_code": -1,
+        "output": "",
+        "status": "blocked"
+      }
+    },
+    {
+      "command": "echo 'safe command'",
+      "deny_rules": [
+        "git push*"
+      ],
+      "id": "envelope_mode_off_allowed_exec",
+      "mode": "off",
+      "raw_envelope": {
+        "cwd": "/workspace",
+        "error": null,
+        "exit_code": 0,
+        "output": "[MOCK_EXECUTION_SUCCESS]"
+      }
+    }
+  ]
+}

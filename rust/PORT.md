@@ -1,5 +1,38 @@
 # Hermes Rust rewrite
 
+## Native static approval deny rules: 2026-09-09
+
+Native Unix-local terminal conversations now accept nonempty `approvals.deny`
+lists when approval mode is off. Every foreground and background request passes
+the hardline security floor first, then case-insensitive Python-compatible deny
+matching over normalized and shell-carrier variants. A denied command returns
+the frozen Python terminal envelope without starting a process.
+
+The conversation-owned terminal reloads approval policy on every call. Valid
+edits apply immediately, malformed YAML retains the last-known-good rules, and
+a live mode change away from off fails closed. The provider-visible terminal
+and process schemas stay byte-identical throughout the conversation.
+
+A 59-case source-executed Python oracle pins parsing, normalization, glob
+semantics, boundary behavior, precedence, envelopes, reload, and last-known-good
+behavior. The live provider integration now exercises the terminal with a
+nonempty deny list. See
+[native-approval-deny-resolution.md](analysis/native-approval-deny-resolution.md).
+
+AGY owned the Python contract oracle. Claude independently audited the Rust
+interactive wiring and proved that a blocking approval would currently
+deadlock its own reply behind the held turn lease. The primary lane integrated
+and reviewed the safe static slice. Interactive approval remains deferred until
+the tool loop can suspend without retaining the transcript lease.
+
+The refreshed [weighted full-port audit](analysis/progress-audit-2026-09-08.md)
+is **53.65 points, reported as about 54%** (judgment range 52% to 56%).
+
+Validation is **1,771 Rust tests passed, two ignored**, plus **151 selected
+Python approval and terminal tests passed**. The 59-case oracle regenerates
+byte-for-byte. Rust and Python formatting, Ruff, Clippy with warnings denied,
+and diff hygiene pass.
+
 ## Native managed background processes: 2026-09-09
 
 The production native Unix-local terminal now starts managed non-PTY background

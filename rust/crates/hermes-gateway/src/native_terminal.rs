@@ -44,6 +44,7 @@ pub struct TerminalTool {
     route_cwd: Option<RouteCwd>,
     process_registry: Arc<crate::background_process::Registry>,
     process_owner: crate::background_process::Owner,
+    approval_policy: Mutex<ApprovalPolicy>,
 }
 
 pub struct TerminalConfig<'a> {
@@ -55,6 +56,39 @@ pub struct TerminalConfig<'a> {
     pub database: Option<Arc<crate::session_db::SessionDb>>,
     pub route: Option<(String, String)>,
     pub process_registry: Arc<crate::background_process::Registry>,
+    pub approval_config: Value,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct ApprovalPolicy {
+    mode_off: bool,
+    deny: Vec<String>,
+}
+
+impl ApprovalPolicy {
+    fn from_value(value: &Value) -> Self {
+        let deny_is_valid = matches!(
+            value.get("deny"),
+            None | Some(Value::Null | Value::Array(_))
+        );
+        let mode_off = deny_is_valid
+            && match value.get("mode") {
+                Some(Value::Bool(false)) => true,
+                Some(Value::String(mode)) => mode.trim().eq_ignore_ascii_case("off"),
+                _ => false,
+            };
+        let deny = value
+            .get("deny")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .map(str::trim)
+            .filter(|pattern| !pattern.is_empty())
+            .map(str::to_owned)
+            .collect();
+        Self { mode_off, deny }
+    }
 }
 
 impl TerminalTool {
@@ -96,6 +130,41 @@ impl TerminalTool {
                 config.profile_home,
                 config.session_identity,
             ),
+            approval_policy: Mutex::new(ApprovalPolicy::from_value(&config.approval_config)),
+        }
+    }
+
+    async fn current_approval_policy(&self) -> ApprovalPolicy {
+        let path = self.profile_home.join("config.yaml");
+        let mut cached = self.approval_policy.lock().await;
+        match tokio::fs::read_to_string(&path).await {
+            Ok(text) => match serde_yaml_ng::from_str::<Value>(&text) {
+                Ok(config) if config.is_object() => {
+                    let policy = ApprovalPolicy::from_value(&config["approvals"]);
+                    *cached = policy.clone();
+                    policy
+                }
+                Ok(_) => {
+                    tracing::warn!(path = %path.display(), "native terminal ignored non-mapping config reload");
+                    cached.clone()
+                }
+                Err(error) => {
+                    tracing::warn!(%error, path = %path.display(), "native terminal retained last-known-good approval policy");
+                    cached.clone()
+                }
+            },
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                let policy = ApprovalPolicy {
+                    mode_off: false,
+                    deny: Vec::new(),
+                };
+                *cached = policy.clone();
+                policy
+            }
+            Err(error) => {
+                tracing::warn!(%error, path = %path.display(), "native terminal retained last-known-good approval policy");
+                cached.clone()
+            }
         }
     }
 
@@ -194,11 +263,32 @@ impl TerminalTool {
             );
         }
 
-        let mut session_cwd = self.cwd.lock().await;
+        let policy = self.current_approval_policy().await;
         let user_home = self
             .environment
             .get(&OsString::from("HOME"))
             .map(PathBuf::from);
+        if let Some(pattern) = crate::terminal_guard::user_deny_match(
+            command,
+            &policy.deny,
+            &self.profile_home,
+            user_home.as_deref(),
+        ) {
+            return execution_error(
+                &format!(
+                    "BLOCKED: this command matches the user-defined deny rule '{pattern}' (approvals.deny in config.yaml). It cannot be executed via the agent - not even with --yolo, /yolo, or approvals.mode=off. Do NOT retry or rephrase this command; the user has explicitly forbidden it."
+                ),
+                "blocked",
+            );
+        }
+        if !policy.mode_off {
+            return execution_error(
+                "Native terminal execution is unavailable because approvals.mode is no longer off. Start a new conversation or use the Python agent for interactive approvals.",
+                "blocked",
+            );
+        }
+
+        let mut session_cwd = self.cwd.lock().await;
         let explicit_workdir = match args.get("workdir") {
             None | Some(Value::Null) => None,
             Some(Value::String(path)) => {
@@ -579,7 +669,7 @@ fn prepare_private_parent(path: &Path) -> std::io::Result<()> {
 }
 
 pub(crate) fn redact_output(output: &str) -> String {
-    crate::compression_redact::redact(&strip_ansi(output))
+    crate::compression_redact::redact(&crate::terminal_guard::strip_ansi(output))
 }
 
 fn redact_spill(path: &Path, marker: &str) -> bool {
@@ -617,37 +707,6 @@ fn discard_spill(path: Option<&Path>) {
     }
 }
 
-fn strip_ansi(text: &str) -> String {
-    let mut output = String::with_capacity(text.len());
-    let mut chars = text.chars().peekable();
-    while let Some(ch) = chars.next() {
-        if ch != '\u{1b}' {
-            output.push(ch);
-            continue;
-        }
-        match chars.next() {
-            Some('[') => {
-                for next in chars.by_ref() {
-                    if ('@'..='~').contains(&next) {
-                        break;
-                    }
-                }
-            }
-            Some(']') => {
-                let mut escaped = false;
-                for next in chars.by_ref() {
-                    if next == '\u{7}' || escaped && next == '\\' {
-                        break;
-                    }
-                    escaped = next == '\u{1b}';
-                }
-            }
-            Some(_) | None => {}
-        }
-    }
-    output
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -671,6 +730,11 @@ mod tests {
     }
 
     fn tool(home: &Path, cwd: &Path) -> TerminalTool {
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: off\n  deny: []\n",
+        )
+        .unwrap();
         let profile = HashMap::from([("PROFILE_SECRET".into(), "only-this-profile".into())]);
         TerminalTool::new(TerminalConfig {
             cwd: cwd.to_path_buf(),
@@ -681,6 +745,7 @@ mod tests {
             database: None,
             route: None,
             process_registry: Arc::new(crate::background_process::Registry::new()),
+            approval_config: json!({"mode":"off","deny":[]}),
         })
     }
 
@@ -709,6 +774,11 @@ mod tests {
     #[tokio::test]
     async fn background_uses_persisted_environment_and_shared_registry() {
         let home = temp_dir("background");
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: off\n  deny: []\n",
+        )
+        .unwrap();
         let registry = Arc::new(crate::background_process::Registry::new());
         let profile = HashMap::from([("PROFILE_SECRET".into(), "only-this-profile".into())]);
         let terminal = TerminalTool::new(TerminalConfig {
@@ -720,6 +790,7 @@ mod tests {
             database: None,
             route: None,
             process_registry: registry.clone(),
+            approval_config: json!({"mode":"off","deny":[]}),
         });
         let exported = terminal
             .invoke(&json!({"command":"export SAVED=background-value"}))
@@ -784,6 +855,111 @@ mod tests {
             assert_eq!(result["status"], "blocked");
             assert_eq!(result["exit_code"], -1);
         }
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn deny_rules_reload_for_foreground_and_background_and_retain_lkg() {
+        let home = temp_dir("deny-reload");
+        let marker = home.join("must-not-exist");
+        let terminal = tool(&home, &home);
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: off\n  deny:\n    - 'touch *'\n    - '*'\n",
+        )
+        .unwrap();
+
+        let hardline = terminal.invoke(&json!({"command":"rm -rf /"})).await;
+        assert!(hardline["error"].as_str().unwrap().contains("hardline"));
+
+        for background in [false, true] {
+            let denied = terminal
+                .invoke(&json!({
+                    "command":format!("touch {}", marker.display()),
+                    "background":background,
+                }))
+                .await;
+            assert_eq!(denied["status"], "blocked");
+            assert!(denied["error"]
+                .as_str()
+                .unwrap()
+                .contains("deny rule 'touch *'"));
+        }
+        assert!(!marker.exists());
+
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: off\n  deny:\n    - 'printf forbidden*'\n",
+        )
+        .unwrap();
+        let updated = terminal
+            .invoke(&json!({"command":"printf forbidden-value"}))
+            .await;
+        assert_eq!(updated["status"], "blocked");
+
+        std::fs::write(home.join("config.yaml"), "approvals: [unterminated").unwrap();
+        let retained = terminal
+            .invoke(&json!({"command":"printf forbidden-after-corruption"}))
+            .await;
+        assert_eq!(retained["status"], "blocked");
+        assert!(retained["error"]
+            .as_str()
+            .unwrap()
+            .contains("printf forbidden*"));
+
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: smart\n  deny: []\n",
+        )
+        .unwrap();
+        let mode_changed = terminal
+            .invoke(&json!({"command":format!("touch {}", marker.display())}))
+            .await;
+        assert_eq!(mode_changed["status"], "blocked");
+        assert!(mode_changed["error"]
+            .as_str()
+            .unwrap()
+            .contains("approvals.mode is no longer off"));
+        assert!(!marker.exists());
+
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: off\n  deny: invalid\n",
+        )
+        .unwrap();
+        let invalid_policy = terminal
+            .invoke(&json!({"command":format!("touch {}", marker.display())}))
+            .await;
+        assert_eq!(invalid_policy["status"], "blocked");
+        assert!(!marker.exists());
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[tokio::test]
+    async fn user_deny_envelope_matches_python_contract() {
+        let home = temp_dir("deny-envelope");
+        let terminal = tool(&home, &home);
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: off\n  deny:\n    - 'git push*'\n",
+        )
+        .unwrap();
+        let approval_corpus: Value = serde_json::from_str(include_str!(
+            "../../../tools/approval-deny-contract-goldens.json"
+        ))
+        .unwrap();
+        let case = approval_corpus["terminal_tool_envelopes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["id"] == "envelope_user_deny_block")
+            .unwrap()
+            .clone();
+        let actual = terminal
+            .invoke(&json!({"command":case["command"].clone()}))
+            .await;
+        assert_eq!(actual, case["raw_envelope"]);
         std::fs::remove_dir_all(home).unwrap();
     }
 
@@ -881,7 +1057,10 @@ mod tests {
 
     #[test]
     fn strips_terminal_escape_sequences() {
-        assert_eq!(strip_ansi("a\u{1b}[31mred\u{1b}[0m b"), "ared b");
+        assert_eq!(
+            crate::terminal_guard::strip_ansi("a\u{1b}[31mred\u{1b}[0m b"),
+            "ared b"
+        );
     }
 
     #[test]

@@ -74,15 +74,17 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   function ABI, profile-secret boundary, and descendant timeout cleanup are
   live. Context-engine and relay-boundary adoption remain open.
 - A session-bound native Unix-local terminal is live only for explicit
-  no-approval local configurations with no user deny rules. Its frozen schema,
+  no-approval local configurations. Its frozen schema,
   profile-isolated persistent environment, routed cwd, bounded redacted output,
   private spills, process-group cleanup, and unconditional security floor are
   covered through the real provider loop. Managed non-PTY background execution
   shares one gateway registry across client eviction and adds owner-isolated
   list, poll, log, wait, kill, reset-liveness, and bounded-shutdown behavior.
-  Approval modes, PTY and notification support, restart adoption, and remote
-  backends remain on the Python path. See
-  [native-background-process-resolution.md](native-background-process-resolution.md).
+  Static `approvals.deny` rules now reload per call with Python-compatible glob
+  normalization and last-known-good protection. Interactive approval modes, PTY
+  and notification support, restart adoption, and remote backends remain on the
+  Python path. See
+  [native-approval-deny-resolution.md](native-approval-deny-resolution.md).
 
 ## Rejected paths
 
@@ -104,6 +106,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-approval-deny-resolution.md](native-approval-deny-resolution.md) | Live static deny rules, Python-compatible matching, runtime reload, last-known-good policy, frozen schema safety, and interactive deferral |
+| [native-approval-deny-contract-agy.md](native-approval-deny-contract-agy.md) | AGY's Python contract audit for rule parsing, variants, glob semantics, precedence, envelopes, and config reload |
+| [native-approval-wiring-claude.md](native-approval-wiring-claude.md) | Claude's Rust seam audit proving the current turn-lease deadlock and mapping the later interactive transport boundary |
+| [approval-deny-contract-goldens.json](../tools/approval-deny-contract-goldens.json) | Source-executed 59-case Python deny-rule, precedence, envelope, and reload contract |
 | [native-background-process-resolution.md](native-background-process-resolution.md) | Live managed non-PTY background terminal, gateway registry ownership, frozen `process_manage` surface, review fixes, validation, and explicit deferrals |
 | [native-background-python-contract.md](native-background-python-contract.md) | Source-executed Python spawn, process management, retention, ownership, redaction, and exclusion contract |
 | [native-background-parity-review-agy.md](native-background-parity-review-agy.md) | AGY's separate review of envelopes, prefix resolution, output tails, pagination, wait, kill, liveness, ownership, and deliberate scope differences |

@@ -1,12 +1,13 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **53.35% of the full native replacement**, reported as
-**about 53%**, with a reasonable judgment range of **51% to 55%**. The native
+Current estimate: **53.65% of the full native replacement**, reported as
+**about 54%**, with a reasonable judgment range of **52% to 56%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
-background commands through the frozen conversation tool loop. The estimate
-remains conservative because approval workflows, PTY and notification support,
-remote execution, most tools, and the underlying plugin and external-memory
-managers are not native.
+background commands through the frozen conversation tool loop, including
+static user deny rules with live last-known-good reload. The estimate remains
+conservative because interactive approval workflows, PTY and notification
+support, remote execution, most tools, and the underlying plugin and
+external-memory managers are not native.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -22,12 +23,12 @@ audits.
 | Area | Full-port weight | Current area completion | Overall points |
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 66% | 23.10 |
-| Tool runtime and RPC | 30% | 21% | 6.30 |
+| Tool runtime and RPC | 30% | 22% | 6.60 |
 | State and search | 15% | 73% | 10.95 |
 | Native agent core | 20% | 65% | 13.00 |
-| Total | 100% | | **53.35** |
+| Total | 100% | | **53.65** |
 
-`0.35 * 66 + 0.30 * 21 + 0.15 * 73 + 0.20 * 65 = 53.35`
+`0.35 * 66 + 0.30 * 22 + 0.15 * 73 + 0.20 * 65 = 53.65`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -63,7 +64,7 @@ active work, and graceful shutdown terminates all owned groups within shared
 bounded grace windows. Restart adoption and autonomous completion delivery
 remain Python-only.
 
-### Tool runtime and RPC, 21%
+### Tool runtime and RPC, 22%
 
 The native model tool loop, schema projection, malformed-call repair, duplicate
 suppression, result framing, event emission, iteration-summary path, and a
@@ -97,8 +98,11 @@ cwd, with cwd updates following the active SQLite route across compression
 rotation. Visible and spilled output is ANSI-stripped and redacted. The
 unconditional hardline and `sudo -S` floor is source-checked against a
 Python-generated corpus, and extension-name collisions cannot replace native
-tools. Interactive approval modes, user deny rules, and remote backends
-deliberately keep this native tool hidden.
+tools. Static user deny rules use Python-compatible normalized glob matching,
+reload before each call, retain their last-known-good policy after malformed
+edits, and run before foreground or background process creation. Live mode
+changes fail closed without mutating the frozen schema. Interactive approval
+modes and remote backends deliberately keep this native tool hidden.
 
 Eligible conversations also expose managed local non-PTY background execution
 plus an owner-isolated `process_manage` surface for list, poll, log, wait, and

@@ -118,6 +118,7 @@ mod prompt_cache;
 mod prompt_footer;
 mod provider_registry;
 mod provider_usage;
+mod python_fnmatch;
 mod python_literal;
 mod python_value;
 mod qqbot_common;
@@ -243,16 +244,16 @@ fn native_local_terminal_eligible(config: &serde_json::Value) -> bool {
         .as_str()
         .filter(|value| !value.trim().is_empty())
         .unwrap_or("local");
-    let approval_mode = config["approvals"]["mode"]
-        .as_str()
-        .filter(|value| !value.trim().is_empty())
-        .unwrap_or("smart");
-    let deny_is_empty = match config["approvals"].get("deny") {
-        None | Some(serde_json::Value::Null) => true,
-        Some(serde_json::Value::Array(rules)) => rules.is_empty(),
+    let approval_mode_off = match config["approvals"].get("mode") {
+        Some(serde_json::Value::Bool(false)) => true,
+        Some(serde_json::Value::String(mode)) => mode.trim().eq_ignore_ascii_case("off"),
+        _ => false,
+    };
+    let deny_is_valid = match config["approvals"].get("deny") {
+        None | Some(serde_json::Value::Null | serde_json::Value::Array(_)) => true,
         Some(_) => false,
     };
-    cfg!(unix) && backend == "local" && approval_mode == "off" && deny_is_empty
+    cfg!(unix) && backend == "local" && approval_mode_off && deny_is_valid
 }
 
 fn extensions_configured(
@@ -852,6 +853,7 @@ async fn build_conversation_client(
                 database: terminal_database,
                 route,
                 process_registry: process_registry.clone(),
+                approval_config: selected["approvals"].clone(),
             },
         )));
         registered_base_tools.push(Arc::new(crate::native_process::ProcessTool::new(
@@ -1467,16 +1469,23 @@ mod startup_tests {
 
     #[cfg(unix)]
     #[test]
-    fn native_terminal_requires_explicit_local_no_approval_policy() {
+    fn native_terminal_requires_explicit_local_mode_off_policy() {
         assert!(native_local_terminal_eligible(&json!({
             "terminal":{"backend":"local"},
             "approvals":{"mode":"off","deny":[]}
+        })));
+        assert!(native_local_terminal_eligible(&json!({
+            "terminal":{"backend":"local"},
+            "approvals":{"mode":" OFF ","deny":["git push*"]}
+        })));
+        assert!(native_local_terminal_eligible(&json!({
+            "terminal":{"backend":"local"},
+            "approvals":{"mode":false,"deny":null}
         })));
         for config in [
             json!({}),
             json!({"terminal":{"backend":"docker"},"approvals":{"mode":"off"}}),
             json!({"approvals":{"mode":"smart"}}),
-            json!({"approvals":{"mode":"off","deny":["rm *"]}}),
             json!({"approvals":{"mode":"off","deny":"invalid"}}),
         ] {
             assert!(!native_local_terminal_eligible(&config), "{config}");
@@ -1949,7 +1958,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
         std::fs::create_dir_all(home.0.join("child")).unwrap();
         std::fs::write(
             home.0.join("config.yaml"),
-            "model:\n  default: fixture-model\n  provider: openrouter\nterminal:\n  backend: local\n  timeout: 5\napprovals:\n  mode: off\n  deny: []\n",
+            "model:\n  default: fixture-model\n  provider: openrouter\nterminal:\n  backend: local\n  timeout: 5\napprovals:\n  mode: off\n  deny:\n    - 'git push*'\n",
         )
         .unwrap();
         let database = session_db::SessionDb::open_shared(home.0.join("state.db")).unwrap();
