@@ -51,6 +51,7 @@ pub struct Dispatcher {
     /// attachments are then left untranscribed and the turn runs on the caption).
     transcription: Option<Arc<dyn crate::transcription_enrichment::TranscriptionBackend>>,
     slash_confirmations: Arc<crate::slash_confirm::SlashConfirmations>,
+    tool_approvals: Arc<crate::tool_approval::ApprovalBroker>,
 }
 
 struct AdmittedTurnOwnership {
@@ -110,6 +111,7 @@ impl Dispatcher {
             slash_confirmations: Arc::new(crate::slash_confirm::SlashConfirmations::new(
                 crate::config_file::config_path(),
             )),
+            tool_approvals: Arc::new(crate::tool_approval::ApprovalBroker::new()),
         }
     }
 
@@ -153,6 +155,14 @@ impl Dispatcher {
         confirmations: Arc<crate::slash_confirm::SlashConfirmations>,
     ) -> Self {
         self.slash_confirmations = confirmations;
+        self
+    }
+
+    pub fn with_tool_approvals(
+        mut self,
+        approvals: Arc<crate::tool_approval::ApprovalBroker>,
+    ) -> Self {
+        self.tool_approvals = approvals;
         self
     }
 
@@ -280,9 +290,35 @@ impl Dispatcher {
 
         // Confirmation replies are gateway control input and never enter the
         // transcript or model context. Keep this ahead of ordinary slash
-        // dispatch. Native blocking tool approvals will take precedence here
-        // once that runtime is ported, matching Python's ordering contract.
+        // dispatch. Native blocking tool approvals take precedence here,
+        // matching Python's ordering contract.
         if let Some((store, _)) = &self.session_store {
+            let source = crate::session::source_from_message(&msg);
+            let route_key = store.session_key_for_source(&source);
+            match self
+                .tool_approvals
+                .resolve_text(&route_key, &msg.text, |request| {
+                    request.principal == msg.sender_id
+                        && crate::slash::can_run_command(&self.user_config, &msg, "approve")
+                }) {
+                crate::tool_approval::ResolveOutcome::Resolved {
+                    count, decision, ..
+                } => {
+                    self.deliver(
+                        &msg,
+                        crate::tool_approval::confirmation_text(&decision, count),
+                    )
+                    .await;
+                    return;
+                }
+                crate::tool_approval::ResolveOutcome::Unauthorized => {
+                    self.deliver(&msg, crate::slash::denial_text("approve"))
+                        .await;
+                    return;
+                }
+                crate::tool_approval::ResolveOutcome::NoPending
+                | crate::tool_approval::ResolveOutcome::Malformed => {}
+            }
             let deps = crate::session_admission::AdmissionDeps {
                 store: store.clone(),
                 transcript_leases: self.lease.clone(),
@@ -290,13 +326,16 @@ impl Dispatcher {
                 generation: self.generation.clone(),
             };
             if let Some(result) = crate::session_commands::resolve_reset_confirmation(
-                &self.slash_confirmations,
+                crate::session_commands::ResetControls {
+                    confirmations: &self.slash_confirmations,
+                    tool_approvals: &self.tool_approvals,
+                },
                 deps,
                 self.agent.clone(),
-                crate::session::source_from_message(&msg),
+                source,
                 &msg,
                 &self.user_config,
-                false,
+                self.tool_approvals.has_pending(&route_key),
             )
             .await
             {
@@ -368,6 +407,7 @@ impl Dispatcher {
             };
             match crate::session_commands::resume_session(crate::session_commands::ResumeCommand {
                 confirmations: &self.slash_confirmations,
+                tool_approvals: &self.tool_approvals,
                 deps: crate::session_admission::AdmissionDeps {
                     store: store.clone(),
                     transcript_leases: self.lease.clone(),
@@ -448,7 +488,10 @@ impl Dispatcher {
                 return;
             };
             match crate::session_commands::reset_or_confirm(
-                &self.slash_confirmations,
+                crate::session_commands::ResetControls {
+                    confirmations: &self.slash_confirmations,
+                    tool_approvals: &self.tool_approvals,
+                },
                 crate::session_admission::AdmissionDeps {
                     store: store.clone(),
                     transcript_leases: self.lease.clone(),
@@ -549,6 +592,7 @@ impl Dispatcher {
                         if let Some(previous_session_id) = resolved.predecessor_id {
                             if let Some(route_key) = routing_key.as_deref() {
                                 self.slash_confirmations.clear(route_key);
+                                self.tool_approvals.cancel_route(route_key);
                             }
                             self.agent.retire_conversation(
                                 crate::agent::TurnContext::from_database(turn_db.as_deref()),
@@ -647,13 +691,15 @@ impl Dispatcher {
         let msg_for_agent = msg.clone();
         let agent_turn_lease_holder = turn_lease_holder.clone();
         let agent_turn_session = turn_session.clone();
+        let agent_route_key = routing_key.clone();
         let agent_task = tokio::spawn(async move {
             turn_agent
                 .run_turn_with_context(
                     crate::agent::TurnContext::from_database(agent_db.as_deref())
                         .with_session_finalizable(session_finalizable)
                         .with_turn_lease_holder(agent_turn_lease_holder.as_deref())
-                        .with_turn_session(agent_turn_session.as_ref()),
+                        .with_turn_session(agent_turn_session.as_ref())
+                        .with_route_key(agent_route_key.as_deref()),
                     &msg_for_agent,
                     &history,
                     tx,
@@ -679,6 +725,30 @@ impl Dispatcher {
                 }
                 StreamEvent::MessageStop { final_: true } => break,
                 StreamEvent::MessageStop { final_: false } => reply.push_str("\n\n"),
+                StreamEvent::ApprovalRequest {
+                    request_id: _,
+                    command,
+                    description,
+                    allow_session,
+                    allow_permanent,
+                    smart_denied,
+                } => {
+                    let prompt = crate::tool_approval::ApprovalPrompt {
+                        command: &command,
+                        description: &description,
+                        allow_session,
+                        allow_permanent,
+                        smart_denied,
+                    };
+                    self.deliver(
+                        &msg,
+                        crate::tool_approval::format_prompt(
+                            prompt,
+                            crate::slash::typed_command_prefix(msg.platform),
+                        ),
+                    )
+                    .await;
+                }
                 // Tool chrome, hints and notices: not rendered in this pass.
                 StreamEvent::ToolCallChunk { .. }
                 | StreamEvent::ToolCallFinished { .. }
@@ -1215,6 +1285,172 @@ mod tests {
         assert_eq!(out.len(), 1);
         assert_eq!(out[0].text, "hello there");
         assert_eq!(out[0].channel_id, "chan");
+    }
+
+    #[tokio::test]
+    async fn approval_reply_bypasses_held_transcript_lease_and_stays_out_of_history() {
+        struct ApprovalGateAgent {
+            broker: Arc<crate::tool_approval::ApprovalBroker>,
+            route_key: String,
+        }
+
+        #[async_trait]
+        impl crate::agent::AgentClient for ApprovalGateAgent {
+            async fn run_turn(
+                &self,
+                msg: &Message,
+                _history: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                let notify_tx = tx.clone();
+                let outcome = self
+                    .broker
+                    .request_with_notify(
+                        crate::tool_approval::RequestSpec {
+                            route_key: self.route_key.clone(),
+                            principal: msg.sender_id.clone(),
+                            command: "git push --force origin main".into(),
+                            description: "git push force".into(),
+                            pattern_keys: vec!["git push force".into()],
+                            allow_session: true,
+                            allow_permanent: true,
+                            smart_denied: false,
+                            timeout: Some(std::time::Duration::from_secs(5)),
+                        },
+                        move |info| async move {
+                            notify_tx
+                                .send(StreamEvent::ApprovalRequest {
+                                    request_id: info.id,
+                                    command: info.command,
+                                    description: info.description,
+                                    allow_session: info.allow_session,
+                                    allow_permanent: info.allow_permanent,
+                                    smart_denied: info.smart_denied,
+                                })
+                                .await
+                                .is_ok()
+                        },
+                    )
+                    .await
+                    .unwrap();
+                assert_eq!(
+                    outcome,
+                    crate::tool_approval::Outcome::Decided(
+                        crate::tool_approval::Decision::AllowSession
+                    )
+                );
+                tx.send(StreamEvent::MessageChunk {
+                    text: "approved answer".into(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+
+        let home = std::env::temp_dir().join(format!(
+            "hermes-push-approval-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_nanos()
+        ));
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.join("sessions"),
+                    ..Default::default()
+                },
+                home.clone(),
+                home.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let mut question = cli_msg("please deploy", "owner");
+        question.platform = Platform::Telegram;
+        let route_key =
+            store.session_key_for_source(&crate::session::source_from_message(&question));
+        let broker = Arc::new(crate::tool_approval::ApprovalBroker::new());
+        let sent = Arc::new(Mutex::new(Vec::new()));
+        let (mut dispatcher, _, _) = harness("unused", json!({}));
+        dispatcher.agent = Arc::new(ApprovalGateAgent {
+            broker: broker.clone(),
+            route_key,
+        });
+        dispatcher.register_adapter(
+            Platform::Telegram,
+            Arc::new(StubAdapter { sent: sent.clone() }),
+        );
+        let dispatcher = dispatcher
+            .with_session_store(store, 3600.0)
+            .with_tool_approvals(broker.clone());
+
+        let turn_dispatcher = dispatcher.clone();
+        let turn = tokio::spawn(async move { turn_dispatcher.handle_turn(question).await });
+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            loop {
+                if sent
+                    .lock()
+                    .unwrap()
+                    .iter()
+                    .any(|message| message.text.contains("Dangerous command requires approval"))
+                {
+                    break;
+                }
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .expect("approval prompt was not delivered");
+
+        let mut approval = cli_msg("/approve session", "owner");
+        approval.platform = Platform::Telegram;
+        tokio::time::timeout(
+            std::time::Duration::from_secs(2),
+            dispatcher.handle_turn(approval),
+        )
+        .await
+        .expect("control reply waited for the transcript lease");
+        tokio::time::timeout(std::time::Duration::from_secs(5), turn)
+            .await
+            .expect("approved turn did not resume")
+            .unwrap();
+
+        let out = sent.lock().unwrap();
+        assert!(out
+            .iter()
+            .any(|message| { message.text == "✅ Approved 1 pending command for this session." }));
+        let final_message = out
+            .iter()
+            .find(|message| message.text == "approved answer")
+            .expect("final reply was not delivered");
+        let session_id = final_message
+            .resolved_session_id
+            .as_deref()
+            .expect("coordinator must assign a session id");
+        let database = crate::session_db::SessionDb::open_shared(home.join("state.db")).unwrap();
+        let history = database.load_history(session_id, 0).unwrap();
+        assert_eq!(history.len(), 2);
+        assert_eq!(
+            (history[0].role.as_str(), history[0].content.as_str()),
+            ("user", "please deploy")
+        );
+        assert_eq!(
+            (history[1].role.as_str(), history[1].content.as_str()),
+            ("assistant", "approved answer")
+        );
+        assert!(history
+            .iter()
+            .all(|entry| !entry.content.contains("approve session")));
+        drop(out);
+        drop(database);
+        std::fs::remove_dir_all(home).unwrap();
     }
 
     #[tokio::test]

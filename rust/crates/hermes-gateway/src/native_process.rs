@@ -206,7 +206,11 @@ impl Tool for ProcessTool {
         }
     }
 
-    async fn call(&self, args: &Value) -> Result<Value> {
+    async fn call(
+        &self,
+        args: &Value,
+        _context: crate::native_tools::ToolCallContext<'_>,
+    ) -> Result<Value> {
         Ok(self.invoke(args).await)
     }
 }

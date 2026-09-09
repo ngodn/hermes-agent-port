@@ -41,6 +41,7 @@ pub struct TitleCommand {
 
 pub struct ResumeCommand<'a> {
     pub confirmations: &'a crate::slash_confirm::SlashConfirmations,
+    pub tool_approvals: &'a crate::tool_approval::ApprovalBroker,
     pub deps: crate::session_admission::AdmissionDeps,
     pub agent: Arc<dyn crate::agent::AgentClient>,
     pub source: crate::session::SessionSource,
@@ -749,6 +750,7 @@ fn query_visible_resume_sessions(
 pub async fn resume_session(command: ResumeCommand<'_>) -> anyhow::Result<ResumeResult> {
     let ResumeCommand {
         confirmations,
+        tool_approvals,
         deps,
         agent,
         source,
@@ -1052,6 +1054,7 @@ pub async fn resume_session(command: ResumeCommand<'_>) -> anyhow::Result<Resume
             continue;
         }
         confirmations.clear(&route_key);
+        tool_approvals.cancel_route(&route_key);
         drop(transcript_tokens);
         drop(route_token);
         let summary_db = database.clone();
@@ -1079,8 +1082,13 @@ pub async fn resume_session(command: ResumeCommand<'_>) -> anyhow::Result<Resume
 
 /// Resolve a pending text confirmation before ordinary slash dispatch. `None`
 /// means the message was unrelated and must continue through the normal path.
+pub struct ResetControls<'a> {
+    pub confirmations: &'a crate::slash_confirm::SlashConfirmations,
+    pub tool_approvals: &'a crate::tool_approval::ApprovalBroker,
+}
+
 pub async fn resolve_reset_confirmation(
-    confirmations: &crate::slash_confirm::SlashConfirmations,
+    controls: ResetControls<'_>,
     deps: crate::session_admission::AdmissionDeps,
     agent: Arc<dyn crate::agent::AgentClient>,
     source: crate::session::SessionSource,
@@ -1089,10 +1097,12 @@ pub async fn resolve_reset_confirmation(
     tool_approval_live: bool,
 ) -> Option<ResetResult> {
     let route_key = deps.store.session_key_for_source(&source);
-    let resolution =
-        confirmations.resolve_text(&route_key, &message.text, tool_approval_live, |command| {
-            crate::slash::can_run_command(user_config, message, command)
-        });
+    let resolution = controls.confirmations.resolve_text(
+        &route_key,
+        &message.text,
+        tool_approval_live,
+        |command| crate::slash::can_run_command(user_config, message, command),
+    );
     match resolution {
         crate::slash_confirm::Resolution::NotHandled => None,
         crate::slash_confirm::Resolution::Expired => Some(ResetResult {
@@ -1103,7 +1113,7 @@ pub async fn resolve_reset_confirmation(
         }),
         crate::slash_confirm::Resolution::Approved(approved) => {
             let persisted = if approved.always {
-                match confirmations.persist_opt_out().await {
+                match controls.confirmations.persist_opt_out().await {
                     Ok(()) => true,
                     Err(error) => {
                         tracing::warn!(%error, session = %route_key, "could not persist destructive slash confirmation opt-out");
@@ -1116,6 +1126,7 @@ pub async fn resolve_reset_confirmation(
             Some(
                 match reset_session(deps, agent, source, &message.sender_id, approved.title).await {
                     Ok(mut result) => {
+                        controls.tool_approvals.cancel_route(&route_key);
                         if approved.always {
                             if persisted {
                                 result.reply.push_str(
@@ -1144,7 +1155,7 @@ pub async fn resolve_reset_confirmation(
 /// Gate a newly authorized reset. The prompt is registered before it is
 /// returned; when the live config disables confirmation, reset immediately.
 pub async fn reset_or_confirm(
-    confirmations: &crate::slash_confirm::SlashConfirmations,
+    controls: ResetControls<'_>,
     deps: crate::session_admission::AdmissionDeps,
     agent: Arc<dyn crate::agent::AgentClient>,
     source: crate::session::SessionSource,
@@ -1152,13 +1163,18 @@ pub async fn reset_or_confirm(
     title: Option<String>,
     typed_prefix: &str,
 ) -> anyhow::Result<ResetResult> {
-    if confirmations.required().await {
+    if controls.confirmations.required().await {
         let route_key = deps.store.session_key_for_source(&source);
         return Ok(ResetResult {
-            reply: confirmations.register_reset(&route_key, title, typed_prefix),
+            reply: controls
+                .confirmations
+                .register_reset(&route_key, title, typed_prefix),
         });
     }
-    reset_session(deps, agent, source, owner_key, title).await
+    let route_key = deps.store.session_key_for_source(&source);
+    let result = reset_session(deps, agent, source, owner_key, title).await?;
+    controls.tool_approvals.cancel_route(&route_key);
+    Ok(result)
 }
 
 /// Rotate one stable route while holding the predecessor turn lease. The

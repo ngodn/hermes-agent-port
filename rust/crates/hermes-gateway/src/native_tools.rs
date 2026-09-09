@@ -34,12 +34,44 @@ pub struct ToolSpec {
     pub extra: serde_json::Map<String, Value>,
 }
 
+/// Turn-local capabilities available to a tool call. Keeping delivery here
+/// avoids process-global callbacks and preserves the stream consumer as the
+/// single presentation boundary.
+#[derive(Clone, Copy)]
+pub struct ToolCallContext<'a> {
+    pub events: Option<&'a mpsc::Sender<StreamEvent>>,
+    pub call_id: &'a str,
+    /// Sender that owns the current turn. This is turn-local because a frozen
+    /// group conversation client can serve more than one authorized user.
+    pub principal: Option<&'a str>,
+    /// Stable route for the current admitted turn. This is turn-local because
+    /// resume can attach a cached physical session to a different route.
+    pub route_key: Option<&'a str>,
+}
+
+impl<'a> ToolCallContext<'a> {
+    pub fn detached(call_id: &'a str) -> Self {
+        Self {
+            events: None,
+            call_id,
+            principal: None,
+            route_key: None,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Default)]
+pub struct ToolTurnIdentity<'a> {
+    pub principal: Option<&'a str>,
+    pub route_key: Option<&'a str>,
+}
+
 /// A callable tool. External tools may cross a process or network boundary, so
 /// execution is asynchronous even when a built-in implementation is immediate.
 #[async_trait]
 pub trait Tool: Send + Sync {
     fn spec(&self) -> ToolSpec;
-    async fn call(&self, args: &Value) -> Result<Value>;
+    async fn call(&self, args: &Value, context: ToolCallContext<'_>) -> Result<Value>;
 }
 
 /// Return the provider-visible names in their wire order.
@@ -536,7 +568,16 @@ pub async fn run_tool_loop_with_content(
     max_iters: usize,
 ) -> Result<()> {
     let history = crate::native_agent::build_history_messages(history);
-    run_tool_loop_with_messages(model, tools, &history, user_content, events, max_iters).await
+    run_tool_loop_with_messages(
+        model,
+        tools,
+        &history,
+        user_content,
+        events,
+        max_iters,
+        ToolTurnIdentity::default(),
+    )
+    .await
 }
 
 /// Run the tool loop from an already reconstructed provider-wire history.
@@ -550,6 +591,7 @@ pub async fn run_tool_loop_with_messages(
     user_content: &Value,
     events: &mpsc::Sender<StreamEvent>,
     max_iters: usize,
+    identity: ToolTurnIdentity<'_>,
 ) -> Result<()> {
     let tool_specs: Vec<Value> = tools.iter().map(|t| tool_spec_json(&t.spec())).collect();
     let valid_names: Vec<String> = tool_specs
@@ -756,7 +798,18 @@ pub async fn run_tool_loop_with_messages(
                         Some(_) if !call.arguments.is_object() => {
                             (json!(INVALID_TOOL_ARGUMENTS), false)
                         }
-                        Some(tool) => match tool.call(&call.arguments).await {
+                        Some(tool) => match tool
+                            .call(
+                                &call.arguments,
+                                ToolCallContext {
+                                    events: Some(events),
+                                    call_id: &call.id,
+                                    principal: identity.principal,
+                                    route_key: identity.route_key,
+                                },
+                            )
+                            .await
+                        {
                             Ok(out) => (out, true),
                             Err(error) => (json!(format!("tool error: {error}")), false),
                         },
@@ -902,7 +955,7 @@ impl Tool for CurrentTimeTool {
         }
     }
 
-    async fn call(&self, _args: &Value) -> Result<Value> {
+    async fn call(&self, _args: &Value, _context: ToolCallContext<'_>) -> Result<Value> {
         let secs = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_secs())
@@ -991,7 +1044,7 @@ mod tests {
                     extra: Default::default(),
                 }
             }
-            async fn call(&self, _args: &Value) -> Result<Value> {
+            async fn call(&self, _args: &Value, _context: ToolCallContext<'_>) -> Result<Value> {
                 Ok(json!(""))
             }
         }
@@ -1152,7 +1205,7 @@ mod tests {
                     extra: Default::default(),
                 }
             }
-            async fn call(&self, _: &Value) -> Result<Value> {
+            async fn call(&self, _: &Value, _context: ToolCallContext<'_>) -> Result<Value> {
                 Ok(json!("saved"))
             }
         }
@@ -1319,7 +1372,7 @@ mod tests {
                     extra: Default::default(),
                 }
             }
-            async fn call(&self, _: &Value) -> Result<Value> {
+            async fn call(&self, _: &Value, _context: ToolCallContext<'_>) -> Result<Value> {
                 Ok(json!("executed"))
             }
         }
@@ -1447,7 +1500,7 @@ mod tests {
                     extra: Default::default(),
                 }
             }
-            async fn call(&self, _: &Value) -> Result<Value> {
+            async fn call(&self, _: &Value, _context: ToolCallContext<'_>) -> Result<Value> {
                 panic!("a malformed batch must not execute siblings")
             }
         }
@@ -1638,7 +1691,11 @@ mod tests {
                     extra: Default::default(),
                 }
             }
-            async fn call(&self, arguments: &Value) -> Result<Value> {
+            async fn call(
+                &self,
+                arguments: &Value,
+                _context: ToolCallContext<'_>,
+            ) -> Result<Value> {
                 self.0.lock().unwrap().push(arguments.clone());
                 Ok(json!("executed"))
             }
@@ -2006,7 +2063,7 @@ mod tests {
                     extra: Default::default(),
                 }
             }
-            async fn call(&self, args: &Value) -> Result<Value> {
+            async fn call(&self, args: &Value, _context: ToolCallContext<'_>) -> Result<Value> {
                 std::thread::sleep(std::time::Duration::from_millis(2));
                 if args["fail"] == true {
                     Err(Error::Other("test failure".into()))

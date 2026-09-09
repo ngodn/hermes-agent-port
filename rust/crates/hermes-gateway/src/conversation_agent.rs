@@ -1196,6 +1196,7 @@ mod tests {
         crate::agent::TurnContext {
             home: Some(home),
             database: None,
+            route_key: None,
             turn_session: None,
             compression_observer: None,
             turn_lease_holder: None,

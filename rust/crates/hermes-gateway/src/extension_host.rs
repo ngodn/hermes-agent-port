@@ -880,7 +880,11 @@ impl crate::native_tools::Tool for Tool {
         }
     }
 
-    async fn call(&self, args: &Value) -> Result<Value> {
+    async fn call(
+        &self,
+        args: &Value,
+        _context: crate::native_tools::ToolCallContext<'_>,
+    ) -> Result<Value> {
         let name = self
             .function
             .get("name")
@@ -1668,10 +1672,22 @@ def register(ctx):
             .api_content
             .is_none());
         assert_eq!(
-            tools[0].call(&json!({"text":"image text"})).await.unwrap(),
+            tools[0]
+                .call(
+                    &json!({"text":"image text"}),
+                    crate::native_tools::ToolCallContext::detached("test-image"),
+                )
+                .await
+                .unwrap(),
             json!({"_multimodal":true,"content":[{"type":"text","text":"session-one:image text"}]})
         );
-        let memory_result = tools[1].call(&json!({"query":"remember"})).await.unwrap();
+        let memory_result = tools[1]
+            .call(
+                &json!({"query":"remember"}),
+                crate::native_tools::ToolCallContext::detached("test-memory"),
+            )
+            .await
+            .unwrap();
         let memory_result: Value =
             serde_json::from_str(memory_result.as_str().unwrap()).unwrap();
         assert_eq!(memory_result["session"], "session-one");

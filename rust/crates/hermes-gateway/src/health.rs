@@ -39,6 +39,9 @@ pub struct AppState {
     /// One route-scoped destructive-command confirmation registry shared by
     /// HTTP and every push dispatcher in this gateway life.
     pub slash_confirmations: Arc<crate::slash_confirm::SlashConfirmations>,
+    /// Route-scoped terminal approvals shared by native tools and every
+    /// ingress path. Replies are handled before turn admission.
+    pub tool_approvals: Arc<crate::tool_approval::ApprovalBroker>,
 }
 
 impl AppState {
@@ -61,6 +64,7 @@ impl AppState {
             slash_confirmations: Arc::new(crate::slash_confirm::SlashConfirmations::new(
                 crate::config_file::config_path(),
             )),
+            tool_approvals: Arc::new(crate::tool_approval::ApprovalBroker::new()),
         }
     }
 

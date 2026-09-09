@@ -74,17 +74,21 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   function ABI, profile-secret boundary, and descendant timeout cleanup are
   live. Context-engine and relay-boundary adoption remain open.
 - A session-bound native Unix-local terminal is live only for explicit
-  no-approval local configurations. Its frozen schema,
+  supported local approval configurations. Its frozen schema,
   profile-isolated persistent environment, routed cwd, bounded redacted output,
   private spills, process-group cleanup, and unconditional security floor are
   covered through the real provider loop. Managed non-PTY background execution
   shares one gateway registry across client eviction and adds owner-isolated
   list, poll, log, wait, kill, reset-liveness, and bounded-shutdown behavior.
   Static `approvals.deny` rules now reload per call with Python-compatible glob
-  normalization and last-known-good protection. Interactive approval modes, PTY
-  and notification support, restart adoption, and remote backends remain on the
+  normalization and last-known-good protection. Manual approval is live on
+  Telegram, Discord, and Slack through a bounded route-scoped broker and
+  pre-transcript-lease reply routing. Approval prompts and replies never enter
+  model history, current-sender authorization is enforced, and session grants
+  survive frozen-client eviction. Smart approval, Tirith-on manual mode, PTY and
+  notification support, restart adoption, and remote backends remain on the
   Python path. See
-  [native-approval-deny-resolution.md](native-approval-deny-resolution.md).
+  [native-interactive-approval-resolution.md](native-interactive-approval-resolution.md).
 
 ## Rejected paths
 
@@ -106,6 +110,13 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-interactive-approval-resolution.md](native-interactive-approval-resolution.md) | Live manual terminal approval on native push adapters, route broker ownership, pre-lease control replies, current-sender authorization, policy persistence, validation, and explicit deferrals |
+| [native-interactive-approval-contract-agy.md](native-interactive-approval-contract-agy.md) | AGY's 76-case Python contract for prompt text, reply parsing, authorization, scopes, timeout, cancellation, overload, and batch behavior |
+| [native-dangerous-command-contract-agy.md](native-dangerous-command-contract-agy.md) | AGY's exhaustive Python classifier audit, extended by the primary lane to 251 option-ownership and wrapper cases |
+| [native-tool-approval-broker-claude.md](native-tool-approval-broker-claude.md) | Claude's isolated broker draft and the primary integration disposition for lifecycle, authorization, and non-speculative surface |
+| [native-interactive-approval-review-claude.md](native-interactive-approval-review-claude.md) | Claude's separate security and concurrency review plus dispositions for route identity, dropped waiters, session grant ownership, and config persistence |
+| [interactive-approval-contract-goldens.json](../tools/interactive-approval-contract-goldens.json) | Source-executed 76-case Python interactive approval contract |
+| [dangerous-command-contract-goldens.json](../tools/dangerous-command-contract-goldens.json) | Source-executed 251-case Python dangerous-command classification contract |
 | [native-approval-deny-resolution.md](native-approval-deny-resolution.md) | Live static deny rules, Python-compatible matching, runtime reload, last-known-good policy, frozen schema safety, and interactive deferral |
 | [native-approval-deny-contract-agy.md](native-approval-deny-contract-agy.md) | AGY's Python contract audit for rule parsing, variants, glob semantics, precedence, envelopes, and config reload |
 | [native-approval-wiring-claude.md](native-approval-wiring-claude.md) | Claude's Rust seam audit proving the current turn-lease deadlock and mapping the later interactive transport boundary |

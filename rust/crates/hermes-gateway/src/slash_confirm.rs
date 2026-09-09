@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::{Mutex, OnceLock};
+use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
 use yaml_edit::path::YamlPath;
@@ -255,11 +255,7 @@ fn confirmation_prompt(command: &str, prefix: &str) -> String {
 }
 
 fn persist_opt_out(path: &Path) -> anyhow::Result<()> {
-    static CONFIG_WRITE_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-    let _guard = CONFIG_WRITE_LOCK
-        .get_or_init(|| Mutex::new(()))
-        .lock()
-        .unwrap();
+    let _guard = crate::config_file::config_write_lock();
 
     let text = match std::fs::read_to_string(path) {
         Ok(text) => text,

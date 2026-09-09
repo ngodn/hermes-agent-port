@@ -47,6 +47,7 @@ mod credential_sources;
 mod custom_provider_config;
 mod custom_request_config;
 mod cwd_placeholder;
+mod dangerous_command;
 mod dead_targets;
 mod delegation_policy;
 mod delivery;
@@ -180,6 +181,7 @@ mod telegram;
 mod terminal_guard;
 mod think_scrubber;
 mod threat_patterns;
+mod tool_approval;
 mod tool_arguments;
 mod tool_backend_selection;
 mod tool_credentials;
@@ -239,21 +241,28 @@ fn available_native_tools(config: &Config) -> Vec<Arc<dyn crate::native_tools::T
     }
 }
 
-fn native_local_terminal_eligible(config: &serde_json::Value) -> bool {
+fn native_local_terminal_eligible(config: &serde_json::Value, platform: &str) -> bool {
     let backend = config["terminal"]["backend"]
         .as_str()
         .filter(|value| !value.trim().is_empty())
         .unwrap_or("local");
-    let approval_mode_off = match config["approvals"].get("mode") {
-        Some(serde_json::Value::Bool(false)) => true,
-        Some(serde_json::Value::String(mode)) => mode.trim().eq_ignore_ascii_case("off"),
-        _ => false,
+    let approval_mode = match config["approvals"].get("mode") {
+        None => "smart",
+        Some(serde_json::Value::Bool(false)) => "off",
+        Some(serde_json::Value::String(mode)) if mode.trim().eq_ignore_ascii_case("off") => "off",
+        Some(serde_json::Value::String(mode)) if mode.trim().eq_ignore_ascii_case("smart") => {
+            "smart"
+        }
+        _ => "manual",
     };
     let deny_is_valid = match config["approvals"].get("deny") {
         None | Some(serde_json::Value::Null | serde_json::Value::Array(_)) => true,
         Some(_) => false,
     };
-    cfg!(unix) && backend == "local" && approval_mode_off && deny_is_valid
+    let manual_push = approval_mode == "manual"
+        && matches!(platform, "telegram" | "discord" | "slack")
+        && config["security"]["tirith_enabled"].as_bool() == Some(false);
+    cfg!(unix) && backend == "local" && deny_is_valid && (approval_mode == "off" || manual_push)
 }
 
 fn extensions_configured(
@@ -771,15 +780,25 @@ fn build_agent_client_for_home(
     Ok(build_subprocess_agent(config))
 }
 
+struct ConversationRuntime<'a> {
+    database: Option<&'a session_db::SessionDb>,
+    process_registry: Arc<background_process::Registry>,
+    tool_approvals: Arc<tool_approval::ApprovalBroker>,
+}
+
 async fn build_conversation_client(
     config: &Config,
     initializer: &conversation_prompt::Initializer,
     home: &std::path::Path,
     message: &hermes_core::Message,
     history: &[session_db::HistoryMessage],
-    database: Option<&session_db::SessionDb>,
-    process_registry: Arc<background_process::Registry>,
+    runtime: ConversationRuntime<'_>,
 ) -> anyhow::Result<Arc<dyn AgentClient>> {
+    let ConversationRuntime {
+        database,
+        process_registry,
+        tool_approvals,
+    } = runtime;
     let profile_secrets = secret_scope::current_secret_scope().as_deref().cloned();
     anyhow::ensure!(
         !secret_scope::is_multiplex_active() || profile_secrets.is_some(),
@@ -830,7 +849,7 @@ async fn build_conversation_client(
         .to_owned();
     let runtime_cwd = initializer.runtime_cwd(home, session_cwd)?;
     let mut registered_base_tools = registered_native_tools();
-    if native_local_terminal_eligible(&selected) {
+    if native_local_terminal_eligible(&selected, &platform) {
         let route = database
             .and_then(|database| database.gateway_route_for_session(&session_id).ok())
             .flatten();
@@ -853,7 +872,12 @@ async fn build_conversation_client(
                 database: terminal_database,
                 route,
                 process_registry: process_registry.clone(),
-                approval_config: selected["approvals"].clone(),
+                approval_config: selected.clone(),
+                tool_approvals,
+                approval_prompt_capable: matches!(
+                    platform.as_str(),
+                    "telegram" | "discord" | "slack"
+                ),
             },
         )));
         registered_base_tools.push(Arc::new(crate::native_process::ProcessTool::new(
@@ -1078,7 +1102,8 @@ fn start_push_path(
         state.route_leases.clone(),
         state.turn_generation.clone(),
     )
-    .with_slash_confirmations(state.slash_confirmations.clone());
+    .with_slash_confirmations(state.slash_confirmations.clone())
+    .with_tool_approvals(state.tool_approvals.clone());
     if let Some((store, freshness)) = &state.session_store {
         dispatcher = dispatcher.with_session_store(store.clone(), *freshness);
     }
@@ -1197,6 +1222,7 @@ async fn main() -> anyhow::Result<()> {
             .map(str::to_string)
     });
     let background_processes = Arc::new(background_process::Registry::new());
+    let tool_approvals = Arc::new(tool_approval::ApprovalBroker::new());
 
     // Choose the agent backend. Native (in-Rust LLM) is opt-in and needs a key +
     // a model; otherwise fall back to the Python subprocess bridge (default).
@@ -1206,6 +1232,7 @@ async fn main() -> anyhow::Result<()> {
         if config.agent_native && config.agent_cli.is_none() && !agent.manages_history() {
             let captured = config.clone();
             let captured_processes = background_processes.clone();
+            let captured_approvals = tool_approvals.clone();
             let prompt_initializer = Arc::new(conversation_prompt::Initializer::capture(
                 config_file::hermes_root(),
                 config.agent_cwd.clone(),
@@ -1219,6 +1246,7 @@ async fn main() -> anyhow::Result<()> {
                     let history = history.to_vec();
                     let prompt_initializer = prompt_initializer.clone();
                     let process_registry = captured_processes.clone();
+                    let approvals = captured_approvals.clone();
                     Box::pin(async move {
                         build_conversation_client(
                             &captured,
@@ -1226,8 +1254,11 @@ async fn main() -> anyhow::Result<()> {
                             &home,
                             &message,
                             &history,
-                            database,
-                            process_registry,
+                            ConversationRuntime {
+                                database,
+                                process_registry,
+                                tool_approvals: approvals,
+                            },
                         )
                         .await
                     })
@@ -1252,6 +1283,7 @@ async fn main() -> anyhow::Result<()> {
         };
 
     let mut state = AppState::new(agent, user_config, configured_model, session_db);
+    state.tool_approvals = tool_approvals;
     if !state.agent.manages_history() {
         let home = config_file::hermes_home();
         let root = config_file::hermes_root();
@@ -1415,6 +1447,13 @@ async fn main() -> anyhow::Result<()> {
         .with_graceful_shutdown(async move { server_shutdown.cancelled().await })
         .await;
     shutdown.cancel();
+    let cancelled_approvals = state.tool_approvals.shutdown();
+    if cancelled_approvals > 0 {
+        tracing::info!(
+            cancelled_approvals,
+            "cancelled pending tool approvals on shutdown"
+        );
+    }
     if let Some(cache) = conversation_cache {
         cache.shutdown(std::time::Duration::from_secs(45)).await;
     }
@@ -1469,26 +1508,74 @@ mod startup_tests {
 
     #[cfg(unix)]
     #[test]
-    fn native_terminal_requires_explicit_local_mode_off_policy() {
-        assert!(native_local_terminal_eligible(&json!({
-            "terminal":{"backend":"local"},
-            "approvals":{"mode":"off","deny":[]}
-        })));
-        assert!(native_local_terminal_eligible(&json!({
-            "terminal":{"backend":"local"},
-            "approvals":{"mode":" OFF ","deny":["git push*"]}
-        })));
-        assert!(native_local_terminal_eligible(&json!({
-            "terminal":{"backend":"local"},
-            "approvals":{"mode":false,"deny":null}
-        })));
-        for config in [
-            json!({}),
-            json!({"terminal":{"backend":"docker"},"approvals":{"mode":"off"}}),
-            json!({"approvals":{"mode":"smart"}}),
-            json!({"approvals":{"mode":"off","deny":"invalid"}}),
+    fn native_terminal_requires_supported_local_approval_surface() {
+        assert!(native_local_terminal_eligible(
+            &json!({
+                "terminal":{"backend":"local"},
+                "approvals":{"mode":"off","deny":[]}
+            }),
+            "cli"
+        ));
+        assert!(native_local_terminal_eligible(
+            &json!({
+                "terminal":{"backend":"local"},
+                "approvals":{"mode":" OFF ","deny":["git push*"]}
+            }),
+            "telegram"
+        ));
+        assert!(native_local_terminal_eligible(
+            &json!({
+                "terminal":{"backend":"local"},
+                "approvals":{"mode":false,"deny":null}
+            }),
+            "cli"
+        ));
+        assert!(native_local_terminal_eligible(
+            &json!({
+                "terminal":{"backend":"local"},
+                "approvals":{"mode":"manual","deny":[]},
+                "security":{"tirith_enabled":false}
+            }),
+            "telegram"
+        ));
+        assert!(native_local_terminal_eligible(
+            &json!({
+                "terminal":{"backend":"local"},
+                "approvals":{"mode":"manual","deny":[]},
+                "security":{"tirith_enabled":false}
+            }),
+            "discord"
+        ));
+        assert!(native_local_terminal_eligible(
+            &json!({
+                "terminal":{"backend":"local"},
+                "approvals":{"mode":true,"deny":[]},
+                "security":{"tirith_enabled":false}
+            }),
+            "slack"
+        ));
+        for (config, platform) in [
+            (json!({}), "telegram"),
+            (json!({"security":{"tirith_enabled":false}}), "telegram"),
+            (
+                json!({"approvals":{"mode":"manual"},"security":{"tirith_enabled":false}}),
+                "cli",
+            ),
+            (json!({"approvals":{"mode":"manual"}}), "telegram"),
+            (
+                json!({"terminal":{"backend":"docker"},"approvals":{"mode":"off"}}),
+                "telegram",
+            ),
+            (json!({"approvals":{"mode":"smart"}}), "telegram"),
+            (
+                json!({"approvals":{"mode":"off","deny":"invalid"}}),
+                "telegram",
+            ),
         ] {
-            assert!(!native_local_terminal_eligible(&config), "{config}");
+            assert!(
+                !native_local_terminal_eligible(&config, platform),
+                "{config}"
+            );
         }
     }
 
@@ -1801,8 +1888,11 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                 &home.0,
                 &message,
                 &history,
-                Some(&database),
-                Arc::new(background_process::Registry::new()),
+                ConversationRuntime {
+                    database: Some(&database),
+                    process_registry: Arc::new(background_process::Registry::new()),
+                    tool_approvals: Arc::new(tool_approval::ApprovalBroker::new()),
+                },
             ),
         )
         .await
@@ -1874,8 +1964,11 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                 &home.0,
                 &message,
                 &history,
-                Some(&database),
-                Arc::new(background_process::Registry::new()),
+                ConversationRuntime {
+                    database: Some(&database),
+                    process_registry: Arc::new(background_process::Registry::new()),
+                    tool_approvals: Arc::new(tool_approval::ApprovalBroker::new()),
+                },
             ),
         )
         .await
@@ -1912,7 +2005,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
             requests.lock().unwrap().push(body.clone());
             match call {
                 0 => Json(
-                    json!({"choices":[{"message":{"role":"assistant","content":null,"tool_calls":[{"id":"terminal-1","type":"function","function":{"name":"terminal","arguments":"{\"command\":\"cd child && export LIVE_NATIVE=yes && printf first\"}"}}]}}]}),
+                    json!({"choices":[{"message":{"role":"assistant","content":null,"tool_calls":[{"id":"terminal-1","type":"function","function":{"name":"terminal","arguments":"{\"command\":\"bash -c 'true' && cd child && export LIVE_NATIVE=yes && printf first\"}"}}]}}]}),
                 ),
                 1 => {
                     assert!(body.to_string().contains("first"));
@@ -1958,7 +2051,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
         std::fs::create_dir_all(home.0.join("child")).unwrap();
         std::fs::write(
             home.0.join("config.yaml"),
-            "model:\n  default: fixture-model\n  provider: openrouter\nterminal:\n  backend: local\n  timeout: 5\napprovals:\n  mode: off\n  deny:\n    - 'git push*'\n",
+            "model:\n  default: fixture-model\n  provider: openrouter\nterminal:\n  backend: local\n  timeout: 5\napprovals:\n  mode: manual\n  timeout: 5\n  deny:\n    - 'git push*'\nsecurity:\n  tirith_enabled: false\n",
         )
         .unwrap();
         let database = session_db::SessionDb::open_shared(home.0.join("state.db")).unwrap();
@@ -1967,7 +2060,7 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                 "terminal-session",
                 &session_db::SessionCreate {
                     peer: session_db::GatewayPeer {
-                        source: "cli",
+                        source: "telegram",
                         session_key: Some("terminal-route"),
                         ..Default::default()
                     },
@@ -1999,12 +2092,13 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
         config.agent_cwd = home.0.clone();
         config.agent_tools = true;
         let mut message: hermes_core::Message = serde_json::from_value(json!({
-            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"run"
+            "platform":"telegram", "channel_id":"chat", "sender_id":"user", "text":"run"
         }))
         .unwrap();
         message.resolved_session_id = Some("terminal-session".into());
         let initializer =
             conversation_prompt::Initializer::capture(home.0.clone(), home.0.clone()).unwrap();
+        let approvals = Arc::new(tool_approval::ApprovalBroker::new());
         let client = secret_scope::with_secret_scope(
             Some(Default::default()),
             build_conversation_client(
@@ -2013,8 +2107,11 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
                 &home.0,
                 &message,
                 &[],
-                Some(&database),
-                Arc::new(background_process::Registry::new()),
+                ConversationRuntime {
+                    database: Some(&database),
+                    process_registry: Arc::new(background_process::Registry::new()),
+                    tool_approvals: approvals.clone(),
+                },
             ),
         )
         .await
@@ -2024,8 +2121,30 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
             r#"["current_time","terminal","process_manage"]"#
         );
         let (sender, mut receiver) = tokio::sync::mpsc::channel(32);
-        client.run_turn(&message, &[], sender).await.unwrap();
-        while receiver.recv().await.is_some() {}
+        let run_client = client.clone();
+        let run_message = message.clone();
+        let turn = tokio::spawn(async move {
+            run_client
+                .run_turn_with_context(
+                    agent::TurnContext::from_database(None).with_route_key(Some("terminal-route")),
+                    &run_message,
+                    &[],
+                    sender,
+                )
+                .await
+        });
+        let mut approval_prompts = 0;
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::ApprovalRequest { .. } = event {
+                approval_prompts += 1;
+                assert!(matches!(
+                    approvals.resolve_text("terminal-route", "/approve session", |_| true),
+                    tool_approval::ResolveOutcome::Resolved { .. }
+                ));
+            }
+        }
+        turn.await.unwrap().unwrap();
+        assert_eq!(approval_prompts, 1);
         assert_eq!(calls.load(Ordering::SeqCst), 5);
         assert_eq!(
             database.get_session("terminal-session").unwrap().unwrap()["cwd"],
@@ -2047,6 +2166,9 @@ mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
             .iter()
             .any(|tool| tool["function"]["name"] == "process_manage"));
         assert!(schemas.windows(2).all(|pair| pair[0] == pair[1]));
+        assert!(requests[1].to_string().contains(
+            "Command required approval (shell command via -c/-lc flag) and was approved by the user."
+        ));
         server.abort();
     }
 
@@ -2256,8 +2378,11 @@ def register(ctx):
                 &home.0,
                 &message,
                 &history,
-                Some(&database),
-                Arc::new(background_process::Registry::new()),
+                ConversationRuntime {
+                    database: Some(&database),
+                    process_registry: Arc::new(background_process::Registry::new()),
+                    tool_approvals: Arc::new(tool_approval::ApprovalBroker::new()),
+                },
             ),
         )
         .await
@@ -2332,8 +2457,11 @@ def register(ctx):
                 &home.0,
                 &message,
                 &history,
-                Some(&database),
-                Arc::new(background_process::Registry::new()),
+                ConversationRuntime {
+                    database: Some(&database),
+                    process_registry: Arc::new(background_process::Registry::new()),
+                    tool_approvals: Arc::new(tool_approval::ApprovalBroker::new()),
+                },
             ),
         )
         .await

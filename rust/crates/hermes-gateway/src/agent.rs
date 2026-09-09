@@ -37,6 +37,9 @@ use tracing::warn;
 pub struct TurnContext<'a> {
     pub home: Option<&'a std::path::Path>,
     pub database: Option<&'a crate::session_db::SessionDb>,
+    /// Stable gateway route that owns this admitted turn. Unlike a physical
+    /// session id, this stays aligned with control replies after resume.
+    pub route_key: Option<&'a str>,
     /// Shared physical identity for a routed turn that may publish a
     /// compression child before the provider loop finishes.
     pub turn_session: Option<&'a crate::turn_session::TurnSession>,
@@ -77,11 +80,17 @@ impl<'a> TurnContext<'a> {
         Self {
             home: database.and_then(|db| db.profile_home()),
             database,
+            route_key: None,
             turn_session: None,
             compression_observer: None,
             turn_lease_holder: None,
             session_finalizable: false,
         }
+    }
+
+    pub fn with_route_key(mut self, route_key: Option<&'a str>) -> Self {
+        self.route_key = route_key;
+        self
     }
 
     pub fn with_session_finalizable(mut self, finalizable: bool) -> Self {

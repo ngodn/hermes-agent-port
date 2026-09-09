@@ -8,7 +8,7 @@
 use std::collections::{BTreeMap, HashMap};
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
-use std::sync::Arc;
+use std::sync::{Arc, LazyLock};
 use std::time::Duration;
 
 use async_trait::async_trait;
@@ -45,6 +45,8 @@ pub struct TerminalTool {
     process_registry: Arc<crate::background_process::Registry>,
     process_owner: crate::background_process::Owner,
     approval_policy: Mutex<ApprovalPolicy>,
+    tool_approvals: Arc<crate::tool_approval::ApprovalBroker>,
+    approval_prompt_capable: bool,
 }
 
 pub struct TerminalConfig<'a> {
@@ -57,27 +59,49 @@ pub struct TerminalConfig<'a> {
     pub route: Option<(String, String)>,
     pub process_registry: Arc<crate::background_process::Registry>,
     pub approval_config: Value,
+    pub tool_approvals: Arc<crate::tool_approval::ApprovalBroker>,
+    pub approval_prompt_capable: bool,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ApprovalMode {
+    Off,
+    Manual,
+    Smart,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct ApprovalPolicy {
-    mode_off: bool,
+    mode: ApprovalMode,
     deny: Vec<String>,
+    permanent: Vec<String>,
+    timeout: Duration,
+    tirith_enabled: bool,
 }
 
 impl ApprovalPolicy {
-    fn from_value(value: &Value) -> Self {
+    fn from_config(value: &Value) -> Self {
+        let approvals = &value["approvals"];
         let deny_is_valid = matches!(
-            value.get("deny"),
+            approvals.get("deny"),
             None | Some(Value::Null | Value::Array(_))
         );
-        let mode_off = deny_is_valid
-            && match value.get("mode") {
-                Some(Value::Bool(false)) => true,
-                Some(Value::String(mode)) => mode.trim().eq_ignore_ascii_case("off"),
-                _ => false,
-            };
-        let deny = value
+        let mode = if !deny_is_valid {
+            ApprovalMode::Smart
+        } else {
+            match approvals.get("mode") {
+                None => ApprovalMode::Smart,
+                Some(Value::Bool(false)) => ApprovalMode::Off,
+                Some(Value::String(mode)) if mode.trim().eq_ignore_ascii_case("off") => {
+                    ApprovalMode::Off
+                }
+                Some(Value::String(mode)) if mode.trim().eq_ignore_ascii_case("smart") => {
+                    ApprovalMode::Smart
+                }
+                _ => ApprovalMode::Manual,
+            }
+        };
+        let deny = approvals
             .get("deny")
             .and_then(Value::as_array)
             .into_iter()
@@ -87,8 +111,48 @@ impl ApprovalPolicy {
             .filter(|pattern| !pattern.is_empty())
             .map(str::to_owned)
             .collect();
-        Self { mode_off, deny }
+        let permanent = value["command_allowlist"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .map(str::trim)
+            .filter(|pattern| !pattern.is_empty())
+            .map(str::to_owned)
+            .collect();
+        let timeout = approval_timeout(&approvals["timeout"]);
+        Self {
+            mode,
+            deny,
+            permanent,
+            timeout,
+            tirith_enabled: value["security"]["tirith_enabled"].as_bool() != Some(false),
+        }
     }
+}
+
+fn approval_timeout(value: &Value) -> Duration {
+    const DEFAULT_SECONDS: i128 = 300;
+    const MAX_SAFE_SECONDS: i128 = 365 * 24 * 60 * 60;
+
+    let parsed = match value {
+        Value::Bool(value) => Some(i128::from(*value)),
+        Value::Number(value) => value
+            .as_i64()
+            .map(i128::from)
+            .or_else(|| value.as_u64().map(i128::from))
+            .or_else(|| {
+                value
+                    .as_f64()
+                    .filter(|value| value.is_finite())
+                    .map(|value| value.trunc() as i128)
+            }),
+        Value::String(value) => value.trim().parse::<i128>().ok(),
+        _ => None,
+    }
+    .unwrap_or(DEFAULT_SECONDS)
+    .clamp(0, MAX_SAFE_SECONDS);
+    Duration::from_secs(parsed as u64)
 }
 
 impl TerminalTool {
@@ -130,7 +194,9 @@ impl TerminalTool {
                 config.profile_home,
                 config.session_identity,
             ),
-            approval_policy: Mutex::new(ApprovalPolicy::from_value(&config.approval_config)),
+            approval_policy: Mutex::new(ApprovalPolicy::from_config(&config.approval_config)),
+            tool_approvals: config.tool_approvals,
+            approval_prompt_capable: config.approval_prompt_capable,
         }
     }
 
@@ -140,7 +206,7 @@ impl TerminalTool {
         match tokio::fs::read_to_string(&path).await {
             Ok(text) => match serde_yaml_ng::from_str::<Value>(&text) {
                 Ok(config) if config.is_object() => {
-                    let policy = ApprovalPolicy::from_value(&config["approvals"]);
+                    let policy = ApprovalPolicy::from_config(&config);
                     *cached = policy.clone();
                     policy
                 }
@@ -155,8 +221,11 @@ impl TerminalTool {
             },
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
                 let policy = ApprovalPolicy {
-                    mode_off: false,
+                    mode: ApprovalMode::Smart,
                     deny: Vec::new(),
+                    permanent: Vec::new(),
+                    timeout: Duration::from_secs(300),
+                    tirith_enabled: true,
                 };
                 *cached = policy.clone();
                 policy
@@ -168,7 +237,20 @@ impl TerminalTool {
         }
     }
 
+    #[cfg(test)]
     async fn invoke(&self, args: &Value) -> Value {
+        self.invoke_with_context(
+            args,
+            crate::native_tools::ToolCallContext::detached("direct"),
+        )
+        .await
+    }
+
+    async fn invoke_with_context(
+        &self,
+        args: &Value,
+        context: crate::native_tools::ToolCallContext<'_>,
+    ) -> Value {
         let Some(args) = args.as_object() else {
             return error_only("Invalid terminal arguments: expected an object.");
         };
@@ -281,11 +363,149 @@ impl TerminalTool {
                 "blocked",
             );
         }
-        if !policy.mode_off {
-            return execution_error(
-                "Native terminal execution is unavailable because approvals.mode is no longer off. Start a new conversation or use the Python agent for interactive approvals.",
-                "blocked",
-            );
+        let mut approval_note = None;
+        match policy.mode {
+            ApprovalMode::Off => {}
+            ApprovalMode::Smart => {
+                return execution_error(
+                    "Native terminal execution is unavailable because smart approval requires the auxiliary guardian. Start a new conversation or use the Python agent for smart approvals.",
+                    "blocked",
+                );
+            }
+            ApprovalMode::Manual => {
+                if policy.tirith_enabled {
+                    return execution_error(
+                        "Native terminal execution is unavailable because Tirith security findings are not native yet. Start a new conversation or use the Python agent when security.tirith_enabled is true.",
+                        "blocked",
+                    );
+                }
+                if !command_matches_permanent_allowlist(command, &policy.permanent) {
+                    if let Some(finding) = crate::dangerous_command::detect(
+                        command,
+                        &self.profile_home,
+                        user_home.as_deref(),
+                    ) {
+                        let approved = policy.permanent.iter().any(|key| {
+                            crate::dangerous_command::approval_key_matches(
+                                &finding.pattern_key,
+                                key,
+                            )
+                        }) || context.route_key.is_some_and(|route| {
+                            self.tool_approvals
+                                .is_session_approved(route, &finding.pattern_key)
+                        });
+                        if !approved {
+                            if !self.approval_prompt_capable {
+                                return execution_error(
+                                    "BLOCKED: Command requires approval, but this surface cannot deliver an interactive approval prompt.",
+                                    "blocked",
+                                );
+                            }
+                            let Some(events) = context.events.cloned() else {
+                                return execution_error(
+                                    "BLOCKED: Command requires approval, but this surface cannot deliver an interactive approval prompt.",
+                                    "blocked",
+                                );
+                            };
+                            let Some(principal) = context.principal else {
+                                return execution_error(
+                                    "BLOCKED: Command requires approval, but the current sender identity is unavailable.",
+                                    "blocked",
+                                );
+                            };
+                            let Some(route_key) = context.route_key else {
+                                return execution_error(
+                                    "BLOCKED: Command requires approval, but its stable gateway route is unavailable.",
+                                    "blocked",
+                                );
+                            };
+                            let spec = crate::tool_approval::RequestSpec {
+                                route_key: route_key.to_owned(),
+                                principal: principal.to_owned(),
+                                command: crate::compression_redact::redact(command),
+                                description: crate::compression_redact::redact(
+                                    &finding.description,
+                                ),
+                                pattern_keys: vec![finding.pattern_key.clone()],
+                                allow_session: true,
+                                allow_permanent: true,
+                                smart_denied: false,
+                                timeout: Some(policy.timeout),
+                            };
+                            let decision = self
+                                .tool_approvals
+                                .request_with_notify(spec, move |info| {
+                                    let events = events.clone();
+                                    async move {
+                                        events
+                                            .send(hermes_core::StreamEvent::ApprovalRequest {
+                                                request_id: info.id,
+                                                command: info.command,
+                                                description: info.description,
+                                                allow_session: info.allow_session,
+                                                allow_permanent: info.allow_permanent,
+                                                smart_denied: info.smart_denied,
+                                            })
+                                            .await
+                                            .is_ok()
+                                    }
+                                })
+                                .await;
+                            match decision {
+                                Ok(crate::tool_approval::Outcome::Decided(
+                                    crate::tool_approval::Decision::AllowOnce,
+                                )) => {}
+                                Ok(crate::tool_approval::Outcome::Decided(
+                                    crate::tool_approval::Decision::AllowSession,
+                                )) => {
+                                    self.tool_approvals.approve_for_session(
+                                        route_key,
+                                        &finding.pattern_key,
+                                    );
+                                }
+                                Ok(crate::tool_approval::Outcome::Decided(
+                                    crate::tool_approval::Decision::AllowAlways,
+                                )) => {
+                                    self.tool_approvals.approve_for_session(
+                                        route_key,
+                                        &finding.pattern_key,
+                                    );
+                                    if let Err(error) = persist_permanent_allowlist(
+                                        &self.profile_home.join("config.yaml"),
+                                        &finding.pattern_key,
+                                    )
+                                    .await
+                                    {
+                                        tracing::warn!(%error, "native permanent approval persistence failed");
+                                    }
+                                }
+                                Ok(crate::tool_approval::Outcome::Decided(
+                                    crate::tool_approval::Decision::Deny { reason },
+                                )) => return approval_denied(reason.as_deref(), false),
+                                Ok(crate::tool_approval::Outcome::TimedOut) => {
+                                    return approval_denied(None, true)
+                                }
+                                Ok(crate::tool_approval::Outcome::Cancelled) => {
+                                    return execution_error(
+                                        "BLOCKED: Approval was cancelled before a decision. The user has NOT consented to this action. Do NOT retry.",
+                                        "blocked",
+                                    )
+                                }
+                                Err(crate::tool_approval::SubmitError::Overloaded) => {
+                                    return execution_error(
+                                        "BLOCKED: Too many approval requests are pending. The user has NOT consented to this action. Do NOT retry.",
+                                        "blocked",
+                                    )
+                                }
+                            }
+                            approval_note = Some(format!(
+                                "Command required approval ({}) and was approved by the user.",
+                                finding.description
+                            ));
+                        }
+                    }
+                }
+            }
         }
 
         let mut session_cwd = self.cwd.lock().await;
@@ -325,7 +545,7 @@ impl TerminalTool {
                 command_cwd,
                 environment,
             );
-            return match self.process_registry.spawn(request) {
+            let mut result = match self.process_registry.spawn(request) {
                 Ok(spawned) => json!({
                     "output":"Background process started",
                     "session_id":spawned.id,
@@ -340,6 +560,10 @@ impl TerminalTool {
                     "error":redact_output(&format!("Failed to start background process: {error}")),
                 }),
             };
+            if let Some(note) = approval_note {
+                result["approval"] = json!(note);
+            }
+            return result;
         }
         let marker = marker(command);
         let wrapper = terminal_wrapper();
@@ -370,7 +594,7 @@ impl TerminalTool {
         })
         .await;
 
-        match outcome {
+        let mut result = match outcome {
             Outcome::Exited(exit) => {
                 let (output, observed_cwd) = split_cwd_marker(&exit.stdout.text, &marker);
                 let output = if exit.stderr.text.is_empty() {
@@ -430,7 +654,11 @@ impl TerminalTool {
                 "error": crate::compression_redact::redact(&format!("Command execution failed: {error}")),
                 "status": "error",
             }),
+        };
+        if let Some(note) = approval_note {
+            result["approval"] = json!(note);
         }
+        result
     }
 }
 
@@ -455,9 +683,190 @@ impl Tool for TerminalTool {
         }
     }
 
-    async fn call(&self, args: &Value) -> Result<Value> {
-        Ok(self.invoke(args).await)
+    async fn call(
+        &self,
+        args: &Value,
+        context: crate::native_tools::ToolCallContext<'_>,
+    ) -> Result<Value> {
+        Ok(self.invoke_with_context(args, context).await)
     }
+}
+
+fn approval_denied(reason: Option<&str>, timed_out: bool) -> Value {
+    let (cause, outcome) = if timed_out {
+        ("timed out without user response", "timeout")
+    } else {
+        ("denied by user", "denied")
+    };
+    let reason = reason
+        .filter(|reason| !reason.is_empty())
+        .map(|reason| format!(" Reason given by the user: \"{reason}\"."))
+        .unwrap_or_default();
+    let silence = if timed_out {
+        " Silence is not consent."
+    } else {
+        ""
+    };
+    json!({
+        "output":"",
+        "exit_code":-1,
+        "error":format!(
+            "BLOCKED: Command {cause}.{reason} The user has NOT consented to this action. Do NOT retry this command, do NOT rephrase it, and do NOT attempt the same outcome via a different command. Stop the current workflow and wait for the user to respond before taking any further destructive or irreversible action.{silence}"
+        ),
+        "status":"blocked",
+        "outcome":outcome,
+        "user_consent":false,
+    })
+}
+
+fn command_matches_permanent_allowlist(command: &str, patterns: &[String]) -> bool {
+    let command = command.trim();
+    if command.is_empty() || has_allowlist_shell_operator(command) {
+        return false;
+    }
+    patterns.iter().any(|pattern| {
+        let pattern = pattern.trim();
+        !pattern.is_empty()
+            && (command == pattern
+                || pattern.contains(['*', '?', '['])
+                    && crate::python_fnmatch::matches(command, pattern))
+    })
+}
+
+fn has_allowlist_shell_operator(command: &str) -> bool {
+    static REINTERPRETED_ARGUMENT: LazyLock<fancy_regex::Regex> = LazyLock::new(|| {
+        fancy_regex::Regex::new(r"(?:^|[ \t])(?:-[^-\s]*[ce]|--(?:command|eval))(?:[= \t]|$)")
+            .expect("static reinterpreted-argument regex")
+    });
+
+    let mut quote = None;
+    let mut escaped = false;
+    let mut has_reinterpretable = false;
+    let mut chars = command.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if escaped {
+            if matches!(
+                ch,
+                '\n' | '\r' | ';' | '&' | '|' | '<' | '>' | '`' | '$' | '(' | ')'
+            ) {
+                has_reinterpretable = true;
+            }
+            escaped = false;
+            continue;
+        }
+        if ch == '\\' && quote != Some('\'') {
+            escaped = true;
+            continue;
+        }
+        if let Some(active) = quote {
+            if ch == active {
+                quote = None;
+            } else if active == '"' && matches!(ch, '$' | '`') {
+                return true;
+            } else if matches!(
+                ch,
+                '\n' | '\r' | ';' | '&' | '|' | '<' | '>' | '`' | '$' | '(' | ')'
+            ) {
+                has_reinterpretable = true;
+            }
+            continue;
+        }
+        if matches!(ch, '\'' | '"') {
+            quote = Some(ch);
+        } else if matches!(ch, '\n' | '\r' | ';' | '&' | '|' | '<' | '>' | '`')
+            || ch == '$' && chars.peek() == Some(&'(')
+        {
+            return true;
+        }
+    }
+    quote.is_some()
+        || has_reinterpretable
+            && REINTERPRETED_ARGUMENT
+                .is_match(command)
+                .expect("static reinterpreted-argument regex evaluates")
+}
+
+async fn persist_permanent_allowlist(path: &Path, pattern_key: &str) -> anyhow::Result<()> {
+    let path = path.to_owned();
+    let pattern_key = pattern_key.to_owned();
+    tokio::task::spawn_blocking(move || persist_permanent_allowlist_sync(&path, &pattern_key))
+        .await
+        .map_err(|error| anyhow::anyhow!("config writer task failed: {error}"))?
+}
+
+fn persist_permanent_allowlist_sync(path: &Path, pattern_key: &str) -> anyhow::Result<()> {
+    use std::str::FromStr;
+    use yaml_edit::path::YamlPath;
+    use yaml_edit::{SequenceBuilder, YamlFile};
+
+    let _guard = crate::config_file::config_write_lock();
+    let text = match std::fs::read_to_string(path) {
+        Ok(text) => text,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => String::new(),
+        Err(error) => return Err(error.into()),
+    };
+    let mut document_text = text.as_str();
+    let mut patterns = Vec::new();
+    if !text.trim().is_empty() {
+        let parsed: Value = serde_yaml_ng::from_str(&text)
+            .map_err(|error| anyhow::anyhow!("invalid config.yaml: {error}"))?;
+        anyhow::ensure!(
+            parsed.is_object() || parsed.is_null(),
+            "config.yaml top level is not a mapping"
+        );
+        if parsed.is_null() {
+            document_text = "";
+        } else {
+            patterns.extend(
+                parsed["command_allowlist"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .filter_map(Value::as_str)
+                    .map(str::trim)
+                    .filter(|pattern| !pattern.is_empty())
+                    .map(str::to_owned),
+            );
+        }
+    }
+    if !patterns.iter().any(|pattern| pattern == pattern_key) {
+        patterns.push(pattern_key.to_owned());
+    }
+    patterns.sort();
+    patterns.dedup();
+    let document =
+        YamlFile::from_str(document_text).map_err(|error| anyhow::anyhow!(error.to_string()))?;
+    let first = document.ensure_document();
+    anyhow::ensure!(
+        first.as_mapping().is_some(),
+        "config.yaml top level is not a mapping"
+    );
+    let sequence = patterns
+        .iter()
+        .fold(SequenceBuilder::new(), |builder, pattern| {
+            builder.item(pattern.as_str())
+        })
+        .build_document()
+        .as_sequence()
+        .ok_or_else(|| anyhow::anyhow!("could not build command allowlist sequence"))?;
+    first
+        .try_set_path("command_allowlist", sequence)
+        .map_err(|error| anyhow::anyhow!(error.to_string()))?;
+    let rendered = document.to_string();
+    let check: Value = serde_yaml_ng::from_str(&rendered)
+        .map_err(|error| anyhow::anyhow!("edited config.yaml is invalid: {error}"))?;
+    let saved = check["command_allowlist"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str)
+        .collect::<Vec<_>>();
+    anyhow::ensure!(
+        saved == patterns.iter().map(String::as_str).collect::<Vec<_>>(),
+        "edited config.yaml did not contain the approval keys"
+    );
+    crate::atomic_file::write_private_preserving_symlink(path, rendered.as_bytes())?;
+    Ok(())
 }
 
 fn background_wrapper() -> &'static str {
@@ -745,8 +1154,37 @@ mod tests {
             database: None,
             route: None,
             process_registry: Arc::new(crate::background_process::Registry::new()),
-            approval_config: json!({"mode":"off","deny":[]}),
+            approval_config: json!({"approvals":{"mode":"off","deny":[]}}),
+            tool_approvals: Arc::new(crate::tool_approval::ApprovalBroker::new()),
+            approval_prompt_capable: false,
         })
+    }
+
+    #[test]
+    fn approval_policy_defaults_and_timeout_coercion_match_python() {
+        let defaults = ApprovalPolicy::from_config(&json!({}));
+        assert_eq!(defaults.mode, ApprovalMode::Smart);
+        assert!(defaults.tirith_enabled);
+        assert_eq!(defaults.timeout, Duration::from_secs(300));
+
+        for (value, seconds) in [
+            (json!(true), 1),
+            (json!(false), 0),
+            (json!(12.9), 12),
+            (json!("45"), 45),
+            (json!("invalid"), 300),
+            (json!(-10), 0),
+            (json!(99_999_999), 365 * 24 * 60 * 60),
+        ] {
+            assert_eq!(approval_timeout(&value), Duration::from_secs(seconds));
+        }
+
+        let manual = ApprovalPolicy::from_config(&json!({
+            "approvals":{"mode":"manual"},
+            "security":{"tirith_enabled":false}
+        }));
+        assert_eq!(manual.mode, ApprovalMode::Manual);
+        assert!(!manual.tirith_enabled);
     }
 
     #[cfg(unix)]
@@ -790,7 +1228,9 @@ mod tests {
             database: None,
             route: None,
             process_registry: registry.clone(),
-            approval_config: json!({"mode":"off","deny":[]}),
+            approval_config: json!({"approvals":{"mode":"off","deny":[]}}),
+            tool_approvals: Arc::new(crate::tool_approval::ApprovalBroker::new()),
+            approval_prompt_capable: false,
         });
         let exported = terminal
             .invoke(&json!({"command":"export SAVED=background-value"}))
@@ -816,6 +1256,190 @@ mod tests {
                 panic!("background command did not finish")
             }
         }
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn manual_approval_suspends_then_applies_session_and_deny_scopes() {
+        let home = temp_dir("manual-approval");
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: manual\n  deny: []\n  timeout: 5\nsecurity:\n  tirith_enabled: false\n",
+        )
+        .unwrap();
+        let broker = Arc::new(crate::tool_approval::ApprovalBroker::new());
+        let profile = HashMap::new();
+        let terminal = Arc::new(TerminalTool::new(TerminalConfig {
+            cwd: home.clone(),
+            profile_env: &profile,
+            profile_home: &home,
+            session_identity: "frozen-physical-session",
+            default_timeout: 5,
+            database: None,
+            route: None,
+            process_registry: Arc::new(crate::background_process::Registry::new()),
+            approval_config: json!({
+                "approvals":{"mode":"manual","deny":[],"timeout":5},
+                "security":{"tirith_enabled":false}
+            }),
+            tool_approvals: broker.clone(),
+            approval_prompt_capable: true,
+        }));
+        let (events, mut receiver) = tokio::sync::mpsc::channel(4);
+        let first_terminal = terminal.clone();
+        let first = tokio::spawn(async move {
+            first_terminal
+                .call(
+                    &json!({"command":"bash -c 'printf approved'"}),
+                    crate::native_tools::ToolCallContext {
+                        events: Some(&events),
+                        call_id: "call-1",
+                        principal: Some("owner"),
+                        route_key: Some("route"),
+                    },
+                )
+                .await
+                .unwrap()
+        });
+        let event = receiver.recv().await.unwrap();
+        assert!(matches!(
+            event,
+            hermes_core::StreamEvent::ApprovalRequest { ref command, .. }
+                if command == "bash -c 'printf approved'"
+        ));
+        assert_eq!(
+            broker.resolve_text("route", "/approve session", |info| {
+                info.principal == "stale-owner"
+            }),
+            crate::tool_approval::ResolveOutcome::Unauthorized
+        );
+        assert!(matches!(
+            broker.resolve_text("route", "/approve session", |info| {
+                info.principal == "owner"
+            }),
+            crate::tool_approval::ResolveOutcome::Resolved {
+                decision: crate::tool_approval::Decision::AllowSession,
+                ..
+            }
+        ));
+        let result = first.await.unwrap();
+        assert_eq!(result["output"], "approved");
+        assert_eq!(
+            result["approval"],
+            "Command required approval (shell command via -c/-lc flag) and was approved by the user."
+        );
+
+        let rebuilt_terminal = Arc::new(TerminalTool::new(TerminalConfig {
+            cwd: home.clone(),
+            profile_env: &profile,
+            profile_home: &home,
+            session_identity: "frozen-physical-session",
+            default_timeout: 5,
+            database: None,
+            route: None,
+            process_registry: Arc::new(crate::background_process::Registry::new()),
+            approval_config: json!({
+                "approvals":{"mode":"manual","deny":[],"timeout":5},
+                "security":{"tirith_enabled":false}
+            }),
+            tool_approvals: broker.clone(),
+            approval_prompt_capable: true,
+        }));
+        let second = rebuilt_terminal
+            .call(
+                &json!({"command":"bash -c 'printf remembered'"}),
+                crate::native_tools::ToolCallContext {
+                    events: None,
+                    call_id: "call-rebuilt",
+                    principal: Some("owner"),
+                    route_key: Some("route"),
+                },
+            )
+            .await;
+        let second = second.unwrap();
+        assert_eq!(second["output"], "remembered");
+        assert!(second.get("approval").is_none());
+
+        let (events, mut receiver) = tokio::sync::mpsc::channel(4);
+        let denied_terminal = rebuilt_terminal.clone();
+        let denied = tokio::spawn(async move {
+            denied_terminal
+                .call(
+                    &json!({"command":"git push --force invalid.invalid branch"}),
+                    crate::native_tools::ToolCallContext {
+                        events: Some(&events),
+                        call_id: "call-2",
+                        principal: Some("owner"),
+                        route_key: Some("route"),
+                    },
+                )
+                .await
+                .unwrap()
+        });
+        assert!(matches!(
+            receiver.recv().await.unwrap(),
+            hermes_core::StreamEvent::ApprovalRequest { .. }
+        ));
+        broker.resolve_text("route", "/deny unsafe remote", |_| true);
+        let denied = denied.await.unwrap();
+        assert_eq!(denied["outcome"], "denied");
+        assert!(denied["error"]
+            .as_str()
+            .unwrap()
+            .contains("Reason given by the user: \"unsafe remote\""));
+        std::fs::remove_dir_all(home).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn always_approval_is_persisted_losslessly_and_reloaded() {
+        let home = temp_dir("always-approval");
+        std::fs::write(
+            home.join("config.yaml"),
+            "# keep this comment\napprovals:\n  mode: manual\n  deny: []\n  timeout: 5\nsecurity:\n  tirith_enabled: false\n",
+        )
+        .unwrap();
+        let broker = Arc::new(crate::tool_approval::ApprovalBroker::new());
+        let profile = HashMap::new();
+        let terminal = Arc::new(TerminalTool::new(TerminalConfig {
+            cwd: home.clone(),
+            profile_env: &profile,
+            profile_home: &home,
+            session_identity: "frozen-physical-session",
+            default_timeout: 5,
+            database: None,
+            route: None,
+            process_registry: Arc::new(crate::background_process::Registry::new()),
+            approval_config: crate::config_file::load_config_from(&home.join("config.yaml")),
+            tool_approvals: broker.clone(),
+            approval_prompt_capable: true,
+        }));
+        let (events, mut receiver) = tokio::sync::mpsc::channel(4);
+        let waiter = terminal.clone();
+        let run = tokio::spawn(async move {
+            waiter
+                .call(
+                    &json!({"command":"bash -c 'printf persisted'"}),
+                    crate::native_tools::ToolCallContext {
+                        events: Some(&events),
+                        call_id: "call",
+                        principal: Some("owner"),
+                        route_key: Some("route"),
+                    },
+                )
+                .await
+                .unwrap()
+        });
+        receiver.recv().await.unwrap();
+        broker.resolve_text("route", "/approve always", |_| true);
+        assert_eq!(run.await.unwrap()["output"], "persisted");
+        let saved = std::fs::read_to_string(home.join("config.yaml")).unwrap();
+        assert!(saved.contains("# keep this comment"));
+        assert_eq!(
+            crate::config_file::load_config_from(&home.join("config.yaml"))["command_allowlist"],
+            json!(["shell command via -c/-lc flag"])
+        );
         std::fs::remove_dir_all(home).unwrap();
     }
 
@@ -920,8 +1544,36 @@ mod tests {
         assert!(mode_changed["error"]
             .as_str()
             .unwrap()
-            .contains("approvals.mode is no longer off"));
+            .contains("smart approval requires the auxiliary guardian"));
         assert!(!marker.exists());
+
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: manual\n  deny: []\n",
+        )
+        .unwrap();
+        let unsupported_tirith = terminal
+            .invoke(&json!({"command":"bash -c 'printf must-not-run'"}))
+            .await;
+        assert_eq!(unsupported_tirith["status"], "blocked");
+        assert!(unsupported_tirith["error"]
+            .as_str()
+            .unwrap()
+            .contains("Tirith security findings are not native"));
+
+        std::fs::write(
+            home.join("config.yaml"),
+            "approvals:\n  mode: manual\n  deny: []\nsecurity:\n  tirith_enabled: false\n",
+        )
+        .unwrap();
+        let unsupported_manual = terminal
+            .invoke(&json!({"command":"bash -c 'printf must-not-run'"}))
+            .await;
+        assert_eq!(unsupported_manual["status"], "blocked");
+        assert!(unsupported_manual["error"]
+            .as_str()
+            .unwrap()
+            .contains("surface cannot deliver"));
 
         std::fs::write(
             home.join("config.yaml"),
@@ -1074,6 +1726,59 @@ mod tests {
                 case["id"]
             );
         }
+    }
+
+    #[test]
+    fn permanent_allowlist_shell_operator_rules_match_python() {
+        for command in [
+            "echo $HOME",
+            "cargo bench -- '^a(b|c)$'",
+            r"printf \|",
+            "echo foo(bar)",
+        ] {
+            assert!(
+                command_matches_permanent_allowlist(command, &["*".into()]),
+                "simple command should remain allowlist-eligible: {command}"
+            );
+        }
+        for command in [
+            "echo $(whoami)",
+            "echo \"$HOME\"",
+            "sh -c 'echo a|b'",
+            "git -c alias.x='!echo a|b' x",
+            "echo 'unterminated",
+        ] {
+            assert!(
+                !command_matches_permanent_allowlist(command, &["*".into()]),
+                "compound command must not use the allowlist shortcut: {command}"
+            );
+        }
+    }
+
+    #[test]
+    fn concurrent_permanent_approvals_merge_under_the_config_lock() {
+        let home = temp_dir("concurrent-always-approval");
+        let path = home.join("config.yaml");
+        std::fs::write(&path, "# preserve\ncommand_allowlist:\n  - existing\n").unwrap();
+        let first_path = path.clone();
+        let first = std::thread::spawn(move || {
+            persist_permanent_allowlist_sync(&first_path, "recursive delete")
+        });
+        let second_path = path.clone();
+        let second = std::thread::spawn(move || {
+            persist_permanent_allowlist_sync(&second_path, "force push")
+        });
+        first.join().unwrap().unwrap();
+        second.join().unwrap().unwrap();
+        let saved = crate::config_file::load_config_from(&path);
+        assert_eq!(
+            saved["command_allowlist"],
+            json!(["existing", "force push", "recursive delete"])
+        );
+        assert!(std::fs::read_to_string(&path)
+            .unwrap()
+            .contains("# preserve"));
+        std::fs::remove_dir_all(home).unwrap();
     }
 
     #[test]

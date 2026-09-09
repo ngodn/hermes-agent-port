@@ -106,9 +106,32 @@ pub async fn post_message(
 
     // A confirmation reply is control input, not a model turn. Intercept it
     // before ordinary slash dispatch, while authorizing against the destructive
-    // command that created the prompt. Native tool approvals are not live yet;
-    // once ported, their blocking predicate must replace this explicit false.
+    // command that created the prompt. Native tool approvals take precedence,
+    // matching the push dispatcher and the Python ordering contract.
     if let Some((store, _)) = &state.session_store {
+        let source = crate::session::source_from_message(&msg);
+        let route_key = store.session_key_for_source(&source);
+        match state
+            .tool_approvals
+            .resolve_text(&route_key, &msg.text, |request| {
+                request.principal == msg.sender_id
+                    && crate::slash::can_run_command(&state.user_config, &msg, "approve")
+            }) {
+            crate::tool_approval::ResolveOutcome::Resolved {
+                count, decision, ..
+            } => {
+                return Ok(Json(MessageResponse {
+                    reply: crate::tool_approval::confirmation_text(&decision, count),
+                }));
+            }
+            crate::tool_approval::ResolveOutcome::Unauthorized => {
+                return Ok(Json(MessageResponse {
+                    reply: crate::slash::denial_text("approve"),
+                }));
+            }
+            crate::tool_approval::ResolveOutcome::NoPending
+            | crate::tool_approval::ResolveOutcome::Malformed => {}
+        }
         let deps = crate::session_admission::AdmissionDeps {
             store: store.clone(),
             transcript_leases: state.turn_leases.clone(),
@@ -116,13 +139,16 @@ pub async fn post_message(
             generation: state.turn_generation.clone(),
         };
         if let Some(result) = crate::session_commands::resolve_reset_confirmation(
-            &state.slash_confirmations,
+            crate::session_commands::ResetControls {
+                confirmations: &state.slash_confirmations,
+                tool_approvals: &state.tool_approvals,
+            },
             deps,
             state.agent.clone(),
-            crate::session::source_from_message(&msg),
+            source,
             &msg,
             &state.user_config,
-            false,
+            state.tool_approvals.has_pending(&route_key),
         )
         .await
         {
@@ -194,6 +220,7 @@ pub async fn post_message(
         let result =
             crate::session_commands::resume_session(crate::session_commands::ResumeCommand {
                 confirmations: &state.slash_confirmations,
+                tool_approvals: &state.tool_approvals,
                 deps: crate::session_admission::AdmissionDeps {
                     store: store.clone(),
                     transcript_leases: state.turn_leases.clone(),
@@ -267,7 +294,10 @@ pub async fn post_message(
             }));
         };
         let result = crate::session_commands::reset_or_confirm(
-            &state.slash_confirmations,
+            crate::session_commands::ResetControls {
+                confirmations: &state.slash_confirmations,
+                tool_approvals: &state.tool_approvals,
+            },
             crate::session_admission::AdmissionDeps {
                 store: store.clone(),
                 transcript_leases: state.turn_leases.clone(),
@@ -355,6 +385,7 @@ pub async fn post_message(
             if let Some(previous_session_id) = resolved.predecessor_id {
                 if let Some(route_key) = routing_key.as_deref() {
                     state.slash_confirmations.clear(route_key);
+                    state.tool_approvals.cancel_route(route_key);
                 }
                 state.agent.retire_conversation(
                     crate::agent::TurnContext::from_database(turn_db.as_deref()),
@@ -413,13 +444,15 @@ pub async fn post_message(
         let msg_for_agent = msg.clone();
         let agent_turn_lease_holder = turn_lease_holder.clone();
         let agent_turn_session = turn_session.clone();
+        let agent_route_key = routing_key.clone();
         let turn = tokio::spawn(async move {
             turn_agent
                 .run_turn_with_context(
                     crate::agent::TurnContext::from_database(agent_db.as_deref())
                         .with_session_finalizable(session_finalizable)
                         .with_turn_lease_holder(agent_turn_lease_holder.as_deref())
-                        .with_turn_session(agent_turn_session.as_ref()),
+                        .with_turn_session(agent_turn_session.as_ref())
+                        .with_route_key(agent_route_key.as_deref()),
                     &msg_for_agent,
                     &history,
                     tx,
@@ -440,6 +473,9 @@ pub async fn post_message(
                 }
                 StreamEvent::MessageStop { final_: true } => break,
                 StreamEvent::MessageStop { final_: false } => reply.push_str("\n\n"),
+                StreamEvent::ApprovalRequest { .. } => {
+                    warn!("HTTP turn requested interactive approval on a synchronous surface");
+                }
                 StreamEvent::ToolCallChunk { .. }
                 | StreamEvent::ToolCallFinished { .. }
                 | StreamEvent::LongToolHint { .. }
@@ -595,7 +631,11 @@ mod tests {
                 extra: Default::default(),
             }
         }
-        async fn call(&self, _: &Value) -> hermes_core::Result<Value> {
+        async fn call(
+            &self,
+            _: &Value,
+            _context: crate::native_tools::ToolCallContext<'_>,
+        ) -> hermes_core::Result<Value> {
             Ok(json!("done"))
         }
     }
@@ -2430,7 +2470,11 @@ mod tests {
                 }
             }
 
-            async fn call(&self, _: &Value) -> hermes_core::Result<Value> {
+            async fn call(
+                &self,
+                _: &Value,
+                _context: crate::native_tools::ToolCallContext<'_>,
+            ) -> hermes_core::Result<Value> {
                 Ok(json!(format!(
                     "SAMETURNDETAIL {}\nexit_code: 0",
                     "build line ".repeat(3_000)
@@ -2579,7 +2623,11 @@ mod tests {
                 }
             }
 
-            async fn call(&self, _: &Value) -> hermes_core::Result<Value> {
+            async fn call(
+                &self,
+                _: &Value,
+                _context: crate::native_tools::ToolCallContext<'_>,
+            ) -> hermes_core::Result<Value> {
                 Ok(json!("LIVE_TOOL_RESULT exit_code: 0"))
             }
         }

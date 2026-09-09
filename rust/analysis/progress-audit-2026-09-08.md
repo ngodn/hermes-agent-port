@@ -1,13 +1,13 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **53.65% of the full native replacement**, reported as
-**about 54%**, with a reasonable judgment range of **52% to 56%**. The native
+Current estimate: **54.90% of the full native replacement**, reported as
+**about 55%**, with a reasonable judgment range of **53% to 57%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
-static user deny rules with live last-known-good reload. The estimate remains
-conservative because interactive approval workflows, PTY and notification
-support, remote execution, most tools, and the underlying plugin and
-external-memory managers are not native.
+static user deny rules with live last-known-good reload and manual approval on
+the three native push adapters. The estimate remains conservative because smart
+approval, Tirith findings, PTY and notification support, remote execution, most
+tools, and the underlying plugin and external-memory managers are not native.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -22,13 +22,13 @@ audits.
 
 | Area | Full-port weight | Current area completion | Overall points |
 | --- | ---: | ---: | ---: |
-| Gateway | 35% | 66% | 23.10 |
-| Tool runtime and RPC | 30% | 22% | 6.60 |
+| Gateway | 35% | 67% | 23.45 |
+| Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 73% | 10.95 |
 | Native agent core | 20% | 65% | 13.00 |
-| Total | 100% | | **53.65** |
+| Total | 100% | | **54.90** |
 
-`0.35 * 66 + 0.30 * 22 + 0.15 * 73 + 0.20 * 65 = 53.65`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 73 + 0.20 * 65 = 54.90`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -36,7 +36,7 @@ small range would imply false precision.
 
 ## Evidence behind the scores
 
-### Gateway, 66%
+### Gateway, 67%
 
 Production startup, profile-aware client construction, HTTP and push dispatch,
 Telegram, Discord and Slack, session admission, delivery state, routing,
@@ -64,7 +64,14 @@ active work, and graceful shutdown terminates all owned groups within shared
 bounded grace windows. Restart adoption and autonomous completion delivery
 remain Python-only.
 
-### Tool runtime and RPC, 22%
+The gateway also owns one bounded manual-approval broker. Telegram, Discord,
+and Slack surface immutable approval prompts immediately, while typed replies
+resolve before session admission and transcript lease acquisition. Requests
+are scoped to a stable route and the current sender, and reset, resume,
+freshness rotation, and shutdown cancel their pending state. The control plane
+does not mutate the transcript or frozen provider prefix.
+
+### Tool runtime and RPC, 25%
 
 The native model tool loop, schema projection, malformed-call repair, duplicate
 suppression, result framing, event emission, iteration-summary path, and a
@@ -101,8 +108,13 @@ Python-generated corpus, and extension-name collisions cannot replace native
 tools. Static user deny rules use Python-compatible normalized glob matching,
 reload before each call, retain their last-known-good policy after malformed
 edits, and run before foreground or background process creation. Live mode
-changes fail closed without mutating the frozen schema. Interactive approval
-modes and remote backends deliberately keep this native tool hidden.
+changes fail closed without mutating the frozen schema. Manual mode now
+classifies dangerous commands with the checked-in Python pattern corpus, waits
+for a route-scoped decision, and supports once, session, permanent, deny,
+timeout, cancellation, and overload outcomes. Session grants survive client
+reconstruction, while permanent grants merge through the lossless config
+writer. Smart approval, Tirith-enabled manual mode, and remote backends keep
+the native tool hidden.
 
 Eligible conversations also expose managed local non-PTY background execution
 plus an owner-isolated `process_manage` surface for list, poll, log, wait, and
@@ -114,7 +126,8 @@ the frozen schema. PTY input, notifications, restart adoption, systemd cgroup
 isolation, remote processes, and delegation attribution remain open.
 
 The remaining terminal modes, file, browser, web, MCP, execution-environment
-backends, approval runtime, delegation execution, most service tools, plugin
+backends, smart and Tirith approval runtime, delegation execution, most service
+tools, plugin
 discovery/management, and full backend RPC account for most of this weighted
 area and remain.
 
@@ -282,15 +295,15 @@ Configurable multi-provider auxiliary fallback chains, non-chat auxiliary
 transports, context-engine and relay-boundary notifications, overflow recovery,
 provider
 failover and credential retry loops, delegation/subagents, full
-approval/clarification flows, memory and plugin managers, skill execution,
+smart approval and clarification flows, memory and plugin managers, skill execution,
 context invalidation policy, and several agent-loop recovery behaviors remain.
 These are large behavioral systems, which is why the core score remains low
 despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,752 passing Rust tests and two expected ignores
-(1,751 gateway plus one core test).
+The workspace currently has 1,795 passing Rust tests and two expected ignores
+(1,794 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -298,13 +311,15 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,752 passed, two ignored (1,751 gateway plus one core).
-- Selected Python terminal and approval contracts: 167 passed.
+- Full Rust workspace: 1,795 passed, two ignored (1,794 gateway plus one core).
+- Selected Python approval and gateway contracts: 305 passed across isolated
+  commands. The optional Slack adapter module was excluded because this
+  checkout's virtual environment does not contain `aiohttp`.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 24 structural-backoff, and 60
-  handoff-layer cases, plus the 233-case terminal and approval corpus. The
-  current Rust terminal slice consumes 147 of those 233 cases.
+  handoff-layer cases, plus the 233-case terminal and approval corpus, 76
+  interactive-approval cases, and 251 exhaustive dangerous-command cases.
 - Rust and Python formatting, Ruff, Clippy with warnings denied, and
   `git diff --check`: passed.
 - The lower end of the range assumes the versioned extension-host boundary earns
@@ -318,7 +333,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
    and context-engine adoption complete the current compression cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
-3. Native approval, background and remote terminal modes, then file, browser,
+3. Smart and Tirith approval, PTY and remote terminal modes, then file, browser,
    MCP and delegation execution move the largest remaining weighted area.
 
 Older audits remain useful historical snapshots, but their percentages are

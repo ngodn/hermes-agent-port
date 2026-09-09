@@ -16,6 +16,7 @@
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use serde_json::Value;
 use tracing::warn;
@@ -344,6 +345,13 @@ pub fn parse_config(text: &str, source: &str) -> Value {
 
 fn empty_object() -> Value {
     Value::Object(serde_json::Map::new())
+}
+
+/// Serialize lossless read-modify-write edits to config.yaml within this
+/// gateway process. Callers still use atomic replacement for crash safety.
+pub(crate) fn config_write_lock() -> MutexGuard<'static, ()> {
+    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    LOCK.get_or_init(|| Mutex::new(())).lock().unwrap()
 }
 
 #[cfg(test)]

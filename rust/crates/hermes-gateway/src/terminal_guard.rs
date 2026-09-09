@@ -45,7 +45,11 @@ pub fn user_deny_match(
     None
 }
 
-fn detection_variants(command: &str, profile_home: &Path, user_home: Option<&Path>) -> Vec<String> {
+pub(crate) fn dangerous_detection_variants(
+    command: &str,
+    profile_home: &Path,
+    user_home: Option<&Path>,
+) -> Vec<String> {
     let masked = mask_quoted_newlines(command);
     let normalized = normalize_detection(&masked, profile_home, user_home);
     let mut variants = vec![normalized.clone()];
@@ -78,6 +82,10 @@ fn detection_variants(command: &str, profile_home: &Path, user_home: Option<&Pat
         }
     }
     variants
+}
+
+fn detection_variants(command: &str, profile_home: &Path, user_home: Option<&Path>) -> Vec<String> {
+    dangerous_detection_variants(command, profile_home, user_home)
 }
 
 fn push_unique(values: &mut Vec<String>, value: String) {

@@ -1,5 +1,51 @@
 # Hermes Rust rewrite
 
+## Native interactive terminal approval: 2026-09-09
+
+Manual approval is live for native Unix-local terminal conversations on
+Telegram, Discord, and Slack when Tirith is explicitly disabled. One bounded
+gateway-owned broker routes immutable approval requests and decisions by the
+stable conversation route. Replies resolve before session admission and before
+the transcript lease, so a waiting tool turn resumes without deadlock and
+neither the prompt nor the control reply enters model history.
+
+Every request is bound to the current turn's sender plus the gateway's normal
+`/approve` authorization. Malformed and unauthorized replies do not consume the
+request. Once, session, permanent, deny, timeout, cancellation, overload, and
+batch decisions are implemented. Session grants survive frozen-client eviction
+and clear on conversation boundaries. Permanent grants merge through the
+shared lossless config writer. The hardline, sudo-stdin, and user-deny floors
+still run before every approval mode.
+
+The native dangerous-command classifier is pinned to a source-executed
+251-case Python corpus. A separate 76-case corpus covers prompts, reply parsing,
+authorization, scopes, and lifecycle outcomes. A dispatcher integration proves
+approval replies bypass the held transcript lease and stay out of SQLite
+history. A real provider and SQLite test proves one approval prompt, session
+reuse, durable cwd, audit-note replay, and byte-stable schemas across five
+requests. See
+[native-interactive-approval-resolution.md](analysis/native-interactive-approval-resolution.md).
+
+AGY owned the two independent Python contract oracles in serialized runs.
+Claude owned an isolated broker draft and a later security and concurrency
+review. The primary lane verified and integrated them, corrected contract and
+review errors, removed speculative APIs, and fixed route identity, dropped
+waiter, sender identity, and session-lifetime findings. The codebase-design
+skill kept broker lifecycle, terminal policy, and stream presentation behind
+separate narrow interfaces.
+
+Validation is **1,795 Rust tests passed, two ignored**, plus **305 selected
+Python approval and gateway tests passed** across isolated commands. The
+optional Slack Python adapter test could not collect because `aiohttp` is absent
+from this checkout's virtual environment; native Slack routing is covered in
+Rust. Both 76-case and 251-case oracles regenerate byte-for-byte. Rust and
+Python formatting, Ruff, Clippy with warnings denied, and diff hygiene pass.
+
+The refreshed [weighted full-port audit](analysis/progress-audit-2026-09-08.md)
+is **54.90 points, reported as about 55%** (judgment range 53% to 57%). Smart
+approval and Tirith findings, PTY and notifications, remote execution, file and
+browser tools, and native plugin and memory managers remain.
+
 ## Native static approval deny rules: 2026-09-09
 
 Native Unix-local terminal conversations now accept nonempty `approvals.deny`
@@ -19,11 +65,10 @@ behavior. The live provider integration now exercises the terminal with a
 nonempty deny list. See
 [native-approval-deny-resolution.md](analysis/native-approval-deny-resolution.md).
 
-AGY owned the Python contract oracle. Claude independently audited the Rust
-interactive wiring and proved that a blocking approval would currently
-deadlock its own reply behind the held turn lease. The primary lane integrated
-and reviewed the safe static slice. Interactive approval remains deferred until
-the tool loop can suspend without retaining the transcript lease.
+AGY owned the Python contract oracle. Claude's first wiring audit predicted a
+turn-lease deadlock. The later production integration proved that resolving
+control replies before admission and lease acquisition avoids that deadlock;
+the current interactive checkpoint above supersedes the earlier deferral.
 
 The refreshed [weighted full-port audit](analysis/progress-audit-2026-09-08.md)
 is **53.65 points, reported as about 54%** (judgment range 52% to 56%).

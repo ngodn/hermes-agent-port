@@ -77,6 +77,21 @@ pub enum StreamEvent {
         duration: f64,
     },
 
+    /// A tool is suspended on a human decision. This is control-plane data,
+    /// never conversation history. The gateway renders it for the originating
+    /// platform while the admitted turn continues to own its transcript.
+    ApprovalRequest {
+        request_id: String,
+        command: String,
+        description: String,
+        #[serde(default)]
+        allow_session: bool,
+        #[serde(default)]
+        allow_permanent: bool,
+        #[serde(default)]
+        smart_denied: bool,
+    },
+
     /// A gateway-originated control message (restart, online, long-run notice).
     /// `notice_kind` is a stable string the adapter can switch on
     /// ("restart" / "online" / "long_run" / ...).
