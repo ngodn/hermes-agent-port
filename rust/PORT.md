@@ -1,5 +1,46 @@
 # Hermes Rust rewrite
 
+## Native same-turn full compression checkpoint: 2026-09-09
+
+Native full LLM compression now runs after a complete tool-result batch is
+durable and before the next provider request in that same turn. It prefers real
+provider prompt usage, falls back to provider-visible request sizing including
+tool schemas, preserves Python's post-compaction sentinel, and rearms its
+per-turn attempt budget only after real usage proves the request is below the
+threshold.
+
+An admitted pass applies token-budget Phase 1 pruning, chooses a complete
+partial-turn-safe summary window, makes one tool-free auxiliary request outside
+SQLite, rejects partial or non-shrinking output, and publishes through the
+existing exact-snapshot, route, live-session, and lineage-lease transaction.
+The loop then adopts the durable active generation without duplicating rows.
+The immutable system prompt remains byte-identical across main requests.
+
+The default in-place mode is live. Rotation mode remains deferred because a
+mid-turn rotation must rebind immutable client and lease identities safely.
+Required memory checkpoints fail closed until their native hook exists.
+Cooldown, breaker, prompt-usage precedence, completed-tool-batch validation,
+and attempt rearming have focused coverage. A public HTTP and SQLite test proves
+tool-result persistence before summary I/O and summary adoption before the
+same-turn follow-up request.
+
+AGY produced only the runtime contract map, running once behind its auth lock.
+Claude separately produced only the 25-case source-executed Python oracle. The
+primary lane owned Rust code, integration, corrections, validation,
+documentation, and publication. See
+[native-same-turn-full-compression-resolution.md](analysis/native-same-turn-full-compression-resolution.md).
+
+Validation is **1,650 Rust tests passed, two ignored**, plus **251 selected
+Python tests passed**. Oracle regeneration, formatting, Clippy with warnings
+denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **47.50
+points, reported as about 48%** (judgment range 46% to 50%). This percentage is
+an inventory of production capability, not test coverage. Remaining compression
+work includes mid-turn rotation, tail and handoff edge cases, structural
+backoff, auxiliary routing and caps, required memory checkpoints, notifications,
+and overflow recovery. Native plugin, memory, tool, provider, and platform
+breadth remains the larger port.
+
 ## Native micro-compaction checkpoint: 2026-09-09
 
 Opt-in rolling micro-compaction now runs on the native conversation client

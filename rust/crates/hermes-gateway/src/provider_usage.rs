@@ -48,8 +48,7 @@ impl CanonicalUsage {
         }
     }
 
-    #[cfg(test)]
-    fn prompt_tokens(&self) -> u64 {
+    pub(crate) fn prompt_tokens(&self) -> u64 {
         self.input_tokens
             .saturating_add(self.cache_read_tokens)
             .saturating_add(self.cache_write_tokens)

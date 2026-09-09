@@ -66,6 +66,12 @@ pub struct AutomaticCompressionPolicy {
     pub tail_mode: String,
     /// Per-turn cap on compression retry passes. Clamped to [1, 10].
     pub max_attempts: u32,
+    /// Keep compression in the current durable conversation. Active tool-loop
+    /// compression requires this because its client identity is immutable.
+    pub in_place: bool,
+    /// Refuse compression until a required pre-compress memory checkpoint can
+    /// be produced. The native checkpoint hook is not connected yet.
+    pub checkpoint_required: bool,
     /// Opt-in request-pressure trigger for deterministic tool-result pruning.
     /// Zero disables the path.
     pub proactive_prune_tokens: u64,
@@ -95,6 +101,8 @@ impl Default for AutomaticCompressionPolicy {
             target_ratio: DEFAULT_TARGET_RATIO,
             tail_mode: DEFAULT_TAIL_MODE.into(),
             max_attempts: DEFAULT_MAX_ATTEMPTS,
+            in_place: true,
+            checkpoint_required: false,
             proactive_prune_tokens: DEFAULT_PROACTIVE_PRUNE_TOKENS,
             proactive_prune_min_result_chars: DEFAULT_PROACTIVE_PRUNE_MIN_RESULT_CHARS,
             proactive_prune_min_reclaim_tokens: DEFAULT_PROACTIVE_PRUNE_MIN_RECLAIM_TOKENS,
@@ -188,6 +196,7 @@ impl AutomaticCompressionPolicy {
             .filter(|mode| matches!(mode.as_str(), "lean" | "legacy"))
             .unwrap_or_else(|| DEFAULT_TAIL_MODE.into());
         let max_attempts = parse_max_attempts(map.get("max_attempts"), DEFAULT_MAX_ATTEMPTS);
+        let in_place = parse_truthy_value(map.get("in_place"), true);
         let proactive_prune_tokens = u64::try_from(
             parse_prune_integer(
                 map.get("proactive_prune_tokens"),
@@ -244,6 +253,8 @@ impl AutomaticCompressionPolicy {
             target_ratio,
             tail_mode,
             max_attempts,
+            in_place,
+            checkpoint_required,
             proactive_prune_tokens,
             proactive_prune_min_result_chars,
             proactive_prune_min_reclaim_tokens,
@@ -657,6 +668,41 @@ fn compression_boundaries(
     tail_token_budget: u64,
     charge_all_thinking: bool,
 ) -> Option<(usize, usize)> {
+    compression_boundaries_with_tail(
+        messages,
+        protect_first_n,
+        protect_last_n,
+        tail_token_budget,
+        charge_all_thinking,
+        false,
+    )
+}
+
+pub(crate) fn compression_boundaries_after_tool_batch(
+    messages: &[crate::session_db::CompressionHistoryMessage],
+    protect_first_n: usize,
+    protect_last_n: usize,
+    tail_token_budget: u64,
+    charge_all_thinking: bool,
+) -> Option<(usize, usize)> {
+    compression_boundaries_with_tail(
+        messages,
+        protect_first_n,
+        protect_last_n,
+        tail_token_budget,
+        charge_all_thinking,
+        true,
+    )
+}
+
+fn compression_boundaries_with_tail(
+    messages: &[crate::session_db::CompressionHistoryMessage],
+    protect_first_n: usize,
+    protect_last_n: usize,
+    tail_token_budget: u64,
+    charge_all_thinking: bool,
+    allow_completed_tool_batch: bool,
+) -> Option<(usize, usize)> {
     // Python needs only a complete protected head plus three tail messages
     // and one compressible row. The token walk, not the configured count,
     // decides how much recent history survives.
@@ -677,13 +723,27 @@ fn compression_boundaries(
     if initial_tail <= prefix_end {
         return None;
     }
-    let tail_start = (prefix_end + 1..=initial_tail)
-        .rev()
-        .find(|start| complete_region(&messages[*start..]))?;
+    let tail_start = (prefix_end + 1..=initial_tail).rev().find(|start| {
+        if allow_completed_tool_batch {
+            let rows = messages[*start..]
+                .iter()
+                .map(|item| {
+                    (
+                        item.message.role.clone(),
+                        item.tool_calls.clone(),
+                        item.tool_call_id.clone(),
+                    )
+                })
+                .collect::<Vec<_>>();
+            crate::session_db::prunable_turn_sequence(&rows)
+        } else {
+            complete_region(&messages[*start..])
+        }
+    })?;
     (prefix_end < tail_start).then_some((prefix_end, tail_start))
 }
 
-fn structured_chars(messages: &[crate::session_db::CompressionHistoryMessage]) -> usize {
+pub(crate) fn structured_chars(messages: &[crate::session_db::CompressionHistoryMessage]) -> usize {
     messages
         .iter()
         .map(|item| {
@@ -720,13 +780,15 @@ pub async fn compress_before_turn(
     admitted: &mut crate::session_admission::AdmittedSession,
 ) -> anyhow::Result<u32> {
     let policy = AutomaticCompressionPolicy::from_value(user_config);
-    if !policy.enabled || admitted.database.is_none() || admitted.route_lease.is_none() {
+    if !policy.enabled
+        || policy.checkpoint_required
+        || admitted.database.is_none()
+        || admitted.route_lease.is_none()
+    {
         return Ok(0);
     }
     let database = admitted.database.as_ref().expect("checked").clone();
-    let in_place = user_config["compression"]["in_place"]
-        .as_bool()
-        .unwrap_or(true);
+    let in_place = policy.in_place;
     let mut attempts = 0;
     // Once an over-threshold pass has committed its deterministic Phase 1,
     // finish that same compression attempt even if pruning alone drops the
@@ -1117,6 +1179,27 @@ mod tests {
             "checkpoint_required": true
         }}));
         assert!(!checkpointed.micro_compact);
+    }
+
+    #[test]
+    fn full_compression_mode_and_checkpoint_gate_match_python_coercion() {
+        let configured = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "in_place": "off",
+            "checkpoint_required": "yes"
+        }}));
+        assert!(!configured.in_place);
+        assert!(configured.checkpoint_required);
+
+        let unknown = AutomaticCompressionPolicy::from_value(&json!({"compression": {
+            "in_place": "unknown",
+            "checkpoint_required": "unknown"
+        }}));
+        assert!(!unknown.in_place);
+        assert!(!unknown.checkpoint_required);
+
+        let defaults = AutomaticCompressionPolicy::from_value(&json!({"compression": {}}));
+        assert!(defaults.in_place);
+        assert!(!defaults.checkpoint_required);
     }
 
     #[test]

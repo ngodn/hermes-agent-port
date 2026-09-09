@@ -1,0 +1,21 @@
+You are one helper on a coordinated Rust port. This is a read-only source-mapping lane. Create exactly one new report:
+
+- rust/analysis/same-turn-full-compression-runtime-agy.md
+
+Do not edit Rust source, PORT.md, INDEX.md, tests, tools, or any other file. Do not run another helper.
+
+Trace only Python's full LLM summary compression that runs after a completed tool-result batch and before the next provider request. Do not map proactive pruning, micro-compaction, auxiliary route configuration, memory checkpoints, or general pre-turn compression except where a fact is required to distinguish the post-tool path.
+
+Record exact, source-verified contracts for:
+
+- trigger input and precedence of real prompt usage versus rough request sizing
+- attempt accounting, cooldown/backoff gates, lock-skip handling, and fail-open versus fail-closed outcomes
+- the exact transcript passed to compression after tool persistence
+- phase-one deterministic pruning, protected head/tail boundaries, summary generation, and in-place publication
+- adoption of the committed transcript into the live loop without duplicate persistence
+- role alternation, tool-group, immutable system-prompt, prompt-cache, and reference-only handoff behavior
+- ordering relative to the next provider request and activity/session state
+- the narrowest current Rust seams in native_tools.rs, native_agent.rs, automatic_compression.rs, and session_db.rs
+- directly relevant Python and Rust tests, plus parity traps that need a live HTTP and SQLite test
+
+Separate verified Python behavior from Rust recommendations. Use current local source only. Cite exact files, functions, and line ranges. Keep the report concise and do not use em dashes.

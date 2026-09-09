@@ -33,6 +33,13 @@ struct TranscriptModel<'a> {
     database: Option<&'a crate::session_db::SessionDb>,
     session_id: &'a str,
     turn_lease_holder: Option<&'a str>,
+    compression: SameTurnCompressionState,
+}
+
+#[derive(Default)]
+struct SameTurnCompressionState {
+    attempts: std::sync::atomic::AtomicU32,
+    awaiting_usage: std::sync::atomic::AtomicBool,
 }
 
 struct PendingMemoryTurn {
@@ -46,9 +53,16 @@ enum UsageBucket {
     Auxiliary,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum SameTurnCompressionOutcome {
+    NotTriggered,
+    Attempted,
+}
+
 struct UsageState {
     main: crate::provider_usage::CanonicalUsage,
     auxiliary: crate::provider_usage::CanonicalUsage,
+    last_main_prompt_tokens: Option<u64>,
 }
 
 impl Default for UsageState {
@@ -56,6 +70,7 @@ impl Default for UsageState {
         Self {
             main: crate::provider_usage::CanonicalUsage::accumulator(),
             auxiliary: crate::provider_usage::CanonicalUsage::accumulator(),
+            last_main_prompt_tokens: None,
         }
     }
 }
@@ -94,18 +109,21 @@ impl ChatModel for TranscriptModel<'_> {
         }
     }
 
-    fn maintain_tool_loop_messages(
+    async fn maintain_tool_loop_messages(
         &self,
         messages: &mut Vec<Value>,
         tools: &[Value],
     ) -> Result<()> {
-        self.inner.maintain_after_tool_batch(
-            self.database,
-            self.session_id,
-            self.turn_lease_holder,
-            messages,
-            tools,
-        )
+        self.inner
+            .maintain_after_tool_batch(
+                self.database,
+                self.session_id,
+                self.turn_lease_holder,
+                messages,
+                tools,
+                &self.compression,
+            )
+            .await
     }
 
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
@@ -123,6 +141,32 @@ fn summary_temperature(model: &str) -> Option<f64> {
         .to_lowercase();
     let bare = normalized.rsplit('/').next().unwrap_or_default();
     (bare == "trinity-large-thinking").then_some(0.5)
+}
+
+fn same_turn_compression_pressure(
+    provider_prompt_tokens: Option<u64>,
+    rough_request_tokens: u64,
+    threshold: u64,
+    attempts: &std::sync::atomic::AtomicU32,
+    awaiting_usage: &std::sync::atomic::AtomicBool,
+) -> u64 {
+    let provider_prompt_tokens = provider_prompt_tokens.filter(|tokens| *tokens > 0);
+    let was_awaiting_usage = awaiting_usage.load(std::sync::atomic::Ordering::Acquire);
+    if was_awaiting_usage {
+        if let Some(tokens) = provider_prompt_tokens {
+            awaiting_usage.store(false, std::sync::atomic::Ordering::Release);
+            if tokens < threshold {
+                attempts.store(0, std::sync::atomic::Ordering::Release);
+            }
+        }
+    }
+    if was_awaiting_usage && provider_prompt_tokens.is_none() {
+        // Match Python's -1 sentinel until a real post-compaction usage value
+        // arrives. A large tool schema must not cause immediate recompression.
+        0
+    } else {
+        provider_prompt_tokens.unwrap_or(rough_request_tokens)
+    }
 }
 
 /// One decoded SSE line.
@@ -661,8 +705,9 @@ impl NativeAgentClient {
     }
 
     fn begin_main_usage(&self) {
-        self.usage_state.lock().unwrap().main =
-            crate::provider_usage::CanonicalUsage::accumulator();
+        let mut state = self.usage_state.lock().unwrap();
+        state.main = crate::provider_usage::CanonicalUsage::accumulator();
+        state.last_main_prompt_tokens = None;
     }
 
     fn begin_auxiliary_usage(&self) {
@@ -676,9 +721,22 @@ impl NativeAgentClient {
         };
         let mut state = self.usage_state.lock().unwrap();
         match self.usage_bucket {
-            UsageBucket::Main => state.main += &usage,
+            UsageBucket::Main => {
+                state.last_main_prompt_tokens = Some(usage.prompt_tokens());
+                state.main += &usage;
+            }
             UsageBucket::Auxiliary => state.auxiliary += &usage,
         }
+    }
+
+    fn clear_last_main_prompt_tokens(&self) {
+        if self.usage_bucket == UsageBucket::Main {
+            self.usage_state.lock().unwrap().last_main_prompt_tokens = None;
+        }
+    }
+
+    fn last_main_prompt_tokens(&self) -> Option<u64> {
+        self.usage_state.lock().unwrap().last_main_prompt_tokens
     }
 
     fn take_main_usage(&self) -> crate::provider_usage::CanonicalUsage {
@@ -720,20 +778,16 @@ impl NativeAgentClient {
         }
     }
 
-    async fn micro_summary_request(&self, messages: &[Value]) -> Result<Option<String>> {
+    async fn auxiliary_summary_request(
+        &self,
+        messages: &[Value],
+        operation: &str,
+        output_cap: Option<u64>,
+        temperature: Option<Value>,
+    ) -> Result<Option<String>> {
         let url = format!("{}/chat/completions", self.base_url);
         let mut body = json!({ "model": self.model, "messages": messages, "stream": false });
         self.apply_provider_extras(&mut body)?;
-        let configured_cap = 1_500_u64;
-        let temperature = match self
-            .provider_profile
-            .as_ref()
-            .map(|profile| &profile.fixed_temperature)
-        {
-            Some(crate::provider_registry::Temperature::Omit) => None,
-            Some(crate::provider_registry::Temperature::Fixed(value)) => Some(value.clone()),
-            Some(crate::provider_registry::Temperature::Inherit) | None => Some(json!(0.1)),
-        };
         if let Some(object) = body.as_object_mut() {
             object.shift_remove("tools");
             object.shift_remove("tool_choice");
@@ -744,10 +798,12 @@ impl NativeAgentClient {
             if let Some(temperature) = temperature {
                 object.insert("temperature".into(), temperature);
             }
-            object.insert(
-                output_cap_parameter(&self.model, &self.base_url).into(),
-                Value::from(configured_cap),
-            );
+            if let Some(output_cap) = output_cap {
+                object.insert(
+                    output_cap_parameter(&self.model, &self.base_url).into(),
+                    Value::from(output_cap),
+                );
+            }
         }
         let response = self
             .client
@@ -757,19 +813,19 @@ impl NativeAgentClient {
             .json(&body)
             .send()
             .await
-            .map_err(|error| Error::Other(format!("native micro-compaction request: {error}")))?;
+            .map_err(|error| Error::Other(format!("native {operation} request: {error}")))?;
         if !response.status().is_success() {
             let status = response.status();
             let text = response.text().await.unwrap_or_default();
             return Err(Error::Other(format!(
-                "native micro-compaction HTTP {status}: {}",
+                "native {operation} HTTP {status}: {}",
                 text.chars().take(300).collect::<String>()
             )));
         }
         let response: Value = response
             .json()
             .await
-            .map_err(|error| Error::Other(format!("native micro-compaction decode: {error}")))?;
+            .map_err(|error| Error::Other(format!("native {operation} decode: {error}")))?;
         self.capture_usage(crate::provider_usage::from_response(
             &response,
             crate::provider_usage::ApiMode::ChatCompletions,
@@ -784,9 +840,9 @@ impl NativeAgentClient {
             return Ok(None);
         }
         let Some(message) = choice.and_then(|choice| choice.get("message")) else {
-            return Err(Error::Other(
-                "native micro-compaction response has no choices[0].message".into(),
-            ));
+            return Err(Error::Other(format!(
+                "native {operation} response has no choices[0].message"
+            )));
         };
         if message
             .get("tool_calls")
@@ -801,6 +857,30 @@ impl NativeAgentClient {
             .and_then(crate::visible_response::answer)
             .map(|answer| crate::compression_redact::redact(&answer));
         Ok(answer.filter(|answer| !answer.trim().is_empty()))
+    }
+
+    async fn micro_summary_request(&self, messages: &[Value]) -> Result<Option<String>> {
+        let temperature = match self
+            .provider_profile
+            .as_ref()
+            .map(|profile| &profile.fixed_temperature)
+        {
+            Some(crate::provider_registry::Temperature::Omit) => None,
+            Some(crate::provider_registry::Temperature::Fixed(value)) => Some(value.clone()),
+            Some(crate::provider_registry::Temperature::Inherit) | None => Some(json!(0.1)),
+        };
+        self.auxiliary_summary_request(messages, "micro-compaction", Some(1_500), temperature)
+            .await
+    }
+
+    async fn full_summary_request(&self, messages: &[Value]) -> Result<Option<String>> {
+        self.auxiliary_summary_request(
+            messages,
+            "compression summary",
+            None,
+            summary_temperature(&self.model).map(Value::from),
+        )
+        .await
     }
 
     async fn micro_compact_after_turn(
@@ -977,7 +1057,330 @@ impl NativeAgentClient {
         Ok((tokens, output_cap))
     }
 
-    fn maintain_after_tool_batch(
+    async fn summarize_history(
+        &self,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+    ) -> Result<Option<String>> {
+        let prompt = crate::compression_prompt::build(history, focus_topic);
+        let mut summary_client = self.clone();
+        summary_client.usage_bucket = UsageBucket::Auxiliary;
+        summary_client.begin_auxiliary_usage();
+        let summary = summary_client
+            .full_summary_request(&[json!({"role":"user", "content":prompt})])
+            .await;
+        let usage = summary_client.take_auxiliary_usage();
+        summary_client.record_compression_usage(database, session_id, &usage);
+        summary
+    }
+
+    fn adopt_durable_tool_loop_transcript(
+        database: &crate::session_db::SessionDb,
+        session_id: &str,
+        messages: &mut Vec<Value>,
+        operation: &str,
+    ) -> Result<()> {
+        let system = messages
+            .first()
+            .filter(|message| message["role"] == "system")
+            .cloned();
+        let durable = database
+            .load_lifecycle_messages(session_id)
+            .map_err(|error| {
+                Error::Other(format!(
+                    "{operation} committed but durable replay failed: {error}"
+                ))
+            })?;
+        messages.clear();
+        messages.extend(system);
+        messages.extend(durable);
+        Ok(())
+    }
+
+    fn same_turn_db<T>(result: rusqlite::Result<T>, operation: &str) -> Result<T> {
+        result.map_err(|error| Error::Other(format!("same-turn compression {operation}: {error}")))
+    }
+
+    fn refund_compression_attempt(attempts: &std::sync::atomic::AtomicU32) {
+        let _ = attempts.fetch_update(
+            std::sync::atomic::Ordering::AcqRel,
+            std::sync::atomic::Ordering::Acquire,
+            |value| Some(value.saturating_sub(1)),
+        );
+    }
+
+    async fn full_compress_after_tool_batch(
+        &self,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        turn_lease_holder: Option<&str>,
+        messages: &mut Vec<Value>,
+        tools: &[Value],
+        compression: &SameTurnCompressionState,
+    ) -> Result<SameTurnCompressionOutcome> {
+        let policy = &self.automatic_compression_policy;
+        let (Some(database), Some(holder)) = (database, turn_lease_holder) else {
+            return Ok(SameTurnCompressionOutcome::NotTriggered);
+        };
+        if !policy.enabled || !policy.in_place || policy.checkpoint_required {
+            return Ok(SameTurnCompressionOutcome::NotTriggered);
+        }
+        let (rough_request_tokens, output_cap) = self.tool_request_pressure(messages, tools)?;
+        let threshold = policy.compute_effective_threshold_with_output_for(
+            self.context_length,
+            output_cap,
+            Some(&self.model),
+        );
+        let pressure_tokens = same_turn_compression_pressure(
+            self.last_main_prompt_tokens(),
+            rough_request_tokens,
+            threshold,
+            &compression.attempts,
+            &compression.awaiting_usage,
+        );
+        let attempts_used = compression
+            .attempts
+            .load(std::sync::atomic::Ordering::Acquire);
+        if attempts_used >= policy.max_attempts {
+            return Ok(SameTurnCompressionOutcome::NotTriggered);
+        }
+        let guard = Self::same_turn_db(
+            database.load_compression_guard_state(session_id),
+            "guard read",
+        )?;
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0.0, |duration| duration.as_secs_f64());
+        let blocked = guard.cooldown_until.is_some_and(|deadline| deadline > now)
+            || (guard.ineffective_count >= 2 && guard.recovery_deadline > now);
+        if !policy
+            .decide(threshold, pressure_tokens, attempts_used, blocked)
+            .should_compress()
+        {
+            return Ok(SameTurnCompressionOutcome::NotTriggered);
+        }
+        let route =
+            match Self::same_turn_db(database.gateway_route_for_session(session_id), "route read")?
+            {
+                Some(route) => route,
+                None => return Ok(SameTurnCompressionOutcome::NotTriggered),
+            };
+        compression
+            .attempts
+            .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
+
+        let mut snapshot = Self::same_turn_db(
+            database.load_compression_snapshot(session_id),
+            "snapshot read",
+        )?;
+        let protect_first = if Self::same_turn_db(
+            database.has_compression_checkpoint(session_id),
+            "checkpoint read",
+        )? {
+            0
+        } else {
+            policy.protect_first_n
+        };
+        let tail_token_budget = policy.tail_token_budget(self.context_length, threshold);
+        let charge_all_thinking = self.reasoning_echo
+            || crate::reasoning_replay::needs_echo(
+                self.provider_name(),
+                &self.model,
+                &self.base_url,
+            );
+        let prune_rearm = Self::same_turn_db(
+            database.proactive_prune_rearm_tokens(session_id),
+            "prune rearm read",
+        )?;
+        let candidate = crate::tool_result_prune::prune_old_tool_results_with_budget(
+            &snapshot.messages,
+            policy.protect_last_n,
+            tail_token_budget,
+            crate::tool_result_prune::PRUNE_MIN_CHARS,
+            charge_all_thinking,
+        );
+        if candidate.changed {
+            let published = Self::same_turn_db(
+                database.publish_gateway_tool_prune(&crate::session_db::GatewayToolPrunePublish {
+                    scope: &route.0,
+                    session_key: &route.1,
+                    session_id,
+                    original_messages: &snapshot.messages,
+                    pruned_messages: &candidate.messages,
+                    rearm_tokens: prune_rearm,
+                    turn_lease_holder: Some(holder),
+                }),
+                "token-budget prune publication",
+            )?;
+            if !published {
+                Self::refund_compression_attempt(&compression.attempts);
+                return Ok(SameTurnCompressionOutcome::Attempted);
+            }
+            Self::adopt_durable_tool_loop_transcript(
+                database,
+                session_id,
+                messages,
+                "same-turn token-budget prune",
+            )?;
+            snapshot = Self::same_turn_db(
+                database.load_compression_snapshot(session_id),
+                "post-prune snapshot read",
+            )?;
+        }
+
+        let Some((prefix_end, tail_start)) =
+            crate::automatic_compression::compression_boundaries_after_tool_batch(
+                &snapshot.messages,
+                protect_first,
+                policy.protect_last_n,
+                tail_token_budget,
+                charge_all_thinking,
+            )
+        else {
+            return Ok(SameTurnCompressionOutcome::Attempted);
+        };
+        let middle = &snapshot.messages[prefix_end..tail_start];
+        let source_chars = crate::automatic_compression::structured_chars(middle);
+        let summary_body = match self
+            .summarize_history(Some(database), session_id, middle, None)
+            .await
+        {
+            Ok(Some(summary)) => crate::compression_redact::redact(summary.trim()),
+            Ok(None) => {
+                Self::same_turn_db(
+                    database.record_compression_failure_cooldown(
+                        session_id,
+                        now + 600.0,
+                        Some("empty native compression summary"),
+                    ),
+                    "empty-summary cooldown write",
+                )?;
+                return Ok(SameTurnCompressionOutcome::Attempted);
+            }
+            Err(error) => {
+                let error = crate::compression_redact::redact(&error.to_string());
+                Self::same_turn_db(
+                    database.record_compression_failure_cooldown(
+                        session_id,
+                        now + 600.0,
+                        Some(&error),
+                    ),
+                    "summary-failure cooldown write",
+                )?;
+                tracing::warn!(%error, %session_id, "same-turn compression summary failed open");
+                return Ok(SameTurnCompressionOutcome::Attempted);
+            }
+        };
+        if source_chars == 0 || summary_body.len() >= source_chars {
+            let strikes = guard.ineffective_count.saturating_add(1);
+            let recovery = if strikes >= 2 { now + 300.0 } else { 0.0 };
+            Self::same_turn_db(
+                database.set_compression_breaker(session_id, strikes, recovery),
+                "ineffective breaker write",
+            )?;
+            tracing::warn!(%session_id, strikes, "same-turn compression refused a non-shrinking summary");
+            return Ok(SameTurnCompressionOutcome::Attempted);
+        }
+        let Some(summary) = crate::compression_prompt::wrap(&summary_body) else {
+            return Ok(SameTurnCompressionOutcome::Attempted);
+        };
+        let compacted = [
+            crate::session_db::HistoryMessage {
+                role: "user".into(),
+                content: summary,
+                api_content: None,
+            },
+            crate::session_db::HistoryMessage {
+                role: "assistant".into(),
+                content: crate::compression_prompt::SUMMARY_ACK.into(),
+                api_content: None,
+            },
+        ];
+        let prefix_end_id = prefix_end
+            .checked_sub(1)
+            .map(|index| snapshot.messages[index].id);
+        let tail_start_id = snapshot.messages.get(tail_start).map(|item| item.id);
+        let published = Self::same_turn_db(
+            database.publish_gateway_in_place_compression(
+                &crate::session_db::GatewayInPlaceCompressionPublish {
+                    scope: &route.0,
+                    session_key: &route.1,
+                    session_id,
+                    compacted_messages: &compacted,
+                    prefix_end_id,
+                    tail_start_id,
+                    watermark: snapshot.watermark,
+                    turn_lease_holder: Some(holder),
+                },
+            ),
+            "in-place publication",
+        )?;
+        if !published {
+            Self::refund_compression_attempt(&compression.attempts);
+            return Ok(SameTurnCompressionOutcome::Attempted);
+        }
+        Self::same_turn_db(
+            database.clear_compression_failure_cooldown(session_id),
+            "cooldown clear",
+        )?;
+        Self::same_turn_db(
+            database.set_compression_breaker(session_id, 0, 0.0),
+            "breaker clear",
+        )?;
+        Self::adopt_durable_tool_loop_transcript(
+            database,
+            session_id,
+            messages,
+            "same-turn compression",
+        )?;
+        compression
+            .awaiting_usage
+            .store(true, std::sync::atomic::Ordering::Release);
+        tracing::info!(
+            %session_id,
+            pressure_tokens,
+            threshold,
+            attempt = attempts_used + 1,
+            "same-turn native full compression committed"
+        );
+        Ok(SameTurnCompressionOutcome::Attempted)
+    }
+
+    async fn maintain_after_tool_batch(
+        &self,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        turn_lease_holder: Option<&str>,
+        messages: &mut Vec<Value>,
+        tools: &[Value],
+        compression: &SameTurnCompressionState,
+    ) -> Result<()> {
+        if self
+            .full_compress_after_tool_batch(
+                database,
+                session_id,
+                turn_lease_holder,
+                messages,
+                tools,
+                compression,
+            )
+            .await?
+            == SameTurnCompressionOutcome::Attempted
+        {
+            return Ok(());
+        }
+        self.proactive_prune_after_tool_batch(
+            database,
+            session_id,
+            turn_lease_holder,
+            messages,
+            tools,
+        )
+    }
+
+    fn proactive_prune_after_tool_batch(
         &self,
         database: Option<&crate::session_db::SessionDb>,
         session_id: &str,
@@ -1131,6 +1534,7 @@ impl NativeAgentClient {
                 database,
                 session_id,
                 turn_lease_holder,
+                compression: SameTurnCompressionState::default(),
             };
             crate::native_tools::run_tool_loop_with_messages(
                 &model,
@@ -1325,25 +1729,9 @@ impl AgentClient for NativeAgentClient {
         history: &[crate::session_db::CompressionHistoryMessage],
         focus_topic: Option<&str>,
     ) -> Result<Option<String>> {
-        let prompt = crate::compression_prompt::build(history, focus_topic);
-        let mut summary_client = self.clone();
-        summary_client.usage_bucket = UsageBucket::Auxiliary;
-        summary_client.begin_auxiliary_usage();
-        let step = <Self as ChatModel>::step(
-            &summary_client,
-            &[json!({"role":"user", "content":prompt})],
-            &[],
-        )
-        .await?;
-        let usage = summary_client.take_auxiliary_usage();
         let session_id = crate::session_db::message_session_id(msg);
-        summary_client.record_compression_usage(context.database, &session_id, &usage);
-        match step {
-            Step::Final(summary) => Ok((!summary.trim().is_empty()).then(|| summary.trim().into())),
-            Step::ToolCalls { .. } => Err(Error::Other(
-                "native compression summary unexpectedly requested a tool".into(),
-            )),
-        }
+        self.summarize_history(context.database, &session_id, history, focus_topic)
+            .await
     }
 
     async fn compression_preflight(
@@ -1576,6 +1964,7 @@ impl ChatModel for NativeAgentClient {
     /// tool-call deltas; the streaming path ([`AgentClient::run_turn`]) stays
     /// for the no-tools case.
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
+        self.clear_last_main_prompt_tokens();
         let url = format!("{}/chat/completions", self.base_url);
         let mut body = json!({ "model": self.model, "messages": messages, "stream": false });
         if !tools.is_empty() {
@@ -2085,7 +2474,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn micro_summary_rejects_partial_and_reasoning_only_responses() {
+    async fn auxiliary_summaries_reject_partial_reasoning_only_and_tool_responses() {
         use axum::{routing::post, Json, Router};
         use serde_json::{json, Value};
         use std::sync::{Arc, Mutex};
@@ -2103,14 +2492,19 @@ mod tests {
                     call
                 };
                 async move {
-                    if call == 0 {
-                        Json(json!({"choices":[{"finish_reason":"length","message":{
+                    match call {
+                        0 | 2 => Json(json!({"choices":[{"finish_reason":"length","message":{
                             "role":"assistant","content":"partial summary"
-                        }}]}))
-                    } else {
-                        Json(json!({"choices":[{"finish_reason":"stop","message":{
+                        }}]})),
+                        1 => Json(json!({"choices":[{"finish_reason":"stop","message":{
                             "role":"assistant","content":"<think>reasoning only</think>"
-                        }}]}))
+                        }}]})),
+                        _ => Json(json!({"choices":[{"finish_reason":"tool_calls","message":{
+                            "role":"assistant","content":null,
+                            "tool_calls":[{"id":"bad","type":"function","function":{
+                                "name":"terminal","arguments":"{}"
+                            }}]
+                        }}]})),
                     }
                 }
             }),
@@ -2131,7 +2525,50 @@ mod tests {
         let prompt = crate::micro_compaction::build_prompt("", "exchange");
         assert_eq!(client.micro_summary_request(&prompt).await.unwrap(), None);
         assert_eq!(client.micro_summary_request(&prompt).await.unwrap(), None);
-        assert_eq!(*calls.lock().unwrap(), 2);
+        let full_prompt = [json!({"role":"user", "content":"summarize"})];
+        assert_eq!(
+            client.full_summary_request(&full_prompt).await.unwrap(),
+            None
+        );
+        assert_eq!(
+            client.full_summary_request(&full_prompt).await.unwrap(),
+            None
+        );
+        assert_eq!(*calls.lock().unwrap(), 4);
+    }
+
+    #[test]
+    fn same_turn_pressure_uses_provider_usage_sentinel_and_rearms_attempts() {
+        use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+
+        let attempts = AtomicU32::new(2);
+        let awaiting = AtomicBool::new(false);
+        assert_eq!(
+            super::same_turn_compression_pressure(None, 90_000, 50_000, &attempts, &awaiting),
+            90_000
+        );
+        assert_eq!(attempts.load(Ordering::Acquire), 2);
+
+        awaiting.store(true, Ordering::Release);
+        assert_eq!(
+            super::same_turn_compression_pressure(None, 90_000, 50_000, &attempts, &awaiting),
+            0
+        );
+        assert!(awaiting.load(Ordering::Acquire));
+        assert_eq!(attempts.load(Ordering::Acquire), 2);
+
+        assert_eq!(
+            super::same_turn_compression_pressure(
+                Some(20_000),
+                90_000,
+                50_000,
+                &attempts,
+                &awaiting,
+            ),
+            20_000
+        );
+        assert!(!awaiting.load(Ordering::Acquire));
+        assert_eq!(attempts.load(Ordering::Acquire), 0);
     }
 
     #[tokio::test]

@@ -1,0 +1,24 @@
+You are one helper on a coordinated Rust port. Work only in these new files:
+
+- rust/tools/same-turn-full-compression-oracle.py
+- rust/tools/same-turn-full-compression-goldens.json
+- rust/analysis/same-turn-full-compression-oracle-claude.md
+
+Do not edit Rust source, PORT.md, INDEX.md, existing tests, or any other file. Do not run another helper.
+
+Build a deterministic, source-executed Python oracle focused only on the post-tool full LLM compression decision and transcript adoption in agent/conversation_loop.py and the real ContextCompressor/conversation_compression path it invokes. Patch only provider summary I/O, persistence, clock, and heavyweight agent dependencies required to execute the real behavior deterministically. Do not reimplement the decision logic in the oracle.
+
+Cover a bounded set of high-value cases:
+
+- provider prompt usage triggers compression after a durable tool batch
+- zero/unavailable usage falls back to request sizing
+- prompt usage below threshold does not compress
+- one admitted pass consumes one attempt and makes at most one summary call
+- lock-skip refunds the attempt and keeps the original transcript identity
+- empty/failed/non-shrinking summary leaves the transcript unchanged
+- successful in-place compression returns a new transcript with one summary/ack pair, protected tail, complete tool groups, and every uncompressed user byte
+- committed transcript adoption prevents duplicate persistence and reaches the next provider request
+- reference-only handoff suppresses an extra provider call
+- cooldown or exhausted attempts do not issue another summary call
+
+If executing the whole conversation loop is impractical, drive the narrowest real extracted functions that own these decisions and state clearly which outer-loop assertions remain for Rust's live integration test. Emit JSON-compatible inputs, outputs, call counts, identity/adoption flags, and relevant state. Add --check mode that regenerates and compares the corpus. Run the generator and directly relevant Python tests. The report must distinguish exact oracle coverage from deferred integration coverage, cite authoritative local functions, and avoid em dashes.

@@ -1,0 +1,291 @@
+{
+  "_meta": {
+    "authoritative_sources": [
+      "agent/context_compressor.py: ContextCompressor.should_compress / should_compress_info / compress",
+      "agent/conversation_loop.py: _midturn_request_pressure_tokens / _should_skip_model_call_for_reference_handoff",
+      "agent/conversation_compression.py: conversation_history_after_compression / compression_skipped_due_to_lock",
+      "agent/context_compressor.py: reference_handoff_would_drive_next_model_call",
+      "agent/model_metadata.py: estimate_request_tokens_rough"
+    ],
+    "deferred_to_rust_integration": [
+      "inline attempt bookkeeping (+=1 admit, -=1 lock-skip refund)",
+      "post-compaction break and next-provider-request ordering",
+      "SQLite session split / in-place publication and the _DB_PERSISTED_MARKER flush-dedup",
+      "activity/session touch after tool results"
+    ],
+    "description": "Golden oracle for the post-tool full LLM compression decision and transcript adoption. Every value is the return of a real local function; no decision logic is reimplemented.",
+    "fixed_window_tokens": 8000,
+    "protect_first_n": 3,
+    "protect_last_n": 20,
+    "threshold_percent": 0.5
+  },
+  "adoption": [
+    {
+      "attempt_in_place": true,
+      "attempt_recorded": true,
+      "baseline": [
+        {
+          "content": "system prompt",
+          "role": "system"
+        },
+        {
+          "content": "q",
+          "role": "user"
+        },
+        {
+          "content": "a",
+          "role": "assistant"
+        }
+      ],
+      "baseline_is_messages_object": false,
+      "case": "adopt_inplace_shallow_copy",
+      "why": "committed in-place transcript adopted; duplicate persistence prevented"
+    },
+    {
+      "attempt_in_place": null,
+      "attempt_recorded": true,
+      "baseline": [
+        {
+          "content": "older",
+          "role": "user"
+        }
+      ],
+      "case": "adopt_no_boundary_keeps_previous",
+      "previous_history": [
+        {
+          "content": "older",
+          "role": "user"
+        }
+      ],
+      "why": "aborted/no-op after an earlier boundary retains the pre-attempt baseline"
+    },
+    {
+      "attempt_in_place": false,
+      "attempt_recorded": true,
+      "baseline": null,
+      "case": "adopt_legacy_rotation_clears_baseline",
+      "why": "legacy child-session rotation writes the full compacted list"
+    }
+  ],
+  "compress": [
+    {
+      "aborted": false,
+      "case": "successful_inplace_compression",
+      "input_len": 81,
+      "made_progress": true,
+      "marker_count": 1,
+      "output_len": 13,
+      "output_roles": [
+        "system",
+        "user",
+        "assistant",
+        "tool",
+        "assistant",
+        "user",
+        "assistant",
+        "tool",
+        "assistant",
+        "user",
+        "assistant",
+        "tool",
+        "assistant"
+      ],
+      "output_user_contents": [
+        "do task 0 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "do task 18 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "do task 19 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      ],
+      "returned_is_input": false,
+      "savings_pct": 54.48487,
+      "summary_calls": 1,
+      "tool_group_orphans": {
+        "calls_without_results": [],
+        "results_without_calls": []
+      },
+      "why": "one summary/ack pair, protected tail, complete tool groups, tail user bytes"
+    },
+    {
+      "aborted": true,
+      "case": "empty_summary_leaves_transcript_unchanged",
+      "empty_content_failure": true,
+      "input_len": 61,
+      "made_progress": false,
+      "marker_count": 0,
+      "output_equals_input": true,
+      "output_len": 61,
+      "summary_calls": 1,
+      "why": "HTTP-200 empty content aborts; the middle window is preserved"
+    },
+    {
+      "aborted": true,
+      "case": "failed_summary_leaves_transcript_unchanged",
+      "input_len": 61,
+      "made_progress": false,
+      "network_failure": true,
+      "output_equals_input": true,
+      "output_len": 61,
+      "summary_calls": 1,
+      "why": "transient network failure aborts; session not rotated"
+    },
+    {
+      "case": "structural_no_op_no_summary_call",
+      "input_len": 3,
+      "made_progress": false,
+      "output_len": 3,
+      "returned_is_input": true,
+      "summary_calls": 0,
+      "why": "non-shrinking transcript: no eligible window, zero summary calls"
+    }
+  ],
+  "gate_composition": [
+    {
+      "admitted": true,
+      "attempts_after": 1,
+      "attempts_before": 0,
+      "case": "admitted_pass_consumes_one_attempt_one_call",
+      "compressed_identity_changed": true,
+      "max_attempts": 3,
+      "should_compress": true,
+      "summary_calls": 1,
+      "why": "one admitted pass consumes one attempt and makes at most one summary call"
+    },
+    {
+      "attempts_after": 0,
+      "attempts_before": 1,
+      "case": "lock_skip_refunds_attempt_keeps_identity",
+      "refunded": true,
+      "returned_is_input": true,
+      "skipped_due_to_lock": true,
+      "why": "lock-skip refunds the attempt and keeps the original transcript identity"
+    },
+    {
+      "admitted": false,
+      "attempts_before": 3,
+      "case": "exhausted_attempts_no_summary_call",
+      "max_attempts": 3,
+      "should_compress": true,
+      "summary_calls": 0,
+      "why": "over threshold with the per-turn attempt budget spent issues no summary call"
+    }
+  ],
+  "lock_skip": [
+    {
+      "case": "lock_skip_holder_string",
+      "signal": "manual_compress",
+      "skipped_due_to_lock": true,
+      "why": "type-pinned lock-skip read (str holder or True), never bare truthiness"
+    },
+    {
+      "case": "lock_skip_bare_true",
+      "signal": true,
+      "skipped_due_to_lock": true,
+      "why": "type-pinned lock-skip read (str holder or True), never bare truthiness"
+    },
+    {
+      "case": "lock_skip_cleared_none",
+      "signal": null,
+      "skipped_due_to_lock": false,
+      "why": "type-pinned lock-skip read (str holder or True), never bare truthiness"
+    },
+    {
+      "case": "lock_skip_magicmock_not_hijacked",
+      "signal": "<MagicMock attribute>",
+      "skipped_due_to_lock": false,
+      "why": "auto-created truthy MagicMock attribute must read False"
+    }
+  ],
+  "reference_handoff": [
+    {
+      "case": "reference_only_handoff_skips_model_call",
+      "skip_model_call": true,
+      "user_message": null,
+      "why": "sole handoff would drive the next call by itself: suppress it",
+      "would_drive": true
+    },
+    {
+      "case": "trailing_user_turn_no_skip",
+      "skip_model_call": false,
+      "why": "an actionable user turn after the handoff keeps the model call",
+      "would_drive": false
+    },
+    {
+      "case": "tool_result_after_handoff_not_sole_driver",
+      "why": "tool result after the handoff means an in-flight exchange continues",
+      "would_drive": false
+    },
+    {
+      "case": "restorable_user_ask_no_skip",
+      "restored_len": 3,
+      "restored_tail": {
+        "content": "the fresh ask",
+        "role": "user"
+      },
+      "skip_model_call": false,
+      "user_message": "the fresh ask",
+      "why": "the turn's real user ask is re-appended; the handoff no longer drives"
+    }
+  ],
+  "token_selection": [
+    {
+      "branch": "last_prompt_tokens>0",
+      "case": "real_usage_used_verbatim",
+      "last_prompt_tokens": 123456,
+      "selected_real_tokens": 123456,
+      "why": "provider usage available: loop compares last_prompt_tokens"
+    },
+    {
+      "branch": "last_prompt_tokens==-1",
+      "case": "awaiting_real_usage_sentinel_zero",
+      "last_prompt_tokens": -1,
+      "selected_real_tokens": 0,
+      "why": "compression just ran; no real count yet, avoid rough false-trigger"
+    },
+    {
+      "branch": "else/fallback",
+      "case": "zero_usage_falls_back_to_request_sizing",
+      "estimate_request_tokens_rough": 56,
+      "last_prompt_tokens": 0,
+      "midturn_request_pressure_tokens": 56,
+      "selected_real_tokens": 56,
+      "why": "no provider usage (post-disconnect): size from the request"
+    }
+  ],
+  "trigger": [
+    {
+      "block_reason": null,
+      "case": "prompt_usage_over_threshold_triggers",
+      "prompt_tokens": 56800,
+      "should_compress": true,
+      "threshold_tokens": 6800,
+      "why": "provider prompt usage above threshold after a durable tool batch"
+    },
+    {
+      "block_reason": null,
+      "case": "prompt_usage_below_threshold_no_compress",
+      "prompt_tokens": 6799,
+      "should_compress": false,
+      "threshold_tokens": 6800,
+      "why": "real prompt usage under threshold leaves the transcript alone"
+    },
+    {
+      "block_reason": "cooldown:1000",
+      "case": "over_threshold_cooldown_blocks",
+      "monotonic_now": 1000.0,
+      "prompt_tokens": 56800,
+      "should_compress": false,
+      "summary_failure_cooldown_until": 2000.0,
+      "threshold_tokens": 6800,
+      "why": "summary cooldown defers compression; the loop issues no summary call"
+    },
+    {
+      "block_reason": "structural_backoff:500",
+      "case": "over_threshold_structural_backoff_blocks",
+      "monotonic_now": 1000.0,
+      "prompt_tokens": 56800,
+      "should_compress": false,
+      "structural_no_op_backoff_until": 1500.0,
+      "threshold_tokens": 6800,
+      "why": "structural backoff defers compression; the loop issues no summary call"
+    }
+  ]
+}

@@ -42,6 +42,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   user bytes, supersedes only contained rolling markers, bounds failures and
   defrag, and publishes through an exact-snapshot plus lineage-lease SQLite
   transaction.
+- Default in-place full compression now runs after durable tool-result batches
+  and before the next same-turn provider request. It uses real prompt usage,
+  sentinel/rearm attempt semantics, guarded summary publication, durable
+  transcript adoption, and byte-stable system prompts. Mid-turn rotation and
+  checkpoint hooks remain open.
 
 ## Rejected paths
 
@@ -59,6 +64,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-same-turn-full-compression-resolution.md](native-same-turn-full-compression-resolution.md) | Live post-tool full summary ordering, usage and attempt lifecycle, guarded in-place publication, cache invariants, helper disposition, and explicit deferrals |
+| [same-turn-full-compression-oracle-claude.md](same-turn-full-compression-oracle-claude.md) | Claude's independent 25-case source-executed Python decision and adoption oracle |
+| [same-turn-full-compression-runtime-agy.md](same-turn-full-compression-runtime-agy.md) | AGY's separate Python runtime map for trigger precedence, failure guards, publication, adoption, and same-turn ordering |
 | [native-micro-compaction-resolution.md](native-micro-compaction-resolution.md) | Live post-turn rolling compaction, guarded SQLite publication, helper dispositions, validation, and remaining compression work |
 | [micro-compaction-oracle-claude.md](micro-compaction-oracle-claude.md) | Claude's independent 21-case source-executed Python state-machine oracle |
 | [micro-compaction-runtime-agy.md](micro-compaction-runtime-agy.md) | Corrected AGY source map of configuration, post-turn ordering, auxiliary calls, state transitions, and transaction invariants |

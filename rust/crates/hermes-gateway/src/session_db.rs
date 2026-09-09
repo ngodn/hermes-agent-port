@@ -498,7 +498,7 @@ pub(crate) fn complete_turn_sequence(rows: &[(String, Option<String>, Option<Str
     matches!(partial_turn_phase(rows), Some(TailPhase::User))
 }
 
-fn prunable_turn_sequence(rows: &[(String, Option<String>, Option<String>)]) -> bool {
+pub(crate) fn prunable_turn_sequence(rows: &[(String, Option<String>, Option<String>)]) -> bool {
     match partial_turn_phase(rows) {
         Some(TailPhase::User) => true,
         Some(TailPhase::Tools(pending)) => pending.is_empty(),
@@ -2091,7 +2091,7 @@ impl SessionDb {
             .iter()
             .map(|(_, role, calls, call_id)| (role.clone(), calls.clone(), call_id.clone()))
             .collect::<Vec<_>>();
-        if !complete_turn_sequence(&prefix_roles) || !complete_turn_sequence(&tail_roles) {
+        if !complete_turn_sequence(&prefix_roles) || !prunable_turn_sequence(&tail_roles) {
             return Ok(false);
         }
         let prefix_ids = prefix_rows
@@ -4976,9 +4976,14 @@ mod tests {
         ];
         assert!(super::complete_turn_sequence(&complete));
 
+        let completed_tool_batch = complete[..4].to_vec();
+        assert!(!super::complete_turn_sequence(&completed_tool_batch));
+        assert!(super::prunable_turn_sequence(&completed_tool_batch));
+
         let mut missing_tool = complete.clone();
         missing_tool.remove(3);
         assert!(!super::complete_turn_sequence(&missing_tool));
+        assert!(!super::prunable_turn_sequence(&missing_tool[..3]));
 
         let mut wrong_tool = complete;
         wrong_tool[2].2 = Some("unknown".into());

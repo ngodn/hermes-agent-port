@@ -153,7 +153,7 @@ pub trait ChatModel: Send + Sync {
     /// Apply optional transcript maintenance after a complete tool-result
     /// batch and before the next provider request. Stateless/test models keep
     /// the durable transcript unchanged.
-    fn maintain_tool_loop_messages(
+    async fn maintain_tool_loop_messages(
         &self,
         messages: &mut Vec<Value>,
         tools: &[Value],
@@ -783,7 +783,10 @@ pub async fn run_tool_loop_with_messages(
                     model.persist_tool_loop_message(&result)?;
                     messages.push(result);
                 }
-                if let Err(error) = model.maintain_tool_loop_messages(&mut messages, &tool_specs) {
+                if let Err(error) = model
+                    .maintain_tool_loop_messages(&mut messages, &tool_specs)
+                    .await
+                {
                     warn!(%error, "same-turn tool-history maintenance failed open");
                 }
             }

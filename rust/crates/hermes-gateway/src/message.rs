@@ -2378,6 +2378,217 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn full_compression_commits_after_tools_before_the_same_turn_followup() {
+        #[derive(Clone)]
+        struct ModelState {
+            calls: Arc<Mutex<Vec<Value>>>,
+            database: Arc<crate::session_db::SessionDb>,
+        }
+
+        struct BuildProbe;
+        #[async_trait::async_trait]
+        impl Tool for BuildProbe {
+            fn spec(&self) -> ToolSpec {
+                ToolSpec {
+                    name: "terminal".into(),
+                    description: "run a build".into(),
+                    parameters: json!({"type":"object"}),
+                    extra: Default::default(),
+                }
+            }
+
+            async fn call(&self, _: &Value) -> hermes_core::Result<Value> {
+                Ok(json!("LIVE_TOOL_RESULT exit_code: 0"))
+            }
+        }
+
+        async fn model(State(state): State<ModelState>, Json(body): Json<Value>) -> Response {
+            state.calls.lock().unwrap().push(body.clone());
+            if body.get("tools").is_some() {
+                assert_eq!(
+                    body["messages"][0],
+                    json!({"role":"system", "content":"FROZEN_SYSTEM_PROMPT_BYTES"})
+                );
+            }
+            if body.get("tools").is_none() {
+                assert_eq!(
+                    state.database.search("LIVE_TOOL_RESULT", 10).unwrap().len(),
+                    1
+                );
+                return Json(json!({
+                    "choices":[{"finish_reason":"stop","message":{
+                        "role":"assistant",
+                        "content":"## Goal\nKeep the build green.\n\n## Active State\nEarlier work was compacted."
+                    }}],
+                    "usage":{"prompt_tokens":1200,"completion_tokens":40}
+                }))
+                .into_response();
+            }
+
+            let messages = body["messages"].as_array().unwrap();
+            let is_seed = messages
+                .last()
+                .is_some_and(|message| message["role"] == "user" && message["content"] == "seed");
+            if is_seed {
+                return Json(json!({
+                    "choices":[{"message":{"role":"assistant","content":"seed answer"}}],
+                    "usage":{"prompt_tokens":20,"completion_tokens":2}
+                }))
+                .into_response();
+            }
+            let has_live_result = messages.iter().any(|message| {
+                message["role"] == "tool" && message["tool_call_id"] == "same-turn-full-compression"
+            });
+            if has_live_result {
+                assert!(messages.iter().any(|message| {
+                    message["content"].as_str().is_some_and(|content| {
+                        content.starts_with(crate::compression_prompt::SUMMARY_PREFIX)
+                    })
+                }));
+                assert!(messages
+                    .iter()
+                    .all(|message| !message.to_string().contains("EARLYCOMPRESSDETAIL")));
+                return Json(json!({
+                    "choices":[{"message":{"role":"assistant","content":"build handled"}}],
+                    "usage":{"prompt_tokens":4000,"completion_tokens":3}
+                }))
+                .into_response();
+            }
+            Json(json!({
+                "choices":[{"message":{
+                    "role":"assistant",
+                    "content":null,
+                    "tool_calls":[{
+                        "id":"same-turn-full-compression",
+                        "type":"function",
+                        "function":{"name":"terminal","arguments":"{\"command\":\"cargo test\"}"}
+                    }]
+                }}],
+                "usage":{"prompt_tokens":60000,"completion_tokens":8}
+            }))
+            .into_response()
+        }
+
+        let home = TempHome::new();
+        let calls = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let (model_url, _model_server) = serve(
+            axum::Router::new()
+                .route("/chat/completions", post(model))
+                .with_state(ModelState {
+                    calls: calls.clone(),
+                    database: db.clone(),
+                }),
+        )
+        .await;
+        let store = Arc::new(
+            crate::session_store::SessionStore::open(
+                crate::config_gateway::GatewayConfig {
+                    sessions_dir: home.0.join("sessions"),
+                    ..Default::default()
+                },
+                home.0.clone(),
+                home.0.clone(),
+                "default".into(),
+                |_| Ok(false),
+            )
+            .unwrap(),
+        );
+        let config = json!({"compression": {
+            "enabled": true,
+            "threshold_tokens": 40_000,
+            "protect_first_n": 2,
+            "protect_last_n": 2,
+            "max_attempts": 1,
+            "in_place": true
+        }});
+        let policy = crate::automatic_compression::AutomaticCompressionPolicy::from_value(&config);
+        let agent = NativeAgentClient::new("fixture-model", "fixture-key", model_url)
+            .unwrap()
+            .with_system_prompt("FROZEN_SYSTEM_PROMPT_BYTES")
+            .with_tools(vec![Arc::new(BuildProbe)])
+            .with_context_length(100_000)
+            .with_automatic_compression_policy(policy);
+        let mut state = AppState::new(Arc::new(agent), Arc::new(config), None, Some(db.clone()));
+        state.session_store = Some((store.clone(), 3600.0));
+        let (gateway_url, _gateway_server) = serve(
+            axum::Router::new()
+                .route("/message", post(post_message))
+                .with_state(state),
+        )
+        .await;
+        let client = reqwest::Client::new();
+        let send = |text: &str| {
+            client
+                .post(format!("{gateway_url}/message"))
+                .json(&json!({
+                    "channel_id":"same-turn-full-compression",
+                    "sender_id":"local",
+                    "text":text
+                }))
+                .send()
+        };
+        assert_eq!(send("seed").await.unwrap().status(), StatusCode::OK);
+
+        let source = crate::session::SessionSource {
+            user_id: Some("local".into()),
+            ..crate::session::SessionSource::new("local", "same-turn-full-compression")
+        };
+        let session_id = store.current_entry_for_source(&source).unwrap().session_id;
+        for index in 0..10 {
+            let marker = if index == 0 {
+                "EARLYCOMPRESSDETAIL "
+            } else {
+                ""
+            };
+            db.append_message(
+                &session_id,
+                "user",
+                &format!("old question {index} {marker}{}", "u".repeat(5_000)),
+            )
+            .unwrap();
+            db.append_message(
+                &session_id,
+                "assistant",
+                &format!("old answer {index} {}", "a".repeat(5_000)),
+            )
+            .unwrap();
+        }
+
+        let response = send("run the build").await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(
+            response.json::<Value>().await.unwrap()["reply"],
+            "build handled"
+        );
+
+        let requests = calls.lock().unwrap();
+        assert_eq!(requests.len(), 4);
+        assert!(requests[2].get("tools").is_none());
+        assert!(requests[3].get("tools").is_some());
+        drop(requests);
+
+        let active = db.load_compression_snapshot(&session_id).unwrap();
+        assert_eq!(
+            active
+                .messages
+                .iter()
+                .filter(|message| message.compressed_summary)
+                .count(),
+            1
+        );
+        assert_eq!(
+            active.messages.last().unwrap().message.content,
+            "build handled"
+        );
+        assert!(db
+            .search("EARLYCOMPRESSDETAIL", 10)
+            .unwrap()
+            .iter()
+            .any(|hit| hit.session_id == session_id));
+    }
+
+    #[tokio::test]
     async fn unsupported_backend_rejects_parts_before_persisting_or_running() {
         struct TextOnly;
         #[async_trait::async_trait]

@@ -1,9 +1,8 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **46.75% of the full native replacement**, reported as
-**about 47%**, with a reasonable judgment range of **45% to 49%**. This
-supersedes the 46.20-point estimate recorded after token-budget compression
-landed.
+Current estimate: **47.50% of the full native replacement**, reported as
+**about 48%**, with a reasonable judgment range of **46% to 50%**. This
+supersedes the 46.75-point estimate recorded after micro-compaction landed.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -20,11 +19,11 @@ audits.
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 64% | 22.40 |
 | Tool runtime and RPC | 30% | 13% | 3.90 |
-| State and search | 15% | 71% | 10.65 |
-| Native agent core | 20% | 49% | 9.80 |
-| Total | 100% | | **46.75** |
+| State and search | 15% | 72% | 10.80 |
+| Native agent core | 20% | 52% | 10.40 |
+| Total | 100% | | **47.50** |
 
-`0.35 * 64 + 0.30 * 13 + 0.15 * 71 + 0.20 * 49 = 46.75`
+`0.35 * 64 + 0.30 * 13 + 0.15 * 72 + 0.20 * 52 = 47.50`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -63,7 +62,7 @@ Terminal, file, browser, web, MCP, execution-environment backends, approval
 runtime, delegation execution, most service tools, plugin discovery/management,
 and full backend RPC account for most of this weighted area and remain.
 
-### State and search, 71%
+### State and search, 72%
 
 SQLite history, structured content replay, FTS foundations, route persistence,
 legacy recovery, peer ownership, lineage, conversation generations, prompt
@@ -92,12 +91,17 @@ hides carried-forward duplicate originals, persists the summary marker, and
 reconciles live counters atomically. An injected insert failure proves the
 archive, clones, marker, and counters roll back together.
 
+In-place publication now also accepts the live partial-turn shape ending in a
+fully answered tool-call group, while rejecting dangling or mismatched calls.
+This enables same-turn full summary publication without weakening the
+complete-turn checks used by rotation.
+
 Full schema and migration parity, session search projection, archive/pin/read
 state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 49%
+### Native agent core, 52%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -142,18 +146,28 @@ reasoning-only output. A source-executed Python oracle covers 21 state-machine
 scenarios, and a live HTTP plus SQLite test proves post-persist ordering,
 search semantics, auxiliary usage attribution, and next-request adoption.
 
-Same-turn LLM summary compression, exact synthetic-user and multi-user tail
-anchors, configurable auxiliary summary caps, auxiliary model routing and
-fallback, provider failover and credential retry loops, delegation/subagents,
-full approval/clarification flows, memory and plugin managers, skill execution,
-context invalidation policy, and several agent-loop recovery behaviors remain.
-These are large behavioral systems, which is why the
-core score remains low despite broad helper and oracle coverage.
+Default in-place full compression now runs inside the live tool loop after all
+results are durable and before the next provider request. It prefers real
+provider prompt usage, falls back to full request sizing, preserves the
+post-compaction no-usage sentinel, and rearms attempts only after provider
+usage proves recovery. It reuses token-budget Phase 1, durable cooldown and
+breaker state, and exact-snapshot publication. The live HTTP and SQLite test
+proves persistence-before-summary, adoption-before-follow-up, archived-source
+search, and byte-identical system prompts across every main request.
+
+Mid-turn rotation, exact synthetic-user and multi-user tail anchors,
+reference-only handoff suppression, structural no-op backoff, configurable
+auxiliary summary caps, auxiliary model routing and fallback, provider failover
+and credential retry loops, delegation/subagents, full approval/clarification
+flows, memory and plugin managers, skill execution, context invalidation
+policy, and several agent-loop recovery behaviors remain. These are large
+behavioral systems, which is why the core score remains low despite broad
+helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,647 passing Rust tests and two expected ignores
-(1,646 gateway plus one core test).
+The workspace currently has 1,650 passing Rust tests and two expected ignores
+(1,649 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -161,11 +175,11 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,647 passed, two ignored (1,646 gateway plus one core).
-- Selected Python compression and micro-compaction contracts: 249 passed, one
-  skipped.
+- Full Rust workspace: 1,650 passed, two ignored (1,649 gateway plus one core).
+- Selected Python same-turn compression contracts: 251 passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
-  tail-selection, and 21 micro-compaction state-machine cases.
+  tail-selection, 21 micro-compaction state-machine, and 25 same-turn decision
+  and adoption cases.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
 - The lower end of the range assumes native extension-host functionality earns
   little tool-runtime credit until managers and built-ins use it broadly.
@@ -174,9 +188,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Same-turn full compression, exact remaining tail anchors, auxiliary model
-   routing/fallback, and checkpoint hooks complete the current compression
-   cluster.
+1. Mid-turn rotation, exact remaining tail and handoff behavior, structural
+   backoff, auxiliary routing/fallback, and checkpoint hooks complete the
+   current compression cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the
