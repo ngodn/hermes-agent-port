@@ -1,0 +1,1302 @@
+{
+  "container_and_entry_parsing": [
+    {
+      "case": "modern_fallback_providers_list",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "openrouter",
+            "model": "meta-llama/llama-3-70b",
+            "base_url": "https://openrouter.ai/api/v1",
+            "api_key": "sk-synthetic-openrouter",
+            "timeout": 45
+          },
+          {
+            "provider": "anthropic",
+            "model": "claude-3-5-sonnet"
+          }
+        ]
+      },
+      "chain_length": 2,
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b",
+          "base_url": "https://openrouter.ai/api/v1",
+          "api_key": "sk-synthetic-openrouter",
+          "timeout": 45
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-3-5-sonnet"
+        }
+      ]
+    },
+    {
+      "case": "modern_fallback_providers_single_dict",
+      "raw_config": {
+        "fallback_providers": {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b",
+          "base_url": "https://openrouter.ai/api/v1"
+        }
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b",
+          "base_url": "https://openrouter.ai/api/v1"
+        }
+      ]
+    },
+    {
+      "case": "legacy_fallback_model_list",
+      "raw_config": {
+        "fallback_model": [
+          {
+            "provider": "anthropic",
+            "model": "claude-3-haiku"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "anthropic",
+          "model": "claude-3-haiku"
+        }
+      ]
+    },
+    {
+      "case": "legacy_fallback_model_single_dict",
+      "raw_config": {
+        "fallback_model": {
+          "provider": "anthropic",
+          "model": "claude-3-haiku"
+        }
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "anthropic",
+          "model": "claude-3-haiku"
+        }
+      ]
+    },
+    {
+      "case": "merged_order_modern_then_legacy",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "openrouter",
+            "model": "meta-llama/llama-3-70b"
+          }
+        ],
+        "fallback_model": [
+          {
+            "provider": "anthropic",
+            "model": "claude-3-haiku"
+          }
+        ]
+      },
+      "chain_length": 2,
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-3-haiku"
+        }
+      ]
+    },
+    {
+      "case": "empty_config",
+      "raw_config": {},
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "none_config",
+      "raw_config": null,
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "invalid_container_string",
+      "raw_config": {
+        "fallback_providers": "not-a-list"
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "invalid_container_int",
+      "raw_config": {
+        "fallback_providers": 12345
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "invalid_container_bool",
+      "raw_config": {
+        "fallback_providers": true
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "invalid_container_none_value",
+      "raw_config": {
+        "fallback_providers": null
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "item_filtering_non_dict_elements",
+      "raw_config": {
+        "fallback_providers": [
+          "invalid-string",
+          123,
+          true,
+          null,
+          [
+            "nested",
+            "list"
+          ],
+          {
+            "provider": "custom",
+            "model": "valid-model"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "valid-model"
+        }
+      ]
+    },
+    {
+      "case": "item_filtering_missing_provider",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "model": "valid-model"
+          }
+        ]
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "item_filtering_empty_provider",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "",
+            "model": "valid-model"
+          }
+        ]
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "item_filtering_whitespace_provider",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "   ",
+            "model": "valid-model"
+          }
+        ]
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "item_filtering_missing_model",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom"
+          }
+        ]
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "item_filtering_empty_model",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": ""
+          }
+        ]
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "item_filtering_whitespace_model",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": "   "
+          }
+        ]
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "truthy_numeric_provider_is_stringified",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": 123,
+            "model": "valid-model"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "123",
+          "model": "valid-model"
+        }
+      ]
+    },
+    {
+      "case": "truthy_boolean_provider_is_stringified",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": true,
+            "model": "valid-model"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "True",
+          "model": "valid-model"
+        }
+      ]
+    },
+    {
+      "case": "truthy_numeric_model_is_stringified",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": 123
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "123"
+        }
+      ]
+    },
+    {
+      "case": "false_provider_is_rejected",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": false,
+            "model": "valid-model"
+          }
+        ]
+      },
+      "chain_length": 0,
+      "chain": []
+    },
+    {
+      "case": "item_normalization_trimming",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "  OpenRouter  ",
+            "model": "  meta-llama/llama-3-70b  "
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "OpenRouter",
+          "model": "meta-llama/llama-3-70b"
+        }
+      ]
+    },
+    {
+      "case": "item_normalization_base_url_trailing_slash",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": "local-model",
+            "base_url": "  https://api.example.com/v1///  "
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "local-model",
+          "base_url": "https://api.example.com/v1"
+        }
+      ]
+    },
+    {
+      "case": "truthy_non_string_base_url_is_preserved",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": "local-model",
+            "base_url": 123
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "local-model",
+          "base_url": 123
+        }
+      ]
+    },
+    {
+      "case": "falsey_non_string_base_url_is_preserved",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": "local-model",
+            "base_url": false
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "local-model",
+          "base_url": false
+        }
+      ]
+    },
+    {
+      "case": "item_normalization_extra_fields_preserved",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": "local-model",
+            "timeout": 60,
+            "extra_body": {
+              "custom_flag": true
+            },
+            "custom_arbitrary_field": "preserved"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "local-model",
+          "timeout": 60,
+          "extra_body": {
+            "custom_flag": true
+          },
+          "custom_arbitrary_field": "preserved"
+        }
+      ]
+    }
+  ],
+  "chain_deduplication_and_identity": [
+    {
+      "case": "exact_duplicate_within_fallback_providers",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "openrouter",
+            "model": "meta-llama/llama-3-70b",
+            "base_url": "https://openrouter.ai/api/v1"
+          },
+          {
+            "provider": "openrouter",
+            "model": "meta-llama/llama-3-70b",
+            "base_url": "https://openrouter.ai/api/v1"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "identities": [
+        [
+          "openrouter",
+          "meta-llama/llama-3-70b",
+          "https://openrouter.ai/api/v1"
+        ]
+      ],
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3-70b",
+          "base_url": "https://openrouter.ai/api/v1"
+        }
+      ]
+    },
+    {
+      "case": "case_insensitive_duplicate_within_fallback_providers",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "OpenRouter",
+            "model": "Meta-Llama/Llama-3-70B",
+            "base_url": "HTTPS://OpenRouter.AI/api/v1"
+          },
+          {
+            "provider": "openrouter",
+            "model": "meta-llama/llama-3-70b",
+            "base_url": "https://openrouter.ai/api/v1"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "identities": [
+        [
+          "openrouter",
+          "meta-llama/llama-3-70b",
+          "https://openrouter.ai/api/v1"
+        ]
+      ],
+      "chain": [
+        {
+          "provider": "OpenRouter",
+          "model": "Meta-Llama/Llama-3-70B",
+          "base_url": "HTTPS://OpenRouter.AI/api/v1"
+        }
+      ]
+    },
+    {
+      "case": "base_url_trailing_slash_duplicate",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": "local-model",
+            "base_url": "https://api.example.com/v1/"
+          },
+          {
+            "provider": "custom",
+            "model": "local-model",
+            "base_url": "https://api.example.com/v1"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "identities": [
+        [
+          "custom",
+          "local-model",
+          "https://api.example.com/v1"
+        ]
+      ],
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "local-model",
+          "base_url": "https://api.example.com/v1"
+        }
+      ]
+    },
+    {
+      "case": "duplicate_across_modern_and_legacy",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "anthropic",
+            "model": "claude-3-5-sonnet",
+            "api_key": "modern-key"
+          }
+        ],
+        "fallback_model": [
+          {
+            "provider": "anthropic",
+            "model": "claude-3-5-sonnet",
+            "api_key": "legacy-key"
+          }
+        ]
+      },
+      "chain_length": 1,
+      "identities": [
+        [
+          "anthropic",
+          "claude-3-5-sonnet",
+          ""
+        ]
+      ],
+      "chain": [
+        {
+          "provider": "anthropic",
+          "model": "claude-3-5-sonnet",
+          "api_key": "modern-key"
+        }
+      ]
+    },
+    {
+      "case": "distinct_models_same_provider_retained",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "anthropic",
+            "model": "claude-3-5-sonnet"
+          },
+          {
+            "provider": "anthropic",
+            "model": "claude-3-haiku"
+          }
+        ]
+      },
+      "chain_length": 2,
+      "identities": [
+        [
+          "anthropic",
+          "claude-3-5-sonnet",
+          ""
+        ],
+        [
+          "anthropic",
+          "claude-3-haiku",
+          ""
+        ]
+      ],
+      "chain": [
+        {
+          "provider": "anthropic",
+          "model": "claude-3-5-sonnet"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-3-haiku"
+        }
+      ]
+    },
+    {
+      "case": "distinct_base_urls_same_provider_model_retained",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "custom",
+            "model": "llama-3",
+            "base_url": "https://east.cluster.local/v1"
+          },
+          {
+            "provider": "custom",
+            "model": "llama-3",
+            "base_url": "https://west.cluster.local/v1"
+          }
+        ]
+      },
+      "chain_length": 2,
+      "identities": [
+        [
+          "custom",
+          "llama-3",
+          "https://east.cluster.local/v1"
+        ],
+        [
+          "custom",
+          "llama-3",
+          "https://west.cluster.local/v1"
+        ]
+      ],
+      "chain": [
+        {
+          "provider": "custom",
+          "model": "llama-3",
+          "base_url": "https://east.cluster.local/v1"
+        },
+        {
+          "provider": "custom",
+          "model": "llama-3",
+          "base_url": "https://west.cluster.local/v1"
+        }
+      ]
+    },
+    {
+      "case": "multiple_duplicates_source_order_retained",
+      "raw_config": {
+        "fallback_providers": [
+          {
+            "provider": "p1",
+            "model": "m1"
+          },
+          {
+            "provider": "p2",
+            "model": "m2"
+          },
+          {
+            "provider": "p1",
+            "model": "m1"
+          }
+        ],
+        "fallback_model": [
+          {
+            "provider": "p2",
+            "model": "m2"
+          },
+          {
+            "provider": "p3",
+            "model": "m3"
+          }
+        ]
+      },
+      "chain_length": 3,
+      "identities": [
+        [
+          "p1",
+          "m1",
+          ""
+        ],
+        [
+          "p2",
+          "m2",
+          ""
+        ],
+        [
+          "p3",
+          "m3",
+          ""
+        ]
+      ],
+      "chain": [
+        {
+          "provider": "p1",
+          "model": "m1"
+        },
+        {
+          "provider": "p2",
+          "model": "m2"
+        },
+        {
+          "provider": "p3",
+          "model": "m3"
+        }
+      ]
+    }
+  ],
+  "credential_and_transport_resolution": [
+    {
+      "case": "inline_api_key_only",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "api_key": "  sk-synthetic-inline  "
+      },
+      "resolved_key_fc": "sk-synthetic-inline",
+      "resolved_key_ax": "sk-synthetic-inline",
+      "api_mode_extracted": null,
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "key_env_only",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "key_env": "FALLBACK_TEST_KEY"
+      },
+      "resolved_key_fc": "sk-synthetic-key-env-value",
+      "resolved_key_ax": "sk-synthetic-key-env-value",
+      "api_mode_extracted": null,
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "api_key_env_alias_only",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "api_key_env": "FALLBACK_TEST_ALIAS"
+      },
+      "resolved_key_fc": "sk-synthetic-api-key-env-alias",
+      "resolved_key_ax": "sk-synthetic-api-key-env-alias",
+      "api_mode_extracted": null,
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "precedence_inline_over_key_env",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "api_key": "sk-synthetic-inline-winner",
+        "key_env": "FALLBACK_TEST_KEY"
+      },
+      "resolved_key_fc": "sk-synthetic-inline-winner",
+      "resolved_key_ax": "sk-synthetic-inline-winner",
+      "api_mode_extracted": null,
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "precedence_key_env_over_api_key_env",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "key_env": "FALLBACK_TEST_KEY",
+        "api_key_env": "FALLBACK_TEST_ALIAS"
+      },
+      "resolved_key_fc": "sk-synthetic-key-env-value",
+      "resolved_key_ax": "sk-synthetic-key-env-value",
+      "api_mode_extracted": null,
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "empty_key_env_falls_through_to_api_key_env",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "key_env": "",
+        "api_key_env": "FALLBACK_TEST_ALIAS"
+      },
+      "resolved_key_fc": "sk-synthetic-api-key-env-alias",
+      "resolved_key_ax": "sk-synthetic-api-key-env-alias",
+      "api_mode_extracted": null,
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "nonexistent_env_evaluates_none",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "key_env": "NONEXISTENT_VAR"
+      },
+      "resolved_key_fc": null,
+      "resolved_key_ax": null,
+      "api_mode_extracted": null,
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "missing_credentials_evaluates_none",
+      "entry": {
+        "provider": "custom",
+        "model": "m"
+      },
+      "resolved_key_fc": null,
+      "resolved_key_ax": null,
+      "api_mode_extracted": null,
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "api_mode_explicit",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "api_mode": "chat_completions"
+      },
+      "resolved_key_fc": null,
+      "resolved_key_ax": null,
+      "api_mode_extracted": "chat_completions",
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "chat_completions",
+        "model": "m"
+      }
+    },
+    {
+      "case": "transport_alias_explicit",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "transport": "responses"
+      },
+      "resolved_key_fc": null,
+      "resolved_key_ax": null,
+      "api_mode_extracted": "responses",
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "responses",
+        "model": "m"
+      }
+    },
+    {
+      "case": "precedence_api_mode_over_transport",
+      "entry": {
+        "provider": "custom",
+        "model": "m",
+        "api_mode": "anthropic_messages",
+        "transport": "responses"
+      },
+      "resolved_key_fc": null,
+      "resolved_key_ax": null,
+      "api_mode_extracted": "anthropic_messages",
+      "destination": {
+        "provider": "custom",
+        "base_url": "",
+        "api_mode": "anthropic_messages",
+        "model": "m"
+      }
+    }
+  ],
+  "provider_skipping_and_health_rules": [
+    {
+      "case": "failed_provider_skipped",
+      "main_provider": "anthropic",
+      "failed_provider": "openrouter",
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "m1"
+        },
+        {
+          "provider": "custom",
+          "model": "m2"
+        }
+      ],
+      "unhealthy_provider": null,
+      "unhealthy_active": false,
+      "resolved": true,
+      "resolved_model": "m2",
+      "resolved_provider": "custom"
+    },
+    {
+      "case": "main_provider_skipped",
+      "main_provider": "anthropic",
+      "failed_provider": "openrouter",
+      "chain": [
+        {
+          "provider": "anthropic",
+          "model": "m1"
+        },
+        {
+          "provider": "custom",
+          "model": "m2"
+        }
+      ],
+      "unhealthy_provider": null,
+      "unhealthy_active": false,
+      "resolved": true,
+      "resolved_model": "m2",
+      "resolved_provider": "custom"
+    },
+    {
+      "case": "auto_provider_in_chain_skipped",
+      "main_provider": "anthropic",
+      "failed_provider": "google",
+      "chain": [
+        {
+          "provider": "auto",
+          "model": "m1"
+        },
+        {
+          "provider": "custom",
+          "model": "m2"
+        }
+      ],
+      "unhealthy_provider": null,
+      "unhealthy_active": false,
+      "resolved": true,
+      "resolved_model": "m2",
+      "resolved_provider": "custom"
+    },
+    {
+      "case": "sibling_model_under_failed_provider_skipped_wholesale",
+      "main_provider": "anthropic",
+      "failed_provider": "openrouter",
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "sibling-model-1"
+        },
+        {
+          "provider": "openrouter",
+          "model": "sibling-model-2"
+        },
+        {
+          "provider": "custom",
+          "model": "recovered-model"
+        }
+      ],
+      "unhealthy_provider": null,
+      "unhealthy_active": false,
+      "resolved": true,
+      "resolved_model": "recovered-model",
+      "resolved_provider": "custom"
+    },
+    {
+      "case": "case_insensitive_skipping",
+      "main_provider": "AnThRoPiC",
+      "failed_provider": "OpEnRoUtEr",
+      "chain": [
+        {
+          "provider": "OPENROUTER",
+          "model": "m1"
+        },
+        {
+          "provider": "anthropic",
+          "model": "m2"
+        },
+        {
+          "provider": "custom",
+          "model": "m3"
+        }
+      ],
+      "unhealthy_provider": null,
+      "unhealthy_active": false,
+      "resolved": true,
+      "resolved_model": "m3",
+      "resolved_provider": "custom"
+    },
+    {
+      "case": "unhealthy_provider_skipped",
+      "main_provider": "anthropic",
+      "failed_provider": "google",
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "m1"
+        },
+        {
+          "provider": "custom",
+          "model": "m2"
+        }
+      ],
+      "unhealthy_provider": "openrouter",
+      "unhealthy_active": true,
+      "resolved": true,
+      "resolved_model": "m2",
+      "resolved_provider": "custom"
+    },
+    {
+      "case": "expired_unhealthy_provider_admitted",
+      "main_provider": "anthropic",
+      "failed_provider": "google",
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "m1"
+        },
+        {
+          "provider": "custom",
+          "model": "m2"
+        }
+      ],
+      "unhealthy_provider": "openrouter",
+      "unhealthy_active": false,
+      "resolved": true,
+      "resolved_model": "m1",
+      "resolved_provider": "openrouter"
+    },
+    {
+      "case": "all_candidates_skipped_returns_none",
+      "main_provider": "anthropic",
+      "failed_provider": "openrouter",
+      "chain": [
+        {
+          "provider": "openrouter",
+          "model": "m1"
+        },
+        {
+          "provider": "anthropic",
+          "model": "m2"
+        }
+      ],
+      "unhealthy_provider": null,
+      "unhealthy_active": false,
+      "resolved": false,
+      "resolved_model": null,
+      "resolved_provider": ""
+    }
+  ],
+  "compression_context_window_filtering_64k": [
+    {
+      "case": "task_floor_compression",
+      "task": "compression",
+      "minimum_context_length": 64000,
+      "expected_floor": 64000
+    },
+    {
+      "case": "task_floor_vision",
+      "task": "vision",
+      "minimum_context_length": null,
+      "expected_floor": null
+    },
+    {
+      "case": "task_floor_title",
+      "task": "title_generation",
+      "minimum_context_length": null,
+      "expected_floor": null
+    },
+    {
+      "case": "task_floor_session_search",
+      "task": "session_search",
+      "minimum_context_length": null,
+      "expected_floor": null
+    },
+    {
+      "case": "task_floor_none",
+      "task": null,
+      "minimum_context_length": null,
+      "expected_floor": null
+    },
+    {
+      "case": "compression_skips_small_context_8k",
+      "task": "compression",
+      "chain": [
+        {
+          "provider": "p1",
+          "model": "small-8k-model"
+        },
+        {
+          "provider": "p2",
+          "model": "viable-128k-model"
+        }
+      ],
+      "model_contexts": {
+        "small-8k-model": 8192,
+        "viable-128k-model": 131072
+      },
+      "resolved": true,
+      "resolved_provider": "p2",
+      "resolved_model": "viable-128k-model",
+      "expected_provider": "p2",
+      "expected_model": "viable-128k-model"
+    },
+    {
+      "case": "compression_skips_small_context_32k",
+      "task": "compression",
+      "chain": [
+        {
+          "provider": "p1",
+          "model": "small-32k-model"
+        },
+        {
+          "provider": "p2",
+          "model": "viable-64k-model"
+        }
+      ],
+      "model_contexts": {
+        "small-32k-model": 32768,
+        "viable-64k-model": 64000
+      },
+      "resolved": true,
+      "resolved_provider": "p2",
+      "resolved_model": "viable-64k-model",
+      "expected_provider": "p2",
+      "expected_model": "viable-64k-model"
+    },
+    {
+      "case": "compression_accepts_exact_64k_boundary",
+      "task": "compression",
+      "chain": [
+        {
+          "provider": "p1",
+          "model": "exact-64k-model"
+        }
+      ],
+      "model_contexts": {
+        "exact-64k-model": 64000
+      },
+      "resolved": true,
+      "resolved_provider": "p1",
+      "resolved_model": "exact-64k-model",
+      "expected_provider": "p1",
+      "expected_model": "exact-64k-model"
+    },
+    {
+      "case": "compression_accepts_unknown_context_none",
+      "task": "compression",
+      "chain": [
+        {
+          "provider": "p1",
+          "model": "unknown-context-model"
+        }
+      ],
+      "model_contexts": {
+        "unknown-context-model": null
+      },
+      "resolved": true,
+      "resolved_provider": "p1",
+      "resolved_model": "unknown-context-model",
+      "expected_provider": "p1",
+      "expected_model": "unknown-context-model"
+    },
+    {
+      "case": "vision_permits_small_context_without_skipping",
+      "task": "vision",
+      "chain": [
+        {
+          "provider": "p1",
+          "model": "small-8k-model"
+        },
+        {
+          "provider": "p2",
+          "model": "viable-128k-model"
+        }
+      ],
+      "model_contexts": {
+        "small-8k-model": 8192,
+        "viable-128k-model": 131072
+      },
+      "resolved": true,
+      "resolved_provider": "p1",
+      "resolved_model": "small-8k-model",
+      "expected_provider": "p1",
+      "expected_model": "small-8k-model"
+    }
+  ],
+  "client_resolution_and_timeout_behavior": [
+    {
+      "case": "client_resolution_returns_none_advances_chain",
+      "resolved": true,
+      "resolved_provider": "p2",
+      "resolved_model": "resolvable-model",
+      "expected_provider": "p2",
+      "expected_model": "resolvable-model"
+    },
+    {
+      "case": "client_resolution_raises_advances_chain",
+      "resolved": true,
+      "resolved_provider": "p2",
+      "resolved_model": "resolvable-model",
+      "expected_provider": "p2",
+      "expected_model": "resolvable-model"
+    },
+    {
+      "case": "label_bare_provider_returns_none",
+      "label": "openrouter",
+      "resolved_timeout": null,
+      "expected_timeout": null
+    },
+    {
+      "case": "label_fallback_providers_returns_none",
+      "label": "fallback_providers[0](openrouter)",
+      "resolved_timeout": null,
+      "expected_timeout": null
+    },
+    {
+      "case": "label_main_agent_returns_none",
+      "label": "main-agent(anthropic)",
+      "resolved_timeout": null,
+      "expected_timeout": null
+    },
+    {
+      "case": "label_empty_returns_none",
+      "label": "",
+      "resolved_timeout": null,
+      "expected_timeout": null
+    },
+    {
+      "case": "contrast_configured_chain_resolves_timeout",
+      "label": "fallback_chain[0](openrouter)",
+      "resolved_timeout": 45.0,
+      "expected_timeout": 45.0
+    },
+    {
+      "case": "main_fallback_candidate_request_keeps_task_timeout",
+      "task": "compression",
+      "passed_effective_timeout": 300.0,
+      "final_request_timeout": 300.0
+    }
+  ],
+  "candidate_execution_budget_and_failure_propagation": [
+    {
+      "case": "candidate_execution_success",
+      "candidates_executed": 1,
+      "success": true,
+      "re_raised": false,
+      "falls_to_built_in_discovery": false
+    },
+    {
+      "case": "candidate_non_auth_429_propagates_immediately",
+      "candidates_executed": 1,
+      "success": false,
+      "re_raised": true,
+      "subsequent_fallback_candidates_tried": 0,
+      "falls_to_built_in_discovery": false
+    },
+    {
+      "case": "candidate_non_auth_500_propagates_immediately",
+      "candidates_executed": 1,
+      "success": false,
+      "re_raised": true,
+      "subsequent_fallback_candidates_tried": 0,
+      "falls_to_built_in_discovery": false
+    },
+    {
+      "case": "candidate_non_auth_timeout_propagates_immediately",
+      "candidates_executed": 1,
+      "success": false,
+      "re_raised": true,
+      "subsequent_fallback_candidates_tried": 0,
+      "falls_to_built_in_discovery": false
+    },
+    {
+      "case": "candidate_auth_error_returns_none_for_discovery_handoff",
+      "candidates_executed": 1,
+      "returned_none": true,
+      "provider_marked_unhealthy": true,
+      "subsequent_fallback_candidates_tried": 0,
+      "falls_to_built_in_discovery": true
+    }
+  ]
+}

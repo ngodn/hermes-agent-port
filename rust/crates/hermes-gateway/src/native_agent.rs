@@ -449,7 +449,8 @@ pub fn parse_sse_line(line: &str) -> SseEvent {
 #[derive(Default)]
 struct CompressionRoutes {
     primary: Option<NativeAgentClient>,
-    fallbacks: Vec<NativeAgentClient>,
+    task_fallbacks: Vec<NativeAgentClient>,
+    main_fallbacks: Vec<NativeAgentClient>,
     main_first: bool,
     initial_failure: Option<(
         crate::compression_auxiliary::BackendIdentity,
@@ -467,6 +468,10 @@ fn compression_failure_scope(error: &Error) -> crate::compression_auxiliary::Fai
         "error"
     };
     crate::compression_auxiliary::classify_failure_reason(reason)
+}
+
+fn compression_auth_failure(error: &Error) -> bool {
+    error.to_string().to_lowercase().contains("http 401")
 }
 
 #[derive(Clone)]
@@ -689,18 +694,20 @@ impl NativeAgentClient {
 
     /// Install a frozen compression failover plan. Explicit auxiliary mode
     /// runs its primary and one eligible configured fallback before the main
-    /// conversation model. Auto mode uses the main model first, then one
-    /// eligible task fallback.
+    /// conversation model. Auto mode uses its frozen main-route client first,
+    /// then one eligible task or top-level main fallback.
     pub fn with_compression_routes(
         mut self,
         primary: Option<NativeAgentClient>,
-        fallbacks: Vec<NativeAgentClient>,
+        task_fallbacks: Vec<NativeAgentClient>,
+        main_fallbacks: Vec<NativeAgentClient>,
         main_first: bool,
         unavailable_primary: Option<crate::compression_auxiliary::BackendIdentity>,
     ) -> Self {
         self.compression_routes = std::sync::Arc::new(CompressionRoutes {
             primary,
-            fallbacks,
+            task_fallbacks,
+            main_fallbacks,
             main_first,
             initial_failure: unavailable_primary.map(|identity| {
                 (
@@ -1279,36 +1286,78 @@ impl NativeAgentClient {
             Main,
             Auxiliary {
                 client: &'a NativeAgentClient,
-                label: &'static str,
+                kind: AuxiliaryKind,
                 index: usize,
             },
+        }
+        #[derive(Clone, Copy, PartialEq, Eq)]
+        enum AuxiliaryKind {
+            Primary,
+            TaskFallback,
+            MainFallback,
+        }
+        impl AuxiliaryKind {
+            fn label(self) -> &'static str {
+                match self {
+                    Self::Primary => "primary auxiliary",
+                    Self::TaskFallback => "configured task fallback",
+                    Self::MainFallback => "configured main fallback",
+                }
+            }
         }
         let mut routes = Vec::new();
         if !self.compression_routes.main_first {
             if let Some(primary) = self.compression_routes.primary.as_ref() {
                 routes.push(PlannedRoute::Auxiliary {
                     client: primary,
-                    label: "primary auxiliary",
+                    kind: AuxiliaryKind::Primary,
                     index: 0,
                 });
             }
-            routes.extend(self.compression_routes.fallbacks.iter().enumerate().map(
-                |(index, client)| PlannedRoute::Auxiliary {
-                    client,
-                    label: "configured fallback",
-                    index,
-                },
-            ));
+            routes.extend(
+                self.compression_routes
+                    .task_fallbacks
+                    .iter()
+                    .enumerate()
+                    .map(|(index, client)| PlannedRoute::Auxiliary {
+                        client,
+                        kind: AuxiliaryKind::TaskFallback,
+                        index,
+                    }),
+            );
             routes.push(PlannedRoute::Main);
         } else {
-            routes.push(PlannedRoute::Main);
-            routes.extend(self.compression_routes.fallbacks.iter().enumerate().map(
-                |(index, client)| PlannedRoute::Auxiliary {
-                    client,
-                    label: "configured fallback",
-                    index,
-                },
-            ));
+            if let Some(primary) = self.compression_routes.primary.as_ref() {
+                routes.push(PlannedRoute::Auxiliary {
+                    client: primary,
+                    kind: AuxiliaryKind::Primary,
+                    index: 0,
+                });
+            } else {
+                routes.push(PlannedRoute::Main);
+            }
+            routes.extend(
+                self.compression_routes
+                    .task_fallbacks
+                    .iter()
+                    .enumerate()
+                    .map(|(index, client)| PlannedRoute::Auxiliary {
+                        client,
+                        kind: AuxiliaryKind::TaskFallback,
+                        index,
+                    }),
+            );
+            routes.extend(
+                self.compression_routes
+                    .main_fallbacks
+                    .iter()
+                    .enumerate()
+                    .map(|(index, client)| PlannedRoute::Auxiliary {
+                        client,
+                        kind: AuxiliaryKind::MainFallback,
+                        index,
+                    }),
+            );
         }
 
         let mut first_error = None;
@@ -1316,15 +1365,18 @@ impl NativeAgentClient {
         let mut first_failure = self.compression_routes.initial_failure.clone();
         let mut configured_fallback_attempted = false;
         for route in routes {
-            let (client, label, index, configured_fallback) = match route {
-                PlannedRoute::Main => (self, "main", 0, false),
+            let (client, label, index, kind) = match route {
+                PlannedRoute::Main => (self, "main", 0, None),
                 PlannedRoute::Auxiliary {
                     client,
-                    label,
+                    kind,
                     index,
-                } => (client, label, index, label == "configured fallback"),
+                } => (client, kind.label(), index, Some(kind)),
             };
-            if configured_fallback {
+            if matches!(
+                kind,
+                Some(AuxiliaryKind::TaskFallback | AuxiliaryKind::MainFallback)
+            ) {
                 if configured_fallback_attempted {
                     continue;
                 }
@@ -1339,13 +1391,22 @@ impl NativeAgentClient {
                     );
                     continue;
                 }
-                if first_failure.as_ref().is_some_and(|(failed, scope)| {
-                    crate::compression_auxiliary::should_skip_candidate(
-                        &client.compression_identity(),
-                        failed,
-                        *scope,
-                    )
-                }) {
+                let repeats_failed = first_failure.as_ref().is_some_and(|(failed, scope)| {
+                    let candidate = client.compression_identity();
+                    match kind {
+                        Some(AuxiliaryKind::TaskFallback) => {
+                            crate::compression_auxiliary::should_skip_candidate(
+                                &candidate, failed, *scope,
+                            )
+                        }
+                        // Main-chain entries matching the configured main provider
+                        // are removed before clients are built. Python compares the
+                        // raw provider labels here, not canonical profile identities.
+                        Some(AuxiliaryKind::MainFallback) => false,
+                        _ => false,
+                    }
+                });
+                if repeats_failed {
                     tracing::info!(
                         %session_id,
                         route_index = index,
@@ -1356,7 +1417,7 @@ impl NativeAgentClient {
                     continue;
                 }
                 configured_fallback_attempted = true;
-            } else if label == "main"
+            } else if kind.is_none()
                 && !self.compression_routes.main_first
                 && first_failure.as_ref().is_some_and(|(failed, scope)| {
                     crate::compression_auxiliary::should_skip_candidate(
@@ -1380,6 +1441,12 @@ impl NativeAgentClient {
             {
                 Ok(Some(summary)) => return Ok(Some(summary)),
                 Ok(None) => {
+                    if kind == Some(AuxiliaryKind::MainFallback) {
+                        return Err(Error::Other(
+                            "configured main compression fallback returned no usable summary"
+                                .into(),
+                        ));
+                    }
                     first_failure.get_or_insert_with(|| {
                         (
                             client.compression_identity(),
@@ -1397,6 +1464,11 @@ impl NativeAgentClient {
                     );
                 }
                 Err(error) => {
+                    if kind == Some(AuxiliaryKind::MainFallback)
+                        && !compression_auth_failure(&error)
+                    {
+                        return Err(error);
+                    }
                     first_failure.get_or_insert_with(|| {
                         (
                             client.compression_identity(),
@@ -3257,11 +3329,11 @@ mod tests {
         )
         .await;
 
-        let before = super::NativeAgentClient::new("before-model", "key", before_url).unwrap();
+        let before = super::NativeAgentClient::new("before-model", "key", &before_url).unwrap();
         let after = super::NativeAgentClient::new("after-model", "key", after_url).unwrap();
         let client = super::NativeAgentClient::new("main-model", "key", main_url.clone())
             .unwrap()
-            .with_compression_routes(Some(before), vec![after.clone()], false, None);
+            .with_compression_routes(Some(before), vec![after.clone()], Vec::new(), false, None);
         let history = [crate::session_db::CompressionHistoryMessage {
             id: 1,
             message: crate::session_db::HistoryMessage {
@@ -3295,13 +3367,46 @@ mod tests {
         order.lock().unwrap().clear();
         let inherited = super::NativeAgentClient::new("main-model", "key", main_url)
             .unwrap()
-            .with_compression_routes(None, vec![after], true, None);
+            .with_provider_identity("main-provider")
+            .with_compression_routes(None, vec![after.clone()], Vec::new(), true, None);
         let summary = inherited
             .summarize_history(None, "route-order", &history, None)
             .await
             .unwrap();
         assert_eq!(summary.as_deref(), Some("fallback summary"));
         assert_eq!(&*order.lock().unwrap(), &["main", "after"]);
+
+        order.lock().unwrap().clear();
+        let duplicate_main =
+            super::NativeAgentClient::new("main-model", "key", &inherited.base_url)
+                .unwrap()
+                .with_provider_identity("main-provider");
+        let top_level = super::NativeAgentClient::new("top-model", "key", after.base_url.clone())
+            .unwrap()
+            .with_provider_identity("top-provider");
+        let inherited =
+            super::NativeAgentClient::new("main-model", "key", inherited.base_url.clone())
+                .unwrap()
+                .with_provider_identity("main-provider")
+                .with_compression_routes(None, vec![duplicate_main], vec![top_level], true, None);
+        let summary = inherited
+            .summarize_history(None, "main-chain-order", &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("fallback summary"));
+        assert_eq!(&*order.lock().unwrap(), &["main", "after"]);
+
+        order.lock().unwrap().clear();
+        let unusable_top = super::NativeAgentClient::new("top-model", "key", before_url).unwrap();
+        let main = super::NativeAgentClient::new("main-model", "key", inherited.base_url.clone())
+            .unwrap()
+            .with_compression_routes(None, Vec::new(), vec![unusable_top], true, None);
+        let error = main
+            .summarize_history(None, "main-chain-failure", &history, None)
+            .await
+            .unwrap_err();
+        assert!(error.to_string().contains("no usable summary"));
+        assert_eq!(&*order.lock().unwrap(), &["main", "before"]);
     }
 
     #[tokio::test]
@@ -3377,6 +3482,7 @@ mod tests {
             .with_compression_routes(
                 Some(primary),
                 vec![duplicate, small, candidate, unused],
+                Vec::new(),
                 false,
                 None,
             );
@@ -3425,6 +3531,7 @@ mod tests {
             .with_compression_routes(
                 None,
                 vec![same_credential, distinct_credential],
+                Vec::new(),
                 false,
                 Some(unavailable),
             );

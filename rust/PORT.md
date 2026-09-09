@@ -1,5 +1,44 @@
 # Hermes Rust rewrite
 
+## Native compression top-level fallback chain: 2026-09-10
+
+Native full-compression summaries in auxiliary auto mode now freeze and honor
+the main agent's top-level `fallback_providers` and legacy `fallback_model`
+policy after the task-specific chain and before future built-in discovery.
+Modern and legacy containers merge in Python order, deduplicate by normalized
+route identity, skip the failed and configured main providers by raw label,
+enforce the 64,000-token context floor, and execute at most one configured
+candidate across both fallback tiers.
+
+Top-level routes reuse the existing profile-aware compression client builder.
+Their credentials and transport are entry-specific, while timeout, reasoning,
+and output-cap controls deliberately remain task-scoped to match the current
+Python request path. Route clients stay tool-free and recursion-free, and all
+tiers reuse one summary prompt byte for byte.
+
+The live HTTP integration also found and fixed a route-state bug: auto mode was
+previously inferred from whether a dedicated client was needed. Auto routes
+with task request settings do need a frozen client, but remain auto-routed. The
+route plan now separates those concepts and uses that dedicated client in the
+main-first slot, pinned to the active conversation model, before falling
+through to the two configured tiers. See
+[compression-main-fallback-chain-resolution.md](analysis/compression-main-fallback-chain-resolution.md).
+
+AGY owned the Python contract and source-executed corpus. Claude owned a
+separate Rust seam review. The primary lane corrected scalar and base-URL
+oracle gaps, extended the corpus to 76 cases, rejected the conflated auto-mode
+predicate after the live integration exposed it, and integrated the production
+path. The codebase-design skill kept the change inside the existing frozen
+route plan without adding a second resolver or prompt surface.
+
+Built-in auxiliary discovery, provider health state, credential refresh and
+rotation, non-chat transports, and stall-triggered route pinning remain. The
+weighted audit is now **55.30 points, reported as about 55%** (judgment range
+53% to 57%). Validation is **1,815 Rust tests passed, two ignored**, plus **20
+selected Python fallback tests passed**. The 76-case corpus regenerates byte
+for byte. Rust and Python formatting, Ruff, Clippy with warnings denied, and
+diff hygiene pass.
+
 ## Native auxiliary compression fallback chain: 2026-09-10
 
 Native full-compression summaries now resolve and freeze the ordered

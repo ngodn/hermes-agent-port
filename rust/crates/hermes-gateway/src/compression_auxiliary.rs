@@ -5,7 +5,7 @@
 //! summary request policy cannot leak into normal conversation calls.
 
 use serde_json::{Map, Value};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 const DEFAULT_TIMEOUT_SECONDS: f64 = 120.0;
 const COMPRESSION_TIMEOUT_FLOOR_SECONDS: f64 = 300.0;
@@ -219,6 +219,90 @@ impl FallbackChainEntry {
             })
         })
     }
+}
+
+/// Merge the modern and legacy main-agent fallback settings exactly as
+/// `hermes_cli.fallback_config.get_fallback_chain` does. Unlike the task chain,
+/// every retained entry must name both a provider and model.
+pub(crate) fn main_fallback_chain(root: &Value) -> Vec<FallbackChainEntry> {
+    let mut result = Vec::new();
+    let mut seen = HashSet::new();
+    for key in ["fallback_providers", "fallback_model"] {
+        let Some(raw) = root.get(key) else {
+            continue;
+        };
+        let values: Vec<&Value> = match raw {
+            Value::Object(_) => vec![raw],
+            Value::Array(values) => values.iter().collect(),
+            _ => Vec::new(),
+        };
+        for value in values {
+            let Some(object) = value.as_object() else {
+                continue;
+            };
+            let Some(provider) = object
+                .get("provider")
+                .filter(|value| crate::python_value::truthy(value))
+                .and_then(|value| text(Some(value)))
+            else {
+                continue;
+            };
+            let Some(model) = object
+                .get("model")
+                .filter(|value| crate::python_value::truthy(value))
+                .and_then(|value| text(Some(value)))
+            else {
+                continue;
+            };
+            let base_url = object
+                .get("base_url")
+                .and_then(Value::as_str)
+                .map(|value| {
+                    value
+                        .trim_matches(crate::python_value::python_whitespace)
+                        .trim_end_matches('/')
+                        .to_owned()
+                })
+                .filter(|value| !value.is_empty())
+                .unwrap_or_default();
+            let identity = (
+                provider.to_lowercase(),
+                model.to_lowercase(),
+                base_url.to_lowercase(),
+            );
+            if !seen.insert(identity) {
+                continue;
+            }
+            let mut normalized = object.clone();
+            normalized.insert("provider".into(), Value::String(provider));
+            normalized.insert("model".into(), Value::String(model));
+            if !base_url.is_empty() {
+                normalized.insert("base_url".into(), Value::String(base_url));
+            } else if normalized
+                .get("base_url")
+                .is_some_and(|value| !crate::python_value::truthy(value))
+            {
+                normalized.remove("base_url");
+            }
+            if let Some(entry) = FallbackChainEntry::from_value(&Value::Object(normalized)) {
+                result.push(entry);
+            }
+        }
+    }
+    result
+}
+
+pub(crate) fn should_skip_main_fallback_provider(
+    candidate_provider: &str,
+    failed_provider: &str,
+    main_provider: &str,
+) -> bool {
+    let candidate = normalize_provider(candidate_provider);
+    let failed = normalize_provider(failed_provider);
+    let main = normalize_provider(main_provider);
+    candidate == "auto"
+        || (!failed.is_empty() && candidate == failed)
+        || (!main.is_empty() && candidate == main)
 }
 
 impl Config {
@@ -460,8 +544,9 @@ fn normalize_provider(value: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        classify_failure_reason, entry_timeout_seconds, normalize_api_mode, should_skip_candidate,
-        BackendIdentity, Config, FailureScope, FallbackChainEntry,
+        classify_failure_reason, entry_timeout_seconds, main_fallback_chain, normalize_api_mode,
+        should_skip_candidate, should_skip_main_fallback_provider, BackendIdentity, Config,
+        FailureScope, FallbackChainEntry,
     };
     use serde_json::json;
 
@@ -472,6 +557,158 @@ mod tests {
             "fallback_chain":"none"
         }}}));
         assert!(non_list.fallback_chain.is_empty());
+    }
+
+    #[test]
+    fn main_fallback_chain_merges_modern_then_legacy_and_deduplicates_routes() {
+        let chain = main_fallback_chain(&json!({
+            "fallback_providers":[
+                "invalid",
+                {"provider":" OpenRouter ", "model":" m ", "base_url":" https://a/v1/ "},
+                {"provider":"anthropic", "model":"claude"},
+                {"provider":"missing-model"}
+            ],
+            "fallback_model":[
+                {"provider":"openrouter", "model":"M", "base_url":"https://a/v1"},
+                {"provider":"custom", "model":"local"}
+            ]
+        }));
+        assert_eq!(chain.len(), 3);
+        assert_eq!(chain[0].provider, "openrouter");
+        assert_eq!(chain[0].model.as_deref(), Some("m"));
+        assert_eq!(chain[0].base_url.as_deref(), Some("https://a/v1"));
+        assert_eq!(chain[1].provider, "anthropic");
+        assert_eq!(chain[2].provider, "custom");
+
+        let singleton = main_fallback_chain(&json!({
+            "fallback_model":{"provider":"custom", "model":"one"}
+        }));
+        assert_eq!(singleton.len(), 1);
+        assert_eq!(singleton[0].model.as_deref(), Some("one"));
+    }
+
+    #[test]
+    fn main_fallback_chain_matches_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-main-fallback-chain-goldens.json"
+        ))
+        .unwrap();
+        for section in [
+            "container_and_entry_parsing",
+            "chain_deduplication_and_identity",
+        ] {
+            for case in corpus[section].as_array().unwrap() {
+                let actual = main_fallback_chain(&case["raw_config"]);
+                let expected = case["chain"].as_array().unwrap();
+                assert_eq!(actual.len(), expected.len(), "{case}");
+                for (actual, expected) in actual.iter().zip(expected) {
+                    assert_eq!(
+                        actual.provider,
+                        expected["provider"].as_str().unwrap().to_lowercase(),
+                        "{case}"
+                    );
+                    assert_eq!(
+                        actual.model.as_deref(),
+                        expected["model"].as_str(),
+                        "{case}"
+                    );
+                    let expected_base = expected
+                        .get("base_url")
+                        .filter(|value| crate::python_value::truthy(value))
+                        .and_then(|value| super::text(Some(value)));
+                    assert_eq!(actual.base_url, expected_base, "{case}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn main_fallback_provider_skip_matches_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-main-fallback-chain-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["provider_skipping_and_health_rules"]
+            .as_array()
+            .unwrap()
+        {
+            if case["unhealthy_active"].as_bool() == Some(true) {
+                continue;
+            }
+            let selected = case["chain"].as_array().unwrap().iter().find(|entry| {
+                !should_skip_main_fallback_provider(
+                    entry["provider"].as_str().unwrap(),
+                    case["failed_provider"].as_str().unwrap(),
+                    case["main_provider"].as_str().unwrap(),
+                )
+            });
+            assert_eq!(
+                selected.map(|entry| entry["provider"].as_str().unwrap()),
+                case["resolved_provider"]
+                    .as_str()
+                    .filter(|provider| !provider.is_empty()),
+                "{case}"
+            );
+        }
+    }
+
+    #[test]
+    fn main_fallback_context_floor_matches_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-main-fallback-chain-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["compression_context_window_filtering_64k"]
+            .as_array()
+            .unwrap()
+        {
+            let Some(chain) = case["chain"].as_array() else {
+                continue;
+            };
+            let enforce_floor = case["task"] == "compression";
+            let contexts = case["model_contexts"].as_object().unwrap();
+            let selected = chain.iter().find(|entry| {
+                !enforce_floor
+                    || contexts[entry["model"].as_str().unwrap()]
+                        .as_u64()
+                        .is_none_or(|tokens| tokens >= 64_000)
+            });
+            assert_eq!(
+                selected.map(|entry| entry["provider"].as_str().unwrap()),
+                case["resolved_provider"].as_str(),
+                "{case}"
+            );
+            assert_eq!(
+                selected.map(|entry| entry["model"].as_str().unwrap()),
+                case["resolved_model"].as_str(),
+                "{case}"
+            );
+        }
+    }
+
+    #[test]
+    fn main_fallback_credentials_and_transport_match_source_executed_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-main-fallback-chain-goldens.json"
+        ))
+        .unwrap();
+        for case in corpus["credential_and_transport_resolution"]
+            .as_array()
+            .unwrap()
+        {
+            let entry = FallbackChainEntry::from_value(&case["entry"]).unwrap();
+            let key = entry.direct_api_key(&Default::default(), |name| match name {
+                "FALLBACK_TEST_KEY" => Some("sk-synthetic-key-env-value".into()),
+                "FALLBACK_TEST_ALIAS" => Some("sk-synthetic-api-key-env-alias".into()),
+                _ => None,
+            });
+            assert_eq!(key.as_deref(), case["resolved_key_fc"].as_str(), "{case}");
+            let expected_mode = case["api_mode_extracted"]
+                .as_str()
+                .map(str::to_owned)
+                .map(normalize_api_mode);
+            assert_eq!(entry.api_mode, expected_mode, "{case}");
+        }
     }
 
     #[test]

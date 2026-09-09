@@ -52,8 +52,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   unusable auxiliary output gets one clean main-route retry. Its ordered task
   fallback chain is also frozen at startup, applies failure-scoped and 64k
   context eligibility, and calls at most one configured candidate before the
-  main safety route. Top-level and built-in provider discovery, credential
-  rotation, and non-chat transports remain open.
+  main safety route. Auto mode now continues from the task chain into the
+  frozen top-level `fallback_providers` / legacy `fallback_model` policy while
+  preserving one configured request across both tiers. Built-in discovery,
+  unhealthy-provider state, credential rotation, and non-chat transports
+  remain open.
 - Structural full-compression no-ops arm a conversation-local, in-memory 300
   second guard shared across pre-turn and same-turn paths. They never strike or
   persist the durable ineffective breaker. Successful boundaries and forced
@@ -113,6 +116,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [compression-main-fallback-chain-resolution.md](compression-main-fallback-chain-resolution.md) | Production top-level compression fallback tier, auto-with-request-settings correction, frozen one-shot route order, helper disposition, and deferrals |
+| [compression-main-fallback-chain-contract-agy.md](compression-main-fallback-chain-contract-agy.md) | AGY source audit corrected and extended by the primary lane for Python parsing, skip, context, timeout, and execution-budget behavior |
+| [compression-main-fallback-rust-seam-claude.md](compression-main-fallback-rust-seam-claude.md) | Claude's independent narrow Rust seam review, including reusable parser and client-builder boundaries plus the superseded auto predicate |
+| [compression-main-fallback-chain-goldens.json](../tools/compression-main-fallback-chain-goldens.json) | Source-executed 76-case top-level fallback parser, credential, skip, context, timeout, and execution corpus |
 | [compression-fallback-chain-resolution.md](compression-fallback-chain-resolution.md) | Production frozen task fallback plan, Python-compatible one-candidate selection, failure and context eligibility, request isolation, helper review disposition, and deferrals |
 | [compression-fallback-chain-contract-agy.md](compression-fallback-chain-contract-agy.md) | AGY audit and source-executed corpus for fallback entry coercion, route identity, selection, context filtering, and exhaustion |
 | [compression-fallback-chain-config-claude.md](compression-fallback-chain-config-claude.md) | Claude's isolated Rust configuration-model lane plus the primary correction removing the draft-only per-entry extra-body field |
@@ -203,7 +210,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 53.35-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |

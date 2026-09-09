@@ -1,13 +1,13 @@
 # Full Rust port progress audit, updated 2026-09-10
 
-Current estimate: **55.10% of the full native replacement**, reported as
+Current estimate: **55.30% of the full native replacement**, reported as
 **about 55%**, with a reasonable judgment range of **53% to 57%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
 static user deny rules with live last-known-good reload and manual approval on
-the three native push adapters. Full-compression summaries also use a frozen,
-failure-scoped configured task fallback chain. The estimate remains
-conservative because top-level and built-in provider discovery, credential
+the three native push adapters. Full-compression summaries also use frozen,
+failure-scoped task and top-level configured fallback tiers. The estimate
+remains conservative because built-in provider discovery, provider health, credential
 recovery, smart approval, PTY and notification support, remote execution, most
 tools, and the underlying plugin and external-memory managers are not native.
 
@@ -27,10 +27,10 @@ audits.
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 73% | 10.95 |
-| Native agent core | 20% | 66% | 13.20 |
-| Total | 100% | | **55.10** |
+| Native agent core | 20% | 67% | 13.40 |
+| Total | 100% | | **55.30** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 73 + 0.20 * 66 = 55.10`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 73 + 0.20 * 67 = 55.30`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -180,7 +180,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 65%
+### Native agent core, 67%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -261,6 +261,16 @@ independent of the task floor. Exact-route reasoning controls cannot leak to an
 uncertified candidate, and all attempts remain tool-free, non-recursive, and
 separately attributed to auxiliary usage.
 
+Auto-mode compression now continues into the main agent's top-level
+`fallback_providers` and legacy `fallback_model` policy when the task chain has
+no eligible client. Startup merges and deduplicates both sources, filters raw
+provider labels, resolves routes in the active profile's secret scope, and
+shares one configured-request budget across the task and top-level tiers. An
+auto route with task-specific request policy keeps a dedicated frozen client
+in the main-first slot instead of being misclassified as explicit mode. The
+same prompt bytes cross every route, while top-level per-entry timeout,
+reasoning, and output-cap fields remain inert to match Python runtime behavior.
+
 Structurally impossible full-compression attempts now arm a 300 second
 conversation-local monotonic guard instead of incrementing the durable
 ineffective breaker. Pre-turn and same-turn paths share the guard, a live
@@ -303,8 +313,8 @@ retain Python's empty `old_session_id`; rotation events carry the archived
 parent. A clone-shared conversation counter survives frozen-client cache rekeys,
 and hook execution never delays or rolls back compression.
 
-Top-level and built-in auxiliary provider discovery, credential rotation and
-OAuth refresh, non-chat auxiliary transports, context-engine and relay-boundary
+Built-in auxiliary provider discovery, provider health state, credential rotation
+and OAuth refresh, non-chat auxiliary transports, context-engine and relay-boundary
 notifications, overflow recovery, broader provider failover loops,
 delegation/subagents, full
 smart approval and clarification flows, memory and plugin managers, skill execution,
@@ -314,8 +324,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,810 passing Rust tests and two expected ignores
-(1,809 gateway plus one core test).
+The workspace currently has 1,815 passing Rust tests and two expected ignores
+(1,814 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -323,13 +333,14 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,810 passed, two ignored (1,809 gateway plus one core).
+- Full Rust workspace: 1,815 passed, two ignored (1,814 gateway plus one core).
 - Selected Python fallback contracts: 20 passed across isolated commands.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
-  adoption, 129 auxiliary routing/config, 112 compression fallback-chain, 24
-  structural-backoff, and 60 handoff-layer cases, plus the 233-case terminal and approval corpus, 76
-  interactive-approval cases, and 251 exhaustive dangerous-command cases.
+  adoption, 129 auxiliary routing/config, 112 task fallback-chain, 76 top-level
+  fallback-chain, 24 structural-backoff, and 60 handoff-layer cases, plus the
+  233-case terminal and approval corpus, 76 interactive-approval cases, and 251
+  exhaustive dangerous-command cases.
 - Rust and Python formatting, Ruff, Clippy with warnings denied, and
   `git diff --check`: passed.
 - The lower end of the range assumes the versioned extension-host boundary earns
@@ -339,7 +350,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Top-level and built-in auxiliary discovery, credential recovery, overflow
+1. Built-in auxiliary discovery, provider health, credential recovery, overflow
    recovery, repeated-compression status, and context-engine adoption complete
    the current compression cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility

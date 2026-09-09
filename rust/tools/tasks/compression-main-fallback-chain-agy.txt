@@ -1,0 +1,28 @@
+Audit the authoritative Python contract for the top-level main-model fallback
+chain as consumed by auxiliary compression in provider auto mode. This is an
+independent contract and oracle lane. Do not edit Rust source, PORT.md,
+INDEX.md, existing reports, or existing generators.
+
+Trace agent/auxiliary_client.py `_try_main_fallback_chain`, its call sites in
+sync and async `call_llm`, and hermes_cli/fallback_config.py
+`get_fallback_chain`. Cover modern `fallback_providers`, legacy
+`fallback_model`, accepted dict/list containers, filtering, normalization,
+deduplication, source order, failed/main provider skip rules, 64,000-token
+compression context filtering, client resolution failures, credential
+resolution, transport aliases, per-entry timeout behavior at the final request,
+and exactly how many candidates may execute before built-in discovery or
+failure propagation. Distinguish current runtime behavior from comments or
+desired behavior.
+
+Write a concise report to
+rust/analysis/compression-main-fallback-chain-contract-agy.md. Also create a
+deterministic source-executed generator at
+rust/tools/gen_compression_main_fallback_chain_goldens.py and its JSON output
+at rust/tools/compression-main-fallback-chain-goldens.json. Use only synthetic
+credentials and local mocks. The generator must support `--check`, exercise
+the real Python functions rather than duplicating their logic where practical,
+and avoid network calls. Run it once normally and once with `--check`.
+
+Include exact source references, case counts, commands, and explicit parity
+requirements for a bounded native Rust checkpoint. Avoid em dash characters
+in every file you write.

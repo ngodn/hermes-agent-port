@@ -1,0 +1,21 @@
+Inspect the existing Rust gateway only and design the narrowest production seam
+for adding the top-level `fallback_providers` / legacy `fallback_model` chain
+after `auxiliary.compression.fallback_chain` in auto-mode compression routing.
+This is an independent Rust seam lane, not a Python contract audit and not an
+implementation lane.
+
+Read rust/crates/hermes-gateway/src/compression_auxiliary.rs, main.rs,
+native_agent.rs, provider_registry.rs, custom_provider_config.rs, models_dev.rs,
+and relevant config helpers. Identify reusable parsing and provider resolution,
+where the frozen route plan should encode tier order, how to prevent more than
+one runtime candidate from executing, how top-level per-entry timeout and
+request controls should differ from task entries, how to preserve profile
+secret scope and prompt byte stability, and what local HTTP integration tests
+would prove production wiring. Flag any interface growth that would be shallow
+or speculative.
+
+Do not edit Rust or Python source, PORT.md, INDEX.md, generators, goldens, or
+existing reports. Write only
+rust/analysis/compression-main-fallback-rust-seam-claude.md. Include concrete
+file and symbol references plus a recommended implementation sequence. Avoid
+em dash characters in all prose.

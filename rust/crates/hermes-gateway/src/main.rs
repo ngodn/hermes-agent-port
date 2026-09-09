@@ -372,7 +372,11 @@ fn build_agent_client(
 
 enum CompressionRouteConfig<'a> {
     Primary(&'a compression_auxiliary::Config),
-    Fallback {
+    TaskFallback {
+        entry: &'a compression_auxiliary::FallbackChainEntry,
+        task: &'a compression_auxiliary::Config,
+    },
+    MainFallback {
         entry: &'a compression_auxiliary::FallbackChainEntry,
         task: &'a compression_auxiliary::Config,
     },
@@ -382,39 +386,49 @@ impl CompressionRouteConfig<'_> {
     fn provider(&self) -> &str {
         match self {
             Self::Primary(config) => &config.provider,
-            Self::Fallback { entry, .. } => &entry.provider,
+            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => &entry.provider,
         }
     }
 
     fn is_fallback(&self) -> bool {
-        matches!(self, Self::Fallback { .. })
+        !matches!(self, Self::Primary(_))
     }
 
     fn model(&self) -> Option<&str> {
         match self {
             Self::Primary(config) => config.model.as_deref(),
-            Self::Fallback { entry, .. } => entry.model.as_deref(),
+            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => {
+                entry.model.as_deref()
+            }
         }
     }
 
     fn base_url(&self) -> Option<&str> {
         match self {
             Self::Primary(config) => config.base_url.as_deref(),
-            Self::Fallback { entry, .. } => entry.base_url.as_deref(),
+            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => {
+                entry.base_url.as_deref()
+            }
         }
     }
 
     fn api_mode(&self) -> Option<&str> {
         match self {
             Self::Primary(config) => config.api_mode.as_deref(),
-            Self::Fallback { entry, .. } => entry.api_mode.as_deref(),
+            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => {
+                entry.api_mode.as_deref()
+            }
         }
     }
 
     fn timeout(&self) -> std::time::Duration {
         match self {
             Self::Primary(config) => config.timeout,
-            Self::Fallback { entry, task } => entry.timeout.unwrap_or(task.timeout),
+            Self::TaskFallback { entry, task } => entry.timeout.unwrap_or(task.timeout),
+            // Python's `_fallback_entry_timeout` only resolves
+            // `auxiliary.<task>.fallback_chain` labels. Top-level main-chain
+            // entries retain the task timeout even if they carry this key.
+            Self::MainFallback { task, .. } => task.timeout,
         }
     }
 
@@ -425,12 +439,12 @@ impl CompressionRouteConfig<'_> {
     ) -> Option<serde_json::Value> {
         match self {
             Self::Primary(config) => config.reasoning_config.clone(),
-            Self::Fallback { entry, .. }
+            Self::TaskFallback { entry, .. }
                 if entry.certifies_route(actual_provider, actual_model) =>
             {
                 Some(serde_json::json!({"enabled": false, "effort": "none"}))
             }
-            Self::Fallback { .. } => None,
+            Self::TaskFallback { .. } | Self::MainFallback { .. } => None,
         }
     }
 
@@ -441,8 +455,9 @@ impl CompressionRouteConfig<'_> {
     ) -> serde_json::Map<String, serde_json::Value> {
         match self {
             Self::Primary(config) => config.extra_body.clone(),
-            Self::Fallback { entry, task } => {
-                let certified = entry.certifies_route(actual_provider, actual_model);
+            Self::TaskFallback { entry, task } | Self::MainFallback { entry, task } => {
+                let certified = matches!(self, Self::TaskFallback { .. })
+                    && entry.certifies_route(actual_provider, actual_model);
                 let mut body = task.extra_body.clone();
                 if task.claims_fast_lane() && !certified {
                     body.shift_remove("reasoning");
@@ -463,16 +478,19 @@ impl CompressionRouteConfig<'_> {
     ) -> Option<String> {
         match self {
             Self::Primary(config) => config.direct_api_key(dotenv, environment),
-            Self::Fallback { entry, .. } => entry.direct_api_key(dotenv, environment),
+            Self::TaskFallback { entry, .. } | Self::MainFallback { entry, .. } => {
+                entry.direct_api_key(dotenv, environment)
+            }
         }
     }
 
     fn certified_output_cap(&self, actual_provider: &str, actual_model: &str) -> Option<u64> {
         match self {
             Self::Primary(config) => config.certified_output_cap(actual_provider, actual_model),
-            Self::Fallback { entry, .. } => {
+            Self::TaskFallback { entry, .. } => {
                 entry.certified_output_cap(actual_provider, actual_model)
             }
+            Self::MainFallback { .. } => None,
         }
     }
 }
@@ -563,6 +581,7 @@ fn build_native_compression_client(
     let model = route
         .model()
         .map(str::to_owned)
+        .or_else(|| inherits_main.then(|| main_model.to_owned()))
         .or_else(|| {
             auxiliary_profile
                 .as_ref()
@@ -786,6 +805,7 @@ fn build_agent_client_for_home(
                 }) {
                 Ok(mut c) => {
                     let compression_policy = compression_auxiliary::Config::from_value(user_config);
+                    let compression_auto = compression_policy.provider == "auto";
                     c = c.with_summary_request_policy(compression_policy.timeout, None);
                     c = c.with_reasoning_config(reasoning_effort::resolve_config(
                         user_config,
@@ -841,6 +861,7 @@ fn build_agent_client_for_home(
                     let mut primary_compression = None;
                     let mut primary_compression_unavailable = false;
                     let mut compression_fallbacks = Vec::new();
+                    let mut main_compression_fallbacks = Vec::new();
                     if compression_policy.needs_separate_client {
                         match build_native_compression_client(
                             CompressionRouteConfig::Primary(&compression_policy),
@@ -868,7 +889,7 @@ fn build_agent_client_for_home(
                     }
                     for (index, entry) in compression_policy.fallback_chain.iter().enumerate() {
                         match build_native_compression_client(
-                            CompressionRouteConfig::Fallback {
+                            CompressionRouteConfig::TaskFallback {
                                 entry,
                                 task: &compression_policy,
                             },
@@ -898,7 +919,55 @@ fn build_agent_client_for_home(
                             }
                         }
                     }
-                    if primary_compression.is_some() || !compression_fallbacks.is_empty() {
+                    if compression_auto {
+                        for (index, entry) in
+                            compression_auxiliary::main_fallback_chain(user_config)
+                                .iter()
+                                .enumerate()
+                        {
+                            if compression_auxiliary::should_skip_main_fallback_provider(
+                                &entry.provider,
+                                requested_provider,
+                                requested_provider,
+                            ) {
+                                continue;
+                            }
+                            match build_native_compression_client(
+                                CompressionRouteConfig::MainFallback {
+                                    entry,
+                                    task: &compression_policy,
+                                },
+                                user_config,
+                                model,
+                                &key,
+                                &base_url,
+                                profile.as_ref(),
+                                &profiles,
+                                &dotenv,
+                                &mut environment,
+                                home,
+                            ) {
+                                Ok(Some(fallback)) => main_compression_fallbacks.push(fallback),
+                                Ok(None) => tracing::debug!(
+                                    route_index = index,
+                                    "main compression fallback has no resolvable model; skipping"
+                                ),
+                                Err(error) => {
+                                    let error = compression_redact::redact(&error.to_string());
+                                    tracing::warn!(
+                                        %error,
+                                        route_index = index,
+                                        provider = entry.provider,
+                                        "main compression fallback unavailable; trying the next entry"
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    if primary_compression.is_some()
+                        || !compression_fallbacks.is_empty()
+                        || !main_compression_fallbacks.is_empty()
+                    {
                         let unavailable_primary = primary_compression_unavailable.then(|| {
                             compression_auxiliary::BackendIdentity::new(
                                 &compression_policy.provider,
@@ -909,7 +978,8 @@ fn build_agent_client_for_home(
                         c = c.with_compression_routes(
                             primary_compression,
                             compression_fallbacks,
-                            !compression_policy.needs_separate_client,
+                            main_compression_fallbacks,
+                            compression_auto,
                             unavailable_primary,
                         );
                     }
@@ -1689,7 +1759,7 @@ mod startup_tests {
                 ]
             }}
         }));
-        let route = CompressionRouteConfig::Fallback {
+        let route = CompressionRouteConfig::TaskFallback {
             entry: &task.fallback_chain[0],
             task: &task,
         };
@@ -1869,6 +1939,7 @@ mod startup_tests {
 
         let auxiliary_requests: Captures = Default::default();
         let fallback_requests: Captures = Default::default();
+        let main_fallback_requests: Captures = Default::default();
         let main_requests: Captures = Default::default();
         let (auxiliary_url, _auxiliary_server) = serve(
             auxiliary_requests.clone(),
@@ -1892,6 +1963,14 @@ mod startup_tests {
             })],
         )
         .await;
+        let (main_fallback_url, _main_fallback_server) = serve(
+            main_fallback_requests.clone(),
+            vec![json!({
+                "choices":[{"finish_reason":"stop","message":{"content":"main-chain summary"}}],
+                "usage":{"prompt_tokens":31,"completion_tokens":7}
+            })],
+        )
+        .await;
         let (main_url, _main_server) = serve(
             main_requests.clone(),
             vec![
@@ -1900,7 +1979,7 @@ mod startup_tests {
                     "usage":{"prompt_tokens":34,"completion_tokens":8}
                 }),
                 json!({
-                    "choices":[{"finish_reason":"stop","message":{"content":"main summary"}}],
+                    "choices":[{"finish_reason":"length","message":{"content":"partial again"}}],
                     "usage":{"prompt_tokens":35,"completion_tokens":8}
                 }),
             ],
@@ -2028,6 +2107,57 @@ mod startup_tests {
         assert_eq!(summary.as_deref(), Some("chain summary"));
         assert_eq!(main_requests.lock().unwrap().len(), 1);
         assert_eq!(fallback_requests.lock().unwrap().len(), 2);
+
+        let main_chain_config = json!({
+            "model":{"provider":"openrouter"},
+            "fallback_providers":[
+                {"provider":"openrouter", "model":"duplicate-main"},
+                {"provider":"custom", "model":"main-fallback-model",
+                 "base_url":main_fallback_url, "api_key":"main-fallback-key",
+                 "timeout":1, "reasoning_effort":false,
+                 "max_output_tokens":111}
+            ],
+            "auxiliary":{"compression":{
+                "provider":"auto",
+                "extra_body":{"route_marker":"auto-task"}
+            }}
+        });
+        let main_chain = build_agent_client_for_home(
+            &config,
+            &main_chain_config,
+            Some("main-model"),
+            &home.0,
+            None,
+        )
+        .unwrap();
+        let summary = main_chain
+            .summarize_context(agent::TurnContext::default(), &message, &history, None)
+            .await
+            .unwrap();
+        assert_eq!(
+            summary.as_deref(),
+            Some("main-chain summary"),
+            "main requests: {:?}, fallback requests: {:?}",
+            main_requests
+                .lock()
+                .unwrap()
+                .iter()
+                .map(|(_, body)| body["model"].clone())
+                .collect::<Vec<_>>(),
+            main_fallback_requests.lock().unwrap().len()
+        );
+        assert_eq!(main_requests.lock().unwrap().len(), 2);
+        assert_eq!(main_requests.lock().unwrap()[1].1["model"], "main-model");
+        let main_fallback_guard = main_fallback_requests.lock().unwrap();
+        assert_eq!(main_fallback_guard.len(), 1);
+        let (headers, body) = &main_fallback_guard[0];
+        assert_eq!(headers["authorization"], "Bearer main-fallback-key");
+        assert_eq!(body["model"], "main-fallback-model");
+        assert_eq!(body["route_marker"], "auto-task");
+        assert!(body.get("max_tokens").is_none());
+        assert!(body.get("max_completion_tokens").is_none());
+        assert!(body.get("reasoning").is_none());
+        assert!(body.get("tools").is_none());
     }
 
     #[tokio::test]
