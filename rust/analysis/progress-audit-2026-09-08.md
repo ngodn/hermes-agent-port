@@ -1,9 +1,9 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **49.75% of the full native replacement**, reported as
+Current estimate: **50.30% of the full native replacement**, reported as
 **about 50%**, with a reasonable judgment range of **48% to 52%**. This
-supersedes the 49.55-point estimate recorded after the external-memory
-pre-compression checkpoint.
+supersedes the 49.75-point estimate recorded after compression-boundary memory
+rebinding.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -18,13 +18,13 @@ audits.
 
 | Area | Full-port weight | Current area completion | Overall points |
 | --- | ---: | ---: | ---: |
-| Gateway | 35% | 64% | 22.40 |
+| Gateway | 35% | 65% | 22.75 |
 | Tool runtime and RPC | 30% | 14% | 4.20 |
 | State and search | 15% | 73% | 10.95 |
-| Native agent core | 20% | 61% | 12.20 |
-| Total | 100% | | **49.75** |
+| Native agent core | 20% | 62% | 12.40 |
+| Total | 100% | | **50.30** |
 
-`0.35 * 64 + 0.30 * 14 + 0.15 * 73 + 0.20 * 61 = 49.75`
+`0.35 * 65 + 0.30 * 14 + 0.15 * 73 + 0.20 * 62 = 50.30`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -32,7 +32,7 @@ small range would imply false precision.
 
 ## Evidence behind the scores
 
-### Gateway, 64%
+### Gateway, 65%
 
 Production startup, profile-aware client construction, HTTP and push dispatch,
 Telegram, Discord and Slack, session admission, delivery state, routing,
@@ -41,6 +41,13 @@ lifecycle, and bounded conversation ownership are live and tested. Native HTTP
 and push admission now run automatic compression before inbound persistence,
 under stable route, transcript, and cross-process lineage leases. Both default
 in-place publication and explicit rotation are exercised end to end.
+
+The generic `session:compress` event now reaches profile-scoped user hooks from
+every committed native full-compression path. Python function handlers retain
+their sync or async `handle(event_type, context)` ABI through a bounded runner.
+Ambient profile secrets are cleared before each handler subprocess, and timeout
+cleanup covers descendant processes. Other lifecycle hook events remain tied to
+the Python gateway.
 
 Most of the Python gateway breadth remains: many platform adapters, command
 handlers, queue/steer/interrupt behavior, richer streaming delivery, adapter
@@ -117,7 +124,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 61%
+### Native agent core, 62%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -214,9 +221,15 @@ child turn can recover cleanly. Cache tests cover target contention and a hard
 retirement racing the asynchronous observer, while a live Python-child test
 proves the exact provider callback.
 
+The same post-publication seam now schedules the exact five-key generic
+`session:compress` payload after the memory callback attempt. In-place events
+retain Python's empty `old_session_id`; rotation events carry the archived
+parent. A clone-shared conversation counter survives frozen-client cache rekeys,
+and hook execution never delays or rolls back compression.
+
 Mid-turn rotation, configurable multi-provider auxiliary fallback chains,
-non-chat auxiliary transports, context-engine and generic compression-event
-notifications, transparent extension-host recovery, overflow recovery, provider
+non-chat auxiliary transports, context-engine and relay-boundary notifications,
+transparent extension-host recovery, overflow recovery, provider
 failover and credential retry loops, delegation/subagents, full
 approval/clarification flows, memory and plugin managers, skill execution,
 context invalidation policy, and several agent-loop recovery behaviors remain.
@@ -225,8 +238,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,713 passing Rust tests and two expected ignores
-(1,712 gateway plus one core test).
+The workspace currently has 1,720 passing Rust tests and two expected ignores
+(1,719 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -234,10 +247,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,713 passed, two ignored (1,712 gateway plus one core).
-- Selected Python checkpoint, session-switch, memory-context, and
-  extension-hook contracts: 110
-  passed.
+- Full Rust workspace: 1,720 passed, two ignored (1,719 gateway plus one core).
+- Selected Python hook-runner, gateway-hook, compression-boundary,
+  session-switch, and memory-checkpoint contracts: 157 passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 24 structural-backoff, and 60
@@ -250,8 +262,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Mid-turn rotation, auxiliary fallback chains, overflow recovery, and
-   extension notifications complete the current compression cluster.
+1. Mid-turn rotation, auxiliary fallback chains, overflow recovery,
+   repeated-compression status, and context-engine adoption complete the current
+   compression cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.
 3. Native terminal/file/browser/MCP and approval/delegation execution move the

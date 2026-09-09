@@ -1,5 +1,42 @@
 # Hermes Rust rewrite
 
+## Native compression lifecycle hooks: 2026-09-09
+
+Every committed native full-compression path now emits the generic
+`session:compress` event through the selected profile's real user-hook
+registry. The exact five-key Python payload is preserved: rotation reports the
+active child and archived parent, while in-place compression reports an empty
+`old_session_id`. A clone-shared one-based counter follows the frozen client
+across cache rekeys.
+
+The event is scheduled only after SQLite publication and after the external
+memory callback attempt. It still runs when that callback returns a transport
+error, but no hook can delay or roll back compression. The handler set is
+discovered during conversation initialization without entering prompt or tool
+bytes.
+
+Python function hooks keep their `handle(event_type, context)` ABI through a
+small compatibility runner. Handler processes start from a cleared environment,
+receive only process-global and selected-profile values, and get a forced
+`HERMES_HOME`. Timeout cleanup kills the whole process group. Nonzero exits and
+malformed collected output are isolated so later handlers still run.
+
+AGY owned only the Python runner, then separately reviewed the Python ABI.
+Claude owned only Rust registry hardening, then separately reviewed Rust
+lifecycle and profile safety. The primary lane owned production wiring,
+boundary semantics, integration, corrections, documentation, validation, and
+publication. See
+[native-compression-hook-resolution.md](analysis/native-compression-hook-resolution.md).
+
+Validation is **1,720 Rust tests passed, two ignored**, plus **157 selected
+Python tests passed**. Formatting, Ruff lint and format checks, Clippy with
+warnings denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **50.30
+points, reported as about 50%** (judgment range 48% to 52%). Context-engine and
+relay-boundary adoption, repeated-compression status, transparent extension-host
+recovery, same-turn rotation, overflow recovery, and native plugin and memory
+managers remain.
+
 ## Native compression-boundary rebinding: 2026-09-09
 
 Every committed native full-compression path now notifies the real Python

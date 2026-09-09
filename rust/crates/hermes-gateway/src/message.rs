@@ -2702,6 +2702,31 @@ def register(ctx):
 "#,
         )
         .unwrap();
+        let hook = home.0.join("hooks/compression-fixture");
+        std::fs::create_dir_all(&hook).unwrap();
+        std::fs::write(
+            hook.join("HOOK.yaml"),
+            "name: compression-fixture\ndescription: test compression observer\nevents:\n  - session:compress\n",
+        )
+        .unwrap();
+        std::fs::write(
+            hook.join("handler.py"),
+            r#"import json
+import os
+from pathlib import Path
+
+async def handle(event_type, context):
+    home = Path(os.environ["HERMES_HOME"])
+    record = {
+        "event": event_type,
+        "context": context,
+        "memory_completed": (home / "compression-boundary.jsonl").exists(),
+    }
+    with (home / "hook-boundary.jsonl").open("a") as stream:
+        stream.write(json.dumps(record, sort_keys=True) + "\n")
+"#,
+        )
+        .unwrap();
         let source = crate::session::SessionSource {
             user_id: Some("local".into()),
             ..crate::session::SessionSource::new("local", "same-turn-full-compression")
@@ -2746,6 +2771,14 @@ def register(ctx):
             initialized.active_memory_provider.as_deref(),
             Some("boundary-fixture")
         );
+        let mut hooks = crate::hooks::HookRegistry::new().with_runtime(crate::hooks::HookRuntime {
+            profile_home: home.0.clone(),
+            profile_env: Default::default(),
+            python: python.to_string_lossy().into_owned(),
+            repo_root: repo.clone(),
+        });
+        hooks.discover_and_load_from(&home.0.join("hooks"));
+        assert_eq!(hooks.loaded_hooks().len(), 1);
         let config = json!({"compression": {
             "enabled": true,
             "threshold_tokens": 40_000,
@@ -2761,7 +2794,8 @@ def register(ctx):
             .with_tools(vec![Arc::new(BuildProbe)])
             .with_context_length(100_000)
             .with_automatic_compression_policy(policy)
-            .with_extension_host(Some(extension));
+            .with_extension_host(Some(extension))
+            .with_hooks(Some(Arc::new(hooks)), "cli");
         let mut state = AppState::new(Arc::new(agent), Arc::new(config), None, Some(db.clone()));
         state.session_store = Some((store.clone(), 3600.0));
         let (gateway_url, _gateway_server) = serve(
@@ -2814,11 +2848,12 @@ def register(ctx):
             "build handled"
         );
 
-        let requests = calls.lock().unwrap();
-        assert_eq!(requests.len(), 4);
-        assert!(requests[2].get("tools").is_none());
-        assert!(requests[3].get("tools").is_some());
-        drop(requests);
+        {
+            let requests = calls.lock().unwrap();
+            assert_eq!(requests.len(), 4);
+            assert!(requests[2].get("tools").is_none());
+            assert!(requests[3].get("tools").is_some());
+        }
 
         let active = db.load_compression_snapshot(&session_id).unwrap();
         assert_eq!(
@@ -2854,6 +2889,33 @@ def register(ctx):
                 "parent_session_id": session_id,
                 "reset": false,
                 "extra": {"reason": "compression"}
+            })]
+        );
+        let hook_path = home.0.join("hook-boundary.jsonl");
+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            while !hook_path.exists() {
+                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+            }
+        })
+        .await
+        .expect("compression hook did not finish");
+        let hook_boundaries = std::fs::read_to_string(hook_path)
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str::<Value>(line).unwrap())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            hook_boundaries,
+            [json!({
+                "event": "session:compress",
+                "context": {
+                    "platform": "cli",
+                    "session_id": session_id,
+                    "old_session_id": "",
+                    "in_place": true,
+                    "compression_count": 1,
+                },
+                "memory_completed": true,
             })]
         );
     }

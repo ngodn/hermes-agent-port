@@ -67,8 +67,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 - Every committed native full-compression boundary now rebinds the real Python
   memory manager after publication. Rotation atomically moves the same frozen
   conversation client to the child cache key; in-place notification keeps the
-  key. Observer failure never rolls back SQLite. Context-engine, relay, and
-  generic compression-event notifications remain open.
+  key. Observer failure never rolls back SQLite.
+- The generic `session:compress` event now reaches the selected profile's user
+  hooks after the memory callback attempt. The exact five-key Python payload,
+  in-place empty parent ID, clone-shared count, async failure isolation, Python
+  function ABI, profile-secret boundary, and descendant timeout cleanup are
+  live. Context-engine and relay-boundary adoption remain open.
 
 ## Rejected paths
 
@@ -81,11 +85,20 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 - Do not title-gate every native session picker before a title writer exists.
   `/sessions full` is the discoverable ID path until `/title` and auto-title
   are native.
+- Do not notify a standalone Python context engine or relay coordinator merely
+  because a native transcript compressed. Neither currently owns the native
+  compression, turn, tool, usage, or relay-scope lifecycle needed to make that
+  notification truthful.
 
 ## Artifacts
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-compression-hook-resolution.md](native-compression-hook-resolution.md) | Production `session:compress` dispatch, profile-safe subprocess runtime, Python function runner, exact payload and ordering, review disposition, and explicit context-engine and relay deferrals |
+| [compression-event-relay-claude.md](compression-event-relay-claude.md) | Source audit of the generic event payload, fire-and-forget bridge, rollback oddity, absent relay transport, dormant Rust registry, and safe wiring seam |
+| [compression-context-engine-boundary-agy.md](compression-context-engine-boundary-agy.md) | Source audit of context-engine boundary arguments, commit and memory ordering, deferred finalization, and full lifecycle requirements |
+| [native-compression-hook-python-review-agy.md](native-compression-hook-python-review-agy.md) | Separate Python ABI review of the runner, imports, sync and async handling, error containment, and exact event shape |
+| [native-compression-hook-rust-review-claude.md](native-compression-hook-rust-review-claude.md) | Separate Rust review of profile isolation, child lifecycle, post-commit ordering, count ownership, cache stability, and remaining test notes |
 | [native-compression-boundary-rebind-resolution.md](native-compression-boundary-rebind-resolution.md) | Post-commit memory-provider rebinding, frozen-client cache transfer, retirement races, live Python-child proof, helper disposition, and explicit notification deferrals |
 | [native-pre-compress-checkpoint-resolution.md](native-pre-compress-checkpoint-resolution.md) | Versioned Python host protocol, complete-snapshot ordering, required and optional failure semantics, sanitized summary context, helper disposition, and proof |
 | [native-compression-handoff-tail-resolution.md](native-compression-handoff-tail-resolution.md) | Live N-user tails, complete handoff planner, summary rehydration, exact replacement publication, call suppression, helper disposition, and proof |
@@ -147,7 +160,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 49.55-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 50.30-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |

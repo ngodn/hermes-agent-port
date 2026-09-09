@@ -215,6 +215,8 @@ struct NativeConversationState {
     tools: Vec<Arc<dyn crate::native_tools::Tool>>,
     plugin_prompt: crate::plugin_prompt::Snapshot,
     extension_host: Option<crate::extension_host::Client>,
+    hooks: Option<Arc<crate::hooks::HookRegistry>>,
+    platform: String,
     context_length: u64,
 }
 
@@ -731,6 +733,7 @@ fn build_agent_client_for_home(
                             .with_system_prompt(state.system_prompt)
                             .with_plugin_prompt_snapshot(state.plugin_prompt)
                             .with_extension_host(state.extension_host)
+                            .with_hooks(state.hooks, state.platform)
                             .with_context_length(state.context_length);
                     }
                     return Ok(Arc::new(c));
@@ -953,6 +956,22 @@ async fn build_conversation_client(
         .context_window(&provider, &model, &selected, true)
         .await
         .unwrap_or(256_000);
+    let profile_env = profile_secrets
+        .clone()
+        .unwrap_or_else(|| config_file::load_dotenv(&home.join(".env")));
+    let mut hooks = hooks::HookRegistry::new().with_runtime(hooks::HookRuntime {
+        profile_home: home.to_path_buf(),
+        profile_env,
+        python: config.agent_python.clone(),
+        repo_root: config.agent_cwd.clone(),
+    });
+    hooks.discover_and_load_from(&home.join("hooks"));
+    let hooks = if hooks.loaded_hooks().is_empty() {
+        None
+    } else {
+        tracing::info!(count = hooks.loaded_hooks().len(), %session_id, "Native lifecycle hooks activated");
+        Some(Arc::new(hooks))
+    };
     build_agent_client_for_home(
         config,
         &selected,
@@ -963,6 +982,8 @@ async fn build_conversation_client(
             tools,
             plugin_prompt,
             extension_host: extension.map(|(client, _)| client),
+            hooks,
+            platform,
             context_length,
         }),
     )
@@ -1614,6 +1635,21 @@ mod startup_tests {
             "model:\n  default: fixture-model\n  provider: openrouter\n",
         )
         .unwrap();
+        let hook = home.0.join("hooks/compression-proof");
+        std::fs::create_dir_all(&hook).unwrap();
+        std::fs::write(
+            hook.join("HOOK.yaml"),
+            "name: compression-proof\nevents:\n  - session:compress\n",
+        )
+        .unwrap();
+        std::fs::write(
+            hook.join("handler.sh"),
+            r#"payload=$(cat)
+printf '{"event":"%s","home":"%s","context":%s}' "$1" "$HERMES_HOME" "$payload" > "$HERMES_HOME/native-hook.tmp"
+mv "$HERMES_HOME/native-hook.tmp" "$HERMES_HOME/native-hook.json"
+"#,
+        )
+        .unwrap();
         let database = session_db::SessionDb::open_shared(home.0.join("state.db")).unwrap();
         database
             .create_session(
@@ -1688,7 +1724,38 @@ mod startup_tests {
                 while receiver.recv().await.is_some() {}
             }
         };
-        run(first).await;
+        run(first.clone()).await;
+        first
+            .notify_compression_boundary(
+                agent::TurnContext::from_database(Some(&database)),
+                "session-one",
+                "session-one",
+                true,
+            )
+            .await
+            .unwrap();
+        let hook_record = home.0.join("native-hook.json");
+        tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            while !hook_record.is_file() {
+                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+            }
+        })
+        .await
+        .expect("production conversation hook did not finish");
+        let observed: Value =
+            serde_json::from_str(&std::fs::read_to_string(hook_record).unwrap()).unwrap();
+        assert_eq!(observed["event"], "session:compress");
+        assert_eq!(observed["home"], home.0.to_string_lossy().as_ref());
+        assert_eq!(
+            observed["context"],
+            json!({
+                "platform": "cli",
+                "session_id": "session-one",
+                "old_session_id": "",
+                "in_place": true,
+                "compression_count": 1,
+            })
+        );
 
         // A new process-level initializer must restore the stored bytes without
         // consulting changed prompt sources for this continuing conversation.

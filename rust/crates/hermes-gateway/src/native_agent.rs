@@ -449,6 +449,12 @@ pub struct NativeAgentClient {
     /// Keeps a conversation-scoped legacy extension child alive for plugin and
     /// external-memory tool calls. Dropping the final clone closes its worker.
     _extension_host: Option<crate::extension_host::Client>,
+    /// Frozen per-conversation lifecycle handler set. Discovery happens during
+    /// client initialization, while each selected handler file remains a normal
+    /// user-managed extension loaded when the event runs.
+    hooks: Option<std::sync::Arc<crate::hooks::HookRegistry>>,
+    platform: std::sync::Arc<str>,
+    compression_count: std::sync::Arc<std::sync::atomic::AtomicU32>,
     pending_memory_turn: std::sync::Arc<std::sync::Mutex<Option<PendingMemoryTurn>>>,
     micro_compaction_state:
         std::sync::Arc<std::sync::Mutex<crate::micro_compaction::MicroCompactionState>>,
@@ -493,6 +499,9 @@ impl NativeAgentClient {
             system_prompt: None,
             _plugin_prompt: crate::plugin_prompt::Snapshot::default(),
             _extension_host: None,
+            hooks: None,
+            platform: std::sync::Arc::from("gateway"),
+            compression_count: Default::default(),
             pending_memory_turn: Default::default(),
             micro_compaction_state: Default::default(),
             usage_state: Default::default(),
@@ -521,6 +530,36 @@ impl NativeAgentClient {
     pub fn with_extension_host(mut self, host: Option<crate::extension_host::Client>) -> Self {
         self._extension_host = host;
         self
+    }
+
+    /// Attach the lifecycle handlers discovered for this conversation profile.
+    pub(crate) fn with_hooks(
+        mut self,
+        hooks: Option<std::sync::Arc<crate::hooks::HookRegistry>>,
+        platform: impl Into<String>,
+    ) -> Self {
+        self.hooks = hooks;
+        self.platform = std::sync::Arc::from(platform.into());
+        self
+    }
+
+    fn compression_hook_context(
+        &self,
+        old_session_id: &str,
+        new_session_id: &str,
+        in_place: bool,
+    ) -> Value {
+        let compression_count = self
+            .compression_count
+            .fetch_add(1, std::sync::atomic::Ordering::AcqRel)
+            + 1;
+        json!({
+            "platform": self.platform.as_ref(),
+            "session_id": new_session_id,
+            "old_session_id": if in_place { "" } else { old_session_id },
+            "in_place": in_place,
+            "compression_count": compression_count,
+        })
     }
 
     /// Attach a base profile during client construction. Unsupported transports
@@ -1953,11 +1992,26 @@ impl AgentClient for NativeAgentClient {
                 "in-place compression boundary cannot change session id".into(),
             ));
         }
-        let Some(host) = &self._extension_host else {
-            return Ok(());
+        let memory_result = match &self._extension_host {
+            Some(host) => {
+                host.session_switch(new_session_id, old_session_id, false, false, "compression")
+                    .await
+            }
+            None => Ok(()),
         };
-        host.session_switch(new_session_id, old_session_id, false, false, "compression")
-            .await
+
+        // The generic hook is intentionally fire-and-forget. A slow or broken
+        // user handler cannot delay a committed compression boundary. Match the
+        // Python event ABI, including its empty old_session_id for in-place
+        // compaction, while only emitting after the durable commit succeeds.
+        if let Some(hooks) = self.hooks.clone() {
+            let context = self.compression_hook_context(old_session_id, new_session_id, in_place);
+            tokio::spawn(async move {
+                hooks.emit("session:compress", Some(context)).await;
+            });
+        }
+
+        memory_result
     }
 
     async fn summarize_context_with_memory(
@@ -2307,6 +2361,35 @@ impl ChatModel for NativeAgentClient {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn compression_hook_payload_uses_python_ids_and_clone_shared_count() {
+        let client = super::NativeAgentClient::new("fixture", "key", "http://localhost")
+            .unwrap()
+            .with_hooks(None, "telegram");
+        let clone = client.clone();
+
+        assert_eq!(
+            client.compression_hook_context("same", "same", true),
+            serde_json::json!({
+                "platform": "telegram",
+                "session_id": "same",
+                "old_session_id": "",
+                "in_place": true,
+                "compression_count": 1,
+            })
+        );
+        assert_eq!(
+            clone.compression_hook_context("parent", "child", false),
+            serde_json::json!({
+                "platform": "telegram",
+                "session_id": "child",
+                "old_session_id": "parent",
+                "in_place": false,
+                "compression_count": 2,
+            })
+        );
+    }
+
     #[test]
     fn structural_backoff_is_transient_absolute_and_shared_by_clones() {
         let oracle: serde_json::Value = serde_json::from_str(include_str!(
