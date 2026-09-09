@@ -61,6 +61,15 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   attribute usage to the serving route. Retry-triggered transport failures,
   non-chat and OAuth routes, and operator notices remain open. See
   [native-main-provider-fallback-resolution.md](native-main-provider-fallback-resolution.md).
+- Ordinary native chat-completions requests now apply the configured retry
+  budget to replay-safe connection, HTTP 408, overload, deterministic format,
+  and generic server failures before provider fallback. Credential pools remain
+  isolated from transport health, certificate failures fail fast, and partial
+  streams are never replayed. See
+  [native-main-provider-retry-resolution.md](native-main-provider-retry-resolution.md),
+  with the independent [AGY contract](main-provider-retry-contract-agy.md),
+  [Claude seam map](main-provider-retry-seam-claude.md), and
+  [Claude review](main-provider-retry-review-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -143,6 +152,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [main-provider-fallback-seam-claude.md](main-provider-fallback-seam-claude.md) | Claude's separate Rust ownership and shared-dispatch design for safe pre-body provider switching |
 | [main-provider-fallback-review-claude.md](main-provider-fallback-review-claude.md) | Claude's post-implementation review that found the fixed durable reset gate and non-rate exhaustion floor |
 | [main-provider-fallback-goldens.json](../tools/main-provider-fallback-goldens.json) | Source-executed 104-case parser, credential, trigger, pool, cooldown, identity, request, lifecycle, and scope corpus |
+| [native-main-provider-retry-resolution.md](native-main-provider-retry-resolution.md) | Production pre-body transport and status retries, bounded provider fallback, credential isolation, partial-stream replay barrier, review fixes, and measured progress |
+| [main-provider-retry-contract-agy.md](main-provider-retry-contract-agy.md) | AGY's independent Python retry, classifier, fallback, stream, notice, and lifecycle contract |
+| [main-provider-retry-seam-claude.md](main-provider-retry-seam-claude.md) | Claude's separate Rust ownership, replay-boundary, cancellation, and integration design |
+| [main-provider-retry-review-claude.md](main-provider-retry-review-claude.md) | Claude's post-implementation review that found the fixed pooled-408 panic and empty-response threshold mismatch |
+| [main-provider-retry-goldens.json](../tools/main-provider-retry-goldens.json) | Source-executed 157-case retry and fallback corpus across 11 contract sections |
 | [native-main-provider-pool-resolution.md](native-main-provider-pool-resolution.md) | Production main-provider static API-key selection and recovery, shared streaming/tool dispatch, exact-key durability, endpoint/header isolation, helper disposition, and explicit transport limits |
 | [main-provider-pool-contract-agy.md](main-provider-pool-contract-agy.md) | AGY's Python behavior contract, corrected and extended by the primary lane for executable precedence, persistence, cooldown, and raw-classifier evidence |
 | [main-provider-pool-seam-claude.md](main-provider-pool-seam-claude.md) | Claude's independent Rust ownership, concurrency, cancellation, and shared-dispatch seam analysis |

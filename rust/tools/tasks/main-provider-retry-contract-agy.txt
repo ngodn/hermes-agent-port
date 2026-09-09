@@ -1,0 +1,18 @@
+Audit the live Python ordinary main-turn retry and provider-fallback contract. This is a distinct evidence lane. Do not design or edit Rust code.
+
+Scope:
+- Trace the production path in agent/conversation_loop.py, agent/error_classifier.py, agent/chat_completion_helpers.py, run_agent.py, config defaults, and directly relevant tests.
+- Pin exact behavior for connection failures, request/read timeouts, HTTP 408, overload, 500/502/503/504 and other 5xx, unknown transport errors, malformed HTTP 200 responses, missing/empty choices, content-policy or safety refusals, and stream failures before or after user-visible output.
+- Derive the exact default retry budget and the threshold at which an available fallback provider activates. Distinguish same-provider retries, credential rotation, eager fallback, max-retry fallback, and no-fallback terminal behavior.
+- Record whether retry counters reset after fallback and whether fallback remains sticky through later tool rounds.
+- Record operator-visible status text only where it is directly emitted by the production path.
+- Explicitly distinguish behavior proven by executed source from behavior inferred from source inspection.
+
+Produce a deterministic, source-executed oracle rather than a handwritten table. It must import and execute current Python helpers/classifiers wherever possible and use independent literal expected values. Include enough cases to catch status, exception-type/message, retryability, fallback, and retry-threshold drift.
+
+Write only these new files:
+- rust/analysis/main-provider-retry-contract-agy.md
+- rust/tools/gen_main_provider_retry_goldens.py
+- rust/tools/main-provider-retry-goldens.json
+
+Run the generator and report its command, case count, and any limitations. Do not modify PORT.md, INDEX.md, Rust code, existing tests, or any other file.

@@ -1,0 +1,20 @@
+Review the current uncommitted ordinary main-provider retry implementation against the live Python contract and the completed AGY oracle. This is a focused post-implementation review, not a design task and not an editing task.
+
+Read:
+- rust/crates/hermes-gateway/src/native_agent.rs
+- rust/crates/hermes-gateway/src/main.rs
+- rust/crates/hermes-gateway/src/retry_utils.rs
+- rust/analysis/main-provider-retry-contract-agy.md
+- rust/tools/main-provider-retry-goldens.json
+- the relevant live Python sources when a claim needs confirmation
+
+Review only the pre-response-body checkpoint now implemented: config coercion, request budgets, connection/send failures, HTTP 408, overload 429/503/529, generic 5xx, deterministic 500/502 request-validation rejections, context-overflow exclusions, Z.AI overload ceiling/backoff, credential-pool ordering, fallback cursor/stickiness, stable request bytes, and cancellation/replay safety before body consumption.
+
+Do not treat malformed successful responses, safety refusals, response-body stalls, post-delta reconnect, primary client rebuild, or user-facing fallback notices as bugs in this checkpoint unless the new code regresses their existing behavior. List them only as intentionally deferred boundaries.
+
+Find concrete correctness, race, replay, security, config, and test gaps. For every finding, give severity, exact file/symbol, a minimal reproduction or reasoning trace, and the smallest safe fix. Re-run the focused Rust tests and the Python oracle check if useful.
+
+Write only:
+- rust/analysis/main-provider-retry-review-claude.md
+
+Do not edit production code, tests, PORT.md, INDEX.md, generated goldens, or any other file. Use no em dash characters.

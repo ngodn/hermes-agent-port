@@ -907,8 +907,12 @@ enum MainPoolFailure {
     Auth,
     Billing,
     BillingUnverified,
+    FormatError,
     RateLimit,
     UpstreamRateLimit,
+    Overloaded,
+    ServerError,
+    Transport,
     Unrelated,
 }
 
@@ -919,8 +923,12 @@ impl MainPoolFailure {
             Self::Auth
                 | Self::Billing
                 | Self::BillingUnverified
+                | Self::FormatError
                 | Self::RateLimit
                 | Self::UpstreamRateLimit
+                | Self::Overloaded
+                | Self::ServerError
+                | Self::Transport
         )
     }
 
@@ -929,6 +937,20 @@ impl MainPoolFailure {
             self,
             Self::Billing | Self::BillingUnverified | Self::RateLimit | Self::UpstreamRateLimit
         )
+    }
+}
+
+fn main_attempt_limit(failure: MainPoolFailure, max_attempts: usize, has_fallback: bool) -> usize {
+    let max_attempts = max_attempts.max(1);
+    if has_fallback
+        && matches!(
+            failure,
+            MainPoolFailure::Transport | MainPoolFailure::Overloaded
+        )
+    {
+        max_attempts.min(2)
+    } else {
+        max_attempts
     }
 }
 
@@ -947,6 +969,10 @@ impl MainTerminal {
 
 enum MainRequestError {
     Terminal(MainTerminal),
+    Fallback {
+        failure: MainPoolFailure,
+        error: Error,
+    },
     Internal(Error),
 }
 
@@ -960,6 +986,7 @@ impl MainRequestError {
     fn into_error(self) -> Error {
         match self {
             Self::Terminal(terminal) => terminal.into_error(),
+            Self::Fallback { error, .. } => error,
             Self::Internal(error) => error,
         }
     }
@@ -1186,9 +1213,7 @@ fn main_pool_failure(
         402 if usage_limit && transient => MainPoolFailure::RateLimit,
         402 => MainPoolFailure::Billing,
         404 if billing => MainPoolFailure::Billing,
-        429 if lower.contains("overloaded") || lower.contains("at capacity") => {
-            MainPoolFailure::Unrelated
-        }
+        429 if main_response_is_overloaded(status, text) => MainPoolFailure::Unrelated,
         429 if parsed["error"]["message"].as_str().is_some_and(|message| {
             message
                 .trim()
@@ -1204,6 +1229,169 @@ fn main_pool_failure(
         400 if lower.contains("out of extra usage") => MainPoolFailure::BillingUnverified,
         _ => MainPoolFailure::Unrelated,
     }
+}
+
+fn main_response_is_overloaded(status: reqwest::StatusCode, text: &str) -> bool {
+    let lower = text.to_lowercase();
+    matches!(status.as_u16(), 503 | 529)
+        || status == reqwest::StatusCode::TOO_MANY_REQUESTS
+            && [
+                "overloaded",
+                "temporarily overloaded",
+                "service is temporarily overloaded",
+                "service may be temporarily overloaded",
+                "server is overloaded",
+                "server overloaded",
+                "service overloaded",
+                "service is overloaded",
+                "upstream overloaded",
+                "currently overloaded",
+                "at capacity",
+                "over capacity",
+            ]
+            .iter()
+            .any(|marker| lower.contains(marker))
+}
+
+fn main_transport_retry_failure(text: &str) -> Option<MainPoolFailure> {
+    let lower = text.to_lowercase();
+    let certificate_failure = [
+        "certificate verify failed",
+        "certificate_verify_failed",
+        "unable to get local issuer certificate",
+        "self-signed certificate",
+        "self signed certificate",
+        "certificate has expired",
+        "hostname mismatch, certificate is not valid",
+        "unable to verify the first certificate",
+    ]
+    .iter()
+    .any(|marker| lower.contains(marker));
+    (!certificate_failure).then_some(MainPoolFailure::Transport)
+}
+
+fn main_error_chain(error: &(dyn std::error::Error + 'static)) -> String {
+    let mut text = error.to_string();
+    let mut source = error.source();
+    while let Some(cause) = source {
+        text.push(' ');
+        text.push_str(&cause.to_string());
+        source = cause.source();
+    }
+    text
+}
+
+fn main_retry_failure(
+    status: reqwest::StatusCode,
+    text: &str,
+    provider: &str,
+) -> Option<MainPoolFailure> {
+    if status == reqwest::StatusCode::REQUEST_TIMEOUT {
+        return Some(MainPoolFailure::Transport);
+    }
+    let lower = text.to_lowercase();
+    if matches!(status.as_u16(), 500 | 502) {
+        let request_validation = [
+            "unknown parameter",
+            "unsupported parameter",
+            "unrecognized request argument",
+            "invalid_request_error",
+            "unknown_parameter",
+            "unsupported_parameter",
+        ]
+        .iter()
+        .any(|marker| lower.contains(marker));
+        let injected_prompt_cache_rejection = lower.contains("prompt_cache_retention")
+            && ["not supported", "unsupported", "unknown", "unrecognized"]
+                .iter()
+                .any(|marker| lower.contains(marker))
+            && !["meta", "muse", "msl", "model-api", "bedrock", "mantle"]
+                .iter()
+                .any(|sender| provider.to_lowercase().contains(sender));
+        if request_validation && !injected_prompt_cache_rejection {
+            return Some(MainPoolFailure::FormatError);
+        }
+    }
+    if matches!(status.as_u16(), 500 | 502 | 503 | 529) {
+        let empty_response = [
+            "returned an empty response",
+            "empty response despite retries",
+            "provider returned an empty response",
+            "model returning empty responses",
+            "empty response stream",
+        ]
+        .iter()
+        .any(|marker| lower.contains(marker));
+        if empty_response && matches!(status.as_u16(), 503 | 529) {
+            return Some(MainPoolFailure::ServerError);
+        }
+        if !empty_response
+            && [
+                "context length",
+                "context size",
+                "maximum context",
+                "token limit",
+                "too many tokens",
+                "reduce the length",
+                "exceeds the limit",
+                "context window",
+                "prompt is too long",
+                "prompt exceeds max length",
+                "max_tokens",
+                "maximum number of tokens",
+                "exceeds the max_model_len",
+                "max_model_len",
+                "prompt length",
+                "input is too long",
+                "maximum model length",
+                "context length exceeded",
+                "truncating input",
+                "slot context",
+                "n_ctx_slot",
+                "超过最大长度",
+                "上下文长度",
+                "tokens in request more than max tokens allowed",
+                "max input token",
+                "input token",
+                "exceeds the maximum number of input tokens",
+                "maximum allowed input length",
+            ]
+            .iter()
+            .any(|marker| lower.contains(marker))
+        {
+            return None;
+        }
+    }
+    if main_response_is_overloaded(status, text) {
+        return Some(MainPoolFailure::Overloaded);
+    }
+    status
+        .is_server_error()
+        .then_some(MainPoolFailure::ServerError)
+}
+
+pub(crate) fn main_retry_attempts(value: &Value) -> usize {
+    let parsed = match value {
+        Value::Null => return 3,
+        Value::Bool(value) => i128::from(*value),
+        Value::Number(value) => {
+            if let Some(value) = value.as_i64() {
+                i128::from(value)
+            } else if let Some(value) = value.as_u64() {
+                i128::from(value)
+            } else if let Some(value) = value.as_f64().filter(|value| value.is_finite()) {
+                value.trunc() as i128
+            } else {
+                return 3;
+            }
+        }
+        Value::String(value) => match value.trim().parse::<i128>() {
+            Ok(value) => value,
+            Err(_) => return 3,
+        },
+        Value::Array(_) | Value::Object(_) => return 3,
+    };
+    usize::try_from(parsed.max(1)).unwrap_or(usize::MAX)
 }
 
 fn main_error_context(text: &str, headers: &reqwest::header::HeaderMap) -> Value {
@@ -1364,6 +1552,21 @@ struct MainDispatch {
     provider: String,
 }
 
+#[derive(Clone, Copy)]
+struct MainRetryPolicy {
+    max_attempts: usize,
+    backoff_base: std::time::Duration,
+}
+
+impl Default for MainRetryPolicy {
+    fn default() -> Self {
+        Self {
+            max_attempts: 3,
+            backoff_base: std::time::Duration::from_secs(2),
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct NativeAgentClient {
     model: String,
@@ -1377,6 +1580,7 @@ pub struct NativeAgentClient {
     /// plan, while the shared cursor keeps one selected route sticky for the
     /// remainder of a tool loop and through any active cooldown.
     main_fallback: MainFallbackRoutes,
+    main_retry: MainRetryPolicy,
     provider_profile: Option<crate::provider_registry::ProviderProfile>,
     provider_identity: Option<String>,
     reasoning_config: Option<Value>,
@@ -1440,6 +1644,7 @@ impl NativeAgentClient {
             provider_default_headers: reqwest::header::HeaderMap::new(),
             main_pool: None,
             main_fallback: Default::default(),
+            main_retry: Default::default(),
             provider_profile: None,
             provider_identity: None,
             reasoning_config: None,
@@ -1610,6 +1815,7 @@ impl NativeAgentClient {
     ) -> Self {
         for route in &mut fallbacks {
             route.main_fallback = Default::default();
+            route.main_retry = self.main_retry;
             route.compression_routes = Default::default();
             if let Some(prompt) = self.system_prompt.as_deref() {
                 route.system_prompt = Some(std::sync::Arc::from(rewrite_prompt_identity(
@@ -1623,6 +1829,25 @@ impl NativeAgentClient {
             fallbacks: std::sync::Arc::new(fallbacks),
             state: Default::default(),
         };
+        self
+    }
+
+    pub(crate) fn with_main_retry_attempts(mut self, attempts: usize) -> Self {
+        self.main_retry.max_attempts = attempts.max(1);
+        let routes = std::sync::Arc::make_mut(&mut self.main_fallback.fallbacks);
+        for route in routes {
+            route.main_retry = self.main_retry;
+        }
+        self
+    }
+
+    #[cfg(test)]
+    fn with_main_retry_backoff(mut self, base: std::time::Duration) -> Self {
+        self.main_retry.backoff_base = base;
+        let routes = std::sync::Arc::make_mut(&mut self.main_fallback.fallbacks);
+        for route in routes {
+            route.main_retry = self.main_retry;
+        }
         self
     }
 
@@ -1788,6 +2013,7 @@ impl NativeAgentClient {
             self.main_fallback.fallbacks.get(index - 1)?.clone()
         };
         route.main_fallback = Default::default();
+        route.main_retry = self.main_retry;
         route.cache_scope = self.cache_scope.clone();
         route.automatic_compression_policy = self.automatic_compression_policy.clone();
         route.compression_routes = self.compression_routes.clone();
@@ -1839,31 +2065,22 @@ impl NativeAgentClient {
         failed_index: usize,
         failure: MainPoolFailure,
     ) -> Option<usize> {
-        let failed = self.main_route(failed_index)?;
-        let mut next = failed_index + 1;
-        while let Some(candidate) = self.main_route(next) {
-            if !crate::compression_auxiliary::should_skip_candidate(
-                &candidate.compression_identity(),
-                &failed.compression_identity(),
-                crate::compression_auxiliary::FailureScope::Model,
-            ) {
-                let mut state = self
-                    .main_fallback
-                    .state
-                    .lock()
-                    .unwrap_or_else(|error| error.into_inner());
-                if failed_index == 0 && failure.arms_primary_cooldown() {
-                    let shift = state.rate_limit_backoff_count.min(8);
-                    let seconds = 60_u64.checked_shl(shift).unwrap_or(14_400).min(14_400);
-                    state.rate_limit_backoff_count =
-                        state.rate_limit_backoff_count.saturating_add(1);
-                    state.cooldown_until =
-                        Some(std::time::Instant::now() + std::time::Duration::from_secs(seconds));
-                }
-                state.active = next;
-                return Some(next);
+        let next = self.next_main_fallback_index(failed_index);
+        if let Some(next) = next {
+            let mut state = self
+                .main_fallback
+                .state
+                .lock()
+                .unwrap_or_else(|error| error.into_inner());
+            if failed_index == 0 && failure.arms_primary_cooldown() {
+                let shift = state.rate_limit_backoff_count.min(8);
+                let seconds = 60_u64.checked_shl(shift).unwrap_or(14_400).min(14_400);
+                state.rate_limit_backoff_count = state.rate_limit_backoff_count.saturating_add(1);
+                state.cooldown_until =
+                    Some(std::time::Instant::now() + std::time::Duration::from_secs(seconds));
             }
-            next += 1;
+            state.active = next;
+            return Some(next);
         }
         if !self.main_fallback.fallbacks.is_empty() && !failure.arms_primary_cooldown() {
             let floor = std::time::Instant::now() + std::time::Duration::from_secs(5);
@@ -1877,6 +2094,22 @@ impl NativeAgentClient {
                     .cooldown_until
                     .map_or(floor, |existing| existing.max(floor)),
             );
+        }
+        None
+    }
+
+    fn next_main_fallback_index(&self, failed_index: usize) -> Option<usize> {
+        let failed = self.main_route(failed_index)?;
+        let mut next = failed_index + 1;
+        while let Some(candidate) = self.main_route(next) {
+            if !crate::compression_auxiliary::should_skip_candidate(
+                &candidate.compression_identity(),
+                &failed.compression_identity(),
+                crate::compression_auxiliary::FailureScope::Model,
+            ) {
+                return Some(next);
+            }
+            next += 1;
         }
         None
     }
@@ -1896,7 +2129,8 @@ impl NativeAgentClient {
                 .main_route(index)
                 .unwrap_or_else(|| self.main_route(0).expect("primary main route"));
             let body = build_body(&route)?;
-            match route.send_main_request(&body, label).await {
+            let has_fallback = self.next_main_fallback_index(index).is_some();
+            match route.send_main_request(&body, label, has_fallback).await {
                 Ok(response) => {
                     self.main_fallback
                         .state
@@ -1916,6 +2150,14 @@ impl NativeAgentClient {
                     };
                     index = next;
                 }
+                Err(MainRequestError::Fallback { failure, error })
+                    if failure.activates_provider_fallback() =>
+                {
+                    let Some(next) = self.activate_main_fallback(index, failure) else {
+                        return Err(error);
+                    };
+                    index = next;
+                }
                 Err(error) => return Err(error.into_error()),
             }
         }
@@ -1925,10 +2167,13 @@ impl NativeAgentClient {
         &self,
         body: &Value,
         label: &str,
+        has_fallback: bool,
     ) -> std::result::Result<reqwest::Response, MainRequestError> {
         let operation = if label.is_empty() { "" } else { " step" };
         let mut retried_429 = std::collections::HashSet::<(String, String)>::new();
-        let mut attempts = std::collections::HashMap::<(String, String), usize>::new();
+        let mut recovery_attempts = std::collections::HashMap::<(String, String), usize>::new();
+        let mut request_failures = 0_usize;
+        let mut max_attempts = self.main_retry.max_attempts;
         loop {
             let route = self
                 .main_pool
@@ -1944,16 +2189,8 @@ impl NativeAgentClient {
             // Bound and retry the exact dispatched credential, not only its
             // durable row identity. This key is request-local and never logged.
             let identity = (route.credential_id.clone(), route.api_key.clone());
-            let count = attempts.entry(identity.clone()).or_default();
-            *count += 1;
-            if *count > 2 {
-                return Err(Error::Other(format!(
-                    "native agent{operation} credential recovery repeated one pool entry"
-                ))
-                .into());
-            }
             let url = format!("{}/chat/completions", route.base_url);
-            let response = route
+            let response = match route
                 .client
                 .post(url)
                 .bearer_auth(&route.api_key)
@@ -1961,16 +2198,68 @@ impl NativeAgentClient {
                 .json(body)
                 .send()
                 .await
-                .map_err(|error| {
-                    Error::Other(format!("native agent{operation} request: {error}"))
-                })?;
+            {
+                Ok(response) => response,
+                Err(error) => {
+                    let failure = main_transport_retry_failure(&main_error_chain(&error));
+                    request_failures += 1;
+                    let error = Error::Other(format!("native agent{operation} request: {error}"));
+                    let Some(failure) = failure else {
+                        return Err(MainRequestError::Internal(error));
+                    };
+                    let attempt_limit = main_attempt_limit(failure, max_attempts, has_fallback);
+                    if request_failures < attempt_limit {
+                        self.wait_before_main_retry(request_failures as i64, &route.base_url, None)
+                            .await;
+                        continue;
+                    }
+                    return Err(MainRequestError::Fallback { failure, error });
+                }
+            };
             if response.status().is_success() {
                 return Ok(response);
             }
             let status = response.status();
             let headers = response.headers().clone();
             let text = response.text().await.unwrap_or_default();
-            let failure = main_pool_failure(status, &text, &headers, self.provider_name());
+            let mut failure = main_pool_failure(status, &text, &headers, self.provider_name());
+            if let Some(retry_failure) = main_retry_failure(status, &text, self.provider_name()) {
+                let provider_error = crate::retry_utils::ProviderError {
+                    repr: text.clone(),
+                    body: Some(text.clone()),
+                    status_code: Some(i64::from(status.as_u16())),
+                    ..Default::default()
+                };
+                if retry_failure == MainPoolFailure::Overloaded
+                    && crate::retry_utils::is_zai_coding_overload_error(
+                        Some(&route.base_url),
+                        Some(&self.model),
+                        &provider_error,
+                    )
+                {
+                    max_attempts =
+                        max_attempts.max(crate::retry_utils::zai_coding_overload_retry_ceiling(
+                            crate::retry_utils::zai_coding_overload_short_attempts_default(),
+                        ) as usize);
+                }
+                if retry_failure == MainPoolFailure::FormatError {
+                    failure = retry_failure;
+                } else {
+                    request_failures += 1;
+                    let attempt_limit =
+                        main_attempt_limit(retry_failure, max_attempts, has_fallback);
+                    if request_failures < attempt_limit {
+                        self.wait_before_main_retry(
+                            request_failures as i64,
+                            &route.base_url,
+                            Some(&provider_error),
+                        )
+                        .await;
+                        continue;
+                    }
+                    failure = retry_failure;
+                }
+            }
             let Some(pool) = &self.main_pool else {
                 return Err(MainRequestError::Terminal(MainTerminal {
                     status,
@@ -1981,7 +2270,12 @@ impl NativeAgentClient {
             };
             if matches!(
                 failure,
-                MainPoolFailure::Unrelated | MainPoolFailure::UpstreamRateLimit
+                MainPoolFailure::FormatError
+                    | MainPoolFailure::Unrelated
+                    | MainPoolFailure::UpstreamRateLimit
+                    | MainPoolFailure::Overloaded
+                    | MainPoolFailure::ServerError
+                    | MainPoolFailure::Transport
             ) {
                 return Err(MainRequestError::Terminal(MainTerminal {
                     status,
@@ -1989,6 +2283,14 @@ impl NativeAgentClient {
                     body: text,
                     label: label.to_owned(),
                 }));
+            }
+            let count = recovery_attempts.entry(identity.clone()).or_default();
+            *count += 1;
+            if *count > 2 {
+                return Err(Error::Other(format!(
+                    "native agent{operation} credential recovery repeated one pool entry"
+                ))
+                .into());
             }
             let context = main_error_context(&text, &headers);
 
@@ -2023,7 +2325,12 @@ impl NativeAgentClient {
                 MainPoolFailure::Billing => "billing",
                 MainPoolFailure::BillingUnverified => "billing_unverified",
                 MainPoolFailure::RateLimit => "rate_limit",
-                MainPoolFailure::UpstreamRateLimit | MainPoolFailure::Unrelated => unreachable!(),
+                MainPoolFailure::FormatError
+                | MainPoolFailure::UpstreamRateLimit
+                | MainPoolFailure::Overloaded
+                | MainPoolFailure::ServerError
+                | MainPoolFailure::Transport
+                | MainPoolFailure::Unrelated => unreachable!(),
             };
             let binding = pool.clone();
             let failed = route.clone();
@@ -2055,6 +2362,31 @@ impl NativeAgentClient {
                 }));
             }
         }
+    }
+
+    async fn wait_before_main_retry(
+        &self,
+        attempt: i64,
+        base_url: &str,
+        error: Option<&crate::retry_utils::ProviderError>,
+    ) {
+        let base = self.main_retry.backoff_base.as_secs_f64();
+        if base <= 0.0 {
+            return;
+        }
+        let default_wait = crate::retry_utils::jittered_backoff(attempt, base, 60.0, 0.5);
+        let wait = error.map_or(default_wait, |error| {
+            crate::retry_utils::adaptive_rate_limit_backoff(
+                attempt,
+                Some(base_url),
+                Some(&self.model),
+                error,
+                default_wait,
+                crate::retry_utils::zai_coding_overload_short_attempts_default(),
+            )
+            .0
+        });
+        tokio::time::sleep(std::time::Duration::from_secs_f64(wait)).await;
     }
 
     /// Apply request hooks at the wire boundary so streaming and every tool
@@ -4212,6 +4544,596 @@ impl ChatModel for NativeAgentClient {
 
 #[cfg(test)]
 mod tests {
+    struct MainRetryServer(tokio::task::JoinHandle<()>);
+
+    impl Drop for MainRetryServer {
+        fn drop(&mut self) {
+            self.0.abort();
+        }
+    }
+
+    async fn serve_main_retry(app: axum::Router) -> (String, MainRetryServer) {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let server = MainRetryServer(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        (base_url, server)
+    }
+
+    #[test]
+    fn main_retry_attempts_match_python_config_coercion() {
+        let cases = [
+            (serde_json::Value::Null, 3),
+            (serde_json::json!(true), 1),
+            (serde_json::json!(false), 1),
+            (serde_json::json!(0), 1),
+            (serde_json::json!(-7), 1),
+            (serde_json::json!(2.9), 2),
+            (serde_json::json!("4"), 4),
+            (serde_json::json!("bad"), 3),
+            (serde_json::json!([]), 3),
+        ];
+        for (value, expected) in cases {
+            assert_eq!(super::main_retry_attempts(&value), expected, "{value}");
+        }
+    }
+
+    #[test]
+    fn main_retry_thresholds_distinguish_eager_and_full_budget_failures() {
+        use super::MainPoolFailure::{Overloaded, ServerError, Transport};
+        assert_eq!(super::main_attempt_limit(Transport, 3, true), 2);
+        assert_eq!(super::main_attempt_limit(Overloaded, 3, true), 2);
+        assert_eq!(super::main_attempt_limit(ServerError, 3, true), 3);
+        assert_eq!(super::main_attempt_limit(Transport, 4, false), 4);
+        assert_eq!(super::main_attempt_limit(Overloaded, 1, true), 1);
+    }
+
+    #[test]
+    fn main_status_retry_classes_match_source_executed_python_corpus() {
+        use super::MainPoolFailure::{FormatError, Overloaded, ServerError, Transport};
+        use reqwest::StatusCode;
+
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-retry-goldens.json"
+        ))
+        .unwrap();
+        for row in corpus["error_classification_taxonomy_matrix"]
+            .as_array()
+            .unwrap()
+        {
+            let Some(status) = row["status_code"].as_u64() else {
+                continue;
+            };
+            let expected = match row["classified_reason"].as_str().unwrap() {
+                "timeout" => Some(Transport),
+                "overloaded" => Some(Overloaded),
+                "server_error" => Some(ServerError),
+                "format_error" if status >= 500 => Some(FormatError),
+                "context_overflow" if status >= 500 => None,
+                _ => continue,
+            };
+            assert_eq!(
+                super::main_retry_failure(
+                    StatusCode::from_u16(status as u16).unwrap(),
+                    row["error_repr"].as_str().unwrap(),
+                    row["provider"].as_str().unwrap(),
+                ),
+                expected,
+                "{}",
+                row["case_name"]
+            );
+        }
+        assert_eq!(
+            super::main_retry_failure(
+                StatusCode::SERVICE_UNAVAILABLE,
+                "provider returned an empty response despite retries",
+                "fixture",
+            ),
+            Some(ServerError)
+        );
+    }
+
+    #[test]
+    fn main_transport_retry_class_matches_source_executed_python_corpus() {
+        use super::MainPoolFailure::Transport;
+
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-retry-goldens.json"
+        ))
+        .unwrap();
+        for row in corpus["error_classification_taxonomy_matrix"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|row| row["status_code"].is_null())
+            .filter(|row| {
+                matches!(
+                    row["classified_reason"].as_str(),
+                    Some("timeout" | "ssl_cert_verification")
+                )
+            })
+        {
+            let expected = (row["classified_reason"] == "timeout").then_some(Transport);
+            assert_eq!(
+                super::main_transport_retry_failure(row["error_repr"].as_str().unwrap()),
+                expected,
+                "{}",
+                row["case_name"]
+            );
+        }
+    }
+
+    #[tokio::test]
+    async fn overloaded_main_route_retries_once_then_uses_fallback() {
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router,
+        };
+        use std::sync::{Arc, Mutex};
+
+        let primary_bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        bodies.lock().unwrap().push(body);
+                        (
+                            StatusCode::SERVICE_UNAVAILABLE,
+                            Json(serde_json::json!({
+                                "error":{"message":"provider overloaded"}
+                            })),
+                        )
+                            .into_response()
+                    },
+                ),
+            )
+            .with_state(primary_bodies.clone());
+        let fallback_bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        bodies.lock().unwrap().push(body);
+                        Json(serde_json::json!({"choices":[]})).into_response()
+                    },
+                ),
+            )
+            .with_state(fallback_bodies.clone());
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+
+        let dispatched = client
+            .dispatch_main_turn("", |route| {
+                Ok(serde_json::json!({
+                    "model":route.model,
+                    "messages":[{"role":"user","content":"stable"}],
+                    "tools":[{"type":"function","function":{"name":"fixture"}}]
+                }))
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(dispatched.provider, "fallback-provider");
+        let primary_bodies = primary_bodies.lock().unwrap();
+        assert_eq!(primary_bodies.len(), 2);
+        assert_eq!(primary_bodies[0], primary_bodies[1]);
+        let fallback_bodies = fallback_bodies.lock().unwrap();
+        assert_eq!(fallback_bodies.len(), 1);
+        assert_eq!(
+            fallback_bodies[0]["messages"],
+            primary_bodies[0]["messages"]
+        );
+        assert_eq!(fallback_bodies[0]["tools"], primary_bodies[0]["tools"]);
+    }
+
+    #[tokio::test]
+    async fn dropped_main_connections_retry_once_then_use_fallback() {
+        use axum::{routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let primary_url = format!("http://{}", listener.local_addr().unwrap());
+        let dropped = Arc::new(AtomicUsize::new(0));
+        let dropped_in_task = dropped.clone();
+        let _primary_server = MainRetryServer(tokio::spawn(async move {
+            loop {
+                let Ok((stream, _)) = listener.accept().await else {
+                    break;
+                };
+                dropped_in_task.fetch_add(1, Ordering::SeqCst);
+                drop(stream);
+            }
+        }));
+        let fallback = Router::new().route(
+            "/chat/completions",
+            post(|| async {
+                Json(serde_json::json!({
+                    "choices":[{"message":{"role":"assistant","content":"recovered"}}]
+                }))
+            }),
+        );
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+
+        let dispatched = client
+            .dispatch_main_turn("", |route| {
+                Ok(serde_json::json!({"model":route.model,"messages":[]}))
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(dispatched.provider, "fallback-provider");
+        assert_eq!(dropped.load(Ordering::SeqCst), 2);
+    }
+
+    #[tokio::test]
+    async fn partial_main_stream_is_not_replayed_or_sent_to_fallback() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let primary_url = format!("http://{}", listener.local_addr().unwrap());
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary_calls_in_task = primary_calls.clone();
+        let _primary_server = MainRetryServer(tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            let mut request = vec![0_u8; 16 * 1024];
+            let _ = stream.read(&mut request).await.unwrap();
+            primary_calls_in_task.fetch_add(1, Ordering::SeqCst);
+            let event = b"data: {\"choices\":[{\"delta\":{\"content\":\"partial\"}}]}\n\n";
+            let headers = concat!(
+                "HTTP/1.1 200 OK\r\n",
+                "content-type: text/event-stream\r\n",
+                "transfer-encoding: chunked\r\n",
+                "connection: close\r\n\r\n"
+            );
+            stream.write_all(headers.as_bytes()).await.unwrap();
+            stream
+                .write_all(format!("{:x}\r\n", event.len()).as_bytes())
+                .await
+                .unwrap();
+            stream.write_all(event).await.unwrap();
+            stream.write_all(b"\r\n").await.unwrap();
+            stream.flush().await.unwrap();
+            // Closing without the terminating zero-length chunk makes the body
+            // fail only after the first visible model delta has been delivered.
+        }));
+
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({"choices":[]}))
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli",
+            "channel_id":"channel",
+            "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut visible = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                visible.push_str(&text);
+            }
+        }
+
+        assert!(result.is_err());
+        assert_eq!(visible, "partial");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 0);
+    }
+
+    #[tokio::test]
+    async fn server_errors_use_full_retry_budget_before_fallback() {
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router,
+        };
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        StatusCode::BAD_GATEWAY,
+                        Json(serde_json::json!({"error":{"message":"upstream failed"}})),
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback = Router::new().route(
+            "/chat/completions",
+            post(|| async { Json(serde_json::json!({"choices":[]})) }),
+        );
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+
+        let dispatched = client
+            .dispatch_main_turn("", |route| {
+                Ok(serde_json::json!({"model":route.model,"messages":[]}))
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(dispatched.provider, "fallback-provider");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 3);
+    }
+
+    #[tokio::test]
+    async fn transport_without_fallback_uses_configured_attempt_budget() {
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let primary_url = format!("http://{}", listener.local_addr().unwrap());
+        let dropped = Arc::new(AtomicUsize::new(0));
+        let dropped_in_task = dropped.clone();
+        let _server = MainRetryServer(tokio::spawn(async move {
+            loop {
+                let Ok((stream, _)) = listener.accept().await else {
+                    break;
+                };
+                dropped_in_task.fetch_add(1, Ordering::SeqCst);
+                drop(stream);
+            }
+        }));
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_retry_attempts(4)
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+
+        let result = client
+            .dispatch_main_turn("", |route| {
+                Ok(serde_json::json!({"model":route.model,"messages":[]}))
+            })
+            .await;
+
+        assert!(result.is_err());
+        assert_eq!(dropped.load(Ordering::SeqCst), 4);
+    }
+
+    #[tokio::test]
+    async fn request_timeout_status_uses_transport_fallback_threshold() {
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router,
+        };
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        StatusCode::REQUEST_TIMEOUT,
+                        Json(serde_json::json!({"error":{"message":"request timed out"}})),
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback = Router::new().route(
+            "/chat/completions",
+            post(|| async { Json(serde_json::json!({"choices":[]})) }),
+        );
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+
+        let dispatched = client
+            .dispatch_main_turn("", |route| {
+                Ok(serde_json::json!({"model":route.model,"messages":[]}))
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(dispatched.provider, "fallback-provider");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 2);
+    }
+
+    #[tokio::test]
+    async fn pooled_request_timeout_status_bypasses_credential_rotation() {
+        use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
+
+        struct TempAuth(std::path::PathBuf);
+        impl Drop for TempAuth {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+
+        let primary = Router::new().route(
+            "/chat/completions",
+            post(|| async {
+                (
+                    StatusCode::REQUEST_TIMEOUT,
+                    Json(serde_json::json!({"error":{"message":"request timed out"}})),
+                )
+                    .into_response()
+            }),
+        );
+        let fallback = Router::new().route(
+            "/chat/completions",
+            post(|| async { Json(serde_json::json!({"choices":[]})) }),
+        );
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let auth = TempAuth(
+            std::env::temp_dir().join(format!("hermes-pooled-408-{}-{nonce}", std::process::id())),
+        );
+        std::fs::create_dir_all(&auth.0).unwrap();
+        let auth_path = auth.0.join("auth.json");
+        std::fs::write(
+            &auth_path,
+            serde_json::to_vec(&serde_json::json!({
+                "credential_pool":{"fixture":[{
+                    "id":"primary", "auth_type":"api_key", "source":"manual",
+                    "access_token":"primary-key", "base_url":primary_url
+                }]}
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let locator =
+            crate::credential_pool::PoolLocator::new(auth_path, None, "fixture", "fill_first");
+        let runtime = locator.select_runtime().unwrap().unwrap();
+        let pool =
+            super::MainPoolCredential::new(locator, runtime, &primary_url, Vec::new()).unwrap();
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", &primary_url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_pool(pool)
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+
+        let dispatched = client
+            .dispatch_main_turn("", |route| {
+                Ok(serde_json::json!({"model":route.model,"messages":[]}))
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(dispatched.provider, "fallback-provider");
+        let stored: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(auth.0.join("auth.json")).unwrap()).unwrap();
+        assert!(stored["credential_pool"]["fixture"][0]["last_status"].is_null());
+    }
+
+    #[tokio::test]
+    async fn zai_coding_overload_without_fallback_uses_extended_budget() {
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Json, Router,
+        };
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/api.z.ai/api/coding/paas/v4/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        StatusCode::TOO_MANY_REQUESTS,
+                        Json(serde_json::json!({
+                            "error":{"code":1305,"message":"The service may be temporarily overloaded"}
+                        })),
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!(
+            "http://{}/api.z.ai/api/coding/paas/v4",
+            listener.local_addr().unwrap()
+        );
+        let _server = MainRetryServer(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let client = super::NativeAgentClient::new("glm-5.2", "key", base_url)
+            .unwrap()
+            .with_provider_identity("zai")
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+
+        let result = client
+            .dispatch_main_turn("", |route| {
+                Ok(serde_json::json!({"model":route.model,"messages":[]}))
+            })
+            .await;
+
+        assert!(result.is_err());
+        assert_eq!(calls.load(Ordering::SeqCst), 8);
+    }
+
     #[tokio::test]
     async fn primary_pool_reset_deadline_keeps_the_active_fallback_sticky() {
         use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};

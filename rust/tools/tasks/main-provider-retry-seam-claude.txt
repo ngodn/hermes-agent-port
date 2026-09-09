@@ -1,0 +1,17 @@
+Independently map the narrowest safe Rust ownership seam for ordinary main-turn transport and retry fallback. This is an architecture lane, not a Python oracle and not an implementation task.
+
+Inspect the current Rust gateway, especially rust/crates/hermes-gateway/src/native_agent.rs, its live local-HTTP tests, route state, request dispatch, streaming, tool-loop response parsing, and relevant configuration. Compare against the live Python ordinary main-turn retry path only as needed to identify parity gaps.
+
+Answer:
+- Which existing module and interface should own same-route retry and cross-provider fallback so streaming and tool rounds cannot drift?
+- Which failures are safe to replay before response-body consumption, and which cannot be replayed after text, tool calls, or other visible effects?
+- How should the design represent transport failures, overload/server statuses, malformed successful responses, empty choices, safety refusals, cancellation, timeout configuration, retry budget, backoff, route stickiness, credential pools, and preserved request bytes?
+- What is the smallest vertical-slice test seam using the real local HTTP boundary?
+- Identify concrete race, replay, prompt-cache, and request-accounting risks in the current implementation.
+
+Prefer a deep module behind the existing dispatch interface. Do not propose another provider loop or a broad abstraction without a second real adapter.
+
+Write only this new file:
+- rust/analysis/main-provider-retry-seam-claude.md
+
+Do not edit Rust code, tests, PORT.md, INDEX.md, or any other file.

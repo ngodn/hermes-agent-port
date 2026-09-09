@@ -1,5 +1,40 @@
 # Hermes Rust rewrite
 
+## Native main-provider pre-body retry subset: 2026-09-10
+
+The ordinary native chat-completions path now applies Python-compatible
+`agent.api_max_retries` policy to replay-safe failures before advancing its
+frozen provider chain. Connection errors, transient TLS failures, HTTP 408,
+overload 429/503/529, deterministic 500/502 request-validation failures, and
+generic 5xx responses use their class-specific thresholds. Each fallback route
+starts a fresh bounded budget, while static credential pools remain responsible
+only for auth, billing, and rate health.
+
+Streaming and tool rounds still share one request dispatcher and one sticky
+route cursor. Same-route attempts reuse the exact request value. A truncated
+local HTTP stream proves that once a visible delta crosses the successful-status
+boundary, the turn fails without replay or fallback. Deterministic certificate
+verification failures also fail immediately instead of wasting the retry budget.
+
+AGY owned the source-executed Python behavior lane and produced 157 cases across
+11 contract sections. Claude separately mapped the ownership seam and reviewed
+the implementation. Its review found a pooled HTTP 408 panic and a 503/529
+empty-response threshold mismatch. Both were reproduced before repair. Primary
+review also corrected active-route Z.AI backoff detection and separated
+certificate failures from transient TLS errors. See
+[native-main-provider-retry-resolution.md](analysis/native-main-provider-retry-resolution.md).
+
+The refreshed weighted audit is **57.55 points, reported as about 58%**
+(judgment range 55% to 61%). Native agent core moves from 75% to 76%; gateway,
+tool/RPC, and state/search estimates are unchanged. Successful-body validation,
+safety fallback, response stalls, primary-client rebuild, operator notices,
+non-chat and OAuth routes, dynamic providers, native plugin and external-memory
+managers, prompt invalidation, and broader client eviction remain. Validation is
+**1,867 Rust tests passed, two ignored**. The 157-case Python corpus regenerates
+byte for byte, and the focused Python compatibility suite passes 236 tests.
+Rust and Python formatting, Ruff, workspace Clippy with warnings denied, and
+diff hygiene pass.
+
 ## Native ordinary main-provider fallback subset: 2026-09-10
 
 The native ordinary main chat-completions path now freezes and executes

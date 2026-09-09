@@ -1,0 +1,1590 @@
+{
+  "credential_rotation_vs_fallback": [
+    {
+      "case_name": "pool_recovery_none_pool",
+      "consequence": "eager fallback activates on 429",
+      "has_pool": false,
+      "may_recover": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "pool_recovery_single_credential_pool",
+      "consequence": "single key 429 cannot rotate; eager fallback activates on 429",
+      "entries_count": 1,
+      "may_recover": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "pool_recovery_multi_credential_available",
+      "consequence": "eager fallback suppressed on attempt 1 to allow credential rotation",
+      "entries_count": 2,
+      "may_recover": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "pool_recovery_multi_credential_in_cooldown",
+      "consequence": "all pool keys exhausted/cooling down; eager fallback activates on 429",
+      "entries_count": 2,
+      "may_recover": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "upstream_rate_limit_bypasses_multi_pool",
+      "consequence": "upstream model throttling OpenRouter; user key healthy; falls back to different model without rotating pool",
+      "is_upstream_error": true,
+      "pool_recovery_forced": false,
+      "provenance": "executed_source"
+    }
+  ],
+  "eager_fallback_decisions_and_predicates": [
+    {
+      "case_name": "rate_limit_attempt_1_single_pool",
+      "eval_result": {
+        "activates_now": true,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": true,
+        "is_transport_failure": false,
+        "should_fallback_raw": true
+      },
+      "expected_activation": true,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "rate_limit",
+      "retry_count": 1,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "rate_limit_attempt_1_multi_pool_suppressed",
+      "eval_result": {
+        "activates_now": false,
+        "effective_pool_may_recover": true,
+        "is_rate_limited": true,
+        "is_transport_failure": false,
+        "should_fallback_raw": true
+      },
+      "expected_activation": false,
+      "pool_may_recover": true,
+      "provenance": "executed_source",
+      "reason": "rate_limit",
+      "retry_count": 1,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "upstream_rate_limit_attempt_1_multi_pool_never_suppressed",
+      "eval_result": {
+        "activates_now": true,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": true,
+        "is_transport_failure": false,
+        "should_fallback_raw": true
+      },
+      "expected_activation": true,
+      "pool_may_recover": true,
+      "provenance": "executed_source",
+      "reason": "upstream_rate_limit",
+      "retry_count": 1,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "billing_attempt_1_unrecoverable_pool",
+      "eval_result": {
+        "activates_now": true,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": true,
+        "is_transport_failure": false,
+        "should_fallback_raw": true
+      },
+      "expected_activation": true,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "billing",
+      "retry_count": 1,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "rate_limit_wrapped_output_cap_exempted",
+      "eval_result": {
+        "activates_now": false,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": true,
+        "is_transport_failure": false,
+        "should_fallback_raw": false
+      },
+      "expected_activation": false,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "rate_limit",
+      "retry_count": 1,
+      "wrapped_output_cap": 2048
+    },
+    {
+      "case_name": "transport_timeout_attempt_1_no_eager_fallback",
+      "eval_result": {
+        "activates_now": false,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": false,
+        "is_transport_failure": true,
+        "should_fallback_raw": false
+      },
+      "expected_activation": false,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "timeout",
+      "retry_count": 1,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "transport_timeout_attempt_2_activates_fallback",
+      "eval_result": {
+        "activates_now": true,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": false,
+        "is_transport_failure": true,
+        "should_fallback_raw": true
+      },
+      "expected_activation": true,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "timeout",
+      "retry_count": 2,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "transport_overload_attempt_1_no_eager_fallback",
+      "eval_result": {
+        "activates_now": false,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": false,
+        "is_transport_failure": true,
+        "should_fallback_raw": false
+      },
+      "expected_activation": false,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "overloaded",
+      "retry_count": 1,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "transport_overload_attempt_2_activates_fallback",
+      "eval_result": {
+        "activates_now": true,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": false,
+        "is_transport_failure": true,
+        "should_fallback_raw": true
+      },
+      "expected_activation": true,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "overloaded",
+      "retry_count": 2,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "server_error_attempt_1_no_eager_fallback",
+      "eval_result": {
+        "activates_now": false,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": false,
+        "is_transport_failure": false,
+        "should_fallback_raw": false
+      },
+      "expected_activation": false,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "server_error",
+      "retry_count": 1,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "server_error_attempt_2_no_eager_fallback",
+      "eval_result": {
+        "activates_now": false,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": false,
+        "is_transport_failure": false,
+        "should_fallback_raw": false
+      },
+      "expected_activation": false,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "server_error",
+      "retry_count": 2,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "unknown_attempt_1_no_eager_fallback",
+      "eval_result": {
+        "activates_now": false,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": false,
+        "is_transport_failure": false,
+        "should_fallback_raw": false
+      },
+      "expected_activation": false,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "unknown",
+      "retry_count": 1,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "unknown_attempt_2_no_eager_fallback",
+      "eval_result": {
+        "activates_now": false,
+        "effective_pool_may_recover": false,
+        "is_rate_limited": false,
+        "is_transport_failure": false,
+        "should_fallback_raw": false
+      },
+      "expected_activation": false,
+      "pool_may_recover": false,
+      "provenance": "executed_source",
+      "reason": "unknown",
+      "retry_count": 2,
+      "wrapped_output_cap": null
+    },
+    {
+      "case_name": "extra_eager_site_line",
+      "details": {
+        "attempt_index": 0,
+        "behavior": "activates fallback immediately without issuing network request; resets retry_count = 0",
+        "site": "conversation_loop_line_3360_nous_rate_guard_preflight",
+        "trigger": "nous_rate_limit_remaining > 0 on Nous route before API call"
+      },
+      "provenance": "source_inspection_and_trace"
+    },
+    {
+      "case_name": "extra_eager_site_line",
+      "details": {
+        "attempt_index": 1,
+        "behavior": "activates fallback immediately on attempt 1 without waiting for max retries; resets retry_count = 0",
+        "site": "conversation_loop_line_3851_malformed_response_eager_fallback",
+        "trigger": "validate_response(response) is False on HTTP 200"
+      },
+      "provenance": "source_inspection_and_trace"
+    },
+    {
+      "case_name": "extra_eager_site_line",
+      "details": {
+        "attempt_index": 1,
+        "behavior": "activates fallback once without same-provider retries; terminal if no fallback; resets retry_count = 0",
+        "site": "conversation_loop_line_4103_safety_refusal_http_200",
+        "trigger": "finish_reason == 'content_filter' or message.refusal on HTTP 200"
+      },
+      "provenance": "source_inspection_and_trace"
+    },
+    {
+      "case_name": "extra_eager_site_line",
+      "details": {
+        "attempt_index": 1,
+        "behavior": "rolls back partial assistant content to last clean turn; activates fallback; resets retry_count = 0",
+        "site": "conversation_loop_line_4327_content_filter_stream_stall",
+        "trigger": "response._content_filter_terminated is True on partial stream stub"
+      },
+      "provenance": "source_inspection_and_trace"
+    },
+    {
+      "case_name": "extra_eager_site_line",
+      "details": {
+        "attempt_index": 1,
+        "behavior": "activates fallback once per attempt cycle; resets retry_count = 0",
+        "site": "conversation_loop_line_6117_auth_failure_escalation",
+        "trigger": "classified.is_auth and provider refresh failed"
+      },
+      "provenance": "source_inspection_and_trace"
+    },
+    {
+      "case_name": "extra_eager_site_line",
+      "details": {
+        "attempt_index": 1,
+        "behavior": "tries fallback before aborting; terminal abort if no fallback; resets retry_count = 0",
+        "site": "conversation_loop_line_6824_non_retryable_client_error",
+        "trigger": "HTTP 4xx (format_error, content_policy_blocked exception, ssl_cert_verification)"
+      },
+      "provenance": "source_inspection_and_trace"
+    }
+  ],
+  "error_classification_taxonomy_matrix": [
+    {
+      "case_name": "conn_httpx_connect_error",
+      "classified_reason": "timeout",
+      "error_repr": "Connection refused by target machine",
+      "error_type": "ConnectError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "conn_reset_error_normal_context",
+      "classified_reason": "timeout",
+      "error_repr": "Connection reset by peer",
+      "error_type": "ConnectionResetError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "conn_broken_pipe",
+      "classified_reason": "timeout",
+      "error_repr": "Broken pipe",
+      "error_type": "BrokenPipeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "conn_dns_name_not_known",
+      "classified_reason": "timeout",
+      "error_repr": "Name or service not known",
+      "error_type": "RuntimeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "conn_dns_getaddrinfo_failed",
+      "classified_reason": "timeout",
+      "error_repr": "getaddrinfo failed: Temporary failure in name resolution",
+      "error_type": "RuntimeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "conn_openai_api_connection_error",
+      "classified_reason": "timeout",
+      "error_repr": "Connection error",
+      "error_type": "APIConnectionError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "timeout_httpx_read_timeout",
+      "classified_reason": "timeout",
+      "error_repr": "The read operation timed out",
+      "error_type": "ReadTimeout",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "timeout_httpx_connect_timeout",
+      "classified_reason": "timeout",
+      "error_repr": "Connect timeout",
+      "error_type": "ConnectTimeout",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "timeout_openai_api_timeout_error",
+      "classified_reason": "timeout",
+      "error_repr": "Request timed out.",
+      "error_type": "APITimeoutError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "timeout_runtime_error_string_timed_out",
+      "classified_reason": "timeout",
+      "error_repr": "turn timed out after 300 seconds",
+      "error_type": "RuntimeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "timeout_runtime_error_deadline_exceeded",
+      "classified_reason": "timeout",
+      "error_repr": "gRPC deadline exceeded",
+      "error_type": "RuntimeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "http_408_request_timeout",
+      "classified_reason": "timeout",
+      "error_repr": "Request Timeout",
+      "error_type": "APIStatusError",
+      "model": "local-model",
+      "provenance": "executed_source",
+      "provider": "custom",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 408
+    },
+    {
+      "case_name": "overload_http_503_service_unavailable",
+      "classified_reason": "overloaded",
+      "error_repr": "Service Unavailable",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 503
+    },
+    {
+      "case_name": "overload_http_529_site_overloaded",
+      "classified_reason": "overloaded",
+      "error_repr": "Site Overloaded",
+      "error_type": "APIStatusError",
+      "model": "claude-3-5-sonnet",
+      "provenance": "executed_source",
+      "provider": "anthropic",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 529
+    },
+    {
+      "case_name": "overload_http_429_server_overloaded_body",
+      "classified_reason": "overloaded",
+      "error_repr": "The server is currently overloaded. Please retry in a moment.",
+      "error_type": "APIStatusError",
+      "model": "glm-5.1",
+      "provenance": "executed_source",
+      "provider": "zai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 429
+    },
+    {
+      "case_name": "overload_http_429_service_temporarily_overloaded",
+      "classified_reason": "overloaded",
+      "error_repr": "service is temporarily overloaded",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 429
+    },
+    {
+      "case_name": "server_error_500_generic_internal_error",
+      "classified_reason": "server_error",
+      "error_repr": "Internal Server Error",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 500
+    },
+    {
+      "case_name": "server_error_502_bad_gateway",
+      "classified_reason": "server_error",
+      "error_repr": "Bad Gateway",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 502
+    },
+    {
+      "case_name": "server_error_504_gateway_timeout",
+      "classified_reason": "server_error",
+      "error_repr": "Gateway Timeout",
+      "error_type": "APIStatusError",
+      "model": "deepseek/deepseek-r1",
+      "provenance": "executed_source",
+      "provider": "openrouter",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 504
+    },
+    {
+      "case_name": "server_error_520_cloudflare_unknown",
+      "classified_reason": "server_error",
+      "error_repr": "Web server is returning an unknown error",
+      "error_type": "APIStatusError",
+      "model": "remote-vllm",
+      "provenance": "executed_source",
+      "provider": "custom",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 520
+    },
+    {
+      "case_name": "server_error_524_cloudflare_timeout",
+      "classified_reason": "server_error",
+      "error_repr": "A timeout occurred",
+      "error_type": "APIStatusError",
+      "model": "anthropic/claude-3.5-sonnet",
+      "provenance": "executed_source",
+      "provider": "openrouter",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 524
+    },
+    {
+      "case_name": "server_error_500_with_request_validation_reclassifies_to_format_error",
+      "classified_reason": "format_error",
+      "error_repr": "unsupported parameter: temperature must be between 0 and 1",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "codex-gateway",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": 500
+    },
+    {
+      "case_name": "server_error_500_with_context_overflow_reclassifies_to_compress",
+      "classified_reason": "context_overflow",
+      "error_repr": "This model maximum context length is 8192 tokens",
+      "error_type": "APIStatusError",
+      "model": "llama-3-8b",
+      "provenance": "executed_source",
+      "provider": "local-llama",
+      "retryable": true,
+      "should_compress": true,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 500
+    },
+    {
+      "case_name": "unknown_generic_runtime_error",
+      "classified_reason": "unknown",
+      "error_repr": "unrecognized custom runtime error",
+      "error_type": "RuntimeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "unknown_http_404_without_model_signal",
+      "classified_reason": "unknown",
+      "error_repr": "404 page not found",
+      "error_type": "APIStatusError",
+      "model": "http://localhost:8080/v1",
+      "provenance": "executed_source",
+      "provider": "custom",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": 404
+    },
+    {
+      "case_name": "model_not_found_404_explicit_pattern",
+      "classified_reason": "model_not_found",
+      "error_repr": "The model 'non-existent-model' does not exist",
+      "error_type": "APIStatusError",
+      "model": "non-existent-model",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": 404
+    },
+    {
+      "case_name": "content_policy_blocked_400_usage_policies",
+      "classified_reason": "content_policy_blocked",
+      "error_repr": "Your request violates our usage policies",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": 400
+    },
+    {
+      "case_name": "content_policy_blocked_400_anthropic_safety",
+      "classified_reason": "content_policy_blocked",
+      "error_repr": "Prompt was flagged by our safety system",
+      "error_type": "APIStatusError",
+      "model": "claude-3-5-sonnet",
+      "provenance": "executed_source",
+      "provider": "anthropic",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": 400
+    },
+    {
+      "case_name": "content_policy_blocked_azure_responsible_ai",
+      "classified_reason": "content_policy_blocked",
+      "error_repr": "ResponsibleAIPolicyViolation: request was filtered",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "azure",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": 400
+    },
+    {
+      "case_name": "content_policy_blocked_minimax_new_sensitive_stream",
+      "classified_reason": "content_policy_blocked",
+      "error_repr": "output new_sensitive (1027) content filter triggered",
+      "error_type": "RuntimeError",
+      "model": "MiniMax-Text-01",
+      "provenance": "executed_source",
+      "provider": "minimax",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "rate_limit_standard_429",
+      "classified_reason": "rate_limit",
+      "error_repr": "Rate limit reached for requests",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": true,
+      "status_code": 429
+    },
+    {
+      "case_name": "upstream_rate_limit_openrouter_429",
+      "classified_reason": "upstream_rate_limit",
+      "error_repr": "Provider returned error",
+      "error_type": "APIStatusError",
+      "model": "deepseek/deepseek-r1",
+      "provenance": "executed_source",
+      "provider": "openrouter",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": 429
+    },
+    {
+      "case_name": "billing_http_402_insufficient_credits",
+      "classified_reason": "billing",
+      "error_repr": "Insufficient credits",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openrouter",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": true,
+      "status_code": 402
+    },
+    {
+      "case_name": "billing_http_403_key_limit_exceeded",
+      "classified_reason": "billing",
+      "error_repr": "Key limit exceeded for current billing cycle",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openrouter",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": true,
+      "status_code": 403
+    },
+    {
+      "case_name": "auth_http_401_invalid_api_key",
+      "classified_reason": "auth",
+      "error_repr": "Incorrect API key provided",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": true,
+      "status_code": 401
+    },
+    {
+      "case_name": "auth_http_403_forbidden",
+      "classified_reason": "auth",
+      "error_repr": "Access denied / forbidden",
+      "error_type": "APIStatusError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": 403
+    },
+    {
+      "case_name": "ssl_cert_verification_failed_deterministic",
+      "classified_reason": "ssl_cert_verification",
+      "error_repr": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate",
+      "error_type": "RuntimeError",
+      "model": "https://internal-vllm.corp",
+      "provenance": "executed_source",
+      "provider": "custom",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "ssl_transient_decryption_failed",
+      "classified_reason": "timeout",
+      "error_repr": "[SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC] transient ssl alert",
+      "error_type": "RuntimeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "disconnect_large_context_triggers_compression",
+      "classified_reason": "context_overflow",
+      "error_repr": "Server disconnected unexpectedly without response",
+      "error_type": "RuntimeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": true,
+      "should_compress": true,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "disconnect_reasoning_model_large_context_overrides_to_timeout",
+      "classified_reason": "timeout",
+      "error_repr": "Server disconnected unexpectedly without response",
+      "error_type": "RuntimeError",
+      "model": "deepseek-r1",
+      "provenance": "executed_source",
+      "provider": "deepseek",
+      "retryable": true,
+      "should_compress": false,
+      "should_fallback": false,
+      "should_rotate_credential": false,
+      "status_code": null
+    },
+    {
+      "case_name": "stale_call_circuit_breaker_runtime_error",
+      "classified_reason": "timeout",
+      "error_repr": "aborting this call after 5 consecutive stale attempts",
+      "error_type": "RuntimeError",
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true,
+      "should_rotate_credential": false,
+      "status_code": null
+    }
+  ],
+  "executed_vs_inferred_catalog": [
+    {
+      "capability_or_behavior": "Default api_max_retries = 3 and config override parsing",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed AIAgent constructor and agent/agent_init.py parsing logic; verified default is 3, minimum clamp is 1, non-int falls back to 3."
+    },
+    {
+      "capability_or_behavior": "HTTP 408 Request Timeout mapped to FailoverReason.timeout (retryable=True)",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed classify_api_error on HTTP 408 response; verified timeout classification, avoiding generic 4xx format_error."
+    },
+    {
+      "capability_or_behavior": "Overload (503/529) mapped to FailoverReason.overloaded (retryable=True, should_rotate=False)",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed classify_api_error on 503 and 529 responses; verified overloaded classification without credential rotation."
+    },
+    {
+      "capability_or_behavior": "Server errors (500, 502, 504) mapped to FailoverReason.server_error (retryable=True)",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed classify_api_error on 500/502/504; verified server_error classification, retryable=True, should_fallback=False."
+    },
+    {
+      "capability_or_behavior": "500/502 with request validation reclassified to format_error (non-retryable, fallback=True)",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed classify_api_error on 500 with 'unsupported parameter'; verified format_error classification."
+    },
+    {
+      "capability_or_behavior": "Single credential pool blocks pool recovery on 429",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed _pool_may_recover_from_rate_limit on single-credential pool; returned False, enabling eager fallback."
+    },
+    {
+      "capability_or_behavior": "Multi-credential pool enables pool recovery on 429",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed _pool_may_recover_from_rate_limit on multi-entry pool; returned True, suppressing eager fallback on attempt 1."
+    },
+    {
+      "capability_or_behavior": "Upstream rate limit (OpenRouter 429) bypasses pool recovery",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed conversation_loop logic; verified _is_upstream forces pool recovery to False, routing immediately to fallback."
+    },
+    {
+      "capability_or_behavior": "Primary transport recovery succeeds on direct endpoints and resets retry_count",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed try_recover_primary_transport on openai agent with ReadTimeout; returned True."
+    },
+    {
+      "capability_or_behavior": "Primary transport recovery skipped for OpenRouter and Nous aggregators",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed try_recover_primary_transport on openrouter and nous agents; returned False."
+    },
+    {
+      "capability_or_behavior": "Response validation rejects None, missing choices, and empty choices across transports",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed validate_response on ChatCompletionsTransport, ResponsesApiTransport, AnthropicTransport, BedrockTransport."
+    },
+    {
+      "capability_or_behavior": "Fallback activation resets retry_count to 0 and grants full budget",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed try_activate_fallback on AIAgent; verified _fallback_activated becomes True and agent attributes mutate to fallback route."
+    },
+    {
+      "capability_or_behavior": "Fallback remains sticky within turn across subsequent tool rounds",
+      "classification": "inferred_from_source_inspection",
+      "evidence": "Inspected run_conversation loop: tool execution sub-iterations operate on the live agent instance without restoring primary mid-turn."
+    },
+    {
+      "capability_or_behavior": "Primary restored at start of next turn if rate limit cooldown expired",
+      "classification": "proven_by_executed_source",
+      "evidence": "Executed _restore_primary_runtime on activated fallback agent; verified agent attributes cleanly revert to primary snapshot."
+    },
+    {
+      "capability_or_behavior": "Mid-stream connection drop with in-flight tool call triggers silent retry",
+      "classification": "inferred_from_source_inspection",
+      "evidence": "Inspected interruptible_streaming_api_call:5202-5295 where partial_tool_in_flight + transient error triggers silent stream retry."
+    },
+    {
+      "capability_or_behavior": "Mid-stream text stall returns partial stub with finish_reason='length'",
+      "classification": "inferred_from_source_inspection",
+      "evidence": "Inspected interruptible_streaming_api_call:5772-5870 where post-worker checks deltas_were_sent and returns PARTIAL_STREAM_STUB_ID."
+    },
+    {
+      "capability_or_behavior": "Content-filter terminated stream triggers message rollback and fallback",
+      "classification": "inferred_from_source_inspection",
+      "evidence": "Inspected conversation_loop.py:4312-4346 where _content_filter_terminated rolls back messages to last assistant and activates fallback."
+    }
+  ],
+  "operator_visible_status_and_terminal_structures": [
+    {
+      "case_name": "fallback_reason_text_rate_limit",
+      "notice_template": "\u26a0\ufe0f Model fallback: gpt-4o via openai unavailable (rate limit); using claude-3-5-sonnet via anthropic.",
+      "operator_text": "rate limit",
+      "provenance": "executed_source",
+      "reason": "rate_limit"
+    },
+    {
+      "case_name": "fallback_reason_text_billing",
+      "notice_template": "\u26a0\ufe0f Model fallback: gpt-4o via openai unavailable (billing or quota exhausted); using claude-3-5-sonnet via anthropic.",
+      "operator_text": "billing or quota exhausted",
+      "provenance": "executed_source",
+      "reason": "billing"
+    },
+    {
+      "case_name": "fallback_reason_text_upstream_rate_limit",
+      "notice_template": "\u26a0\ufe0f Model fallback: gpt-4o via openai unavailable (upstream model rate limit); using claude-3-5-sonnet via anthropic.",
+      "operator_text": "upstream model rate limit",
+      "provenance": "executed_source",
+      "reason": "upstream_rate_limit"
+    },
+    {
+      "case_name": "fallback_reason_text_overloaded",
+      "notice_template": "\u26a0\ufe0f Model fallback: gpt-4o via openai unavailable (provider overloaded); using claude-3-5-sonnet via anthropic.",
+      "operator_text": "provider overloaded",
+      "provenance": "executed_source",
+      "reason": "overloaded"
+    },
+    {
+      "case_name": "fallback_reason_text_timeout",
+      "notice_template": "\u26a0\ufe0f Model fallback: gpt-4o via openai unavailable (request timeout); using claude-3-5-sonnet via anthropic.",
+      "operator_text": "request timeout",
+      "provenance": "executed_source",
+      "reason": "timeout"
+    },
+    {
+      "case_name": "fallback_reason_text_content_policy_blocked",
+      "notice_template": "\u26a0\ufe0f Model fallback: gpt-4o via openai unavailable (content policy blocked the request); using claude-3-5-sonnet via anthropic.",
+      "operator_text": "content policy blocked the request",
+      "provenance": "executed_source",
+      "reason": "content_policy_blocked"
+    },
+    {
+      "case_name": "fallback_reason_text_auth",
+      "notice_template": "\u26a0\ufe0f Model fallback: gpt-4o via openai unavailable (authentication failed); using claude-3-5-sonnet via anthropic.",
+      "operator_text": "authentication failed",
+      "provenance": "executed_source",
+      "reason": "auth"
+    },
+    {
+      "case_name": "production_status_eager_fallback_rate_limit",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f Rate limited -- switching to fallback provider...",
+        "trigger": "eager_fallback_rate_limit",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_eager_fallback_billing_verified",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f Billing or credits exhausted -- switching to fallback provider...",
+        "trigger": "eager_fallback_billing_verified",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_eager_fallback_billing_unverified",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f Provider reported usage/credit exhaustion (unverified -- may be a content-filter rejection) -- switching to fallback provider...",
+        "trigger": "eager_fallback_billing_unverified",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_eager_fallback_transport_ge_2",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f Provider unreachable -- switching to fallback provider...",
+        "trigger": "eager_fallback_transport_ge_2",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_eager_fallback_upstream_rate_limit",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f Upstream aggregator rate-limited -- switching to fallback model...",
+        "trigger": "eager_fallback_upstream_rate_limit",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_eager_fallback_auth",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\ud83d\udd10 Authentication failed and could not be refreshed -- switching to fallback provider...",
+        "trigger": "eager_fallback_auth",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_eager_fallback_malformed_response",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f Empty/malformed response -- switching to fallback...",
+        "trigger": "eager_fallback_malformed_response",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_eager_fallback_safety_refusal",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f Model declined to respond (safety refusal) -- trying fallback...",
+        "trigger": "eager_fallback_safety_refusal",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_stream_stall_content_filter",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "Content filter terminated stream; switching to fallback...",
+        "trigger": "stream_stall_content_filter",
+        "type": "emit_status"
+      }
+    },
+    {
+      "case_name": "production_status_max_retries_exhausted_fallback_available",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f Max retries (3) exhausted -- trying fallback...",
+        "trigger": "max_retries_exhausted_fallback_available",
+        "type": "buffer_status"
+      }
+    },
+    {
+      "case_name": "production_status_terminal_api_failed",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u274c API failed after 3 retries -- {summary}",
+        "trigger": "terminal_api_failed",
+        "type": "emit_status"
+      }
+    },
+    {
+      "case_name": "production_status_terminal_rate_limited",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u274c Rate limited after 3 retries -- {summary}",
+        "trigger": "terminal_rate_limited",
+        "type": "emit_status"
+      }
+    },
+    {
+      "case_name": "production_status_terminal_billing",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u274c Billing or credits exhausted -- {summary}",
+        "trigger": "terminal_billing",
+        "type": "emit_status"
+      }
+    },
+    {
+      "case_name": "production_status_terminal_invalid_responses",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u274c Max retries (3) exceeded for invalid responses. Giving up.",
+        "trigger": "terminal_invalid_responses",
+        "type": "emit_status"
+      }
+    },
+    {
+      "case_name": "production_status_terminal_safety_refusal",
+      "provenance": "loop_trace",
+      "status_entry": {
+        "text": "\u26a0\ufe0f The model declined to respond to this request (safety refusal).",
+        "trigger": "terminal_safety_refusal",
+        "type": "emit_status"
+      }
+    },
+    {
+      "case_name": "terminal_failure_return_dict_schema",
+      "provenance": "source_inspection_and_trace",
+      "schema": {
+        "api_calls": 3,
+        "billing_block": null,
+        "billing_unverified": false,
+        "completed": false,
+        "error": "{summary}",
+        "failed": true,
+        "failure_reason": "{reason.value}",
+        "failure_retryable": false,
+        "final_response": "API call failed after 3 retries: {summary}",
+        "messages": "conversation messages list"
+      }
+    }
+  ],
+  "response_validation_and_malformed_shapes": [
+    {
+      "case_name": "chat_completions_none_response",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "ChatCompletionsTransport"
+    },
+    {
+      "case_name": "chat_completions_missing_choices_attr",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "ChatCompletionsTransport"
+    },
+    {
+      "case_name": "chat_completions_choices_is_none",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "ChatCompletionsTransport"
+    },
+    {
+      "case_name": "chat_completions_choices_is_empty_list",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "ChatCompletionsTransport"
+    },
+    {
+      "case_name": "chat_completions_valid_choice",
+      "expected": true,
+      "is_valid": true,
+      "provenance": "executed_source",
+      "transport": "ChatCompletionsTransport"
+    },
+    {
+      "case_name": "codex_responses_none_response",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "ResponsesApiTransport"
+    },
+    {
+      "case_name": "codex_responses_failed_status_empty_output",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "ResponsesApiTransport"
+    },
+    {
+      "case_name": "codex_responses_cancelled_status_empty_output",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "ResponsesApiTransport"
+    },
+    {
+      "case_name": "codex_responses_empty_output_incomplete_other",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "ResponsesApiTransport"
+    },
+    {
+      "case_name": "codex_responses_empty_output_incomplete_content_filter_treated_valid",
+      "expected": true,
+      "is_valid": true,
+      "provenance": "executed_source",
+      "transport": "ResponsesApiTransport"
+    },
+    {
+      "case_name": "codex_responses_valid_output",
+      "expected": true,
+      "is_valid": true,
+      "provenance": "executed_source",
+      "transport": "ResponsesApiTransport"
+    },
+    {
+      "case_name": "anthropic_none_response",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "AnthropicTransport"
+    },
+    {
+      "case_name": "anthropic_empty_content_none_stop_reason",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "AnthropicTransport"
+    },
+    {
+      "case_name": "anthropic_empty_content_stop_reason_max_tokens",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "AnthropicTransport"
+    },
+    {
+      "case_name": "anthropic_empty_content_stop_reason_end_turn_valid",
+      "expected": true,
+      "is_valid": true,
+      "provenance": "executed_source",
+      "transport": "AnthropicTransport"
+    },
+    {
+      "case_name": "anthropic_empty_content_stop_reason_refusal_valid",
+      "expected": true,
+      "is_valid": true,
+      "provenance": "executed_source",
+      "transport": "AnthropicTransport"
+    },
+    {
+      "case_name": "anthropic_valid_content_block",
+      "expected": true,
+      "is_valid": true,
+      "provenance": "executed_source",
+      "transport": "AnthropicTransport"
+    },
+    {
+      "case_name": "bedrock_none_response",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "BedrockTransport"
+    },
+    {
+      "case_name": "bedrock_raw_empty_dict",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "BedrockTransport"
+    },
+    {
+      "case_name": "bedrock_raw_dict_with_output_valid",
+      "expected": true,
+      "is_valid": true,
+      "provenance": "executed_source",
+      "transport": "BedrockTransport"
+    },
+    {
+      "case_name": "bedrock_ns_without_choices",
+      "expected": false,
+      "is_valid": false,
+      "provenance": "executed_source",
+      "transport": "BedrockTransport"
+    },
+    {
+      "case_name": "bedrock_ns_with_choices_valid",
+      "expected": true,
+      "is_valid": true,
+      "provenance": "executed_source",
+      "transport": "BedrockTransport"
+    }
+  ],
+  "retry_budgets_and_config_defaults": [
+    {
+      "case_name": "config_max_retries_default_none_falls_back_to_three",
+      "derived_max_retries": 3,
+      "expected_max_retries": 3,
+      "input_raw": "None",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "config_max_retries_custom_override_five",
+      "derived_max_retries": 5,
+      "expected_max_retries": 5,
+      "input_raw": "5",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "config_max_retries_custom_override_string_five",
+      "derived_max_retries": 5,
+      "expected_max_retries": 5,
+      "input_raw": "5",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "config_max_retries_min_floor_clamp_zero_to_one",
+      "derived_max_retries": 1,
+      "expected_max_retries": 1,
+      "input_raw": "0",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "config_max_retries_min_floor_clamp_negative_to_one",
+      "derived_max_retries": 1,
+      "expected_max_retries": 1,
+      "input_raw": "-3",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "config_max_retries_invalid_string_defaults_to_three",
+      "derived_max_retries": 3,
+      "expected_max_retries": 3,
+      "input_raw": "invalid_num",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "config_max_retries_invalid_dict_defaults_to_three",
+      "derived_max_retries": 3,
+      "expected_max_retries": 3,
+      "input_raw": "{}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "stream_worker_internal_retries_default",
+      "default_retries": 2,
+      "env_var": "HERMES_STREAM_RETRIES",
+      "provenance": "executed_source",
+      "total_stream_attempts": 3
+    },
+    {
+      "case_name": "empty_response_retry_budget_default",
+      "default_budget": 3,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "zai_coding_overload_retry_ceiling",
+      "ceiling": 8,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "stream_stale_giveup_streak_default",
+      "default_threshold": 5,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "context_compression_max_attempts",
+      "max_attempts": 3,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "thinking_only_prefill_max_retries",
+      "max_retries": 2,
+      "provenance": "executed_source"
+    }
+  ],
+  "retry_counter_resets_and_fallback_stickiness": [
+    {
+      "case_name": "fallback_activation_resets_retry_counter",
+      "fallback_activated_flag": true,
+      "fallback_model": "claude-3-5-sonnet",
+      "fallback_provider": "anthropic",
+      "primary_model": "gpt-4o",
+      "provenance": "executed_source",
+      "retry_count_reset_to": 0
+    },
+    {
+      "active_model_during_tool_rounds": "claude-3-5-sonnet",
+      "active_provider_during_tool_rounds": "anthropic",
+      "case_name": "within_turn_stickiness",
+      "is_sticky_across_tool_rounds": true,
+      "provenance": "executed_source_and_loop_trace",
+      "restore_called_mid_turn": false
+    },
+    {
+      "case_name": "multi_turn_turn_boundary_restoration",
+      "provenance": "executed_source",
+      "restoration_returned": true,
+      "restored_model": "gpt-4o",
+      "restored_provider": "openai"
+    }
+  ],
+  "stream_failure_boundaries": [
+    {
+      "boundary": "stream_failure_before_deltas",
+      "deltas_were_sent": false,
+      "inner_stream_retries": "retried inside streaming worker up to HERMES_STREAM_RETRIES (default 2 retries, 3 attempts)",
+      "main_loop_reception": "caught in except Exception as api_error; classified by classify_api_error",
+      "provenance": "source_inspection_and_trace",
+      "recovery_dispatch": "enters standard classified failover ladder (rate limit, transport 2-retry threshold, server error, fallback)",
+      "worker_exhausted": "raises result['error'] directly up to conversation_loop.py"
+    },
+    {
+      "action": "silent retry inside streaming worker; emits '\\n\\n\u26a0 Connection dropped mid tool-call; reconnecting\u2026\\n\\n' delta",
+      "boundary": "stream_failure_after_deltas_with_inflight_tool_call",
+      "deltas_were_sent": true,
+      "error_nature": "transient (timeout, connection drop, sse connection closed)",
+      "provenance": "source_inspection_and_trace",
+      "tool_call_in_flight": true,
+      "tracking_reset": "calls _reset_stream_delivery_tracking(), clears partial_tool_names, continues streaming loop"
+    },
+    {
+      "action": "does NOT re-raise to outer loop; returns partial stream stub with finish_reason='length'",
+      "boundary": "stream_failure_after_deltas_pure_text_no_tool",
+      "deltas_were_sent": true,
+      "main_loop_reception": "handled under finish_reason == 'length' in conversation_loop.py",
+      "provenance": "source_inspection_and_trace",
+      "recovery_dispatch": "appends partial text, sends continuation nudge to prompt completion",
+      "stub_finish_reason": "length",
+      "stub_id": "partial-stream-stub",
+      "tool_call_in_flight": false
+    },
+    {
+      "boundary": "stream_failure_after_deltas_content_filter_terminated",
+      "deltas_were_sent": true,
+      "error_nature": "classified as FailoverReason.content_policy_blocked (e.g. MiniMax new_sensitive, Azure content_filter)",
+      "fallback_available_action": "rolls back partial messages to last clean assistant turn; activates fallback provider; resets retry_count = 0",
+      "main_loop_reception": "detected at conversation_loop.py:4313",
+      "no_fallback_action": "emits '\u26a0\ufe0f No fallback provider configured -- retrying with same provider (may re-hit filter)...'; falls through to length continuation",
+      "provenance": "source_inspection_and_trace",
+      "stub_tagging": "_stub._content_filter_terminated is set to True on partial stub"
+    }
+  ],
+  "transport_retry_and_fallback_thresholds": [
+    {
+      "case_name": "primary_recovery_direct_endpoint_succeeds",
+      "error_type": "ReadTimeout",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "recovered": true,
+      "resets_retry_count": true
+    },
+    {
+      "case_name": "primary_recovery_non_transient_error_rejected",
+      "error_type": "RuntimeError",
+      "provenance": "executed_source",
+      "provider": "openai",
+      "recovered": false
+    },
+    {
+      "case_name": "primary_recovery_openrouter_aggregator_skipped",
+      "provenance": "executed_source",
+      "provider": "openrouter",
+      "recovered": false
+    },
+    {
+      "case_name": "primary_recovery_nous_portal_skipped",
+      "provenance": "executed_source",
+      "provider": "nous",
+      "recovered": false
+    },
+    {
+      "case_name": "ladder_transport_failures",
+      "ladder_contract": {
+        "attempt_1": "same-provider retry with jittered backoff (retry_count becomes 1; fallback gated by retry_count >= 2)",
+        "attempt_2": "FALLBACK ACTIVATES immediately if fallback provider is available (retry_count >= 2); retry_count resets to 0",
+        "attempt_3": "if NO fallback available: primary transport recovery attempted if direct endpoint; if that fails, terminal failure",
+        "category": "transport_failures (timeout, overloaded, connect)",
+        "terminal_no_fallback": "\u274c API failed after 3 retries"
+      },
+      "provenance": "executed_source_and_loop_trace"
+    },
+    {
+      "case_name": "ladder_server_errors",
+      "ladder_contract": {
+        "attempt_1": "same-provider retry with jittered backoff",
+        "attempt_2": "same-provider retry with jittered backoff (server_error not in _is_transport_failure)",
+        "attempt_3": "MAX RETRIES EXHAUSTED: fallback activates at retry_count >= max_retries; resets retry_count to 0",
+        "category": "server_errors (500, 502, 504 and other 5xx)",
+        "terminal_no_fallback": "\u274c API failed after 3 retries"
+      },
+      "provenance": "executed_source_and_loop_trace"
+    },
+    {
+      "case_name": "ladder_unknown_transport_errors",
+      "ladder_contract": {
+        "attempt_1": "same-provider retry with backoff",
+        "attempt_2": "same-provider retry with backoff",
+        "attempt_3": "MAX RETRIES EXHAUSTED: fallback activates at retry_count >= max_retries; resets retry_count to 0",
+        "category": "unknown_transport_errors (generic exception, unknown 404)",
+        "terminal_no_fallback": "\u274c API failed after 3 retries"
+      },
+      "provenance": "executed_source_and_loop_trace"
+    },
+    {
+      "case_name": "ladder_malformed_http_200_responses",
+      "ladder_contract": {
+        "attempt_1": "EAGER FALLBACK ACTIVATES immediately if fallback available; resets retry_count to 0",
+        "attempt_2": "if NO fallback: same-provider retry with 5s-120s backoff",
+        "attempt_3": "if NO fallback: max retries invalid response terminal giving up",
+        "category": "malformed_http_200_responses (no choices, None, empty)",
+        "terminal_no_fallback": "\u274c Max retries (3) exceeded for invalid responses. Giving up."
+      },
+      "provenance": "executed_source_and_loop_trace"
+    }
+  ],
+  "turn_retry_state_contract": [
+    {
+      "all_defaults_false": true,
+      "case_name": "turn_retry_state_field_count",
+      "count": 22,
+      "fields": [
+        "codex_auth_retry_attempted",
+        "anthropic_auth_retry_attempted",
+        "nous_auth_retry_attempted",
+        "nous_paid_entitlement_refresh_attempted",
+        "copilot_auth_retry_attempted",
+        "copilot_stale_cred_retry_attempted",
+        "vertex_auth_retry_attempted",
+        "thinking_sig_retry_attempted",
+        "invalid_encrypted_content_retry_attempted",
+        "native_compaction_reject_retry_attempted",
+        "image_shrink_retry_attempted",
+        "multimodal_tool_content_retry_attempted",
+        "reasoning_mandatory_retry_attempted",
+        "oauth_1m_beta_retry_attempted",
+        "llama_cpp_grammar_retry_attempted",
+        "primary_recovery_attempted",
+        "has_retried_429",
+        "auth_failover_attempted",
+        "restart_with_compressed_messages",
+        "restart_with_length_continuation",
+        "restart_with_rebuilt_messages",
+        "restart_with_redirected_messages"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "turn_retry_state_one_shot_semantics",
+      "description": "Each recovery branch checks `not _retry.<guard>` before executing and sets it to True so it runs at most once per turn attempt.",
+      "provenance": "executed_source"
+    }
+  ]
+}
