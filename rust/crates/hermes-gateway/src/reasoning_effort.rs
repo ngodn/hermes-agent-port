@@ -108,6 +108,10 @@ fn parse(effort: &Value) -> Option<Value> {
         .then(|| json!({"enabled": true, "effort": effort}))
 }
 
+pub(crate) fn parse_value(effort: &Value) -> Option<Value> {
+    parse(effort)
+}
+
 fn add(values: &mut Vec<String>, value: String) {
     if !value.is_empty() && !values.contains(&value) {
         values.push(value);

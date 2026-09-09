@@ -25,6 +25,7 @@ mod coding_context;
 mod coding_project_facts;
 mod coding_prompt;
 mod command_catalog;
+mod compression_auxiliary;
 mod compression_prompt;
 mod compression_redact;
 mod config;
@@ -335,6 +336,190 @@ fn build_agent_client(
     })
 }
 
+#[allow(clippy::too_many_arguments)]
+fn build_native_compression_client(
+    policy: &compression_auxiliary::Config,
+    user_config: &serde_json::Value,
+    main_model: &str,
+    main_key: &str,
+    main_base_url: &str,
+    main_profile: Option<&provider_registry::ProviderProfile>,
+    profiles: &provider_registry::ProviderRegistry,
+    dotenv: &std::collections::HashMap<String, String>,
+    environment: &mut impl FnMut(&str) -> Option<String>,
+) -> anyhow::Result<Option<NativeAgentClient>> {
+    if !policy.needs_separate_client {
+        return Ok(None);
+    }
+
+    let configured_main_provider = user_config["model"]["provider"]
+        .as_str()
+        .unwrap_or("")
+        .trim();
+    let requested_provider = if policy.provider == "auto" {
+        main_profile
+            .map(|profile| profile.name.as_str())
+            .filter(|provider| !provider.is_empty())
+            .unwrap_or(configured_main_provider)
+    } else {
+        policy.provider.as_str()
+    };
+    let auxiliary_profile = if policy.provider == "auto" {
+        main_profile.cloned()
+    } else {
+        profiles
+            .get(requested_provider)
+            .map(|profile| profile.read().unwrap().clone())
+    };
+    let named = custom_provider_config::named(
+        user_config,
+        requested_provider,
+        auxiliary_profile
+            .as_ref()
+            .map(|profile| profile.name.as_str()),
+        |name| {
+            environment(name)
+                .or_else(|| dotenv.get(name).cloned())
+                .unwrap_or_default()
+        },
+    );
+
+    let same_as_main = policy.provider == "auto"
+        || requested_provider.eq_ignore_ascii_case(configured_main_provider)
+        || main_profile.is_some_and(|profile| {
+            profile.name.eq_ignore_ascii_case(requested_provider)
+                || profile
+                    .aliases
+                    .iter()
+                    .any(|alias| alias.eq_ignore_ascii_case(requested_provider))
+        });
+    let profile_base_url = auxiliary_profile.as_ref().and_then(|profile| {
+        profile
+            .env_vars
+            .iter()
+            .find(|name| name.ends_with("_URL"))
+            .and_then(|name| environment(name))
+            .map(|value| value.trim().to_owned())
+            .filter(|value| !value.is_empty())
+            .or_else(|| (!profile.base_url.is_empty()).then(|| profile.base_url.clone()))
+    });
+    let base_url = policy
+        .base_url
+        .clone()
+        .or_else(|| {
+            named
+                .as_ref()
+                .and_then(|entry| entry["base_url"].as_str())
+                .map(str::to_owned)
+        })
+        .or(profile_base_url)
+        .or_else(|| same_as_main.then(|| main_base_url.to_owned()))
+        .ok_or_else(|| anyhow::anyhow!("auxiliary compression route has no endpoint"))?;
+
+    let model = policy
+        .model
+        .clone()
+        .or_else(|| {
+            auxiliary_profile
+                .as_ref()
+                .map(|profile| profile.default_aux_model.trim())
+                .filter(|model| !model.is_empty())
+                .map(str::to_owned)
+        })
+        .or_else(|| {
+            named
+                .as_ref()
+                .and_then(|entry| entry["model"].as_str())
+                .map(str::trim)
+                .filter(|model| !model.is_empty())
+                .map(str::to_owned)
+        })
+        .unwrap_or_else(|| main_model.to_owned());
+
+    let api_mode = policy
+        .api_mode
+        .clone()
+        .or_else(|| {
+            named
+                .as_ref()
+                .and_then(|entry| entry["api_mode"].as_str())
+                .map(str::to_owned)
+        })
+        .or_else(|| {
+            auxiliary_profile
+                .as_ref()
+                .map(|profile| profile.api_mode.clone())
+        })
+        .unwrap_or_else(|| "chat_completions".into());
+    anyhow::ensure!(
+        api_mode == "chat_completions",
+        "auxiliary compression provider requires unsupported native API mode {api_mode}"
+    );
+
+    let direct_key = policy.direct_api_key(dotenv, |name| environment(name));
+    let named_key = named
+        .as_ref()
+        .and_then(|entry| entry["api_key"].as_str())
+        .map(str::trim)
+        .filter(|key| !key.is_empty())
+        .map(str::to_owned);
+    let profile_key = auxiliary_profile.as_ref().and_then(|profile| {
+        config_file::resolve_profile_api_key(profile, dotenv, |name| environment(name))
+    });
+    let api_key = direct_key
+        .or(named_key)
+        .or_else(|| same_as_main.then(|| main_key.to_owned()))
+        .or(profile_key)
+        .or_else(|| {
+            config_file::resolve_provider_api_key_with_env(&base_url, dotenv, |name| {
+                environment(name)
+            })
+        })
+        .or_else(|| {
+            crate::local_probe::is_local_endpoint(&base_url).then(|| "no-key-required".into())
+        })
+        .ok_or_else(|| anyhow::anyhow!("no API key resolved for auxiliary compression route"))?;
+
+    let actual_provider = auxiliary_profile
+        .as_ref()
+        .map(|profile| profile.name.as_str())
+        .or_else(|| (!requested_provider.is_empty()).then_some(requested_provider))
+        .unwrap_or("custom");
+    let mut client = NativeAgentClient::new(&model, api_key, &base_url)?
+        .with_provider_identity(actual_provider)
+        .with_reasoning_config(policy.reasoning_config.clone())
+        .with_summary_request_policy(
+            policy.timeout,
+            policy.certified_output_cap(actual_provider, &model),
+        );
+    if let Some(profile) = &auxiliary_profile {
+        client = client.with_provider_profile(profile)?;
+    }
+    client = client.with_extra_headers(&custom_provider_config::extra_headers(
+        user_config,
+        &base_url,
+    ))?;
+
+    let mut extra_body = named
+        .as_ref()
+        .and_then(|entry| entry["extra_body"].as_object())
+        .cloned()
+        .unwrap_or_default();
+    extra_body.extend(policy.extra_body.clone());
+    if let Some(reasoning) = &policy.reasoning_config {
+        extra_body
+            .entry("reasoning")
+            .or_insert_with(|| reasoning.clone());
+    }
+    if !extra_body.is_empty() {
+        client = client.with_request_overrides(serde_json::Map::from_iter([(
+            "extra_body".into(),
+            serde_json::Value::Object(extra_body),
+        )]));
+    }
+    Ok(Some(client))
+}
+
 /// Build against the selected conversation profile without changing ambient
 /// HERMES_HOME. Each native client captures one credentials/config snapshot;
 /// concurrent profiles must never reread another profile's .env mid-build.
@@ -379,7 +564,7 @@ fn build_agent_client_for_home(
             .as_deref()
             .cloned()
             .unwrap_or_else(|| config_file::load_dotenv(&home.join(".env")));
-        let environment = |name: &str| secret_scope::get_secret(name, None).ok().flatten();
+        let mut environment = |name: &str| secret_scope::get_secret(name, None).ok().flatten();
         let profiles = provider_registry::ProviderRegistry::default();
         profiles.register_bundled_base_profiles(env!("CARGO_PKG_VERSION"));
         profiles.register_upstage();
@@ -421,12 +606,16 @@ fn build_agent_client_for_home(
         // Explicit native credentials win. Registered profiles use their own
         // declared key names; generic configurations retain the legacy lookup.
         let key = config.llm_api_key.clone().or_else(|| match &profile {
-            Some(profile) => config_file::resolve_profile_api_key(profile, &dotenv, environment),
-            None => config_file::resolve_provider_api_key_with_env(&base_url, &dotenv, environment),
+            Some(profile) => {
+                config_file::resolve_profile_api_key(profile, &dotenv, &mut environment)
+            }
+            None => {
+                config_file::resolve_provider_api_key_with_env(&base_url, &dotenv, &mut environment)
+            }
         });
 
         match (key, model) {
-            (Some(key), Some(model)) => match NativeAgentClient::new(model, key, base_url.clone())
+            (Some(key), Some(model)) => match NativeAgentClient::new(model, &key, base_url.clone())
                 .and_then(|client| {
                     let limit = turn_limit::gateway(
                         user_config,
@@ -448,6 +637,8 @@ fn build_agent_client_for_home(
                     ))
                 }) {
                 Ok(mut c) => {
+                    let compression_policy = compression_auxiliary::Config::from_value(user_config);
+                    c = c.with_summary_request_policy(compression_policy.timeout, None);
                     c = c.with_reasoning_config(reasoning_effort::resolve_config(
                         user_config,
                         model,
@@ -499,6 +690,24 @@ fn build_agent_client_for_home(
                             .as_ref()
                             .and_then(|entry| entry.get("max_output_tokens")),
                     ));
+                    match build_native_compression_client(
+                        &compression_policy,
+                        user_config,
+                        model,
+                        &key,
+                        &base_url,
+                        profile.as_ref(),
+                        &profiles,
+                        &dotenv,
+                        &mut environment,
+                    ) {
+                        Ok(Some(auxiliary)) => c = c.with_compression_client(auxiliary),
+                        Ok(None) => {}
+                        Err(error) => tracing::warn!(
+                            %error,
+                            "auxiliary compression route unavailable; using main native route"
+                        ),
+                    }
                     c = c.with_automatic_compression_policy(
                         automatic_compression::AutomaticCompressionPolicy::from_value(user_config),
                     );
@@ -1202,6 +1411,161 @@ mod startup_tests {
             agent_cli_prompt_flag: None,
             agent_tools: false,
         }
+    }
+
+    #[tokio::test]
+    async fn compression_route_uses_auxiliary_policy_then_falls_back_once_to_main() {
+        use axum::{http::HeaderMap, routing::post, Json, Router};
+
+        type Captures = Arc<std::sync::Mutex<Vec<(HeaderMap, Value)>>>;
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        async fn serve(captures: Captures, responses: Vec<Value>) -> (String, Server) {
+            let responses = Arc::new(responses);
+            let app = Router::new().route(
+                "/chat/completions",
+                post(move |headers: HeaderMap, Json(body): Json<Value>| {
+                    let captures = captures.clone();
+                    let responses = responses.clone();
+                    async move {
+                        let index = {
+                            let mut captures = captures.lock().unwrap();
+                            let index = captures.len();
+                            captures.push((headers, body));
+                            index
+                        };
+                        let response = responses
+                            .get(index)
+                            .or_else(|| responses.last())
+                            .expect("test response")
+                            .clone();
+                        Json(response)
+                    }
+                }),
+            );
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let auxiliary_requests: Captures = Default::default();
+        let main_requests: Captures = Default::default();
+        let (auxiliary_url, _auxiliary_server) = serve(
+            auxiliary_requests.clone(),
+            vec![
+                json!({
+                    "choices":[{"finish_reason":"length","message":{"content":"partial"}}],
+                    "usage":{"prompt_tokens":21,"completion_tokens":7}
+                }),
+                json!({
+                    "choices":[{"finish_reason":"stop","message":{"content":"auxiliary summary"}}],
+                    "usage":{"prompt_tokens":22,"completion_tokens":9}
+                }),
+            ],
+        )
+        .await;
+        let (main_url, _main_server) = serve(
+            main_requests.clone(),
+            vec![json!({
+                "choices":[{"finish_reason":"stop","message":{"content":"main summary"}}],
+                "usage":{"prompt_tokens":34,"completion_tokens":8}
+            })],
+        )
+        .await;
+
+        let mut config = native_config();
+        config.llm_base_url = Some(main_url);
+        config.llm_api_key = Some("main-key".into());
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home =
+            TempHome(std::env::temp_dir().join(format!("hermes-compression-aux-route-{nonce}")));
+        std::fs::create_dir_all(&home.0).unwrap();
+        std::fs::write(home.0.join(".env"), "AUX_COMPRESSION_KEY=aux-key\n").unwrap();
+        let user_config = json!({
+            "model":{"provider":"custom"},
+            "auxiliary":{"compression":{
+                "provider":"openrouter",
+                "model":"aux-model",
+                "base_url":auxiliary_url,
+                "key_env":"AUX_COMPRESSION_KEY",
+                "reasoning_effort":false,
+                "max_output_tokens":777,
+                "extra_body":{"route_marker":"auxiliary-only"}
+            }}
+        });
+        let agent =
+            build_agent_client_for_home(&config, &user_config, Some("main-model"), &home.0, None)
+                .unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"next"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("compression-route-session".into());
+        let history = [session_db::CompressionHistoryMessage {
+            id: 1,
+            message: session_db::HistoryMessage {
+                role: "user".into(),
+                content: "preserve this context".into(),
+                api_content: None,
+            },
+            tool_call_id: None,
+            tool_calls: None,
+            tool_name: None,
+            reasoning: None,
+            reasoning_content: None,
+            reasoning_details: None,
+            codex_reasoning_items: None,
+            codex_message_items: None,
+            compressed_summary: false,
+        }];
+        let summary = agent
+            .summarize_context(agent::TurnContext::default(), &message, &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("main summary"));
+        let summary = agent
+            .summarize_context(agent::TurnContext::default(), &message, &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("auxiliary summary"));
+
+        let auxiliary_requests = auxiliary_requests.lock().unwrap();
+        assert_eq!(auxiliary_requests.len(), 2);
+        let (headers, body) = &auxiliary_requests[0];
+        assert_eq!(headers["authorization"], "Bearer aux-key");
+        assert_eq!(body["model"], "aux-model");
+        assert_eq!(body["max_tokens"], 777);
+        assert_eq!(body["reasoning"], json!({"enabled":false}));
+        assert_eq!(body["route_marker"], "auxiliary-only");
+        assert_eq!(body["messages"].as_array().unwrap().len(), 1);
+        assert!(body.get("tools").is_none());
+
+        let main_requests = main_requests.lock().unwrap();
+        assert_eq!(main_requests.len(), 1);
+        let (headers, body) = &main_requests[0];
+        assert_eq!(headers["authorization"], "Bearer main-key");
+        assert_eq!(body["model"], "main-model");
+        assert!(body.get("max_tokens").is_none());
+        assert!(body.get("max_completion_tokens").is_none());
+        assert!(body.get("reasoning").is_none());
+        assert!(body.get("route_marker").is_none());
+        assert!(body.get("tools").is_none());
     }
 
     #[tokio::test]

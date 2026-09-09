@@ -36,7 +36,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   pre-turn boundary and after durable tool batches in the active loop, with
   exact-snapshot CAS and durable hysteresis. Full compression now also uses the
   Python token estimator, protected-tail pressure passes, and token-aware
-  summary-tail selection. Auxiliary routing and hooks remain open.
+  summary-tail selection. Auxiliary fallback chains and hooks remain open.
 - Opt-in native micro-compaction runs after reply persistence and before
   external-memory completion or the next provider request. It preserves all
   user bytes, supersedes only contained rolling markers, bounds failures and
@@ -47,6 +47,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   sentinel/rearm attempt semantics, guarded summary publication, durable
   transcript adoption, and byte-stable system prompts. Mid-turn rotation and
   checkpoint hooks remain open.
+- Full compression resolves a frozen, isolated `auxiliary.compression` client
+  at native startup. Exact non-reasoning routes may carry a configured cap;
+  unusable auxiliary output gets one clean main-route retry. Configured
+  fallback chains and non-chat-completions transports remain open.
 
 ## Rejected paths
 
@@ -64,6 +68,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-compression-auxiliary-routing-resolution.md](native-compression-auxiliary-routing-resolution.md) | Production auxiliary compression route construction, isolated request policy, bounded main fallback, validation, and explicit failover deferrals |
+| [compression-auxiliary-config-oracle-claude.md](compression-auxiliary-config-oracle-claude.md) | Claude's separate 129-case source-executed config, cap, temperature, and fallback oracle |
+| [compression-auxiliary-routing-agy.md](compression-auxiliary-routing-agy.md) | AGY's separate runtime map of Python auxiliary client selection, timeout, usage, startup, and layered fallback behavior |
 | [native-same-turn-full-compression-resolution.md](native-same-turn-full-compression-resolution.md) | Live post-tool full summary ordering, usage and attempt lifecycle, guarded in-place publication, cache invariants, helper disposition, and explicit deferrals |
 | [same-turn-full-compression-oracle-claude.md](same-turn-full-compression-oracle-claude.md) | Claude's independent 25-case source-executed Python decision and adoption oracle |
 | [same-turn-full-compression-runtime-agy.md](same-turn-full-compression-runtime-agy.md) | AGY's separate Python runtime map for trigger precedence, failure guards, publication, adoption, and same-turn ordering |
@@ -114,7 +121,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-resume-review-agy.md](native-resume-review-agy.md) | Gemini implementation review that found the initial untitled-session usability blocker, same-channel DM IDOR, reverse preview, and numeric-label defects; all blocking findings were fixed |
 | [native-resume-review-claude.md](native-resume-review-claude.md) | Claude implementation review of transaction, lease, CAS and cache identity, plus the initial title-gated usability blocker and compatibility/test gaps; see the resolution for final disposition |
 | [native-resume-resolution.md](native-resume-resolution.md) | Implemented design and verified disposition of both helper maps and reviews, including DM identity filtering, full unnamed listing, atomic rollback, warm-client reuse and explicit deferrals |
-| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 46.75-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
+| [progress-audit-2026-09-08.md](progress-audit-2026-09-08.md) | Current 47.90-point weighted full-port estimate, area scores, live evidence, uncertainty range and largest remaining systems |
 | [native-title-map-agy.md](native-title-map-agy.md) | Distilled Gemini source map for gateway title behavior, sanitizer rules, durable metadata and checkpoint boundaries |
 | [native-title-map-claude.md](native-title-map-claude.md) | Independent Python/Rust contract map for `/title`, `/new <title>`, title uniqueness, provenance, lazy creation and cache isolation |
 | [native-title-review-agy.md](native-title-review-agy.md) | Gemini implementation review and disposition of metadata lookup, transaction-race, index, formatting and sanitizer findings |

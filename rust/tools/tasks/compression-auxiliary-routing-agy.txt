@@ -1,0 +1,21 @@
+You are one helper on a coordinated Rust port. This is a read-only source-mapping lane. Create exactly one new report:
+
+- rust/analysis/compression-auxiliary-routing-agy.md
+
+Do not edit Rust source, PORT.md, INDEX.md, tests, tools, or any other file. Do not run another helper.
+
+Trace only Python's auxiliary client selection and runtime fallback for full context compression summaries. Do not map compression boundaries, pruning, persistence, micro-compaction, or general provider failover except where required to explain the summary request.
+
+Record exact, source-verified contracts for:
+
+- configuration keys and precedence for auxiliary.compression and legacy summary model settings
+- provider, model, base URL, API mode, credential, header, temperature, reasoning, timeout, and output-cap resolution
+- when the primary conversation client is reused versus a separate client is constructed
+- one-shot fallback ordering after auxiliary failure, including errors that do or do not permit fallback
+- usage attribution and which client/route identity receives each call
+- prompt-cache behavior and why summary calls must remain tool-free
+- startup validation or refusal behavior for unsupported modes
+- the narrowest current Rust seams in native_agent.rs, provider_resolver.rs, provider_registry.rs, credential selection, and startup construction
+- directly relevant Python and Rust tests and parity traps for a live two-endpoint HTTP test
+
+Separate verified Python behavior from Rust recommendations. Use current local source only. Cite exact files, functions, and line ranges. Keep the report concise and do not use em dashes.

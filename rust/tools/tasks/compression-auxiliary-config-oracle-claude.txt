@@ -1,0 +1,19 @@
+You are one helper on a coordinated Rust port. Work only in these new files:
+
+- rust/tools/compression-auxiliary-config-oracle.py
+- rust/tools/compression-auxiliary-config-goldens.json
+- rust/analysis/compression-auxiliary-config-oracle-claude.md
+
+Do not edit Rust source, PORT.md, INDEX.md, existing tests, or any other file. Do not run another helper.
+
+Build a deterministic, source-executed Python oracle focused only on parsing and resolving full-compression auxiliary configuration, summary output caps, summary temperature, and the predicate that permits a one-shot fallback to the main model. Drive the narrowest real Python functions and constructors that own these decisions. Patch only filesystem, environment, model metadata, or client construction needed for deterministic execution. Do not reimplement the decision logic.
+
+Cover a bounded set of high-value cases across absent, valid, legacy, malformed, and conflicting configuration:
+
+- auxiliary.compression model/provider/base_url/api_mode/credential-related selection and precedence
+- configured summary max token cap versus derived/default behavior, including model-specific output parameter names
+- temperature omit/fixed/default behavior
+- same-model versus distinct-model fallback eligibility and exactly which failures are retryable
+- values that must fail closed or fall back to the primary route
+
+If some decisions are inline or inseparable from network construction, execute the closest authoritative functions and state precisely what remains for Rust live integration tests. Emit stable JSON inputs and resolved outputs. Add --check mode that regenerates and compares the corpus. Run the generator and directly relevant Python tests. The report must distinguish exact oracle coverage from deferred runtime coverage, cite authoritative local functions, and avoid em dashes.

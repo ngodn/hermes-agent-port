@@ -1,5 +1,37 @@
 # Hermes Rust rewrite
 
+## Native auxiliary compression routing checkpoint: 2026-09-09
+
+Native full-compression summaries now resolve the frozen
+`auxiliary.compression` route during per-conversation client construction.
+Provider, model, endpoint, scoped credentials, named-provider headers and body,
+reasoning control, timeout, and API mode are isolated from main conversation
+requests. Auto routing inherits the resolved main route. Unsupported native
+transports fail open to main-route compression instead of breaking startup.
+
+Config-derived compression timeouts use Python's 300 second floor. A configured
+output cap is admitted only for an exact concrete provider/model route that is
+explicitly non-reasoning. Auxiliary failures, truncation, tool calls, and empty
+answers get one uncapped retry on the main route. A live two-endpoint test proves
+request isolation, tool-free summaries, fallback count, and successful
+auxiliary short-circuit behavior.
+
+AGY mapped runtime client selection, usage, startup, and fallback behavior.
+Claude separately produced a 129-case source-executed config, cap, temperature,
+and fallback oracle. The primary lane implemented and verified the Rust route.
+See
+[native-compression-auxiliary-routing-resolution.md](analysis/native-compression-auxiliary-routing-resolution.md).
+
+Validation is **1,656 Rust tests passed, two ignored**, plus **113 selected
+Python tests passed**. Oracle regeneration, formatting, focused live tests,
+Clippy with warnings denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **47.90
+points, reported as about 48%** (judgment range 46% to 50%). Configured
+multi-provider fallback chains, credential refresh and rotation, non-chat
+auxiliary transports, stall detection, and the remaining compression hooks are
+still open. Native plugin, memory, tool, provider, and platform breadth remains
+the larger port.
+
 ## Native same-turn full compression checkpoint: 2026-09-09
 
 Native full LLM compression now runs after a complete tool-result batch is

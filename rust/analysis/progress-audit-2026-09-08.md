@@ -1,8 +1,8 @@
 # Full Rust port progress audit, updated 2026-09-09
 
-Current estimate: **47.50% of the full native replacement**, reported as
+Current estimate: **47.90% of the full native replacement**, reported as
 **about 48%**, with a reasonable judgment range of **46% to 50%**. This
-supersedes the 46.75-point estimate recorded after micro-compaction landed.
+supersedes the 47.50-point estimate recorded after same-turn full compression.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -20,10 +20,10 @@ audits.
 | Gateway | 35% | 64% | 22.40 |
 | Tool runtime and RPC | 30% | 13% | 3.90 |
 | State and search | 15% | 72% | 10.80 |
-| Native agent core | 20% | 52% | 10.40 |
-| Total | 100% | | **47.50** |
+| Native agent core | 20% | 54% | 10.80 |
+| Total | 100% | | **47.90** |
 
-`0.35 * 64 + 0.30 * 13 + 0.15 * 72 + 0.20 * 52 = 47.50`
+`0.35 * 64 + 0.30 * 13 + 0.15 * 72 + 0.20 * 54 = 47.90`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -101,7 +101,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 52%
+### Native agent core, 54%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -155,10 +155,17 @@ breaker state, and exact-snapshot publication. The live HTTP and SQLite test
 proves persistence-before-summary, adoption-before-follow-up, archived-source
 search, and byte-identical system prompts across every main request.
 
+Full summary requests now use a separately constructed, conversation-frozen
+`auxiliary.compression` route. Startup resolves its provider, model, endpoint,
+credentials, request fields, reasoning controls, 300 second timeout floor, and
+exact-route fast-lane cap. A two-endpoint test proves that auxiliary controls do
+not leak into the main request, truncated output gets one uncapped main retry,
+and successful auxiliary output skips that retry.
+
 Mid-turn rotation, exact synthetic-user and multi-user tail anchors,
 reference-only handoff suppression, structural no-op backoff, configurable
-auxiliary summary caps, auxiliary model routing and fallback, provider failover
-and credential retry loops, delegation/subagents, full approval/clarification
+multi-provider auxiliary fallback chains, non-chat auxiliary transports,
+provider failover and credential retry loops, delegation/subagents, full approval/clarification
 flows, memory and plugin managers, skill execution, context invalidation
 policy, and several agent-loop recovery behaviors remain. These are large
 behavioral systems, which is why the core score remains low despite broad
@@ -166,8 +173,8 @@ helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,650 passing Rust tests and two expected ignores
-(1,649 gateway plus one core test).
+The workspace currently has 1,656 passing Rust tests and two expected ignores
+(1,655 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -175,11 +182,11 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,650 passed, two ignored (1,649 gateway plus one core).
-- Selected Python same-turn compression contracts: 251 passed.
+- Full Rust workspace: 1,656 passed, two ignored (1,655 gateway plus one core).
+- Selected Python auxiliary compression contracts: 113 passed.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
-  tail-selection, 21 micro-compaction state-machine, and 25 same-turn decision
-  and adoption cases.
+  tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
+  adoption, and 129 auxiliary routing/config cases.
 - Formatting, Clippy with warnings denied, and `git diff --check`: passed.
 - The lower end of the range assumes native extension-host functionality earns
   little tool-runtime credit until managers and built-ins use it broadly.
@@ -189,7 +196,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 ## What moves the estimate next
 
 1. Mid-turn rotation, exact remaining tail and handoff behavior, structural
-   backoff, auxiliary routing/fallback, and checkpoint hooks complete the
+   backoff, auxiliary fallback chains, and checkpoint hooks complete the
    current compression cluster.
 2. Transparent extension-host recovery plus native plugin and memory managers
    turn the existing protocol into a broader production capability.

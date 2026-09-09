@@ -401,11 +401,18 @@ pub struct NativeAgentClient {
     client: reqwest::Client,
     provider_headers: reqwest::header::HeaderMap,
     provider_profile: Option<crate::provider_registry::ProviderProfile>,
+    provider_identity: Option<String>,
     reasoning_config: Option<Value>,
     reasoning_echo: bool,
     output_cap: Option<Value>,
     context_length: u64,
     automatic_compression_policy: crate::automatic_compression::AutomaticCompressionPolicy,
+    /// Optional task-scoped route for full compression summaries. It never
+    /// carries another auxiliary route, so fallback returns directly to this
+    /// conversation client without recursion.
+    compression_client: Option<std::sync::Arc<NativeAgentClient>>,
+    summary_timeout: std::time::Duration,
+    summary_output_cap: Option<u64>,
     request_overrides: serde_json::Map<String, Value>,
     cache_scope: Option<String>,
     /// Already assembled conversation prompt. Clones share the same immutable
@@ -447,11 +454,15 @@ impl NativeAgentClient {
             client,
             provider_headers: reqwest::header::HeaderMap::new(),
             provider_profile: None,
+            provider_identity: None,
             reasoning_config: None,
             reasoning_echo: false,
             output_cap: None,
             context_length: 256_000,
             automatic_compression_policy: Default::default(),
+            compression_client: None,
+            summary_timeout: std::time::Duration::from_secs(300),
+            summary_output_cap: None,
             request_overrides: Default::default(),
             cache_scope: None,
             system_prompt: None,
@@ -529,6 +540,12 @@ impl NativeAgentClient {
         self
     }
 
+    pub fn with_provider_identity(mut self, provider: impl Into<String>) -> Self {
+        let provider = provider.into();
+        self.provider_identity = (!provider.is_empty()).then_some(provider);
+        self
+    }
+
     /// This flag belongs to the active provider, including custom endpoints.
     pub fn with_reasoning_echo(mut self, enabled: bool) -> Self {
         self.reasoning_echo = enabled;
@@ -550,6 +567,21 @@ impl NativeAgentClient {
         policy: crate::automatic_compression::AutomaticCompressionPolicy,
     ) -> Self {
         self.automatic_compression_policy = policy;
+        self
+    }
+
+    pub fn with_compression_client(mut self, client: NativeAgentClient) -> Self {
+        self.compression_client = Some(std::sync::Arc::new(client));
+        self
+    }
+
+    pub fn with_summary_request_policy(
+        mut self,
+        timeout: std::time::Duration,
+        output_cap: Option<u64>,
+    ) -> Self {
+        self.summary_timeout = timeout;
+        self.summary_output_cap = output_cap;
         self
     }
 
@@ -701,6 +733,7 @@ impl NativeAgentClient {
         self.provider_profile
             .as_ref()
             .map(|profile| profile.name.as_str())
+            .or(self.provider_identity.as_deref())
             .unwrap_or("")
     }
 
@@ -808,6 +841,7 @@ impl NativeAgentClient {
         let response = self
             .client
             .post(&url)
+            .timeout(self.summary_timeout)
             .bearer_auth(&self.api_key)
             .headers(self.provider_headers.clone())
             .json(&body)
@@ -877,7 +911,7 @@ impl NativeAgentClient {
         self.auxiliary_summary_request(
             messages,
             "compression summary",
-            None,
+            self.summary_output_cap,
             summary_temperature(&self.model).map(Value::from),
         )
         .await
@@ -1057,15 +1091,14 @@ impl NativeAgentClient {
         Ok((tokens, output_cap))
     }
 
-    async fn summarize_history(
+    async fn summarize_history_on(
         &self,
         database: Option<&crate::session_db::SessionDb>,
         session_id: &str,
-        history: &[crate::session_db::CompressionHistoryMessage],
-        focus_topic: Option<&str>,
+        prompt: &str,
     ) -> Result<Option<String>> {
-        let prompt = crate::compression_prompt::build(history, focus_topic);
         let mut summary_client = self.clone();
+        summary_client.compression_client = None;
         summary_client.usage_bucket = UsageBucket::Auxiliary;
         summary_client.begin_auxiliary_usage();
         let summary = summary_client
@@ -1074,6 +1107,38 @@ impl NativeAgentClient {
         let usage = summary_client.take_auxiliary_usage();
         summary_client.record_compression_usage(database, session_id, &usage);
         summary
+    }
+
+    async fn summarize_history(
+        &self,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        history: &[crate::session_db::CompressionHistoryMessage],
+        focus_topic: Option<&str>,
+    ) -> Result<Option<String>> {
+        let prompt = crate::compression_prompt::build(history, focus_topic);
+        if let Some(auxiliary) = self.compression_client.as_deref() {
+            match auxiliary
+                .summarize_history_on(database, session_id, &prompt)
+                .await
+            {
+                Ok(Some(summary)) => return Ok(Some(summary)),
+                Ok(None) => tracing::warn!(
+                    %session_id,
+                    "auxiliary compression route returned no usable summary; retrying once on main route"
+                ),
+                Err(error) => {
+                    let error = crate::compression_redact::redact(&error.to_string());
+                    tracing::warn!(
+                        %error,
+                        %session_id,
+                        "auxiliary compression route failed; retrying once on main route"
+                    );
+                }
+            }
+        }
+        self.summarize_history_on(database, session_id, &prompt)
+            .await
     }
 
     fn adopt_durable_tool_loop_transcript(

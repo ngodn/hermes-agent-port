@@ -1,0 +1,2868 @@
+{
+  "task_config_resolution": [
+    {
+      "case": "absent_config_auto",
+      "config": null,
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "auto",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "empty_config_auto",
+      "config": {},
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "auto",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "provider_and_model",
+      "config": {
+        "provider": "openrouter",
+        "model": "x/y"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "openrouter",
+        "model": "x/y",
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "first_class_provider_with_base_url",
+      "config": {
+        "provider": "anthropic",
+        "model": "claude-x",
+        "base_url": "https://relay/v1"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "anthropic",
+        "model": "claude-x",
+        "base_url": "https://relay/v1",
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "bare_base_url_no_key_falls_to_auto",
+      "config": {
+        "base_url": "https://endpoint/v1"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "auto",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "base_url_and_api_key_custom",
+      "config": {
+        "base_url": "https://endpoint/v1",
+        "api_key": "sk-inline"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "custom",
+        "model": null,
+        "base_url": "https://endpoint/v1",
+        "api_key": "sk-inline",
+        "api_mode": null
+      }
+    },
+    {
+      "case": "base_url_with_provider_no_key_keeps_provider",
+      "config": {
+        "provider": "openrouter",
+        "base_url": "https://or/v1"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "openrouter",
+        "model": null,
+        "base_url": "https://or/v1",
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "key_env_resolves_from_environment",
+      "config": {
+        "provider": "openrouter",
+        "model": "m",
+        "key_env": "AUX_KEY"
+      },
+      "env": {
+        "AUX_KEY": "sk-env"
+      },
+      "explicit_args": null,
+      "resolved": {
+        "provider": "openrouter",
+        "model": "m",
+        "base_url": null,
+        "api_key": "sk-env",
+        "api_mode": null
+      }
+    },
+    {
+      "case": "api_key_env_alias_resolves",
+      "config": {
+        "provider": "openrouter",
+        "model": "m",
+        "api_key_env": "AUX_KEY2"
+      },
+      "env": {
+        "AUX_KEY2": "sk-env2"
+      },
+      "explicit_args": null,
+      "resolved": {
+        "provider": "openrouter",
+        "model": "m",
+        "base_url": null,
+        "api_key": "sk-env2",
+        "api_mode": null
+      }
+    },
+    {
+      "case": "key_env_missing_fails_to_none",
+      "config": {
+        "provider": "openrouter",
+        "model": "m",
+        "key_env": "AUX_MISSING"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "openrouter",
+        "model": "m",
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "api_key_wins_over_key_env",
+      "config": {
+        "provider": "openrouter",
+        "api_key": "sk-direct",
+        "key_env": "AUX_KEY"
+      },
+      "env": {
+        "AUX_KEY": "sk-env"
+      },
+      "explicit_args": null,
+      "resolved": {
+        "provider": "openrouter",
+        "model": null,
+        "base_url": null,
+        "api_key": "sk-direct",
+        "api_mode": null
+      }
+    },
+    {
+      "case": "model_auto_normalized_to_none",
+      "config": {
+        "provider": "anthropic",
+        "model": "auto"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "anthropic",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "provider_auto_falls_through",
+      "config": {
+        "provider": "auto",
+        "model": "m"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "auto",
+        "model": "m",
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "api_mode_passthrough_anthropic",
+      "config": {
+        "base_url": "https://relay/v1",
+        "api_key": "k",
+        "api_mode": "anthropic_messages"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "custom",
+        "model": null,
+        "base_url": "https://relay/v1",
+        "api_key": "k",
+        "api_mode": "anthropic_messages"
+      }
+    },
+    {
+      "case": "api_mode_codex_responses",
+      "config": {
+        "base_url": "https://relay/v1",
+        "api_key": "k",
+        "api_mode": "codex_responses"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "custom",
+        "model": null,
+        "base_url": "https://relay/v1",
+        "api_key": "k",
+        "api_mode": "codex_responses"
+      }
+    },
+    {
+      "case": "whitespace_values_treated_absent",
+      "config": {
+        "provider": "  ",
+        "model": "  ",
+        "base_url": "  "
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "auto",
+        "model": null,
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "direct_api_alias_openai_becomes_custom",
+      "config": {
+        "provider": "openai",
+        "model": "gpt-4o"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "custom",
+        "model": "gpt-4o",
+        "base_url": "https://api.openai.com/v1",
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "direct_api_alias_openai_keeps_user_base",
+      "config": {
+        "provider": "openai",
+        "model": "gpt-4o",
+        "base_url": "https://proxy/v1"
+      },
+      "env": null,
+      "explicit_args": null,
+      "resolved": {
+        "provider": "custom",
+        "model": "gpt-4o",
+        "base_url": "https://proxy/v1",
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "explicit_provider_arg_overrides_config",
+      "config": {
+        "provider": "openrouter",
+        "model": "cfg/model"
+      },
+      "env": null,
+      "explicit_args": {
+        "provider": "anthropic",
+        "model": "arg/model"
+      },
+      "resolved": {
+        "provider": "anthropic",
+        "model": "arg/model",
+        "base_url": null,
+        "api_key": null,
+        "api_mode": null
+      }
+    },
+    {
+      "case": "explicit_provider_arg_adopts_config_base",
+      "config": {
+        "provider": "openrouter",
+        "base_url": "https://or/v1",
+        "api_key": "cfgk"
+      },
+      "env": null,
+      "explicit_args": {
+        "provider": "openrouter"
+      },
+      "resolved": {
+        "provider": "openrouter",
+        "model": null,
+        "base_url": "https://or/v1",
+        "api_key": "cfgk",
+        "api_mode": null
+      }
+    }
+  ],
+  "summary_output_cap": {
+    "fast_lane": [
+      {
+        "case": "certified_cap_applied",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": 2048
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": true,
+          "max_tokens": 2048,
+          "reasoning_config": {
+            "enabled": false,
+            "effort": "none"
+          }
+        }
+      },
+      {
+        "case": "model_drift_uncapped",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": 2048
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "other",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": false,
+          "max_tokens": null,
+          "reasoning_config": null
+        }
+      },
+      {
+        "case": "provider_drift_uncapped",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": 2048
+        },
+        "actual_provider": "anthropic",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": false,
+          "max_tokens": null,
+          "reasoning_config": null
+        }
+      },
+      {
+        "case": "reasoning_on_uncapped",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "max_output_tokens": 2048
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": false,
+          "max_tokens": null,
+          "reasoning_config": null
+        }
+      },
+      {
+        "case": "auto_provider_uncapped",
+        "route_config": {
+          "provider": "auto",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": 2048
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": false,
+          "max_tokens": null,
+          "reasoning_config": null
+        }
+      },
+      {
+        "case": "auto_model_uncapped",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "auto",
+          "reasoning_effort": "none",
+          "max_output_tokens": 2048
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "auto",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": false,
+          "max_tokens": null,
+          "reasoning_config": null
+        }
+      },
+      {
+        "case": "bool_cap_is_config_drift_none",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": true
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": true,
+          "max_tokens": null,
+          "reasoning_config": {
+            "enabled": false,
+            "effort": "none"
+          }
+        }
+      },
+      {
+        "case": "zero_cap_none",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": 0
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": true,
+          "max_tokens": null,
+          "reasoning_config": {
+            "enabled": false,
+            "effort": "none"
+          }
+        }
+      },
+      {
+        "case": "negative_cap_none",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": -5
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": true,
+          "max_tokens": null,
+          "reasoning_config": {
+            "enabled": false,
+            "effort": "none"
+          }
+        }
+      },
+      {
+        "case": "string_cap_parsed",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": "4096"
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": true,
+          "max_tokens": 4096,
+          "reasoning_config": {
+            "enabled": false,
+            "effort": "none"
+          }
+        }
+      },
+      {
+        "case": "requested_model_override_matches",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none",
+          "max_output_tokens": 1024
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "pinned",
+        "requested_provider": "openrouter",
+        "requested_model": "pinned",
+        "result": {
+          "certified_non_reasoning": true,
+          "max_tokens": 1024,
+          "reasoning_config": {
+            "enabled": false,
+            "effort": "none"
+          }
+        }
+      },
+      {
+        "case": "certified_no_cap_field",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "reasoning_effort": "none"
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": true,
+          "max_tokens": null,
+          "reasoning_config": {
+            "enabled": false,
+            "effort": "none"
+          }
+        }
+      },
+      {
+        "case": "no_reasoning_effort_uncapped",
+        "route_config": {
+          "provider": "openrouter",
+          "model": "m",
+          "max_output_tokens": 2048
+        },
+        "actual_provider": "openrouter",
+        "actual_model": "m",
+        "requested_provider": null,
+        "requested_model": null,
+        "result": {
+          "certified_non_reasoning": false,
+          "max_tokens": null,
+          "reasoning_config": null
+        }
+      }
+    ],
+    "wire_forwarding": [
+      {
+        "case": "no_cap_default_omitted",
+        "provider": "custom",
+        "model": "some-model",
+        "base_url": "https://plain/v1",
+        "max_tokens": null,
+        "cap_kwargs": {}
+      },
+      {
+        "case": "plain_custom_cap_dropped",
+        "provider": "custom",
+        "model": "some-model",
+        "base_url": "https://plain/v1",
+        "max_tokens": 2048,
+        "cap_kwargs": {}
+      },
+      {
+        "case": "openrouter_cap_forwarded_max_tokens",
+        "provider": "openrouter",
+        "model": "meta/llama",
+        "base_url": "https://openrouter.ai/api/v1",
+        "max_tokens": 2048,
+        "cap_kwargs": {
+          "max_tokens": 2048
+        }
+      },
+      {
+        "case": "openai_host_custom_gpt5_cap_not_forwarded",
+        "provider": "custom",
+        "model": "gpt-5",
+        "base_url": "https://api.openai.com/v1",
+        "max_tokens": 2048,
+        "cap_kwargs": {}
+      },
+      {
+        "case": "openai_host_custom_gpt4o_cap_not_forwarded",
+        "provider": "custom",
+        "model": "gpt-4o",
+        "base_url": "https://api.openai.com/v1",
+        "max_tokens": 2048,
+        "cap_kwargs": {}
+      },
+      {
+        "case": "openrouter_gpt5_by_name_uses_max_completion_tokens",
+        "provider": "openrouter",
+        "model": "openai/gpt-5",
+        "base_url": "https://openrouter.ai/api/v1",
+        "max_tokens": 2048,
+        "cap_kwargs": {
+          "max_completion_tokens": 2048
+        }
+      },
+      {
+        "case": "openrouter_llama_uses_max_tokens",
+        "provider": "openrouter",
+        "model": "meta/llama-3",
+        "base_url": "https://openrouter.ai/api/v1",
+        "max_tokens": 2048,
+        "cap_kwargs": {
+          "max_tokens": 2048
+        }
+      },
+      {
+        "case": "nvidia_nim_cap_forwarded",
+        "provider": "nvidia",
+        "model": "minimaxai/minimax-m3",
+        "base_url": "https://integrate.api.nvidia.com/v1",
+        "max_tokens": 2048,
+        "cap_kwargs": {
+          "max_tokens": 2048
+        }
+      },
+      {
+        "case": "plain_openai_family_name_but_no_forward_provider",
+        "provider": "custom",
+        "model": "gpt-5",
+        "base_url": "https://plain/v1",
+        "max_tokens": 2048,
+        "cap_kwargs": {}
+      }
+    ]
+  },
+  "summary_temperature": [
+    {
+      "case": "kimi_moonshot_omits",
+      "provider": "custom",
+      "model": "kimi-k2",
+      "base_url": "https://api.moonshot.ai/v1",
+      "caller_temperature": null,
+      "fixed_temperature_for_model": "OMIT",
+      "resolved_temperature": "OMITTED"
+    },
+    {
+      "case": "kimi_name_omits",
+      "provider": "custom",
+      "model": "moonshot/kimi-k2.5",
+      "base_url": null,
+      "caller_temperature": null,
+      "fixed_temperature_for_model": "OMIT",
+      "resolved_temperature": "OMITTED"
+    },
+    {
+      "case": "arcee_trinity_thinking_forced_half",
+      "provider": "custom",
+      "model": "arcee/trinity-large-thinking",
+      "base_url": null,
+      "caller_temperature": null,
+      "fixed_temperature_for_model": 0.5,
+      "resolved_temperature": 0.5
+    },
+    {
+      "case": "generic_model_default_none_omitted",
+      "provider": "openrouter",
+      "model": "meta/llama-3",
+      "base_url": null,
+      "caller_temperature": null,
+      "fixed_temperature_for_model": null,
+      "resolved_temperature": "OMITTED"
+    },
+    {
+      "case": "generic_model_caller_temperature_kept",
+      "provider": "openrouter",
+      "model": "meta/llama-3",
+      "base_url": null,
+      "caller_temperature": 0.3,
+      "fixed_temperature_for_model": null,
+      "resolved_temperature": 0.3
+    },
+    {
+      "case": "arcee_overrides_caller_temperature",
+      "provider": "custom",
+      "model": "arcee/trinity-large-thinking",
+      "base_url": null,
+      "caller_temperature": 0.9,
+      "fixed_temperature_for_model": 0.5,
+      "resolved_temperature": 0.5
+    },
+    {
+      "case": "kimi_overrides_caller_temperature",
+      "provider": "custom",
+      "model": "kimi-k2",
+      "base_url": "https://api.moonshot.ai/v1",
+      "caller_temperature": 0.7,
+      "fixed_temperature_for_model": "OMIT",
+      "resolved_temperature": "OMITTED"
+    }
+  ],
+  "main_model_fallback": {
+    "classify_source_lines": [
+      5669,
+      5670,
+      5671,
+      5677,
+      5690,
+      5701,
+      5704,
+      5719,
+      5731
+    ],
+    "cases": [
+      {
+        "case": "model_not_found_404::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "model_not_found",
+          "status_code": 404
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "model_not_found_404::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "model_not_found",
+          "status_code": 404
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "model_not_found_404::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "model_not_found",
+          "status_code": 404
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "model_not_found_404::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "model_not_found",
+          "status_code": 404
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "service_unavailable_503::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "temporarily down",
+          "status_code": 503
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "service_unavailable_503::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "temporarily down",
+          "status_code": 503
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "service_unavailable_503::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "temporarily down",
+          "status_code": 503
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "service_unavailable_503::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "temporarily down",
+          "status_code": 503
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "does_not_exist_text::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "the model does not exist"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "does_not_exist_text::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "the model does not exist"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "does_not_exist_text::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "the model does not exist"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "does_not_exist_text::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "the model does not exist"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "no_available_channel::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "no available channel for request"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "no_available_channel::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "no available channel for request"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "no_available_channel::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "no available channel for request"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "no_available_channel::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "no available channel for request"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": true,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "timeout_504::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "upstream gateway",
+          "status_code": 504
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "timeout_504::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "upstream gateway",
+          "status_code": 504
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "timeout_504::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "upstream gateway",
+          "status_code": 504
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "timeout_504::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "upstream gateway",
+          "status_code": 504
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "rate_limited_429::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "slow down",
+          "status_code": 429
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "rate_limited_429::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "slow down",
+          "status_code": 429
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "rate_limited_429::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "slow down",
+          "status_code": 429
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "rate_limited_429::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "slow down",
+          "status_code": 429
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "timeout_text::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "request timed out"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": true,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "timeout_text::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "request timed out"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": true,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "timeout_text::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "request timed out"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": true,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "timeout_text::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "request timed out"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": true,
+            "_is_json_decode": false,
+            "_is_streaming_closed": true,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "json_decode::distinct_summary_model",
+        "exception": {
+          "type": "json_decode",
+          "message": "Expecting value"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": true,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "json_decode::same_summary_model",
+        "exception": {
+          "type": "json_decode",
+          "message": "Expecting value"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": true,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "json_decode::no_summary_override",
+        "exception": {
+          "type": "json_decode",
+          "message": "Expecting value"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": true,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "json_decode::distinct_already_fell_back",
+        "exception": {
+          "type": "json_decode",
+          "message": "Expecting value"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": true,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "expecting_value_text::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "Expecting value: line 1 column 1"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": true,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "expecting_value_text::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "Expecting value: line 1 column 1"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": true,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "expecting_value_text::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "Expecting value: line 1 column 1"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": true,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "expecting_value_text::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "Expecting value: line 1 column 1"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": true,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "streaming_closed::distinct_summary_model",
+        "exception": {
+          "type": "connection",
+          "message": "peer closed connection"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": true,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "streaming_closed::same_summary_model",
+        "exception": {
+          "type": "connection",
+          "message": "peer closed connection"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": true,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "streaming_closed::no_summary_override",
+        "exception": {
+          "type": "connection",
+          "message": "peer closed connection"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": true,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "streaming_closed::distinct_already_fell_back",
+        "exception": {
+          "type": "connection",
+          "message": "peer closed connection"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": true,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "empty_content_runtime::distinct_summary_model",
+        "exception": {
+          "type": "runtime",
+          "message": "Context compression LLM returned empty content"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": true,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "empty_content_runtime::same_summary_model",
+        "exception": {
+          "type": "runtime",
+          "message": "Context compression LLM returned empty content"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": true,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "empty_content_runtime::no_summary_override",
+        "exception": {
+          "type": "runtime",
+          "message": "Context compression LLM returned empty content"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": true,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "empty_content_runtime::distinct_already_fell_back",
+        "exception": {
+          "type": "runtime",
+          "message": "Context compression LLM returned empty content"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": true,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "truncated_summary_runtime::distinct_summary_model",
+        "exception": {
+          "type": "runtime",
+          "message": "summary was truncated (finish_reason=length)"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": true,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": true,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "truncated_summary_runtime::same_summary_model",
+        "exception": {
+          "type": "runtime",
+          "message": "summary was truncated (finish_reason=length)"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": true,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "truncated_summary_runtime::no_summary_override",
+        "exception": {
+          "type": "runtime",
+          "message": "summary was truncated (finish_reason=length)"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": true,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "truncated_summary_runtime::distinct_already_fell_back",
+        "exception": {
+          "type": "runtime",
+          "message": "summary was truncated (finish_reason=length)"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": true,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "auth_401::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "invalid api key",
+          "status_code": 401
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "auth_401::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "invalid api key",
+          "status_code": 401
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "auth_401::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "invalid api key",
+          "status_code": 401
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "auth_401::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "invalid api key",
+          "status_code": 401
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "payment_402::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "payment required",
+          "status_code": 402
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "payment_402::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "payment required",
+          "status_code": 402
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "payment_402::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "payment required",
+          "status_code": 402
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "payment_402::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "payment required",
+          "status_code": 402
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "forbidden_403::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "forbidden",
+          "status_code": 403
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "forbidden_403::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "forbidden",
+          "status_code": 403
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "forbidden_403::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "forbidden",
+          "status_code": 403
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "forbidden_403::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "forbidden",
+          "status_code": 403
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "insufficient_quota::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "insufficient_quota for org"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "insufficient_quota::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "insufficient_quota for org"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "insufficient_quota::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "insufficient_quota for org"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "insufficient_quota::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "insufficient_quota for org"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "out_of_credits::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "you are out of credits"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "out_of_credits::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "you are out of credits"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "out_of_credits::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "you are out of credits"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "out_of_credits::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "you are out of credits"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "missing_credential::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "no api key was found"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "missing_credential::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "no api key was found"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "missing_credential::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "no api key was found"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "missing_credential::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "no api key was found"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": true
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "no_provider_configured::distinct_summary_model",
+        "exception": {
+          "type": "runtime",
+          "message": "No LLM provider configured for compression"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": true,
+          "fast_path_fallback": false,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "no_provider_configured::same_summary_model",
+        "exception": {
+          "type": "runtime",
+          "message": "No LLM provider configured for compression"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": true,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "no_provider_configured::no_summary_override",
+        "exception": {
+          "type": "runtime",
+          "message": "No LLM provider configured for compression"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": true,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "no_provider_configured::distinct_already_fell_back",
+        "exception": {
+          "type": "runtime",
+          "message": "No LLM provider configured for compression"
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": true,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "unknown_400::distinct_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "bad request",
+          "status_code": 400
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": true
+        }
+      },
+      {
+        "case": "unknown_400::same_summary_model",
+        "exception": {
+          "type": "value",
+          "message": "bad request",
+          "status_code": 400
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "main-model",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "unknown_400::no_summary_override",
+        "exception": {
+          "type": "value",
+          "message": "bad request",
+          "status_code": 400
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "",
+          "already_fell_back": false
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      },
+      {
+        "case": "unknown_400::distinct_already_fell_back",
+        "exception": {
+          "type": "value",
+          "message": "bad request",
+          "status_code": 400
+        },
+        "state": {
+          "model": "main-model",
+          "summary_model": "aux-model",
+          "already_fell_back": true
+        },
+        "result": {
+          "classification": {
+            "_is_model_not_found": false,
+            "_is_timeout": false,
+            "_is_json_decode": false,
+            "_is_streaming_closed": false,
+            "_is_empty_content": false,
+            "_is_truncated_summary": false,
+            "_is_access_or_quota_error": false
+          },
+          "no_provider_cooldown": false,
+          "fast_path_fallback": false,
+          "generic_fallback": false
+        }
+      }
+    ]
+  }
+}
