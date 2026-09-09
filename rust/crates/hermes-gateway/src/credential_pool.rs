@@ -279,6 +279,70 @@ impl PooledCredential {
             .insert("priority".into(), serde_json::json!(priority));
         next
     }
+
+    fn with_failure(
+        &self,
+        status_code: Option<i64>,
+        error_context: Option<&Value>,
+        failure_reason: Option<&str>,
+        now: f64,
+    ) -> Self {
+        const TERMINAL_AUTH_REASONS: &[&str] = &[
+            "token_invalidated",
+            "token_revoked",
+            "invalid_token",
+            "invalid_grant",
+            "unauthorized_client",
+            "refresh_token_reused",
+        ];
+        let normalized = normalize_error_context(error_context.unwrap_or(&Value::Null), now);
+        let reason = normalized["reason"]
+            .as_str()
+            .unwrap_or("")
+            .trim()
+            .to_lowercase();
+        let terminal = reason == "credential_persist_failed"
+            || status_code == Some(401) && TERMINAL_AUTH_REASONS.contains(&reason.as_str());
+        let mut next = self.clone();
+        next.fields.insert(
+            "last_status".into(),
+            Value::String(
+                if terminal {
+                    STATUS_DEAD
+                } else {
+                    STATUS_EXHAUSTED
+                }
+                .into(),
+            ),
+        );
+        next.fields
+            .insert("last_status_at".into(), serde_json::json!(now));
+        next.fields.insert(
+            "last_error_code".into(),
+            status_code.map(Value::from).unwrap_or(Value::Null),
+        );
+        for key in ["reason", "message", "reset_at"] {
+            let target = match key {
+                "reason" => "last_error_reason",
+                "message" => "last_error_message",
+                _ => "last_error_reset_at",
+            };
+            next.fields.insert(
+                target.into(),
+                normalized.get(key).cloned().unwrap_or(Value::Null),
+            );
+        }
+        match failure_reason {
+            Some(reason) if !reason.is_empty() => {
+                next.extra
+                    .insert("failure_reason".into(), Value::String(reason.into()));
+            }
+            _ => {
+                next.extra.shift_remove("failure_reason");
+            }
+        }
+        next
+    }
 }
 
 /// Refresh one source in memory. The return value means its disk-safe state
@@ -840,6 +904,133 @@ pub fn store_pool_callback(
 /// [to_dict...], removed_ids)`; the pool owns WHEN to persist, the sink owns HOW.
 pub type PersistSink = Box<dyn FnMut(&str, Vec<Value>, Vec<String>) + Send>;
 
+/// Rebuild a profile-scoped API-key pool for each selection or recovery.
+///
+/// The locator contains no credentials. Keeping the mutable pool request-local
+/// avoids sharing secrets across conversations and ensures every recovery sees
+/// cooldowns written by other processes before it chooses a replacement.
+#[derive(Clone)]
+pub struct PoolLocator {
+    profile: std::path::PathBuf,
+    root: Option<std::path::PathBuf>,
+    provider: String,
+    strategy: String,
+}
+
+impl PoolLocator {
+    pub fn new(
+        profile: impl Into<std::path::PathBuf>,
+        root: Option<std::path::PathBuf>,
+        provider: impl Into<String>,
+        strategy: impl Into<String>,
+    ) -> Self {
+        Self {
+            profile: profile.into(),
+            root,
+            provider: provider
+                .into()
+                .trim_matches(crate::python_value::python_whitespace)
+                .to_lowercase(),
+            strategy: strategy.into(),
+        }
+    }
+
+    fn load(
+        &self,
+    ) -> anyhow::Result<(
+        CredentialPool,
+        std::sync::Arc<std::sync::Mutex<Option<String>>>,
+    )> {
+        let write_error = std::sync::Arc::new(std::sync::Mutex::new(None));
+        let sink_error = write_error.clone();
+        let path = self.profile.clone();
+        let sink: PersistSink = Box::new(move |provider, entries, removed| {
+            if let Err(error) = crate::auth_store::write_pool(&path, provider, entries, removed) {
+                let mut slot = sink_error.lock().unwrap_or_else(|error| error.into_inner());
+                if slot.is_none() {
+                    *slot = Some(error.to_string());
+                }
+            }
+        });
+        let pool = load_pool_from_store(
+            &self.profile,
+            self.root.as_deref(),
+            &self.provider,
+            &self.strategy,
+            Some(sink),
+        )?;
+        Self::check_write(&write_error)?;
+        Ok((pool, write_error))
+    }
+
+    fn check_write(error: &std::sync::Arc<std::sync::Mutex<Option<String>>>) -> anyhow::Result<()> {
+        let error = error
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .take();
+        match error {
+            Some(error) => anyhow::bail!("credential pool persistence failed: {error}"),
+            None => Ok(()),
+        }
+    }
+
+    pub fn select_runtime(&self) -> anyhow::Result<Option<RuntimeCredential>> {
+        let (mut pool, write_error) = self.load()?;
+        let selected = pool.select_runtime();
+        drop(pool);
+        Self::check_write(&write_error)?;
+        Ok(selected)
+    }
+
+    pub fn mark_exhausted_and_rotate(
+        &self,
+        status_code: Option<i64>,
+        error_context: Option<&Value>,
+        api_key_hint: Option<&str>,
+        credential_id: Option<&str>,
+        failure_reason: Option<&str>,
+    ) -> anyhow::Result<Option<RuntimeCredential>> {
+        let (mut pool, write_error) = self.load()?;
+        let selected = pool.mark_exhausted_and_rotate(
+            status_code,
+            error_context,
+            api_key_hint,
+            credential_id,
+            failure_reason,
+        );
+        drop(pool);
+        Self::check_write(&write_error)?;
+        Ok(selected)
+    }
+
+    pub fn provider(&self) -> &str {
+        &self.provider
+    }
+}
+
+/// One selected credential ready for a provider request. Debug is omitted so
+/// accidental diagnostics cannot expose the runtime key.
+#[derive(Clone)]
+pub struct RuntimeCredential {
+    id: String,
+    api_key: String,
+    base_url: Option<String>,
+}
+
+impl RuntimeCredential {
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+
+    pub fn api_key(&self) -> &str {
+        &self.api_key
+    }
+
+    pub fn base_url(&self) -> Option<&str> {
+        self.base_url.as_deref()
+    }
+}
+
 /// The runtime credential pool for one provider. Entries are kept sorted by
 /// ascending priority. `select`/`peek`/availability run over a shared clock so
 /// tests are deterministic.
@@ -853,6 +1044,7 @@ pub struct CredentialPool {
     /// STRATEGY_RANDOM index chooser over `[0, len)`. Injectable for tests;
     /// defaults to a kernel-seeded uniform pick.
     choose_random: Box<dyn FnMut(usize) -> usize + Send>,
+    unmatched_rotation_streak: usize,
 }
 
 fn default_now() -> f64 {
@@ -882,6 +1074,7 @@ impl CredentialPool {
                     (default_now().to_bits() as usize) % len
                 }
             }),
+            unmatched_rotation_streak: 0,
         }
     }
 
@@ -923,6 +1116,31 @@ impl CredentialPool {
     /// key resolves via the existing `runtime_key` with a never-usable stub.
     fn runtime_api_key(entry: &PooledCredential) -> String {
         entry.runtime_key(|_, _, _| false)
+    }
+
+    fn runtime_credential(&self, id: &str) -> Option<RuntimeCredential> {
+        let entry = self.entries.iter().find(|entry| entry.id() == id)?;
+        let api_key = Self::runtime_api_key(entry)
+            .trim_matches(crate::python_value::python_whitespace)
+            .to_owned();
+        if api_key.is_empty() {
+            return None;
+        }
+        let base_url = entry
+            .runtime_base_url()
+            .as_str()
+            .map(|value| {
+                value
+                    .trim_matches(crate::python_value::python_whitespace)
+                    .trim_end_matches('/')
+                    .to_owned()
+            })
+            .filter(|value| !value.is_empty());
+        Some(RuntimeCredential {
+            id: id.into(),
+            api_key,
+            base_url,
+        })
     }
 
     /// Earliest epoch any entry re-enters rotation, or `None` when one is
@@ -1134,6 +1352,101 @@ impl CredentialPool {
     /// applies to API-key providers.)
     pub fn select(&mut self) -> Option<String> {
         self.select_unlocked()
+    }
+
+    pub fn select_runtime(&mut self) -> Option<RuntimeCredential> {
+        let id = self.select_unlocked()?;
+        self.runtime_credential(&id)
+    }
+
+    pub fn current_runtime(&mut self) -> Option<RuntimeCredential> {
+        let id = self
+            .current_id
+            .clone()
+            .or_else(|| self.available_entries(false).into_iter().next())?;
+        self.runtime_credential(&id)
+    }
+
+    /// Attribute a failed request to the exact key that was dispatched, mark
+    /// every duplicate row carrying that key, persist the failure state, and
+    /// select the next available entry. Network refresh remains outside this
+    /// synchronous state machine.
+    pub fn mark_exhausted_and_rotate(
+        &mut self,
+        status_code: Option<i64>,
+        error_context: Option<&Value>,
+        api_key_hint: Option<&str>,
+        credential_id: Option<&str>,
+        failure_reason: Option<&str>,
+    ) -> Option<RuntimeCredential> {
+        let identity_supplied = credential_id.is_some_and(|id| !id.is_empty())
+            || api_key_hint.is_some_and(|key| !key.is_empty());
+        let key_match = |entry: &PooledCredential| {
+            api_key_hint.is_some_and(|hint| Self::runtime_api_key(entry) == hint)
+        };
+        let mut index = credential_id
+            .filter(|id| !id.is_empty())
+            .and_then(|id| self.entries.iter().position(|entry| entry.id() == id));
+        if index.is_some_and(|index| api_key_hint.is_some() && !key_match(&self.entries[index])) {
+            index = self.entries.iter().position(key_match);
+        }
+        if index.is_none() && api_key_hint.is_some() {
+            index = self.entries.iter().position(key_match);
+        }
+        if index.is_none() && identity_supplied {
+            self.unmatched_rotation_streak = self.unmatched_rotation_streak.saturating_add(1);
+            let available_count = self.available_entries(false).len();
+            if self.unmatched_rotation_streak > available_count.max(1) {
+                self.unmatched_rotation_streak = 0;
+                self.current_id = None;
+                return None;
+            }
+            self.current_id = None;
+            let next = self.select_runtime();
+            if next.is_some() && self.available_entries(false).len() == 1 {
+                self.unmatched_rotation_streak = 0;
+                self.current_id = None;
+                return None;
+            }
+            return next;
+        }
+        self.unmatched_rotation_streak = 0;
+        let index = index.or_else(|| {
+            self.current_id
+                .as_deref()
+                .and_then(|id| self.entries.iter().position(|entry| entry.id() == id))
+        });
+        let index = match index {
+            Some(index) => index,
+            None => {
+                let id = self.select_unlocked()?;
+                self.entries.iter().position(|entry| entry.id() == id)?
+            }
+        };
+        let now = (self.clock)();
+        let failed_key = Self::runtime_api_key(&self.entries[index]);
+        self.entries[index] =
+            self.entries[index].with_failure(status_code, error_context, failure_reason, now);
+        self.persist_now(Vec::new());
+        if identity_supplied && !failed_key.is_empty() {
+            let mut sibling_marked = false;
+            for sibling in 0..self.entries.len() {
+                if sibling != index && Self::runtime_api_key(&self.entries[sibling]) == failed_key {
+                    self.entries[sibling] = self.entries[sibling].with_failure(
+                        status_code,
+                        error_context,
+                        failure_reason,
+                        now,
+                    );
+                    sibling_marked = true;
+                }
+            }
+            if sibling_marked {
+                self.persist_now(Vec::new());
+            }
+        }
+        self.current_id = None;
+        self.select_runtime()
     }
 
     /// Port of `peek`: the current selection if any, else the first available
@@ -1630,5 +1943,167 @@ mod tests {
             };
             assert_eq!(result, row["result"], "{row}");
         }
+    }
+
+    #[test]
+    fn request_failure_rotation_matches_compression_oracle() {
+        fn entry(id: &str, key: &str, priority: i64) -> PooledCredential {
+            PooledCredential::from_dict(
+                "openrouter",
+                &serde_json::json!({
+                    "id":id,
+                    "label":id,
+                    "auth_type":"api_key",
+                    "source":"manual",
+                    "priority":priority,
+                    "access_token":key,
+                }),
+            )
+            .unwrap()
+        }
+        let corpus: Value = serde_json::from_str(include_str!(
+            "../../../tools/compression-credential-recovery-goldens.json"
+        ))
+        .unwrap();
+        let expected = |name: &str| {
+            corpus["recovery_401_refresh_and_rotation"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|row| row["case"] == name)
+                .unwrap()
+        };
+
+        let mut disagreement = CredentialPool::new(
+            "openrouter",
+            vec![entry("or-k1", "key-1", 0), entry("or-k2", "key-2", 1)],
+            "fill_first",
+        )
+        .with_clock(|| 1_700_000_000.0);
+        let selected = disagreement.select_runtime().unwrap();
+        assert_eq!(selected.id(), "or-k1");
+        let next = disagreement
+            .mark_exhausted_and_rotate(
+                Some(401),
+                Some(&serde_json::json!({"message":"unauthorized"})),
+                Some("key-2"),
+                Some("or-k1"),
+                None,
+            )
+            .unwrap();
+        let row = expected("mark_exhausted_key_disagreement_trusts_actual_key");
+        assert_eq!(next.id(), row["rotated_to_id"].as_str().unwrap());
+        assert_eq!(
+            disagreement.entries()[0].last_status(),
+            row["or_k1_status"].as_str()
+        );
+        assert_eq!(
+            disagreement.entries()[1].last_status(),
+            row["or_k2_status"].as_str()
+        );
+
+        let mut siblings = CredentialPool::new(
+            "openrouter",
+            vec![
+                entry("s-k1", "duplicate", 0),
+                entry("s-k2", "duplicate", 1),
+                entry("s-k3", "healthy", 2),
+            ],
+            "fill_first",
+        )
+        .with_clock(|| 1_700_000_000.0);
+        let next = siblings
+            .mark_exhausted_and_rotate(
+                Some(429),
+                Some(&serde_json::json!({"message":"rate limited"})),
+                Some("duplicate"),
+                Some("s-k1"),
+                None,
+            )
+            .unwrap();
+        let row = expected("mark_exhausted_sibling_runtime_keys_marked");
+        assert_eq!(next.id(), row["rotated_to_id"].as_str().unwrap());
+        for (index, field) in [(0, "k1_status"), (1, "k2_status"), (2, "k3_status")] {
+            assert_eq!(siblings.entries()[index].last_status(), row[field].as_str());
+        }
+
+        let mut unmatched = CredentialPool::new(
+            "openrouter",
+            vec![entry("or-k1", "key-1", 0), entry("or-k2", "key-2", 1)],
+            "fill_first",
+        );
+        let row = expected("unmatched_key_streak_capped_at_available_count");
+        assert_eq!(
+            unmatched
+                .mark_exhausted_and_rotate(Some(401), None, Some("missing"), None, None)
+                .unwrap()
+                .id(),
+            row["lap_1_selected"].as_str().unwrap()
+        );
+        assert_eq!(
+            unmatched
+                .mark_exhausted_and_rotate(Some(401), None, Some("missing"), None, None)
+                .unwrap()
+                .id(),
+            row["lap_2_selected"].as_str().unwrap()
+        );
+        assert!(unmatched
+            .mark_exhausted_and_rotate(Some(401), None, Some("missing"), None, None)
+            .is_none());
+
+        let mut sole =
+            CredentialPool::new("openrouter", vec![entry("only", "key", 0)], "fill_first");
+        assert!(sole
+            .mark_exhausted_and_rotate(Some(401), None, Some("missing"), None, None)
+            .is_none());
+    }
+
+    #[test]
+    fn failure_status_and_cooldown_are_recorded_before_rotation() {
+        let make = || {
+            PooledCredential::from_dict(
+                "openrouter",
+                &serde_json::json!({
+                    "id":"key",
+                    "auth_type":"api_key",
+                    "source":"manual",
+                    "priority":0,
+                    "access_token":"fixture",
+                }),
+            )
+            .unwrap()
+        };
+        for (status, reason, ttl) in [
+            (401, None, 300.0),
+            (402, Some("billing"), 3600.0),
+            (429, None, 60.0),
+        ] {
+            let mut pool = CredentialPool::new("openrouter", vec![make()], "fill_first")
+                .with_clock(|| 1_700_000_000.0);
+            assert!(pool
+                .mark_exhausted_and_rotate(
+                    Some(status),
+                    Some(&serde_json::json!({"message":"fixture failure"})),
+                    Some("fixture"),
+                    Some("key"),
+                    reason,
+                )
+                .is_none());
+            let entry = &pool.entries()[0];
+            assert_eq!(entry.last_status(), Some("exhausted"));
+            assert_eq!(entry.to_dict()["last_error_code"], status);
+            assert_eq!(entry.cooldown_until(true), Some(1_700_000_000.0 + ttl));
+        }
+
+        let mut terminal = CredentialPool::new("openrouter", vec![make()], "fill_first")
+            .with_clock(|| 1_700_000_000.0);
+        terminal.mark_exhausted_and_rotate(
+            Some(401),
+            Some(&serde_json::json!({"reason":"invalid_grant"})),
+            Some("fixture"),
+            Some("key"),
+            None,
+        );
+        assert_eq!(terminal.entries()[0].last_status(), Some("dead"));
     }
 }

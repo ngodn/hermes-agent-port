@@ -58,9 +58,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   now discovers the ordered chat-compatible OpenRouter, custom, and registered
   API-key subset without a context floor. Profile-qualified shared health
   suppresses recent quota or unrefreshable-auth failures without mutating the
-  frozen candidate plan. Credential rotation, OAuth and Nous refresh,
-  non-chat transports, client-cache eviction, and dynamic provider plugins
-  remain open.
+  frozen candidate plan. Store-backed static API-key routes now select before
+  environment credentials, persist exact-key cooldowns under a cross-process
+  lock, rebuild failed request clients, and perform bounded same-provider
+  recovery without changing prompt bytes. OAuth and Nous refresh, non-chat
+  transports, the general client cache, and dynamic provider plugins remain
+  open.
 - Structural full-compression no-ops arm a conversation-local, in-memory 300
   second guard shared across pre-turn and same-turn paths. They never strike or
   persist the durable ineffective breaker. Successful boundaries and forced
@@ -120,6 +123,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-compression-credential-recovery-resolution.md](native-compression-credential-recovery-resolution.md) | Production static API-key pool selection and recovery, durable auth-store merge, fresh-client retry, prompt stability, live proof, and explicit OAuth limits |
+| [compression-credential-recovery-contract-agy.md](compression-credential-recovery-contract-agy.md) | AGY's source-executed Python pool and request-recovery contract, with retry and health summaries corrected against the source by the primary lane |
+| [compression-credential-recovery-rust-seam-claude.md](compression-credential-recovery-rust-seam-claude.md) | Claude's independent Rust ownership and concurrency map for request-local pools and profile isolation |
+| [compression-credential-recovery-review-claude.md](compression-credential-recovery-review-claude.md) | Claude's post-implementation correctness and security review plus primary dispositions |
+| [compression-credential-recovery-goldens.json](../tools/compression-credential-recovery-goldens.json) | Source-executed 64-case selection, identity, recovery, cooldown, health, eviction, retry, profile, and transport corpus |
 | [compression-builtin-discovery-resolution.md](compression-builtin-discovery-resolution.md) | Production native built-in discovery subset, profile-scoped health ownership, two-request auth budget, live HTTP proof, and explicit transport and credential deferrals |
 | [compression-builtin-discovery-contract-agy.md](compression-builtin-discovery-contract-agy.md) | AGY's Python discovery, health, credential-refresh, cache-eviction, and traversal contract, corrected against current source by the primary lane |
 | [compression-builtin-discovery-rust-seam-claude.md](compression-builtin-discovery-rust-seam-claude.md) | Claude's independent Rust ownership review and the primary disposition that retained shared health but froze secret-bearing candidates per conversation |

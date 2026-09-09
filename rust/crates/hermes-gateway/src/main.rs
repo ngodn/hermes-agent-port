@@ -518,7 +518,10 @@ fn build_native_compression_discovery(
     dotenv: &std::collections::HashMap<String, String>,
     environment: &mut impl FnMut(&str) -> Option<String>,
     home: &std::path::Path,
-) -> Vec<NativeAgentClient> {
+) -> Vec<(
+    NativeAgentClient,
+    Option<native_agent::CompressionPoolCredential>,
+)> {
     fn secret(
         name: &str,
         dotenv: &std::collections::HashMap<String, String>,
@@ -532,7 +535,40 @@ fn build_native_compression_discovery(
             .filter(|value| !value.is_empty())
     }
 
-    let mut entries = Vec::new();
+    let profile_auth = home.join("auth.json");
+    let root = config_file::hermes_root();
+    let root_auth =
+        (home.parent() == Some(root.join("profiles").as_path())).then(|| root.join("auth.json"));
+    let pool_runtime = |provider: &str| {
+        let locator = credential_pool::PoolLocator::new(
+            profile_auth.clone(),
+            root_auth.clone(),
+            provider,
+            credential_pool::pool_strategy(provider, user_config),
+        );
+        match locator.select_runtime() {
+            Ok(Some(runtime)) => Some((locator, runtime)),
+            Ok(None) => None,
+            Err(error) => {
+                tracing::debug!(
+                    provider,
+                    error = %compression_redact::redact(&error.to_string()),
+                    "compression credential pool unavailable"
+                );
+                None
+            }
+        }
+    };
+
+    type DiscoveryEntry = (
+        serde_json::Value,
+        Option<(
+            credential_pool::PoolLocator,
+            credential_pool::RuntimeCredential,
+            String,
+        )>,
+    );
+    let mut entries: Vec<DiscoveryEntry> = Vec::new();
     let openrouter_model = user_config["auxiliary"]["openrouter_model"]
         .as_str()
         .map(str::trim)
@@ -542,13 +578,29 @@ fn build_native_compression_discovery(
     let openrouter_free =
         openrouter_model.ends_with(":free") || openrouter_model.starts_with("stealth/");
     if !free_only || openrouter_free {
-        if let Some(api_key) = secret("OPENROUTER_API_KEY", dotenv, environment) {
-            entries.push(serde_json::json!({
-                "provider":"openrouter",
-                "model":openrouter_model,
-                "base_url":"https://openrouter.ai/api/v1",
-                "api_key":api_key,
-            }));
+        let fallback_base_url = "https://openrouter.ai/api/v1".to_owned();
+        let pooled = pool_runtime("openrouter");
+        let api_key = pooled
+            .as_ref()
+            .map(|(_, runtime)| runtime.api_key().to_owned())
+            .or_else(|| secret("OPENROUTER_API_KEY", dotenv, environment));
+        if let Some(api_key) = api_key {
+            let base_url = pooled
+                .as_ref()
+                .and_then(|(_, runtime)| runtime.base_url())
+                .unwrap_or(&fallback_base_url)
+                .to_owned();
+            let binding =
+                pooled.map(|(locator, runtime)| (locator, runtime, fallback_base_url.clone()));
+            entries.push((
+                serde_json::json!({
+                    "provider":"openrouter",
+                    "model":openrouter_model,
+                    "base_url":base_url,
+                    "api_key":api_key,
+                }),
+                binding,
+            ));
         }
     }
 
@@ -565,25 +617,48 @@ fn build_native_compression_discovery(
             .to_lowercase()
             .starts_with("https://chatgpt.com/backend-api/codex")
     {
-        entries.push(serde_json::json!({
-            "provider":requested_main,
-            "model":main_model,
-            "base_url":main_base_url,
-            "api_key":main_key,
-        }));
+        entries.push((
+            serde_json::json!({
+                "provider":requested_main,
+                "model":main_model,
+                "base_url":main_base_url,
+                "api_key":main_key,
+            }),
+            None,
+        ));
     }
 
     for profile in compression_discovery::ordered_native_profiles(profiles) {
-        entries.push(serde_json::json!({
+        let fallback_base_url = profile
+            .env_vars
+            .iter()
+            .find(|name| name.ends_with("_URL"))
+            .and_then(|name| dotenv.get(name).cloned().or_else(|| environment(name)))
+            .map(|value| value.trim().trim_end_matches('/').to_owned())
+            .filter(|value| !value.is_empty())
+            .unwrap_or_else(|| profile.base_url.clone());
+        let pooled = pool_runtime(&profile.name);
+        let mut entry = serde_json::json!({
             "provider":profile.name,
             "model":profile.default_aux_model,
-        }));
+        });
+        if let Some((_, runtime)) = &pooled {
+            entry["api_key"] = serde_json::json!(runtime.api_key());
+            if let Some(base_url) = runtime.base_url() {
+                entry["base_url"] = serde_json::json!(base_url);
+            }
+        }
+        let binding = pooled.map(|(locator, runtime)| (locator, runtime, fallback_base_url));
+        entries.push((entry, binding));
     }
 
     entries
         .iter()
-        .filter_map(compression_auxiliary::FallbackChainEntry::from_value)
-        .filter_map(|entry| {
+        .filter_map(|(value, binding)| {
+            compression_auxiliary::FallbackChainEntry::from_value(value)
+                .map(|entry| (entry, binding.clone()))
+        })
+        .filter_map(|(entry, binding)| {
             match build_native_compression_client(
                 CompressionRouteConfig::BuiltinDiscovery {
                     entry: &entry,
@@ -599,7 +674,16 @@ fn build_native_compression_discovery(
                 environment,
                 home,
             ) {
-                Ok(Some(client)) => Some(client),
+                Ok(Some(client)) => {
+                    let binding = binding.map(|(locator, runtime, fallback_base_url)| {
+                        native_agent::CompressionPoolCredential::new(
+                            locator,
+                            runtime,
+                            fallback_base_url,
+                        )
+                    });
+                    Some((client, binding))
+                }
                 Ok(None) => None,
                 Err(error) => {
                     tracing::debug!(
@@ -1140,11 +1224,12 @@ fn build_agent_client_for_home_with_discovery(
                             &mut environment,
                             home,
                         );
-                        compression_discovery = native_agent::CompressionDiscovery::new(
-                            home,
-                            candidates,
-                            compression_health.clone(),
-                        );
+                        compression_discovery =
+                            native_agent::CompressionDiscovery::new_with_pool_credentials(
+                                home,
+                                candidates,
+                                compression_health.clone(),
+                            );
                     }
                     if primary_compression.is_some()
                         || !compression_fallbacks.is_empty()
@@ -2207,6 +2292,21 @@ mod startup_tests {
             ),
         )
         .unwrap();
+        std::fs::write(
+            home.0.join("auth.json"),
+            serde_json::to_vec(&json!({
+                "credential_pool":{"gmi":[{
+                    "id":"gmi-pool",
+                    "auth_type":"api_key",
+                    "source":"manual",
+                    "priority":0,
+                    "access_token":"gmi-pool-key",
+                    "base_url":discovery_url,
+                }]}
+            }))
+            .unwrap(),
+        )
+        .unwrap();
         let user_config = json!({
             "model":{"provider":"custom"},
             "auxiliary":{"compression":{
@@ -2402,7 +2502,7 @@ mod startup_tests {
         assert_eq!(main_guard.len(), 3);
         assert_eq!(discovery_guard.len(), 1);
         let (headers, body) = &discovery_guard[0];
-        assert_eq!(headers["authorization"], "Bearer gmi-key");
+        assert_eq!(headers["authorization"], "Bearer gmi-pool-key");
         assert_eq!(body["model"], "google/gemini-3.1-flash-lite-preview");
         assert_eq!(body["route_marker"], "discovery-task");
         assert_eq!(body["messages"], main_guard[2].1["messages"]);

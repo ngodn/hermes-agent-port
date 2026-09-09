@@ -1,15 +1,18 @@
 # Full Rust port progress audit, updated 2026-09-10
 
-Current estimate: **55.50% of the full native replacement**, reported as
-**about 56%**, with a reasonable judgment range of **53% to 58%**. The native
+Current estimate: **56.05% of the full native replacement**, reported as
+**about 56%**, with a reasonable judgment range of **54% to 59%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
 static user deny rules with live last-known-good reload and manual approval on
 the three native push adapters. Full-compression summaries also use frozen,
 failure-scoped task and top-level configured fallback tiers, followed by the
 chat-compatible built-in discovery subset with profile-qualified shared
-health. The estimate remains conservative because credential recovery, OAuth
-and non-chat provider transports, smart approval, PTY and notification
+health. Store-backed static API-key discovery routes now recover from exact-key
+auth, payment, and rate failures with durable cooldowns and fresh request
+clients. The estimate remains conservative because OAuth and single-use
+credential recovery, main-provider failover, non-chat provider transports,
+smart approval, PTY and notification
 support, remote execution, most tools, and the underlying plugin and
 external-memory managers are not native.
 
@@ -28,11 +31,11 @@ audits.
 | --- | ---: | ---: | ---: |
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
-| State and search | 15% | 73% | 10.95 |
-| Native agent core | 20% | 68% | 13.60 |
-| Total | 100% | | **55.50** |
+| State and search | 15% | 74% | 11.10 |
+| Native agent core | 20% | 70% | 14.00 |
+| Total | 100% | | **56.05** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 73 + 0.20 * 68 = 55.50`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 74 + 0.20 * 70 = 56.05`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -135,7 +138,7 @@ tools, plugin
 discovery/management, and full backend RPC account for most of this weighted
 area and remain.
 
-### State and search, 73%
+### State and search, 74%
 
 SQLite history, structured content replay, FTS foundations, route persistence,
 legacy recovery, peer ownership, lineage, conversation generations, prompt
@@ -177,12 +180,18 @@ metadata, and timestamps as part of its exact snapshot CAS. Stored adjacent
 summary and anchor user rows are accepted only through the same provider repair
 used on outbound requests, while incomplete tool-call groups remain invalid.
 
+The auth store now has a production read/modify/write path for ordinary API-key
+pools. It serializes across threads and processes, merges concurrent additions
+and newer live cooldowns, treats a changed token as re-authentication, and uses
+the existing private atomic writer without replacing symlinks. OAuth
+single-use root write-through remains deferred.
+
 Full schema and migration parity, session search projection, archive/pin/read
 state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 68%
+### Native agent core, 70%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -285,6 +294,15 @@ and an unrefreshable 401 admits at most one successor. Local HTTP tests prove
 request order, health reuse, failure bounds, exact message reuse, and auxiliary
 usage identity.
 
+Static API-key discovery candidates now consult the profile/root credential
+pool before environment keys. Recovery attributes the failure to the exact
+dispatched key, persists duplicate-key cooldowns before retry, and reloads the
+store for each mutation so concurrent processes share durable truth. Auth and
+payment failures rotate immediately; ordinary 429 responses get one retry on
+the dispatched key first. One rotated-key request uses a newly built HTTP
+client, and a second credential failure is recorded without another request.
+The request body stays byte-identical and tool-free across rotation.
+
 Structurally impossible full-compression attempts now arm a 300 second
 conversation-local monotonic guard instead of incrementing the durable
 ineffective breaker. Pre-turn and same-turn paths share the guard, a live
@@ -327,10 +345,10 @@ retain Python's empty `old_session_id`; rotation events carry the archived
 parent. A clone-shared conversation counter survives frozen-client cache rekeys,
 and hook execution never delays or rolls back compression.
 
-Credential-pool rotation and OAuth refresh, Nous device-code discovery,
-non-chat auxiliary transports, dynamic provider-plugin discovery, poisoned
-client eviction, context-engine and relay-boundary notifications, overflow
-recovery, broader provider failover loops,
+Main-provider credential-pool failover, OAuth and single-use refresh, Nous
+device-code discovery, non-chat auxiliary transports, dynamic provider-plugin
+discovery, the general auxiliary client cache, context-engine and
+relay-boundary notifications, overflow recovery, broader provider failover loops,
 delegation/subagents, full
 smart approval and clarification flows, memory and plugin managers, skill execution,
 context invalidation policy, and several agent-loop recovery behaviors remain.
@@ -339,8 +357,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,820 passing Rust tests and two expected ignores
-(1,819 gateway plus one core test).
+The workspace currently has 1,827 passing Rust tests and two expected ignores
+(1,826 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -348,13 +366,13 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,820 passed, two ignored (1,819 gateway plus one core).
+- Full Rust workspace: 1,827 passed, two ignored (1,826 gateway plus one core).
 - Selected Python fallback contracts: 20 passed across isolated commands.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 112 task fallback-chain, 76 top-level
-  fallback-chain, 97 built-in discovery, 24 structural-backoff, and 60
-  handoff-layer cases, plus the 233-case terminal and approval corpus, 76
+  fallback-chain, 97 built-in discovery, 64 credential-recovery, 24
+  structural-backoff, and 60 handoff-layer cases, plus the 233-case terminal and approval corpus, 76
   interactive-approval cases, and 251 exhaustive dangerous-command cases.
 - Rust and Python formatting, Ruff, Clippy with warnings denied, and
   `git diff --check`: passed.
@@ -365,9 +383,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Credential-pool and OAuth recovery, remaining discovery transports, overflow
-   recovery, repeated-compression status, and context-engine adoption complete
-   the current compression cluster.
+1. OAuth and single-use recovery, main-provider failover, remaining discovery
+   transports, overflow recovery, repeated-compression status, and
+   context-engine adoption complete the current compression cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
 3. Smart and Tirith approval, PTY and remote terminal modes, then file, browser,

@@ -1,5 +1,46 @@
 # Hermes Rust rewrite
 
+## Native compression API-key recovery: 2026-09-10
+
+Native auxiliary auto-discovery now chooses profile-scoped store-backed API
+keys before environment credentials and performs bounded request-time recovery
+for the chat-completions provider subset. Exact failed-key attribution protects
+healthy siblings from stale IDs, duplicate rows sharing one key are quarantined
+together, and 401, payment, and rate-limit cooldowns are durable before any
+replacement request begins.
+
+Every mutation reloads a request-local pool from `auth.json`. Writes serialize
+across threads and processes, merge concurrent additions plus newer live
+cooldowns, preserve re-authenticated tokens, keep Unix mode `0600`, and update
+symlink targets without replacing the link. A replacement key gets a fresh
+`reqwest::Client`, so stale connection and authorization state cannot leak into
+the retry. The frozen summary prompt, message body, tool-free request surface,
+provider headers, and conversation prompt remain unchanged.
+
+The production retry tree follows the current Python source: 401 and payment
+failures rotate immediately, while an ordinary 429 first retries the dispatched
+key once. One rotated-key request is allowed, and a second credential failure
+is persisted without another request. A real local HTTP plus filesystem test
+proves persistence-before-retry, byte-identical JSON bodies, fresh
+authorization, later selection of the healthy key, and pool precedence over an
+environment key.
+
+AGY owned the 64-case source-executed pool and recovery corpus. Claude owned a
+separate Rust ownership map and a post-implementation review. The primary lane
+checked both against the live source, corrected helper summaries about default
+health TTL and the ordinary-429 request count, and integrated the production
+path. See
+[native-compression-credential-recovery-resolution.md](analysis/native-compression-credential-recovery-resolution.md).
+
+The refreshed weighted audit is **56.05 points, reported as about 56%**
+(judgment range 54% to 59%). This moves native agent core from 68% to 70% and
+state/search from 73% to 74%; gateway and tool/RPC estimates are unchanged.
+OAuth and single-use credential refresh, Nous discovery, non-chat transports,
+main-provider failover, dynamic provider plugins, and the general auxiliary
+client cache remain. Validation is **1,827 Rust tests passed, two ignored**.
+The 64-case Python corpus regenerates byte for byte. Rust and Python formatting,
+Ruff, workspace Clippy with warnings denied, and diff hygiene pass.
+
 ## Native compression built-in discovery subset: 2026-09-10
 
 Native full compression in auxiliary auto mode now continues from the frozen

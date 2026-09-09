@@ -463,20 +463,226 @@ struct CompressionRoutes {
 pub(crate) struct CompressionDiscovery {
     profile_home: std::path::PathBuf,
     candidates: Vec<NativeAgentClient>,
+    pool_credentials: Vec<Option<CompressionPoolCredential>>,
     health: std::sync::Arc<crate::compression_discovery::Health>,
 }
 
+/// Conversation-scoped handle for one store-backed discovery credential.
+/// The durable pool is reloaded for mutations; this only remembers the key
+/// selected for the next request so a failed client is not reused.
+#[derive(Clone)]
+pub(crate) struct CompressionPoolCredential {
+    locator: crate::credential_pool::PoolLocator,
+    current: std::sync::Arc<std::sync::Mutex<Option<crate::credential_pool::RuntimeCredential>>>,
+    fallback_base_url: String,
+}
+
+impl CompressionPoolCredential {
+    pub(crate) fn new(
+        locator: crate::credential_pool::PoolLocator,
+        current: crate::credential_pool::RuntimeCredential,
+        fallback_base_url: impl Into<String>,
+    ) -> Self {
+        Self {
+            locator,
+            current: std::sync::Arc::new(std::sync::Mutex::new(Some(current))),
+            fallback_base_url: fallback_base_url.into(),
+        }
+    }
+
+    fn current(&self) -> Option<crate::credential_pool::RuntimeCredential> {
+        self.current
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .clone()
+    }
+
+    fn rotate_after_failure(
+        &self,
+        error: &Error,
+    ) -> anyhow::Result<Option<crate::credential_pool::RuntimeCredential>> {
+        let failed = self.current().ok_or_else(|| {
+            anyhow::anyhow!("credential pool has no dispatched credential to recover")
+        })?;
+        let status = compression_status_code(error);
+        let safe_message = crate::compression_redact::redact(&error.to_string());
+        let context = json!({"message":safe_message, "status_code":status});
+        let payment = compression_payment_failure(error);
+        let next = self.locator.mark_exhausted_and_rotate(
+            status,
+            Some(&context),
+            Some(failed.api_key()),
+            Some(failed.id()),
+            payment.then_some("billing"),
+        )?;
+        *self
+            .current
+            .lock()
+            .unwrap_or_else(|error| error.into_inner()) = next.clone();
+        Ok(next)
+    }
+}
+
 impl CompressionDiscovery {
+    #[cfg(test)]
     pub(crate) fn new(
         profile_home: &std::path::Path,
         candidates: Vec<NativeAgentClient>,
         health: std::sync::Arc<crate::compression_discovery::Health>,
     ) -> Option<Self> {
         (!candidates.is_empty()).then(|| Self {
+            pool_credentials: vec![None; candidates.len()],
             profile_home: profile_home.to_path_buf(),
             candidates,
             health,
         })
+    }
+
+    pub(crate) fn new_with_pool_credentials(
+        profile_home: &std::path::Path,
+        candidates: Vec<(NativeAgentClient, Option<CompressionPoolCredential>)>,
+        health: std::sync::Arc<crate::compression_discovery::Health>,
+    ) -> Option<Self> {
+        if candidates.is_empty() {
+            return None;
+        }
+        let (candidates, pool_credentials) = candidates.into_iter().unzip();
+        Some(Self {
+            profile_home: profile_home.to_path_buf(),
+            candidates,
+            pool_credentials,
+            health,
+        })
+    }
+
+    fn request_client(&self, index: usize) -> Result<Option<NativeAgentClient>> {
+        let client = self.candidates[index].clone();
+        match &self.pool_credentials[index] {
+            Some(binding) => binding.current().map_or(Ok(None), |credential| {
+                let base_url = credential
+                    .base_url()
+                    .unwrap_or(&binding.fallback_base_url)
+                    .trim_end_matches('/');
+                if client.api_key == credential.api_key() && client.base_url == base_url {
+                    Ok(Some(client))
+                } else {
+                    client
+                        .with_runtime_credential(&credential, &binding.fallback_base_url)
+                        .map(Some)
+                }
+            }),
+            None => Ok(Some(client)),
+        }
+    }
+
+    #[cfg(test)]
+    fn rotate_after_failure(
+        &self,
+        index: usize,
+        error: &Error,
+    ) -> Result<Option<NativeAgentClient>> {
+        let Some(binding) = &self.pool_credentials[index] else {
+            return Ok(None);
+        };
+        let next = binding.rotate_after_failure(error).map_err(|error| {
+            Error::Other(format!("native compression credential recovery: {error}"))
+        })?;
+        next.map(|credential| {
+            self.candidates[index]
+                .clone()
+                .with_runtime_credential(&credential, &binding.fallback_base_url)
+        })
+        .transpose()
+    }
+
+    async fn rotate_after_failure_async(
+        &self,
+        index: usize,
+        error: &Error,
+    ) -> Result<Option<NativeAgentClient>> {
+        let Some(binding) = self.pool_credentials[index].clone() else {
+            return Ok(None);
+        };
+        let candidate = self.candidates[index].clone();
+        let fallback_base_url = binding.fallback_base_url.clone();
+        let owned_error = Error::Other(error.to_string());
+        tokio::task::spawn_blocking(move || {
+            let next = binding
+                .rotate_after_failure(&owned_error)
+                .map_err(|error| {
+                    Error::Other(format!("native compression credential recovery: {error}"))
+                })?;
+            next.map(|credential| {
+                candidate.with_runtime_credential(&credential, &fallback_base_url)
+            })
+            .transpose()
+        })
+        .await
+        .map_err(|error| Error::Other(format!("compression credential worker failed: {error}")))?
+    }
+
+    fn pool_has_current(&self, index: usize) -> bool {
+        self.pool_credentials
+            .get(index)
+            .and_then(Option::as_ref)
+            .is_some_and(|binding| binding.current().is_some())
+    }
+
+    async fn recover_summary(
+        &self,
+        index: usize,
+        failed_client: &NativeAgentClient,
+        database: Option<&crate::session_db::SessionDb>,
+        session_id: &str,
+        prompt: &str,
+        first_error: Error,
+    ) -> Result<Option<String>> {
+        // Python gives an ordinary 429 one cheap retry on the dispatched key
+        // before it accounts for exhaustion. Auth and payment failures rotate
+        // immediately because the same credential cannot recover them.
+        let mut recovery_error = first_error;
+        if compression_rate_limit_failure(&recovery_error) {
+            match failed_client
+                .summarize_history_on(database, session_id, prompt)
+                .await
+            {
+                Ok(result) => return Ok(result),
+                Err(error)
+                    if compression_auth_failure(&error)
+                        || compression_payment_failure(&error)
+                        || compression_rate_limit_failure(&error) =>
+                {
+                    recovery_error = error;
+                }
+                Err(error) => return Err(error),
+            }
+        }
+
+        let rotated = match self
+            .rotate_after_failure_async(index, &recovery_error)
+            .await
+        {
+            Ok(Some(client)) => client,
+            Ok(None) => return Err(recovery_error),
+            Err(error) => return Err(error),
+        };
+        match rotated
+            .summarize_history_on(database, session_id, prompt)
+            .await
+        {
+            Ok(result) => Ok(result),
+            Err(error)
+                if compression_auth_failure(&error)
+                    || compression_payment_failure(&error)
+                    || compression_rate_limit_failure(&error) =>
+            {
+                // Account for the replacement immediately, but do not spend a
+                // third rotated-key request in this compression attempt.
+                self.rotate_after_failure_async(index, &error).await?;
+                Err(error)
+            }
+            Err(error) => Err(error),
+        }
     }
 
     fn is_unhealthy(&self, provider: &str) -> bool {
@@ -508,6 +714,15 @@ fn compression_failure_scope(error: &Error) -> crate::compression_auxiliary::Fai
 
 fn compression_auth_failure(error: &Error) -> bool {
     error.to_string().to_lowercase().contains("http 401")
+}
+
+fn compression_status_code(error: &Error) -> Option<i64> {
+    let text = error.to_string().to_lowercase();
+    (400..=599).find(|status| text.contains(&format!("http {status}")))
+}
+
+fn compression_rate_limit_failure(error: &Error) -> bool {
+    compression_status_code(error) == Some(429) && !compression_payment_failure(error)
 }
 
 fn compression_payment_failure(error: &Error) -> bool {
@@ -644,6 +859,24 @@ impl NativeAgentClient {
             max_concurrent_children: 10,
             tools: Vec::new(),
         })
+    }
+
+    fn with_runtime_credential(
+        mut self,
+        credential: &crate::credential_pool::RuntimeCredential,
+        fallback_base_url: &str,
+    ) -> Result<Self> {
+        self.api_key = credential.api_key().to_owned();
+        self.base_url = credential
+            .base_url()
+            .unwrap_or(fallback_base_url)
+            .trim_end_matches('/')
+            .to_owned();
+        self.client = reqwest::Client::builder()
+            .build()
+            .map_err(|error| Error::Other(format!("native agent: rebuild http client: {error}")))?;
+        self.compression_routes = Default::default();
+        Ok(self)
     }
 
     /// Install the assembled prompt when constructing a conversation client.
@@ -1468,6 +1701,20 @@ impl NativeAgentClient {
                     index,
                 } => (client, kind.label(), index, Some(kind)),
             };
+            let runtime_client = if kind == Some(AuxiliaryKind::BuiltinDiscovery) {
+                self.compression_routes
+                    .discovery
+                    .as_ref()
+                    .map(|discovery| discovery.request_client(index))
+                    .transpose()?
+                    .flatten()
+            } else {
+                None
+            };
+            if kind == Some(AuxiliaryKind::BuiltinDiscovery) && runtime_client.is_none() {
+                continue;
+            }
+            let client = runtime_client.as_ref().unwrap_or(client);
             if kind.is_none() && self.compression_routes.main_first {
                 if let Some(discovery) = self.compression_routes.discovery.as_ref() {
                     if discovery.is_unhealthy(client.provider_name()) {
@@ -1624,11 +1871,43 @@ impl NativeAgentClient {
                     );
                 }
                 Err(error) => {
-                    let auth_failure = compression_auth_failure(&error);
-                    let payment_failure = compression_payment_failure(&error);
+                    let mut error = error;
                     if kind == Some(AuxiliaryKind::BuiltinDiscovery) {
+                        let recoverable = compression_auth_failure(&error)
+                            || compression_payment_failure(&error)
+                            || compression_rate_limit_failure(&error);
+                        if let Some(discovery) = self.compression_routes.discovery.as_ref() {
+                            if recoverable
+                                && discovery
+                                    .pool_credentials
+                                    .get(index)
+                                    .is_some_and(Option::is_some)
+                            {
+                                match discovery
+                                    .recover_summary(
+                                        index, client, database, session_id, &prompt, error,
+                                    )
+                                    .await
+                                {
+                                    Ok(Some(summary)) => return Ok(Some(summary)),
+                                    Ok(None) => {
+                                        return Err(Error::Other(
+                                            "built-in discovery returned no usable summary".into(),
+                                        ))
+                                    }
+                                    Err(recovery_error) => error = recovery_error,
+                                }
+                            }
+                        }
+                        let auth_failure = compression_auth_failure(&error);
+                        let payment_failure = compression_payment_failure(&error);
                         if auth_failure {
-                            if let Some(discovery) = self.compression_routes.discovery.as_ref() {
+                            if let Some(discovery) = self
+                                .compression_routes
+                                .discovery
+                                .as_ref()
+                                .filter(|discovery| !discovery.pool_has_current(index))
+                            {
                                 discovery.mark_unhealthy(client.provider_name());
                             }
                             if discovery_attempts >= 2 {
@@ -1637,8 +1916,15 @@ impl NativeAgentClient {
                             first_error.get_or_insert(error);
                             continue;
                         }
+                        if payment_failure {
+                            if let Some(discovery) = self.compression_routes.discovery.as_ref() {
+                                discovery.mark_unhealthy(client.provider_name());
+                            }
+                        }
                         return Err(error);
                     }
+                    let auth_failure = compression_auth_failure(&error);
+                    let payment_failure = compression_payment_failure(&error);
                     if kind == Some(AuxiliaryKind::MainFallback) && !auth_failure {
                         return Err(error);
                     }
@@ -3949,6 +4235,352 @@ mod tests {
             .unwrap();
         assert_eq!(summary.as_deref(), Some("healthy summary"));
         assert_eq!(&*repeat_order.lock().unwrap(), &["main", "successor"]);
+    }
+
+    #[tokio::test]
+    async fn compression_pool_persists_failure_before_fresh_client_retry() {
+        use axum::{
+            body::Bytes,
+            extract::State,
+            http::{HeaderMap, StatusCode},
+            response::IntoResponse,
+            routing::post,
+            Router,
+        };
+        use std::sync::{Arc, Mutex};
+
+        #[derive(Clone)]
+        struct Capture {
+            auth_path: std::path::PathBuf,
+            authorizations: Arc<Mutex<Vec<String>>>,
+            pool_bodies: Arc<Mutex<Vec<Vec<u8>>>>,
+            persisted_before_retry: Arc<Mutex<bool>>,
+        }
+
+        async fn complete(
+            State(capture): State<Capture>,
+            headers: HeaderMap,
+            body: Bytes,
+        ) -> impl IntoResponse {
+            let authorization = headers
+                .get("authorization")
+                .and_then(|value| value.to_str().ok())
+                .unwrap_or("")
+                .to_owned();
+            capture
+                .authorizations
+                .lock()
+                .unwrap()
+                .push(authorization.clone());
+            if authorization == "Bearer main-key" {
+                return (
+                    StatusCode::OK,
+                    axum::Json(serde_json::json!({
+                        "choices":[{"finish_reason":"length","message":{"content":"partial"}}]
+                    })),
+                )
+                    .into_response();
+            }
+            capture.pool_bodies.lock().unwrap().push(body.to_vec());
+            if authorization == "Bearer key-one" {
+                return (
+                    StatusCode::UNAUTHORIZED,
+                    axum::Json(serde_json::json!({"error":"expired"})),
+                )
+                    .into_response();
+            }
+            let persisted = crate::auth_store::load(&capture.auth_path)
+                .ok()
+                .and_then(|store| {
+                    store["credential_pool"]["openrouter"]
+                        .as_array()
+                        .and_then(|rows| rows.first())
+                        .and_then(|row| row["last_status"].as_str())
+                        .map(|status| status == "exhausted")
+                })
+                .unwrap_or(false);
+            *capture.persisted_before_retry.lock().unwrap() = persisted;
+            (
+                StatusCode::OK,
+                axum::Json(serde_json::json!({
+                    "choices":[{"finish_reason":"stop","message":{"content":"rotated summary"}}]
+                })),
+            )
+                .into_response()
+        }
+
+        let dir = std::env::temp_dir().join(format!(
+            "hermes-compression-pool-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&dir).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(dir.clone());
+        let auth_path = dir.join("auth.json");
+        std::fs::write(
+            &auth_path,
+            serde_json::to_vec(&serde_json::json!({
+                "credential_pool":{"openrouter":[
+                    {"id":"one","auth_type":"api_key","source":"manual","priority":0,"access_token":"key-one"},
+                    {"id":"two","auth_type":"api_key","source":"manual","priority":1,"access_token":"key-two"}
+                ]}
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+
+        let capture = Capture {
+            auth_path: auth_path.clone(),
+            authorizations: Default::default(),
+            pool_bodies: Default::default(),
+            persisted_before_retry: Default::default(),
+        };
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let application = Router::new()
+            .route("/chat/completions", post(complete))
+            .with_state(capture.clone());
+        let server = tokio::spawn(async move {
+            axum::serve(listener, application).await.unwrap();
+        });
+        let base_url = format!("http://{address}");
+        let locator = crate::credential_pool::PoolLocator::new(
+            auth_path.clone(),
+            None,
+            "openrouter",
+            "fill_first",
+        );
+        let selected = locator.select_runtime().unwrap().unwrap();
+        assert_eq!(selected.id(), "one");
+        let candidate = super::NativeAgentClient::new("summary-model", "stale", &base_url)
+            .unwrap()
+            .with_provider_identity("openrouter");
+        let binding = super::CompressionPoolCredential::new(locator.clone(), selected, &base_url);
+        let discovery = super::CompressionDiscovery::new_with_pool_credentials(
+            &dir,
+            vec![(candidate, Some(binding))],
+            Arc::new(crate::compression_discovery::Health::default()),
+        );
+        let client = super::NativeAgentClient::new("main-model", "main-key", &base_url)
+            .unwrap()
+            .with_provider_identity("custom")
+            .with_compression_routes(None, Vec::new(), Vec::new(), discovery, true, None);
+        let history = [crate::session_db::CompressionHistoryMessage {
+            id: 1,
+            message: crate::session_db::HistoryMessage {
+                role: "user".into(),
+                content: "unchanged prompt fixture".into(),
+                api_content: None,
+            },
+            tool_call_id: None,
+            tool_calls: None,
+            tool_name: None,
+            effect_disposition: None,
+            finish_reason: None,
+            reasoning: None,
+            reasoning_content: None,
+            reasoning_details: None,
+            codex_reasoning_items: None,
+            codex_message_items: None,
+            display_kind: None,
+            display_metadata: None,
+            timestamp: 0.0,
+            compressed_summary: false,
+        }];
+
+        let summary = client
+            .summarize_history(None, "pool-recovery", &history, None)
+            .await
+            .unwrap();
+        assert_eq!(summary.as_deref(), Some("rotated summary"));
+        assert_eq!(
+            &*capture.authorizations.lock().unwrap(),
+            &["Bearer main-key", "Bearer key-one", "Bearer key-two"]
+        );
+        assert!(*capture.persisted_before_retry.lock().unwrap());
+        let bodies = capture.pool_bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2);
+        assert_eq!(bodies[0], bodies[1]);
+        let body: serde_json::Value = serde_json::from_slice(&bodies[0]).unwrap();
+        assert!(body.get("tools").is_none());
+        drop(bodies);
+        assert_eq!(locator.select_runtime().unwrap().unwrap().id(), "two");
+        server.abort();
+    }
+
+    #[test]
+    fn exhausted_compression_pool_drops_the_frozen_failed_client() {
+        let dir = std::env::temp_dir().join(format!(
+            "hermes-compression-pool-empty-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&dir).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(dir.clone());
+        let auth_path = dir.join("auth.json");
+        std::fs::write(
+            &auth_path,
+            serde_json::to_vec(&serde_json::json!({
+                "credential_pool":{"openrouter":[{
+                    "id":"only","auth_type":"api_key","source":"manual",
+                    "priority":0,"access_token":"failed-key"
+                }]}
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let locator =
+            crate::credential_pool::PoolLocator::new(auth_path, None, "openrouter", "fill_first");
+        let selected = locator.select_runtime().unwrap().unwrap();
+        let candidate =
+            super::NativeAgentClient::new("summary-model", "failed-key", "http://127.0.0.1:1")
+                .unwrap()
+                .with_provider_identity("openrouter");
+        let binding =
+            super::CompressionPoolCredential::new(locator, selected, "http://127.0.0.1:1");
+        let discovery = super::CompressionDiscovery::new_with_pool_credentials(
+            &dir,
+            vec![(candidate, Some(binding))],
+            Default::default(),
+        )
+        .unwrap();
+
+        assert!(discovery
+            .rotate_after_failure(
+                0,
+                &hermes_core::Error::Other("native full compression HTTP 401 Unauthorized".into(),),
+            )
+            .unwrap()
+            .is_none());
+        assert!(discovery.request_client(0).unwrap().is_none());
+    }
+
+    #[tokio::test]
+    async fn compression_pool_429_retries_failed_key_but_402_rotates_immediately() {
+        use axum::{
+            extract::State,
+            http::{HeaderMap, StatusCode},
+            response::IntoResponse,
+            routing::post,
+            Json, Router,
+        };
+        use std::sync::{Arc, Mutex};
+
+        async fn complete(
+            State(authorizations): State<Arc<Mutex<Vec<String>>>>,
+            headers: HeaderMap,
+        ) -> impl IntoResponse {
+            let authorization = headers["authorization"].to_str().unwrap().to_owned();
+            authorizations.lock().unwrap().push(authorization.clone());
+            if authorization == "Bearer key-one" {
+                return (
+                    StatusCode::TOO_MANY_REQUESTS,
+                    Json(serde_json::json!({"error":"rate limited"})),
+                )
+                    .into_response();
+            }
+            (
+                StatusCode::OK,
+                Json(serde_json::json!({
+                    "choices":[{"finish_reason":"stop","message":{"content":"summary"}}]
+                })),
+            )
+                .into_response()
+        }
+
+        let dir = std::env::temp_dir().join(format!(
+            "hermes-compression-pool-status-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&dir).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(dir.clone());
+        let authorizations: Arc<Mutex<Vec<String>>> = Default::default();
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let application = Router::new()
+            .route("/chat/completions", post(complete))
+            .with_state(authorizations.clone());
+        let server = tokio::spawn(async move {
+            axum::serve(listener, application).await.unwrap();
+        });
+
+        for (status, expected) in [
+            (402, vec!["Bearer key-two"]),
+            (429, vec!["Bearer key-one", "Bearer key-two"]),
+        ] {
+            authorizations.lock().unwrap().clear();
+            let auth_path = dir.join(format!("auth-{status}.json"));
+            std::fs::write(
+                &auth_path,
+                serde_json::to_vec(&serde_json::json!({
+                    "credential_pool":{"openrouter":[
+                        {"id":"one","auth_type":"api_key","source":"manual","priority":0,"access_token":"key-one"},
+                        {"id":"two","auth_type":"api_key","source":"manual","priority":1,"access_token":"key-two"}
+                    ]}
+                }))
+                .unwrap(),
+            )
+            .unwrap();
+            let locator = crate::credential_pool::PoolLocator::new(
+                auth_path,
+                None,
+                "openrouter",
+                "fill_first",
+            );
+            let selected = locator.select_runtime().unwrap().unwrap();
+            let candidate =
+                super::NativeAgentClient::new("summary-model", selected.api_key(), &base_url)
+                    .unwrap()
+                    .with_provider_identity("openrouter");
+            let binding = super::CompressionPoolCredential::new(locator, selected, &base_url);
+            let discovery = super::CompressionDiscovery::new_with_pool_credentials(
+                &dir,
+                vec![(candidate.clone(), Some(binding))],
+                Default::default(),
+            )
+            .unwrap();
+            let error = hermes_core::Error::Other(format!(
+                "native full compression HTTP {status}: fixture"
+            ));
+            assert_eq!(
+                discovery
+                    .recover_summary(0, &candidate, None, "status", "same prompt", error)
+                    .await
+                    .unwrap()
+                    .as_deref(),
+                Some("summary")
+            );
+            assert_eq!(&*authorizations.lock().unwrap(), &expected);
+        }
+        server.abort();
     }
 
     #[test]

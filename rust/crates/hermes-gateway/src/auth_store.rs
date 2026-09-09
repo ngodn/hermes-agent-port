@@ -2,7 +2,7 @@
 //! Reading rows does not select, refresh or lease a usable credential.
 #![allow(dead_code)]
 use serde_json::{json, Value};
-use std::{io, path::Path};
+use std::{collections::HashSet, io, path::Path, sync::Mutex};
 
 fn empty_store() -> Value {
     json!({"version":1,"providers":{}})
@@ -132,6 +132,227 @@ pub(crate) fn suppressed_in(store: &Value, provider: &str, source: &str) -> bool
     }
 }
 
+static WRITE_LOCK: Mutex<()> = Mutex::new(());
+
+#[cfg(unix)]
+struct AuthFileLock(std::fs::File);
+
+#[cfg(unix)]
+impl AuthFileLock {
+    fn acquire(auth_path: &Path) -> io::Result<Self> {
+        use std::os::fd::AsRawFd;
+        let lock_path = auth_path.with_extension("lock");
+        if let Some(parent) = lock_path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        let file = std::fs::OpenOptions::new()
+            .create(true)
+            .truncate(false)
+            .read(true)
+            .write(true)
+            .open(lock_path)?;
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
+        loop {
+            // SAFETY: `file` owns a valid descriptor for the lock lifetime.
+            let status = unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) };
+            if status == 0 {
+                return Ok(Self(file));
+            }
+            let error = io::Error::last_os_error();
+            if std::time::Instant::now() >= deadline {
+                return Err(io::Error::new(
+                    io::ErrorKind::TimedOut,
+                    "timed out waiting for auth store lock",
+                ));
+            }
+            if !error.raw_os_error().is_some_and(|code| {
+                code == libc::EWOULDBLOCK || code == libc::EAGAIN || code == libc::EINTR
+            }) {
+                return Err(error);
+            }
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        }
+    }
+}
+
+#[cfg(unix)]
+impl Drop for AuthFileLock {
+    fn drop(&mut self) {
+        use std::os::fd::AsRawFd;
+        // SAFETY: `self.0` still owns the descriptor; close also releases it.
+        unsafe {
+            libc::flock(self.0.as_raw_fd(), libc::LOCK_UN);
+        }
+    }
+}
+
+#[cfg(not(unix))]
+struct AuthFileLock;
+
+#[cfg(not(unix))]
+impl AuthFileLock {
+    fn acquire(_auth_path: &Path) -> io::Result<Self> {
+        Ok(Self)
+    }
+}
+
+fn merge_newer_disk_status(
+    mut incoming: serde_json::Map<String, Value>,
+    disk: Option<&serde_json::Map<String, Value>>,
+    provider: &str,
+    now: f64,
+) -> serde_json::Map<String, Value> {
+    const STATUS_FIELDS: &[&str] = &[
+        "last_status",
+        "last_status_at",
+        "last_error_code",
+        "last_error_reason",
+        "last_error_message",
+        "last_error_reset_at",
+    ];
+    let Some(disk) = disk else {
+        return incoming;
+    };
+    if !matches!(
+        disk.get("last_status").and_then(Value::as_str),
+        Some("dead" | "exhausted")
+    ) {
+        return incoming;
+    }
+    let incoming_key = incoming
+        .get("access_token")
+        .and_then(Value::as_str)
+        .unwrap_or("");
+    let disk_key = disk
+        .get("access_token")
+        .and_then(Value::as_str)
+        .unwrap_or("");
+    if !incoming_key.is_empty() && !disk_key.is_empty() && incoming_key != disk_key {
+        return incoming;
+    }
+    let disk_at = disk
+        .get("last_status_at")
+        .and_then(crate::credential_pool::absolute_timestamp)
+        .unwrap_or(0.0);
+    let incoming_at = incoming
+        .get("last_status_at")
+        .and_then(crate::credential_pool::absolute_timestamp)
+        .unwrap_or(0.0);
+    if disk_at <= incoming_at {
+        return incoming;
+    }
+    if disk.get("last_status").and_then(Value::as_str) == Some("exhausted") {
+        let disk_value = Value::Object(disk.clone());
+        let Ok(entry) = crate::credential_pool::PooledCredential::from_dict(provider, &disk_value)
+        else {
+            return incoming;
+        };
+        if entry.cooldown_until(false).is_none_or(|until| until <= now) {
+            return incoming;
+        }
+    }
+    for field in STATUS_FIELDS {
+        incoming.insert(
+            (*field).into(),
+            disk.get(*field).cloned().unwrap_or(Value::Null),
+        );
+    }
+    incoming
+}
+
+/// Persist one provider pool with Python's concurrent-add and newer-cooldown
+/// merge. The profile store is the write authority for API-key pools.
+pub fn write_pool(
+    auth_path: &Path,
+    provider: &str,
+    entries: Vec<Value>,
+    removed_ids: Vec<String>,
+) -> io::Result<()> {
+    let _process_guard = WRITE_LOCK.lock().unwrap_or_else(|error| error.into_inner());
+    let _file_guard = AuthFileLock::acquire(auth_path)?;
+    let mut store = load(auth_path)?;
+    let root = store
+        .as_object_mut()
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "auth store is not an object"))?;
+    root.entry("providers").or_insert_with(|| json!({}));
+    let pool = root
+        .entry("credential_pool")
+        .or_insert_with(|| json!({}))
+        .as_object_mut()
+        .ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::InvalidData,
+                "credential_pool is not an object",
+            )
+        })?;
+    let existing = pool
+        .get(provider)
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    let existing_by_id: std::collections::HashMap<String, serde_json::Map<String, Value>> =
+        existing
+            .iter()
+            .filter_map(Value::as_object)
+            .filter_map(|entry| {
+                entry
+                    .get("id")
+                    .and_then(Value::as_str)
+                    .filter(|id| !id.is_empty())
+                    .map(|id| (id.into(), entry.clone()))
+            })
+            .collect();
+    let removed: HashSet<String> = removed_ids
+        .into_iter()
+        .filter(|id| !id.is_empty())
+        .collect();
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0.0, |duration| duration.as_secs_f64());
+    let mut merged = Vec::with_capacity(entries.len() + existing.len());
+    let mut incoming_ids = HashSet::new();
+    for entry in entries {
+        let Some(entry) = entry.as_object() else {
+            merged.push(entry);
+            continue;
+        };
+        let mut sanitized = crate::credential_persistence::sanitize(entry, provider);
+        let id = sanitized
+            .get("id")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_owned();
+        if !id.is_empty() {
+            incoming_ids.insert(id.clone());
+        }
+        sanitized = merge_newer_disk_status(sanitized, existing_by_id.get(&id), provider, now);
+        merged.push(Value::Object(sanitized));
+    }
+    for disk in existing {
+        let Some(id) = disk.get("id").and_then(Value::as_str) else {
+            continue;
+        };
+        if incoming_ids.contains(id) || removed.contains(id) {
+            continue;
+        }
+        let value = disk
+            .as_object()
+            .map(|entry| Value::Object(crate::credential_persistence::sanitize(entry, provider)))
+            .unwrap_or(disk);
+        merged.push(value);
+    }
+    pool.insert(provider.into(), Value::Array(merged));
+    root.insert("version".into(), json!(1));
+    root.insert(
+        "updated_at".into(),
+        Value::String(chrono::Utc::now().to_rfc3339()),
+    );
+    let mut bytes = serde_json::to_vec_pretty(&store)
+        .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+    bytes.push(b'\n');
+    crate::atomic_file::write_private_preserving_symlink(auth_path, &bytes)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -218,5 +439,131 @@ mod tests {
             );
             assert_eq!(std::fs::read(&profile).unwrap(), bytes);
         }
+    }
+
+    #[test]
+    fn pool_writes_merge_concurrent_rows_and_newer_cooldowns() {
+        let dir = std::env::temp_dir().join(format!(
+            "hermes-auth-write-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&dir).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(dir.clone());
+        let path = dir.join("auth.json");
+        let future = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs_f64()
+            + 600.0;
+        std::fs::write(
+            &path,
+            serde_json::to_vec(&serde_json::json!({
+                "credential_pool":{"openrouter":[
+                    {"id":"one","auth_type":"api_key","source":"manual","priority":0,"access_token":"key-one","last_status":"exhausted","last_status_at":future,"last_error_code":429},
+                    {"id":"concurrent","auth_type":"api_key","source":"manual","priority":1,"access_token":"key-two"}
+                ]}
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        write_pool(
+            &path,
+            "openrouter",
+            vec![serde_json::json!({
+                "id":"one","auth_type":"api_key","source":"manual","priority":0,
+                "access_token":"key-one","last_status":"ok","last_status_at":1.0
+            })],
+            Vec::new(),
+        )
+        .unwrap();
+        let rows = load(&path).unwrap()["credential_pool"]["openrouter"]
+            .as_array()
+            .unwrap()
+            .clone();
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0]["last_status"], "exhausted");
+        assert_eq!(rows[0]["last_error_code"], 429);
+        assert_eq!(rows[1]["id"], "concurrent");
+
+        write_pool(
+            &path,
+            "openrouter",
+            vec![serde_json::json!({
+                "id":"one","auth_type":"api_key","source":"manual","priority":0,
+                "access_token":"rotated-key","last_status":"ok"
+            })],
+            vec!["concurrent".into()],
+        )
+        .unwrap();
+        let rows = load(&path).unwrap()["credential_pool"]["openrouter"]
+            .as_array()
+            .unwrap()
+            .clone();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0]["access_token"], "rotated-key");
+        assert_eq!(rows[0]["last_status"], "ok");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn pool_write_is_private_and_preserves_auth_symlink() {
+        use std::os::unix::fs::{symlink, MetadataExt, PermissionsExt};
+
+        let dir = std::env::temp_dir().join(format!(
+            "hermes-auth-link-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&dir).unwrap();
+        struct Cleanup(std::path::PathBuf);
+        impl Drop for Cleanup {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        let _cleanup = Cleanup(dir.clone());
+        let target = dir.join("owned.json");
+        let link = dir.join("auth.json");
+        std::fs::write(&target, b"{}").unwrap();
+        std::fs::set_permissions(&target, std::fs::Permissions::from_mode(0o644)).unwrap();
+        symlink(&target, &link).unwrap();
+        let link_inode = std::fs::symlink_metadata(&link).unwrap().ino();
+
+        write_pool(
+            &link,
+            "openrouter",
+            vec![serde_json::json!({
+                "id":"one","auth_type":"api_key","source":"manual","priority":0,
+                "access_token":"secret"
+            })],
+            Vec::new(),
+        )
+        .unwrap();
+        assert!(std::fs::symlink_metadata(&link)
+            .unwrap()
+            .file_type()
+            .is_symlink());
+        assert_eq!(std::fs::symlink_metadata(&link).unwrap().ino(), link_inode);
+        assert_eq!(
+            std::fs::metadata(&target).unwrap().permissions().mode() & 0o777,
+            0o600
+        );
+        assert_eq!(
+            load(&link).unwrap()["credential_pool"]["openrouter"][0]["id"],
+            "one"
+        );
     }
 }
