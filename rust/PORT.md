@@ -1,5 +1,37 @@
 # Hermes Rust rewrite
 
+## Native compression handoff framing and tail anchors: 2026-09-09
+
+Native full compression now honors `compression.min_tail_user_messages` on
+both pre-turn and same-turn paths. Values above one preserve the last N real
+actionable user turns despite token pressure, excluding persisted summary
+carriers, continuation and retry scaffolding, background notices, todo
+snapshots, and blank echoes. The default one-user path keeps its existing
+causal-coupling behavior unchanged, and final tool-group alignment still
+prevents split call/result sequences.
+
+Persisted native handoffs now use Python's byte-exact current prefix, heading,
+end marker, and continuation strings. Current, legacy, all five frozen Python
+generations, the earlier native prefix, and merged carriers normalize before
+re-compression. Micro-compaction now shares that recognition instead of
+matching only the newest prefix.
+
+The helpers had separate deliverables. AGY handled only the tail draft under
+its exclusive auth lock. Claude produced only the 60-case source-executed
+handoff oracle. The primary lane corrected and integrated the draft, consumed
+the oracle, and owned validation and publication. See
+[native-compression-handoff-tail-resolution.md](analysis/native-compression-handoff-tail-resolution.md).
+
+Validation is **1,669 Rust tests passed, two ignored**, plus **62 selected
+Python tests passed**. Oracle regeneration, formatting, Clippy with warnings
+denied, and diff hygiene pass. The refreshed
+[weighted full-port audit](analysis/progress-audit-2026-09-08.md) is **48.30
+points, reported as about 48%** (judgment range 46% to 50%). Dynamic
+template-visible summary role selection, merge-into-tail publication,
+zero-user anchor insertion, and reference-only provider-call suppression remain
+the next compression seam. Native plugin, memory, tool, provider, and platform
+breadth remains the larger port.
+
 ## Native compression structural backoff checkpoint: 2026-09-09
 
 Native full compression now treats an absent compressible window as a

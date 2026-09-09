@@ -331,17 +331,18 @@ fn compute_prune_boundary(
 
 /// Select the verbatim tail retained by full compression.
 ///
-/// This is the default single-actionable-user path of Python
-/// `_find_tail_cut_by_tokens`: a 1.5x soft ceiling, bounded count floor,
-/// raw-budget retry when the whole region fits, tool-group alignment, and
-/// newest user/assistant anchors.
+/// Mirrors Python `_find_tail_cut_by_tokens`: a 1.5x soft ceiling, bounded
+/// count floor, raw-budget retry when the whole region fits, tool-group
+/// alignment, newest user/assistant anchors, and optional multi-user anchoring.
 pub(crate) fn find_tail_cut_by_tokens(
     messages: &[CompressionHistoryMessage],
     head_end: usize,
     protect_last_n: usize,
     token_budget: u64,
     charge_all_thinking: bool,
+    min_tail_user_messages: usize,
 ) -> usize {
+    let min_tail_user_messages = min_tail_user_messages.max(1);
     let n = messages.len();
     if n == 0 {
         return 0;
@@ -403,6 +404,9 @@ pub(crate) fn find_tail_cut_by_tokens(
     cut = align_tool_boundary_backward(messages, cut);
     cut = anchor_last_user(messages, cut, head_end);
     cut = anchor_last_assistant(messages, cut, head_end);
+    if min_tail_user_messages > 1 {
+        cut = anchor_last_n_user_messages(messages, cut, head_end, min_tail_user_messages);
+    }
     align_tool_boundary_forward(messages, cut.max(head_end.saturating_add(1))).min(n)
 }
 
@@ -430,42 +434,141 @@ fn align_tool_boundary_backward(messages: &[CompressionHistoryMessage], mut idx:
     idx
 }
 
-fn is_summary_content(message: &CompressionHistoryMessage) -> bool {
-    let text = match decoded_content(message) {
+fn content_text_for_contains(msg: &CompressionHistoryMessage) -> String {
+    match decoded_content(msg) {
         Value::String(text) => text,
-        _ => return false,
-    };
-    let text = text.trim_start();
-    text.starts_with("[CONTEXT COMPACTION")
-        || text.starts_with("[CONTEXT SUMMARY]:")
-        || text
-            .split_once("COMPACTION SUMMARY BELOW]")
-            .is_some_and(|(_, suffix)| suffix.trim_start().starts_with("[CONTEXT COMPACTION"))
+        Value::Array(parts) => {
+            let mut texts = Vec::new();
+            for part in parts {
+                match part {
+                    Value::String(text) => texts.push(text),
+                    Value::Object(object) => {
+                        if let Some(text) = object.get("text").and_then(Value::as_str) {
+                            texts.push(text.to_owned());
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            texts.join("\n")
+        }
+        _ => String::new(),
+    }
+}
+
+fn is_summary_content(message: &CompressionHistoryMessage) -> bool {
+    if message.compressed_summary {
+        return true;
+    }
+    let text = content_text_for_contains(message);
+    crate::compression_prompt::is_summary_content(&text)
+}
+
+fn is_synthetic_compression_user_turn(message: &CompressionHistoryMessage) -> bool {
+    if role(message) != "user" {
+        return false;
+    }
+    if is_summary_content(message) {
+        return true;
+    }
+    let text = content_text_for_contains(message);
+    let trimmed = text.trim();
+    if trimmed.is_empty() {
+        return false;
+    }
+    if crate::compression_prompt::is_synthetic_compression_user_content(trimmed) {
+        return true;
+    }
+
+    matches!(
+        trimmed,
+        "[System: Your previous response contained only internal reasoning and never produced a visible answer or tool call. Do not keep thinking. Produce your final answer as plain text now (or make the tool call you were planning).]"
+            | "[System: Continue now. Execute the required tool calls and only send your final answer after completing the task.]"
+            | "Your previous turn indicated a tool call but none was included. Do not narrate a plan or restate intent \u{2014} issue the actual tool call now to continue the task."
+            | "You just executed tool calls but returned an empty response. Please process the tool results above and continue with the task."
+            | "[System: The previous response was cut off by a network error mid-stream. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]"
+            | "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]"
+    ) || trimmed.starts_with("[IMPORTANT: Background process ")
+        || trimmed.starts_with("[Your active task list was preserved across context compression]")
+        || trimmed.starts_with("[System: Your previous tool call ")
+}
+
+fn is_blank_user_turn(message: &CompressionHistoryMessage) -> bool {
+    if role(message) != "user" || is_summary_content(message) {
+        return false;
+    }
+    match decoded_content(message) {
+        Value::Null => true,
+        Value::String(text) => text.trim().is_empty(),
+        Value::Array(parts) => {
+            if parts.is_empty() {
+                return true;
+            }
+            for part in parts {
+                match part {
+                    Value::String(text) if !text.trim().is_empty() => return false,
+                    Value::Object(object) => {
+                        let is_text_type = matches!(
+                            object.get("type").and_then(Value::as_str),
+                            Some("text") | Some("input_text")
+                        );
+                        if is_text_type {
+                            let Some(text) = object.get("text").and_then(Value::as_str) else {
+                                return false;
+                            };
+                            if !text.trim().is_empty() {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    }
+                    _ => return false,
+                }
+            }
+            true
+        }
+        _ => false,
+    }
 }
 
 fn actionable_user(message: &CompressionHistoryMessage) -> bool {
-    role(message) == "user"
-        && !is_summary_content(message)
-        && match decoded_content(message) {
-            Value::Null => false,
-            Value::String(text) => !text.trim().is_empty(),
-            Value::Array(parts) => parts.iter().any(|part| match part {
-                Value::String(text) => !text.trim().is_empty(),
-                Value::Object(object)
-                    if matches!(
-                        object.get("type").and_then(Value::as_str),
-                        Some("text") | Some("input_text")
-                    ) =>
-                {
-                    object
-                        .get("text")
-                        .and_then(Value::as_str)
-                        .is_some_and(|text| !text.trim().is_empty())
-                }
-                _ => true,
-            }),
-            _ => true,
-        }
+    role(message) == "user" && !is_summary_content(message) && !is_blank_user_turn(message)
+}
+
+fn real_actionable_user(message: &CompressionHistoryMessage) -> bool {
+    actionable_user(message) && !is_synthetic_compression_user_turn(message)
+}
+
+fn anchor_last_n_user_messages(
+    messages: &[CompressionHistoryMessage],
+    cut: usize,
+    head_end: usize,
+    n: usize,
+) -> usize {
+    if n <= 1 {
+        return anchor_last_user(messages, cut, head_end);
+    }
+    let user_indices: Vec<usize> = (head_end.min(messages.len())..messages.len())
+        .rev()
+        .filter(|idx| real_actionable_user(&messages[*idx]))
+        .collect();
+
+    if user_indices.is_empty() {
+        return cut;
+    }
+
+    let target_idx = if user_indices.len() < n {
+        user_indices[user_indices.len() - 1]
+    } else {
+        user_indices[n - 1]
+    };
+
+    if target_idx >= cut {
+        return cut;
+    }
+
+    target_idx.max(head_end.saturating_add(1))
 }
 
 fn find_turn_pair_end(messages: &[CompressionHistoryMessage], user_idx: usize) -> usize {
@@ -2051,7 +2154,7 @@ mod tests {
         }
         let mut messages = vec![msg(1, "user", "start", None, None)];
         messages.extend(heavy);
-        assert_eq!(find_tail_cut_by_tokens(&messages, 1, 20, 680, false), 12);
+        assert_eq!(find_tail_cut_by_tokens(&messages, 1, 20, 680, false, 1), 12);
 
         let alternating = (0..12)
             .map(|index| {
@@ -2065,7 +2168,7 @@ mod tests {
             })
             .collect::<Vec<_>>();
         assert_eq!(
-            find_tail_cut_by_tokens(&alternating, 2, 20, 1_000_000, false),
+            find_tail_cut_by_tokens(&alternating, 2, 20, 1_000_000, false, 1),
             5
         );
     }
@@ -2082,7 +2185,7 @@ mod tests {
             msg(7, "user", "u2", None, None),
             msg(8, "assistant", "a2", None, None),
         ];
-        assert_eq!(find_tail_cut_by_tokens(&rows, 2, 20, 20, false), 3);
+        assert_eq!(find_tail_cut_by_tokens(&rows, 2, 20, 20, false, 1), 3);
     }
 
     fn golden_row(id: i64, value: &Value) -> CompressionHistoryMessage {
@@ -2251,6 +2354,7 @@ mod tests {
                 case["protect_last_n"].as_u64().unwrap() as usize,
                 case["token_budget"].as_u64().unwrap(),
                 charge_all,
+                1,
             );
             assert_eq!(
                 actual,
@@ -2259,5 +2363,168 @@ mod tests {
                 case["name"]
             );
         }
+    }
+
+    #[test]
+    fn default_single_user_anchor_keeps_its_original_actionable_definition() {
+        let continuation = msg(
+            1,
+            "user",
+            crate::compression_prompt::COMPRESSION_CONTINUATION_USER_CONTENT,
+            None,
+            None,
+        );
+        assert!(actionable_user(&continuation));
+        assert!(!real_actionable_user(&continuation));
+    }
+
+    #[test]
+    fn test_multi_user_tail_anchoring_table() {
+        let mut messages = vec![
+            msg(1, "user", "head prompt", None, None),
+            msg(2, "assistant", "head reply", None, None),
+        ];
+        for i in 1..=4 {
+            messages.push(msg(
+                (i * 2 + 1) as i64,
+                "user",
+                &format!("user {i}"),
+                None,
+                None,
+            ));
+            messages.push(msg(
+                (i * 2 + 2) as i64,
+                "assistant",
+                &big("A", 3000),
+                None,
+                None,
+            ));
+        }
+
+        let head_end = 1;
+        struct TestCase {
+            min_users: usize,
+            expected_cut: usize,
+            name: &'static str,
+        }
+
+        let cases = vec![
+            TestCase {
+                min_users: 1,
+                expected_cut: 8,
+                name: "N=1 anchors to last user (index 8)",
+            },
+            TestCase {
+                min_users: 2,
+                expected_cut: 6,
+                name: "N=2 pulls back monotonically to 2nd-to-last user (index 6)",
+            },
+            TestCase {
+                min_users: 3,
+                expected_cut: 4,
+                name: "N=3 pulls back monotonically to 3rd-to-last user (index 4)",
+            },
+            TestCase {
+                min_users: 4,
+                expected_cut: 2,
+                name: "N=4 pulls back monotonically to 4th-to-last user (index 2)",
+            },
+            TestCase {
+                min_users: 10,
+                expected_cut: 2,
+                name: "N=10 clamps to earliest available user above head_end (index 2)",
+            },
+        ];
+
+        for case in cases {
+            let cut =
+                anchor_last_n_user_messages(&messages, messages.len(), head_end, case.min_users);
+            assert_eq!(cut, case.expected_cut, "failed: {}", case.name);
+        }
+    }
+
+    #[test]
+    fn test_blank_and_synthetic_user_rows_do_not_consume_slots() {
+        let messages = vec![
+            msg(1, "user", "head", None, None),
+            msg(2, "assistant", "head reply", None, None),
+            msg(3, "user", "real oldest", None, None),
+            msg(4, "assistant", "reply 1", None, None),
+            msg(5, "user", "real middle", None, None),
+            msg(6, "assistant", "reply 2", None, None),
+            msg(7, "user", "", None, None),
+            msg(8, "assistant", "reply 3", None, None),
+            msg(9, "user", "   ", None, None),
+            msg(10, "assistant", "reply 4", None, None),
+            msg(
+                11,
+                "user",
+                crate::compression_prompt::COMPRESSION_CONTINUATION_USER_CONTENT,
+                None,
+                None,
+            ),
+            msg(12, "assistant", "reply 5", None, None),
+            msg(
+                13,
+                "user",
+                "[IMPORTANT: Background process 42 finished]",
+                None,
+                None,
+            ),
+            msg(14, "assistant", "reply 6", None, None),
+            msg(
+                15,
+                "user",
+                "[Your active task list was preserved across context compression]\n- task 1",
+                None,
+                None,
+            ),
+            msg(16, "assistant", "reply 7", None, None),
+            msg(17, "user", "real latest", None, None),
+            msg(18, "assistant", "final reply", None, None),
+        ];
+
+        let cut = anchor_last_n_user_messages(&messages, messages.len(), 1, 3);
+        assert_eq!(cut, 2);
+    }
+
+    #[test]
+    fn test_multimodal_blank_user_check() {
+        let mut empty_arr_row = msg(1, "user", "", None, None);
+        empty_arr_row.message.content =
+            crate::session_db::encode_message_content(&Value::Array(Vec::new()));
+        assert!(is_blank_user_turn(&empty_arr_row));
+
+        let mut whitespace_text_arr = msg(2, "user", "", None, None);
+        whitespace_text_arr.message.content = crate::session_db::encode_message_content(&json!([
+            {"type": "text", "text": "   "}
+        ]));
+        assert!(is_blank_user_turn(&whitespace_text_arr));
+
+        let mut image_arr = msg(3, "user", "", None, None);
+        image_arr.message.content = crate::session_db::encode_message_content(&json!([
+            {"type": "image_url", "image_url": {"url": "https://example.com/image.png"}}
+        ]));
+        assert!(!is_blank_user_turn(&image_arr));
+    }
+
+    #[test]
+    fn test_tool_group_integrity_across_tail_boundary() {
+        let messages = vec![
+            msg(1, "user", "start", None, None),
+            assistant_call(2, "call_1", "read_file", "{}"),
+            tool_row(3, "call_1", &big("RESULT", 1000)),
+            msg(4, "user", "user 3rd last", None, None),
+            msg(5, "assistant", "reply 3rd last", None, None),
+            msg(6, "user", "user 2nd last", None, None),
+            msg(7, "assistant", "reply 2nd last", None, None),
+            msg(8, "user", "user last", None, None),
+            msg(9, "assistant", "reply last", None, None),
+        ];
+        let head_end = 0;
+        let cut = anchor_last_n_user_messages(&messages, messages.len(), head_end, 3);
+        assert_eq!(cut, 3);
+        assert_eq!(messages[cut].message.role, "user");
+        assert_eq!(messages[cut].message.content, "user 3rd last");
     }
 }

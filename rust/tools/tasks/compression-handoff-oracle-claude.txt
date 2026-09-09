@@ -1,0 +1,31 @@
+Oracle-only task. Do not edit Rust production code, existing tests, PORT.md,
+INDEX.md, or any existing file. Create only:
+
+  rust/tools/compression-handoff-oracle.py
+  rust/tools/compression-handoff-goldens.json
+  rust/analysis/compression-handoff-oracle-claude.md
+
+Build a deterministic source-executed Python oracle for the full-compression
+handoff layer, excluding token-tail selection and min_tail_user_messages (AGY
+owns that independent lane). Exercise the real current implementation in
+`agent/context_compressor.py` and `agent/conversation_compression.py` for:
+
+- exact current summary prefix, historical heading, end marker, continuation
+  strings, merge delimiters, and historical prefix recognition;
+- context-summary and synthetic-user classification after private metadata is
+  stripped by persistence;
+- summary role selection and collision behavior for user/assistant/tool-call
+  visible-role combinations, including merge-into-tail and forced-user-leading;
+- stripping or unwrapping standalone and merged old handoffs on re-compression;
+- zero-real-user continuation insertion and real-user anchor preservation;
+- `reference_handoff_would_drive_next_model_call` across standalone handoff,
+  later real user input, tool results, pending assistant tool calls, and
+  composite carriers.
+
+Prefer real functions and a minimally scripted summary response over
+reimplemented decisions. The generator must support `--check` and emit stable
+JSON without network, dates, credentials, random values, or absolute paths.
+Cite exact sources and tests, separate runtime coverage from pure constants,
+and list parity traps for Rust. Do not implement todo snapshot insertion or
+tail selection. Do not use em dashes in new prose, except when recording exact
+Python string constants whose byte parity requires them.

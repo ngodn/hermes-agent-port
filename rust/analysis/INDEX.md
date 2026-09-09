@@ -55,6 +55,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   second guard shared across pre-turn and same-turn paths. They never strike or
   persist the durable ineffective breaker. Successful boundaries and forced
   manual compression clear the guard.
+- Full compression now honors the configured minimum count of real actionable
+  user turns in both pre-turn and same-turn tails. Persisted handoffs use the
+  current Python framing and recognize legacy, frozen historical, earlier
+  native, and merged carriers during re-compression. Dynamic role and carrier
+  assembly remains open.
 
 ## Rejected paths
 
@@ -72,6 +77,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-compression-handoff-tail-resolution.md](native-compression-handoff-tail-resolution.md) | Live N-user tail anchoring, exact handoff framing and historical normalization, helper split, proof, and remaining assembly seam |
+| [compression-handoff-oracle-claude.md](compression-handoff-oracle-claude.md) | Source-executed 60-case handoff contract, runtime coverage, and parity traps |
+| [compression-handoff-goldens.json](../tools/compression-handoff-goldens.json) | Exact constants plus classification, role, carrier, anchor, and call-suppression outputs |
 | [native-compression-structural-backoff-resolution.md](native-compression-structural-backoff-resolution.md) | Live conversation-local structural retry guard, manual and successful clearing, durable-breaker separation, validation, and explicit deferrals |
 | [compression-structural-backoff-oracle-claude.md](compression-structural-backoff-oracle-claude.md) | Claude's separate 24-case source-executed timer, caller, guard, and clearing oracle |
 | [compression-handoff-anchors-agy.md](compression-handoff-anchors-agy.md) | AGY's separate source map for synthetic user rows, multi-user tail anchors, reference handoffs, todo coupling, role alternation, and restart suppression |

@@ -1,0 +1,28 @@
+Implementation-only task. Work in the existing Rust port and edit only:
+
+  rust/crates/hermes-gateway/src/automatic_compression.rs
+  rust/crates/hermes-gateway/src/tool_result_prune.rs
+
+Implement exact current Python parity for
+`compression.min_tail_user_messages` and the multi-user extension of the full
+compression token-tail cut. Use the already verified source map at
+`rust/analysis/compression-handoff-anchors-agy.md`, but re-open the current
+Python and Rust source before editing because line numbers and constants can
+move.
+
+Requirements:
+
+- Parse and carry `min_tail_user_messages` in `AutomaticCompressionPolicy`,
+  default 1, with current Python/config coercion behavior.
+- Extend `find_tail_cut_by_tokens` so values above 1 monotonically pull the cut
+  back to preserve the last N real actionable user turns.
+- Synthetic compaction carriers, legacy/current continuation markers, todo
+  snapshots, blank user echoes, and other stable synthetic rows must not count.
+- Preserve the existing single-user causal-coupling rule, assistant anchor,
+  tool-group alignment, and byte-identical default behavior when N is 1.
+- Update every Rust production call site in the two allowed files and add
+  focused table tests there. Do not create another module or report.
+- Do not alter prompt framing, summary assembly, provider calls, persistence,
+  PORT.md, INDEX.md, analysis files, task files, or any other file.
+- Run formatting and focused tests. Report uncertainties rather than guessing.
+- Do not use em dashes in new comments or test text.

@@ -1347,6 +1347,7 @@ impl NativeAgentClient {
                 &snapshot.messages,
                 protect_first,
                 policy.protect_last_n,
+                policy.min_tail_user_messages,
                 tail_token_budget,
                 charge_all_thinking,
             )

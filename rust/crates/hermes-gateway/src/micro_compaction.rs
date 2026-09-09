@@ -5,7 +5,6 @@ use serde_json::{json, Value};
 use crate::session_db::CompressionHistoryMessage;
 
 const MAX_CONSECUTIVE_FAILURES: u32 = 3;
-const HISTORICAL_TASK_HEADING: &str = "## Historical Task Snapshot";
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct MicroCompactionState {
@@ -104,6 +103,7 @@ pub(crate) fn prepare(
         config.protect_last,
         config.tail_token_budget,
         config.charge_all_thinking,
+        1,
     );
     if head_end >= tail_start {
         return None;
@@ -331,20 +331,14 @@ fn find_one_exchange(
 
 fn is_context_summary(message: &CompressionHistoryMessage) -> bool {
     message.compressed_summary
-        || message
-            .message
-            .content
-            .trim_start()
-            .starts_with(crate::compression_prompt::SUMMARY_PREFIX)
+        || crate::compression_prompt::is_summary_content(&message.message.content)
 }
 
 fn rolling_summary_from_marker(content: &str) -> String {
-    let mut body = content;
-    if let Some(index) = body.rfind(HISTORICAL_TASK_HEADING) {
-        body = &body[index + HISTORICAL_TASK_HEADING.len()..];
-    }
-    if let Some(index) = body.find(crate::compression_prompt::SUMMARY_END) {
-        body = &body[..index];
+    let normalized = crate::compression_prompt::strip_summary_prefix(content);
+    let mut body = normalized.as_str();
+    if let Some(index) = body.rfind(crate::compression_prompt::HISTORICAL_TASK_HEADING) {
+        body = &body[index + crate::compression_prompt::HISTORICAL_TASK_HEADING.len()..];
     }
     body.trim_matches(crate::python_value::python_whitespace)
         .to_owned()
@@ -516,7 +510,7 @@ fn render_marker(summary: &str) -> String {
     format!(
         "{}\n\n{}\n{}\n\n{}",
         crate::compression_prompt::SUMMARY_PREFIX,
-        HISTORICAL_TASK_HEADING,
+        crate::compression_prompt::HISTORICAL_TASK_HEADING,
         summary.trim(),
         crate::compression_prompt::SUMMARY_END,
     )
@@ -859,7 +853,7 @@ mod tests {
             &format!(
                 "{}\n\n{}\nbatch history\n\n{}",
                 crate::compression_prompt::SUMMARY_PREFIX,
-                HISTORICAL_TASK_HEADING,
+                crate::compression_prompt::HISTORICAL_TASK_HEADING,
                 crate::compression_prompt::SUMMARY_END
             ),
         );
@@ -906,7 +900,7 @@ mod tests {
             &format!(
                 "{}\n\n{}\nbatch history that is not in stale state\n\n{}",
                 crate::compression_prompt::SUMMARY_PREFIX,
-                HISTORICAL_TASK_HEADING,
+                crate::compression_prompt::HISTORICAL_TASK_HEADING,
                 crate::compression_prompt::SUMMARY_END
             ),
         );

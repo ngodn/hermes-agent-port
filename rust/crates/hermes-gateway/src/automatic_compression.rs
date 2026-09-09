@@ -18,6 +18,8 @@ pub const DEFAULT_PROTECT_LAST_N: usize = 20;
 
 /// Default count of initial non-system messages preserved at transcript head.
 pub const DEFAULT_PROTECT_FIRST_N: usize = 3;
+/// Default count of real actionable user messages guaranteed to survive in the tail.
+pub const DEFAULT_MIN_TAIL_USER_MESSAGES: usize = 1;
 pub const DEFAULT_TARGET_RATIO: f64 = 0.20;
 pub const DEFAULT_TAIL_MODE: &str = "lean";
 pub const LEAN_TAIL_FLOOR_TOKENS: u64 = 10_000;
@@ -59,6 +61,8 @@ pub struct AutomaticCompressionPolicy {
     pub model_thresholds: Vec<(String, f64)>,
     /// Number of most recent messages unconditionally spared from summarization.
     pub protect_last_n: usize,
+    /// Minimum real actionable user messages guaranteed to survive in uncompressed tail.
+    pub min_tail_user_messages: usize,
     /// Number of initial non-system messages preserved at transcript head.
     pub protect_first_n: usize,
     /// Fraction of the trigger threshold retained by legacy tail mode.
@@ -98,6 +102,7 @@ impl Default for AutomaticCompressionPolicy {
             threshold_tokens: None,
             model_thresholds: Vec::new(),
             protect_last_n: DEFAULT_PROTECT_LAST_N,
+            min_tail_user_messages: DEFAULT_MIN_TAIL_USER_MESSAGES,
             protect_first_n: DEFAULT_PROTECT_FIRST_N,
             target_ratio: DEFAULT_TARGET_RATIO,
             tail_mode: DEFAULT_TAIL_MODE.into(),
@@ -185,6 +190,10 @@ impl AutomaticCompressionPolicy {
         let threshold_tokens = parse_threshold_tokens(map.get("threshold_tokens"));
         let model_thresholds = parse_model_thresholds(map.get("model_thresholds"));
         let protect_last_n = parse_protect_count(map.get("protect_last_n"), DEFAULT_PROTECT_LAST_N);
+        let min_tail_user_messages = parse_min_tail_user_messages(
+            map.get("min_tail_user_messages"),
+            DEFAULT_MIN_TAIL_USER_MESSAGES,
+        );
         let protect_first_n =
             parse_protect_count(map.get("protect_first_n"), DEFAULT_PROTECT_FIRST_N);
         let target_ratio =
@@ -250,6 +259,7 @@ impl AutomaticCompressionPolicy {
             threshold_tokens,
             model_thresholds,
             protect_last_n,
+            min_tail_user_messages,
             protect_first_n,
             target_ratio,
             tail_mode,
@@ -587,6 +597,49 @@ fn parse_protect_count(raw: Option<&Value>, default: usize) -> usize {
     }
 }
 
+fn parse_min_tail_user_messages(raw: Option<&Value>, default: usize) -> usize {
+    let fallback = default.max(1);
+    let parsed = match raw {
+        None | Some(Value::Null) => return fallback,
+        Some(Value::Bool(_)) => 1,
+        Some(Value::Number(n)) => {
+            if let Some(u) = n.as_u64() {
+                u as usize
+            } else if let Some(i) = n.as_i64() {
+                if i < 1 {
+                    1
+                } else {
+                    i as usize
+                }
+            } else if let Some(f) = n.as_f64() {
+                if f.is_finite() && f.fract() == 0.0 {
+                    if f < 1.0 {
+                        1
+                    } else {
+                        f as usize
+                    }
+                } else {
+                    1
+                }
+            } else {
+                1
+            }
+        }
+        Some(Value::String(s)) => match s.trim().parse::<i64>() {
+            Ok(i) => {
+                if i < 1 {
+                    1
+                } else {
+                    i as usize
+                }
+            }
+            Err(_) => 1,
+        },
+        _ => 1,
+    };
+    parsed.max(1)
+}
+
 fn parse_max_attempts(raw: Option<&Value>, default: u32) -> u32 {
     let parsed = match raw {
         None | Some(Value::Null) | Some(Value::Bool(_)) => default as i64,
@@ -666,6 +719,7 @@ fn compression_boundaries(
     messages: &[crate::session_db::CompressionHistoryMessage],
     protect_first_n: usize,
     protect_last_n: usize,
+    min_tail_user_messages: usize,
     tail_token_budget: u64,
     charge_all_thinking: bool,
 ) -> Option<(usize, usize)> {
@@ -673,6 +727,7 @@ fn compression_boundaries(
         messages,
         protect_first_n,
         protect_last_n,
+        min_tail_user_messages,
         tail_token_budget,
         charge_all_thinking,
         false,
@@ -683,6 +738,7 @@ pub(crate) fn compression_boundaries_after_tool_batch(
     messages: &[crate::session_db::CompressionHistoryMessage],
     protect_first_n: usize,
     protect_last_n: usize,
+    min_tail_user_messages: usize,
     tail_token_budget: u64,
     charge_all_thinking: bool,
 ) -> Option<(usize, usize)> {
@@ -690,6 +746,7 @@ pub(crate) fn compression_boundaries_after_tool_batch(
         messages,
         protect_first_n,
         protect_last_n,
+        min_tail_user_messages,
         tail_token_budget,
         charge_all_thinking,
         true,
@@ -700,6 +757,7 @@ fn compression_boundaries_with_tail(
     messages: &[crate::session_db::CompressionHistoryMessage],
     protect_first_n: usize,
     protect_last_n: usize,
+    min_tail_user_messages: usize,
     tail_token_budget: u64,
     charge_all_thinking: bool,
     allow_completed_tool_batch: bool,
@@ -720,6 +778,7 @@ fn compression_boundaries_with_tail(
         protect_last_n,
         tail_token_budget,
         charge_all_thinking,
+        min_tail_user_messages,
     );
     if initial_tail <= prefix_end {
         return None;
@@ -960,6 +1019,7 @@ pub async fn compress_before_turn(
             &snapshot.messages,
             protect_first,
             policy.protect_last_n,
+            policy.min_tail_user_messages,
             tail_token_budget,
             preflight.stale_thinking_on_wire,
         ) else {
@@ -1992,5 +2052,151 @@ mod tests {
         let cap = Some(50_000);
         let res = compute_effective_threshold(context_length, ratio, cap);
         assert_eq!(res, 50_000);
+    }
+
+    #[test]
+    fn min_tail_user_messages_config_matches_python_coercion() {
+        struct Case {
+            raw: Value,
+            expected: usize,
+        }
+        let cases = vec![
+            Case {
+                raw: json!({}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": null}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": true}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": false}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": 0}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": -5}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": 1}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": 3}}),
+                expected: 3,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": 4.0}}),
+                expected: 4,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": 4.5}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": -2.0}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": "5"}}),
+                expected: 5,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": "  4  "}}),
+                expected: 4,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": "0"}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": "-2"}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": "not_a_number"}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": "3.5"}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": [1, 2]}}),
+                expected: 1,
+            },
+            Case {
+                raw: json!({"compression": {"min_tail_user_messages": {"nested": 1}}}),
+                expected: 1,
+            },
+        ];
+
+        for case in cases {
+            let policy = AutomaticCompressionPolicy::from_value(&case.raw);
+            assert_eq!(
+                policy.min_tail_user_messages, case.expected,
+                "input: {:?}",
+                case.raw
+            );
+        }
+
+        let default_policy = AutomaticCompressionPolicy::default();
+        assert_eq!(default_policy.min_tail_user_messages, 1);
+    }
+
+    #[test]
+    fn compression_boundaries_honors_min_tail_user_messages() {
+        use crate::session_db::{CompressionHistoryMessage, HistoryMessage};
+
+        fn test_msg(id: i64, role: &str, content: &str) -> CompressionHistoryMessage {
+            CompressionHistoryMessage {
+                id,
+                message: HistoryMessage {
+                    role: role.to_string(),
+                    content: content.to_string(),
+                    api_content: None,
+                },
+                tool_call_id: None,
+                tool_calls: None,
+                tool_name: None,
+                reasoning: None,
+                reasoning_content: None,
+                reasoning_details: None,
+                codex_reasoning_items: None,
+                codex_message_items: None,
+                compressed_summary: false,
+            }
+        }
+
+        let mut messages = Vec::new();
+        // Head: index 0 (user), index 1 (assistant)
+        messages.push(test_msg(1, "user", "head prompt"));
+        messages.push(test_msg(2, "assistant", "head reply"));
+
+        for i in 1..=4 {
+            messages.push(test_msg((i * 2 + 1) as i64, "user", &format!("task {i}")));
+            messages.push(test_msg((i * 2 + 2) as i64, "assistant", &"A".repeat(4000)));
+        }
+
+        let cut_n1 = compression_boundaries(&messages, 2, 2, 1, 200, false);
+        assert!(cut_n1.is_some());
+        let (_prefix1, tail_start1) = cut_n1.unwrap();
+
+        let cut_n3 = compression_boundaries(&messages, 2, 2, 3, 200, false);
+        assert!(cut_n3.is_some());
+        let (_prefix3, tail_start3) = cut_n3.unwrap();
+
+        assert!(
+            tail_start3 < tail_start1,
+            "tail_start3 ({tail_start3}) must be pulled back before tail_start1 ({tail_start1})"
+        );
     }
 }
