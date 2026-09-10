@@ -1,5 +1,30 @@
 # Hermes Rust rewrite
 
+## Native visible-text length continuation subset: 2026-09-10
+
+The no-tools native chat-completions stream now continues successful responses
+that end with `finish_reason="length"`. Each follow-up stays on the frozen route,
+replays the original turn plus the received assistant fragment and Python's
+exact continuation prompt, raises the output cap progressively, and streams only
+the missing suffix. Fragment joins use Python's whitespace rule, and the fourth
+truncation surfaces the accumulated partial answer without claiming success.
+
+AGY produced a 104-case, ten-section source-executed contract and passed 53
+focused Python tests. Claude independently audited the separate response-stall
+and client-rebuild seam. Its finding is that Python's httpx retirement machinery
+must not be copied to reqwest; the missing behavior is an inactivity deadline,
+which remains a separate configuration-backed checkpoint. See
+[native-main-provider-length-continuation-resolution.md](analysis/native-main-provider-length-continuation-resolution.md).
+
+The weighted full-port estimate remains **57.95 points, reported as about 58%**.
+This slice closes explicit visible-text streaming continuation, but buffered
+tool-path continuation, truncated tool calls, thinking-only length handling,
+repetition rejection, dropped-stream stubs, Ollama GLM stop correction, and the
+stall deadline remain. Validation is **1,888 Rust tests passed, two ignored**. The
+104-case Python corpus regenerates byte for byte, all 53 focused Python tests
+pass, and Rust/Python formatting, Ruff, workspace Clippy with warnings denied,
+and diff hygiene pass.
+
 ## Native main-provider successful-body subset: 2026-09-10
 
 The ordinary native chat-completions path now validates successful HTTP bodies

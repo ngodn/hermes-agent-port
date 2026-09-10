@@ -1,0 +1,861 @@
+{
+  "boundaries_and_separation_matrix": [
+    {
+      "case_name": "separation_anthropic_messages",
+      "distinction": "Uses AnthropicTransport adapter and OAuth tool prefix stripping",
+      "lane": "anthropic_messages",
+      "normalized_finish_reason": "length",
+      "provenance": "source_inspection_literal",
+      "uses_chat_completions_transport": false,
+      "wire_finish_reason": "stop_reason: max_tokens"
+    },
+    {
+      "case_name": "separation_codex_responses",
+      "continuation_nudge": "_CODEX_INCOMPLETE_NUDGE",
+      "distinction": "Dedicated Codex continuation loop; does not enter chat-completions length continuation",
+      "incomplete_reason": "max_output_tokens",
+      "lane": "codex_responses",
+      "max_continuation_attempts": 3,
+      "merges_native_reasoning_items": true,
+      "normalized_finish_reason": "incomplete",
+      "provenance": "source_inspection_literal",
+      "wire_status": "status: incomplete"
+    },
+    {
+      "case_name": "separation_content_policy_refusal",
+      "distinction": "Safety refusals never enter length continuation; escalate immediately to fallback or terminal refusal",
+      "eager_fallback": true,
+      "finish_reason": "content_filter",
+      "lane": "content_policy_refusal",
+      "provenance": "source_inspection_literal",
+      "retryable_on_same_provider": false
+    },
+    {
+      "appends_fragment_or_nudge": false,
+      "case_name": "separation_tool_call_truncation",
+      "distinction": "Re-runs API call from current messages with boosted max_tokens; does not append fragment trail",
+      "finish_reason": "length",
+      "has_tool_calls": true,
+      "lane": "tool_call_truncation",
+      "max_retries": 4,
+      "provenance": "source_inspection_literal",
+      "token_boost_schedule": "base * (2 ** retry_count)"
+    },
+    {
+      "case_name": "separation_verification_continuation",
+      "distinction": "Runs after complete text response; verifies file mutations and does not handle output truncation",
+      "finish_reason": "stop",
+      "lane": "verification_continuation",
+      "preserves_candidate_response": true,
+      "provenance": "source_inspection_literal",
+      "synthetic_metadata": "_verification_stop_synthetic",
+      "trigger": "verify_on_stop_enabled or pre_verify hook"
+    },
+    {
+      "anthropic_messages_included": true,
+      "bedrock_converse_included": true,
+      "case_name": "separation_api_mode_gate",
+      "chat_completions_included": true,
+      "codex_responses_included": false,
+      "distinction": "Codex Responses is strictly excluded from chat-completions length continuation",
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "action": "refuse_to_execute_and_exit_partial",
+      "case_name": "separation_tool_args_truncation_detection",
+      "error_response": "Response truncated due to output length limit",
+      "lane": "tool_argument_truncation",
+      "provenance": "source_inspection_literal",
+      "symptom": "Tool call arguments cut off mid-stream (invalid JSON not ending with } or ])"
+    },
+    {
+      "action": "retry_without_continuation_prompt",
+      "case_name": "separation_incomplete_scratchpad_retries",
+      "exhaustion_action": "rollback_to_last_assistant_and_exit_partial",
+      "lane": "incomplete_scratchpad",
+      "max_retries": 2,
+      "provenance": "source_inspection_literal",
+      "symptom": "Incomplete <REASONING_SCRATCHPAD> (opened but never closed)"
+    }
+  ],
+  "ceiling_exit_and_persistence_cleanup": [
+    {
+      "api_calls": 4,
+      "case_name": "ceiling_exit_with_visible_fragments",
+      "completed": false,
+      "error": "Response remained truncated after 4 continuation attempts",
+      "final_response": "part one part two part three part four.",
+      "partial": true,
+      "provenance": "executed_source",
+      "surfaces_all_parts": true
+    },
+    {
+      "case_name": "ceiling_exit_purges_nudges_and_collapses_fragments",
+      "provenance": "executed_source",
+      "settled_assistant_content": "part one part two part three part four.",
+      "settled_assistant_count": 1,
+      "settled_assistant_role": "assistant",
+      "unanswered_nudges_count": 0
+    },
+    {
+      "calls_made": 1,
+      "case_name": "fresh_turn_after_ceiling_unwedged",
+      "completed": true,
+      "final_response": "Fresh answer.",
+      "has_error": false,
+      "provenance": "executed_source"
+    },
+    {
+      "api_calls": 4,
+      "assistant_rows_count": 0,
+      "case_name": "ceiling_exit_all_empty_actionable_guidance",
+      "completed": false,
+      "contains_actionable_guidance": true,
+      "ephemeral_reasoning_off_cleared": true,
+      "final_response_snippet": "\u26a0\ufe0f **No visible answer was produced.** The model hit its output-token limit on e",
+      "partial": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "ceiling_pruning_scoped_to_current_turn",
+      "prior_turn_fragment_preserved": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "subsequent_turn_inherits_full_retry_budget",
+      "completed": true,
+      "final_response": "second turn partial and ending.",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "ceiling_exit_error_contract",
+      "expected_error": "Response remained truncated after 4 continuation attempts",
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "case_name": "settled_assistant_finish_reason_length",
+      "finish_reason": "length",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "ephemeral_reasoning_off_not_leaked",
+      "flag_value": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "ceiling_exit_messages_structure",
+      "provenance": "executed_source",
+      "roles_sequence": [
+        "user",
+        "assistant"
+      ]
+    }
+  ],
+  "continuation_prompts": [
+    {
+      "case_name": "output_limit_prompt",
+      "dropped_tools": null,
+      "expected_exact_constant": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "is_partial_stub": false,
+      "matches_constant": true,
+      "prompt_content": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "network_stub_prompt",
+      "dropped_tools": null,
+      "expected_exact_constant": "[System: The previous response was cut off by a network error mid-stream. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "is_partial_stub": true,
+      "matches_constant": true,
+      "prompt_content": "[System: The previous response was cut off by a network error mid-stream. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "dropped_tools_single",
+      "contains_tool": true,
+      "dropped_tools": [
+        "write_file"
+      ],
+      "has_prefix": true,
+      "is_partial_stub": true,
+      "prompt_content": "[System: Your previous tool call (write_file) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "dropped_tools_triple",
+      "contains_tools": true,
+      "dropped_tools": [
+        "write_file",
+        "edit_file",
+        "bash"
+      ],
+      "is_partial_stub": true,
+      "prompt_content": "[System: Your previous tool call (write_file, edit_file, bash) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "dropped_tools_capped_at_three",
+      "dropped_tools_input": [
+        "tool_1",
+        "tool_2",
+        "tool_3",
+        "tool_4",
+        "tool_5"
+      ],
+      "interpolated_tools": "(tool_1, tool_2, tool_3)",
+      "is_partial_stub": true,
+      "omits_later_tools": true,
+      "prompt_content": "[System: Your previous tool call (tool_1, tool_2, tool_3) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "dropped_tools_prefix_constant_stability",
+      "context_compressor_matching_method": "str.startswith",
+      "prefix_constant": "[System: Your previous tool call ",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "network_stub_contains_distinctive_phrase",
+      "distinctive_phrase": "cut off by a network error mid-stream",
+      "in_network_stub": true,
+      "not_in_output_limit": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "output_limit_contains_distinctive_phrase",
+      "distinctive_phrase": "truncated by the output length limit",
+      "in_output_limit": true,
+      "not_in_network_stub": true,
+      "provenance": "executed_source"
+    }
+  ],
+  "finish_reason_normalization": [
+    {
+      "case_name": "normalize_standard_length",
+      "content": "partial text",
+      "input_finish_reason": "length",
+      "normalized_finish_reason": "length",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "normalize_standard_stop",
+      "content": "complete text",
+      "input_finish_reason": "stop",
+      "normalized_finish_reason": "stop",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "normalize_none_defaults_to_stop",
+      "content": "some text",
+      "input_finish_reason": null,
+      "normalized_finish_reason": "stop",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "normalize_integer_finish_reason",
+      "content": "poolside text",
+      "input_finish_reason": 24,
+      "normalized_finish_reason": "24",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "normalize_tool_calls_finish_reason",
+      "input_finish_reason": "tool_calls",
+      "normalized_finish_reason": "tool_calls",
+      "provenance": "executed_source",
+      "tool_call_count": 1
+    },
+    {
+      "case_name": "normalize_content_filter_finish_reason",
+      "content": "filter notice",
+      "input_finish_reason": "content_filter",
+      "normalized_finish_reason": "content_filter",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "partial_stream_stub_text_only",
+      "content": "partial stream text so far",
+      "dropped_tool_names": null,
+      "finish_reason": "length",
+      "provenance": "executed_source",
+      "stub_id": "partial-stream-stub"
+    },
+    {
+      "case_name": "partial_stream_stub_dropped_tools",
+      "dropped_tool_names": [
+        "write_file",
+        "bash"
+      ],
+      "finish_reason": "length",
+      "provenance": "executed_source",
+      "stub_id": "partial-stream-stub"
+    },
+    {
+      "case_name": "stream_clean_with_usage_not_stub",
+      "description": "When include_usage chunk arrives without finish_reason, it proves stream completion",
+      "finish_reason": "stop",
+      "is_partial_stream_stub": false,
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "base_url": "http://localhost:11434/v1",
+      "case_name": "ollama_glm_stop_truncated_positive",
+      "model": "glm-4-9b",
+      "provenance": "executed_source",
+      "rewritten_finish_reason": "length",
+      "should_treat_stop_as_truncated": true,
+      "visible_text": "Based on the search results, the best next"
+    },
+    {
+      "base_url": "https://ollama.com/v1",
+      "case_name": "ollama_cloud_hosted_negative",
+      "model": "glm-5.3-flash",
+      "provenance": "executed_source",
+      "should_treat_stop_as_truncated": false
+    },
+    {
+      "base_url": "http://localhost:11434/v1",
+      "case_name": "ollama_cloud_model_suffix_negative",
+      "model": "glm-5.1:cloud",
+      "provenance": "executed_source",
+      "should_treat_stop_as_truncated": false
+    },
+    {
+      "case_name": "non_glm_model_negative",
+      "model": "llama3:8b",
+      "provenance": "executed_source",
+      "should_treat_stop_as_truncated": false
+    },
+    {
+      "case_name": "natural_ending_period_negative",
+      "provenance": "executed_source",
+      "should_treat_stop_as_truncated": false,
+      "visible_text": "Based on the search results, the best next step is done."
+    },
+    {
+      "case_name": "natural_ending_emoji_negative",
+      "provenance": "executed_source",
+      "should_treat_stop_as_truncated": false,
+      "visible_text": "Here is your requested update \ud83c\udf89"
+    },
+    {
+      "case_name": "natural_ending_code_fence_negative",
+      "provenance": "executed_source",
+      "should_treat_stop_as_truncated": false,
+      "visible_text": "Here is the python code:\n```python\nprint('hi')\n```"
+    },
+    {
+      "case_name": "natural_ending_chinese_punct_negative",
+      "provenance": "executed_source",
+      "should_treat_stop_as_truncated": false,
+      "visible_text": "\u6839\u64da\u641c\u7d22\u7d50\u679c\uff0c\u4e0b\u4e00\u6b65\u662f\u66f4\u65b0\u914d\u7f6e\u3002"
+    },
+    {
+      "case_name": "no_prior_tool_turn_negative",
+      "has_prior_tool_message": false,
+      "provenance": "executed_source",
+      "should_treat_stop_as_truncated": false
+    }
+  ],
+  "fragment_accumulation_and_joining": [
+    {
+      "case_name": "join_two_unspaced_parts",
+      "has_newline_separator": true,
+      "joined": "Edited index.html\nReview the 5 changes",
+      "parts": [
+        "Edited index.html",
+        "Review the 5 changes"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "join_trailing_newline",
+      "joined": "line one\nline two",
+      "newline_count": 1,
+      "parts": [
+        "line one\n",
+        "line two"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "join_leading_space",
+      "joined": "word next",
+      "parts": [
+        "word",
+        " next"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "join_both_spaced",
+      "joined": "word  next",
+      "parts": [
+        "word ",
+        " next"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "join_empty_list",
+      "joined": "",
+      "parts": [],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "join_single_item",
+      "joined": "only",
+      "parts": [
+        "only"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "join_with_empty_intermediate",
+      "joined": "a\nb",
+      "parts": [
+        "a",
+        "",
+        "b"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "join_multi_pass_accumulation",
+      "joined": "Phase 1: Architecture setup completed.\nPhase 2: Database schema migrated.\nPhase 3: Integration tests passed.",
+      "parts": [
+        "Phase 1: Architecture setup completed.\n",
+        "Phase 2: Database schema migrated.\n",
+        "Phase 3: Integration tests passed."
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "action": "truncated_response_parts = []",
+      "case_name": "recovery_resets_accumulated_parts",
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "action": "length_continue_retries = 0",
+      "case_name": "recovery_resets_continuation_retries",
+      "provenance": "source_inspection_literal"
+    }
+  ],
+  "repetition_guard_algorithm": [
+    {
+      "case_name": "repetition_constants",
+      "dominance_ratio": 0.5,
+      "min_fragment_length": 400,
+      "min_repeat_count": 5,
+      "provenance": "executed_source",
+      "repeat_window": 60
+    },
+    {
+      "case_name": "verbatim_phrase_repeat_50x",
+      "is_repetition_dominated": true,
+      "length": 1450,
+      "line_repetition_dominated": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "line_repetition_fast_path",
+      "is_repetition_dominated": true,
+      "length": 800,
+      "line_count": 10,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "sliding_window_subline_repeat",
+      "is_repetition_dominated": true,
+      "length": 534,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "diverse_prose_long",
+      "is_repetition_dominated": false,
+      "length": 908,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "short_text_under_min_fragment_length",
+      "is_repetition_dominated": false,
+      "length": 58,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "non_string_input_none",
+      "input_val": null,
+      "is_repetition_dominated": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "non_string_input_int",
+      "input_val": 123456,
+      "is_repetition_dominated": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "empty_string",
+      "input_val": "",
+      "is_repetition_dominated": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "repetitive_think_block_clean_visible_text",
+      "loop_action": "eligible_for_continuation",
+      "provenance": "executed_source",
+      "raw_is_repetition_dominated": true,
+      "raw_text_length": 1506,
+      "visible_is_repetition_dominated": false,
+      "visible_text": "Here is the distinct visible answer text."
+    }
+  ],
+  "request_budgets_and_progressive_boost": [
+    {
+      "base_tokens": 4096,
+      "case_name": "boost_retry_1_default",
+      "ephemeral_max_tokens": 8192,
+      "multiplier": "2^1 = 2",
+      "provenance": "executed_source",
+      "retry_count": 1
+    },
+    {
+      "base_tokens": 4096,
+      "case_name": "boost_retry_2_default",
+      "ephemeral_max_tokens": 16384,
+      "multiplier": "2^2 = 4",
+      "provenance": "executed_source",
+      "retry_count": 2
+    },
+    {
+      "base_tokens": 4096,
+      "case_name": "boost_retry_3_default",
+      "ephemeral_max_tokens": 32768,
+      "multiplier": "2^3 = 8",
+      "provenance": "executed_source",
+      "retry_count": 3
+    },
+    {
+      "base_tokens": 4096,
+      "capped_at_32768": true,
+      "case_name": "boost_retry_4_ceiling_cap",
+      "ephemeral_max_tokens": 32768,
+      "multiplier": "2^4 = 16",
+      "provenance": "executed_source",
+      "retry_count": 4
+    },
+    {
+      "base_tokens": null,
+      "case_name": "boost_preserves_large_provider_default",
+      "ephemeral_max_tokens": 65536,
+      "floor_preserved": true,
+      "provenance": "executed_source",
+      "requested_cap": 65536,
+      "retry_count": 1
+    },
+    {
+      "base_tokens": 2048,
+      "case_name": "boost_custom_small_base",
+      "provenance": "executed_source",
+      "retry_1": 4096,
+      "retry_2": 8192,
+      "retry_3": 16384
+    },
+    {
+      "case_name": "reasoning_off_one_shot_consumption",
+      "flag_after_attempt_1": false,
+      "is_strictly_one_shot": true,
+      "provenance": "executed_source",
+      "wire_config_attempt_1": {
+        "effort": "none",
+        "enabled": false
+      },
+      "wire_config_attempt_2": {
+        "effort": "high",
+        "enabled": true
+      }
+    },
+    {
+      "case_name": "reasoning_disable_rejected_resends_verbatim",
+      "flag_reset": true,
+      "provenance": "executed_source",
+      "wire_config": {
+        "effort": "high",
+        "enabled": true
+      }
+    },
+    {
+      "action": "agent._ephemeral_reasoning_off = False",
+      "case_name": "ceiling_exit_clears_pending_reasoning_off",
+      "provenance": "source_inspection_literal",
+      "rationale": "Pending override must not leak into next turn when 4th truncation hits ceiling"
+    },
+    {
+      "case_name": "max_continuation_attempts_bound",
+      "ceiling_trigger_attempt": 4,
+      "max_continuation_attempts": 4,
+      "provenance": "source_inspection_literal",
+      "retry_indices": [
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "synthetic_message_metadata_and_wire_sanitization": [
+    {
+      "case_name": "interim_fragment_metadata",
+      "content": "interim partial text",
+      "has_fragment_tag": true,
+      "provenance": "executed_source",
+      "role": "assistant"
+    },
+    {
+      "case_name": "continuation_nudge_metadata",
+      "content": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "has_nudge_tag": true,
+      "provenance": "executed_source",
+      "role": "user"
+    },
+    {
+      "case_name": "wire_sanitization_removes_fragment_mark",
+      "fragment_tag_present": false,
+      "nudge_tag_present": false,
+      "provenance": "executed_source",
+      "sanitized_keys": [
+        "content",
+        "finish_reason",
+        "reasoning",
+        "role",
+        "timestamp"
+      ]
+    },
+    {
+      "case_name": "wire_sanitization_removes_nudge_mark",
+      "fragment_tag_present": false,
+      "nudge_tag_present": false,
+      "provenance": "executed_source",
+      "sanitized_keys": [
+        "content",
+        "role"
+      ]
+    },
+    {
+      "case_name": "role_alternation_standard_continuation",
+      "is_strictly_alternating": true,
+      "message_roles": [
+        "user",
+        "assistant",
+        "user",
+        "assistant",
+        "user"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "assistant_appended": false,
+      "case_name": "thinking_only_empty_assistant_omitted",
+      "empty_content": "",
+      "ephemeral_reasoning_off_set": true,
+      "provenance": "source_inspection_literal",
+      "rationale": "Strict providers reject empty assistant message with HTTP 400 on subsequent replays"
+    },
+    {
+      "case_name": "unmarked_survivors_on_recovery",
+      "fragment_texts_retained_in_history": true,
+      "provenance": "executed_source",
+      "remaining_scaffolding_marks": []
+    },
+    {
+      "api_calls": 2,
+      "case_name": "live_conversation_role_alternation_success",
+      "completed": true,
+      "final_response": "Part 1 Part 2.",
+      "live_roles": [
+        "user",
+        "assistant",
+        "user",
+        "assistant"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "live_conversation_thinking_only_recovery",
+      "completed": true,
+      "empty_assistant_rows_count": 0,
+      "final_response": "Final answer.",
+      "live_roles": [
+        "user",
+        "assistant"
+      ],
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "persistence_layer_strips_synthetic_tags",
+      "provenance": "source_inspection_literal",
+      "stripped_tags": [
+        "_length_continuation_fragment",
+        "_length_continuation_nudge"
+      ],
+      "target_storage": "SessionDB and session JSON"
+    }
+  ],
+  "truncation_eligibility_and_guardrails": [
+    {
+      "case_name": "thinking_exhausted_unclosed_think_tag",
+      "content_snippet": "<think>Let me analyze the problem deeply",
+      "error_message": "Model used all output tokens on reasoning with none left for the response. Try lowering reasoning effort or increasing max_tokens.",
+      "has_tool_calls": false,
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "thinking_exhausted": true
+    },
+    {
+      "case_name": "thinking_exhausted_closed_think_tag_whitespace",
+      "content_snippet": "<think>Concluded thoughts.</think>   \n  ",
+      "has_tool_calls": false,
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "thinking_exhausted": true
+    },
+    {
+      "case_name": "thinking_exhausted_scratchpad_unclosed",
+      "content_snippet": "<REASONING_SCRATCHPAD>\nAnalyzing AST nodes...",
+      "has_tool_calls": false,
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "thinking_exhausted": true
+    },
+    {
+      "case_name": "thinking_not_exhausted_visible_content_present",
+      "content_snippet": "<think>Concluded thoughts.</think>Here is the visible answer.",
+      "has_tool_calls": false,
+      "loop_action": "eligible_for_continuation",
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "case_name": "thinking_not_exhausted_no_think_tags_empty_content",
+      "content_snippet": "",
+      "has_tool_calls": false,
+      "loop_action": "eligible_for_continuation_with_ephemeral_reasoning_off",
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "case_name": "thinking_not_exhausted_tool_calls_present",
+      "content_snippet": "<think>Let me call the tool</think>",
+      "has_tool_calls": true,
+      "loop_action": "route_to_tool_call_retry",
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "case_name": "repetition_dominated_truncation_abort",
+      "error_message": "Model output entered a repetition loop and was truncated mid-loop; refusing to continue a degenerate response.",
+      "is_repetition_dominated": true,
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "text_length": 1450
+    },
+    {
+      "case_name": "repetition_guard_clean_visible_text_eligible",
+      "is_repetition_dominated": false,
+      "loop_action": "eligible_for_continuation",
+      "provenance": "executed_source",
+      "text_length": 87
+    },
+    {
+      "case_name": "content_filter_stall_with_fallback",
+      "content_filter_terminated": true,
+      "has_fallback_chain": true,
+      "loop_action": "activate_fallback_and_restart",
+      "provenance": "source_inspection_literal",
+      "rollback_partial_fragments": true,
+      "unmarks_metadata_tags": [
+        "_length_continuation_fragment",
+        "_length_continuation_nudge"
+      ]
+    },
+    {
+      "case_name": "content_filter_stall_no_fallback",
+      "content_filter_terminated": true,
+      "has_fallback_chain": false,
+      "loop_action": "fallthrough_to_same_provider_continuation",
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "case_name": "eligibility_pure_text_truncation",
+      "finish_reason": "length",
+      "has_content": true,
+      "has_tool_calls": false,
+      "provenance": "source_inspection_literal",
+      "target_lane": "text_length_continuation"
+    },
+    {
+      "case_name": "eligibility_tool_call_truncation",
+      "finish_reason": "length",
+      "has_tool_calls": true,
+      "provenance": "source_inspection_literal",
+      "target_lane": "tool_call_truncation_retry",
+      "token_boost_schedule": "base * (2 ** retry_count)"
+    }
+  ],
+  "usage_accounting_and_stream_no_replay": [
+    {
+      "case_name": "api_call_count_not_refunded",
+      "continuation_passes": 1,
+      "provenance": "executed_source",
+      "refund_applied": false,
+      "total_api_calls": 2
+    },
+    {
+      "case_name": "session_api_calls_incremented",
+      "provenance": "executed_source",
+      "session_api_calls_count": 1
+    },
+    {
+      "case_name": "usage_normalization_forwarded",
+      "compressor_method": "agent.context_compressor.update_from_response",
+      "normalizer_function": "agent.usage_pricing.normalize_usage",
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "case_name": "partial_stream_stub_usage_none",
+      "has_usage_attribute": true,
+      "provenance": "executed_source",
+      "skipped_usage_update": true,
+      "usage_value": null
+    },
+    {
+      "case_name": "stream_failure_before_deltas_replayable",
+      "deltas_were_sent": false,
+      "outer_retries": "up to api_max_retries (default 3)",
+      "provenance": "source_inspection_literal",
+      "replay_permitted": true,
+      "worker_retries": "up to HERMES_STREAM_RETRIES (default 2)"
+    },
+    {
+      "action": "suppress_exception_and_return_partial_stream_stub",
+      "case_name": "stream_failure_after_deltas_no_replay",
+      "deltas_were_sent": true,
+      "loop_recovery_mode": "length_continuation",
+      "provenance": "source_inspection_literal",
+      "replay_permitted": false,
+      "stub_finish_reason": "length",
+      "stub_id": "partial-stream-stub"
+    },
+    {
+      "avoids_replaying_streamed_prefix": true,
+      "case_name": "stream_stub_continuation_prompt_type",
+      "cites_network_drop": true,
+      "continuation_prompt_constant": "_LENGTH_CONTINUATION_NETWORK_STUB",
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "case_name": "stream_stub_user_facing_notice",
+      "notice_text": "Response truncated -- stream ended before completion",
+      "provenance": "source_inspection_literal"
+    }
+  ]
+}

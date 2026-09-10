@@ -20,10 +20,12 @@ connection, timeout, overload, format, and server failures now use their
 configured same-route budgets before fallback. Successful bodies now add
 malformed-response recovery, refusal fallback, deterministic and ambiguous
 empty handling, reasoning-only continuation, and delivery-only terminal
-semantics. The estimate remains conservative because length continuation,
-other OAuth paths, non-chat provider transports, smart approval, PTY and notification
-support, remote execution, most tools, and the underlying plugin and
-external-memory managers are not native.
+semantics. Explicit visible-text streaming truncations now continue on the
+frozen route with progressive output caps. The estimate remains conservative
+because buffered and provider-specific continuation paths, other OAuth paths,
+non-chat provider transports, smart approval, PTY and notification support,
+remote execution, most tools, and the underlying plugin and external-memory
+managers are not native.
 
 This is a weighted engineering inventory, not LOC coverage and not the ratio of
 passing tests. Frontend TypeScript stays in scope as an existing client, while
@@ -417,8 +419,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,885 passing Rust tests and two expected ignores
-(1,884 gateway plus one core test).
+The workspace currently has 1,888 passing Rust tests and two expected ignores
+(1,887 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -426,7 +428,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,885 passed, two ignored (1,884 gateway plus one core).
+- Full Rust workspace: 1,888 passed, two ignored (1,887 gateway plus one core).
 - Selected Python main-provider classifier, credential-pool, provider-boundary,
   and runtime-resolution contracts: 256 passed at the preceding pool
   checkpoint. The focused main-provider fallback and restore suite adds 150
@@ -452,9 +454,10 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Length continuation, response-stall client rebuilding, operator notices,
-   remaining OAuth providers and provider-specific successful-body rules
-   complete the current main-provider cluster.
+1. Buffered/tool-call, thinking-only and provider-specific continuation,
+   response-stall deadlines, operator notices, remaining OAuth providers and
+   provider-specific successful-body rules complete the current main-provider
+   cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
 3. Smart and Tirith approval, PTY and remote terminal modes, then file, browser,

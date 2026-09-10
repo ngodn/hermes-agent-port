@@ -375,6 +375,31 @@ fn output_cap_parameter(model: &str, base_url: &str) -> &'static str {
     }
 }
 
+fn apply_main_length_continuation_cap(route: &NativeAgentClient, body: &mut Value, attempt: usize) {
+    let parameter = output_cap_parameter(&route.model, &route.base_url);
+    let positive_integer = |value: &Value| {
+        value
+            .as_u64()
+            .or_else(|| value.as_i64().and_then(|value| u64::try_from(value).ok()))
+            .or_else(|| value.as_bool().map(u64::from))
+            .filter(|value| *value > 0)
+    };
+    let requested = ["max_output_tokens", "max_completion_tokens", "max_tokens"]
+        .iter()
+        .find_map(|key| body.get(*key).and_then(positive_integer));
+    let base = route
+        .output_cap
+        .as_ref()
+        .and_then(positive_integer)
+        .unwrap_or(4096);
+    let multiplier = 1_u64
+        .checked_shl(attempt.min(63) as u32)
+        .unwrap_or(u64::MAX);
+    let boosted = base.saturating_mul(multiplier).max(requested.unwrap_or(0));
+    let ceiling = 32_768_u64.max(requested.unwrap_or(0));
+    body[parameter] = Value::from(boosted.min(ceiling));
+}
+
 fn supports_stream_usage(base_url: &str) -> bool {
     crate::local_probe::urlparse_hostname(
         base_url.trim_matches(crate::python_value::python_whitespace),
@@ -944,6 +969,19 @@ impl MainPoolFailure {
 enum MainSuccessBodyFailure {
     InvalidResponse,
     ContentPolicyRefusal,
+}
+
+const MAIN_LENGTH_CONTINUATION_PROMPT: &str =
+    "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]";
+
+fn main_length_needs_separator(previous: Option<char>, next: &str) -> bool {
+    previous.is_some_and(|previous| {
+        !previous.is_whitespace()
+            && next
+                .chars()
+                .next()
+                .is_some_and(|next| !next.is_whitespace())
+    })
 }
 
 fn main_content_policy_terminal(explanation: Option<&str>) -> String {
@@ -4203,13 +4241,27 @@ impl NativeAgentClient {
         let mut thinking_prefill_retries = 0_usize;
         let mut empty_stream_attempts = 0_usize;
         let mut last_reasoning = None;
+        let mut request_messages = history.clone();
+        request_messages.push(json!({"role":"user", "content":content}));
+        let mut length_continue_retries = 0_usize;
+        let mut continuation_join_after = None;
         loop {
             let dispatched = self
                 .dispatch_main_turn("", |route| {
-                    let messages = route.route_messages(&history);
-                    let mut body =
-                        build_request_body_from_messages(&route.model, &messages, content);
+                    let messages = route.route_messages(&request_messages);
+                    let mut body = json!({
+                        "model":route.model,
+                        "messages":messages,
+                        "stream":true,
+                    });
                     route.apply_provider_extras(&mut body)?;
+                    if length_continue_retries > 0 {
+                        apply_main_length_continuation_cap(
+                            route,
+                            &mut body,
+                            length_continue_retries,
+                        );
+                    }
                     if supports_stream_usage(&route.base_url) {
                         body["stream_options"] = json!({"include_usage": true});
                     }
@@ -4222,6 +4274,7 @@ impl NativeAgentClient {
                 &events,
                 &dispatched.provider,
                 false,
+                continuation_join_after.take(),
             )
             .await?;
             let content_policy_refusal = outcome.finish_reason == "content_filter"
@@ -4232,6 +4285,27 @@ impl NativeAgentClient {
                 if content_policy_refusal {
                     return Err(Error::Other(
                         "native agent stream was blocked by content policy after visible output"
+                            .into(),
+                    ));
+                }
+                if outcome.finish_reason == "length" {
+                    self.capture_usage(outcome.usage);
+                    length_continue_retries = length_continue_retries.saturating_add(1);
+                    if length_continue_retries < 4 {
+                        continuation_join_after = outcome.visible_content.chars().last();
+                        request_messages.push(json!({
+                            "role":"assistant",
+                            "content":outcome.visible_content,
+                        }));
+                        request_messages.push(json!({
+                            "role":"user",
+                            "content":MAIN_LENGTH_CONTINUATION_PROMPT,
+                        }));
+                        continue;
+                    }
+                    let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                    return Err(Error::Other(
+                        "native agent response remained truncated after 4 continuation attempts"
                             .into(),
                     ));
                 }
@@ -4841,6 +4915,7 @@ fn flatten_extra_body(body: &mut Value) -> Result<()> {
 struct MainStreamOutcome {
     usage: Option<crate::provider_usage::CanonicalUsage>,
     visible: bool,
+    visible_content: String,
     observed_generation: bool,
     finish_reason: String,
     refusal: Option<String>,
@@ -4905,6 +4980,7 @@ async fn forward_sse<S, E>(
     events: &mpsc::Sender<StreamEvent>,
     provider: &str,
     emit_stop: bool,
+    mut join_after: Option<char>,
 ) -> Result<MainStreamOutcome>
 where
     S: futures_util::Stream<Item = std::result::Result<axum::body::Bytes, E>> + Unpin,
@@ -4936,7 +5012,15 @@ where
                     let text = scrubber.feed(&text);
                     if !text.is_empty() {
                         outcome.visible = true;
-                        let _ = events.send(StreamEvent::MessageChunk { text }).await;
+                        let mut emitted = String::new();
+                        if main_length_needs_separator(join_after.take(), &text) {
+                            emitted.push('\n');
+                        }
+                        emitted.push_str(&text);
+                        outcome.visible_content.push_str(&text);
+                        let _ = events
+                            .send(StreamEvent::MessageChunk { text: emitted })
+                            .await;
                     }
                 }
                 SseEvent::Done => {
@@ -4965,7 +5049,15 @@ where
             let text = scrubber.feed(&text);
             if !text.is_empty() {
                 outcome.visible = true;
-                let _ = events.send(StreamEvent::MessageChunk { text }).await;
+                let mut emitted = String::new();
+                if main_length_needs_separator(join_after.take(), &text) {
+                    emitted.push('\n');
+                }
+                emitted.push_str(&text);
+                outcome.visible_content.push_str(&text);
+                let _ = events
+                    .send(StreamEvent::MessageChunk { text: emitted })
+                    .await;
             }
         }
     }
@@ -4973,7 +5065,15 @@ where
     let text = scrubber.flush();
     if !text.is_empty() {
         outcome.visible = true;
-        let _ = events.send(StreamEvent::MessageChunk { text }).await;
+        let mut emitted = String::new();
+        if main_length_needs_separator(join_after.take(), &text) {
+            emitted.push('\n');
+        }
+        emitted.push_str(&text);
+        outcome.visible_content.push_str(&text);
+        let _ = events
+            .send(StreamEvent::MessageChunk { text: emitted })
+            .await;
     }
     if !outcome.visible && outcome.reasoning.is_empty() {
         outcome.reasoning = main_inline_reasoning_text(&outcome.raw_content).unwrap_or_default();
@@ -5340,6 +5440,84 @@ mod tests {
                 .parse::<f64>()
                 .unwrap();
             assert_eq!(actual._cost_threshold_usd, expected_threshold, "{name}");
+        }
+    }
+
+    #[test]
+    fn length_continuation_helpers_match_python_goldens() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-length-continuation-goldens.json"
+        ))
+        .unwrap();
+        let sections = corpus.as_object().unwrap();
+        assert_eq!(sections.len(), 10);
+        assert_eq!(
+            sections
+                .values()
+                .map(|rows| rows.as_array().unwrap().len())
+                .sum::<usize>(),
+            104
+        );
+
+        let prompt = corpus["continuation_prompts"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|row| row["case_name"] == "output_limit_prompt")
+            .unwrap();
+        assert_eq!(
+            super::MAIN_LENGTH_CONTINUATION_PROMPT,
+            prompt["prompt_content"].as_str().unwrap()
+        );
+
+        for row in corpus["fragment_accumulation_and_joining"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|row| row["parts"].is_array())
+        {
+            let mut joined = String::new();
+            for part in row["parts"].as_array().unwrap() {
+                let part = part.as_str().unwrap();
+                if super::main_length_needs_separator(joined.chars().last(), part) {
+                    joined.push('\n');
+                }
+                joined.push_str(part);
+            }
+            assert_eq!(
+                joined,
+                row["joined"].as_str().unwrap(),
+                "{}",
+                row["case_name"]
+            );
+        }
+
+        let default = super::NativeAgentClient::new("fixture", "key", "http://localhost").unwrap();
+        for retry in 1..=4 {
+            let case_name = if retry == 4 {
+                "boost_retry_4_ceiling_cap".to_owned()
+            } else {
+                format!("boost_retry_{retry}_default")
+            };
+            let row = corpus["request_budgets_and_progressive_boost"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|row| row["case_name"] == case_name)
+                .unwrap();
+            let mut body = serde_json::json!({});
+            super::apply_main_length_continuation_cap(&default, &mut body, retry);
+            assert_eq!(body["max_tokens"], row["ephemeral_max_tokens"], "{retry}");
+        }
+
+        let mut body = serde_json::json!({"max_tokens":65536});
+        super::apply_main_length_continuation_cap(&default, &mut body, 1);
+        assert_eq!(body["max_tokens"], 65_536);
+        let custom = default.with_output_cap(Some(serde_json::json!(2048)));
+        for (retry, expected) in [(1, 4096), (2, 8192), (3, 16384)] {
+            let mut body = serde_json::json!({"max_tokens":2048});
+            super::apply_main_length_continuation_cap(&custom, &mut body, retry);
+            assert_eq!(body["max_tokens"], expected, "{retry}");
         }
     }
 
@@ -5748,6 +5926,133 @@ mod tests {
         assert_eq!(visible, "partial");
         assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
         assert_eq!(fallback_calls.load(Ordering::SeqCst), 0);
+    }
+
+    #[tokio::test]
+    async fn length_limited_main_stream_continues_with_frozen_route() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        let attempt = {
+                            let mut bodies = bodies.lock().unwrap();
+                            bodies.push(body);
+                            bodies.len()
+                        };
+                        let response = if attempt == 1 {
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"part one\"},\"finish_reason\":\"length\"}]}\n\ndata: [DONE]\n\n"
+                        } else {
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"part two\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n"
+                        };
+                        ([("content-type", "text/event-stream")], response).into_response()
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        let mut stops = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::MessageStop { final_: true } => stops += 1,
+                _ => {}
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "part one\npart two");
+        assert_eq!(stops, 1);
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2);
+        assert_eq!(bodies[0]["model"], "model");
+        assert_eq!(bodies[1]["model"], "model");
+        assert_eq!(bodies[0]["max_tokens"], 4096);
+        assert_eq!(bodies[1]["max_tokens"], 8192);
+        assert_eq!(
+            bodies[1]["messages"],
+            serde_json::json!([
+                {"role":"user", "content":"question"},
+                {"role":"assistant", "content":"part one"},
+                {
+                    "role":"user",
+                    "content":"[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]"
+                }
+            ])
+        );
+    }
+
+    #[tokio::test]
+    async fn length_limited_main_stream_stops_after_four_fragments() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{Arc, Mutex};
+
+        let calls = Arc::new(Mutex::new(0_usize));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<Mutex<usize>>>| async move {
+                    let attempt = {
+                        let mut calls = calls.lock().unwrap();
+                        *calls += 1;
+                        *calls
+                    };
+                    let response = format!(
+                        "data: {{\"choices\":[{{\"delta\":{{\"content\":\"part {attempt}\"}},\"finish_reason\":\"length\"}}]}}\n\ndata: [DONE]\n\n"
+                    );
+                    ([("content-type", "text/event-stream")], response).into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        let mut stops = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::MessageStop { final_: true } => stops += 1,
+                _ => {}
+            }
+        }
+
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("truncated after 4 continuation attempts"));
+        assert_eq!(answer, "part 1\npart 2\npart 3\npart 4");
+        assert_eq!(stops, 1);
+        assert_eq!(*calls.lock().unwrap(), 4);
     }
 
     #[tokio::test]
@@ -10271,7 +10576,7 @@ mod tests {
                     .map(|byte| Ok(axum::body::Bytes::from(vec![byte])))
                     .collect();
                 let (tx, mut rx) = tokio::sync::mpsc::channel(16);
-                super::forward_sse(futures_util::stream::iter(chunks), &tx, "", true)
+                super::forward_sse(futures_util::stream::iter(chunks), &tx, "", true, None)
                     .await
                     .unwrap();
                 drop(tx);
@@ -10305,7 +10610,7 @@ mod tests {
                     Ok(axum::body::Bytes::copy_from_slice(&bytes[cut..])),
                 ];
                 let (tx, mut rx) = tokio::sync::mpsc::channel(8);
-                super::forward_sse(futures_util::stream::iter(chunks), &tx, "", true)
+                super::forward_sse(futures_util::stream::iter(chunks), &tx, "", true, None)
                     .await
                     .unwrap();
                 drop(tx);

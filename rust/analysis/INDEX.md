@@ -81,6 +81,13 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [AGY pricing dependency audit](main-provider-empty-cost-seam-agy.md),
   [Claude seam map](main-provider-success-body-seam-claude.md), and
   [Claude review](main-provider-success-body-review-claude.md).
+- Explicit `finish_reason="length"` on the visible no-tools stream now issues
+  bounded same-route continuation requests with exact Python prompts,
+  progressive output caps and whitespace-safe suffix delivery. See
+  [native-main-provider-length-continuation-resolution.md](native-main-provider-length-continuation-resolution.md),
+  with the independent
+  [AGY contract](main-provider-length-continuation-contract-agy.md) and
+  [Claude stall/client audit](main-provider-client-rebuild-seam-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -158,6 +165,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-main-provider-length-continuation-resolution.md](native-main-provider-length-continuation-resolution.md) | Visible streaming text continuation, replay boundary, cap growth, helper split, and explicit remaining paths |
+| [main-provider-length-continuation-contract-agy.md](main-provider-length-continuation-contract-agy.md) | AGY's 104-case source-executed Python contract for finish normalization, guards, prompts, budgets, joining and persistence |
+| [main-provider-client-rebuild-seam-claude.md](main-provider-client-rebuild-seam-claude.md) | Claude's separate proof that reqwest does not need Python's httpx retirement machinery and that inactivity deadlines are the real missing seam |
+| [main-provider-length-continuation-goldens.json](../tools/main-provider-length-continuation-goldens.json) | Source-executed 104-case length-continuation corpus across ten contract sections |
 | [native-main-provider-success-body-resolution.md](native-main-provider-success-body-resolution.md) | Production successful-body classification and recovery, delivery-only persistence, helper dispositions, explicit pricing and continuation limits, and measured progress |
 | [main-provider-success-body-contract-agy.md](main-provider-success-body-contract-agy.md) | AGY's source-executed Python successful-body, empty, refusal, reasoning, tool, stream and fallback contract |
 | [main-provider-empty-cost-seam-agy.md](main-provider-empty-cost-seam-agy.md) | Independent proof that fixed empty retries are the required fail-open behavior until native pricing and billing-route normalization exist |

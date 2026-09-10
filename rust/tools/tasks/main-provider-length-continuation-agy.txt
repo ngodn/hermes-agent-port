@@ -1,0 +1,11 @@
+You own the Python behavior-contract lane for native main-provider length continuation. Do not edit Rust production code, Rust tests, PORT.md, or Claude artifacts.
+
+Scope only ordinary main-provider chat-completions text truncation after an HTTP success. Inspect and execute the current Python implementation and focused tests. Map finish-reason normalization, eligibility, repeated-fragment detection, continuation prompt construction, synthetic message metadata, role alternation, request budgets, accumulation, fallback behavior, persistence cleanup, usage accounting, terminal errors, and the no-replay boundary after visible streaming output. Clearly separate ordinary chat-completions behavior from Anthropic, Codex Responses, content-policy, tool-call, and verification-continuation paths.
+
+Produce:
+
+- rust/analysis/main-provider-length-continuation-contract-agy.md
+- rust/tools/gen_main_provider_length_continuation_goldens.py
+- rust/tools/main-provider-length-continuation-goldens.json
+
+The generator must execute or import current Python production functions wherever possible, produce deterministic JSON, and be suitable for a Rust include_str! parity test. Label any source-inspection literals. Run the generator plus the smallest relevant Python test set. Record exact commands, case counts, invariants, uncertainties, and explicit deferrals. Do not use em dash characters in authored files.
