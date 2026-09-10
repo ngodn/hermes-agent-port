@@ -1,0 +1,7 @@
+Repository: /home/eins0fx/development/hermes-agent-port. Resolve all paths under this repository.
+
+Review the current uncommitted Rust implementation of ordinary main-provider successful-body recovery. Do not edit production code or tests.
+
+Focus only on the Rust diff and its interaction with existing code: malformed 200 validation, policy refusal handling, empty-response guard behavior, streaming replay boundary, usage accounting, route stickiness and cooldown state, main-versus-auxiliary ownership, configuration wiring, and test quality. Compare against rust/analysis/main-provider-success-body-contract-agy.md and live Python source where needed. Look for concrete correctness bugs, infinite loops, double billing/accounting, prompt mutation, premature MessageStop, fallback leakage, or regressions to compression summaries. Rank findings by severity with exact file/line evidence and suggested fixes. Also list important contract items intentionally still missing, separately from bugs.
+
+Write rust/analysis/main-provider-success-body-review-claude.md. Do not edit other files. Do not use em dash characters.

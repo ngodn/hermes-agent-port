@@ -1,0 +1,15 @@
+You own a Rust-only ownership and replay-safety map for the next port checkpoint. Do not edit production code, tests, PORT.md, or any AGY artifacts.
+
+Inspect the current native ordinary main-provider chat-completions path, including the routed fallback dispatcher, per-route retries, provider response decoding, streaming event emission, tool-call persistence/execution, route cursor lifecycle, and existing real-HTTP tests. Determine the smallest deep-module seam for successful-body validation and fallback covering malformed/empty successful responses and content-policy refusals.
+
+Your report must identify:
+
+1. exact files/types/functions and control flow from HTTP 200 through final text or tool calls,
+2. the earliest point where a response can still be safely replayed or sent to a fallback,
+3. the point after visible deltas or tool side effects where replay must be forbidden,
+4. how to represent recoverable successful-body failure without conflating it with transport/status retry or credential-pool health,
+5. how fallback route cursor, per-route retry budget, prompt bytes, request value, usage, persistence, and tool rounds should behave,
+6. concrete public-seam real-HTTP red tests to add first,
+7. likely regressions and interactions with the just-landed pre-body retry checkpoint.
+
+Write only rust/analysis/main-provider-success-body-seam-claude.md. Cite line ranges from the live checkout. Clearly separate verified current behavior from recommendations. Do not duplicate the Python contract lane and do not infer Python behavior. Do not use em dash characters.

@@ -1,0 +1,900 @@
+{
+  "content_filter_and_tagged_stream_refusals": [
+    {
+      "case_name": "normalize_finish_reason_content_filter",
+      "content": "Blocked by safety policy",
+      "finish_reason": "content_filter",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "normalize_refusal_sole_payload_promotion",
+      "content": "I cannot fulfill this request",
+      "finish_reason": "content_filter",
+      "provenance": "executed_source",
+      "provider_data": {
+        "refusal": "I cannot fulfill this request"
+      }
+    },
+    {
+      "case_name": "normalize_refusal_with_visible_content_unpromoted",
+      "content": "Here is partial allowable text",
+      "finish_reason": "stop",
+      "provenance": "executed_source",
+      "provider_data": {
+        "refusal": "Omitted sensitive part"
+      }
+    },
+    {
+      "case_name": "normalize_refusal_with_tool_calls_unpromoted",
+      "finish_reason": "tool_calls",
+      "provenance": "executed_source",
+      "provider_data": {
+        "refusal": "Cannot access internal path"
+      },
+      "tool_call_count": 1
+    },
+    {
+      "case_name": "error_classifier_openai_cybersecurity",
+      "provenance": "executed_source",
+      "reason": "content_policy_blocked",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true
+    },
+    {
+      "case_name": "error_classifier_minimax_sensitive_code",
+      "provenance": "executed_source",
+      "reason": "content_policy_blocked",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true
+    },
+    {
+      "case_name": "error_classifier_azure_safety_trigger",
+      "provenance": "executed_source",
+      "reason": "content_policy_blocked",
+      "retryable": false,
+      "should_compress": false,
+      "should_fallback": true
+    },
+    {
+      "case_name": "tagged_stream_stub_content_filter",
+      "content_filter_terminated": true,
+      "finish_reason": "length",
+      "provenance": "executed_source",
+      "stub_id": "partial-stream-stub"
+    },
+    {
+      "case_name": "content_filter_http_200_loop_actions",
+      "eager_fallback": true,
+      "provenance": "source_inspection_literal",
+      "resets_retry_count_on_fallback": true,
+      "retryable": false,
+      "terminal_error_type": "ContentPolicyBlocked",
+      "terminal_reason": "content_policy_blocked"
+    },
+    {
+      "case_name": "content_filter_stream_stall_loop_actions",
+      "eager_fallback": true,
+      "provenance": "source_inspection_literal",
+      "rollback_helper": "_get_messages_up_to_last_assistant",
+      "rolls_back_partial_fragments": true,
+      "same_provider_fallback_if_no_chain": "length_continuation_best_effort",
+      "unmarks_fragment_tags": [
+        "_length_continuation_fragment",
+        "_length_continuation_nudge"
+      ]
+    }
+  ],
+  "empty_assistant_response_guard_and_exhaustion": [
+    {
+      "case_name": "guard_config_none_section",
+      "cost_threshold_usd": "0.25",
+      "enabled": true,
+      "input_section": "None",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_non_dict_section",
+      "cost_threshold_usd": "0.25",
+      "enabled": true,
+      "input_section": "invalid_section",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_disabled_bool",
+      "cost_threshold_usd": "0.25",
+      "enabled": false,
+      "input_section": "{'enabled': False}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_disabled_str_false",
+      "cost_threshold_usd": "0.25",
+      "enabled": false,
+      "input_section": "{'enabled': 'false'}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_disabled_str_zero",
+      "cost_threshold_usd": "0.25",
+      "enabled": false,
+      "input_section": "{'enabled': '0'}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_disabled_str_off",
+      "cost_threshold_usd": "0.25",
+      "enabled": false,
+      "input_section": "{'enabled': 'off'}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_enabled_str_true",
+      "cost_threshold_usd": "0.25",
+      "enabled": true,
+      "input_section": "{'enabled': 'true'}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_custom_threshold_int",
+      "cost_threshold_usd": "5",
+      "enabled": true,
+      "input_section": "{'cost_threshold_usd': 5}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_custom_threshold_str",
+      "cost_threshold_usd": "1.50",
+      "enabled": true,
+      "input_section": "{'cost_threshold_usd': '1.50'}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_invalid_threshold_negative",
+      "cost_threshold_usd": "0.25",
+      "enabled": true,
+      "input_section": "{'cost_threshold_usd': -1}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_invalid_threshold_str_garbage",
+      "cost_threshold_usd": "0.25",
+      "enabled": true,
+      "input_section": "{'cost_threshold_usd': 'banana'}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "guard_config_invalid_threshold_bool",
+      "cost_threshold_usd": "0.25",
+      "enabled": true,
+      "input_section": "{'cost_threshold_usd': True}",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "zero_output_openai_zero_completion",
+      "provenance": "executed_source",
+      "usage_present": true,
+      "zero_output": true
+    },
+    {
+      "case_name": "zero_output_openai_positive_completion",
+      "provenance": "executed_source",
+      "usage_present": true,
+      "zero_output": false
+    },
+    {
+      "case_name": "zero_output_openai_reasoning_only_completion",
+      "provenance": "executed_source",
+      "usage_present": true,
+      "zero_output": false
+    },
+    {
+      "case_name": "zero_output_no_usage_object",
+      "provenance": "executed_source",
+      "usage_present": false,
+      "zero_output": false
+    },
+    {
+      "case_name": "zero_output_all_zero_prompt_tokens_proxy_artifact",
+      "provenance": "executed_source",
+      "usage_present": false,
+      "zero_output": false
+    },
+    {
+      "attempts_count": 1,
+      "case_name": "deterministic_empty_single_zero_attempt_fails_open",
+      "deterministic_empty": false,
+      "provenance": "executed_source"
+    },
+    {
+      "attempts_count": 2,
+      "case_name": "deterministic_empty_two_zero_attempts_same_signature_deterministic",
+      "deterministic_empty": true,
+      "provenance": "executed_source"
+    },
+    {
+      "attempts_count": 2,
+      "case_name": "deterministic_empty_two_attempts_positive_completion_not_deterministic",
+      "deterministic_empty": false,
+      "provenance": "executed_source"
+    },
+    {
+      "attempts_count": 2,
+      "case_name": "deterministic_empty_two_attempts_reasoning_generation_not_deterministic",
+      "deterministic_empty": false,
+      "provenance": "executed_source"
+    },
+    {
+      "attempts_count": 2,
+      "case_name": "deterministic_empty_two_attempts_no_usage_no_observed_generation_deterministic",
+      "deterministic_empty": true,
+      "provenance": "executed_source"
+    },
+    {
+      "attempts_count": 2,
+      "case_name": "deterministic_empty_two_attempts_no_usage_with_observed_reasoning_fails_open",
+      "deterministic_empty": false,
+      "provenance": "executed_source"
+    },
+    {
+      "attempts_count": 2,
+      "case_name": "deterministic_empty_mixed_usage_presence_fails_open",
+      "deterministic_empty": false,
+      "provenance": "executed_source"
+    },
+    {
+      "attempts_count": 2,
+      "case_name": "deterministic_empty_differing_finish_reasons_fails_open",
+      "deterministic_empty": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "deterministic_empty_disabled_via_config",
+      "deterministic_empty": false,
+      "provenance": "executed_source"
+    },
+    {
+      "budget": 3,
+      "case_name": "empty_retry_budget_unknown_cost",
+      "provenance": "executed_source"
+    },
+    {
+      "budget": 3,
+      "case_name": "empty_retry_budget_low_cost_below_threshold",
+      "provenance": "executed_source"
+    },
+    {
+      "budget": 1,
+      "case_name": "empty_retry_budget_high_cost_reduced",
+      "provenance": "executed_source"
+    },
+    {
+      "budget": 3,
+      "case_name": "empty_retry_budget_custom_high_threshold",
+      "provenance": "executed_source"
+    },
+    {
+      "accumulated_usd": "0.35",
+      "case_name": "streak_cost_accumulation",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "streak_cost_reset_on_zero_counter",
+      "provenance": "executed_source",
+      "reset_usd": "0.12"
+    },
+    {
+      "attempt_1_min_max": [
+        2.5,
+        5.0
+      ],
+      "attempt_2_min_max": [
+        5.0,
+        10.0
+      ],
+      "attempt_3_min_max": [
+        10.0,
+        20.0
+      ],
+      "base_delay": 5.0,
+      "case_name": "empty_retry_jittered_backoff_bounds",
+      "max_delay": 60.0,
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "case_name": "empty_response_terminal_outcome_literals",
+      "empty_terminal_sentinel": true,
+      "provenance": "source_inspection_literal",
+      "synthetic_recovery_tag_stripped_on_persist": "_empty_recovery_synthetic",
+      "terminal_content": "(empty)",
+      "turn_exit_reason": "empty_response_exhausted"
+    }
+  ],
+  "empty_content_paired_with_valid_tool_calls": [
+    {
+      "case_name": "empty_content_with_tool_calls_openai",
+      "content": "",
+      "provenance": "executed_source",
+      "reasoning_content": null,
+      "tool_call_count": 1,
+      "triggers_empty_retry": false
+    },
+    {
+      "case_name": "empty_content_with_tool_calls_deepseek_pad",
+      "content": "",
+      "provenance": "executed_source",
+      "reasoning_content": " ",
+      "tool_call_count": 1,
+      "triggers_empty_retry": false
+    },
+    {
+      "case_name": "stale_marker_check_[memory]",
+      "content_after_rule": "",
+      "is_stale_marker": true,
+      "provenance": "executed_source",
+      "raw_content": "[memory]"
+    },
+    {
+      "case_name": "stale_marker_check_[todo_list]",
+      "content_after_rule": "",
+      "is_stale_marker": true,
+      "provenance": "executed_source",
+      "raw_content": "[todo_list]"
+    },
+    {
+      "case_name": "stale_marker_check_[terminal]",
+      "content_after_rule": "",
+      "is_stale_marker": true,
+      "provenance": "executed_source",
+      "raw_content": "[terminal]"
+    },
+    {
+      "case_name": "stale_marker_check_normal_text_[memory]",
+      "content_after_rule": "normal text [memory]",
+      "is_stale_marker": false,
+      "provenance": "executed_source",
+      "raw_content": "normal text [memory]"
+    },
+    {
+      "case_name": "stale_marker_check_[invalid_marker]",
+      "content_after_rule": "[invalid marker]",
+      "is_stale_marker": false,
+      "provenance": "executed_source",
+      "raw_content": "[invalid marker]"
+    },
+    {
+      "case_name": "gemini_thought_signature_preservation",
+      "provenance": "executed_source",
+      "provider_data": {
+        "extra_content": {
+          "thought_signature": "opaque_gemini_signature_token"
+        }
+      },
+      "tool_name": "search"
+    },
+    {
+      "case_name": "tool_execution_resets_counters",
+      "pops_thinking_prefill_scaffolding": true,
+      "provenance": "source_inspection_literal",
+      "resets_dropped_toolcall_retries": true,
+      "resets_empty_content_retries": true,
+      "resets_post_tool_empty_retried": true,
+      "resets_thinking_prefill_retries": true
+    },
+    {
+      "action": "reuse_previous_content_as_final_response",
+      "case_name": "post_tool_empty_followup_housekeeping_content_reuse",
+      "condition": "previous_turn_has_content and all_tools_housekeeping",
+      "exit_reason": "fallback_prior_turn_content",
+      "housekeeping_tools": [
+        "memory",
+        "todo_list",
+        "skill_manage",
+        "session_search"
+      ],
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "action": "send_synthetic_user_nudge_once",
+      "case_name": "post_tool_empty_followup_substantive_nudge",
+      "condition": "previous_turn_substantive_tools and not post_tool_empty_retried",
+      "nudge_content": "You just executed tool calls but returned an empty response. Please process the tool results above and continue with the task.",
+      "provenance": "source_inspection_literal",
+      "synthetic_tag": "_empty_recovery_synthetic"
+    }
+  ],
+  "malformed_and_missing_choice_bodies": [
+    {
+      "case_name": "validate_response_response_none",
+      "error_details": [
+        "response is None"
+      ],
+      "hook_error_type": "InvalidAPIResponse",
+      "hook_reason": "invalid_response",
+      "hook_retryable": true,
+      "is_valid": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "validate_response_missing_choices_attribute",
+      "error_details": [
+        "response has no 'choices' attribute"
+      ],
+      "hook_error_type": "InvalidAPIResponse",
+      "hook_reason": "invalid_response",
+      "hook_retryable": true,
+      "is_valid": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "validate_response_choices_none",
+      "error_details": [
+        "response.choices is None"
+      ],
+      "hook_error_type": "InvalidAPIResponse",
+      "hook_reason": "invalid_response",
+      "hook_retryable": true,
+      "is_valid": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "validate_response_choices_empty_list",
+      "error_details": [
+        "response.choices is empty"
+      ],
+      "hook_error_type": "InvalidAPIResponse",
+      "hook_reason": "invalid_response",
+      "hook_retryable": true,
+      "is_valid": false,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "validate_response_valid_choice_with_content",
+      "error_details": [],
+      "hook_error_type": null,
+      "hook_reason": null,
+      "hook_retryable": null,
+      "is_valid": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "validate_response_valid_choice_with_tool_calls",
+      "error_details": [],
+      "hook_error_type": null,
+      "hook_reason": null,
+      "hook_retryable": null,
+      "is_valid": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "validate_response_choice_message_is_none",
+      "error_details": [],
+      "hook_error_type": null,
+      "hook_reason": null,
+      "hook_retryable": null,
+      "is_valid": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "normalize_choice_message_none",
+      "normalized_content": null,
+      "normalized_finish_reason": "stop",
+      "normalized_tool_calls": null,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "normalize_tool_calls_skip_none_function_or_name",
+      "provenance": "executed_source",
+      "retained_tool_call_count": 1,
+      "retained_tool_names": [
+        "valid_tool"
+      ]
+    },
+    {
+      "case_name": "normalize_tool_call_preserves_explicit_blank_name",
+      "provenance": "executed_source",
+      "retained_name": ""
+    },
+    {
+      "case_name": "normalize_poolside_integer_finish_reason",
+      "normalized_finish_reason": "24",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "failure_hint_code_524_dur_15",
+      "derived_hint": "upstream provider timed out (Cloudflare 524, 15s)",
+      "duration_seconds": 15.0,
+      "error_code": 524,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: upstream provider timed out (Cloudflare 524, 15s)"
+    },
+    {
+      "case_name": "failure_hint_code_504_dur_30",
+      "derived_hint": "upstream gateway timeout (504, 30s)",
+      "duration_seconds": 30.0,
+      "error_code": 504,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: upstream gateway timeout (504, 30s)"
+    },
+    {
+      "case_name": "failure_hint_code_429_dur_2",
+      "derived_hint": "rate limited by upstream provider (429)",
+      "duration_seconds": 2.0,
+      "error_code": 429,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: rate limited by upstream provider (429)"
+    },
+    {
+      "case_name": "failure_hint_code_500_dur_4",
+      "derived_hint": "upstream server error (500, 4s)",
+      "duration_seconds": 4.0,
+      "error_code": 500,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: upstream server error (500, 4s)"
+    },
+    {
+      "case_name": "failure_hint_code_502_dur_5",
+      "derived_hint": "upstream server error (502, 5s)",
+      "duration_seconds": 5.0,
+      "error_code": 502,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: upstream server error (502, 5s)"
+    },
+    {
+      "case_name": "failure_hint_code_503_dur_3",
+      "derived_hint": "upstream provider overloaded (503)",
+      "duration_seconds": 3.0,
+      "error_code": 503,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: upstream provider overloaded (503)"
+    },
+    {
+      "case_name": "failure_hint_code_529_dur_3",
+      "derived_hint": "upstream provider overloaded (529)",
+      "duration_seconds": 3.0,
+      "error_code": 529,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: upstream provider overloaded (529)"
+    },
+    {
+      "case_name": "failure_hint_code_599_dur_12",
+      "derived_hint": "upstream error (code 599, 12s)",
+      "duration_seconds": 12.0,
+      "error_code": 599,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: upstream error (code 599, 12s)"
+    },
+    {
+      "case_name": "failure_hint_code_None_dur_4",
+      "derived_hint": "fast response (4.5s) -- likely rate limited",
+      "duration_seconds": 4.5,
+      "error_code": null,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: fast response (4.5s) -- likely rate limited"
+    },
+    {
+      "case_name": "failure_hint_code_None_dur_75",
+      "derived_hint": "slow response (75s) -- likely upstream timeout",
+      "duration_seconds": 75.0,
+      "error_code": null,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: slow response (75s) -- likely upstream timeout"
+    },
+    {
+      "case_name": "failure_hint_code_None_dur_25",
+      "derived_hint": "response time 25.0s",
+      "duration_seconds": 25.0,
+      "error_code": null,
+      "provenance": "executed_source",
+      "terminal_response_text": "Invalid API response after 3 retries: response time 25.0s"
+    },
+    {
+      "action": "eager_fallback",
+      "attempt": 1,
+      "buffer_status_message": "⚠️ Empty/malformed response -- switching to fallback...",
+      "case_name": "invalid_response_eager_fallback_trigger",
+      "condition": "response_invalid is True and fallback_chain available",
+      "provenance": "source_inspection_literal",
+      "resets_compression_attempts": true,
+      "resets_retry_count": true
+    }
+  ],
+  "nonempty_reasoning_with_empty_visible_content": [
+    {
+      "case_name": "reasoning_detection_structured_reasoning_attr",
+      "content_after_think_strip": "",
+      "extracted_reasoning": "Calculation steps: 1 + 1 = 2",
+      "has_structured": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "reasoning_detection_structured_reasoning_content_attr",
+      "content_after_think_strip": "",
+      "extracted_reasoning": "DeepSeek thinking trace",
+      "has_structured": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "reasoning_detection_structured_reasoning_details_attr",
+      "content_after_think_strip": "",
+      "extracted_reasoning": null,
+      "has_structured": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "reasoning_detection_inline_think_tags_in_content",
+      "content_after_think_strip": "",
+      "extracted_reasoning": "Step by step plan",
+      "has_structured": true,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "reasoning_detection_truly_empty_no_reasoning",
+      "content_after_think_strip": "",
+      "extracted_reasoning": null,
+      "has_structured": false,
+      "provenance": "executed_source"
+    },
+    {
+      "action": "prefill_continuation",
+      "case_name": "thinking_prefill_attempt_1",
+      "current_prefill_count": 0,
+      "interim_finish_reason": "incomplete",
+      "interim_tag": "_thinking_prefill",
+      "max_prefill_attempts": 2,
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "action": "prefill_continuation",
+      "case_name": "thinking_prefill_attempt_2",
+      "current_prefill_count": 1,
+      "interim_finish_reason": "incomplete",
+      "interim_tag": "_thinking_prefill",
+      "max_prefill_attempts": 2,
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "action": "escalate_to_empty_retry_ladder",
+      "case_name": "thinking_prefill_exhaustion_handoff",
+      "current_prefill_count": 2,
+      "empty_candidate": true,
+      "prefill_exhausted": true,
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "action": "pop_prefill_interim_messages",
+      "case_name": "thinking_prefill_success_clears_interim",
+      "provenance": "source_inspection_literal",
+      "resets_prefill_counter": true
+    },
+    {
+      "case_name": "terminal_reasoning_delivered_excerpt",
+      "delivered_text_format": "⚠️ The model produced only internal reasoning and no final answer, despite retries. Its last reasoning, which may contain the answer:\n\nThe calculated answer is 42.",
+      "persisted_empty_terminal_sentinel": true,
+      "persisted_message_content": "(empty)",
+      "provenance": "source_inspection_literal",
+      "reasoning_promoted_early": false
+    },
+    {
+      "case_name": "thinking_budget_exhausted_under_length",
+      "completed": false,
+      "condition": "finish_reason == 'length' and has_think_tags and not has_content_after_think_block",
+      "error": "Model used all output tokens on reasoning with none left for the response. Try lowering reasoning effort or increasing max_tokens.",
+      "final_response_header": "⚠️ **Thinking Budget Exhausted**",
+      "partial": true,
+      "provenance": "source_inspection_literal"
+    }
+  ],
+  "provider_specific_chat_completions_distinctions": [
+    {
+      "case_name": "deepseek_native_prompt_cache_tokens",
+      "extracted_stats": {
+        "cached_tokens": 1200,
+        "creation_tokens": 0
+      },
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "openai_prompt_tokens_details_cache_stats",
+      "extracted_stats": {
+        "cached_tokens": 1800,
+        "creation_tokens": 200
+      },
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "kimi_moonshot_heal_empty_non_final_messages",
+      "preserved_final_content": null,
+      "provenance": "executed_source",
+      "repaired_middle_content": "[response interrupted]"
+    },
+    {
+      "case_name": "xai_wire_alias_reversal",
+      "provenance": "executed_source",
+      "reversed_name": "tool_search",
+      "wire_name": "hermes_tool_search"
+    },
+    {
+      "case_name": "ollama_glm_think_block_strip",
+      "provenance": "executed_source",
+      "raw_content": "<think>\nThinking through the response.\n</think>\nActual visible reply.",
+      "stripped_content": "Actual visible reply."
+    },
+    {
+      "action": "rewrite_finish_reason_from_stop_to_length",
+      "case_name": "ollama_glm_suspicious_stop_rewritten_to_length",
+      "helper": "_should_treat_stop_as_truncated",
+      "provenance": "source_inspection_literal"
+    }
+  ],
+  "retry_vs_fallback_stickiness_and_lifecycle": [
+    {
+      "budget_or_pass_limit": 0,
+      "case_name": "dispatch_malformed_http_200_with_fallback",
+      "has_fallback_chain": true,
+      "provenance": "source_inspection_literal",
+      "selected_action": "fallback_immediate",
+      "trigger": "response_invalid"
+    },
+    {
+      "budget_or_pass_limit": 3,
+      "case_name": "dispatch_malformed_http_200_no_fallback",
+      "has_fallback_chain": false,
+      "provenance": "source_inspection_literal",
+      "selected_action": "retry_same_provider_jittered",
+      "trigger": "response_invalid"
+    },
+    {
+      "budget_or_pass_limit": 3,
+      "case_name": "dispatch_empty_response_ambiguous",
+      "has_fallback_chain": false,
+      "provenance": "source_inspection_literal",
+      "selected_action": "retry_same_provider_jittered",
+      "trigger": "empty_candidate_single"
+    },
+    {
+      "budget_or_pass_limit": 0,
+      "case_name": "dispatch_empty_response_deterministic",
+      "has_fallback_chain": true,
+      "provenance": "source_inspection_literal",
+      "selected_action": "fallback_skip_remaining_retries",
+      "trigger": "deterministic_empty"
+    },
+    {
+      "budget_or_pass_limit": 0,
+      "case_name": "dispatch_empty_response_exhausted",
+      "has_fallback_chain": true,
+      "provenance": "source_inspection_literal",
+      "selected_action": "fallback_immediate",
+      "trigger": "empty_budget_exhausted"
+    },
+    {
+      "budget_or_pass_limit": 0,
+      "case_name": "dispatch_content_filter_http_200",
+      "has_fallback_chain": true,
+      "provenance": "source_inspection_literal",
+      "selected_action": "fallback_immediate",
+      "trigger": "content_policy_blocked"
+    },
+    {
+      "budget_or_pass_limit": 0,
+      "case_name": "dispatch_content_filter_stream_stall",
+      "has_fallback_chain": true,
+      "provenance": "source_inspection_literal",
+      "selected_action": "fallback_immediate_with_rollback",
+      "trigger": "content_filter_stream_stall"
+    },
+    {
+      "budget_or_pass_limit": 4,
+      "case_name": "dispatch_text_length_truncation",
+      "has_fallback_chain": true,
+      "provenance": "source_inspection_literal",
+      "selected_action": "same_provider_continuation_passes",
+      "trigger": "finish_reason_length"
+    },
+    {
+      "case_name": "rewrite_prompt_model_identity_execution",
+      "original_prompt": "You are Hermes, an AI assistant.\nModel: gpt-4o\nProvider: openai\nHelp the user.",
+      "provenance": "executed_source",
+      "rewritten_prompt": "You are Hermes, an AI assistant.\nModel: claude-3-5-sonnet\nProvider: anthropic\nHelp the user.",
+      "touches_last_occurrence_only": true
+    },
+    {
+      "case_name": "fallback_route_within_turn_stickiness",
+      "emits_pending_fallback_notice_on_success": true,
+      "provenance": "source_inspection_literal",
+      "resets_compression_attempts": true,
+      "resets_retry_count": true,
+      "sticky_for_remaining_iterations": true,
+      "sticky_for_tool_rounds": true
+    },
+    {
+      "case_name": "multi_turn_restoration_to_primary",
+      "provenance": "source_inspection_literal",
+      "restoration_function": "restore_primary_runtime",
+      "restores_primary_api_key": true,
+      "restores_primary_base_url": true,
+      "restores_primary_model": true,
+      "restores_primary_provider": true,
+      "timing": "at_start_of_next_turn"
+    }
+  ],
+  "stream_truncation_and_no_replay_boundary": [
+    {
+      "case_name": "continuation_prompt_dropped_tools",
+      "dropped_tools": [
+        "terminal",
+        "write_file"
+      ],
+      "is_partial_stub": true,
+      "prompt_text": "[System: Your previous tool call (terminal, write_file) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "continuation_prompt_network_stub",
+      "dropped_tools": null,
+      "is_partial_stub": true,
+      "prompt_text": "[System: The previous response was cut off by a network error mid-stream. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "continuation_prompt_length_limit",
+      "dropped_tools": null,
+      "is_partial_stub": false,
+      "prompt_text": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "provenance": "executed_source"
+    },
+    {
+      "action": "re_raise_exception_to_outer_loop",
+      "case_name": "stream_failure_before_deltas_delivered",
+      "deltas_were_sent": false,
+      "outer_retries": "up to api_max_retries (default 3)",
+      "provenance": "source_inspection_literal",
+      "replay_permitted": true,
+      "worker_retries": "up to HERMES_STREAM_RETRIES (default 2)"
+    },
+    {
+      "action": "silent_worker_retry_with_reconnect_marker",
+      "case_name": "stream_failure_after_deltas_narrow_tool_gate",
+      "deltas_were_sent": true,
+      "is_transient_error": true,
+      "provenance": "source_inspection_literal",
+      "reconnect_marker": "\n\n⚠ Connection dropped mid tool-call; reconnecting…\n\n",
+      "replay_permitted": "inner_stream_only",
+      "resets_deltas_flag": true,
+      "stream_attempt_below_max": true,
+      "tool_in_flight": true
+    },
+    {
+      "action": "suppress_exception_and_return_partial_stream_stub",
+      "case_name": "stream_failure_after_deltas_general_no_replay",
+      "deltas_were_sent": true,
+      "loop_recovery_mode": "length_continuation",
+      "provenance": "source_inspection_literal",
+      "replay_permitted": false,
+      "stub_finish_reason": "length",
+      "stub_id": "partial-stream-stub",
+      "tool_in_flight": false
+    },
+    {
+      "case_name": "text_length_continuation_ceiling",
+      "ceiling_exit_action": "stitch_partial_fragments_and_strip_nudges",
+      "completed": false,
+      "fragment_tag": "_length_continuation_fragment",
+      "max_continuation_passes": 4,
+      "nudge_tag": "_length_continuation_nudge",
+      "partial": true,
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "broken_tool_call_appended_to_history": false,
+      "case_name": "tool_call_truncation_retry_and_boost",
+      "ceiling_exit_error": "Response truncated due to output length limit",
+      "max_tool_call_retries": 4,
+      "provenance": "source_inspection_literal",
+      "token_boost_cap": 32768,
+      "token_boost_multiplier": "base * (2 ** retry_count)"
+    }
+  ]
+}

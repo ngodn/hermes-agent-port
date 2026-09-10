@@ -1,5 +1,40 @@
 # Hermes Rust rewrite
 
+## Native main-provider successful-body subset: 2026-09-10
+
+The ordinary native chat-completions path now validates successful HTTP bodies
+after the shared pre-body dispatcher. Malformed buffered responses, empty
+finished responses, zero-chunk streams, content-policy refusals, reasoning-only
+output, valid tool-call payloads with empty content, and post-tool empty nudges
+all follow bounded Python-compatible recovery paths across streaming and tool
+rounds.
+
+Retries reuse the same frozen request and fallback advances only the existing
+sticky route cursor. Rejected bodies never penalize API-key pools, arm provider
+cooldowns, or count rejected usage. Once visible streaming output crosses the
+boundary, replay remains forbidden. Terminal refusal, `"(empty)"`, and
+reasoning-excerpt diagnostics reach the user but never enter SQLite replay,
+micro-compaction, or external-memory completion, including after same-turn
+session rotation.
+
+AGY produced the 114-case, eight-section source-executed Python corpus and
+separately proved that cost-aware retry reduction must fail open until the
+native pricing engine exists. Claude independently mapped the ownership seam
+and reviewed the initial implementation. The primary lane fixed its verified
+reasoning, persistence, nudge-scoping, and generation-detection findings. See
+[native-main-provider-success-body-resolution.md](analysis/native-main-provider-success-body-resolution.md).
+
+The refreshed weighted audit is **57.95 points, reported as about 58%**
+(judgment range 55% to 61%). Native agent core moves from 76% to 78%; gateway,
+tool/RPC, and state/search estimates are unchanged. Length continuation,
+response-stall client rebuilding, cost pricing, operator notices, remaining
+provider quirks, non-chat and OAuth routes, dynamic providers, native plugin
+and external-memory managers, prompt invalidation, and broader client eviction
+remain. Validation is **1,885 Rust tests passed, two ignored**. The Python corpus
+regenerates byte for byte and the focused Python compatibility suite passes 161
+tests. Rust and Python formatting, Ruff, workspace Clippy with warnings denied,
+and diff hygiene pass.
+
 ## Native main-provider pre-body retry subset: 2026-09-10
 
 The ordinary native chat-completions path now applies Python-compatible

@@ -1338,6 +1338,7 @@ fn build_agent_client_for_home_with_discovery(
                         .with_main_retry_attempts(native_agent::main_retry_attempts(
                             &user_config["agent"]["api_max_retries"],
                         ))
+                        .with_empty_response_guard(&user_config["agent"]["empty_response_guard"])
                         .with_max_concurrent_children(delegation_policy::max_children(
                             user_config,
                             environment("DELEGATION_MAX_CONCURRENT_CHILDREN").as_deref(),

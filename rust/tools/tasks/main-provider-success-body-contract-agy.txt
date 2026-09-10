@@ -1,0 +1,20 @@
+You own the Python behavior-contract lane for the next Rust port checkpoint. Do not edit Rust code.
+
+Scope: ordinary main-provider chat-completions successful-body validation and recovery. Inspect the current Python source and focused tests, especially run_agent.py, agent/conversation_loop.py, agent/chat_completion_helpers.py, agent/empty_response_guard.py, agent/error_classifier.py, and relevant tests under tests/run_agent and tests/agent. Establish what happens after HTTP success for:
+
+1. malformed or structurally missing choices/message bodies,
+2. empty assistant responses, including the configured empty-response guard and exhaustion,
+3. finish_reason=content_filter and equivalent tagged stream refusals,
+4. nonempty reasoning with empty visible content,
+5. empty content paired with valid tool calls,
+6. truncated/partial streamed output and the exact no-replay boundary,
+7. same-provider retry versus cross-provider fallback, route stickiness, counters, messages, notices, and terminal outcome,
+8. any provider-specific exceptions or distinctions that materially affect the ordinary chat-completions Rust subset.
+
+Use source execution rather than prose inference wherever feasible. Produce these artifacts:
+
+- rust/analysis/main-provider-success-body-contract-agy.md
+- rust/tools/gen_main_provider_success_body_goldens.py
+- rust/tools/main-provider-success-body-goldens.json
+
+The generator must import or execute current Python production behavior, produce deterministic JSON, and be suitable for a Rust include_str! parity test. Include independent expected literals only where source execution cannot expose behavior directly, and label those cases. Run the generator and relevant focused Python tests. Report exact commands, case counts, findings, uncertainties, and deferred non-chat/OAuth behavior. Do not weaken existing tests. Do not use em dash characters in authored files.

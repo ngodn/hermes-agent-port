@@ -773,9 +773,12 @@ impl Dispatcher {
             msg.resolved_session_id = Some(turn_session.session_id());
         }
 
-        // Record the assistant reply for stateless backends (before the silence
-        // gate: a silence marker is still part of the transcript history).
-        crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        // Record model-authored assistant content for stateless backends before
+        // the silence gate. Delivery-only terminal diagnostics stay out of
+        // future provider context.
+        if agent.assistant_reply_is_durable(&msg, &reply) {
+            crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        }
         if let Err(error) = agent
             .finalize_turn_after_persist(
                 crate::agent::TurnContext::from_database(turn_db.as_deref())

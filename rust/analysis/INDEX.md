@@ -70,6 +70,17 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   with the independent [AGY contract](main-provider-retry-contract-agy.md),
   [Claude seam map](main-provider-retry-seam-claude.md), and
   [Claude review](main-provider-retry-review-claude.md).
+- Successful native chat-completions bodies now distinguish malformed buffered
+  payloads, zero-chunk streams, finished empty messages, reasoning-only output,
+  valid tool calls and content-policy refusals. Recovery preserves the frozen
+  route and prompt, never penalizes credential health, and keeps terminal
+  diagnostics out of durable replay and external memory. See
+  [native-main-provider-success-body-resolution.md](native-main-provider-success-body-resolution.md),
+  with the independent
+  [AGY contract](main-provider-success-body-contract-agy.md),
+  [AGY pricing dependency audit](main-provider-empty-cost-seam-agy.md),
+  [Claude seam map](main-provider-success-body-seam-claude.md), and
+  [Claude review](main-provider-success-body-review-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -147,6 +158,12 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-main-provider-success-body-resolution.md](native-main-provider-success-body-resolution.md) | Production successful-body classification and recovery, delivery-only persistence, helper dispositions, explicit pricing and continuation limits, and measured progress |
+| [main-provider-success-body-contract-agy.md](main-provider-success-body-contract-agy.md) | AGY's source-executed Python successful-body, empty, refusal, reasoning, tool, stream and fallback contract |
+| [main-provider-empty-cost-seam-agy.md](main-provider-empty-cost-seam-agy.md) | Independent proof that fixed empty retries are the required fail-open behavior until native pricing and billing-route normalization exist |
+| [main-provider-success-body-seam-claude.md](main-provider-success-body-seam-claude.md) | Claude's separate ownership map for post-success replay boundaries across streaming and buffered tool paths |
+| [main-provider-success-body-review-claude.md](main-provider-success-body-review-claude.md) | Claude's initial implementation review whose reasoning, persistence, nudge-scope and generation findings were resolved by the primary lane |
+| [main-provider-success-body-goldens.json](../tools/main-provider-success-body-goldens.json) | Source-executed 114-case successful-body corpus across eight contract sections |
 | [native-main-provider-fallback-resolution.md](native-main-provider-fallback-resolution.md) | Production static chat-completions main fallback, pool-first ordering, sticky route ownership, prompt stability, durable restore gates, review disposition, and explicit transport limits |
 | [main-provider-fallback-contract-agy.md](main-provider-fallback-contract-agy.md) | AGY's independent Python contract and source map, corrected by the primary lane to the live five-second exhaustion floor |
 | [main-provider-fallback-seam-claude.md](main-provider-fallback-seam-claude.md) | Claude's separate Rust ownership and shared-dispatch design for safe pre-body provider switching |

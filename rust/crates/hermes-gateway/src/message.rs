@@ -483,15 +483,17 @@ pub async fn post_message(
             }
         }
 
-        // Record the assistant reply for stateless backends (before the silence gate).
-        // The producer may still be finishing after its terminal stream event.
-        // Keep ownership until it has stopped, including on error paths.
+        // Record model-authored assistant content for stateless backends before
+        // the silence gate. The producer may still be finishing after its
+        // terminal stream event, so keep ownership until it has stopped.
         let outcome = turn.await;
         let succeeded = matches!(&outcome, Ok(Ok(())));
         if let Some(turn_session) = &turn_session {
             msg.resolved_session_id = Some(turn_session.session_id());
         }
-        crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        if agent.assistant_reply_is_durable(&msg, &reply) {
+            crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        }
         if let Err(error) = agent
             .finalize_turn_after_persist(
                 crate::agent::TurnContext::from_database(turn_db.as_deref())

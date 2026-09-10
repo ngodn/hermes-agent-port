@@ -940,6 +940,51 @@ impl MainPoolFailure {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum MainSuccessBodyFailure {
+    InvalidResponse,
+    ContentPolicyRefusal,
+}
+
+fn main_content_policy_terminal(explanation: Option<&str>) -> String {
+    let detail = explanation
+        .map(str::trim)
+        .filter(|text| !text.is_empty())
+        .map_or_else(
+            || "The model returned no explanation.".to_owned(),
+            |text| format!("Model's explanation: {text}"),
+        );
+    format!(
+        "⚠️  The model declined to respond to this request (safety refusal, not a Hermes/gateway failure).\n\n{detail}\n\nTry rephrasing the request, narrowing the context, or adding a fallback provider with `hermes fallback add`."
+    )
+}
+
+fn main_content_policy_explanation(message: &Value) -> Option<String> {
+    message["refusal"]
+        .as_str()
+        .or_else(|| message["content"].as_str())
+        .map(str::trim)
+        .filter(|text| !text.is_empty())
+        .map(str::to_owned)
+        .or_else(|| main_message_reasoning_text(message))
+}
+
+fn main_success_body_failure(choice: &Value, message: &Value) -> Option<MainSuccessBodyFailure> {
+    let content_filter = choice["finish_reason"]
+        .as_str()
+        .is_some_and(|reason| reason == "content_filter");
+    let refusal_only = message["refusal"]
+        .as_str()
+        .is_some_and(|refusal| !refusal.trim().is_empty())
+        && message["content"]
+            .as_str()
+            .is_none_or(|content| content.trim().is_empty())
+        && message["tool_calls"]
+            .as_array()
+            .is_none_or(|calls| calls.is_empty());
+    (content_filter || refusal_only).then_some(MainSuccessBodyFailure::ContentPolicyRefusal)
+}
+
 fn main_attempt_limit(failure: MainPoolFailure, max_attempts: usize, has_fallback: bool) -> usize {
     let max_attempts = max_attempts.max(1);
     if has_fallback
@@ -1550,6 +1595,158 @@ struct MainFallbackRoutes {
 struct MainDispatch {
     response: reqwest::Response,
     provider: String,
+    route_index: usize,
+}
+
+#[derive(Clone, Debug)]
+struct MainEmptyAttempt {
+    route_index: usize,
+    finish_reason: String,
+    usage_present: bool,
+    zero_output: bool,
+    observed_generation: bool,
+}
+
+fn main_empty_is_deterministic(attempts: &[MainEmptyAttempt], enabled: bool) -> bool {
+    if !enabled || attempts.len() < 2 {
+        return false;
+    }
+    let first = &attempts[0];
+    let same_signature = attempts.iter().all(|attempt| {
+        attempt.route_index == first.route_index && attempt.finish_reason == first.finish_reason
+    });
+    let usage_proves_empty = attempts
+        .iter()
+        .all(|attempt| attempt.usage_present && attempt.zero_output);
+    let response_proves_empty = attempts
+        .iter()
+        .all(|attempt| !attempt.usage_present && !attempt.observed_generation);
+    same_signature && (usage_proves_empty || response_proves_empty)
+}
+
+fn main_empty_attempt(
+    route_index: usize,
+    choice: &Value,
+    message: &Value,
+    usage: Option<&crate::provider_usage::CanonicalUsage>,
+) -> MainEmptyAttempt {
+    let usage_present = usage.is_some_and(|usage| usage.prompt_tokens() > 0);
+    let zero_output = usage.is_some_and(|usage| {
+        usage.prompt_tokens() > 0 && usage.output_tokens.saturating_add(usage.reasoning_tokens) == 0
+    });
+    let observed_generation = main_message_has_reasoning(message);
+    let finish_reason = match &choice["finish_reason"] {
+        Value::String(reason) => reason.clone(),
+        Value::Number(reason) => reason.to_string(),
+        _ => "stop".into(),
+    };
+    MainEmptyAttempt {
+        route_index,
+        finish_reason,
+        usage_present,
+        zero_output,
+        observed_generation,
+    }
+}
+
+fn main_message_has_reasoning(message: &Value) -> bool {
+    ["reasoning", "reasoning_content"].iter().any(|field| {
+        message[*field]
+            .as_str()
+            .is_some_and(|value| !value.is_empty())
+    }) || crate::python_value::truthy(&message["reasoning_details"])
+        || message["content"].as_str().is_some_and(|content| {
+            // ASCII folding preserves UTF-8 byte offsets used by the matching
+            // extraction helper while still covering the ASCII tag grammar.
+            let lowered = content.to_ascii_lowercase();
+            ["<think>", "<thinking>", "<reasoning>"]
+                .iter()
+                .any(|tag| lowered.contains(tag))
+        })
+}
+
+fn main_message_reasoning_text(message: &Value) -> Option<String> {
+    for field in ["reasoning", "reasoning_content"] {
+        if let Some(reasoning) = message[field]
+            .as_str()
+            .map(str::trim)
+            .filter(|reasoning| !reasoning.is_empty())
+        {
+            return Some(reasoning.to_owned());
+        }
+    }
+    main_inline_reasoning_text(message["content"].as_str()?)
+}
+
+fn main_inline_reasoning_text(content: &str) -> Option<String> {
+    let lowered = content.to_ascii_lowercase();
+    for (open, close) in [
+        ("<think>", "</think>"),
+        ("<thinking>", "</thinking>"),
+        ("<reasoning>", "</reasoning>"),
+    ] {
+        let Some(start) = lowered.find(open) else {
+            continue;
+        };
+        let body_start = start + open.len();
+        let body_end = lowered[body_start..]
+            .find(close)
+            .map_or(content.len(), |end| body_start + end);
+        let reasoning = content[body_start..body_end].trim();
+        if !reasoning.is_empty() {
+            return Some(reasoning.to_owned());
+        }
+    }
+    None
+}
+
+#[derive(Clone, Copy)]
+struct MainEmptyResponsePolicy {
+    enabled: bool,
+    retry_budget: usize,
+    // Python also fails open to the fixed retry budget when pricing is
+    // unavailable. Keep the parsed value frozen until the native pricing
+    // catalog, route normalization and decimal cost engine are ported.
+    _cost_threshold_usd: f64,
+    backoff_base: std::time::Duration,
+}
+
+impl Default for MainEmptyResponsePolicy {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            retry_budget: 3,
+            _cost_threshold_usd: 0.25,
+            backoff_base: std::time::Duration::from_secs(5),
+        }
+    }
+}
+
+fn main_empty_response_policy(value: &Value) -> MainEmptyResponsePolicy {
+    let Some(section) = value.as_object() else {
+        return MainEmptyResponsePolicy::default();
+    };
+    let enabled = match section.get("enabled") {
+        Some(Value::Bool(enabled)) => *enabled,
+        Some(Value::String(enabled)) => !matches!(
+            enabled.trim().to_lowercase().as_str(),
+            "0" | "false" | "no" | "off"
+        ),
+        None => true,
+        Some(_) => true,
+    };
+    let threshold = match section.get("cost_threshold_usd") {
+        Some(Value::String(value)) => value.trim().parse::<f64>().ok(),
+        Some(Value::Number(value)) => value.as_f64(),
+        None | Some(Value::Null | Value::Bool(_) | Value::Array(_) | Value::Object(_)) => None,
+    }
+    .filter(|value| value.is_finite() && *value > 0.0)
+    .unwrap_or(0.25);
+    MainEmptyResponsePolicy {
+        enabled,
+        _cost_threshold_usd: threshold,
+        ..MainEmptyResponsePolicy::default()
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -1581,6 +1778,7 @@ pub struct NativeAgentClient {
     /// remainder of a tool loop and through any active cooldown.
     main_fallback: MainFallbackRoutes,
     main_retry: MainRetryPolicy,
+    empty_response: MainEmptyResponsePolicy,
     provider_profile: Option<crate::provider_registry::ProviderProfile>,
     provider_identity: Option<String>,
     reasoning_config: Option<Value>,
@@ -1616,6 +1814,13 @@ pub struct NativeAgentClient {
     micro_compaction_state:
         std::sync::Arc<std::sync::Mutex<crate::micro_compaction::MicroCompactionState>>,
     usage_state: std::sync::Arc<std::sync::Mutex<UsageState>>,
+    /// Turn-local disposition shared with the non-streaming tool model. Each
+    /// admitted turn replaces this Arc before provider work begins.
+    turn_reply_durable: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    /// Conversation ids whose latest reply is a user-facing diagnostic rather
+    /// than model-authored history. Gateway persistence consults this set after
+    /// the producer finishes and finalization consumes the marker.
+    delivery_only_replies: std::sync::Arc<std::sync::Mutex<std::collections::HashSet<String>>>,
     structural_compression_backoff: std::sync::Arc<CompressionStructuralBackoff>,
     usage_bucket: UsageBucket,
     turn_limit: usize,
@@ -1645,6 +1850,7 @@ impl NativeAgentClient {
             main_pool: None,
             main_fallback: Default::default(),
             main_retry: Default::default(),
+            empty_response: Default::default(),
             provider_profile: None,
             provider_identity: None,
             reasoning_config: None,
@@ -1666,6 +1872,8 @@ impl NativeAgentClient {
             pending_memory_turn: Default::default(),
             micro_compaction_state: Default::default(),
             usage_state: Default::default(),
+            turn_reply_durable: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true)),
+            delivery_only_replies: Default::default(),
             structural_compression_backoff: Default::default(),
             usage_bucket: UsageBucket::Main,
             turn_limit: crate::turn_limit::UNLIMITED,
@@ -1816,6 +2024,7 @@ impl NativeAgentClient {
         for route in &mut fallbacks {
             route.main_fallback = Default::default();
             route.main_retry = self.main_retry;
+            route.empty_response = self.empty_response;
             route.compression_routes = Default::default();
             if let Some(prompt) = self.system_prompt.as_deref() {
                 route.system_prompt = Some(std::sync::Arc::from(rewrite_prompt_identity(
@@ -1841,12 +2050,23 @@ impl NativeAgentClient {
         self
     }
 
+    pub(crate) fn with_empty_response_guard(mut self, value: &Value) -> Self {
+        self.empty_response = main_empty_response_policy(value);
+        let routes = std::sync::Arc::make_mut(&mut self.main_fallback.fallbacks);
+        for route in routes {
+            route.empty_response = self.empty_response;
+        }
+        self
+    }
+
     #[cfg(test)]
     fn with_main_retry_backoff(mut self, base: std::time::Duration) -> Self {
         self.main_retry.backoff_base = base;
+        self.empty_response.backoff_base = base;
         let routes = std::sync::Arc::make_mut(&mut self.main_fallback.fallbacks);
         for route in routes {
             route.main_retry = self.main_retry;
+            route.empty_response = self.empty_response;
         }
         self
     }
@@ -2014,6 +2234,7 @@ impl NativeAgentClient {
         };
         route.main_fallback = Default::default();
         route.main_retry = self.main_retry;
+        route.empty_response = self.empty_response;
         route.cache_scope = self.cache_scope.clone();
         route.automatic_compression_policy = self.automatic_compression_policy.clone();
         route.compression_routes = self.compression_routes.clone();
@@ -2098,6 +2319,20 @@ impl NativeAgentClient {
         None
     }
 
+    fn activate_main_success_body_fallback(
+        &self,
+        failed_index: usize,
+        _failure: MainSuccessBodyFailure,
+    ) -> Option<usize> {
+        let next = self.next_main_fallback_index(failed_index)?;
+        self.main_fallback
+            .state
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .active = next;
+        Some(next)
+    }
+
     fn next_main_fallback_index(&self, failed_index: usize) -> Option<usize> {
         let failed = self.main_route(failed_index)?;
         let mut next = failed_index + 1;
@@ -2140,6 +2375,7 @@ impl NativeAgentClient {
                     return Ok(MainDispatch {
                         response,
                         provider: route.provider_name().to_owned(),
+                        route_index: index,
                     });
                 }
                 Err(MainRequestError::Terminal(terminal))
@@ -2389,6 +2625,15 @@ impl NativeAgentClient {
         tokio::time::sleep(std::time::Duration::from_secs_f64(wait)).await;
     }
 
+    async fn wait_before_empty_response_retry(&self, attempt: i64) {
+        let base = self.empty_response.backoff_base.as_secs_f64();
+        if base <= 0.0 {
+            return;
+        }
+        let wait = crate::retry_utils::jittered_backoff(attempt, base, 60.0, 0.5);
+        tokio::time::sleep(std::time::Duration::from_secs_f64(wait)).await;
+    }
+
     /// Apply request hooks at the wire boundary so streaming and every tool
     /// iteration share the same provider rules without rewriting past messages.
     fn apply_provider_extras(&self, body: &mut Value) -> Result<()> {
@@ -2553,6 +2798,11 @@ impl NativeAgentClient {
         let mut state = self.usage_state.lock().unwrap();
         state.main = crate::provider_usage::CanonicalUsage::accumulator();
         state.last_main_prompt_tokens = None;
+    }
+
+    fn mark_turn_reply_delivery_only(&self) {
+        self.turn_reply_durable
+            .store(false, std::sync::atomic::Ordering::Release);
     }
 
     fn begin_auxiliary_usage(&self) {
@@ -3948,26 +4198,196 @@ impl NativeAgentClient {
             return Ok(Some(current_turn_messages(messages, prefix_len, content)));
         }
 
-        let dispatched = self
-            .dispatch_main_turn("", |route| {
-                let messages = route.route_messages(&history);
-                let mut body = build_request_body_from_messages(&route.model, &messages, content);
-                route.apply_provider_extras(&mut body)?;
-                if supports_stream_usage(&route.base_url) {
-                    body["stream_options"] = json!({"include_usage": true});
-                }
-                Ok(body)
-            })
-            .await?;
+        let mut empty_attempts = Vec::new();
+        let mut empty_retries = 0_usize;
+        let mut thinking_prefill_retries = 0_usize;
+        let mut empty_stream_attempts = 0_usize;
+        let mut last_reasoning = None;
+        loop {
+            let dispatched = self
+                .dispatch_main_turn("", |route| {
+                    let messages = route.route_messages(&history);
+                    let mut body =
+                        build_request_body_from_messages(&route.model, &messages, content);
+                    route.apply_provider_extras(&mut body)?;
+                    if supports_stream_usage(&route.base_url) {
+                        body["stream_options"] = json!({"include_usage": true});
+                    }
+                    Ok(body)
+                })
+                .await?;
 
-        let usage = forward_sse(
-            dispatched.response.bytes_stream(),
-            &events,
-            &dispatched.provider,
-        )
-        .await?;
-        self.capture_usage(usage);
-        Ok(None)
+            let mut outcome = forward_sse(
+                dispatched.response.bytes_stream(),
+                &events,
+                &dispatched.provider,
+                false,
+            )
+            .await?;
+            let content_policy_refusal = outcome.finish_reason == "content_filter"
+                || outcome.refusal.as_deref().is_some_and(|refusal| {
+                    !refusal.trim().is_empty() && !outcome.observed_generation
+                });
+            if outcome.visible {
+                if content_policy_refusal {
+                    return Err(Error::Other(
+                        "native agent stream was blocked by content policy after visible output"
+                            .into(),
+                    ));
+                }
+                self.capture_usage(outcome.usage);
+                let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                return Ok(None);
+            }
+
+            if content_policy_refusal {
+                if self
+                    .activate_main_success_body_fallback(
+                        dispatched.route_index,
+                        MainSuccessBodyFailure::ContentPolicyRefusal,
+                    )
+                    .is_some()
+                {
+                    empty_attempts.clear();
+                    empty_retries = 0;
+                    empty_stream_attempts = 0;
+                    last_reasoning = None;
+                    continue;
+                }
+                let explanation = outcome
+                    .refusal
+                    .as_deref()
+                    .or_else(|| {
+                        (!outcome.raw_content.trim().is_empty())
+                            .then_some(outcome.raw_content.as_str())
+                    })
+                    .or_else(|| {
+                        (!outcome.reasoning.trim().is_empty()).then_some(outcome.reasoning.as_str())
+                    });
+                let refusal = main_content_policy_terminal(explanation);
+                self.mark_turn_reply_delivery_only();
+                let _ = events
+                    .send(StreamEvent::MessageChunk { text: refusal })
+                    .await;
+                let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                return Ok(None);
+            }
+
+            // Python treats a stream with no finish signal and no generated
+            // content as EmptyStreamError, not as a model-authored empty
+            // answer. It retries the unopened output three total times before
+            // provider fallback. No terminal stop or transcript content has
+            // crossed the boundary here, so replay remains safe.
+            if outcome.finish_reason.is_empty() && !outcome.observed_generation {
+                empty_stream_attempts = empty_stream_attempts.saturating_add(1);
+                if empty_stream_attempts < 3 {
+                    let route = self
+                        .main_route(dispatched.route_index)
+                        .unwrap_or_else(|| self.clone());
+                    route
+                        .wait_before_empty_response_retry(empty_stream_attempts as i64)
+                        .await;
+                    continue;
+                }
+                if self
+                    .activate_main_success_body_fallback(
+                        dispatched.route_index,
+                        MainSuccessBodyFailure::InvalidResponse,
+                    )
+                    .is_some()
+                {
+                    empty_attempts.clear();
+                    empty_retries = 0;
+                    empty_stream_attempts = 0;
+                    last_reasoning = None;
+                    continue;
+                }
+                return Err(Error::Other(
+                    "native agent provider returned an empty response stream after 3 attempts"
+                        .into(),
+                ));
+            }
+            if outcome.finish_reason.is_empty() {
+                outcome.finish_reason = "stop".into();
+            }
+
+            if outcome.observed_generation && thinking_prefill_retries < 2 {
+                if !outcome.reasoning.is_empty() {
+                    last_reasoning = Some(outcome.reasoning.clone());
+                }
+                thinking_prefill_retries = thinking_prefill_retries.saturating_add(1);
+                self.capture_usage(outcome.usage);
+                continue;
+            }
+            if !outcome.reasoning.is_empty() {
+                last_reasoning = Some(outcome.reasoning.clone());
+            }
+
+            let (usage_present, zero_output) =
+                outcome.usage.as_ref().map_or((false, false), |usage| {
+                    let present = usage.prompt_tokens() > 0;
+                    (
+                        present,
+                        present && usage.output_tokens.saturating_add(usage.reasoning_tokens) == 0,
+                    )
+                });
+            empty_attempts.push(MainEmptyAttempt {
+                route_index: dispatched.route_index,
+                finish_reason: outcome.finish_reason,
+                usage_present,
+                zero_output,
+                observed_generation: outcome.observed_generation,
+            });
+            self.capture_usage(outcome.usage);
+            let deterministic =
+                main_empty_is_deterministic(&empty_attempts, self.empty_response.enabled);
+            if !deterministic && empty_retries < self.empty_response.retry_budget {
+                empty_retries = empty_retries.saturating_add(1);
+                let route = self
+                    .main_route(dispatched.route_index)
+                    .unwrap_or_else(|| self.clone());
+                route
+                    .wait_before_empty_response_retry(empty_retries as i64)
+                    .await;
+                continue;
+            }
+            if self
+                .activate_main_success_body_fallback(
+                    dispatched.route_index,
+                    MainSuccessBodyFailure::InvalidResponse,
+                )
+                .is_some()
+            {
+                empty_attempts.clear();
+                empty_retries = 0;
+                empty_stream_attempts = 0;
+                last_reasoning = None;
+                continue;
+            }
+            let terminal = last_reasoning.map_or_else(
+                || "(empty)".to_owned(),
+                |reasoning| {
+                    let mut preview = reasoning.chars().take(500).collect::<String>();
+                    if reasoning.chars().count() > 500 {
+                        preview.push_str("...");
+                    }
+                    let fallback = if self.main_fallback.fallbacks.is_empty() {
+                        ""
+                    } else {
+                        " and fallback"
+                    };
+                    format!(
+                        "⚠️ The model produced only internal reasoning and no final answer, despite retries{fallback}. Its last reasoning, which may contain the answer:\n\n{preview}"
+                    )
+                },
+            );
+            self.mark_turn_reply_delivery_only();
+            let _ = events
+                .send(StreamEvent::MessageChunk { text: terminal })
+                .await;
+            let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+            return Ok(None);
+        }
     }
 
     async fn run_native_turn(
@@ -3978,9 +4398,16 @@ impl NativeAgentClient {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()> {
         let mut turn_client = self.clone();
+        turn_client.turn_reply_durable =
+            std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
         turn_client.restore_primary_route_for_turn().await;
         turn_client.begin_main_usage();
         let session_id = crate::session_db::message_session_id(msg);
+        turn_client
+            .delivery_only_replies
+            .lock()
+            .unwrap()
+            .remove(&session_id);
         turn_client.cache_scope = Some(
             context
                 .database
@@ -4072,8 +4499,19 @@ impl NativeAgentClient {
         };
         let (outcome, response) = tokio::join!(model, forward);
         let turn_messages = outcome?;
+        let delivery_only = !turn_client
+            .turn_reply_durable
+            .load(std::sync::atomic::Ordering::Acquire);
+        if delivery_only {
+            let durable_session_id = native_turn.session_id();
+            turn_client
+                .delivery_only_replies
+                .lock()
+                .unwrap()
+                .insert(durable_session_id);
+        }
 
-        if !response.is_empty() && turn_client._extension_host.is_some() {
+        if !delivery_only && !response.is_empty() && turn_client._extension_host.is_some() {
             let mut messages = turn_messages
                 .filter(|messages| !messages.is_empty())
                 .unwrap_or_else(|| vec![json!({"role":"user", "content": clean_content})]);
@@ -4114,6 +4552,16 @@ impl AgentClient for NativeAgentClient {
     fn supports_structured_content(&self) -> bool {
         true
     }
+
+    fn assistant_reply_is_durable(&self, msg: &Message, _: &str) -> bool {
+        let session_id = crate::session_db::message_session_id(msg);
+        !self
+            .delivery_only_replies
+            .lock()
+            .unwrap()
+            .contains(&session_id)
+    }
+
     async fn run_turn(
         &self,
         msg: &Message,
@@ -4300,10 +4748,10 @@ impl AgentClient for NativeAgentClient {
         reply: &str,
         succeeded: bool,
     ) -> Result<()> {
+        let session_id = crate::session_db::message_session_id(msg);
         let usage = self.take_main_usage();
         if usage.request_count > 0 {
             if let Some(database) = context.database {
-                let session_id = crate::session_db::message_session_id(msg);
                 let serving = self.active_main_route();
                 let route = crate::session_db::UsageRoute {
                     model: &serving.model,
@@ -4315,6 +4763,15 @@ impl AgentClient for NativeAgentClient {
                     tracing::warn!(%error, %session_id, "main provider usage persistence failed");
                 }
             }
+        }
+        let delivery_only = self
+            .delivery_only_replies
+            .lock()
+            .unwrap()
+            .remove(&session_id);
+        if delivery_only {
+            self.pending_memory_turn.lock().unwrap().take();
+            return Ok(());
         }
         self.micro_compact_after_turn(context, msg, reply, succeeded)
             .await;
@@ -4380,11 +4837,75 @@ fn flatten_extra_body(body: &mut Value) -> Result<()> {
 
 /// Assemble SSE lines before decoding deltas. Network chunk boundaries carry
 /// no protocol meaning and can split both line endings and UTF-8 characters.
+#[derive(Default)]
+struct MainStreamOutcome {
+    usage: Option<crate::provider_usage::CanonicalUsage>,
+    visible: bool,
+    observed_generation: bool,
+    finish_reason: String,
+    refusal: Option<String>,
+    reasoning: String,
+    raw_content: String,
+}
+
+fn observe_main_sse_line(line: &str, outcome: &mut MainStreamOutcome) {
+    let Some(payload) = line
+        .trim_end_matches(['\r', '\n'])
+        .strip_prefix("data:")
+        .map(str::trim)
+        .filter(|payload| !payload.is_empty() && *payload != "[DONE]")
+    else {
+        return;
+    };
+    let Ok(value) = serde_json::from_str::<Value>(payload) else {
+        return;
+    };
+    let last_one = value["lastOne"] == Value::Bool(true)
+        || value["lastOne"].as_i64() == Some(1)
+        || value["lastOne"].as_str() == Some("true");
+    if outcome.finish_reason.is_empty() && last_one {
+        outcome.finish_reason = "stop".into();
+    }
+    let Some(choice) = value["choices"].get(0) else {
+        return;
+    };
+    if let Some(reason) = choice["finish_reason"].as_str() {
+        outcome.finish_reason = reason.to_owned();
+    } else if let Value::Number(reason) = &choice["finish_reason"] {
+        outcome.finish_reason = reason.to_string();
+    }
+    let delta = &choice["delta"];
+    if let Some(content) = delta["content"]
+        .as_str()
+        .filter(|content| !content.is_empty())
+    {
+        outcome.observed_generation = true;
+        outcome.raw_content.push_str(content);
+    }
+    if let Some(reasoning) = delta["reasoning"]
+        .as_str()
+        .or_else(|| delta["reasoning_content"].as_str())
+        .filter(|reasoning| !reasoning.is_empty())
+    {
+        outcome.observed_generation = true;
+        outcome.reasoning.push_str(reasoning);
+    }
+    if let Some(refusal) = delta["refusal"]
+        .as_str()
+        .or_else(|| choice["message"]["refusal"].as_str())
+        .filter(|refusal| !refusal.trim().is_empty())
+        .map(str::to_owned)
+    {
+        outcome.refusal = Some(refusal);
+    }
+}
+
 async fn forward_sse<S, E>(
     mut stream: S,
     events: &mpsc::Sender<StreamEvent>,
     provider: &str,
-) -> Result<Option<crate::provider_usage::CanonicalUsage>>
+    emit_stop: bool,
+) -> Result<MainStreamOutcome>
 where
     S: futures_util::Stream<Item = std::result::Result<axum::body::Bytes, E>> + Unpin,
     E: std::fmt::Display,
@@ -4394,7 +4915,7 @@ where
 
     let mut buf = Vec::new();
     let mut done = false;
-    let mut usage = None;
+    let mut outcome = MainStreamOutcome::default();
     let mut scrubber = crate::think_scrubber::ThinkScrubber::default();
     while let Some(chunk) = stream.next().await {
         let chunk = chunk.map_err(|e| Error::Other(format!("native agent stream: {e}")))?;
@@ -4402,17 +4923,19 @@ where
         while let Some(nl) = buf.iter().position(|byte| *byte == b'\n') {
             let line: Vec<u8> = buf.drain(..=nl).collect();
             let line = String::from_utf8_lossy(&line);
+            observe_main_sse_line(&line, &mut outcome);
             if let Some(found) = crate::provider_usage::from_sse_line(
                 &line,
                 crate::provider_usage::ApiMode::ChatCompletions,
                 Some(provider),
             ) {
-                usage = Some(found);
+                outcome.usage = Some(found);
             }
             match parse_sse_line(&line) {
                 SseEvent::Delta(text) => {
                     let text = scrubber.feed(&text);
                     if !text.is_empty() {
+                        outcome.visible = true;
                         let _ = events.send(StreamEvent::MessageChunk { text }).await;
                     }
                 }
@@ -4430,16 +4953,18 @@ where
     // Handle any final buffered line if the stream ended without a newline.
     if !done {
         let line = String::from_utf8_lossy(&buf);
+        observe_main_sse_line(&line, &mut outcome);
         if let Some(found) = crate::provider_usage::from_sse_line(
             &line,
             crate::provider_usage::ApiMode::ChatCompletions,
             Some(provider),
         ) {
-            usage = Some(found);
+            outcome.usage = Some(found);
         }
         if let SseEvent::Delta(text) = parse_sse_line(&line) {
             let text = scrubber.feed(&text);
             if !text.is_empty() {
+                outcome.visible = true;
                 let _ = events.send(StreamEvent::MessageChunk { text }).await;
             }
         }
@@ -4447,11 +4972,17 @@ where
 
     let text = scrubber.flush();
     if !text.is_empty() {
+        outcome.visible = true;
         let _ = events.send(StreamEvent::MessageChunk { text }).await;
     }
+    if !outcome.visible && outcome.reasoning.is_empty() {
+        outcome.reasoning = main_inline_reasoning_text(&outcome.raw_content).unwrap_or_default();
+    }
 
-    let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
-    Ok(usage)
+    if emit_stop {
+        let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+    }
+    Ok(outcome)
 }
 
 #[async_trait]
@@ -4475,70 +5006,221 @@ impl ChatModel for NativeAgentClient {
     /// for the no-tools case.
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
         self.clear_last_main_prompt_tokens();
-        let dispatched = self
-            .dispatch_main_turn("step", |route| {
-                let routed_messages = route.route_messages(messages);
-                let mut body = json!({
-                    "model": route.model,
-                    "messages": routed_messages,
-                    "stream": false
-                });
-                if !tools.is_empty() {
-                    body["tools"] = Value::Array(tools.to_vec());
-                }
-                route.apply_provider_extras(&mut body)?;
-                if tools.is_empty() {
-                    // Summary calls cannot regain tool access through request overrides.
-                    if let Some(body) = body.as_object_mut() {
-                        body.shift_remove("tools");
-                        body.shift_remove("tool_choice");
-                        body.shift_remove("parallel_tool_calls");
-                        body.shift_remove("temperature");
-                        body.shift_remove("max_tokens");
-                        body.shift_remove("max_completion_tokens");
-                        if let Some(temperature) = summary_temperature(&route.model) {
-                            body.insert("temperature".into(), json!(temperature));
+        let mut invalid_attempts = 0_usize;
+        let mut empty_attempts = Vec::new();
+        let mut empty_retries = 0_usize;
+        let mut thinking_prefill_retries = 0_usize;
+        let mut last_reasoning = None;
+        loop {
+            let dispatched = self
+                .dispatch_main_turn("step", |route| {
+                    let routed_messages = route.route_messages(messages);
+                    let mut body = json!({
+                        "model": route.model,
+                        "messages": routed_messages,
+                        "stream": false
+                    });
+                    if !tools.is_empty() {
+                        body["tools"] = Value::Array(tools.to_vec());
+                    }
+                    route.apply_provider_extras(&mut body)?;
+                    if tools.is_empty() {
+                        // Summary calls cannot regain tool access through request overrides.
+                        if let Some(body) = body.as_object_mut() {
+                            body.shift_remove("tools");
+                            body.shift_remove("tool_choice");
+                            body.shift_remove("parallel_tool_calls");
+                            body.shift_remove("temperature");
+                            body.shift_remove("max_tokens");
+                            body.shift_remove("max_completion_tokens");
+                            if let Some(temperature) = summary_temperature(&route.model) {
+                                body.insert("temperature".into(), json!(temperature));
+                            }
                         }
                     }
+                    Ok(body)
+                })
+                .await?;
+            let decoded = dispatched
+                .response
+                .json::<Value>()
+                .await
+                .map_err(|error| Error::Other(format!("native agent step decode: {error}")));
+            let (value, mut message) = match decoded.and_then(|value| {
+                let message = value
+                    .get("choices")
+                    .and_then(|choices| choices.get(0))
+                    .and_then(|choice| choice.get("message"))
+                    .cloned()
+                    .ok_or_else(|| {
+                        Error::Other("native agent step: no choices[0].message".into())
+                    })?;
+                Ok((value, message))
+            }) {
+                Ok(decoded) => decoded,
+                Err(error) => {
+                    if self.usage_bucket != UsageBucket::Main {
+                        return Err(error);
+                    }
+                    invalid_attempts = invalid_attempts.saturating_add(1);
+                    if self
+                        .activate_main_success_body_fallback(
+                            dispatched.route_index,
+                            MainSuccessBodyFailure::InvalidResponse,
+                        )
+                        .is_some()
+                    {
+                        invalid_attempts = 0;
+                        last_reasoning = None;
+                        continue;
+                    }
+                    if invalid_attempts < self.main_retry.max_attempts.max(1) {
+                        let route = self
+                            .main_route(dispatched.route_index)
+                            .unwrap_or_else(|| self.clone());
+                        route
+                            .wait_before_empty_response_retry(invalid_attempts as i64)
+                            .await;
+                        continue;
+                    }
+                    return Err(error);
                 }
-                Ok(body)
-            })
-            .await?;
-        let v: Value = dispatched
-            .response
-            .json()
-            .await
-            .map_err(|e| Error::Other(format!("native agent step decode: {e}")))?;
-        self.capture_usage(crate::provider_usage::from_response(
-            &v,
-            crate::provider_usage::ApiMode::ChatCompletions,
-            Some(&dispatched.provider),
-        ));
-        let message = v
-            .get("choices")
-            .and_then(|c| c.get(0))
-            .and_then(|c| c.get("message"))
-            .ok_or_else(|| Error::Other("native agent step: no choices[0].message".into()))?;
-        // Name repair precedes assistant-message construction in Python, so
-        // missing-ID hashes must use the repaired name too.
-        let mut message = message.clone();
-        let valid_names: Vec<String> = tools
-            .iter()
-            .filter_map(|tool| tool["function"]["name"].as_str().map(str::to_owned))
-            .collect();
-        if let Some(calls) = message.get_mut("tool_calls").and_then(Value::as_array_mut) {
-            for call in calls {
-                if let Some(name) = call["function"]["name"].as_str() {
-                    if !valid_names.iter().any(|valid| valid == name) {
-                        if let Some(repaired) = crate::tool_name_repair::repair(name, &valid_names)
-                        {
-                            call["function"]["name"] = json!(repaired);
+            };
+            let choice = &value["choices"][0];
+            if let Some(failure) = main_success_body_failure(choice, &message) {
+                if self.usage_bucket != UsageBucket::Main {
+                    self.capture_usage(crate::provider_usage::from_response(
+                        &value,
+                        crate::provider_usage::ApiMode::ChatCompletions,
+                        Some(&dispatched.provider),
+                    ));
+                    return Ok(parse_message_step(&message));
+                }
+                if self
+                    .activate_main_success_body_fallback(dispatched.route_index, failure)
+                    .is_some()
+                {
+                    invalid_attempts = 0;
+                    empty_attempts.clear();
+                    empty_retries = 0;
+                    last_reasoning = None;
+                    continue;
+                }
+                self.mark_turn_reply_delivery_only();
+                return Ok(Step::Final(main_content_policy_terminal(
+                    main_content_policy_explanation(&message).as_deref(),
+                )));
+            }
+            // Name repair precedes assistant-message construction in Python, so
+            // missing-ID hashes must use the repaired name too.
+            let valid_names: Vec<String> = tools
+                .iter()
+                .filter_map(|tool| tool["function"]["name"].as_str().map(str::to_owned))
+                .collect();
+            if let Some(calls) = message.get_mut("tool_calls").and_then(Value::as_array_mut) {
+                for call in calls {
+                    if let Some(name) = call["function"]["name"].as_str() {
+                        if !valid_names.iter().any(|valid| valid == name) {
+                            if let Some(repaired) =
+                                crate::tool_name_repair::repair(name, &valid_names)
+                            {
+                                call["function"]["name"] = json!(repaired);
+                            }
                         }
                     }
                 }
             }
+            let step = parse_message_step(&message);
+            let usage = crate::provider_usage::from_response(
+                &value,
+                crate::provider_usage::ApiMode::ChatCompletions,
+                Some(&dispatched.provider),
+            );
+            let empty = matches!(
+                &step,
+                Step::Final(content) if crate::visible_response::answer(content).is_none()
+            );
+            if !empty || self.usage_bucket != UsageBucket::Main {
+                self.capture_usage(usage);
+                return Ok(step);
+            }
+
+            let empty_attempt =
+                main_empty_attempt(dispatched.route_index, choice, &message, usage.as_ref());
+            if empty_attempt.observed_generation && thinking_prefill_retries < 2 {
+                if let Some(reasoning) = main_message_reasoning_text(&message) {
+                    last_reasoning = Some(reasoning);
+                }
+                thinking_prefill_retries = thinking_prefill_retries.saturating_add(1);
+                self.capture_usage(usage);
+                continue;
+            }
+
+            if let Some(reasoning) = main_message_reasoning_text(&message) {
+                last_reasoning = Some(reasoning);
+            }
+
+            let latest_tool = messages
+                .iter()
+                .rposition(|message| message["role"] == "tool");
+            let recent_tool = latest_tool.is_some_and(|index| messages.len() - index <= 5);
+            let already_nudged = latest_tool.is_some_and(|index| {
+                messages[index + 1..].iter().any(|message| {
+                    message["_empty_recovery_synthetic"]
+                        .as_bool()
+                        .unwrap_or(false)
+                })
+            });
+            if recent_tool && !already_nudged {
+                self.capture_usage(usage);
+                return Ok(step);
+            }
+
+            empty_attempts.push(empty_attempt);
+            self.capture_usage(usage);
+            let deterministic =
+                main_empty_is_deterministic(&empty_attempts, self.empty_response.enabled);
+            if !deterministic && empty_retries < self.empty_response.retry_budget {
+                empty_retries = empty_retries.saturating_add(1);
+                let route = self
+                    .main_route(dispatched.route_index)
+                    .unwrap_or_else(|| self.clone());
+                route
+                    .wait_before_empty_response_retry(empty_retries as i64)
+                    .await;
+                continue;
+            }
+            if self
+                .activate_main_success_body_fallback(
+                    dispatched.route_index,
+                    MainSuccessBodyFailure::InvalidResponse,
+                )
+                .is_some()
+            {
+                invalid_attempts = 0;
+                empty_attempts.clear();
+                empty_retries = 0;
+                last_reasoning = None;
+                continue;
+            }
+            if let Some(reasoning) = last_reasoning {
+                let mut preview = reasoning.chars().take(500).collect::<String>();
+                if reasoning.chars().count() > 500 {
+                    preview.push_str("...");
+                }
+                let fallback = if self.main_fallback.fallbacks.is_empty() {
+                    ""
+                } else {
+                    " and fallback"
+                };
+                self.mark_turn_reply_delivery_only();
+                return Ok(Step::Final(format!(
+                    "⚠️ The model produced only internal reasoning and no final answer, despite retries{fallback}. Its last reasoning, which may contain the answer:\n\n{preview}"
+                )));
+            }
+            self.mark_turn_reply_delivery_only();
+            return Ok(Step::Final("(empty)".into()));
         }
-        Ok(parse_message_step(&message))
     }
 }
 
@@ -4577,6 +5259,203 @@ mod tests {
         for (value, expected) in cases {
             assert_eq!(super::main_retry_attempts(&value), expected, "{value}");
         }
+    }
+
+    #[test]
+    fn empty_response_guard_settings_match_python_goldens() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-success-body-goldens.json"
+        ))
+        .unwrap();
+        let sections = fixture.as_object().unwrap();
+        assert_eq!(sections.len(), 8);
+        assert_eq!(
+            sections
+                .values()
+                .map(|section| section.as_array().unwrap().len())
+                .sum::<usize>(),
+            114
+        );
+        let rows = fixture["empty_assistant_response_guard_and_exhaustion"]
+            .as_array()
+            .unwrap();
+        let cases = [
+            ("guard_config_none_section", serde_json::Value::Null),
+            (
+                "guard_config_non_dict_section",
+                serde_json::json!("invalid_section"),
+            ),
+            (
+                "guard_config_disabled_bool",
+                serde_json::json!({"enabled":false}),
+            ),
+            (
+                "guard_config_disabled_str_false",
+                serde_json::json!({"enabled":"false"}),
+            ),
+            (
+                "guard_config_disabled_str_zero",
+                serde_json::json!({"enabled":"0"}),
+            ),
+            (
+                "guard_config_disabled_str_off",
+                serde_json::json!({"enabled":"off"}),
+            ),
+            (
+                "guard_config_enabled_str_true",
+                serde_json::json!({"enabled":"true"}),
+            ),
+            (
+                "guard_config_custom_threshold_int",
+                serde_json::json!({"cost_threshold_usd":5}),
+            ),
+            (
+                "guard_config_custom_threshold_str",
+                serde_json::json!({"cost_threshold_usd":"1.50"}),
+            ),
+            (
+                "guard_config_invalid_threshold_negative",
+                serde_json::json!({"cost_threshold_usd":-1}),
+            ),
+            (
+                "guard_config_invalid_threshold_str_garbage",
+                serde_json::json!({"cost_threshold_usd":"banana"}),
+            ),
+            (
+                "guard_config_invalid_threshold_bool",
+                serde_json::json!({"cost_threshold_usd":true}),
+            ),
+        ];
+        for (name, value) in cases {
+            let expected = rows.iter().find(|row| row["case_name"] == name).unwrap();
+            let actual = super::main_empty_response_policy(&value);
+            assert_eq!(
+                actual.enabled,
+                expected["enabled"].as_bool().unwrap(),
+                "{name}"
+            );
+            let expected_threshold = expected["cost_threshold_usd"]
+                .as_str()
+                .unwrap()
+                .parse::<f64>()
+                .unwrap();
+            assert_eq!(actual._cost_threshold_usd, expected_threshold, "{name}");
+        }
+    }
+
+    #[test]
+    fn successful_body_classifier_preserves_usable_refusal_annotations() {
+        let usable_text = serde_json::json!({
+            "finish_reason":"stop",
+            "message":{"content":"usable", "refusal":"annotation"}
+        });
+        assert_eq!(
+            super::main_success_body_failure(&usable_text, &usable_text["message"]),
+            None
+        );
+        let usable_tool = serde_json::json!({
+            "finish_reason":"tool_calls",
+            "message":{"content":null, "refusal":"annotation", "tool_calls":[{}]}
+        });
+        assert_eq!(
+            super::main_success_body_failure(&usable_tool, &usable_tool["message"]),
+            None
+        );
+        let refusal_only = serde_json::json!({
+            "finish_reason":"stop",
+            "message":{"content":null, "refusal":"declined"}
+        });
+        assert_eq!(
+            super::main_success_body_failure(&refusal_only, &refusal_only["message"]),
+            Some(super::MainSuccessBodyFailure::ContentPolicyRefusal)
+        );
+        let explicit_filter = serde_json::json!({
+            "finish_reason":"content_filter",
+            "message":{"content":"provider explanation"}
+        });
+        assert_eq!(
+            super::main_success_body_failure(&explicit_filter, &explicit_filter["message"]),
+            Some(super::MainSuccessBodyFailure::ContentPolicyRefusal)
+        );
+    }
+
+    #[test]
+    fn inline_reasoning_extraction_is_case_insensitive_and_utf8_safe() {
+        assert_eq!(
+            super::main_inline_reasoning_text("İ<THINK>résumé 猫</THINK>"),
+            Some("résumé 猫".into())
+        );
+    }
+
+    #[test]
+    fn stream_finish_signals_preserve_poolside_and_nous_shapes() {
+        let mut poolside = super::MainStreamOutcome::default();
+        super::observe_main_sse_line(
+            r#"data: {"choices":[{"delta":{},"finish_reason":24}]}"#,
+            &mut poolside,
+        );
+        assert_eq!(poolside.finish_reason, "24");
+
+        for last_one in ["true", "1", r#""true""#] {
+            let mut nous = super::MainStreamOutcome::default();
+            super::observe_main_sse_line(
+                &format!(r#"data: {{"choices":[],"lastOne":{last_one}}}"#),
+                &mut nous,
+            );
+            assert_eq!(nous.finish_reason, "stop", "{last_one}");
+        }
+    }
+
+    #[test]
+    fn deterministic_empty_evidence_matches_python_guard() {
+        let attempt = |route_index: usize,
+                       finish_reason: &str,
+                       usage_present: bool,
+                       zero_output: bool,
+                       generated: bool| {
+            super::MainEmptyAttempt {
+                route_index,
+                finish_reason: finish_reason.into(),
+                usage_present,
+                zero_output,
+                observed_generation: generated,
+            }
+        };
+        let zero = attempt(0, "stop", true, true, false);
+        assert!(!super::main_empty_is_deterministic(
+            std::slice::from_ref(&zero),
+            true
+        ));
+        assert!(super::main_empty_is_deterministic(
+            &[zero.clone(), zero.clone()],
+            true
+        ));
+        let absent = attempt(0, "stop", false, false, false);
+        assert!(super::main_empty_is_deterministic(
+            &[absent.clone(), absent.clone()],
+            true
+        ));
+        assert!(!super::main_empty_is_deterministic(
+            &[zero.clone(), absent],
+            true
+        ));
+        assert!(!super::main_empty_is_deterministic(
+            &[zero.clone(), attempt(1, "stop", true, true, false)],
+            true
+        ));
+        assert!(!super::main_empty_is_deterministic(
+            &[zero.clone(), attempt(0, "length", true, true, false)],
+            true
+        ));
+        let reasoning = attempt(0, "stop", false, false, true);
+        assert!(!super::main_empty_is_deterministic(
+            &[reasoning.clone(), reasoning],
+            true
+        ));
+        assert!(!super::main_empty_is_deterministic(
+            &[zero.clone(), zero],
+            false
+        ));
     }
 
     #[test]
@@ -4869,6 +5748,444 @@ mod tests {
         assert_eq!(visible, "partial");
         assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
         assert_eq!(fallback_calls.load(Ordering::SeqCst), 0);
+    }
+
+    #[tokio::test]
+    async fn deterministic_empty_main_stream_uses_frozen_fallback() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "text/event-stream")],
+                        "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "text/event-stream")],
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"fallback recovered\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        let mut stops = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::MessageStop { final_: true } => stops += 1,
+                _ => {}
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "fallback recovered");
+        assert_eq!(stops, 1);
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 2);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn exhausted_truly_empty_main_stream_is_delivery_only() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "text/event-stream")],
+                        "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        client.run_turn(&message, &[], tx).await.unwrap();
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        assert_eq!(answer, "(empty)");
+        assert!(!client.assistant_reply_is_durable(&message, &answer));
+    }
+
+    #[tokio::test]
+    async fn empty_stream_without_finish_signal_is_not_a_model_empty() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    ([("content-type", "text/event-stream")], "data: [DONE]\n\n").into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_err());
+        assert_eq!(calls.load(Ordering::SeqCst), 3);
+        assert!(answer.is_empty());
+    }
+
+    #[tokio::test]
+    async fn policy_refusal_before_visible_stream_output_uses_frozen_fallback() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "text/event-stream")],
+                        "data: {\"choices\":[{\"delta\":{\"refusal\":\"Provider declined this request.\"},\"finish_reason\":\"content_filter\"}]}\n\ndata: [DONE]\n\n",
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "text/event-stream")],
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"fallback recovered\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "fallback recovered");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn policy_refusal_after_visible_stream_output_is_not_replayed() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "text/event-stream")],
+                        concat!(
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"partial\"}}]}\n\n",
+                            "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"content_filter\"}]}\n\n",
+                            "data: [DONE]\n\n"
+                        ),
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "text/event-stream")],
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"duplicate\"}}]}\n\ndata: [DONE]\n\n",
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url).unwrap();
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_main_fallback_routes(vec![fallback]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_err());
+        assert_eq!(answer, "partial");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 0);
+    }
+
+    #[tokio::test]
+    async fn exhausted_reasoning_only_main_stream_surfaces_labeled_excerpt() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "text/event-stream")],
+                        "data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"The calculated answer is 42.\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("deepseek-reasoner", "key", url)
+            .unwrap()
+            .with_provider_identity("deepseek")
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let root = std::env::temp_dir().join(format!(
+            "hermes-delivery-only-reply-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = crate::session_db::SessionDb::open(root.join("state.db")).unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("delivery-only-session".into());
+        let history = crate::session_db::begin_turn(Some(&database), false, &message, "cli");
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &history,
+                tx,
+            )
+            .await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(calls.load(Ordering::SeqCst), 6);
+        assert!(answer.contains("only internal reasoning"), "{answer}");
+        assert!(answer.contains("The calculated answer is 42."), "{answer}");
+        assert!(!client.assistant_reply_is_durable(&message, &answer));
+        if client.assistant_reply_is_durable(&message, &answer) {
+            crate::session_db::end_turn(Some(&database), false, &message, &answer);
+        }
+        client
+            .finalize_turn_after_persist(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &answer,
+                true,
+            )
+            .await
+            .unwrap();
+        let durable = database
+            .load_lifecycle_messages("delivery-only-session")
+            .unwrap();
+        assert_eq!(durable.len(), 1);
+        assert_eq!(durable[0]["role"], "user");
+        assert_eq!(durable[0]["content"], "question");
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn disabled_empty_guard_uses_full_three_retry_budget() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    let attempt = calls.fetch_add(1, Ordering::SeqCst) + 1;
+                    let body = if attempt < 4 {
+                        "data: {\"choices\":[{\"delta\":{},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n"
+                    } else {
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"fourth attempt recovered\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n"
+                    };
+                    ([("content-type", "text/event-stream")], body).into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_empty_response_guard(&serde_json::json!({"enabled":false}))
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "fourth attempt recovered");
+        assert_eq!(calls.load(Ordering::SeqCst), 4);
     }
 
     #[tokio::test]
@@ -7926,8 +9243,10 @@ mod tests {
             let mut requests = captured.lock().unwrap();
             requests.push(body);
             let message = match requests.len() {
-                1 => json!({"role":"assistant","content":"Checking.","tool_calls":[{"id":"clock","type":"function","function":{"name":"current_time","arguments":"{}"}}]}),
+                1 => json!({"role":"assistant","content":"Checking.","tool_calls":[{"id":"clock-1","type":"function","function":{"name":"current_time","arguments":"{}"}}]}),
                 2 => json!({"role":"assistant","content":null}),
+                3 => json!({"role":"assistant","content":"Checking again.","tool_calls":[{"id":"clock-2","type":"function","function":{"name":"current_time","arguments":"{}"}}]}),
+                4 => json!({"role":"assistant","content":null}),
                 _ => json!({"role":"assistant","content":"<THINK>private reasoning</THINK> Recovered answer. <tool_call>private protocol</tool_call>"}),
             };
             async move { Json(json!({"choices":[{"message":message}]})) }
@@ -7960,7 +9279,7 @@ mod tests {
         }
         assert_eq!(answer, "Recovered answer.");
         let requests = captures.lock().unwrap();
-        assert_eq!(requests.len(), 3);
+        assert_eq!(requests.len(), 5);
         let prior = requests[1]["messages"].as_array().unwrap();
         let retried = requests[2]["messages"].as_array().unwrap();
         assert_eq!(&retried[..prior.len()], prior);
@@ -7973,6 +9292,17 @@ mod tests {
             .iter()
             .all(|m| m.get("_empty_recovery_synthetic").is_none()));
         assert_eq!(requests[1]["tools"], requests[2]["tools"]);
+        let final_messages = requests[4]["messages"].as_array().unwrap();
+        assert_eq!(
+            final_messages
+                .iter()
+                .filter(|message| {
+                    message["content"]
+                        == "You just executed tool calls but returned an empty response. Please process the tool results above and continue with the task."
+                })
+                .count(),
+            2
+        );
     }
 
     #[tokio::test]
@@ -8017,15 +9347,417 @@ mod tests {
         .await
         .unwrap();
         drop(tx);
+        let refusal = match rx.recv().await {
+            Some(hermes_core::StreamEvent::MessageChunk { text }) => text,
+            event => panic!("expected refusal message, got {event:?}"),
+        };
+        assert!(refusal.contains("safety refusal"), "{refusal}");
         assert!(
-            matches!(rx.recv().await, Some(hermes_core::StreamEvent::MessageChunk { text }) if text == "Provider declined this request.")
+            refusal.contains("Model's explanation: Provider declined this request."),
+            "{refusal}"
         );
+        assert!(refusal.contains("hermes fallback add"), "{refusal}");
         assert!(matches!(
             rx.recv().await,
             Some(hermes_core::StreamEvent::MessageStop { final_: true })
         ));
         assert!(rx.recv().await.is_none());
         assert_eq!(count.load(Ordering::Relaxed), 1);
+    }
+
+    #[tokio::test]
+    async fn policy_refusal_uses_frozen_fallback_without_retrying_primary() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"content_filter","message":{
+                            "role":"assistant", "content":null,
+                            "refusal":"Provider declined this request."
+                        }}],
+                        "usage":{"prompt_tokens":100,"completion_tokens":0}
+                    }))
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"stop","message":{
+                            "role":"assistant", "content":"fallback recovered"
+                        }}],
+                        "usage":{"prompt_tokens":10,"completion_tokens":2}
+                    }))
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "fallback recovered");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+        let usage = client.take_main_usage();
+        assert_eq!(usage.prompt_tokens(), 10);
+        assert_eq!(usage.output_tokens, 2);
+        let state = client.main_fallback.state.lock().unwrap();
+        assert!(state.cooldown_until.is_none());
+        assert_eq!(state.rate_limit_backoff_count, 0);
+    }
+
+    #[tokio::test]
+    async fn malformed_successful_tool_response_uses_frozen_fallback() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[],
+                        "usage":{"prompt_tokens":100,"completion_tokens":0}
+                    }))
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"stop","message":{
+                            "role":"assistant", "content":"fallback recovered"
+                        }}],
+                        "usage":{"prompt_tokens":10,"completion_tokens":2}
+                    }))
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "fallback recovered");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+        let usage = client.take_main_usage();
+        assert_eq!(usage.prompt_tokens(), 10);
+        assert_eq!(usage.output_tokens, 2);
+        let state = client.main_fallback.state.lock().unwrap();
+        assert!(state.cooldown_until.is_none());
+        assert_eq!(state.rate_limit_backoff_count, 0);
+    }
+
+    #[tokio::test]
+    async fn malformed_successful_tool_response_retries_same_route_without_fallback() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    let attempt = calls.fetch_add(1, Ordering::SeqCst) + 1;
+                    if attempt < 3 {
+                        Json(serde_json::json!({"choices":[]}))
+                    } else {
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"stop","message":{
+                                "role":"assistant", "content":"third attempt recovered"
+                            }}]
+                        }))
+                    }
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_main_retry_attempts(3)
+            .with_main_retry_backoff(std::time::Duration::ZERO)
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "third attempt recovered");
+        assert_eq!(calls.load(Ordering::SeqCst), 3);
+    }
+
+    #[tokio::test]
+    async fn deterministic_empty_tool_response_uses_frozen_fallback() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"stop","message":{
+                            "role":"assistant", "content":null
+                        }}]
+                    }))
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"stop","message":{
+                            "role":"assistant", "content":"fallback recovered"
+                        }}]
+                    }))
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO)
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "fallback recovered");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 2);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn reasoning_only_tool_response_uses_the_python_prefill_retry_budget() {
+        use crate::agent::AgentClient;
+        use axum::{routing::post, Json, Router};
+        use serde_json::Value;
+        use std::sync::{Arc, Mutex};
+
+        let captures = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = captures.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                let attempt = {
+                    let mut requests = captured.lock().unwrap();
+                    requests.push(body);
+                    requests.len()
+                };
+                async move {
+                    if attempt == 1 {
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"stop","message":{
+                                "role":"assistant", "content":null,
+                                "reasoning_content":"private calculation"
+                            }}]
+                        }))
+                    } else {
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"stop","message":{
+                                "role":"assistant", "content":"visible answer"
+                            }}]
+                        }))
+                    }
+                }
+            }),
+        );
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("deepseek-reasoner", "key", url)
+            .unwrap()
+            .with_provider_identity("deepseek")
+            .with_main_retry_backoff(std::time::Duration::ZERO)
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "visible answer");
+        let requests = captures.lock().unwrap();
+        assert_eq!(requests.len(), 2);
+        assert_eq!(requests[0]["messages"], requests[1]["messages"]);
+        assert_eq!(
+            requests[1]["messages"].as_array().unwrap().last().unwrap()["role"],
+            "user"
+        );
+    }
+
+    #[tokio::test]
+    async fn exhausted_reasoning_only_tool_response_surfaces_labeled_excerpt() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"stop","message":{
+                            "role":"assistant", "content":null,
+                            "reasoning_content":"The calculated answer is 42."
+                        }}]
+                    }))
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("deepseek-reasoner", "key", url)
+            .unwrap()
+            .with_provider_identity("deepseek")
+            .with_main_retry_backoff(std::time::Duration::ZERO)
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(calls.load(Ordering::SeqCst), 6);
+        assert!(answer.contains("only internal reasoning"), "{answer}");
+        assert!(answer.contains("The calculated answer is 42."), "{answer}");
+        assert!(!client.assistant_reply_is_durable(&message, &answer));
     }
 
     #[test]
@@ -8539,7 +10271,7 @@ mod tests {
                     .map(|byte| Ok(axum::body::Bytes::from(vec![byte])))
                     .collect();
                 let (tx, mut rx) = tokio::sync::mpsc::channel(16);
-                super::forward_sse(futures_util::stream::iter(chunks), &tx, "")
+                super::forward_sse(futures_util::stream::iter(chunks), &tx, "", true)
                     .await
                     .unwrap();
                 drop(tx);
@@ -8573,7 +10305,7 @@ mod tests {
                     Ok(axum::body::Bytes::copy_from_slice(&bytes[cut..])),
                 ];
                 let (tx, mut rx) = tokio::sync::mpsc::channel(8);
-                super::forward_sse(futures_util::stream::iter(chunks), &tx, "")
+                super::forward_sse(futures_util::stream::iter(chunks), &tx, "", true)
                     .await
                     .unwrap();
                 drop(tx);

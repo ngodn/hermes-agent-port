@@ -150,6 +150,14 @@ pub trait AgentClient: Send + Sync {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()>;
 
+    /// Whether the assembled user-visible reply is durable conversation
+    /// content. Backends may return false for terminal diagnostics that are
+    /// delivered to the user but must not be replayed to the model later.
+    fn assistant_reply_is_durable(&self, msg: &Message, reply: &str) -> bool {
+        let _ = (msg, reply);
+        true
+    }
+
     /// Produce one unwrapped out-of-band context summary without running tools
     /// or persisting a user turn. `None` means this backend has no native
     /// summary surface and the caller must leave the transcript unchanged.

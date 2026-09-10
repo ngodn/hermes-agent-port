@@ -1,0 +1,7 @@
+Repository: /home/eins0fx/development/hermes-agent-port. Resolve all paths under this repository.
+
+You own one narrow research lane. Do not edit Rust production code or tests.
+
+Inspect the Python empty-response cost-aware retry budget and the current Rust tree. Determine whether Rust already has enough frozen provider/model pricing data to implement Python's per-attempt cost threshold safely in the ordinary native chat-completions path. Trace exact Python functions and configuration coercion, identify exact Rust modules and data already available, and state the smallest correct seam. If no safe native pricing seam exists, prove the dependency gap and recommend an explicit fail-open boundary for this checkpoint.
+
+Write rust/analysis/main-provider-empty-cost-seam-agy.md. Include exact source locations, required inputs, cache/prompt implications, tests needed, and a clear implement-now or defer verdict. Do not duplicate the successful-body contract report. Do not edit other files. Do not use em dash characters.
