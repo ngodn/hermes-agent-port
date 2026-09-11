@@ -59,7 +59,7 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   recovery is exhausted. Static chat-completions routes preserve prompt bytes,
   remain sticky across tool rounds, honor local and durable reset gates, and
   attribute usage to the serving route. Retry-triggered transport failures,
-  non-chat and OAuth routes, and operator notices remain open. See
+  non-chat and OAuth routes, and transient retry notices remain open. See
   [native-main-provider-fallback-resolution.md](native-main-provider-fallback-resolution.md).
 - Ordinary native chat-completions requests now apply the configured retry
   budget to replay-safe connection, HTTP 408, overload, deterministic format,
@@ -150,6 +150,17 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [AGY contract](main-provider-run-budget-contract-agy.md),
   [32-case corpus](../tools/main-provider-run-budget-goldens.json), and
   [Claude operator-notice map](main-provider-operator-notices-claude.md).
+- Native main-provider fallback switches and later primary restoration now
+  emit exact one-shot `GatewayNotice` events. Push adapters deliver them before
+  the buffered answer, while HTTP remains reply-only and neither surface
+  persists notice text. Compression-preflight restoration transfers its notice
+  into the admitted turn instead of losing it at the turn-local reset. See
+  [native-main-provider-fallback-notices-resolution.md](native-main-provider-fallback-notices-resolution.md),
+  with the source-executed
+  [AGY contract](main-provider-operator-notice-contract-agy.md),
+  [37-case corpus](../tools/main-provider-operator-notice-goldens.json), and
+  [Claude sink map](main-provider-operator-notice-sinks-claude.md) plus
+  [implementation review](main-provider-fallback-notice-review-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -235,6 +246,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [main-provider-run-budget-contract-agy.md](main-provider-run-budget-contract-agy.md) | Repaired AGY oracle lane and verified Python normalization, clocks, explicit settings, local behavior, and streaming boundary |
 | [main-provider-run-budget-goldens.json](../tools/main-provider-run-budget-goldens.json) | Source-executed 32-case run-budget corpus |
 | [main-provider-operator-notices-claude.md](main-provider-operator-notices-claude.md) | Claude's separate next-seam map for wait, retry, fallback, buffer, flush, and delivery-only notice behavior |
+| [native-main-provider-fallback-notices-resolution.md](native-main-provider-fallback-notices-resolution.md) | Production fallback-switch and primary-restore notices, push delivery, HTTP and transcript isolation, and measured progress |
+| [main-provider-operator-notice-contract-agy.md](main-provider-operator-notice-contract-agy.md) | AGY's source-executed Python fallback-notice text, buffering, terminal, callback, and idempotence contract |
+| [main-provider-operator-notice-sinks-claude.md](main-provider-operator-notice-sinks-claude.md) | Claude's independent Rust push and HTTP sink map plus public boundary test plan |
+| [main-provider-fallback-notice-review-claude.md](main-provider-fallback-notice-review-claude.md) | Claude's post-implementation state, ordering, sink, prompt-cache, and transcript findings; primary dispositions are recorded in the resolution |
+| [main-provider-operator-notice-goldens.json](../tools/main-provider-operator-notice-goldens.json) | Source-executed 37-case fallback reason, ordering, recovery, terminal, callback, and cleanup corpus |
 | [native-ollama-glm-truncation-resolution.md](native-ollama-glm-truncation-resolution.md) | Production local Ollama GLM stop correction, serving-route identity, durable continuation, oracle repair, and measured progress |
 | [ollama-glm-truncation-contract-agy.md](ollama-glm-truncation-contract-agy.md) | AGY's source-executed Python contract for the ordered stop-correction gates and downstream continuation envelope |
 | [ollama-glm-truncation-goldens.json](../tools/ollama-glm-truncation-goldens.json) | Source-executed 113-case local Ollama GLM correction corpus with raw input types |

@@ -749,11 +749,14 @@ impl Dispatcher {
                     )
                     .await;
                 }
-                // Tool chrome, hints and notices: not rendered in this pass.
+                StreamEvent::GatewayNotice { text, .. } if !text.is_empty() => {
+                    self.deliver(&msg, text).await;
+                }
+                StreamEvent::GatewayNotice { .. } => {}
+                // Tool chrome and hints are not rendered in this pass.
                 StreamEvent::ToolCallChunk { .. }
                 | StreamEvent::ToolCallFinished { .. }
-                | StreamEvent::LongToolHint { .. }
-                | StreamEvent::GatewayNotice { .. } => {}
+                | StreamEvent::LongToolHint { .. } => {}
             }
         }
 
@@ -1288,6 +1291,102 @@ mod tests {
         assert_eq!(out.len(), 1);
         assert_eq!(out[0].text, "hello there");
         assert_eq!(out[0].channel_id, "chan");
+    }
+
+    #[tokio::test]
+    async fn operator_notice_is_delivered_before_the_model_reply() {
+        struct NoticeAgent;
+
+        #[async_trait]
+        impl crate::agent::AgentClient for NoticeAgent {
+            async fn run_turn(
+                &self,
+                _msg: &Message,
+                _history: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                tx.send(StreamEvent::GatewayNotice {
+                    notice_kind: "fallback_switch".into(),
+                    text: "primary unavailable; using fallback".into(),
+                    extra: Default::default(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageChunk {
+                    text: "recovered answer".into(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+
+        let path = std::env::temp_dir().join(format!(
+            "hermes-notice-history-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let database = Arc::new(crate::session_db::SessionDb::open(path.join("state.db")).unwrap());
+        let (mut dispatcher, _, sent) = harness("unused", json!({}));
+        dispatcher.agent = Arc::new(NoticeAgent);
+        dispatcher.session_db = Some(database.clone());
+
+        dispatcher.handle_turn(cli_msg("question", "u")).await;
+
+        let sent = sent.lock().unwrap();
+        assert_eq!(sent.len(), 2);
+        assert_eq!(sent[0].text, "primary unavailable; using fallback");
+        assert_eq!(sent[1].text, "recovered answer");
+        let history = database.load_history("cli:chan", 0).unwrap();
+        assert_eq!(history.len(), 2);
+        assert_eq!(history[0].content, "question");
+        assert_eq!(history[1].content, "recovered answer");
+        drop(sent);
+        drop(dispatcher);
+        drop(database);
+        std::fs::remove_dir_all(path).unwrap();
+    }
+
+    #[tokio::test]
+    async fn notice_only_turn_is_still_delivered() {
+        struct NoticeOnlyAgent;
+
+        #[async_trait]
+        impl crate::agent::AgentClient for NoticeOnlyAgent {
+            async fn run_turn(
+                &self,
+                _msg: &Message,
+                _history: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                tx.send(StreamEvent::GatewayNotice {
+                    notice_kind: "fallback_switch".into(),
+                    text: "primary unavailable; using fallback".into(),
+                    extra: Default::default(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+
+        let (mut dispatcher, _, sent) = harness("unused", json!({}));
+        dispatcher.agent = Arc::new(NoticeOnlyAgent);
+
+        dispatcher.handle_turn(cli_msg("question", "u")).await;
+
+        let sent = sent.lock().unwrap();
+        assert_eq!(sent.len(), 1);
+        assert_eq!(sent[0].text, "primary unavailable; using fallback");
     }
 
     #[tokio::test]

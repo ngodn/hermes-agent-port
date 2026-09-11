@@ -1,5 +1,36 @@
 # Hermes Rust rewrite
 
+## Native main-provider fallback notices: 2026-09-11
+
+Native chat-completions turns now emit Python-compatible presentation notices
+for every provider fallback switch and for later primary-route restoration.
+Recovered and exhausted fallback chains surface each switch exactly once and in
+order. A compression preflight that restores the primary transfers the pending
+notice into the admitted turn instead of losing it at turn-local reset.
+
+Push dispatch sends every nonempty `GatewayNotice` through the selected
+platform adapter before releasing the buffered assistant answer. Notice-only
+turns are not suppressed. The synchronous HTTP `/message` schema remains
+reply-only, and both sinks keep notice bytes out of SQLite, model history,
+system prompts, tool schemas, and provider requests. Existing memory-recall
+notices now use the same push delivery seam.
+
+AGY owned a 37-case source-executed Python contract for fallback reason text,
+ordered recovery, terminal duplicate suppression, callback failures, and
+idempotent cleanup. Claude independently mapped the push and HTTP sinks, then
+reviewed the finished state ownership and delivery design. See
+[native-main-provider-fallback-notices-resolution.md](analysis/native-main-provider-fallback-notices-resolution.md).
+
+The refreshed weighted full-port estimate is **59.35 points, reported as about
+59%** (judgment range 55% to 61%). Native agent core moves from 84% to 85%; the
+other area estimates are unchanged. Full transient retry and wait traces,
+interrupted-wait accounting, non-chat and remaining OAuth routes, dynamic
+providers, native plugin and external-memory managers, prompt invalidation,
+and broader client eviction remain. The full workspace passes **1,956 Rust
+tests with two ignored**. The 37-case corpus regenerates byte for byte, all 46
+focused Python tests pass, and Rust/Python formatting, Ruff, workspace Clippy
+with warnings denied, and diff hygiene pass.
+
 ## Native run-budget stale scaling: 2026-09-11
 
 Native tool-enabled chat-completions turns now resolve the existing

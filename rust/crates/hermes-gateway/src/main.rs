@@ -85,6 +85,7 @@ mod kanban_watchers;
 mod lifecycle_ledger;
 mod local_probe;
 mod main_dropped_stream;
+mod main_provider_notices;
 mod main_provider_timeouts;
 mod main_provider_truncation;
 mod managed_capabilities;

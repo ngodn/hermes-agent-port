@@ -1,0 +1,5 @@
+Inspect only the current Rust operator-notice delivery sinks and existing public gateway tests. This is a distinct task from Python notice text and buffer goldens. Do not edit Rust code, PORT.md, INDEX.md, progress audit, AGY files, or existing analysis.
+
+Write only rust/analysis/main-provider-operator-notice-sinks-claude.md.
+
+Map every current `StreamEvent::GatewayNotice` consumer in HTTP dispatch, push dispatch, Telegram, Discord, Slack, and any shared rendering module. Identify exactly where notices are currently dropped, which existing adapter method can deliver them, how to preserve event ordering relative to message chunks/stops, and whether the HTTP `/message` response can represent notices without breaking its public response schema. Recommend the narrowest production delivery seam and 3 to 5 public tests. Keep notices presentation-only and never suggest transcript persistence or prompt mutation. Verify line references against current source. Do not use em dash characters.

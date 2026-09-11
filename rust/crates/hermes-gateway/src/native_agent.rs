@@ -992,12 +992,35 @@ impl MainPoolFailure {
             Self::Billing | Self::BillingUnverified | Self::RateLimit | Self::UpstreamRateLimit
         )
     }
+
+    fn notice_reason(self) -> &'static str {
+        match self {
+            Self::Auth => "authentication failed",
+            Self::Billing | Self::BillingUnverified => "billing or quota exhausted",
+            Self::FormatError => "request format rejected",
+            Self::RateLimit => "rate limit",
+            Self::UpstreamRateLimit => "upstream model rate limit",
+            Self::Overloaded => "provider overloaded",
+            Self::ServerError => "provider server error",
+            Self::Transport => "request timeout",
+            Self::Unrelated => "provider failure",
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum MainSuccessBodyFailure {
     InvalidResponse,
     ContentPolicyRefusal,
+}
+
+impl MainSuccessBodyFailure {
+    fn notice_reason(self) -> &'static str {
+        match self {
+            Self::InvalidResponse => "request format rejected",
+            Self::ContentPolicyRefusal => "content policy blocked the request",
+        }
+    }
 }
 
 const MAIN_LENGTH_CONTINUATION_PROMPT: &str =
@@ -1892,6 +1915,7 @@ pub struct NativeAgentClient {
     main_fallback: MainFallbackRoutes,
     main_retry: MainRetryPolicy,
     main_timeouts: crate::main_provider_timeouts::Policy,
+    main_notices: std::sync::Arc<std::sync::Mutex<crate::main_provider_notices::TurnNotices>>,
     run_budget_seconds: Option<f64>,
     run_budget_started_at: Option<std::time::SystemTime>,
     consecutive_stale_streams: std::sync::Arc<std::sync::atomic::AtomicUsize>,
@@ -1980,6 +2004,7 @@ impl NativeAgentClient {
             main_fallback: Default::default(),
             main_retry: Default::default(),
             main_timeouts: Default::default(),
+            main_notices: Default::default(),
             run_budget_seconds: None,
             run_budget_started_at: None,
             consecutive_stale_streams: Default::default(),
@@ -2159,6 +2184,7 @@ impl NativeAgentClient {
         for route in &mut fallbacks {
             route.main_fallback = Default::default();
             route.main_retry = self.main_retry;
+            route.main_notices = self.main_notices.clone();
             route.run_budget_seconds = self.run_budget_seconds;
             route.run_budget_started_at = self.run_budget_started_at;
             route.empty_response = self.empty_response;
@@ -2403,6 +2429,7 @@ impl NativeAgentClient {
             }
         }
 
+        let previous = self.main_route(active);
         let mut state = self
             .main_fallback
             .state
@@ -2419,6 +2446,18 @@ impl NativeAgentClient {
         state.cooldown_until = None;
         state.rate_limit_backoff_count = 0;
         self.reset_stale_stream_streak();
+        drop(state);
+        if let Some(previous) = previous {
+            self.main_notices
+                .lock()
+                .unwrap_or_else(|error| error.into_inner())
+                .record_primary_restore(
+                    &self.model,
+                    self.provider_name(),
+                    &previous.model,
+                    previous.provider_name(),
+                );
+        }
     }
 
     fn main_route(&self, index: usize) -> Option<Self> {
@@ -2429,6 +2468,7 @@ impl NativeAgentClient {
         };
         route.main_fallback = Default::default();
         route.main_retry = self.main_retry;
+        route.main_notices = self.main_notices.clone();
         route.empty_response = self.empty_response;
         route.cache_scope = self.cache_scope.clone();
         route.automatic_compression_policy = self.automatic_compression_policy.clone();
@@ -2488,6 +2528,7 @@ impl NativeAgentClient {
     ) -> Option<usize> {
         let next = self.next_main_fallback_index(failed_index);
         if let Some(next) = next {
+            self.record_main_fallback_notice(failed_index, next, failure.notice_reason());
             if let Some(failed) = self.main_route(failed_index) {
                 failed.reset_stale_stream_streak();
             }
@@ -2525,9 +2566,10 @@ impl NativeAgentClient {
     fn activate_main_success_body_fallback(
         &self,
         failed_index: usize,
-        _failure: MainSuccessBodyFailure,
+        failure: MainSuccessBodyFailure,
     ) -> Option<usize> {
         let next = self.next_main_fallback_index(failed_index)?;
+        self.record_main_fallback_notice(failed_index, next, failure.notice_reason());
         if let Some(failed) = self.main_route(failed_index) {
             failed.reset_stale_stream_streak();
         }
@@ -2537,6 +2579,25 @@ impl NativeAgentClient {
             .unwrap_or_else(|error| error.into_inner())
             .active = next;
         Some(next)
+    }
+
+    fn record_main_fallback_notice(&self, failed_index: usize, next: usize, reason: &str) {
+        let Some(failed) = self.main_route(failed_index) else {
+            return;
+        };
+        let Some(fallback) = self.main_route(next) else {
+            return;
+        };
+        self.main_notices
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .record_fallback(
+                &failed.model,
+                failed.provider_name(),
+                &fallback.model,
+                fallback.provider_name(),
+                reason,
+            );
     }
 
     fn next_main_fallback_index(&self, failed_index: usize) -> Option<usize> {
@@ -5102,6 +5163,14 @@ impl NativeAgentClient {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()> {
         let mut turn_client = self.clone();
+        let inherited_notices = {
+            let mut notices = self
+                .main_notices
+                .lock()
+                .unwrap_or_else(|error| error.into_inner());
+            std::mem::take(&mut *notices)
+        };
+        turn_client.main_notices = std::sync::Arc::new(std::sync::Mutex::new(inherited_notices));
         turn_client.begin_run_budget_turn();
         turn_client.turn_reply_durable =
             std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
@@ -5201,18 +5270,42 @@ impl NativeAgentClient {
             turn_client.run_model_turn(&model_content, &durable_history, native_turn, inner_tx);
         let forward = async {
             let mut response = String::new();
+            let mut final_stop = false;
             while let Some(event) = inner_rx.recv().await {
                 if let StreamEvent::MessageChunk { text } = &event {
                     response.push_str(text);
                 }
+                if matches!(event, StreamEvent::MessageStop { final_: true }) {
+                    final_stop = true;
+                    continue;
+                }
                 let _ = events.send(event).await;
             }
-            response
+            (response, final_stop)
         };
-        let (outcome, response) = tokio::join!(model, forward);
+        let (outcome, (response, final_stop)) = tokio::join!(model, forward);
         let delivery_only = !turn_client
             .turn_reply_durable
             .load(std::sync::atomic::Ordering::Acquire);
+        let notices = turn_client
+            .main_notices
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .drain(outcome.is_ok() && !delivery_only);
+        // Push sinks buffer chunks until this held final stop, so these events
+        // are delivered to the operator before the assembled assistant reply.
+        for notice in notices {
+            let _ = events
+                .send(StreamEvent::GatewayNotice {
+                    notice_kind: notice.kind.into(),
+                    text: notice.text,
+                    extra: Default::default(),
+                })
+                .await;
+        }
+        if final_stop {
+            let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+        }
         if delivery_only {
             let durable_session_id = native_turn.session_id();
             turn_client
@@ -6889,6 +6982,250 @@ mod tests {
             primary_bodies[0]["messages"]
         );
         assert_eq!(fallback_bodies[0]["tools"], primary_bodies[0]["tools"]);
+    }
+
+    #[tokio::test]
+    async fn recovered_main_fallback_emits_one_switch_notice_before_final_stop() {
+        use crate::agent::AgentClient;
+        use axum::{http::StatusCode, response::IntoResponse, routing::post, Router};
+
+        let primary = Router::new().route(
+            "/chat/completions",
+            post(|| async {
+                (
+                    StatusCode::SERVICE_UNAVAILABLE,
+                    "{\"error\":{\"message\":\"provider overloaded\"}}",
+                )
+                    .into_response()
+            }),
+        );
+        let fallback = Router::new().route(
+            "/chat/completions",
+            post(|| async {
+                (
+                    [("content-type", "text/event-stream")],
+                    "data: {\"choices\":[{\"delta\":{\"content\":\"recovered\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                )
+                    .into_response()
+            }),
+        );
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        client.run_turn(&message, &[], tx).await.unwrap();
+        let mut events = Vec::new();
+        while let Some(event) = rx.recv().await {
+            events.push(event);
+        }
+
+        assert!(matches!(
+            &events[0],
+            hermes_core::StreamEvent::MessageChunk { text } if text == "recovered"
+        ));
+        assert!(matches!(
+            &events[1],
+            hermes_core::StreamEvent::GatewayNotice { notice_kind, text, .. }
+                if notice_kind == "fallback_switch"
+                    && text == "⚠️ Model fallback: primary-model via primary-provider unavailable (provider overloaded); using fallback-model via fallback-provider."
+        ));
+        assert!(matches!(
+            &events[2],
+            hermes_core::StreamEvent::MessageStop { final_: true }
+        ));
+        assert_eq!(events.len(), 3);
+    }
+
+    #[tokio::test]
+    async fn terminal_main_fallback_failure_flushes_one_switch_notice() {
+        use crate::agent::AgentClient;
+        use axum::{http::StatusCode, response::IntoResponse, routing::post, Router};
+
+        fn unavailable() -> Router {
+            Router::new().route(
+                "/chat/completions",
+                post(|| async {
+                    (
+                        StatusCode::SERVICE_UNAVAILABLE,
+                        "{\"error\":{\"message\":\"provider overloaded\"}}",
+                    )
+                        .into_response()
+                }),
+            )
+        }
+
+        let (primary_url, _primary_server) = serve_main_retry(unavailable()).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(unavailable()).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        assert!(client.run_turn(&message, &[], tx).await.is_err());
+        let mut events = Vec::new();
+        while let Some(event) = rx.recv().await {
+            events.push(event);
+        }
+
+        assert_eq!(events.len(), 1);
+        assert!(matches!(
+            &events[0],
+            hermes_core::StreamEvent::GatewayNotice { notice_kind, text, .. }
+                if notice_kind == "fallback_switch"
+                    && text == "⚠️ Model fallback: primary-model via primary-provider unavailable (provider overloaded); using fallback-model via fallback-provider."
+        ));
+    }
+
+    #[tokio::test]
+    async fn next_turn_primary_restore_emits_exact_notice_before_reply() {
+        use crate::agent::AgentClient;
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Router,
+        };
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    if calls.fetch_add(1, Ordering::SeqCst) < 2 {
+                        (
+                            StatusCode::SERVICE_UNAVAILABLE,
+                            "{\"error\":{\"message\":\"provider overloaded\"}}",
+                        )
+                            .into_response()
+                    } else {
+                        (
+                            [("content-type", "text/event-stream")],
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"primary answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                        )
+                            .into_response()
+                    }
+                }),
+            )
+            .with_state(calls);
+        let fallback = Router::new().route(
+            "/chat/completions",
+            post(|| async {
+                (
+                    [("content-type", "text/event-stream")],
+                    "data: {\"choices\":[{\"delta\":{\"content\":\"fallback answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                )
+            }),
+        );
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+
+        let (first_tx, mut first_rx) = tokio::sync::mpsc::channel(8);
+        client.run_turn(&message, &[], first_tx).await.unwrap();
+        while first_rx.recv().await.is_some() {}
+        assert_eq!(client.main_fallback.state.lock().unwrap().active, 1);
+        client
+            .compression_preflight(crate::agent::TurnContext::default(), &message, &[])
+            .await
+            .unwrap();
+        assert_eq!(client.main_fallback.state.lock().unwrap().active, 0);
+
+        let (second_tx, mut second_rx) = tokio::sync::mpsc::channel(8);
+        client.run_turn(&message, &[], second_tx).await.unwrap();
+        let mut events = Vec::new();
+        while let Some(event) = second_rx.recv().await {
+            events.push(event);
+        }
+
+        assert!(matches!(
+            &events[0],
+            hermes_core::StreamEvent::MessageChunk { text } if text == "primary answer"
+        ));
+        assert!(matches!(
+            &events[1],
+            hermes_core::StreamEvent::GatewayNotice { notice_kind, text, .. }
+                if notice_kind == "primary_restore"
+                    && text == "✅ Primary model restored: primary-model via primary-provider; fallback fallback-model via fallback-provider is no longer active."
+        ));
+        assert!(matches!(
+            &events[2],
+            hermes_core::StreamEvent::MessageStop { final_: true }
+        ));
+        assert_eq!(events.len(), 3);
+    }
+
+    #[test]
+    fn fallback_notice_reason_labels_match_the_python_corpus() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-operator-notice-goldens.json"
+        ))
+        .unwrap();
+        let rows = corpus["representative_fallback_reasons"]
+            .as_array()
+            .unwrap();
+        let expected = |name: &str| {
+            rows.iter().find(|row| row["case_name"] == name).unwrap()["live_reason_label"]
+                .as_str()
+                .unwrap()
+        };
+        use super::MainPoolFailure::*;
+        for (failure, case_name) in [
+            (Auth, "auth_failure_standard"),
+            (Billing, "billing_quota_exhausted_verified"),
+            (BillingUnverified, "billing_quota_exhausted_unverified"),
+            (RateLimit, "rate_limit_standard"),
+            (UpstreamRateLimit, "rate_limit_upstream_aggregator"),
+            (Overloaded, "provider_overloaded"),
+            (ServerError, "transport_server_error"),
+            (Transport, "transport_timeout"),
+            (Unrelated, "unknown_provider_failure"),
+        ] {
+            assert_eq!(failure.notice_reason(), expected(case_name), "{case_name}");
+        }
+        assert_eq!(FormatError.notice_reason(), "request format rejected");
+        assert_eq!(
+            super::MainSuccessBodyFailure::ContentPolicyRefusal.notice_reason(),
+            expected("policy_content_blocked")
+        );
     }
 
     #[tokio::test]

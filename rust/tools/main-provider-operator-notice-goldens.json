@@ -1,0 +1,674 @@
+{
+  "buffering_primitives": [
+    {
+      "buffer_len": 1,
+      "buffered_record": [
+        "status",
+        "\u23f3 Retrying in 1.0s (attempt 1/3)..."
+      ],
+      "case_name": "buffer_status_appends_tuple",
+      "category": "buffering_primitives",
+      "description": "agent._buffer_status records (status, text) in _retry_status_buffer"
+    },
+    {
+      "buffer_len": 1,
+      "buffered_record": [
+        "vprint",
+        "API call failed: 500 Internal Server Error"
+      ],
+      "case_name": "buffer_vprint_appends_tuple",
+      "category": "buffering_primitives",
+      "description": "agent._buffer_vprint records (vprint, text) in _retry_status_buffer"
+    },
+    {
+      "case_name": "buffer_lazy_initialization_from_none",
+      "category": "buffering_primitives",
+      "description": "buffer methods lazily initialize _retry_status_buffer if set to None",
+      "final_buffer_len": 1,
+      "initial_buffer_is_none": true
+    },
+    {
+      "buffer_len": 4,
+      "case_name": "buffer_preserves_mixed_sequence_order",
+      "category": "buffering_primitives",
+      "description": "interleaved status, vprint, and warn items retain exact FIFO arrival order",
+      "expected_sequence": [
+        [
+          "status",
+          "status-1"
+        ],
+        [
+          "vprint",
+          "vprint-1"
+        ],
+        [
+          "warn",
+          "warn-1"
+        ],
+        [
+          "status",
+          "status-2"
+        ]
+      ]
+    }
+  ],
+  "callback_failure_resilience": [
+    {
+      "attempted_notices": [
+        "first-notice",
+        "second-notice",
+        "third-notice"
+      ],
+      "case_name": "emit_pending_notice_continues_after_first_callback_error",
+      "category": "callback_failure_resilience",
+      "description": "Exception on first notice does not stop remaining notices from being emitted",
+      "final_state": {
+        "pending_fallback_notice": null
+      },
+      "invariants": {
+        "attempted_all_items": true,
+        "pending_notice_cleared_despite_error": true
+      },
+      "succeeded_notices": [
+        "second-notice",
+        "third-notice"
+      ]
+    },
+    {
+      "attempted_notices": [
+        "item-1",
+        "item-2",
+        "item-3"
+      ],
+      "case_name": "emit_pending_notice_continues_after_middle_callback_error",
+      "category": "callback_failure_resilience",
+      "description": "Exception on middle notice is swallowed and remaining notices dispatch",
+      "invariants": {
+        "pending_notice_cleared": true
+      },
+      "succeeded_notices": [
+        "item-1",
+        "item-3"
+      ]
+    },
+    {
+      "attempted_records": [
+        "status-1",
+        "vprint-1",
+        "status-2"
+      ],
+      "case_name": "flush_status_buffer_swallows_callback_exceptions_and_drains",
+      "category": "callback_failure_resilience",
+      "description": "_flush_status_buffer drains buffer first and continues dispatching remaining messages if one fails",
+      "final_state": {
+        "retry_status_buffer": []
+      },
+      "invariants": {
+        "all_items_attempted": true,
+        "buffer_drained_completely": true
+      }
+    },
+    {
+      "attempted_records": [
+        "vprint-error",
+        "status-ok"
+      ],
+      "case_name": "flush_vprint_callback_exception_swallowed",
+      "category": "callback_failure_resilience",
+      "description": "_flush_status_buffer swallows exceptions from _vprint and continues to next item",
+      "invariants": {
+        "buffer_drained": true
+      }
+    }
+  ],
+  "clear_flush_idempotence": [
+    {
+      "case_name": "uninitialized_agent_attributes_safe",
+      "category": "clear_flush_idempotence",
+      "description": "Calling _clear_status_buffer, _flush_status_buffer, or _emit_pending_fallback_notice on bare double does not raise",
+      "invariants": {
+        "no_exceptions_raised": true
+      }
+    },
+    {
+      "case_name": "repeated_clear_status_buffer_idempotent",
+      "category": "clear_flush_idempotence",
+      "description": "Repeated calls to _clear_status_buffer remain quiet no-ops",
+      "invariants": {
+        "buffer_empty": true
+      }
+    },
+    {
+      "case_name": "repeated_flush_status_buffer_idempotent",
+      "category": "clear_flush_idempotence",
+      "description": "First flush drains buffer; second and third flushes emit zero messages",
+      "emissions_after_first": 1,
+      "emissions_after_third": 1,
+      "invariants": {
+        "zero_duplicate_emissions": true
+      }
+    },
+    {
+      "case_name": "repeated_emit_pending_fallback_notice_idempotent",
+      "category": "clear_flush_idempotence",
+      "description": "First call emits notice; subsequent calls find pending notice None and emit zero",
+      "emissions_after_first": 1,
+      "emissions_after_third": 1,
+      "invariants": {
+        "notice_cleared_to_none": true
+      }
+    },
+    {
+      "case_name": "clear_then_flush_produces_zero_emissions",
+      "category": "clear_flush_idempotence",
+      "description": "Clearing the buffer beforehand guarantees subsequent flush produces zero emissions",
+      "emitted_events": [],
+      "invariants": {
+        "zero_emissions": true
+      }
+    },
+    {
+      "case_name": "pending_notice_single_string_coercion",
+      "category": "clear_flush_idempotence",
+      "description": "_emit_pending_fallback_notice correctly coerces a single str notice to a list and clears it",
+      "emitted_events": [
+        "legacy single string notice"
+      ],
+      "invariants": {
+        "cleared_to_none": true,
+        "coerced_and_emitted": true
+      }
+    }
+  ],
+  "contract_metadata": {
+    "generator": "rust/tools/gen_main_provider_operator_notice_goldens.py",
+    "lane": "Python Source-Executed Main Provider Retry & Fallback Notice Buffering Contract",
+    "sections": [
+      "buffering_primitives",
+      "recovered_success",
+      "terminal_failure",
+      "multiple_switches",
+      "callback_failure_resilience",
+      "clear_flush_idempotence",
+      "representative_fallback_reasons"
+    ],
+    "target": "rust/tools/main-provider-operator-notice-goldens.json",
+    "total_cases": 37
+  },
+  "multiple_switches": [
+    {
+      "case_name": "two_switches_recovered_on_second_fallback",
+      "category": "multiple_switches",
+      "description": "Both fallback switch notices are preserved and emitted in sequential order on recovery",
+      "emitted_events": [
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: primary-m via primary-p unavailable (rate limit); using fb1-m via fb1-p."
+        },
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: fb1-m via fb1-p unavailable (authentication failed); using fb2-m via fb2-p."
+        }
+      ],
+      "final_state": {
+        "pending_fallback_notice": null,
+        "retry_status_buffer": []
+      },
+      "invariants": {
+        "all_switches_emitted_in_order": true,
+        "buffer_drained": true,
+        "pending_cleared": true,
+        "retry_chatter_dropped": true
+      },
+      "pending_notices_before_emit": [
+        "\u26a0\ufe0f Model fallback: primary-m via primary-p unavailable (rate limit); using fb1-m via fb1-p.",
+        "\u26a0\ufe0f Model fallback: fb1-m via fb1-p unavailable (authentication failed); using fb2-m via fb2-p."
+      ]
+    },
+    {
+      "case_name": "two_switches_terminal_failure_exhausted",
+      "category": "multiple_switches",
+      "description": "Terminal failure outputs all interleaved retries and switch notices in exact FIFO order",
+      "emitted_events": [
+        {
+          "channel": "status",
+          "text": "\u23f3 Primary 429"
+        },
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Rate limited \\u2014 switching to fallback provider..."
+        },
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: primary-m via primary-p unavailable (rate limit); using fb1-m via fb1-p."
+        },
+        {
+          "channel": "status",
+          "text": "\u23f3 FB1 401"
+        },
+        {
+          "channel": "status",
+          "text": "\ud83d\udd10 Authentication failed and could not be refreshed \\u2014 switching to fallback provider..."
+        },
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: fb1-m via fb1-p unavailable (authentication failed); using fb2-m via fb2-p."
+        },
+        {
+          "channel": "status",
+          "text": "\u23f3 FB2 500 server error"
+        }
+      ],
+      "final_state": {
+        "pending_fallback_notice": null,
+        "retry_status_buffer": []
+      },
+      "invariants": {
+        "buffer_drained": true,
+        "exact_interleaved_fifo_order": true,
+        "pending_cleared": true
+      }
+    },
+    {
+      "case_name": "three_switches_recovered_on_third_fallback",
+      "category": "multiple_switches",
+      "description": "Three sequential fallback notices emit in order 1 -> 2 -> 3 upon successful recovery",
+      "emitted_events": [
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: m0 via p0 unavailable (rate limit); using m1 via p1."
+        },
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: m1 via p1 unavailable (request timeout); using m2 via p2."
+        },
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: m2 via p2 unavailable (provider server error); using m3 via p3."
+        }
+      ],
+      "invariants": {
+        "buffer_drained": true,
+        "notice_count": 3,
+        "pending_cleared": true
+      }
+    }
+  ],
+  "recovered_success": [
+    {
+      "case_name": "single_switch_recovered_success",
+      "category": "recovered_success",
+      "description": "On recovery, one-shot fallback notice is emitted once while noisy retries are dropped",
+      "emitted_events": [
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: claude-3-5-sonnet via anthropic unavailable (rate limit); using gpt-4o via openai."
+        }
+      ],
+      "final_state": {
+        "pending_fallback_notice": null,
+        "retry_status_buffer": []
+      },
+      "invariants": {
+        "buffer_drained": true,
+        "only_durable_notice_emitted": true,
+        "pending_cleared": true,
+        "retry_chatter_silenced": true
+      },
+      "operations": [
+        "_buffer_status(retry_msg)",
+        "_buffer_status(pre_switch_msg)",
+        "try_activate_fallback(rate_limit)",
+        "_emit_pending_fallback_notice()",
+        "_clear_status_buffer()"
+      ]
+    },
+    {
+      "case_name": "primary_recovery_without_fallback_silent",
+      "category": "recovered_success",
+      "description": "If primary recovers without activating fallback, zero operator notices are emitted",
+      "emitted_events": [],
+      "final_state": {
+        "pending_fallback_notice": null,
+        "retry_status_buffer": []
+      },
+      "invariants": {
+        "buffer_drained": true,
+        "zero_emissions": true
+      },
+      "operations": [
+        "_buffer_status(retry)",
+        "_buffer_vprint(socket_reset)",
+        "_emit_pending_fallback_notice()",
+        "_clear_status_buffer()"
+      ]
+    },
+    {
+      "case_name": "post_recovery_subsequent_calls_noop",
+      "category": "recovered_success",
+      "description": "Subsequent calls to _emit_pending_fallback_notice and _flush_status_buffer produce zero extra events",
+      "emitted_count_after_first": 1,
+      "emitted_count_after_second": 1,
+      "invariants": {
+        "no_duplicate_replays": true
+      }
+    }
+  ],
+  "representative_fallback_reasons": [
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (authentication failed); using fb-model via fb-provider."
+      ],
+      "case_name": "auth_failure_standard",
+      "category": "auth",
+      "conversation_loop_pre_switch_notice": "\ud83d\udd10 Authentication failed and could not be refreshed \\u2014 switching to fallback provider...",
+      "live_reason_label": "authentication failed",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (authentication failed); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (authentication failed); using fb-model via fb-provider."
+      ],
+      "reason_enum": "auth",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (authentication permanently failed); using fb-model via fb-provider."
+      ],
+      "case_name": "auth_failure_permanent",
+      "category": "auth",
+      "conversation_loop_pre_switch_notice": "\ud83d\udd10 Authentication failed and could not be refreshed \\u2014 switching to fallback provider...",
+      "live_reason_label": "authentication permanently failed",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (authentication permanently failed); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (authentication permanently failed); using fb-model via fb-provider."
+      ],
+      "reason_enum": "auth_permanent",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (rate limit); using fb-model via fb-provider."
+      ],
+      "case_name": "rate_limit_standard",
+      "category": "rate",
+      "conversation_loop_pre_switch_notice": "\u26a0\ufe0f Rate limited \\u2014 switching to fallback provider...",
+      "live_reason_label": "rate limit",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (rate limit); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (rate limit); using fb-model via fb-provider."
+      ],
+      "reason_enum": "rate_limit",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (upstream model rate limit); using fb-model via fb-provider."
+      ],
+      "case_name": "rate_limit_upstream_aggregator",
+      "category": "rate",
+      "conversation_loop_pre_switch_notice": "\u26a0\ufe0f Upstream aggregator rate-limited \\u2014 switching to fallback model...",
+      "live_reason_label": "upstream model rate limit",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (upstream model rate limit); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (upstream model rate limit); using fb-model via fb-provider."
+      ],
+      "reason_enum": "upstream_rate_limit",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (billing or quota exhausted); using fb-model via fb-provider."
+      ],
+      "case_name": "billing_quota_exhausted_verified",
+      "category": "rate",
+      "conversation_loop_pre_switch_notice": "\u26a0\ufe0f Billing or credits exhausted \\u2014 switching to fallback provider...",
+      "live_reason_label": "billing or quota exhausted",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (billing or quota exhausted); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (billing or quota exhausted); using fb-model via fb-provider."
+      ],
+      "reason_enum": "billing",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (billing or quota exhausted); using fb-model via fb-provider."
+      ],
+      "case_name": "billing_quota_exhausted_unverified",
+      "category": "rate",
+      "conversation_loop_pre_switch_notice": "\u26a0\ufe0f Provider reported usage/credit exhaustion (unverified \\u2014 may be a content-filter rejection) \\u2014 switching to fallback provider...",
+      "live_reason_label": "billing or quota exhausted",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (billing or quota exhausted); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (billing or quota exhausted); using fb-model via fb-provider."
+      ],
+      "reason_enum": "billing",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider overloaded); using fb-model via fb-provider."
+      ],
+      "case_name": "provider_overloaded",
+      "category": "rate",
+      "conversation_loop_pre_switch_notice": "\u26a0\ufe0f Rate limited \\u2014 switching to fallback provider...",
+      "live_reason_label": "provider overloaded",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider overloaded); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider overloaded); using fb-model via fb-provider."
+      ],
+      "reason_enum": "overloaded",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (request timeout); using fb-model via fb-provider."
+      ],
+      "case_name": "transport_timeout",
+      "category": "transport",
+      "conversation_loop_pre_switch_notice": "\u26a0\ufe0f Provider unreachable \\u2014 switching to fallback provider...",
+      "live_reason_label": "request timeout",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (request timeout); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (request timeout); using fb-model via fb-provider."
+      ],
+      "reason_enum": "timeout",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (TLS certificate verification failed); using fb-model via fb-provider."
+      ],
+      "case_name": "transport_ssl_cert_verification",
+      "category": "transport",
+      "conversation_loop_pre_switch_notice": "\u26a0\ufe0f Provider unreachable \\u2014 switching to fallback provider...",
+      "live_reason_label": "TLS certificate verification failed",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (TLS certificate verification failed); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (TLS certificate verification failed); using fb-model via fb-provider."
+      ],
+      "reason_enum": "ssl_cert_verification",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider server error); using fb-model via fb-provider."
+      ],
+      "case_name": "transport_server_error",
+      "category": "transport",
+      "conversation_loop_pre_switch_notice": "\u26a0\ufe0f Provider unreachable \\u2014 switching to fallback provider...",
+      "live_reason_label": "provider server error",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider server error); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider server error); using fb-model via fb-provider."
+      ],
+      "reason_enum": "server_error",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (content policy blocked the request); using fb-model via fb-provider."
+      ],
+      "case_name": "policy_content_blocked",
+      "category": "policy",
+      "conversation_loop_pre_switch_notice": null,
+      "live_reason_label": "content policy blocked the request",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (content policy blocked the request); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (content policy blocked the request); using fb-model via fb-provider."
+      ],
+      "reason_enum": "content_policy_blocked",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (context window exceeded); using fb-model via fb-provider."
+      ],
+      "case_name": "context_window_overflow",
+      "category": "policy",
+      "conversation_loop_pre_switch_notice": null,
+      "live_reason_label": "context window exceeded",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (context window exceeded); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (context window exceeded); using fb-model via fb-provider."
+      ],
+      "reason_enum": "context_overflow",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (model not found); using fb-model via fb-provider."
+      ],
+      "case_name": "model_not_found",
+      "category": "policy",
+      "conversation_loop_pre_switch_notice": null,
+      "live_reason_label": "model not found",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (model not found); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (model not found); using fb-model via fb-provider."
+      ],
+      "reason_enum": "model_not_found",
+      "verified_live_source": true
+    },
+    {
+      "buffered_tuple": [
+        "status",
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider failure); using fb-model via fb-provider."
+      ],
+      "case_name": "unknown_provider_failure",
+      "category": "default",
+      "conversation_loop_pre_switch_notice": null,
+      "live_reason_label": "provider failure",
+      "live_switch_notice": "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider failure); using fb-model via fb-provider.",
+      "pending_notice_stored": [
+        "\u26a0\ufe0f Model fallback: primary-model via primary-provider unavailable (provider failure); using fb-model via fb-provider."
+      ],
+      "reason_enum": null,
+      "verified_live_source": true
+    }
+  ],
+  "terminal_failure": [
+    {
+      "case_name": "terminal_failure_with_fallback_switch",
+      "category": "terminal_failure",
+      "description": "On terminal failure, full trace is replayed in FIFO order and pending notice is discarded",
+      "emitted_events": [
+        {
+          "channel": "status",
+          "text": "\u23f3 Primary attempt 1 failed"
+        },
+        {
+          "channel": "vprint",
+          "force": true,
+          "text": "[hermes] Connection refused by peer"
+        },
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Provider unreachable \\u2014 switching to fallback provider..."
+        },
+        {
+          "channel": "status",
+          "text": "\u26a0\ufe0f Model fallback: claude-3-5-sonnet via anthropic unavailable (request timeout); using gpt-4o via openai."
+        },
+        {
+          "channel": "status",
+          "text": "\u23f3 Fallback attempt 1 failed"
+        },
+        {
+          "channel": "vprint",
+          "force": true,
+          "text": "[hermes] Gateway timeout 504"
+        }
+      ],
+      "final_state": {
+        "pending_fallback_notice": null,
+        "retry_status_buffer": []
+      },
+      "invariants": {
+        "buffer_drained": true,
+        "exact_fifo_order": true,
+        "pending_notice_cleared_by_flush": true,
+        "vprint_force_flag_true": true,
+        "vprint_prepends_log_prefix": true
+      },
+      "operations": [
+        "_buffer_status(primary_err)",
+        "_buffer_vprint(conn_refused)",
+        "_buffer_status(pre_switch)",
+        "try_activate_fallback(timeout)",
+        "_buffer_status(fallback_err)",
+        "_buffer_vprint(timeout_504)",
+        "_flush_status_buffer()"
+      ]
+    },
+    {
+      "case_name": "terminal_failure_primary_only_no_fallback",
+      "category": "terminal_failure",
+      "description": "When no fallback is configured, exhausted retries are flushed to operator in FIFO order",
+      "emitted_events": [
+        {
+          "channel": "status",
+          "text": "\u23f3 Attempt 1 failed"
+        },
+        {
+          "channel": "status",
+          "text": "\u23f3 Attempt 2 failed"
+        },
+        {
+          "channel": "status",
+          "text": "\u23f3 Attempt 3 failed"
+        }
+      ],
+      "final_state": {
+        "pending_fallback_notice": null,
+        "retry_status_buffer": []
+      },
+      "invariants": {
+        "buffer_drained": true,
+        "count_matches_retries": true
+      }
+    },
+    {
+      "case_name": "flush_discards_pending_notice_preventing_leak",
+      "category": "terminal_failure",
+      "description": "Flushing discards pending notice so it cannot leak into a subsequent successful turn",
+      "invariants": {
+        "pending_notice_discarded": true,
+        "subsequent_turn_emits_nothing": true
+      }
+    }
+  ]
+}

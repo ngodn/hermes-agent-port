@@ -1,0 +1,9 @@
+Own only the Python source-executed contract for main chat provider retry and fallback notice buffering. Do not inspect or edit Rust implementation, PORT.md, INDEX.md, the progress audit, or Claude artifacts. Do not spawn background agents or processes.
+
+Produce only:
+
+1. rust/analysis/main-provider-operator-notice-contract-agy.md
+2. rust/tools/gen_main_provider_operator_notice_goldens.py
+3. rust/tools/main-provider-operator-notice-goldens.json
+
+Use AIAgent.__new__ test doubles, never the full constructor. Execute the real Python `_buffer_status`, `_buffer_vprint`, `_clear_status_buffer`, `_flush_status_buffer`, and `_emit_pending_fallback_notice` methods plus the real main fallback notice producer if it can be isolated without network. Freeze exact event order for recovered success, terminal failure, multiple switches, callback failure, and clear/flush idempotence. Include exact fallback-switch strings for representative auth, rate, and transport reasons only when produced by live source. Assert every expected field before writing JSON. Keep the corpus focused, deterministic, and under one second after imports. Run write twice, `--check`, Ruff, and the smallest focused Python test file. Do not use em dash characters in authored text; escape source strings containing them.

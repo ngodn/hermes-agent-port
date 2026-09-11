@@ -958,6 +958,68 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn http_reply_and_history_exclude_operator_notices() {
+        struct NoticeAgent;
+
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for NoticeAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                events: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                events
+                    .send(StreamEvent::GatewayNotice {
+                        notice_kind: "fallback_switch".into(),
+                        text: "primary unavailable; using fallback".into(),
+                        extra: Default::default(),
+                    })
+                    .await
+                    .unwrap();
+                events
+                    .send(StreamEvent::MessageChunk {
+                        text: "recovered answer".into(),
+                    })
+                    .await
+                    .unwrap();
+                events
+                    .send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+
+        let home = TempHome::new();
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let state = AppState::new(
+            Arc::new(NoticeAgent),
+            Arc::new(json!({})),
+            None,
+            Some(db.clone()),
+        );
+
+        let response = post_message(
+            State(state),
+            Json(MessageRequest {
+                channel_id: "notice".into(),
+                sender_id: "local".into(),
+                text: "question".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+
+        assert_eq!(response.0.reply, "recovered answer");
+        let history = db.load_history("cli:notice", 0).unwrap();
+        assert_eq!(history.len(), 2);
+        assert_eq!(history[0].content, "question");
+        assert_eq!(history[1].content, "recovered answer");
+    }
+
+    #[tokio::test]
     async fn http_turn_waits_for_shared_transcript_lease() {
         let calls = Arc::new(Mutex::new(Vec::new()));
         let (model_url, _server) = serve(

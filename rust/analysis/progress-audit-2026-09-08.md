@@ -1,6 +1,6 @@
 # Full Rust port progress audit, updated 2026-09-11
 
-Current estimate: **59.15% of the full native replacement**, reported as
+Current estimate: **59.35% of the full native replacement**, reported as
 **about 59%**, with a reasonable judgment range of **55% to 61%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
@@ -42,7 +42,9 @@ usage objects, and Nous `lastOne` frames remain clean terminal evidence, while
 pre-generation failures retain ordinary retry and fallback behavior. Buffered
 tool calls now also cap implicit stale patience against one turn-wide
 wall-clock run budget without overriding explicit settings or changing stream
-behavior. The estimate remains conservative because other OAuth paths,
+behavior. Durable fallback switches and later primary restoration now surface
+as one-shot push notices without entering the reply or transcript. The estimate
+remains conservative because other OAuth paths,
 non-chat provider transports, smart approval, PTY and notification support,
 remote execution, most tools, and the underlying plugin and external-memory
 managers are not native.
@@ -63,10 +65,10 @@ audits.
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 76% | 11.40 |
-| Native agent core | 20% | 84% | 16.80 |
-| Total | 100% | | **59.15** |
+| Native agent core | 20% | 85% | 17.00 |
+| Total | 100% | | **59.35** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 84 = 59.15`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 85 = 59.35`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -230,7 +232,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 84%
+### Native agent core, 85%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -410,7 +412,13 @@ configuration. One wall-clock start is shared across primary and fallback work
 for the turn; implicit default, reasoning, and context-scaled deadlines can
 only shrink, with a 60-second floor, while explicit model, provider, and
 environment timeouts stay authoritative. Streaming and plain local implicit
-behavior remain unchanged. Interrupted-wait accounting, operator notices,
+behavior remain unchanged. Provider fallback switches and later primary
+restoration now emit exact, ordered, one-shot presentation events. Push
+adapters deliver them before the buffered assistant reply, including
+notice-only turns, while synchronous HTTP remains reply-only. Compression
+preflight restoration transfers its pending notice into the admitted turn.
+Neither notice type enters SQLite, prompt bytes, tool schemas, or provider
+requests. Full transient retry/countdown traces, interrupted-wait accounting,
 non-chat, OAuth, and dynamic-provider paths remain.
 
 Canonical Nous discovery resolves its OAuth material lazily before the first
@@ -486,7 +494,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,945 passed, two ignored (1,944 gateway plus one core).
+- Full Rust workspace: 1,956 passed, two ignored (1,955 gateway plus one core).
 - Selected Python main-provider classifier, credential-pool, provider-boundary,
   and runtime-resolution contracts: 256 passed at the preceding pool
   checkpoint. The focused main-provider fallback and restore suite adds 150
@@ -498,7 +506,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   14 passing tests. The main-provider liveness checkpoint adds 68 focused
   Python tests, the truncation content-guard checkpoint adds 20, and the local
   Ollama GLM correction adds 3. The dropped-stream checkpoint adds 25, and the
-  run-budget checkpoint adds 28.
+  run-budget checkpoint adds 28. The fallback-notice checkpoint adds 46
+  focused retry-buffer and primary-restore tests.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 112 task fallback-chain, 76 top-level
@@ -507,7 +516,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   main-provider retry, 114 main-provider successful-body, 81 main-provider
   tool-truncation, 168 main-provider liveness, 41 truncation content guards,
   113 local Ollama GLM stop-correction, 47 dropped-stream recovery, 32
-  main-provider run-budget, 87 Nous OAuth, 24 structural-backoff,
+  main-provider run-budget, 37 main-provider fallback notices, 87 Nous OAuth,
+  24 structural-backoff,
   and 60 handoff-layer
   cases, plus the 233-case terminal and approval corpus, 76 interactive-approval
   cases, and 251 exhaustive dangerous-command cases.
@@ -520,9 +530,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Operator notices, interrupted-wait accounting, remaining OAuth providers,
-   and provider-specific successful-body rules complete the current
-   main-provider cluster.
+1. Transient retry and wait notices, interrupted-wait accounting, remaining
+   OAuth providers, and provider-specific successful-body rules complete the
+   current main-provider cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
 3. Smart and Tirith approval, PTY and remote terminal modes, then file, browser,
