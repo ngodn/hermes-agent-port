@@ -997,7 +997,9 @@ impl MainPoolFailure {
         match self {
             Self::Auth => "authentication failed",
             Self::Billing | Self::BillingUnverified => "billing or quota exhausted",
-            Self::FormatError => "request format rejected",
+            // Python's non-retryable client-error branch activates fallback
+            // without forwarding the classifier reason.
+            Self::FormatError => "provider failure",
             Self::RateLimit => "rate limit",
             Self::UpstreamRateLimit => "upstream model rate limit",
             Self::Overloaded => "provider overloaded",
@@ -1105,6 +1107,7 @@ fn main_attempt_limit(failure: MainPoolFailure, max_attempts: usize, has_fallbac
 struct MainTerminal {
     status: reqwest::StatusCode,
     class: MainPoolFailure,
+    attempts: usize,
     body: String,
     label: String,
 }
@@ -1119,6 +1122,7 @@ enum MainRequestError {
     Terminal(MainTerminal),
     Fallback {
         failure: MainPoolFailure,
+        attempts: usize,
         error: Error,
     },
     StreamInactivity {
@@ -1677,6 +1681,34 @@ fn main_http_error(label: &str, status: reqwest::StatusCode, text: &str) -> Erro
     ))
 }
 
+fn main_http_error_summary(status: reqwest::StatusCode, text: &str) -> String {
+    let parsed = serde_json::from_str::<Value>(text).ok();
+    let detail = parsed
+        .as_ref()
+        .and_then(|value| {
+            value["error"]["message"]
+                .as_str()
+                .or_else(|| value["message"].as_str())
+        })
+        .unwrap_or(text)
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    let detail = if detail.is_empty() {
+        status
+            .canonical_reason()
+            .unwrap_or("provider request failed")
+            .to_owned()
+    } else {
+        detail.chars().take(300).collect()
+    };
+    format!(
+        "HTTP {}: {}",
+        status.as_u16(),
+        crate::compression_redact::redact(&detail)
+    )
+}
+
 fn rewrite_last_prompt_line(prompt: &mut String, label: &str, value: &str) {
     if value.is_empty() {
         return;
@@ -1916,6 +1948,8 @@ pub struct NativeAgentClient {
     main_retry: MainRetryPolicy,
     main_timeouts: crate::main_provider_timeouts::Policy,
     main_notices: std::sync::Arc<std::sync::Mutex<crate::main_provider_notices::TurnNotices>>,
+    /// Turn-local best-effort path for waits that Python surfaces immediately.
+    main_live_notice_tx: std::sync::Arc<std::sync::Mutex<Option<mpsc::Sender<StreamEvent>>>>,
     run_budget_seconds: Option<f64>,
     run_budget_started_at: Option<std::time::SystemTime>,
     consecutive_stale_streams: std::sync::Arc<std::sync::atomic::AtomicUsize>,
@@ -2005,6 +2039,7 @@ impl NativeAgentClient {
             main_retry: Default::default(),
             main_timeouts: Default::default(),
             main_notices: Default::default(),
+            main_live_notice_tx: Default::default(),
             run_budget_seconds: None,
             run_budget_started_at: None,
             consecutive_stale_streams: Default::default(),
@@ -2469,6 +2504,7 @@ impl NativeAgentClient {
         route.main_fallback = Default::default();
         route.main_retry = self.main_retry;
         route.main_notices = self.main_notices.clone();
+        route.main_live_notice_tx = self.main_live_notice_tx.clone();
         route.empty_response = self.empty_response;
         route.cache_scope = self.cache_scope.clone();
         route.automatic_compression_policy = self.automatic_compression_policy.clone();
@@ -2526,8 +2562,18 @@ impl NativeAgentClient {
         failed_index: usize,
         failure: MainPoolFailure,
     ) -> Option<usize> {
+        self.activate_main_fallback_with_status(failed_index, failure, None)
+    }
+
+    fn activate_main_fallback_with_status(
+        &self,
+        failed_index: usize,
+        failure: MainPoolFailure,
+        status: Option<reqwest::StatusCode>,
+    ) -> Option<usize> {
         let next = self.next_main_fallback_index(failed_index);
         if let Some(next) = next {
+            self.record_main_fallback_attempt(failure, status);
             self.record_main_fallback_notice(failed_index, next, failure.notice_reason());
             if let Some(failed) = self.main_route(failed_index) {
                 failed.reset_stale_stream_streak();
@@ -2569,6 +2615,20 @@ impl NativeAgentClient {
         failure: MainSuccessBodyFailure,
     ) -> Option<usize> {
         let next = self.next_main_fallback_index(failed_index)?;
+        let text = match failure {
+            MainSuccessBodyFailure::ContentPolicyRefusal => {
+                "⚠️ Model declined to respond (safety refusal) \u{2014} trying fallback..."
+                    .to_owned()
+            }
+            MainSuccessBodyFailure::InvalidResponse => format!(
+                "⚠️ Max retries ({}) for invalid responses \u{2014} trying fallback...",
+                self.main_retry.max_attempts
+            ),
+        };
+        self.main_notices
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .record_transient("fallback_attempt", text);
         self.record_main_fallback_notice(failed_index, next, failure.notice_reason());
         if let Some(failed) = self.main_route(failed_index) {
             failed.reset_stale_stream_streak();
@@ -2579,6 +2639,107 @@ impl NativeAgentClient {
             .unwrap_or_else(|error| error.into_inner())
             .active = next;
         Some(next)
+    }
+
+    fn record_main_fallback_attempt(
+        &self,
+        failure: MainPoolFailure,
+        status: Option<reqwest::StatusCode>,
+    ) {
+        let text = match failure {
+            MainPoolFailure::Auth => {
+                "🔐 Authentication failed and could not be refreshed \u{2014} switching to fallback provider..."
+                    .to_owned()
+            }
+            MainPoolFailure::Billing => {
+                "⚠️ Billing or credits exhausted \u{2014} switching to fallback provider..."
+                    .to_owned()
+            }
+            MainPoolFailure::BillingUnverified => {
+                "⚠️ Provider reported usage/credit exhaustion (unverified \u{2014} may be a content-filter rejection) \u{2014} switching to fallback provider..."
+                    .to_owned()
+            }
+            MainPoolFailure::RateLimit => {
+                "⚠️ Rate limited \u{2014} switching to fallback provider...".to_owned()
+            }
+            MainPoolFailure::UpstreamRateLimit => {
+                "⚠️ Upstream aggregator rate-limited \u{2014} switching to fallback model..."
+                    .to_owned()
+            }
+            MainPoolFailure::FormatError => status.map_or_else(
+                || "⚠️ Non-retryable error \u{2014} trying fallback...".to_owned(),
+                |status| {
+                    format!(
+                        "⚠️ Non-retryable error (HTTP {}) \u{2014} trying fallback...",
+                        status.as_u16()
+                    )
+                },
+            ),
+            MainPoolFailure::ServerError => format!(
+                "⚠️ Max retries ({}) exhausted \u{2014} trying fallback...",
+                self.main_retry.max_attempts
+            ),
+            MainPoolFailure::Overloaded | MainPoolFailure::Transport => {
+                "⚠️ Provider unreachable \u{2014} switching to fallback provider...".to_owned()
+            }
+            MainPoolFailure::Unrelated => return,
+        };
+        self.main_notices
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .record_transient("fallback_attempt", text);
+    }
+
+    fn record_main_terminal_http(
+        &self,
+        failure: MainPoolFailure,
+        attempts: usize,
+        status: reqwest::StatusCode,
+        body: &str,
+    ) {
+        let summary = main_http_error_summary(status, body);
+        let text = match failure {
+            MainPoolFailure::Billing => {
+                format!("❌ Billing or credits exhausted \u{2014} {summary}")
+            }
+            MainPoolFailure::BillingUnverified => format!(
+                "❌ Provider reported usage/credit exhaustion (unverified \u{2014} may be a content-filter rejection) \u{2014} {summary}"
+            ),
+            MainPoolFailure::RateLimit | MainPoolFailure::UpstreamRateLimit => format!(
+                "❌ Rate limited after {} retries \u{2014} {summary}",
+                attempts
+            ),
+            MainPoolFailure::Auth | MainPoolFailure::FormatError | MainPoolFailure::Unrelated => {
+                format!(
+                    "❌ Non-retryable error (HTTP {}): {summary}",
+                    status.as_u16()
+                )
+            }
+            MainPoolFailure::Overloaded
+            | MainPoolFailure::ServerError
+            | MainPoolFailure::Transport => format!(
+                "❌ API failed after {} retries \u{2014} {summary}",
+                attempts
+            ),
+        };
+        self.main_notices
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .record_transient("terminal_failure", text);
+    }
+
+    fn record_main_terminal_error(&self, attempts: usize, error: &Error) {
+        let summary = crate::compression_redact::redact(&error.to_string());
+        self.main_notices
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .record_transient(
+                "terminal_failure",
+                format!(
+                    "❌ API failed after {} retries \u{2014} {summary}",
+                    attempts
+                ),
+            );
     }
 
     fn record_main_fallback_notice(&self, failed_index: usize, next: usize, reason: &str) {
@@ -2675,18 +2836,46 @@ impl NativeAgentClient {
                 Err(MainRequestError::Terminal(terminal))
                     if terminal.class.activates_provider_fallback() =>
                 {
-                    let Some(next) = self.activate_main_fallback(index, terminal.class) else {
+                    let Some(next) = self.activate_main_fallback_with_status(
+                        index,
+                        terminal.class,
+                        Some(terminal.status),
+                    ) else {
+                        self.record_main_terminal_http(
+                            terminal.class,
+                            terminal.attempts,
+                            terminal.status,
+                            &terminal.body,
+                        );
                         return Err(MainDispatchFailure::Other(terminal.into_error()));
                     };
                     index = next;
                 }
-                Err(MainRequestError::Fallback { failure, error })
-                    if failure.activates_provider_fallback() =>
-                {
+                Err(MainRequestError::Fallback {
+                    failure,
+                    attempts,
+                    error,
+                }) if failure.activates_provider_fallback() => {
                     let Some(next) = self.activate_main_fallback(index, failure) else {
+                        self.record_main_terminal_error(attempts, &error);
                         return Err(MainDispatchFailure::Other(error));
                     };
                     index = next;
+                }
+                Err(MainRequestError::Terminal(terminal)) => {
+                    self.record_main_terminal_http(
+                        terminal.class,
+                        terminal.attempts,
+                        terminal.status,
+                        &terminal.body,
+                    );
+                    return Err(MainDispatchFailure::Other(terminal.into_error()));
+                }
+                Err(MainRequestError::Fallback {
+                    attempts, error, ..
+                }) => {
+                    self.record_main_terminal_error(attempts, &error);
+                    return Err(MainDispatchFailure::Other(error));
                 }
                 Err(MainRequestError::StreamInactivity {
                     error,
@@ -2793,13 +2982,19 @@ impl NativeAgentClient {
                         if request_failures < attempt_limit {
                             self.wait_before_main_retry(
                                 request_failures as i64,
+                                max_attempts,
+                                failure,
                                 &route.base_url,
                                 None,
                             )
                             .await;
                             continue;
                         }
-                        return Err(MainRequestError::Fallback { failure, error });
+                        return Err(MainRequestError::Fallback {
+                            failure,
+                            attempts: max_attempts,
+                            error,
+                        });
                     }
                 }
             } else {
@@ -2823,11 +3018,21 @@ impl NativeAgentClient {
                     };
                     let attempt_limit = main_attempt_limit(failure, max_attempts, has_fallback);
                     if request_failures < attempt_limit {
-                        self.wait_before_main_retry(request_failures as i64, &route.base_url, None)
-                            .await;
+                        self.wait_before_main_retry(
+                            request_failures as i64,
+                            max_attempts,
+                            failure,
+                            &route.base_url,
+                            None,
+                        )
+                        .await;
                         continue;
                     }
-                    return Err(MainRequestError::Fallback { failure, error });
+                    return Err(MainRequestError::Fallback {
+                        failure,
+                        attempts: max_attempts,
+                        error,
+                    });
                 }
             };
             if response.status().is_success() {
@@ -2891,6 +3096,8 @@ impl NativeAgentClient {
                     if request_failures < attempt_limit {
                         self.wait_before_main_retry(
                             request_failures as i64,
+                            max_attempts,
+                            retry_failure,
                             &route.base_url,
                             Some(&provider_error),
                         )
@@ -2904,6 +3111,7 @@ impl NativeAgentClient {
                 return Err(MainRequestError::Terminal(MainTerminal {
                     status,
                     class: failure,
+                    attempts: max_attempts,
                     body: text,
                     label: label.to_owned(),
                 }));
@@ -2920,6 +3128,7 @@ impl NativeAgentClient {
                 return Err(MainRequestError::Terminal(MainTerminal {
                     status,
                     class: failure,
+                    attempts: max_attempts,
                     body: text,
                     label: label.to_owned(),
                 }));
@@ -2989,6 +3198,7 @@ impl NativeAgentClient {
                 return Err(MainRequestError::Terminal(MainTerminal {
                     status,
                     class: failure,
+                    attempts: max_attempts,
                     body: text,
                     label: label.to_owned(),
                 }));
@@ -2997,6 +3207,7 @@ impl NativeAgentClient {
                 return Err(MainRequestError::Terminal(MainTerminal {
                     status,
                     class: failure,
+                    attempts: max_attempts,
                     body: text,
                     label: label.to_owned(),
                 }));
@@ -3007,15 +3218,18 @@ impl NativeAgentClient {
     async fn wait_before_main_retry(
         &self,
         attempt: i64,
+        max_attempts: usize,
+        failure: MainPoolFailure,
         base_url: &str,
         error: Option<&crate::retry_utils::ProviderError>,
     ) {
         let base = self.main_retry.backoff_base.as_secs_f64();
-        if base <= 0.0 {
-            return;
-        }
-        let default_wait = crate::retry_utils::jittered_backoff(attempt, base, 60.0, 0.5);
-        let wait = error.map_or(default_wait, |error| {
+        let default_wait = if base <= 0.0 {
+            0.0
+        } else {
+            crate::retry_utils::jittered_backoff(attempt, base, 60.0, 0.5)
+        };
+        let (mut wait, policy) = error.map_or((default_wait, None), |error| {
             crate::retry_utils::adaptive_rate_limit_backoff(
                 attempt,
                 Some(base_url),
@@ -3024,9 +3238,57 @@ impl NativeAgentClient {
                 default_wait,
                 crate::retry_utils::zai_coding_overload_short_attempts_default(),
             )
-            .0
         });
-        tokio::time::sleep(std::time::Duration::from_secs_f64(wait)).await;
+        if base <= 0.0 {
+            wait = 0.0;
+        }
+        // Preserve Python's presentation counters, even when eager fallback
+        // caps this route at two requests: generic waits name the failed
+        // attempt, while Z.AI overload waits name the upcoming attempt. Both
+        // display the configured or dynamically expanded retry ceiling.
+        let text = if matches!(
+            policy,
+            Some("zai_coding_overload_short" | "zai_coding_overload_long")
+        ) && failure == MainPoolFailure::Overloaded
+        {
+            let policy_note = match policy {
+                Some("zai_coding_overload_long") => " (Z.AI Coding overload adaptive long backoff)",
+                Some("zai_coding_overload_short") => " (Z.AI Coding overload short retry)",
+                _ => "",
+            };
+            format!(
+                "⏱️ Provider overloaded. Waiting {wait:.1}s (attempt {}/{max_attempts}){policy_note}...",
+                attempt.saturating_add(1)
+            )
+        } else {
+            format!("⏳ Retrying in {wait:.1}s (attempt {attempt}/{max_attempts})...")
+        };
+        // Python emits long Z.AI waits immediately and does not add a buffered
+        // copy. Production turn channels hold 64 events and no response event
+        // can precede this pre-body wait, so the bounded best-effort send has
+        // room without making provider recovery depend on a presentation sink.
+        if policy == Some("zai_coding_overload_long") {
+            let live = self
+                .main_live_notice_tx
+                .lock()
+                .unwrap_or_else(|error| error.into_inner())
+                .clone();
+            if let Some(live) = live {
+                let _ = live.try_send(StreamEvent::GatewayNotice {
+                    notice_kind: "retry_wait".into(),
+                    text,
+                    extra: Default::default(),
+                });
+            }
+        } else {
+            self.main_notices
+                .lock()
+                .unwrap_or_else(|error| error.into_inner())
+                .record_transient("retry_wait", text);
+        }
+        if wait > 0.0 {
+            tokio::time::sleep(std::time::Duration::from_secs_f64(wait)).await;
+        }
     }
 
     async fn wait_before_empty_response_retry(&self, attempt: i64) {
@@ -4786,6 +5048,8 @@ impl NativeAgentClient {
                     route
                         .wait_before_main_retry(
                             stale_stream_outer_failures as i64,
+                            route.main_retry.max_attempts,
+                            MainPoolFailure::Transport,
                             &route.base_url,
                             None,
                         )
@@ -5171,6 +5435,8 @@ impl NativeAgentClient {
             std::mem::take(&mut *notices)
         };
         turn_client.main_notices = std::sync::Arc::new(std::sync::Mutex::new(inherited_notices));
+        turn_client.main_live_notice_tx =
+            std::sync::Arc::new(std::sync::Mutex::new(Some(events.clone())));
         turn_client.begin_run_budget_turn();
         turn_client.turn_reply_durable =
             std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
@@ -6503,6 +6769,36 @@ mod tests {
     }
 
     #[test]
+    fn terminal_http_summary_extracts_and_redacts_provider_message() {
+        let summary = super::main_http_error_summary(
+            reqwest::StatusCode::BAD_GATEWAY,
+            r#"{"error":{"message":"temporary failure api_key=sk-secretvalue123456"}}"#,
+        );
+
+        assert_eq!(summary, "HTTP 502: temporary failure api_key=[REDACTED]");
+        assert!(!summary.contains("secretvalue"));
+    }
+
+    #[test]
+    fn terminal_transport_notice_redacts_error_chain() {
+        let client = super::NativeAgentClient::new("model", "key", "https://example.test").unwrap();
+
+        client.record_main_terminal_error(
+            3,
+            &hermes_core::Error::Other("connection failed api_key=sk-secretvalue123456".to_owned()),
+        );
+
+        let notices = client.main_notices.lock().unwrap().drain(false);
+        assert_eq!(notices.len(), 1);
+        assert_eq!(notices[0].kind, "terminal_failure");
+        assert_eq!(
+            notices[0].text,
+            "❌ API failed after 3 retries \u{2014} connection failed api_key=[REDACTED]"
+        );
+        assert!(!notices[0].text.contains("secretvalue"));
+    }
+
+    #[test]
     fn empty_response_guard_settings_match_python_goldens() {
         let fixture: serde_json::Value = serde_json::from_str(include_str!(
             "../../../tools/main-provider-success-body-goldens.json"
@@ -7051,7 +7347,227 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn terminal_main_fallback_failure_flushes_one_switch_notice() {
+    async fn recovered_main_retry_drops_buffered_wait_notices() {
+        use crate::agent::AgentClient;
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Router,
+        };
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    if calls.fetch_add(1, Ordering::SeqCst) == 0 {
+                        (
+                            StatusCode::INTERNAL_SERVER_ERROR,
+                            "{\"error\":{\"message\":\"temporary server error\"}}",
+                        )
+                            .into_response()
+                    } else {
+                        (
+                            [("content-type", "text/event-stream")],
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"recovered\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                        )
+                            .into_response()
+                    }
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_retry_attempts(3)
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        client.run_turn(&message, &[], tx).await.unwrap();
+        let mut events = Vec::new();
+        while let Some(event) = rx.recv().await {
+            events.push(event);
+        }
+
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        assert!(matches!(
+            &events[..],
+            [
+                hermes_core::StreamEvent::MessageChunk { text },
+                hermes_core::StreamEvent::MessageStop { final_: true }
+            ] if text == "recovered"
+        ));
+    }
+
+    #[tokio::test]
+    async fn terminal_main_retry_flushes_each_buffered_wait_once() {
+        use crate::agent::AgentClient;
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Router,
+        };
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (
+                        StatusCode::BAD_GATEWAY,
+                        "{\"error\":{\"message\":\"temporary server error\"}}",
+                    )
+                        .into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_retry_attempts(3)
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        assert!(client.run_turn(&message, &[], tx).await.is_err());
+        let mut notices = Vec::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::GatewayNotice {
+                notice_kind, text, ..
+            } = event
+            {
+                notices.push((notice_kind, text));
+            }
+        }
+
+        assert_eq!(calls.load(Ordering::SeqCst), 3);
+        assert_eq!(
+            notices,
+            vec![
+                (
+                    "retry_wait".to_owned(),
+                    "⏳ Retrying in 0.0s (attempt 1/3)...".to_owned()
+                ),
+                (
+                    "retry_wait".to_owned(),
+                    "⏳ Retrying in 0.0s (attempt 2/3)...".to_owned()
+                ),
+                (
+                    "terminal_failure".to_owned(),
+                    "❌ API failed after 3 retries \u{2014} HTTP 502: temporary server error"
+                        .to_owned()
+                ),
+            ]
+        );
+    }
+
+    #[tokio::test]
+    async fn terminal_unrelated_http_error_still_emits_nonretryable_status() {
+        use crate::agent::AgentClient;
+        use axum::{http::StatusCode, response::IntoResponse, routing::post, Router};
+
+        let app = Router::new().route(
+            "/chat/completions",
+            post(|| async {
+                (
+                    StatusCode::IM_A_TEAPOT,
+                    "{\"error\":{\"message\":\"request rejected\"}}",
+                )
+                    .into_response()
+            }),
+        );
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(4);
+
+        assert!(client.run_turn(&message, &[], tx).await.is_err());
+        assert!(matches!(
+            rx.recv().await.unwrap(),
+            hermes_core::StreamEvent::GatewayNotice { notice_kind, text, .. }
+                if notice_kind == "terminal_failure"
+                    && text == "❌ Non-retryable error (HTTP 418): HTTP 418: request rejected"
+        ));
+        assert!(rx.recv().await.is_none());
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn zai_long_retry_wait_is_live_while_short_wait_stays_buffered() {
+        let (tx, mut rx) = tokio::sync::mpsc::channel(4);
+        let mut client =
+            super::NativeAgentClient::new("glm-5.2", "key", "https://api.z.ai/api/coding/paas/v4")
+                .unwrap()
+                .with_provider_identity("zai")
+                .with_main_retry_backoff(std::time::Duration::ZERO);
+        client.main_live_notice_tx = std::sync::Arc::new(std::sync::Mutex::new(Some(tx)));
+        let error = crate::retry_utils::ProviderError {
+            repr: "{\"error\":{\"code\":1305,\"message\":\"temporarily overloaded\"}}".into(),
+            status_code: Some(429),
+            ..Default::default()
+        };
+
+        client
+            .wait_before_main_retry(
+                1,
+                8,
+                super::MainPoolFailure::Overloaded,
+                &client.base_url,
+                Some(&error),
+            )
+            .await;
+        assert!(rx.try_recv().is_err());
+        client
+            .wait_before_main_retry(
+                4,
+                8,
+                super::MainPoolFailure::Overloaded,
+                &client.base_url,
+                Some(&error),
+            )
+            .await;
+
+        let live = rx.try_recv().unwrap();
+        assert!(matches!(
+            live,
+            hermes_core::StreamEvent::GatewayNotice { notice_kind, text, .. }
+                if notice_kind == "retry_wait"
+                    && text.starts_with("⏱️ Provider overloaded. Waiting ")
+                    && text.ends_with("s (attempt 5/8) (Z.AI Coding overload adaptive long backoff)...")
+        ));
+        let buffered = client.main_notices.lock().unwrap().drain(false);
+        assert_eq!(buffered.len(), 1);
+        assert_eq!(buffered[0].kind, "retry_wait");
+        assert_eq!(
+            buffered[0].text,
+            "⏱️ Provider overloaded. Waiting 0.0s (attempt 2/8) (Z.AI Coding overload short retry)..."
+        );
+    }
+
+    #[tokio::test]
+    async fn terminal_main_fallback_failure_flushes_ordered_retry_and_switch_trace_once() {
         use crate::agent::AgentClient;
         use axum::{http::StatusCode, response::IntoResponse, routing::post, Router};
 
@@ -7092,13 +7608,128 @@ mod tests {
             events.push(event);
         }
 
-        assert_eq!(events.len(), 1);
-        assert!(matches!(
-            &events[0],
-            hermes_core::StreamEvent::GatewayNotice { notice_kind, text, .. }
-                if notice_kind == "fallback_switch"
-                    && text == "⚠️ Model fallback: primary-model via primary-provider unavailable (provider overloaded); using fallback-model via fallback-provider."
-        ));
+        let notices = events
+            .iter()
+            .map(|event| match event {
+                hermes_core::StreamEvent::GatewayNotice {
+                    notice_kind, text, ..
+                } => (notice_kind.as_str(), text.as_str()),
+                other => panic!("unexpected terminal event: {other:?}"),
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            notices,
+            vec![
+                (
+                    "retry_wait",
+                    "⏳ Retrying in 0.0s (attempt 1/3)..."
+                ),
+                (
+                    "fallback_attempt",
+                    "⚠️ Provider unreachable \u{2014} switching to fallback provider..."
+                ),
+                (
+                    "fallback_switch",
+                    "⚠️ Model fallback: primary-model via primary-provider unavailable (provider overloaded); using fallback-model via fallback-provider."
+                ),
+                (
+                    "retry_wait",
+                    "⏳ Retrying in 0.0s (attempt 1/3)..."
+                ),
+                (
+                    "retry_wait",
+                    "⏳ Retrying in 0.0s (attempt 2/3)..."
+                ),
+                (
+                    "terminal_failure",
+                    "❌ API failed after 3 retries \u{2014} HTTP 503: provider overloaded"
+                ),
+            ]
+        );
+    }
+
+    #[tokio::test]
+    async fn terminal_format_rejection_flushes_nonretryable_fallback_trace() {
+        use crate::agent::AgentClient;
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Router,
+        };
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        fn rejecting(calls: Arc<AtomicUsize>) -> Router {
+            Router::new()
+                .route(
+                    "/chat/completions",
+                    post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                        calls.fetch_add(1, Ordering::SeqCst);
+                        (
+                            StatusCode::INTERNAL_SERVER_ERROR,
+                            "{\"error\":{\"message\":\"unknown parameter: temperature\"}}",
+                        )
+                            .into_response()
+                    }),
+                )
+                .with_state(calls)
+        }
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let (primary_url, _primary_server) =
+            serve_main_retry(rejecting(primary_calls.clone())).await;
+        let (fallback_url, _fallback_server) =
+            serve_main_retry(rejecting(fallback_calls.clone())).await;
+        let fallback =
+            super::NativeAgentClient::new("fallback-model", "fallback-key", fallback_url)
+                .unwrap()
+                .with_provider_identity("fallback-provider");
+        let client = super::NativeAgentClient::new("primary-model", "primary-key", primary_url)
+            .unwrap()
+            .with_provider_identity("primary-provider")
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_attempts(3)
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        assert!(client.run_turn(&message, &[], tx).await.is_err());
+        let mut notices = Vec::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::GatewayNotice {
+                notice_kind, text, ..
+            } = event
+            {
+                notices.push((notice_kind, text));
+            }
+        }
+
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            notices,
+            vec![
+                (
+                    "fallback_attempt".to_owned(),
+                    "⚠️ Non-retryable error (HTTP 500) \u{2014} trying fallback...".to_owned()
+                ),
+                (
+                    "fallback_switch".to_owned(),
+                    "⚠️ Model fallback: primary-model via primary-provider unavailable (provider failure); using fallback-model via fallback-provider."
+                        .to_owned()
+                ),
+                (
+                    "terminal_failure".to_owned(),
+                    "❌ Non-retryable error (HTTP 500): HTTP 500: unknown parameter: temperature"
+                        .to_owned()
+                ),
+            ]
+        );
     }
 
     #[tokio::test]
@@ -7221,7 +7852,7 @@ mod tests {
         ] {
             assert_eq!(failure.notice_reason(), expected(case_name), "{case_name}");
         }
-        assert_eq!(FormatError.notice_reason(), "request format rejected");
+        assert_eq!(FormatError.notice_reason(), "provider failure");
         assert_eq!(
             super::MainSuccessBodyFailure::ContentPolicyRefusal.notice_reason(),
             expected("policy_content_blocked")
@@ -10581,6 +11212,13 @@ mod tests {
 
         assert!(result.is_err());
         assert_eq!(calls.load(Ordering::SeqCst), 8);
+        let notices = client.main_notices.lock().unwrap().drain(false);
+        assert!(notices.iter().any(|notice| {
+            notice.kind == "terminal_failure"
+                && notice.text.starts_with(
+                    "❌ API failed after 8 retries \u{2014} HTTP 429: The service may be temporarily overloaded",
+                )
+        }));
     }
 
     #[tokio::test]

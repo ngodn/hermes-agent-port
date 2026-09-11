@@ -13,6 +13,13 @@ pub struct TurnNotices {
 }
 
 impl TurnNotices {
+    pub fn record_transient(&mut self, kind: &'static str, text: impl Into<String>) {
+        self.buffered.push(Notice {
+            kind,
+            text: text.into(),
+        });
+    }
+
     pub fn record_fallback(
         &mut self,
         old_model: &str,
@@ -49,9 +56,8 @@ impl TurnNotices {
     }
 
     /// Recovery drops transient chatter but preserves each fallback switch.
-    /// Terminal failure emits the buffered switch trace without duplicating
-    /// the pending fallback copy. Both vectors contain the same durable
-    /// notices until transient retry trace records are added to `buffered`.
+    /// Terminal failure emits the complete buffered trace without duplicating
+    /// the pending durable copies.
     pub fn drain(&mut self, recovered: bool) -> Vec<Notice> {
         if recovered {
             self.buffered.clear();
@@ -88,6 +94,50 @@ mod tests {
         notices.record_fallback("m1", "p1", "m2", "p2", "provider overloaded");
 
         assert_eq!(notices.drain(false).len(), 1);
+        assert!(notices.drain(false).is_empty());
+        assert!(notices.drain(true).is_empty());
+    }
+
+    #[test]
+    fn recovery_drops_transient_retry_trace_but_keeps_durable_switches() {
+        let mut notices = TurnNotices::default();
+        notices.record_transient("retry_wait", "retry primary");
+        notices.record_fallback("m1", "p1", "m2", "p2", "provider overloaded");
+        notices.record_transient("retry_wait", "retry fallback");
+
+        let emitted = notices.drain(true);
+
+        assert_eq!(emitted.len(), 1);
+        assert_eq!(emitted[0].kind, "fallback_switch");
+        assert!(emitted[0].text.contains("m1 via p1"));
+        assert!(notices.drain(false).is_empty());
+    }
+
+    #[test]
+    fn terminal_failure_flushes_transient_and_durable_trace_in_recorded_order_once() {
+        let mut notices = TurnNotices::default();
+        notices.record_transient("retry_wait", "retry primary");
+        notices.record_transient("fallback_attempt", "switch primary");
+        notices.record_fallback("m1", "p1", "m2", "p2", "provider overloaded");
+        notices.record_transient("retry_wait", "retry fallback");
+
+        let emitted = notices.drain(false);
+
+        assert_eq!(
+            emitted
+                .iter()
+                .map(|notice| (notice.kind, notice.text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![
+                ("retry_wait", "retry primary"),
+                ("fallback_attempt", "switch primary"),
+                (
+                    "fallback_switch",
+                    "⚠️ Model fallback: m1 via p1 unavailable (provider overloaded); using m2 via p2."
+                ),
+                ("retry_wait", "retry fallback"),
+            ]
+        );
         assert!(notices.drain(false).is_empty());
         assert!(notices.drain(true).is_empty());
     }

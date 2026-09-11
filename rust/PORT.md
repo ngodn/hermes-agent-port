@@ -1,5 +1,37 @@
 # Hermes Rust rewrite
 
+## Native main-provider retry notices: 2026-09-11
+
+Ordinary native chat-completions retries now use the complete turn-local
+presentation lifecycle. Same-route countdowns and fallback-attempt context are
+buffered and dropped after successful recovery. Terminal failure flushes them
+once in order, followed by a bounded, secret-redacted terminal status. Durable
+fallback switches remain visible on recovery without duplicating their terminal
+copies.
+
+The existing Z.AI Coding overload schedule now exposes short waits through the
+same buffer and sends adaptive long-backoff notices live before sleeping. Notice
+state and the live sender follow frozen fallback route clones without entering
+SQLite, model history, system prompts, tool schemas, or provider requests.
+
+AGY ran four live `AIAgent.run_conversation()` cases for HTTP 500 recovery and
+terminal exhaustion, ordinary HTTP 503 fallback exhaustion, and deterministic
+format rejection. The oracle corrected an earlier inferred detail: Python's
+format-rejection fallback banner says `provider failure` because the branch does
+not forward its classifier reason. Claude separately mapped interrupted-wait
+and stale accounting for the next checkpoint. See
+[native-main-provider-retry-notices-resolution.md](analysis/native-main-provider-retry-notices-resolution.md).
+
+The refreshed weighted full-port estimate is **59.55 points, reported as about
+60%** (judgment range 56% to 62%). Native agent core moves from 85% to 86%; the
+other area estimates are unchanged. Provider-response and local-load wait
+notices, cooperative interrupted-wait accounting, non-chat and remaining OAuth
+routes, dynamic providers, native plugin and external-memory managers, prompt
+invalidation, and broader client eviction remain. The full workspace passes
+**1,965 Rust tests with two ignored**. The live Python oracle and its 17 focused
+tests pass, and Rust formatting, workspace Clippy with warnings denied, and diff
+hygiene pass.
+
 ## Native main-provider fallback notices: 2026-09-11
 
 Native chat-completions turns now emit Python-compatible presentation notices

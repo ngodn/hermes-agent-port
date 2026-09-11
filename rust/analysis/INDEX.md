@@ -161,6 +161,15 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [37-case corpus](../tools/main-provider-operator-notice-goldens.json), and
   [Claude sink map](main-provider-operator-notice-sinks-claude.md) plus
   [implementation review](main-provider-fallback-notice-review-claude.md).
+- Native main-provider retry countdowns, fallback-attempt context, and terminal
+  statuses now share the ordered turn-local notice lifecycle. Recovery drops
+  transient chatter, terminal failure flushes it once, and adaptive long Z.AI
+  waits are surfaced live without blocking provider recovery. See
+  [native-main-provider-retry-notices-resolution.md](native-main-provider-retry-notices-resolution.md),
+  with the live-loop
+  [AGY validation](main-provider-retry-trace-validation-agy.md), the separate
+  [Claude interrupted-wait map](main-provider-interrupted-wait-map-claude.md),
+  and the final [Claude review](main-provider-retry-notices-review-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task

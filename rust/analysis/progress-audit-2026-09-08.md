@@ -1,7 +1,7 @@
 # Full Rust port progress audit, updated 2026-09-11
 
-Current estimate: **59.35% of the full native replacement**, reported as
-**about 59%**, with a reasonable judgment range of **55% to 61%**. The native
+Current estimate: **59.55% of the full native replacement**, reported as
+**about 60%**, with a reasonable judgment range of **56% to 62%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
 static user deny rules with live last-known-good reload and manual approval on
@@ -43,8 +43,12 @@ pre-generation failures retain ordinary retry and fallback behavior. Buffered
 tool calls now also cap implicit stale patience against one turn-wide
 wall-clock run budget without overriding explicit settings or changing stream
 behavior. Durable fallback switches and later primary restoration now surface
-as one-shot push notices without entering the reply or transcript. The estimate
-remains conservative because other OAuth paths,
+as one-shot push notices without entering the reply or transcript. Ordinary
+same-route retry countdowns, fallback-attempt context, and terminal statuses
+now share that turn-local lifecycle: recovery drops transient chatter, terminal
+failure flushes it once, and adaptive long Z.AI waits surface live. The estimate
+remains conservative because provider-response and local-load wait notices,
+cooperative interrupted-wait accounting, other OAuth paths,
 non-chat provider transports, smart approval, PTY and notification support,
 remote execution, most tools, and the underlying plugin and external-memory
 managers are not native.
@@ -65,10 +69,10 @@ audits.
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 76% | 11.40 |
-| Native agent core | 20% | 85% | 17.00 |
-| Total | 100% | | **59.35** |
+| Native agent core | 20% | 86% | 17.20 |
+| Total | 100% | | **59.55** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 85 = 59.35`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 86 = 59.55`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -232,7 +236,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 85%
+### Native agent core, 86%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -418,8 +422,12 @@ adapters deliver them before the buffered assistant reply, including
 notice-only turns, while synchronous HTTP remains reply-only. Compression
 preflight restoration transfers its pending notice into the admitted turn.
 Neither notice type enters SQLite, prompt bytes, tool schemas, or provider
-requests. Full transient retry/countdown traces, interrupted-wait accounting,
-non-chat, OAuth, and dynamic-provider paths remain.
+requests. Same-route retry countdowns, fallback-attempt context, and bounded
+terminal statuses now use the same ordered buffer. Recovery clears transient
+records, terminal failure flushes them once, and adaptive long Z.AI waits emit
+live through a best-effort turn sender. Provider-response and managed-load wait
+notices, interrupted-wait accounting, non-chat, OAuth, and dynamic-provider
+paths remain.
 
 Canonical Nous discovery resolves its OAuth material lazily before the first
 auxiliary request. Valid inference JWTs avoid both network and shared-lock
