@@ -1,0 +1,11 @@
+You own the Python behavior-contract lane for truncated tool calls on the ordinary main-provider chat-completions path. Do not edit Rust production code, Rust tests, PORT.md, Claude artifacts, or existing length-continuation artifacts.
+
+Inspect and execute current Python production behavior for a successful response whose finish reason is length and whose assistant message contains tool calls, including incomplete streamed argument payloads. Map eligibility, same-request retry versus semantic continuation, retry count, output-cap growth, tool execution prohibition, partial-stream stub distinctions, dropped tool names, terminal result, transcript repair, persistence, usage, fallback, and provider-specific exceptions. Keep ordinary text continuation, Codex Responses, Anthropic Messages, and response-stall timeout design outside this lane except for explicit boundary notes.
+
+Produce:
+
+- rust/analysis/main-provider-tool-truncation-contract-agy.md
+- rust/tools/gen_main_provider_tool_truncation_goldens.py
+- rust/tools/main-provider-tool-truncation-goldens.json
+
+The generator must import or execute live Python production functions wherever possible, produce deterministic JSON suitable for Rust include_str! parity tests, and label source-inspection literals. Run the generator and the smallest relevant focused Python suites. Record exact commands, case counts, invariants, uncertainties, and deferrals. Do not use em dash characters in authored files.

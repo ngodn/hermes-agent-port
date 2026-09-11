@@ -29,10 +29,11 @@ missing suffix. A stream error after visible output still fails immediately and
 never retries or changes providers. Pre-body transport retry and fallback remain
 owned by the existing shared dispatcher.
 
-The system prompt and route plan remain immutable. Continuation messages are
-turn-local wire context, and the gateway persists the assembled assistant reply
-as one settled turn. No synthetic continuation marker enters SQLite, prompt
-snapshots, plugins, or external memory.
+The system prompt and route plan remain immutable. This initial slice collapsed
+the assembled assistant reply into one settled SQLite row. The later
+[buffered continuation checkpoint](native-main-provider-buffered-continuation-resolution.md)
+supersedes that persistence detail by durably retaining semantic fragment/nudge
+pairs and storing only the final provider suffix.
 
 ## Helper split
 
@@ -58,12 +59,12 @@ ownership has not been ported yet.
 
 ## Deliberate limits
 
-This slice covers visible text with an explicit `length` finish reason on the
-ordinary streaming chat-completions path. Still remaining are buffered text
-continuation inside tool-enabled turns, truncated tool-call retries,
-thinking-only length handling and one-shot reasoning disable, repetition-loop
-rejection, dropped-stream conversion to a network continuation stub, local
-Ollama GLM stop-misreport detection, and the separate inactivity deadline.
+This slice covered visible text with an explicit `length` finish reason on the
+ordinary streaming chat-completions path. Buffered continuation and truncated
+tool-call retries landed in the next checkpoint. Thinking-only length handling
+and one-shot reasoning disable, repetition-loop rejection, dropped-stream
+conversion to a network continuation stub, local Ollama GLM stop-misreport
+detection, and the separate inactivity deadline remain.
 
 The weighted full-port estimate remains 57.95%, reported as about 58%. This
 narrow slice retires a real production gap but does not justify moving the

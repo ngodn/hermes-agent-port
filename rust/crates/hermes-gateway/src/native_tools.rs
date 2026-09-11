@@ -160,6 +160,21 @@ pub enum Step {
         assistant_message: Value,
     },
     Final(String),
+    /// A successful provider continuation inserted semantic transcript rows
+    /// before producing the next ordinary step. The tool loop persists and
+    /// adopts these rows before it can deliver text or execute a tool.
+    WithContinuation {
+        preceding_messages: Vec<Value>,
+        visible_prefix: String,
+        next: Box<Step>,
+    },
+    /// A bounded continuation ceiling keeps the useful partial answer while
+    /// reporting that the turn did not complete.
+    PartialFinal {
+        text: String,
+        error: String,
+        repair_tool_tail: bool,
+    },
 }
 
 /// A chat model that can take a message list + tool specs and return the next
@@ -180,6 +195,12 @@ pub trait ChatModel: Send + Sync {
     /// executes. Stateless/test models keep the default no-op.
     fn persist_tool_loop_message(&self, message: &Value) -> Result<()> {
         let _ = message;
+        Ok(())
+    }
+    /// Atomically persist assistant-fragment/user-nudge pairs produced by one
+    /// model step. Stateless adapters keep the default no-op.
+    fn persist_continuation_messages(&self, messages: &[Value]) -> Result<()> {
+        let _ = messages;
         Ok(())
     }
     /// Apply optional transcript maintenance after a complete tool-result
@@ -381,6 +402,29 @@ pub fn parse_message_step(message: &Value) -> Step {
     Step::Final(content.to_owned())
 }
 
+/// Detect invalid JSON that ends mid-value rather than at a closing object or
+/// array delimiter. Routers sometimes report this cap hit as `tool_calls`
+/// instead of `length`; the incomplete batch must still never execute.
+pub(crate) fn has_truncated_tool_arguments(
+    calls: &[ToolCall],
+    assistant_message: &Value,
+    valid_names: &[String],
+) -> bool {
+    calls.iter().enumerate().any(|(index, call)| {
+        if !valid_names.contains(&call.name) {
+            return false;
+        }
+        let Some(raw) = assistant_message["tool_calls"][index]["function"]["arguments"].as_str()
+        else {
+            return false;
+        };
+        serde_json::from_str::<Value>(raw).is_err()
+            && !raw
+                .trim_end_matches(crate::python_value::python_whitespace)
+                .ends_with(['}', ']'])
+    })
+}
+
 /// Resolve replay/execution identity like build_assistant_message. Missing
 /// identifiers use a stable content hash, never randomness, so repeated
 /// construction of the same turn preserves the provider cache prefix.
@@ -557,6 +601,20 @@ fn has_inline_thinking(text: &str) -> bool {
     PATTERN.is_match(text).unwrap_or(false)
 }
 
+/// Join continuation fragments without gluing adjacent non-whitespace text.
+fn append_continuation_text(joined: &mut String, part: &str) {
+    if !joined.is_empty()
+        && !joined.chars().last().is_some_and(char::is_whitespace)
+        && part
+            .chars()
+            .next()
+            .is_some_and(|next| !next.is_whitespace())
+    {
+        joined.push('\n');
+    }
+    joined.push_str(part);
+}
+
 /// Run the tool loop for one user message with structured content, streaming the outcome as events.
 /// `history` seeds the message list with prior turns (user/assistant/system).
 pub async fn run_tool_loop_with_content(
@@ -609,8 +667,21 @@ pub async fn run_tool_loop_with_messages(
     // Keep that answer only until substantive work makes it stale.
     let mut housekeeping_answer: Option<String> = None;
     let mut post_tool_empty_retried = false;
+    let mut continuation_prefix = String::new();
     for _ in 0..max_iters {
-        match model.step(&messages, &tool_specs).await? {
+        let mut step = model.step(&messages, &tool_specs).await?;
+        while let Step::WithContinuation {
+            preceding_messages,
+            visible_prefix,
+            next,
+        } = step
+        {
+            model.persist_continuation_messages(&preceding_messages)?;
+            messages.extend(preceding_messages);
+            append_continuation_text(&mut continuation_prefix, &visible_prefix);
+            step = *next;
+        }
+        match step {
             Step::Final(text) => {
                 let visible_answer = crate::visible_response::answer(&text);
                 if visible_answer.is_none()
@@ -636,11 +707,37 @@ pub async fn run_tool_loop_with_messages(
                 let text = visible_answer
                     .or_else(|| housekeeping_answer.take())
                     .unwrap_or_default();
+                let mut delivered = std::mem::take(&mut continuation_prefix);
+                append_continuation_text(&mut delivered, &text);
+                let text = delivered;
                 if !text.is_empty() {
                     let _ = events.send(StreamEvent::MessageChunk { text }).await;
                 }
                 let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
                 return Ok(());
+            }
+            Step::PartialFinal {
+                text,
+                error,
+                repair_tool_tail,
+            } => {
+                if repair_tool_tail
+                    && messages
+                        .last()
+                        .is_some_and(|message| message["role"] == "tool")
+                {
+                    model.persist_tool_loop_message(&json!({
+                        "role":"assistant",
+                        "content":text,
+                        "finish_reason":"length",
+                        "_interrupted_tool_terminal":true,
+                    }))?;
+                }
+                if !text.is_empty() {
+                    let _ = events.send(StreamEvent::MessageChunk { text }).await;
+                }
+                let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                return Err(hermes_core::Error::Other(error));
             }
             Step::ToolCalls {
                 mut calls,
@@ -697,14 +794,8 @@ pub async fn run_tool_loop_with_messages(
                     })
                     .collect();
                 if !invalid.is_empty() {
-                    let truncated = calls.iter().enumerate().any(|(index, call)| {
-                        invalid.iter().any(|(name, _)| name == &call.name)
-                            && !assistant_message["tool_calls"][index]["function"]["arguments"]
-                                .as_str()
-                                .unwrap_or_default()
-                                .trim_end_matches(crate::python_value::python_whitespace)
-                                .ends_with(['}', ']'])
-                    });
+                    let truncated =
+                        has_truncated_tool_arguments(&calls, &assistant_message, &valid_names);
                     if truncated {
                         let text = "Response truncated due to output length limit".to_owned();
                         let _ = events
@@ -850,6 +941,7 @@ pub async fn run_tool_loop_with_messages(
                     }
                 }
             }
+            Step::WithContinuation { .. } => unreachable!("continuation wrapper was flattened"),
         }
     }
 
@@ -867,6 +959,29 @@ pub async fn run_tool_loop_with_messages(
 const SUMMARY_REQUEST: &str = "You've reached the maximum number of tool-calling iterations allowed. Please provide a final response summarizing what you've found and accomplished so far, without calling any more tools.";
 const EMPTY_SUMMARY: &str = "I reached the iteration limit and couldn't generate a summary.";
 
+fn summary_step_text(step: Step) -> String {
+    match step {
+        Step::Final(text) | Step::PartialFinal { text, .. } => text,
+        // A provider can return tool calls even without a tool schema. The
+        // summary path reads its text and never executes these calls.
+        Step::ToolCalls {
+            assistant_message, ..
+        } => assistant_message["content"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned(),
+        Step::WithContinuation {
+            visible_prefix,
+            next,
+            ..
+        } => {
+            let mut text = visible_prefix;
+            append_continuation_text(&mut text, &summary_step_text(*next));
+            text
+        }
+    }
+}
+
 async fn summarize_exhausted_turn(
     model: &dyn ChatModel,
     messages: &mut Vec<Value>,
@@ -875,11 +990,7 @@ async fn summarize_exhausted_turn(
     messages.push(json!({"role":"user", "content":SUMMARY_REQUEST}));
     for attempt in 0..2 {
         let text = match model.step(messages, &[]).await {
-            Ok(Step::Final(text)) => text,
-            // A provider can return tool calls even without a tool schema.
-            // The summary path reads its text and never executes these calls.
-            Ok(Step::ToolCalls { assistant_message, .. }) => assistant_message["content"]
-                .as_str().unwrap_or_default().to_owned(),
+            Ok(step) => summary_step_text(step),
             Err(error) => return format!("I reached the maximum iterations ({max_iters}) but couldn't summarize. Error: {error}"),
         };
         let text = text.trim_matches(crate::python_value::python_whitespace);

@@ -1,5 +1,38 @@
 # Hermes Rust rewrite
 
+## Native buffered continuation and tool truncation: 2026-09-11
+
+Tool-enabled native chat-completions turns now continue visible
+`finish_reason="length"` responses on their frozen route with Python's exact
+semantic nudge and progressive output caps. The no-tools stream and buffered
+tool path both commit exact assistant-fragment/user-nudge pairs atomically, then
+store only the final provider suffix while delivering the complete stitched
+answer. Later turns therefore replay the same alternating semantics the provider
+saw, without duplicating the visible prefix.
+
+Length-terminated tool calls take a separate safe lane. Broken arguments never
+execute or enter SQLite. The unchanged request retries four times, for five
+total attempts, with bounded cap growth. Rejected attempts do not enter native
+usage accounting. Ceiling exit delivers a failed diagnostic, and a prior
+completed tool result receives a durable synthetic assistant closer so the next
+turn cannot form an invalid role boundary.
+
+AGY produced and regenerated an 81-case, 11-section source-executed Python
+contract; 14 focused Python tests passed. Claude separately mapped timeout and
+stall ownership for the next checkpoint, then reviewed this implementation.
+See
+[native-main-provider-buffered-continuation-resolution.md](analysis/native-main-provider-buffered-continuation-resolution.md).
+
+The refreshed weighted full-port estimate is **58.15 points, reported as about
+58%** (judgment range 55% to 61%). Native agent core moves from 78% to 79%; the
+other area estimates are unchanged. Thinking-only and provider-specific
+continuation, dropped-stream recovery, inactivity deadlines, non-chat and OAuth
+routes, dynamic providers, native plugin and external-memory managers, prompt
+invalidation, and broader client eviction remain. Validation is **1,895 Rust
+tests passed, two ignored**, plus the 81-case corpus and 14 focused Python tests.
+Rust and Python formatting, Ruff, workspace Clippy with warnings denied, and
+diff hygiene pass.
+
 ## Native visible-text length continuation subset: 2026-09-10
 
 The no-tools native chat-completions stream now continues successful responses

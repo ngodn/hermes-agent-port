@@ -776,8 +776,8 @@ impl Dispatcher {
         // Record model-authored assistant content for stateless backends before
         // the silence gate. Delivery-only terminal diagnostics stay out of
         // future provider context.
-        if agent.assistant_reply_is_durable(&msg, &reply) {
-            crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        if let Some(history_reply) = agent.assistant_reply_for_history(&msg, &reply) {
+            crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &history_reply);
         }
         if let Err(error) = agent
             .finalize_turn_after_persist(

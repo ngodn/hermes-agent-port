@@ -3944,7 +3944,132 @@ impl SessionDb {
         Ok(id)
     }
 
-    /// Persist one native assistant tool-call row or tool-result row before the
+    /// Atomically append the assistant-fragment/user-nudge pairs produced by
+    /// one successful native length-continuation step. The transaction checks
+    /// the live turn lease and current transcript phase before writing, so a
+    /// competing or stale producer cannot leave a half-pair in durable replay.
+    pub fn append_native_continuation_messages(
+        &self,
+        session_id: &str,
+        messages: &[Value],
+        turn_lease_holder: Option<&str>,
+    ) -> rusqlite::Result<bool> {
+        if session_id.is_empty()
+            || messages.is_empty()
+            || !messages.len().is_multiple_of(2)
+            || messages.iter().enumerate().any(|(index, message)| {
+                let expected = if index % 2 == 0 { "assistant" } else { "user" };
+                message.get("role").and_then(Value::as_str) != Some(expected)
+                    || message
+                        .get("content")
+                        .and_then(Value::as_str)
+                        .is_none_or(str::is_empty)
+                    || message
+                        .get("tool_calls")
+                        .and_then(Value::as_array)
+                        .is_some_and(|calls| !calls.is_empty())
+            })
+        {
+            return Ok(false);
+        }
+
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        if let Some(holder) = turn_lease_holder {
+            let conversation_id = compression_lineage_root_on(&tx, session_id)?;
+            let owner = tx
+                .query_row(
+                    "SELECT holder FROM session_turn_leases
+                     WHERE conversation_id = ? AND expires_at >= ?",
+                    params![conversation_id, now_secs()],
+                    |row| row.get::<_, String>(0),
+                )
+                .optional()?;
+            if owner.as_deref() != Some(holder) {
+                return Ok(false);
+            }
+        }
+        let live = tx
+            .query_row(
+                "SELECT ended_at IS NULL FROM sessions WHERE id = ?",
+                [session_id],
+                |row| row.get::<_, bool>(0),
+            )
+            .optional()?;
+        if live != Some(true) {
+            return Ok(false);
+        }
+        let tail = {
+            let mut statement = tx.prepare(
+                "SELECT role, tool_calls, tool_call_id FROM messages
+                 WHERE session_id = ? AND active = 1
+                   AND id >= COALESCE((
+                       SELECT MAX(id) FROM messages
+                       WHERE session_id = ? AND active = 1 AND role = 'user'
+                   ), 0)
+                 ORDER BY id",
+            )?;
+            let rows = statement
+                .query_map(params![session_id, session_id], |row| {
+                    Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            rows
+        };
+        let allowed = match partial_turn_phase(&tail) {
+            Some(TailPhase::Assistant) => true,
+            Some(TailPhase::Tools(pending)) => pending.is_empty(),
+            Some(TailPhase::User) | None => false,
+        };
+        if !allowed {
+            return Ok(false);
+        }
+
+        let timestamp = now_secs();
+        for message in messages {
+            let role = message["role"].as_str().expect("validated role");
+            let content = native_persisted_content(role, message.get("content"));
+            let json_text = |key: &str| {
+                message
+                    .get(key)
+                    .filter(|value| !value.is_null())
+                    .map(Value::to_string)
+            };
+            tx.execute(
+                "INSERT INTO messages (
+                     session_id, role, content, api_content, finish_reason,
+                     reasoning, reasoning_content, reasoning_details,
+                     codex_reasoning_items, codex_message_items, timestamp, active
+                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)",
+                params![
+                    session_id,
+                    role,
+                    content,
+                    message.get("api_content").and_then(Value::as_str),
+                    message.get("finish_reason").and_then(Value::as_str),
+                    message.get("reasoning").and_then(Value::as_str),
+                    message.get("reasoning_content").and_then(Value::as_str),
+                    json_text("reasoning_details"),
+                    json_text("codex_reasoning_items"),
+                    json_text("codex_message_items"),
+                    timestamp,
+                ],
+            )?;
+        }
+        tx.execute(
+            "UPDATE sessions SET message_count = message_count + ?,
+             last_activity_at = ? WHERE id = ?",
+            params![
+                i64::try_from(messages.len()).unwrap_or(i64::MAX),
+                timestamp,
+                session_id
+            ],
+        )?;
+        tx.commit()?;
+        Ok(true)
+    }
+
+    /// Persist one native assistant tool-loop row or tool-result row before the
     /// loop advances. The transaction validates it against the current durable
     /// tail, preventing orphan results, duplicate ids, and reordered groups.
     pub fn append_native_tool_message(
@@ -3972,7 +4097,24 @@ impl SessionDb {
             .get("tool_calls")
             .filter(|value| !value.is_null())
             .map(Value::to_string);
+        let interrupted_terminal = role == "assistant"
+            && object
+                .get("_interrupted_tool_terminal")
+                .is_some_and(crate::python_value::truthy);
+        if interrupted_terminal
+            && (object
+                .get("content")
+                .and_then(Value::as_str)
+                .is_none_or(str::is_empty)
+                || object
+                    .get("tool_calls")
+                    .and_then(Value::as_array)
+                    .is_some_and(|calls| !calls.is_empty()))
+        {
+            return Ok(false);
+        }
         if role == "assistant"
+            && !interrupted_terminal
             && object
                 .get("tool_calls")
                 .and_then(Value::as_array)
@@ -3981,6 +4123,7 @@ impl SessionDb {
             return Ok(false);
         }
         if role == "assistant"
+            && !interrupted_terminal
             && !matches!(
                 phase_after_assistant(tool_calls.as_deref()),
                 Some(TailPhase::Tools(pending)) if !pending.is_empty()
@@ -4037,7 +4180,7 @@ impl SessionDb {
             return Ok(false);
         };
         let allowed = match (role, phase) {
-            ("assistant", TailPhase::Assistant) => true,
+            ("assistant", TailPhase::Assistant) => !interrupted_terminal,
             ("assistant", TailPhase::Tools(pending)) => pending.is_empty(),
             ("tool", TailPhase::Tools(pending)) => tool_call_id
                 .map(str::trim)
@@ -6570,6 +6713,72 @@ mod tests {
         assert_eq!(message_session_id(&msg), "durable-session");
         end_turn(Some(&db), true, &msg, "bridge owns this");
         assert_eq!(db.load_history("durable-session", 100).unwrap().len(), 3);
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn native_continuation_pairs_are_atomic_and_lease_guarded() {
+        let path = temp_db("native_continuation_pairs");
+        let db = SessionDb::open(path.clone()).unwrap();
+        let mut msg: Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        msg.resolved_session_id = Some("continuation-session".into());
+        assert!(begin_turn(Some(&db), false, &msg, "cli").is_empty());
+        assert!(db
+            .try_acquire_session_turn_lease("continuation-session", "holder", 60.0)
+            .unwrap());
+
+        let malformed = [
+            serde_json::json!({"role":"assistant", "content":"fragment"}),
+            serde_json::json!({"role":"assistant", "content":"wrong role"}),
+        ];
+        assert!(
+            !db.append_native_continuation_messages(
+                "continuation-session",
+                &malformed,
+                Some("holder"),
+            )
+            .unwrap()
+        );
+        assert!(!db
+            .append_native_continuation_messages(
+                "continuation-session",
+                &[
+                    serde_json::json!({"role":"assistant", "content":"fragment"}),
+                    serde_json::json!({"role":"user", "content":"continue"}),
+                ],
+                Some("stale-holder"),
+            )
+            .unwrap());
+        assert_eq!(
+            db.load_lifecycle_messages("continuation-session")
+                .unwrap()
+                .len(),
+            1
+        );
+
+        assert!(db
+            .append_native_continuation_messages(
+                "continuation-session",
+                &[
+                    serde_json::json!({"role":"assistant", "content":"fragment"}),
+                    serde_json::json!({"role":"user", "content":"continue"}),
+                ],
+                Some("holder"),
+            )
+            .unwrap());
+        let messages = db.load_lifecycle_messages("continuation-session").unwrap();
+        assert_eq!(messages.len(), 3);
+        assert_eq!(messages[1]["content"], "fragment");
+        assert_eq!(messages[2]["content"], "continue");
+        assert_eq!(
+            db.get_session("continuation-session").unwrap().unwrap()["message_count"],
+            3
+        );
         drop(db);
         std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }

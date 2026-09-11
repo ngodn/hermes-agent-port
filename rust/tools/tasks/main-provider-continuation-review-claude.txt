@@ -1,0 +1,5 @@
+Review the current uncommitted Rust implementation for buffered text length continuation, exact durable continuation history, and truncated tool-call same-request retry. Do not edit production code, tests, PORT.md, AGY artifacts, or existing reports.
+
+Read the live diff, rust/analysis/main-provider-tool-truncation-contract-agy.md, rust/analysis/main-provider-length-continuation-contract-agy.md, and the directly relevant Python source. Focus on correctness bugs that can change user-visible delivery, durable SQLite role order, prompt/cache bytes, retry ceilings, usage attribution, tool execution safety, fallback behavior, and concurrent-turn isolation. Check both gateway persistence call sites and both no-tools streaming and tool-enabled buffered paths. Distinguish verified defects from deliberate deferrals. Do not re-audit timeout configuration.
+
+Write only rust/analysis/main-provider-continuation-review-claude.md. Include exact file/line anchors, severity, a minimal reproduction for each verified issue, and explicitly say when an examined risk is safe. Do not use em dash characters in authored text.

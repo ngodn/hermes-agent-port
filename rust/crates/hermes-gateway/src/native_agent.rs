@@ -153,6 +153,27 @@ impl ChatModel for TranscriptModel<'_> {
         }
     }
 
+    fn persist_continuation_messages(&self, messages: &[Value]) -> Result<()> {
+        let Some(database) = self.turn.database else {
+            return Ok(());
+        };
+        let session_id = self.turn.session_id();
+        let inserted = database
+            .append_native_continuation_messages(&session_id, messages, self.turn.turn_lease_holder)
+            .map_err(|error| {
+                Error::Other(format!(
+                    "native continuation transcript persistence failed: {error}"
+                ))
+            })?;
+        if inserted {
+            Ok(())
+        } else {
+            Err(Error::Other(
+                "native continuation transcript persistence rejected an invalid tail".into(),
+            ))
+        }
+    }
+
     async fn maintain_tool_loop_messages(
         &self,
         messages: &mut Vec<Value>,
@@ -165,8 +186,16 @@ impl ChatModel for TranscriptModel<'_> {
     }
 
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step> {
-        *self.last_messages.lock().unwrap() = messages.to_vec();
-        self.inner.step(messages, tools).await
+        let step = self.inner.step(messages, tools).await?;
+        let mut recorded = messages.to_vec();
+        if let Step::WithContinuation {
+            preceding_messages, ..
+        } = &step
+        {
+            recorded.extend(preceding_messages.clone());
+        }
+        *self.last_messages.lock().unwrap() = recorded;
+        Ok(step)
     }
 }
 
@@ -982,6 +1011,17 @@ fn main_length_needs_separator(previous: Option<char>, next: &str) -> bool {
                 .next()
                 .is_some_and(|next| !next.is_whitespace())
     })
+}
+
+fn main_join_length_parts(parts: &[String]) -> String {
+    let mut joined = String::new();
+    for part in parts {
+        if main_length_needs_separator(joined.chars().last(), part) {
+            joined.push('\n');
+        }
+        joined.push_str(part);
+    }
+    joined
 }
 
 fn main_content_policy_terminal(explanation: Option<&str>) -> String {
@@ -1855,10 +1895,21 @@ pub struct NativeAgentClient {
     /// Turn-local disposition shared with the non-streaming tool model. Each
     /// admitted turn replaces this Arc before provider work begins.
     turn_reply_durable: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    /// True once any semantic length continuation occurs in the admitted
+    /// turn. Later tool rounds use it to persist only the final provider
+    /// suffix while delivering the assembled answer.
+    turn_has_continuation: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    /// Optional model-authored suffix that should close durable history in
+    /// place of the assembled delivery text.
+    turn_reply_replacement: std::sync::Arc<std::sync::Mutex<Option<String>>>,
     /// Conversation ids whose latest reply is a user-facing diagnostic rather
     /// than model-authored history. Gateway persistence consults this set after
     /// the producer finishes and finalization consumes the marker.
     delivery_only_replies: std::sync::Arc<std::sync::Mutex<std::collections::HashSet<String>>>,
+    /// Per-session final provider suffixes for turns whose delivered answer
+    /// includes earlier continuation fragments already persisted separately.
+    durable_reply_replacements:
+        std::sync::Arc<std::sync::Mutex<std::collections::HashMap<String, String>>>,
     structural_compression_backoff: std::sync::Arc<CompressionStructuralBackoff>,
     usage_bucket: UsageBucket,
     turn_limit: usize,
@@ -1911,7 +1962,10 @@ impl NativeAgentClient {
             micro_compaction_state: Default::default(),
             usage_state: Default::default(),
             turn_reply_durable: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true)),
+            turn_has_continuation: Default::default(),
+            turn_reply_replacement: Default::default(),
             delivery_only_replies: Default::default(),
+            durable_reply_replacements: Default::default(),
             structural_compression_backoff: Default::default(),
             usage_bucket: UsageBucket::Main,
             turn_limit: crate::turn_limit::UNLIMITED,
@@ -2286,6 +2340,11 @@ impl NativeAgentClient {
         route.pending_memory_turn = self.pending_memory_turn.clone();
         route.micro_compaction_state = self.micro_compaction_state.clone();
         route.usage_state = self.usage_state.clone();
+        route.turn_reply_durable = self.turn_reply_durable.clone();
+        route.turn_has_continuation = self.turn_has_continuation.clone();
+        route.turn_reply_replacement = self.turn_reply_replacement.clone();
+        route.delivery_only_replies = self.delivery_only_replies.clone();
+        route.durable_reply_replacements = self.durable_reply_replacements.clone();
         route.structural_compression_backoff = self.structural_compression_backoff.clone();
         route.usage_bucket = self.usage_bucket;
         route.turn_limit = self.turn_limit;
@@ -2841,6 +2900,21 @@ impl NativeAgentClient {
     fn mark_turn_reply_delivery_only(&self) {
         self.turn_reply_durable
             .store(false, std::sync::atomic::Ordering::Release);
+    }
+
+    fn mark_turn_continuation(&self) {
+        self.turn_has_continuation
+            .store(true, std::sync::atomic::Ordering::Release);
+    }
+
+    fn clear_turn_continuation(&self) {
+        self.turn_has_continuation
+            .store(false, std::sync::atomic::Ordering::Release);
+        self.turn_reply_replacement.lock().unwrap().take();
+    }
+
+    fn replace_durable_turn_reply(&self, reply: String) {
+        *self.turn_reply_replacement.lock().unwrap() = Some(reply);
     }
 
     fn begin_auxiliary_usage(&self) {
@@ -4245,6 +4319,7 @@ impl NativeAgentClient {
         request_messages.push(json!({"role":"user", "content":content}));
         let mut length_continue_retries = 0_usize;
         let mut continuation_join_after = None;
+        let mut continuation_messages = Vec::new();
         loop {
             let dispatched = self
                 .dispatch_main_turn("", |route| {
@@ -4293,14 +4368,22 @@ impl NativeAgentClient {
                     length_continue_retries = length_continue_retries.saturating_add(1);
                     if length_continue_retries < 4 {
                         continuation_join_after = outcome.visible_content.chars().last();
-                        request_messages.push(json!({
+                        let mut assistant = json!({
                             "role":"assistant",
                             "content":outcome.visible_content,
-                        }));
-                        request_messages.push(json!({
+                            "finish_reason":"length",
+                        });
+                        if !outcome.reasoning.is_empty() {
+                            assistant["reasoning"] = json!(outcome.reasoning);
+                        }
+                        let nudge = json!({
                             "role":"user",
                             "content":MAIN_LENGTH_CONTINUATION_PROMPT,
-                        }));
+                        });
+                        request_messages.push(assistant.clone());
+                        request_messages.push(nudge.clone());
+                        continuation_messages.push(assistant);
+                        continuation_messages.push(nudge);
                         continue;
                     }
                     let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
@@ -4310,8 +4393,32 @@ impl NativeAgentClient {
                     ));
                 }
                 self.capture_usage(outcome.usage);
+                if !continuation_messages.is_empty() {
+                    if let Some(database) = turn.database {
+                        let session_id = turn.session_id();
+                        let inserted = database
+                            .append_native_continuation_messages(
+                                &session_id,
+                                &continuation_messages,
+                                turn.turn_lease_holder,
+                            )
+                            .map_err(|error| {
+                                Error::Other(format!(
+                                    "native stream continuation persistence failed: {error}"
+                                ))
+                            })?;
+                        if !inserted {
+                            return Err(Error::Other(
+                                "native stream continuation persistence rejected an invalid tail"
+                                    .into(),
+                            ));
+                        }
+                    }
+                    self.replace_durable_turn_reply(outcome.visible_content.clone());
+                }
                 let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
-                return Ok(None);
+                return Ok((!continuation_messages.is_empty())
+                    .then(|| current_turn_messages(request_messages, history.len(), content)));
             }
 
             if content_policy_refusal {
@@ -4474,11 +4581,18 @@ impl NativeAgentClient {
         let mut turn_client = self.clone();
         turn_client.turn_reply_durable =
             std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
+        turn_client.turn_has_continuation = Default::default();
+        turn_client.turn_reply_replacement = Default::default();
         turn_client.restore_primary_route_for_turn().await;
         turn_client.begin_main_usage();
         let session_id = crate::session_db::message_session_id(msg);
         turn_client
             .delivery_only_replies
+            .lock()
+            .unwrap()
+            .remove(&session_id);
+        turn_client
+            .durable_reply_replacements
             .lock()
             .unwrap()
             .remove(&session_id);
@@ -4572,7 +4686,6 @@ impl NativeAgentClient {
             response
         };
         let (outcome, response) = tokio::join!(model, forward);
-        let turn_messages = outcome?;
         let delivery_only = !turn_client
             .turn_reply_durable
             .load(std::sync::atomic::Ordering::Acquire);
@@ -4583,7 +4696,16 @@ impl NativeAgentClient {
                 .lock()
                 .unwrap()
                 .insert(durable_session_id);
+        } else if let Some(replacement) = turn_client.turn_reply_replacement.lock().unwrap().take()
+        {
+            let durable_session_id = native_turn.session_id();
+            turn_client
+                .durable_reply_replacements
+                .lock()
+                .unwrap()
+                .insert(durable_session_id, replacement);
         }
+        let turn_messages = outcome?;
 
         if !delivery_only && !response.is_empty() && turn_client._extension_host.is_some() {
             let mut messages = turn_messages
@@ -4634,6 +4756,21 @@ impl AgentClient for NativeAgentClient {
             .lock()
             .unwrap()
             .contains(&session_id)
+    }
+
+    fn assistant_reply_for_history(&self, msg: &Message, reply: &str) -> Option<String> {
+        if !self.assistant_reply_is_durable(msg, reply) {
+            return None;
+        }
+        let session_id = crate::session_db::message_session_id(msg);
+        Some(
+            self.durable_reply_replacements
+                .lock()
+                .unwrap()
+                .get(&session_id)
+                .cloned()
+                .unwrap_or_else(|| reply.to_owned()),
+        )
     }
 
     async fn run_turn(
@@ -4843,6 +4980,11 @@ impl AgentClient for NativeAgentClient {
             .lock()
             .unwrap()
             .remove(&session_id);
+        let history_reply = self
+            .durable_reply_replacements
+            .lock()
+            .unwrap()
+            .remove(&session_id);
         if delivery_only {
             self.pending_memory_turn.lock().unwrap().take();
             return Ok(());
@@ -4856,9 +4998,10 @@ impl AgentClient for NativeAgentClient {
         let Some(host) = &self._extension_host else {
             return Ok(());
         };
-        pending
-            .messages
-            .push(json!({"role":"assistant", "content": reply}));
+        pending.messages.push(json!({
+            "role":"assistant",
+            "content":history_reply.as_deref().unwrap_or(reply),
+        }));
         if let Err(error) = host
             .turn_complete(&pending.clean_content, reply, &pending.messages, false)
             .await
@@ -5111,10 +5254,15 @@ impl ChatModel for NativeAgentClient {
         let mut empty_retries = 0_usize;
         let mut thinking_prefill_retries = 0_usize;
         let mut last_reasoning = None;
+        let mut request_messages = messages.to_vec();
+        let mut continuation_messages = Vec::new();
+        let mut continuation_parts = Vec::new();
+        let mut length_continue_retries = 0_usize;
+        let mut truncated_tool_call_retries = 0_usize;
         loop {
             let dispatched = self
                 .dispatch_main_turn("step", |route| {
-                    let routed_messages = route.route_messages(messages);
+                    let routed_messages = route.route_messages(&request_messages);
                     let mut body = json!({
                         "model": route.model,
                         "messages": routed_messages,
@@ -5124,6 +5272,10 @@ impl ChatModel for NativeAgentClient {
                         body["tools"] = Value::Array(tools.to_vec());
                     }
                     route.apply_provider_extras(&mut body)?;
+                    let output_retry = length_continue_retries.max(truncated_tool_call_retries);
+                    if output_retry > 0 {
+                        apply_main_length_continuation_cap(route, &mut body, output_retry);
+                    }
                     if tools.is_empty() {
                         // Summary calls cannot regain tool access through request overrides.
                         if let Some(body) = body.as_object_mut() {
@@ -5170,6 +5322,14 @@ impl ChatModel for NativeAgentClient {
                         )
                         .is_some()
                     {
+                        if !continuation_messages.is_empty() {
+                            request_messages = messages.to_vec();
+                            continuation_messages.clear();
+                            continuation_parts.clear();
+                            length_continue_retries = 0;
+                            self.clear_turn_continuation();
+                        }
+                        truncated_tool_call_retries = 0;
                         invalid_attempts = 0;
                         last_reasoning = None;
                         continue;
@@ -5200,6 +5360,14 @@ impl ChatModel for NativeAgentClient {
                     .activate_main_success_body_fallback(dispatched.route_index, failure)
                     .is_some()
                 {
+                    if !continuation_messages.is_empty() {
+                        request_messages = messages.to_vec();
+                        continuation_messages.clear();
+                        continuation_parts.clear();
+                        length_continue_retries = 0;
+                        self.clear_turn_continuation();
+                    }
+                    truncated_tool_call_retries = 0;
                     invalid_attempts = 0;
                     empty_attempts.clear();
                     empty_retries = 0;
@@ -5231,11 +5399,138 @@ impl ChatModel for NativeAgentClient {
                 }
             }
             let step = parse_message_step(&message);
+            let router_rewritten_truncation = if self.usage_bucket == UsageBucket::Main
+                && choice["finish_reason"].as_str() == Some("tool_calls")
+            {
+                match &step {
+                    Step::ToolCalls {
+                        calls,
+                        assistant_message,
+                    } => crate::native_tools::has_truncated_tool_arguments(
+                        calls,
+                        assistant_message,
+                        &valid_names,
+                    ),
+                    _ => false,
+                }
+            } else {
+                false
+            };
+            if router_rewritten_truncation {
+                let error = "Response truncated due to output length limit".to_owned();
+                self.mark_turn_reply_delivery_only();
+                return Ok(Step::PartialFinal {
+                    text: error.clone(),
+                    error,
+                    repair_tool_tail: true,
+                });
+            }
             let usage = crate::provider_usage::from_response(
                 &value,
                 crate::provider_usage::ApiMode::ChatCompletions,
                 Some(&dispatched.provider),
             );
+
+            if self.usage_bucket == UsageBucket::Main
+                && choice["finish_reason"].as_str() == Some("length")
+            {
+                match &step {
+                    Step::ToolCalls { .. } => {
+                        // Broken tool JSON is never replayed or executed. Python
+                        // retries the identical request up to four times with a
+                        // larger one-shot output cap, then fails on attempt five.
+                        if truncated_tool_call_retries < 4 {
+                            truncated_tool_call_retries =
+                                truncated_tool_call_retries.saturating_add(1);
+                            continue;
+                        }
+                        let error = "Response truncated due to output length limit".to_owned();
+                        self.mark_turn_reply_delivery_only();
+                        return Ok(Step::PartialFinal {
+                            text: error.clone(),
+                            error,
+                            repair_tool_tail: true,
+                        });
+                    }
+                    Step::Final(content) => {
+                        if let Some(visible) = crate::visible_response::answer(content) {
+                            continuation_parts.push(visible);
+                            length_continue_retries = length_continue_retries.saturating_add(1);
+                            self.capture_usage(usage);
+                            if length_continue_retries < 4 {
+                                self.mark_turn_continuation();
+                                let mut assistant = json!({
+                                    "role": "assistant",
+                                    "content": message
+                                        .get("content")
+                                        .cloned()
+                                        .unwrap_or(Value::String(content.clone())),
+                                    "finish_reason": "length",
+                                });
+                                for field in [
+                                    "reasoning",
+                                    "reasoning_content",
+                                    "reasoning_details",
+                                    "codex_reasoning_items",
+                                    "codex_message_items",
+                                ] {
+                                    if let Some(value) =
+                                        message.get(field).filter(|value| !value.is_null())
+                                    {
+                                        assistant[field] = value.clone();
+                                    }
+                                }
+                                let nudge = json!({
+                                    "role": "user",
+                                    "content": MAIN_LENGTH_CONTINUATION_PROMPT,
+                                });
+                                request_messages.push(assistant.clone());
+                                request_messages.push(nudge.clone());
+                                continuation_messages.push(assistant);
+                                continuation_messages.push(nudge);
+                                continue;
+                            }
+                            self.clear_turn_continuation();
+                            return Ok(Step::PartialFinal {
+                                text: main_join_length_parts(&continuation_parts),
+                                error: "native agent response remained truncated after 4 continuation attempts"
+                                    .into(),
+                                repair_tool_tail: false,
+                            });
+                        }
+                    }
+                    Step::WithContinuation { .. } | Step::PartialFinal { .. } => {}
+                }
+            }
+
+            let continuation_ready = match &step {
+                Step::Final(content) => crate::visible_response::answer(content).is_some(),
+                _ => true,
+            };
+            if !continuation_messages.is_empty() && continuation_ready {
+                self.capture_usage(usage);
+                if let Step::Final(content) = &step {
+                    let visible = crate::visible_response::answer(content)
+                        .expect("continuation-ready final has visible text");
+                    self.replace_durable_turn_reply(visible);
+                }
+                return Ok(Step::WithContinuation {
+                    preceding_messages: continuation_messages,
+                    visible_prefix: main_join_length_parts(&continuation_parts),
+                    next: Box::new(step),
+                });
+            }
+
+            if let Step::Final(content) = &step {
+                if self
+                    .turn_has_continuation
+                    .load(std::sync::atomic::Ordering::Acquire)
+                {
+                    if let Some(visible) = crate::visible_response::answer(content) {
+                        self.replace_durable_turn_reply(visible);
+                    }
+                }
+            }
             let empty = matches!(
                 &step,
                 Step::Final(content) if crate::visible_response::answer(content).is_none()
@@ -5297,6 +5592,14 @@ impl ChatModel for NativeAgentClient {
                 )
                 .is_some()
             {
+                if !continuation_messages.is_empty() {
+                    request_messages = messages.to_vec();
+                    continuation_messages.clear();
+                    continuation_parts.clear();
+                    length_continue_retries = 0;
+                    self.clear_turn_continuation();
+                }
+                truncated_tool_call_retries = 0;
                 invalid_attempts = 0;
                 empty_attempts.clear();
                 empty_retries = 0;
@@ -5519,6 +5822,47 @@ mod tests {
             super::apply_main_length_continuation_cap(&custom, &mut body, retry);
             assert_eq!(body["max_tokens"], expected, "{retry}");
         }
+    }
+
+    #[test]
+    fn tool_truncation_retry_policy_matches_python_goldens() {
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../tools/main-provider-tool-truncation-goldens.json"
+        ))
+        .unwrap();
+        let sections = corpus.as_object().unwrap();
+        assert_eq!(sections.len(), 11);
+        assert_eq!(
+            sections
+                .values()
+                .map(|rows| rows.as_array().unwrap().len())
+                .sum::<usize>(),
+            81
+        );
+
+        let progression = corpus["section_03_retry_progression_and_ceiling"]
+            .as_array()
+            .unwrap();
+        let default = super::NativeAgentClient::new("fixture", "key", "http://localhost").unwrap();
+        for retry in 1..=4 {
+            let row = progression
+                .iter()
+                .find(|row| row["case_name"] == format!("retry_progression_attempt_{retry}"))
+                .unwrap();
+            let mut body = serde_json::json!({});
+            super::apply_main_length_continuation_cap(&default, &mut body, retry);
+            assert_eq!(body["max_tokens"], row["expected_ephemeral_cap"], "{retry}");
+        }
+        let ceiling = progression
+            .iter()
+            .find(|row| row["case_name"] == "ceiling_exit_exhaustion_result")
+            .unwrap();
+        assert_eq!(ceiling["max_retries_ceiling"], 4);
+        assert_eq!(ceiling["total_api_attempts"], 5);
+        assert_eq!(
+            ceiling["error"],
+            "Response truncated due to output length limit"
+        );
     }
 
     #[test]
@@ -5961,14 +6305,33 @@ mod tests {
             .unwrap()
             .with_output_cap(Some(serde_json::json!(4096)))
             .with_main_retry_backoff(std::time::Duration::ZERO);
-        let message = serde_json::from_value(serde_json::json!({
+        let root = std::env::temp_dir().join(format!(
+            "hermes-stream-length-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = crate::session_db::SessionDb::open(root.join("state.db")).unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(serde_json::json!({
             "platform":"cli", "channel_id":"channel", "sender_id":"user",
-            "text":"question"
+            "text":"question", "resolved_session_id":"stream-length-session"
         }))
         .unwrap();
+        message.resolved_session_id = Some("stream-length-session".into());
+        let history = crate::session_db::begin_turn(Some(&database), false, &message, "cli");
         let (tx, mut rx) = tokio::sync::mpsc::channel(16);
 
-        let result = client.run_turn(&message, &[], tx).await;
+        let result = client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &history,
+                tx,
+            )
+            .await;
         let mut answer = String::new();
         let mut stops = 0;
         while let Some(event) = rx.recv().await {
@@ -5982,6 +6345,10 @@ mod tests {
         assert!(result.is_ok(), "{result:?}");
         assert_eq!(answer, "part one\npart two");
         assert_eq!(stops, 1);
+        let history_reply = client
+            .assistant_reply_for_history(&message, &answer)
+            .expect("continued reply remains durable");
+        crate::session_db::end_turn(Some(&database), false, &message, &history_reply);
         let bodies = bodies.lock().unwrap();
         assert_eq!(bodies.len(), 2);
         assert_eq!(bodies[0]["model"], "model");
@@ -5999,6 +6366,26 @@ mod tests {
                 }
             ])
         );
+        drop(bodies);
+        let durable = database
+            .load_lifecycle_messages("stream-length-session")
+            .unwrap();
+        assert_eq!(
+            durable
+                .iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            ["user", "assistant", "user", "assistant"]
+        );
+        assert_eq!(durable[1]["content"], "part one");
+        assert_eq!(
+            durable[2]["content"],
+            super::MAIN_LENGTH_CONTINUATION_PROMPT
+        );
+        assert_eq!(durable[3]["content"], "part two");
+        assert_eq!(durable[1]["finish_reason"], "length");
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
     }
 
     #[tokio::test]
@@ -6053,6 +6440,443 @@ mod tests {
         assert_eq!(answer, "part 1\npart 2\npart 3\npart 4");
         assert_eq!(stops, 1);
         assert_eq!(*calls.lock().unwrap(), 4);
+    }
+
+    #[tokio::test]
+    async fn tool_enabled_text_length_continuation_persists_alternating_history() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        let attempt = {
+                            let mut bodies = bodies.lock().unwrap();
+                            bodies.push(body);
+                            bodies.len()
+                        };
+                        let (content, finish_reason) = if attempt == 1 {
+                            ("part one", "length")
+                        } else {
+                            ("part two", "stop")
+                        };
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":finish_reason,"message":{
+                                "role":"assistant", "content":content
+                            }}]
+                        }))
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let root = std::env::temp_dir().join(format!(
+            "hermes-buffered-length-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = crate::session_db::SessionDb::open(root.join("state.db")).unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question", "resolved_session_id":"buffered-length-session"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("buffered-length-session".into());
+        let history = crate::session_db::begin_turn(Some(&database), false, &message, "cli");
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &history,
+                tx,
+            )
+            .await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "part one\npart two");
+        let history_reply = client
+            .assistant_reply_for_history(&message, &answer)
+            .expect("continued reply remains durable");
+        crate::session_db::end_turn(Some(&database), false, &message, &history_reply);
+
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2);
+        assert_eq!(bodies[0]["max_tokens"], 4096);
+        assert_eq!(bodies[1]["max_tokens"], 8192);
+        assert_eq!(
+            bodies[1]["messages"],
+            serde_json::json!([
+                {"role":"user", "content":"question"},
+                {"role":"assistant", "content":"part one"},
+                {"role":"user", "content":super::MAIN_LENGTH_CONTINUATION_PROMPT}
+            ])
+        );
+        drop(bodies);
+
+        let durable = database
+            .load_lifecycle_messages("buffered-length-session")
+            .unwrap();
+        assert_eq!(
+            durable
+                .iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            ["user", "assistant", "user", "assistant"]
+        );
+        assert_eq!(durable[1]["content"], "part one");
+        assert_eq!(
+            durable[2]["content"],
+            super::MAIN_LENGTH_CONTINUATION_PROMPT
+        );
+        assert_eq!(durable[3]["content"], "part two");
+        assert_eq!(durable[1]["finish_reason"], "length");
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn truncated_tool_call_retries_same_request_then_refuses_execution() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        bodies.lock().unwrap().push(body);
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"length","message":{
+                                "role":"assistant", "content":null,
+                                "tool_calls":[{"id":"call-1","type":"function","function":{
+                                    "name":"current_time", "arguments":"{"
+                                }}]
+                            }}]
+                        }))
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        let mut tool_events = 0;
+        let mut stops = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::ToolCallChunk { .. } => tool_events += 1,
+                hermes_core::StreamEvent::MessageStop { final_: true } => stops += 1,
+                _ => {}
+            }
+        }
+
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Response truncated due to output length limit"
+        );
+        assert_eq!(answer, "Response truncated due to output length limit");
+        assert!(client
+            .assistant_reply_for_history(&message, &answer)
+            .is_none());
+        assert_eq!(tool_events, 0);
+        assert_eq!(stops, 1);
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 5);
+        assert!(bodies
+            .windows(2)
+            .all(|pair| pair[0]["messages"] == pair[1]["messages"]));
+        assert_eq!(
+            bodies
+                .iter()
+                .map(|body| body["max_tokens"].as_u64().unwrap())
+                .collect::<Vec<_>>(),
+            [4096, 8192, 16384, 32768, 32768]
+        );
+    }
+
+    #[tokio::test]
+    async fn router_rewritten_tool_truncation_is_delivery_only_without_retry() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"tool_calls","message":{
+                            "role":"assistant", "content":null,
+                            "tool_calls":[{"id":"call-1","type":"function","function":{
+                                "name":"current_time", "arguments":"{"
+                            }}]
+                        }}]
+                    }))
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        let mut tool_events = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::ToolCallChunk { .. } => tool_events += 1,
+                _ => {}
+            }
+        }
+
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Response truncated due to output length limit"
+        );
+        assert_eq!(answer, "Response truncated due to output length limit");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(tool_events, 0);
+        assert!(client
+            .assistant_reply_for_history(&message, &answer)
+            .is_none());
+    }
+
+    #[tokio::test]
+    async fn recovered_tool_call_executes_once_after_same_request_retry() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        let attempt = {
+                            let mut bodies = bodies.lock().unwrap();
+                            bodies.push(body);
+                            bodies.len()
+                        };
+                        if attempt < 3 {
+                            let (finish_reason, arguments) = if attempt == 1 {
+                                ("length", "{")
+                            } else {
+                                ("tool_calls", "{}")
+                            };
+                            Json(serde_json::json!({
+                                "choices":[{"finish_reason":finish_reason,"message":{
+                                    "role":"assistant", "content":null,
+                                    "tool_calls":[{"id":"call-1","type":"function","function":{
+                                        "name":"current_time", "arguments":arguments
+                                    }}]
+                                }}]
+                            }))
+                        } else {
+                            Json(serde_json::json!({
+                                "choices":[{"finish_reason":"stop","message":{
+                                    "role":"assistant", "content":"done"
+                                }}]
+                            }))
+                        }
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        let mut tool_events = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::ToolCallChunk { .. } => tool_events += 1,
+                _ => {}
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "done");
+        assert_eq!(tool_events, 1);
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 3);
+        assert_eq!(bodies[0]["messages"], bodies[1]["messages"]);
+        assert_eq!(bodies[0]["max_tokens"], 4096);
+        assert_eq!(bodies[1]["max_tokens"], 8192);
+        assert_eq!(bodies[2]["max_tokens"], 4096);
+        assert_eq!(bodies[2]["messages"][1]["tool_calls"][0]["id"], "call-1");
+        assert_eq!(bodies[2]["messages"][2]["tool_call_id"], "call-1");
+    }
+
+    #[tokio::test]
+    async fn tool_truncation_ceiling_repairs_a_durable_tool_tail() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let calls = Arc::new(Mutex::new(0_usize));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<Mutex<usize>>>| async move {
+                    let attempt = {
+                        let mut calls = calls.lock().unwrap();
+                        *calls += 1;
+                        *calls
+                    };
+                    if attempt == 1 {
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"tool_calls","message":{
+                                "role":"assistant", "content":null,
+                                "tool_calls":[{"id":"call-1","type":"function","function":{
+                                    "name":"current_time", "arguments":"{}"
+                                }}]
+                            }}]
+                        }))
+                    } else {
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"length","message":{
+                                "role":"assistant", "content":null,
+                                "tool_calls":[{"id":"call-2","type":"function","function":{
+                                    "name":"current_time", "arguments":"{"
+                                }}]
+                            }}]
+                        }))
+                    }
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let root = std::env::temp_dir().join(format!(
+            "hermes-tool-truncation-tail-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = crate::session_db::SessionDb::open(root.join("state.db")).unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("tool-truncation-tail".into());
+        let history = crate::session_db::begin_turn(Some(&database), false, &message, "cli");
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &history,
+                tx,
+            )
+            .await;
+        let mut answer = String::new();
+        let mut tool_events = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::ToolCallChunk { .. } => tool_events += 1,
+                _ => {}
+            }
+        }
+
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Response truncated due to output length limit"
+        );
+        assert_eq!(answer, "Response truncated due to output length limit");
+        assert_eq!(tool_events, 1);
+        assert_eq!(*calls.lock().unwrap(), 6);
+        assert!(client
+            .assistant_reply_for_history(&message, &answer)
+            .is_none());
+        let durable = database
+            .load_lifecycle_messages("tool-truncation-tail")
+            .unwrap();
+        assert_eq!(
+            durable
+                .iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            ["user", "assistant", "tool", "assistant"]
+        );
+        assert_eq!(durable[3]["content"], answer);
+        assert_eq!(durable[3]["finish_reason"], "length");
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
     }
 
     #[tokio::test]

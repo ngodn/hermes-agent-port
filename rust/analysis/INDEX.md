@@ -88,6 +88,17 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   with the independent
   [AGY contract](main-provider-length-continuation-contract-agy.md) and
   [Claude stall/client audit](main-provider-client-rebuild-seam-claude.md).
+- Tool-enabled buffered responses now use that same semantic continuation path,
+  while both request modes atomically persist exact assistant-fragment/user-nudge
+  pairs and project only the recovered suffix into the final durable assistant
+  row. Truncated tool calls instead retry the unchanged request four times,
+  never execute or persist broken arguments, and repair a completed tool tail on
+  ceiling exit. See
+  [native-main-provider-buffered-continuation-resolution.md](native-main-provider-buffered-continuation-resolution.md),
+  with the independent
+  [AGY tool-truncation contract](main-provider-tool-truncation-contract-agy.md),
+  [Claude timeout ownership audit](main-provider-stall-config-claude.md), and
+  [Claude implementation review](main-provider-continuation-review-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -169,6 +180,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [main-provider-length-continuation-contract-agy.md](main-provider-length-continuation-contract-agy.md) | AGY's 104-case source-executed Python contract for finish normalization, guards, prompts, budgets, joining and persistence |
 | [main-provider-client-rebuild-seam-claude.md](main-provider-client-rebuild-seam-claude.md) | Claude's separate proof that reqwest does not need Python's httpx retirement machinery and that inactivity deadlines are the real missing seam |
 | [main-provider-length-continuation-goldens.json](../tools/main-provider-length-continuation-goldens.json) | Source-executed 104-case length-continuation corpus across ten contract sections |
+| [native-main-provider-buffered-continuation-resolution.md](native-main-provider-buffered-continuation-resolution.md) | Buffered semantic continuation, exact durable fragment/nudge history, suffix projection, safe tool truncation retries, and measured progress |
+| [main-provider-tool-truncation-contract-agy.md](main-provider-tool-truncation-contract-agy.md) | AGY's 81-case source-executed Python contract for tool-truncation eligibility, same-request retries, cap growth, execution prohibition, terminal repair, and boundaries |
+| [main-provider-tool-truncation-goldens.json](../tools/main-provider-tool-truncation-goldens.json) | Source-executed 81-case tool-truncation corpus across 11 contract sections |
+| [main-provider-stall-config-claude.md](main-provider-stall-config-claude.md) | Claude's separate ownership audit for total request timeouts, reset-on-chunk stream deadlines, configuration inputs, and replay boundaries |
+| [main-provider-continuation-review-claude.md](main-provider-continuation-review-claude.md) | Claude's post-implementation review of buffered and streaming continuation durability plus safe tool truncation |
 | [native-main-provider-success-body-resolution.md](native-main-provider-success-body-resolution.md) | Production successful-body classification and recovery, delivery-only persistence, helper dispositions, explicit pricing and continuation limits, and measured progress |
 | [main-provider-success-body-contract-agy.md](main-provider-success-body-contract-agy.md) | AGY's source-executed Python successful-body, empty, refusal, reasoning, tool, stream and fallback contract |
 | [main-provider-empty-cost-seam-agy.md](main-provider-empty-cost-seam-agy.md) | Independent proof that fixed empty retries are the required fail-open behavior until native pricing and billing-route normalization exist |

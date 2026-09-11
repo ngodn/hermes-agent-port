@@ -158,6 +158,14 @@ pub trait AgentClient: Send + Sync {
         true
     }
 
+    /// Project the assembled delivery text into the assistant content that
+    /// belongs in durable provider history. `None` keeps a delivery-only
+    /// diagnostic out of replay; the default stores the delivered bytes.
+    fn assistant_reply_for_history(&self, msg: &Message, reply: &str) -> Option<String> {
+        self.assistant_reply_is_durable(msg, reply)
+            .then(|| reply.to_owned())
+    }
+
     /// Produce one unwrapped out-of-band context summary without running tools
     /// or persisting a user turn. `None` means this backend has no native
     /// summary surface and the caller must leave the transcript unchanged.

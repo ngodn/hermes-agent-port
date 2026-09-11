@@ -1,0 +1,815 @@
+{
+  "section_01_eligibility_and_preemption": [
+    {
+      "api_attempts_issued": 5,
+      "case_name": "eligible_tool_truncation_enters_retry",
+      "completed": false,
+      "description": "finish_reason=length with tool_calls present enters same-request retry loop",
+      "eligible_for_tool_retry": true,
+      "error": "Response truncated due to output length limit",
+      "finish_reason": "length",
+      "has_tool_calls": true,
+      "partial": true,
+      "provenance": "live_execution"
+    },
+    {
+      "api_attempts_issued": 5,
+      "case_name": "thinking_exhaustion_preempted_by_tool_calls",
+      "description": "Thinking tags with no trailing text do not trigger thinking-exhaustion abort when tool_calls are present",
+      "error": "Response truncated due to output length limit",
+      "finish_reason": "length",
+      "has_think_tags": true,
+      "has_tool_calls": true,
+      "provenance": "live_execution",
+      "thinking_exhausted_triggered": false
+    },
+    {
+      "api_attempts_issued": 1,
+      "case_name": "thinking_exhaustion_triggers_without_tool_calls",
+      "description": "Thinking tags with no trailing text and no tool_calls trigger early thinking-exhaustion abort",
+      "error": "Model used all output tokens on reasoning with none left for the response. Try lowering reasoning effort or increasing max_tokens.",
+      "finish_reason": "length",
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "live_execution",
+      "thinking_exhausted_triggered": true
+    },
+    {
+      "api_attempts_issued": 5,
+      "case_name": "repetition_guard_preempted_by_tool_calls",
+      "description": "Repetitive text does not trigger repetition-dominated abort when tool_calls are present",
+      "error": "Response truncated due to output length limit",
+      "finish_reason": "length",
+      "has_tool_calls": true,
+      "is_repetition_dominated": true,
+      "provenance": "live_execution",
+      "repetition_dominated_triggered": false
+    },
+    {
+      "api_attempts_issued": 1,
+      "case_name": "repetition_guard_triggers_without_tool_calls",
+      "description": "Repetitive text without tool_calls triggers repetition-dominated abort",
+      "error": "Model output entered a repetition loop and was truncated mid-loop; refusing to continue a degenerate response.",
+      "finish_reason": "length",
+      "has_tool_calls": false,
+      "is_repetition_dominated": true,
+      "provenance": "live_execution",
+      "repetition_dominated_triggered": true
+    },
+    {
+      "api_attempts_issued": 2,
+      "case_name": "text_only_truncation_routes_to_semantic_continuation",
+      "completed": true,
+      "description": "finish_reason=length without tool_calls routes to semantic continuation lane",
+      "final_response": "Incomplete text without tools completed now.",
+      "finish_reason": "length",
+      "has_tool_calls": false,
+      "provenance": "live_execution"
+    },
+    {
+      "api_attempts_issued": 1,
+      "arguments_end_with_closing_delimiter": false,
+      "case_name": "router_rewrite_unclosed_json_refuses_immediately",
+      "description": "finish_reason=tool_calls with unclosed JSON arguments detects truncation and refuses execution without retrying",
+      "error": "Response truncated due to output length limit",
+      "finish_reason": "tool_calls",
+      "has_tool_calls": true,
+      "provenance": "live_execution",
+      "retries_granted": 0
+    },
+    {
+      "case_name": "clean_tool_calls_dispatches_normally",
+      "completed": true,
+      "description": "finish_reason=tool_calls with valid JSON arguments dispatches function execution normally",
+      "final_response": "All done!",
+      "finish_reason": "tool_calls",
+      "has_tool_calls": true,
+      "provenance": "live_execution",
+      "tool_executed": true
+    }
+  ],
+  "section_02_same_request_retry_vs_semantic_continuation": [
+    {
+      "action": "re_run_same_request_from_current_messages",
+      "assistant_fragment_appended": false,
+      "broken_response_in_history": false,
+      "case_name": "tool_truncation_leaves_transcript_untouched",
+      "lane": "tool_call_truncation",
+      "messages_length_during_retry": 2,
+      "provenance": "live_execution",
+      "user_nudge_appended": false
+    },
+    {
+      "action": "restart_with_length_continuation_nudge",
+      "assistant_fragment_appended": false,
+      "case_name": "text_truncation_appends_fragment_and_nudge",
+      "lane": "text_length_continuation",
+      "messages_length_during_retry": 4,
+      "provenance": "live_execution",
+      "user_nudge_appended": false
+    },
+    {
+      "case_name": "dropped_tools_stub_injects_semantic_nudge",
+      "continuation_prompt_text": "[System: Your previous tool call (write_file) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "dropped_tool_names": [
+        "write_file"
+      ],
+      "is_partial_stream_stub": true,
+      "lane": "dropped_tools_stream_stub",
+      "prompt_starts_with_prefix": true,
+      "provenance": "live_execution",
+      "routes_to_tool_retry": false,
+      "tool_calls_field": null
+    },
+    {
+      "case_name": "empty_dropped_tool_stub_omits_assistant_message",
+      "empty_assistant_message_in_history": false,
+      "lane": "empty_dropped_tools_stream_stub",
+      "provenance": "live_execution",
+      "safeguard_purpose": "prevents_strict_provider_http_400_on_empty_assistant_content"
+    }
+  ],
+  "section_03_retry_progression_and_ceiling": [
+    {
+      "actual_effective_cap": null,
+      "attempt_index": 0,
+      "case_name": "retry_progression_attempt_0",
+      "expected_ephemeral_cap": null,
+      "is_initial_call": true,
+      "is_retry": false,
+      "provenance": "live_execution",
+      "truncated_tool_call_retries": 0
+    },
+    {
+      "actual_effective_cap": 8192,
+      "attempt_index": 1,
+      "case_name": "retry_progression_attempt_1",
+      "expected_ephemeral_cap": 8192,
+      "is_initial_call": false,
+      "is_retry": true,
+      "provenance": "live_execution",
+      "truncated_tool_call_retries": 1
+    },
+    {
+      "actual_effective_cap": 16384,
+      "attempt_index": 2,
+      "case_name": "retry_progression_attempt_2",
+      "expected_ephemeral_cap": 16384,
+      "is_initial_call": false,
+      "is_retry": true,
+      "provenance": "live_execution",
+      "truncated_tool_call_retries": 2
+    },
+    {
+      "actual_effective_cap": 32768,
+      "attempt_index": 3,
+      "case_name": "retry_progression_attempt_3",
+      "expected_ephemeral_cap": 32768,
+      "is_initial_call": false,
+      "is_retry": true,
+      "provenance": "live_execution",
+      "truncated_tool_call_retries": 3
+    },
+    {
+      "actual_effective_cap": 32768,
+      "attempt_index": 4,
+      "case_name": "retry_progression_attempt_4",
+      "expected_ephemeral_cap": 32768,
+      "is_initial_call": false,
+      "is_retry": true,
+      "provenance": "live_execution",
+      "truncated_tool_call_retries": 4
+    },
+    {
+      "api_calls_field": 1,
+      "case_name": "ceiling_exit_exhaustion_result",
+      "completed": false,
+      "error": "Response truncated due to output length limit",
+      "final_response": "Response truncated due to output length limit",
+      "max_retries_ceiling": 4,
+      "partial": true,
+      "provenance": "live_execution",
+      "total_api_attempts": 5
+    },
+    {
+      "case_name": "recovery_on_retry_pass_1",
+      "failed_attempts_before_recovery": 1,
+      "final_response": "Recovered on attempt 1!",
+      "provenance": "live_execution",
+      "recovery_succeeded": true,
+      "tool_call_executed": true,
+      "total_calls_to_client": 3
+    },
+    {
+      "case_name": "recovery_on_retry_pass_2",
+      "failed_attempts_before_recovery": 2,
+      "final_response": "Recovered on attempt 2!",
+      "provenance": "live_execution",
+      "recovery_succeeded": true,
+      "tool_call_executed": true,
+      "total_calls_to_client": 4
+    },
+    {
+      "case_name": "recovery_on_retry_pass_3",
+      "failed_attempts_before_recovery": 3,
+      "final_response": "Recovered on attempt 3!",
+      "provenance": "live_execution",
+      "recovery_succeeded": true,
+      "tool_call_executed": true,
+      "total_calls_to_client": 5
+    },
+    {
+      "case_name": "recovery_on_retry_pass_4",
+      "failed_attempts_before_recovery": 4,
+      "final_response": "Recovered on attempt 4!",
+      "provenance": "live_execution",
+      "recovery_succeeded": true,
+      "tool_call_executed": true,
+      "total_calls_to_client": 6
+    }
+  ],
+  "section_04_output_cap_exponential_growth": [
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 2,
+      "case_name": "token_boost_default_base_retry_1",
+      "computed_boost_tokens": 8192,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 1
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 4,
+      "case_name": "token_boost_default_base_retry_2",
+      "computed_boost_tokens": 16384,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 2
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 8,
+      "case_name": "token_boost_default_base_retry_3",
+      "computed_boost_tokens": 32768,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 3
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 16,
+      "case_name": "token_boost_default_base_retry_4",
+      "computed_boost_tokens": 32768,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 4
+    },
+    {
+      "base_tokens": 1024,
+      "boost_multiplier": 2,
+      "case_name": "token_boost_low_base_retry_1",
+      "computed_boost_tokens": 2048,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 1
+    },
+    {
+      "base_tokens": 1024,
+      "boost_multiplier": 4,
+      "case_name": "token_boost_low_base_retry_2",
+      "computed_boost_tokens": 4096,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 2
+    },
+    {
+      "base_tokens": 1024,
+      "boost_multiplier": 8,
+      "case_name": "token_boost_low_base_retry_3",
+      "computed_boost_tokens": 8192,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 3
+    },
+    {
+      "base_tokens": 1024,
+      "boost_multiplier": 16,
+      "case_name": "token_boost_low_base_retry_4",
+      "computed_boost_tokens": 16384,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 4
+    },
+    {
+      "base_tokens": 8192,
+      "boost_multiplier": 2,
+      "case_name": "token_boost_high_base_retry_1",
+      "computed_boost_tokens": 16384,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 1
+    },
+    {
+      "base_tokens": 8192,
+      "boost_multiplier": 4,
+      "case_name": "token_boost_high_base_retry_2",
+      "computed_boost_tokens": 32768,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 2
+    },
+    {
+      "base_tokens": 8192,
+      "boost_multiplier": 8,
+      "case_name": "token_boost_high_base_retry_3",
+      "computed_boost_tokens": 32768,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 3
+    },
+    {
+      "base_tokens": 8192,
+      "boost_multiplier": 16,
+      "case_name": "token_boost_high_base_retry_4",
+      "computed_boost_tokens": 32768,
+      "provenance": "live_execution",
+      "requested_cap": null,
+      "retry_count": 4
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 2,
+      "case_name": "token_boost_requested_cap_65536_retry_1",
+      "computed_boost_tokens": 65536,
+      "provenance": "live_execution",
+      "requested_cap": 65536,
+      "retry_count": 1
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 4,
+      "case_name": "token_boost_requested_cap_65536_retry_2",
+      "computed_boost_tokens": 65536,
+      "provenance": "live_execution",
+      "requested_cap": 65536,
+      "retry_count": 2
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 8,
+      "case_name": "token_boost_requested_cap_65536_retry_3",
+      "computed_boost_tokens": 65536,
+      "provenance": "live_execution",
+      "requested_cap": 65536,
+      "retry_count": 3
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 16,
+      "case_name": "token_boost_requested_cap_65536_retry_4",
+      "computed_boost_tokens": 65536,
+      "provenance": "live_execution",
+      "requested_cap": 65536,
+      "retry_count": 4
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 2,
+      "case_name": "token_boost_intermediate_requested_cap_retry_1",
+      "computed_boost_tokens": 20000,
+      "provenance": "live_execution",
+      "requested_cap": 20000,
+      "retry_count": 1
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 4,
+      "case_name": "token_boost_intermediate_requested_cap_retry_2",
+      "computed_boost_tokens": 20000,
+      "provenance": "live_execution",
+      "requested_cap": 20000,
+      "retry_count": 2
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 8,
+      "case_name": "token_boost_intermediate_requested_cap_retry_3",
+      "computed_boost_tokens": 32768,
+      "provenance": "live_execution",
+      "requested_cap": 20000,
+      "retry_count": 3
+    },
+    {
+      "base_tokens": 4096,
+      "boost_multiplier": 16,
+      "case_name": "token_boost_intermediate_requested_cap_retry_4",
+      "computed_boost_tokens": 32768,
+      "provenance": "live_execution",
+      "requested_cap": 20000,
+      "retry_count": 4
+    },
+    {
+      "case_name": "requested_cap_probing_priority_max_output_tokens",
+      "expected_cap": 12000,
+      "extracted_cap": 12000,
+      "probe_dict": {
+        "max_completion_tokens": 8000,
+        "max_output_tokens": 12000,
+        "max_tokens": 4000
+      },
+      "provenance": "live_execution"
+    },
+    {
+      "case_name": "requested_cap_probing_priority_max_completion_tokens",
+      "expected_cap": 8000,
+      "extracted_cap": 8000,
+      "probe_dict": {
+        "max_completion_tokens": 8000,
+        "max_tokens": 4000
+      },
+      "provenance": "live_execution"
+    },
+    {
+      "case_name": "requested_cap_probing_priority_max_tokens",
+      "expected_cap": 4000,
+      "extracted_cap": 4000,
+      "probe_dict": {
+        "max_tokens": 4000
+      },
+      "provenance": "live_execution"
+    },
+    {
+      "agent_ephemeral_after_call": null,
+      "case_name": "ephemeral_cap_consumed_and_reset_to_none",
+      "lifecycle_guarantee": "single_shot_consumption_no_turn_leakage",
+      "provenance": "live_execution",
+      "staged_ephemeral_cap": 16384,
+      "wire_kwargs_cap": 16384
+    }
+  ],
+  "section_05_tool_execution_prohibition": [
+    {
+      "case_name": "incomplete_json_tool_handler_not_called",
+      "finish_reason": "length",
+      "handler_call_count": 0,
+      "handler_invoked": false,
+      "provenance": "live_execution",
+      "raw_arguments": "{\"path\":\"report.md\",\"content\":\"incomplete file body",
+      "safety_invariant": "incomplete_tool_arguments_strictly_prevented_from_executing",
+      "tool_name": "write_file"
+    },
+    {
+      "case_name": "empty_arguments_tool_handler_not_called",
+      "finish_reason": "length",
+      "handler_call_count": 0,
+      "handler_invoked": false,
+      "provenance": "live_execution",
+      "raw_arguments": "",
+      "safety_invariant": "empty_argument_truncations_refused_without_side_effects",
+      "tool_name": "execute_code"
+    },
+    {
+      "call_1_valid": true,
+      "call_2_truncated": true,
+      "case_name": "mixed_parallel_tool_calls_all_prohibited",
+      "finish_reason": "length",
+      "handler_call_count": 0,
+      "handler_invoked": false,
+      "provenance": "live_execution",
+      "safety_invariant": "all_or_nothing_execution_atomicity_preserved",
+      "tool_names": [
+        "read_file",
+        "write_file"
+      ]
+    }
+  ],
+  "section_06_partial_stream_stub_distinctions": [
+    {
+      "buffer_log_message": "Truncated tool call detected - retrying API call (1/4)...",
+      "case_name": "genuine_length_distinction",
+      "ceiling_log_message": "Truncated tool call response detected again - refusing to execute incomplete tool arguments.",
+      "error": "Response truncated due to output length limit",
+      "expected_final_response": "Response truncated due to output length limit",
+      "final_response": "Response truncated due to output length limit",
+      "is_stub_stall": false,
+      "provenance": "live_execution",
+      "response_id": "chatcmpl-genuine-123"
+    },
+    {
+      "buffer_log_message": "Stream interrupted mid tool-call - retrying (1/4)...",
+      "case_name": "stub_stall_network_distinction",
+      "ceiling_log_message": "Stream kept dropping mid tool-call after 4 retries - the action was not executed.",
+      "error": "Stream repeatedly dropped mid tool-call (network); the tool was not executed",
+      "expected_final_response": "Stream repeatedly dropped mid tool-call (network); the tool was not executed",
+      "final_response": "Stream repeatedly dropped mid tool-call (network); the tool was not executed",
+      "is_stub_stall": true,
+      "provenance": "live_execution",
+      "response_id": "partial-stream-stub"
+    }
+  ],
+  "section_07_dropped_tool_names_and_streaming_drops": [
+    {
+      "case_name": "zero_byte_stream_drop_produces_stub",
+      "dropped_tool_names": [
+        "write_file"
+      ],
+      "expected_dropped_names": [
+        "write_file"
+      ],
+      "expected_finish_reason": "length",
+      "expected_id": "partial-stream-stub",
+      "expected_tool_calls": null,
+      "finish_reason": "length",
+      "provenance": "live_execution",
+      "stub_id": "partial-stream-stub",
+      "tool_calls": null
+    },
+    {
+      "case_name": "dropped_tools_prompt_single_tool",
+      "contains_expected_phrase": "(write_file) was too large",
+      "prompt_text": "[System: Your previous tool call (write_file) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "provenance": "live_execution",
+      "tool_count": 1,
+      "tools_passed": [
+        "write_file"
+      ]
+    },
+    {
+      "case_name": "dropped_tools_prompt_three_tools",
+      "contains_expected_phrase": "(write_file, execute_code, read_file) was too large",
+      "prompt_text": "[System: Your previous tool call (write_file, execute_code, read_file) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "provenance": "live_execution",
+      "tool_count": 3,
+      "tools_passed": [
+        "write_file",
+        "execute_code",
+        "read_file"
+      ]
+    },
+    {
+      "case_name": "dropped_tools_prompt_capped_at_three",
+      "contains_expected_phrase": "(write_file, execute_code, read_file) was too large",
+      "omits_fifth_tool": true,
+      "omits_fourth_tool": true,
+      "prompt_text": "[System: Your previous tool call (write_file, execute_code, read_file) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "provenance": "live_execution",
+      "tool_count": 5,
+      "tools_passed": [
+        "write_file",
+        "execute_code",
+        "read_file",
+        "patch_file",
+        "bash"
+      ]
+    },
+    {
+      "case_name": "prompt_variant_dropped_tools",
+      "dropped_tools": [
+        "write_file"
+      ],
+      "is_partial_stub": true,
+      "prompt_text": "[System: Your previous tool call (write_file) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "provenance": "live_execution",
+      "stable_prefix": "[System: Your previous tool call "
+    },
+    {
+      "case_name": "prompt_variant_network_stub",
+      "dropped_tools": null,
+      "expected_literal": "[System: The previous response was cut off by a network error mid-stream. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "is_partial_stub": true,
+      "prompt_text": "[System: The previous response was cut off by a network error mid-stream. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "provenance": "live_execution"
+    },
+    {
+      "case_name": "prompt_variant_output_limit",
+      "dropped_tools": null,
+      "expected_literal": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "is_partial_stub": false,
+      "prompt_text": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "provenance": "live_execution"
+    }
+  ],
+  "section_08_terminal_result_and_transcript_repair": [
+    {
+      "api_calls": 1,
+      "case_name": "terminal_result_dict_structure_user_tail",
+      "completed": false,
+      "error": "Response truncated due to output length limit",
+      "final_response": "Response truncated due to output length limit",
+      "last_message_role": "user",
+      "messages_count": 1,
+      "partial": true,
+      "provenance": "live_execution",
+      "synthetic_assistant_added": false
+    },
+    {
+      "api_calls": 2,
+      "case_name": "terminal_result_dict_structure_tool_tail_repaired",
+      "completed": false,
+      "error": "Response truncated due to output length limit",
+      "final_response": "Response truncated due to output length limit",
+      "last_message_content": "Response truncated due to output length limit",
+      "last_message_role": "assistant",
+      "messages_count": 4,
+      "partial": true,
+      "provenance": "live_execution",
+      "role_alternation_valid": true,
+      "role_sequence": [
+        "user",
+        "assistant",
+        "tool",
+        "assistant"
+      ],
+      "synthetic_assistant_added": true
+    },
+    {
+      "appended": false,
+      "case_name": "close_interrupted_tool_sequence_user_tail_no_op",
+      "last_role": "user",
+      "provenance": "live_execution",
+      "resulting_length": 1
+    },
+    {
+      "appended": false,
+      "case_name": "close_interrupted_tool_sequence_assistant_tail_no_op",
+      "last_role": "assistant",
+      "provenance": "live_execution",
+      "resulting_length": 2
+    },
+    {
+      "appended": true,
+      "case_name": "close_interrupted_tool_sequence_tool_tail_appended",
+      "last_content": "Response truncated due to output length limit",
+      "last_role": "assistant",
+      "provenance": "live_execution",
+      "resulting_length": 4
+    }
+  ],
+  "section_09_persistence_and_usage_accounting": [
+    {
+      "accounting_guarantee": "rejected_truncated_tool_calls_are_not_billed_or_counted",
+      "case_name": "session_api_calls_not_incremented_on_exhaustion",
+      "client_calls_issued": 5,
+      "provenance": "live_execution",
+      "session_api_calls_after": 0,
+      "session_api_calls_before": 0,
+      "total_tokens_after": 0,
+      "total_tokens_before": 0
+    },
+    {
+      "case_name": "broken_assistant_message_never_persisted",
+      "contains_broken_tool_calls": false,
+      "persisted_call_count": 2,
+      "provenance": "live_execution",
+      "saved_messages_count": 1,
+      "transcript_contains_only_clean_turns": true
+    },
+    {
+      "accounting_rule": "only_completed_clean_calls_accrue_to_session_api_calls_and_tokens",
+      "case_name": "usage_accounted_only_on_successful_responses",
+      "completed": true,
+      "provenance": "live_execution",
+      "session_api_calls": 2,
+      "total_client_calls": 3,
+      "total_tokens": 320
+    }
+  ],
+  "section_10_provider_specific_exceptions_and_fallbacks": [
+    {
+      "case_name": "content_filter_stall_activates_fallback_immediately",
+      "completed_on_fallback": true,
+      "content_filter_terminated": true,
+      "fallback_activated": true,
+      "final_response": "Completed on fallback!",
+      "provenance": "live_execution",
+      "retries_burned_before_fallback": 0
+    },
+    {
+      "api_attempts_issued": 5,
+      "case_name": "content_filter_stall_without_fallback_retries_provider",
+      "completed": false,
+      "error": "Response truncated due to output length limit",
+      "fallback_chain_empty": true,
+      "provenance": "live_execution"
+    },
+    {
+      "case_name": "ollama_repair_missing_closing_bracket",
+      "is_valid_json": true,
+      "provenance": "live_execution",
+      "raw_input": "{\"command\": \"ls -la\", \"timeout\": 30",
+      "repaired_output": "{\"command\": \"ls -la\", \"timeout\": 30}"
+    },
+    {
+      "case_name": "ollama_repair_trailing_comma",
+      "is_valid_json": true,
+      "provenance": "live_execution",
+      "raw_input": "{\"command\": \"ls -la\", \"timeout\": 30,}",
+      "repaired_output": "{\"command\": \"ls -la\", \"timeout\": 30}"
+    },
+    {
+      "case_name": "ollama_repair_python_none",
+      "is_valid_json": true,
+      "provenance": "live_execution",
+      "raw_input": "None",
+      "repaired_output": "{}"
+    },
+    {
+      "case_name": "ollama_repair_empty_string",
+      "is_valid_json": true,
+      "provenance": "live_execution",
+      "raw_input": "",
+      "repaired_output": "{}"
+    },
+    {
+      "case_name": "ollama_unrepairable_cutoff_returns_empty_object",
+      "provenance": "live_execution",
+      "raw_input": "{\"path\": \"foo.txt\", \"content\": \"open string",
+      "repaired_output": "{}",
+      "triggers_has_truncated_tool_args": true
+    },
+    {
+      "case_name": "gemini_thought_signature_preserved",
+      "extra_content_property": {
+        "google": {
+          "thought_signature": "sig_xyz_123"
+        }
+      },
+      "finish_reason": "length",
+      "provenance": "live_execution",
+      "provider_data": {
+        "extra_content": {
+          "google": {
+            "thought_signature": "sig_xyz_123"
+          }
+        }
+      },
+      "replay_preservation_guarantee": "thought_signature_replayed_on_next_api_request",
+      "tool_call_name": "search"
+    },
+    {
+      "case_name": "poolside_integer_finish_reason_stringified",
+      "is_string": true,
+      "normalized_finish_reason": "24",
+      "provenance": "live_execution",
+      "raw_finish_reason": 24
+    }
+  ],
+  "section_11_boundaries_and_separation_matrix": [
+    {
+      "case_name": "separation_ordinary_text_continuation",
+      "distinction": "Appends assistant fragment and user nudge to history; accumulates fragments; joins text on ceiling exit",
+      "finish_reason": "length",
+      "has_tool_calls": false,
+      "lane": "ordinary_text_continuation",
+      "modifies_messages_history": true,
+      "provenance": "source_inspection_literal",
+      "retries_max": 4
+    },
+    {
+      "case_name": "separation_tool_call_truncation",
+      "distinction": "Preserves messages untouched; re-runs exact same request with exponentially boosted max_tokens; zero fragment or nudge",
+      "finish_reason": "length",
+      "has_tool_calls": true,
+      "lane": "tool_call_truncation",
+      "modifies_messages_history": false,
+      "provenance": "source_inspection_literal",
+      "retries_max": 4,
+      "token_boost_schedule": "base * (2 ** retry_count)"
+    },
+    {
+      "case_name": "separation_dropped_tools_partial_stream_stub",
+      "distinction": "Converts dropped tool call without finish_reason into partial stream stub with tool_calls=None and _dropped_tool_names; routes to semantic continuation",
+      "finish_reason": "length",
+      "has_tool_calls": false,
+      "injects_chunking_nudge": true,
+      "lane": "dropped_tools_partial_stream_stub",
+      "provenance": "source_inspection_literal",
+      "stub_id": "partial-stream-stub"
+    },
+    {
+      "api_mode": "codex_responses",
+      "case_name": "separation_codex_responses",
+      "distinction": "Dedicated Codex Responses continuation loop; merges native reasoning items; does not enter chat completions retry loop",
+      "incomplete_reason": "max_output_tokens",
+      "lane": "codex_responses",
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "api_mode": "anthropic_messages",
+      "case_name": "separation_anthropic_messages",
+      "distinction": "Uses AnthropicTransport adapter, normalizes stop_reason=max_tokens to length, handles oauth tool stripping",
+      "lane": "anthropic_messages",
+      "normalized_finish_reason": "length",
+      "provenance": "source_inspection_literal",
+      "wire_stop_reason": "max_tokens"
+    },
+    {
+      "case_name": "separation_response_stall_timeout",
+      "distinction": "Stream watchdog timer terminates hung connection after inactivity threshold, converting drop into partial stream stub",
+      "lane": "response_stall_timeout",
+      "managed_by": "stream_watchdog_thread_and_socket_read_timeout",
+      "provenance": "source_inspection_literal"
+    }
+  ]
+}

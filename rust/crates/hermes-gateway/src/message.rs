@@ -491,8 +491,8 @@ pub async fn post_message(
         if let Some(turn_session) = &turn_session {
             msg.resolved_session_id = Some(turn_session.session_id());
         }
-        if agent.assistant_reply_is_durable(&msg, &reply) {
-            crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &reply);
+        if let Some(history_reply) = agent.assistant_reply_for_history(&msg, &reply) {
+            crate::session_db::end_turn(turn_db.as_deref(), manages, &msg, &history_reply);
         }
         if let Err(error) = agent
             .finalize_turn_after_persist(
