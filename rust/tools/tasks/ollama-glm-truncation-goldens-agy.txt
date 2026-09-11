@@ -1,0 +1,23 @@
+Analyze and execute only Python's local Ollama/GLM correction that rewrites a
+chat-completions finish_reason="stop" to "length". Do not analyze or edit the
+Rust implementation. Do not cover dropped streams, timeouts, thinking-only
+guards, repetition rejection, non-chat transports, or unrelated retries.
+
+Inspect the live Python helpers, their call site, and focused tests. Produce:
+
+1. rust/analysis/ollama-glm-truncation-contract-agy.md
+2. rust/tools/gen_ollama_glm_truncation_goldens.py
+3. rust/tools/ollama-glm-truncation-goldens.json
+
+The deterministic generator must execute or extract the real Python helpers
+where possible. Cover every gate dimension and ordering rule: finish reason,
+API mode, model/provider/backend identity, ollama.com and :cloud exclusions,
+history tool-message requirement, assistant tool calls, content type, visible
+think stripping, 20-character and whitespace floors, natural terminal
+punctuation, code fences, caret, CJK punctuation, emoji threshold, and the
+positive unpunctuated case. Include downstream continuation envelope metadata
+without duplicating the general length-continuation corpus.
+
+Run the generator twice and prove byte-for-byte determinism. Run the smallest
+focused Python test set for this correction and record exact commands and test
+counts. Do not edit existing files. Do not use em dash characters.

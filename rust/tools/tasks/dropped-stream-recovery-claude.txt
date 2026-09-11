@@ -1,0 +1,20 @@
+Map the next independent Rust-port seam for Python's dropped chat-completions
+stream recovery. This is a future analysis task, separate from the current
+Ollama/GLM stop-to-length implementation.
+
+Inspect authoritative Python sources and tests for PARTIAL_STREAM_STUB_ID,
+partial visible text, dropped tool-call names, continuation prompt choice,
+retry and output-cap behavior, replay boundaries, persistence, usage, and
+ceiling cleanup. Then inspect the current Rust streaming implementation and
+identify what is already covered by stale-stream handling versus what remains.
+
+Write only:
+
+rust/analysis/dropped-stream-recovery-claude.md
+
+Include exact source anchors, a state/decision table, the narrowest deep Rust
+module interface, public run-turn test cases, and unresolved risks. Keep
+provider stalls, malformed SSE, and provider-reported length distinct. Do not
+analyze Ollama/GLM stop correction, thinking exhaustion, or repetition guards.
+Do not edit Rust code, existing docs, tests, or generated files. Do not use em
+dash characters.

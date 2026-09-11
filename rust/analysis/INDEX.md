@@ -121,6 +121,16 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [AGY contract](main-provider-truncation-guards-agy.md),
   [Claude future Ollama/GLM map](ollama-glm-truncation-claude.md), and
   [Claude implementation review](main-provider-truncation-review-claude.md).
+- Local Ollama GLM responses now receive Python's conservative post-tool
+  `stop` correction in both buffered and restored-history streaming turns.
+  Hosted and `:cloud` routes, unrelated local servers, active tool calls, short
+  text, and natural endings stay untouched. The serving route then reuses the
+  exact durable length-continuation path. See
+  [native-ollama-glm-truncation-resolution.md](native-ollama-glm-truncation-resolution.md),
+  with the source-executed
+  [AGY contract](ollama-glm-truncation-contract-agy.md),
+  [113-case corpus](../tools/ollama-glm-truncation-goldens.json), and
+  [Claude dropped-stream map](dropped-stream-recovery-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -198,6 +208,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-ollama-glm-truncation-resolution.md](native-ollama-glm-truncation-resolution.md) | Production local Ollama GLM stop correction, serving-route identity, durable continuation, oracle repair, and measured progress |
+| [ollama-glm-truncation-contract-agy.md](ollama-glm-truncation-contract-agy.md) | AGY's source-executed Python contract for the ordered stop-correction gates and downstream continuation envelope |
+| [ollama-glm-truncation-goldens.json](../tools/ollama-glm-truncation-goldens.json) | Source-executed 113-case local Ollama GLM correction corpus with raw input types |
+| [dropped-stream-recovery-claude.md](dropped-stream-recovery-claude.md) | Claude's separate next-checkpoint map for clean EOF and post-delta transport-error recovery |
+| [ollama-glm-truncation-review-claude.md](ollama-glm-truncation-review-claude.md) | Claude's post-implementation adversarial review of classifier and runtime integration |
 | [native-main-provider-truncation-guards-resolution.md](native-main-provider-truncation-guards-resolution.md) | Production thinking exhaustion, repetition rejection, empty reasoning one-shot recovery, atomic sidecar durability, review fixes, and measured progress |
 | [main-provider-truncation-guards-agy.md](main-provider-truncation-guards-agy.md) | AGY's source-executed Python contract for the three ordered length-content guards and their retry, usage, and transcript behavior |
 | [main-provider-truncation-guard-goldens.json](../tools/main-provider-truncation-guard-goldens.json) | Source-executed 41-case content-guard corpus across three sections |

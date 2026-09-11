@@ -1,5 +1,38 @@
 # Hermes Rust rewrite
 
+## Native local Ollama GLM stop correction: 2026-09-11
+
+Local Ollama GLM routes now apply Python's conservative correction when a
+post-tool response ends mid-sentence but reports `finish_reason="stop"`. The
+pure classifier preserves the exact ordered backend, history, content,
+minimum-length, whitespace, and natural-ending gates. Hosted Ollama, `:cloud`
+models, unrelated local servers, active tool calls, short content, and natural
+terminal boundaries remain ordinary completed responses.
+
+Buffered tool-enabled turns and no-tools streams restored from durable tool
+history both use the actual serving route identity. A corrected response enters
+the existing bounded length-continuation path, so it inherits the exact prompt,
+progressive output cap, suffix-only delivery, atomic fragment/nudge persistence,
+and final durable suffix. Prompt bytes, tool schema, credentials, and route
+selection remain frozen.
+
+AGY produced a 113-case source-executed Python contract. Primary review repaired
+its initially unenforced declared expectations and preserved raw fixture types;
+the corrected corpus contains 43 positive and 70 negative cases. Claude mapped
+the separate future dropped-stream seam, then reviewed this implementation. No
+correctness finding survived its route, cache, transcript, or parity audit. See
+[native-ollama-glm-truncation-resolution.md](analysis/native-ollama-glm-truncation-resolution.md).
+
+The refreshed weighted full-port estimate is **58.75 points, reported as about
+59%** (judgment range 55% to 61%). Native agent core moves from 81% to 82%; the
+other area estimates are unchanged. Dropped-stream recovery, run-budget scaling,
+operator notices, non-chat and remaining OAuth routes, dynamic providers,
+native plugin and external-memory managers, prompt invalidation, and broader
+client eviction remain. The full workspace passes **1,928 Rust tests with two
+ignored**. The 113-case corpus regenerates byte for byte, all three focused
+Python tests pass, and Ruff passes for the generator. Rust formatting,
+workspace Clippy with warnings denied, and diff hygiene pass.
+
 ## Native truncation content guards: 2026-09-11
 
 Provider-reported `finish_reason="length"` now passes through one shared

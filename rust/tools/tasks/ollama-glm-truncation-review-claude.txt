@@ -1,0 +1,17 @@
+Repository: /home/eins0fx/development/hermes-agent-port. Resolve all paths under this repository and do not search the home directory for another checkout.
+
+Review only the current uncommitted Rust checkpoint that ports Python's conservative local Ollama/GLM finish_reason="stop" to "length" correction. This is a post-implementation adversarial review, not an implementation task. Do not edit Rust, Python, JSON, PORT.md, INDEX.md, or existing analysis files.
+
+Inspect:
+
+- run_agent.py helpers around _has_natural_response_ending, _is_ollama_glm_backend, and _should_treat_stop_as_truncated
+- agent/conversation_loop.py normalization call site and length continuation behavior
+- rust/crates/hermes-gateway/src/ollama_glm_truncation.rs
+- both new call sites in rust/crates/hermes-gateway/src/native_agent.rs
+- the new public run-turn tests in native_agent.rs
+- rust/tools/gen_ollama_glm_truncation_goldens.py and rust/tools/ollama-glm-truncation-goldens.json
+- rust/analysis/ollama-glm-truncation-contract-agy.md
+
+Look specifically for false positives, false negatives, Python/Rust Unicode or truthiness differences, wrong serving-route identity under fallback or credential pools, incorrect gate ordering, streaming versus buffered divergence, prompt-cache mutation, unsafe replay, transcript or usage corruption, and tests that pass without proving production behavior. Verify findings against exact code. Do not report stylistic preferences. Rank findings by severity and give file/line evidence plus a concrete reproducer or test when possible. If no correctness finding remains, state that plainly and list residual risks separately.
+
+Write only rust/analysis/ollama-glm-truncation-review-claude.md. Do not use em dash characters.

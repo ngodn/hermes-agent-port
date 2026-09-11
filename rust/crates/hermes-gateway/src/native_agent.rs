@@ -4610,7 +4610,7 @@ impl NativeAgentClient {
                 })
                 .await;
 
-            let (route_index, route, mut outcome) = match dispatch {
+            let (route_index, route, serving_base_url, mut outcome) = match dispatch {
                 Ok(dispatched) => {
                     let route = self
                         .main_route(dispatched.route_index)
@@ -4635,7 +4635,7 @@ impl NativeAgentClient {
                         stream_stale_timeout <= stream_inactivity_timeout,
                     )
                     .await?;
-                    (dispatched.route_index, route, outcome)
+                    (dispatched.route_index, route, dispatched.base_url, outcome)
                 }
                 Err(MainDispatchFailure::StreamInactivity {
                     route_index,
@@ -4643,9 +4643,11 @@ impl NativeAgentClient {
                     stale_strike,
                 }) => {
                     let route = self.main_route(route_index).unwrap_or_else(|| self.clone());
+                    let serving_base_url = route.base_url.clone();
                     (
                         route_index,
                         route,
+                        serving_base_url,
                         MainStreamOutcome {
                             stalled: true,
                             stale_strike,
@@ -4706,6 +4708,30 @@ impl NativeAgentClient {
             }
             stale_stream_inner_attempts = 0;
             stale_stream_outer_failures = 0;
+            let assistant_message = json!({
+                "role":"assistant",
+                "content":outcome.raw_content,
+            });
+            if self.usage_bucket == UsageBucket::Main
+                && crate::ollama_glm_truncation::should_rewrite(
+                    crate::ollama_glm_truncation::Candidate {
+                        finish_reason: Some(&outcome.finish_reason),
+                        api_mode: "chat_completions",
+                        provider: route.provider_name(),
+                        model: &route.model,
+                        base_url: &serving_base_url,
+                        messages: &request_messages,
+                        assistant_message: Some(&assistant_message),
+                    },
+                )
+            {
+                tracing::warn!(
+                    provider = route.provider_name(),
+                    model = %route.model,
+                    "treating suspicious Ollama GLM stop response as truncated"
+                );
+                outcome.finish_reason = "length".into();
+            }
             if outcome.visible || outcome.observed_generation || !outcome.finish_reason.is_empty() {
                 route.reset_stale_stream_streak();
             }
@@ -5772,7 +5798,7 @@ impl ChatModel for NativeAgentClient {
                 }
                 Error::Other(format!("native agent step decode: {error}"))
             });
-            let (value, mut message) = match decoded.and_then(|value| {
+            let (mut value, mut message) = match decoded.and_then(|value| {
                 let message = value
                     .get("choices")
                     .and_then(|choices| choices.get(0))
@@ -5821,6 +5847,29 @@ impl ChatModel for NativeAgentClient {
                 }
             };
             dispatched_route.reset_stale_stream_streak();
+            let finish_reason = value["choices"][0]["finish_reason"]
+                .as_str()
+                .unwrap_or_default();
+            if self.usage_bucket == UsageBucket::Main
+                && crate::ollama_glm_truncation::should_rewrite(
+                    crate::ollama_glm_truncation::Candidate {
+                        finish_reason: Some(finish_reason),
+                        api_mode: "chat_completions",
+                        provider: dispatched_route.provider_name(),
+                        model: &dispatched_route.model,
+                        base_url: &dispatched.base_url,
+                        messages: &request_messages,
+                        assistant_message: Some(&message),
+                    },
+                )
+            {
+                tracing::warn!(
+                    provider = dispatched_route.provider_name(),
+                    model = %dispatched_route.model,
+                    "treating suspicious Ollama GLM stop response as truncated"
+                );
+                value["choices"][0]["finish_reason"] = json!("length");
+            }
             let choice = &value["choices"][0];
             if let Some(failure) = main_success_body_failure(choice, &message) {
                 if self.usage_bucket != UsageBucket::Main {
@@ -8360,6 +8409,398 @@ mod tests {
         assert_eq!(bodies[2]["max_tokens"], 4096);
         assert_eq!(bodies[2]["messages"][1]["tool_calls"][0]["id"], "call-1");
         assert_eq!(bodies[2]["messages"][2]["tool_call_id"], "call-1");
+    }
+
+    #[tokio::test]
+    async fn local_ollama_glm_stop_after_tool_history_continues_and_persists() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        let attempt = {
+                            let mut bodies = bodies.lock().unwrap();
+                            bodies.push(body);
+                            bodies.len()
+                        };
+                        let response = match attempt {
+                            1 => serde_json::json!({
+                                "choices":[{"finish_reason":"tool_calls","message":{
+                                    "role":"assistant", "content":null,
+                                    "tool_calls":[{"id":"call-1","type":"function","function":{
+                                        "name":"current_time", "arguments":"{}"
+                                    }}]
+                                }}]
+                            }),
+                            2 => serde_json::json!({
+                                "choices":[{"finish_reason":"stop","message":{
+                                    "role":"assistant",
+                                    "content":"Based on the search results the next step is to update"
+                                }}]
+                            }),
+                            _ => serde_json::json!({
+                                "choices":[{"finish_reason":"stop","message":{
+                                    "role":"assistant", "content":"the configuration now."
+                                }}]
+                            }),
+                        };
+                        Json(response)
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("glm-4-9b", "key", url)
+            .unwrap()
+            .with_provider_identity("ollama")
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let root = std::env::temp_dir().join(format!(
+            "hermes-ollama-glm-stop-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = crate::session_db::SessionDb::open(root.join("state.db")).unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question", "resolved_session_id":"ollama-glm-stop"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("ollama-glm-stop".into());
+        let history = crate::session_db::begin_turn(Some(&database), false, &message, "cli");
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &history,
+                tx,
+            )
+            .await;
+        let mut answer = String::new();
+        let mut tool_events = 0;
+        let mut stops = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::ToolCallChunk { .. } => tool_events += 1,
+                hermes_core::StreamEvent::MessageStop { final_: true } => stops += 1,
+                _ => {}
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(
+            answer,
+            "Based on the search results the next step is to update\nthe configuration now."
+        );
+        assert_eq!(tool_events, 1);
+        assert_eq!(stops, 1);
+        let history_reply = client
+            .assistant_reply_for_history(&message, &answer)
+            .expect("corrected continuation remains durable");
+        crate::session_db::end_turn(Some(&database), false, &message, &history_reply);
+
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 3);
+        assert_eq!(bodies[0]["max_tokens"], 4096);
+        assert_eq!(bodies[1]["max_tokens"], 4096);
+        assert_eq!(bodies[2]["max_tokens"], 8192);
+        assert_eq!(bodies[2]["messages"][1]["tool_calls"][0]["id"], "call-1");
+        assert_eq!(bodies[2]["messages"][2]["tool_call_id"], "call-1");
+        assert_eq!(
+            bodies[2]["messages"][3],
+            serde_json::json!({
+                "role":"assistant",
+                "content":"Based on the search results the next step is to update"
+            })
+        );
+        assert_eq!(
+            bodies[2]["messages"][4],
+            serde_json::json!({
+                "role":"user", "content":super::MAIN_LENGTH_CONTINUATION_PROMPT
+            })
+        );
+        drop(bodies);
+
+        let durable = database.load_lifecycle_messages("ollama-glm-stop").unwrap();
+        assert_eq!(
+            durable
+                .iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            [
+                "user",
+                "assistant",
+                "tool",
+                "assistant",
+                "user",
+                "assistant"
+            ]
+        );
+        assert_eq!(durable[3]["finish_reason"], "length");
+        assert_eq!(
+            durable[4]["content"],
+            super::MAIN_LENGTH_CONTINUATION_PROMPT
+        );
+        assert_eq!(durable[5]["content"], "the configuration now.");
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn ollama_glm_stop_correction_stays_inside_its_public_route_boundary() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let cases = [
+            (
+                "glm-5.1:cloud",
+                "ollama",
+                "Based on the search results the next step is to update",
+            ),
+            (
+                "glm-4-9b",
+                "ollama",
+                "Based on the search results, the task is complete.",
+            ),
+            (
+                "local-model",
+                "ollama",
+                "Based on the search results the next step is to update",
+            ),
+        ];
+
+        for (model, provider, final_text) in cases {
+            let calls = Arc::new(AtomicUsize::new(0));
+            let final_text = Arc::new(final_text.to_owned());
+            let app = Router::new()
+                .route(
+                    "/chat/completions",
+                    post(
+                        |State((calls, final_text)): State<(
+                            Arc<AtomicUsize>,
+                            Arc<String>,
+                        )>| async move {
+                            let attempt = calls.fetch_add(1, Ordering::SeqCst) + 1;
+                            if attempt == 1 {
+                                Json(serde_json::json!({
+                                    "choices":[{"finish_reason":"tool_calls","message":{
+                                        "role":"assistant", "content":null,
+                                        "tool_calls":[{"id":"call-1","type":"function","function":{
+                                            "name":"current_time", "arguments":"{}"
+                                        }}]
+                                    }}]
+                                }))
+                            } else {
+                                Json(serde_json::json!({
+                                    "choices":[{"finish_reason":"stop","message":{
+                                        "role":"assistant", "content":final_text.as_str()
+                                    }}]
+                                }))
+                            }
+                        },
+                    ),
+                )
+                .with_state((calls.clone(), final_text.clone()));
+            let (url, _server) = serve_main_retry(app).await;
+            let client = super::NativeAgentClient::new(model, "key", url)
+                .unwrap()
+                .with_provider_identity(provider)
+                .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+                .with_main_retry_backoff(std::time::Duration::ZERO);
+            let message = serde_json::from_value(serde_json::json!({
+                "platform":"cli", "channel_id":"channel", "sender_id":"user",
+                "text":"question"
+            }))
+            .unwrap();
+            let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+            let result = client.run_turn(&message, &[], tx).await;
+            let mut answer = String::new();
+            while let Some(event) = rx.recv().await {
+                if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                    answer.push_str(&text);
+                }
+            }
+
+            assert!(result.is_ok(), "{model}: {result:?}");
+            assert_eq!(answer, final_text.as_str(), "{model}");
+            assert_eq!(calls.load(Ordering::SeqCst), 2, "{model}");
+        }
+    }
+
+    #[tokio::test]
+    async fn restored_tool_history_enables_ollama_glm_stream_correction() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        let attempt = {
+                            let mut bodies = bodies.lock().unwrap();
+                            bodies.push(body);
+                            bodies.len()
+                        };
+                        let response = if attempt == 1 {
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"Based on the search results the next step is to update\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n"
+                        } else {
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"the configuration now.\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n"
+                        };
+                        ([(("content-type"), "text/event-stream")], response).into_response()
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("glm-4-9b", "key", url)
+            .unwrap()
+            .with_provider_identity("ollama")
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let root = std::env::temp_dir().join(format!(
+            "hermes-restored-ollama-glm-stop-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = crate::session_db::SessionDb::open(root.join("state.db")).unwrap();
+
+        let mut first: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"first question", "resolved_session_id":"restored-ollama-glm-stop"
+        }))
+        .unwrap();
+        first.resolved_session_id = Some("restored-ollama-glm-stop".into());
+        assert!(crate::session_db::begin_turn(Some(&database), false, &first, "cli").is_empty());
+        assert!(database
+            .append_native_tool_message(
+                "restored-ollama-glm-stop",
+                &serde_json::json!({
+                    "role":"assistant", "content":null,
+                    "tool_calls":[{"id":"call-1","type":"function","function":{
+                        "name":"current_time", "arguments":"{}"
+                    }}]
+                }),
+                None,
+            )
+            .unwrap());
+        assert!(database
+            .append_native_tool_message(
+                "restored-ollama-glm-stop",
+                &serde_json::json!({
+                    "role":"tool", "name":"current_time", "tool_call_id":"call-1",
+                    "content":"123"
+                }),
+                None,
+            )
+            .unwrap());
+        crate::session_db::end_turn(Some(&database), false, &first, "Previous answer.");
+
+        let mut second: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"second question", "resolved_session_id":"restored-ollama-glm-stop"
+        }))
+        .unwrap();
+        second.resolved_session_id = Some("restored-ollama-glm-stop".into());
+        let history = crate::session_db::begin_turn(Some(&database), false, &second, "cli");
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &second,
+                &history,
+                tx,
+            )
+            .await;
+        let mut answer = String::new();
+        let mut stops = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::MessageStop { final_: true } => stops += 1,
+                _ => {}
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(
+            answer,
+            "Based on the search results the next step is to update\nthe configuration now."
+        );
+        assert_eq!(stops, 1);
+        let history_reply = client
+            .assistant_reply_for_history(&second, &answer)
+            .expect("stream correction remains durable");
+        crate::session_db::end_turn(Some(&database), false, &second, &history_reply);
+
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2);
+        assert_eq!(bodies[1]["max_tokens"], 8192);
+        assert_eq!(bodies[1]["messages"][2]["role"], "tool");
+        assert_eq!(
+            bodies[1]["messages"][5]["content"],
+            "Based on the search results the next step is to update"
+        );
+        assert_eq!(
+            bodies[1]["messages"][6]["content"],
+            super::MAIN_LENGTH_CONTINUATION_PROMPT
+        );
+        drop(bodies);
+
+        let durable = database
+            .load_lifecycle_messages("restored-ollama-glm-stop")
+            .unwrap();
+        assert_eq!(
+            durable
+                .iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            [
+                "user",
+                "assistant",
+                "tool",
+                "assistant",
+                "user",
+                "assistant",
+                "user",
+                "assistant"
+            ]
+        );
+        assert_eq!(durable[5]["finish_reason"], "length");
+        assert_eq!(
+            durable[6]["content"],
+            super::MAIN_LENGTH_CONTINUATION_PROMPT
+        );
+        assert_eq!(durable[7]["content"], "the configuration now.");
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
     }
 
     #[tokio::test]

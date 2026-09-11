@@ -109,6 +109,7 @@ mod native_terminal;
 mod native_tools;
 mod nous_credentials;
 mod ogg_opus_duration;
+mod ollama_glm_truncation;
 mod pairing;
 mod partial_compress;
 mod pending_messages;
