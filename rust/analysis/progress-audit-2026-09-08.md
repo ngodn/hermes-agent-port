@@ -1,6 +1,6 @@
 # Full Rust port progress audit, updated 2026-09-11
 
-Current estimate: **58.95% of the full native replacement**, reported as
+Current estimate: **59.15% of the full native replacement**, reported as
 **about 59%**, with a reasonable judgment range of **55% to 61%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
@@ -39,8 +39,10 @@ touching hosted Ollama, cloud models, or unrelated local servers. Clean EOF,
 protocol `[DONE]`, and body transport failures after generation now preserve
 visible output through the network-specific continuation path. Finish reasons,
 usage objects, and Nous `lastOne` frames remain clean terminal evidence, while
-pre-generation failures retain ordinary retry and fallback behavior. The
-estimate remains conservative because run-budget scaling, other OAuth paths,
+pre-generation failures retain ordinary retry and fallback behavior. Buffered
+tool calls now also cap implicit stale patience against one turn-wide
+wall-clock run budget without overriding explicit settings or changing stream
+behavior. The estimate remains conservative because other OAuth paths,
 non-chat provider transports, smart approval, PTY and notification support,
 remote execution, most tools, and the underlying plugin and external-memory
 managers are not native.
@@ -61,10 +63,10 @@ audits.
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 76% | 11.40 |
-| Native agent core | 20% | 83% | 16.60 |
-| Total | 100% | | **58.95** |
+| Native agent core | 20% | 84% | 16.80 |
+| Total | 100% | | **59.15** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 83 = 58.95`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 84 = 59.15`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -228,7 +230,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 83%
+### Native agent core, 84%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -403,7 +405,12 @@ Streaming requests bound the pre-header wait, then use a meaningful-SSE-event
 inactivity clock. Buffered requests bound the complete JSON read. Pre-visible
 stalls replay within the two-layer budget, post-visible stalls enter durable
 length continuation without replay, and the route-local stale breaker persists
-across turns. Run-budget scaling, interrupted-wait accounting, operator notices,
+across turns. Buffered calls now consume the existing normalized run-budget
+configuration. One wall-clock start is shared across primary and fallback work
+for the turn; implicit default, reasoning, and context-scaled deadlines can
+only shrink, with a 60-second floor, while explicit model, provider, and
+environment timeouts stay authoritative. Streaming and plain local implicit
+behavior remain unchanged. Interrupted-wait accounting, operator notices,
 non-chat, OAuth, and dynamic-provider paths remain.
 
 Canonical Nous discovery resolves its OAuth material lazily before the first
@@ -470,8 +477,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,937 passing Rust tests and two expected ignores
-(1,936 gateway plus one core test).
+The workspace currently has 1,945 passing Rust tests and two expected ignores
+(1,944 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -479,7 +486,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,937 passed, two ignored (1,936 gateway plus one core).
+- Full Rust workspace: 1,945 passed, two ignored (1,944 gateway plus one core).
 - Selected Python main-provider classifier, credential-pool, provider-boundary,
   and runtime-resolution contracts: 256 passed at the preceding pool
   checkpoint. The focused main-provider fallback and restore suite adds 150
@@ -490,7 +497,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   checkpoint. The focused tool-truncation and interrupted-sequence suite adds
   14 passing tests. The main-provider liveness checkpoint adds 68 focused
   Python tests, the truncation content-guard checkpoint adds 20, and the local
-  Ollama GLM correction adds 3. The dropped-stream checkpoint adds 25.
+  Ollama GLM correction adds 3. The dropped-stream checkpoint adds 25, and the
+  run-budget checkpoint adds 28.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 112 task fallback-chain, 76 top-level
@@ -498,8 +506,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   86 main-provider credential-recovery, 104 main-provider fallback, 157
   main-provider retry, 114 main-provider successful-body, 81 main-provider
   tool-truncation, 168 main-provider liveness, 41 truncation content guards,
-  113 local Ollama GLM stop-correction, 47 dropped-stream recovery, 87 Nous
-  OAuth, 24 structural-backoff,
+  113 local Ollama GLM stop-correction, 47 dropped-stream recovery, 32
+  main-provider run-budget, 87 Nous OAuth, 24 structural-backoff,
   and 60 handoff-layer
   cases, plus the 233-case terminal and approval corpus, 76 interactive-approval
   cases, and 251 exhaustive dangerous-command cases.
@@ -512,8 +520,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Run-budget-aware buffered stale scaling, operator notices, remaining OAuth
-   providers, and provider-specific successful-body rules complete the current
+1. Operator notices, interrupted-wait accounting, remaining OAuth providers,
+   and provider-specific successful-body rules complete the current
    main-provider cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.

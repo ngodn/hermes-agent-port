@@ -1701,12 +1701,14 @@ struct MainDispatch {
     route_index: usize,
     base_url: String,
     body: Value,
+    buffered_stale_timeout: Option<std::time::Duration>,
 }
 
 struct MainSentResponse {
     response: reqwest::Response,
     base_url: String,
     body: Value,
+    buffered_stale_timeout: Option<std::time::Duration>,
 }
 
 #[derive(Clone, Debug)]
@@ -1890,6 +1892,8 @@ pub struct NativeAgentClient {
     main_fallback: MainFallbackRoutes,
     main_retry: MainRetryPolicy,
     main_timeouts: crate::main_provider_timeouts::Policy,
+    run_budget_seconds: Option<f64>,
+    run_budget_started_at: Option<std::time::SystemTime>,
     consecutive_stale_streams: std::sync::Arc<std::sync::atomic::AtomicUsize>,
     empty_response: MainEmptyResponsePolicy,
     provider_profile: Option<crate::provider_registry::ProviderProfile>,
@@ -1976,6 +1980,8 @@ impl NativeAgentClient {
             main_fallback: Default::default(),
             main_retry: Default::default(),
             main_timeouts: Default::default(),
+            run_budget_seconds: None,
+            run_budget_started_at: None,
             consecutive_stale_streams: Default::default(),
             empty_response: Default::default(),
             provider_profile: None,
@@ -2153,6 +2159,8 @@ impl NativeAgentClient {
         for route in &mut fallbacks {
             route.main_fallback = Default::default();
             route.main_retry = self.main_retry;
+            route.run_budget_seconds = self.run_budget_seconds;
+            route.run_budget_started_at = self.run_budget_started_at;
             route.empty_response = self.empty_response;
             route.compression_routes = Default::default();
             if let Some(prompt) = self.system_prompt.as_deref() {
@@ -2185,6 +2193,38 @@ impl NativeAgentClient {
     ) -> Self {
         self.main_timeouts = timeouts;
         self
+    }
+
+    pub(crate) fn with_run_budget_seconds(mut self, value: &Value) -> Self {
+        self.run_budget_seconds =
+            crate::main_provider_timeouts::normalize_run_budget_seconds(value);
+        let routes = std::sync::Arc::make_mut(&mut self.main_fallback.fallbacks);
+        for route in routes {
+            route.run_budget_seconds = self.run_budget_seconds;
+        }
+        self
+    }
+
+    fn begin_run_budget_turn(&mut self) {
+        self.run_budget_started_at = self
+            .run_budget_seconds
+            .map(|_| std::time::SystemTime::now());
+        let routes = std::sync::Arc::make_mut(&mut self.main_fallback.fallbacks);
+        for route in routes {
+            route.run_budget_seconds = self.run_budget_seconds;
+            route.run_budget_started_at = self.run_budget_started_at;
+        }
+    }
+
+    fn run_budget_remaining(&self) -> Option<f64> {
+        let budget = self.run_budget_seconds?;
+        let started = self.run_budget_started_at?;
+        let now = std::time::SystemTime::now();
+        let elapsed = match now.duration_since(started) {
+            Ok(elapsed) => elapsed.as_secs_f64(),
+            Err(error) => -error.duration().as_secs_f64(),
+        };
+        Some(budget - elapsed)
     }
 
     fn reset_stale_stream_streak(&self) {
@@ -2568,6 +2608,7 @@ impl NativeAgentClient {
                         route_index: index,
                         base_url: sent.base_url,
                         body: sent.body,
+                        buffered_stale_timeout: sent.buffered_stale_timeout,
                     });
                 }
                 Err(MainRequestError::Terminal(terminal))
@@ -2637,8 +2678,11 @@ impl NativeAgentClient {
                 .json(&body);
             let buffered_stale_timeout = (!label.is_empty())
                 .then(|| {
-                    self.main_timeouts
-                        .buffered_stale_timeout(&route.base_url, &body)
+                    self.main_timeouts.buffered_stale_timeout_capped(
+                        &route.base_url,
+                        &body,
+                        self.run_budget_remaining(),
+                    )
                 })
                 .flatten();
             let stream_stale_timeout = label.is_empty().then(|| {
@@ -2730,6 +2774,7 @@ impl NativeAgentClient {
                     response,
                     base_url: route.base_url,
                     body,
+                    buffered_stale_timeout,
                 });
             }
             let status = response.status();
@@ -5057,6 +5102,7 @@ impl NativeAgentClient {
         events: mpsc::Sender<StreamEvent>,
     ) -> Result<()> {
         let mut turn_client = self.clone();
+        turn_client.begin_run_budget_turn();
         turn_client.turn_reply_durable =
             std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
         turn_client.turn_has_continuation = Default::default();
@@ -5879,9 +5925,7 @@ impl ChatModel for NativeAgentClient {
             let dispatched_route = self
                 .main_route(dispatched.route_index)
                 .unwrap_or_else(|| self.clone());
-            let buffered_stale_timeout = dispatched_route
-                .main_timeouts
-                .buffered_stale_timeout(&dispatched.base_url, &dispatched.body);
+            let buffered_stale_timeout = dispatched.buffered_stale_timeout;
             let decoded = dispatched.response.json::<Value>().await.map_err(|error| {
                 if error.is_timeout()
                     && buffered_stale_timeout.is_some_and(|stale| {
@@ -8506,6 +8550,116 @@ mod tests {
             assert!(error.to_string().contains("consecutive stale attempts"));
             assert_eq!(calls.load(Ordering::SeqCst), expected_calls);
         }
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn run_budget_caps_the_live_buffered_reasoning_stall() {
+        use crate::agent::AgentClient;
+        use axum::{body::Body, response::Response, routing::post, Router};
+        use std::convert::Infallible;
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let server_calls = calls.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move || {
+                let calls = server_calls.clone();
+                async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "application/json")
+                        .body(Body::from_stream(futures_util::stream::pending::<
+                            std::result::Result<axum::body::Bytes, Infallible>,
+                        >()))
+                        .unwrap()
+                }
+            }),
+        );
+        let (url, _server) = serve_main_retry(app).await;
+        let policy = crate::main_provider_timeouts::Policy::resolve(
+            &serde_json::json!({}),
+            "deepseek",
+            "deepseek/deepseek-r1",
+            |_| None,
+        );
+        let client = super::NativeAgentClient::new("deepseek/deepseek-r1", "key", url)
+            .unwrap()
+            .with_provider_identity("deepseek")
+            .with_main_timeouts(policy)
+            .with_run_budget_seconds(&serde_json::json!(120))
+            .with_main_retry_attempts(1)
+            .with_main_retry_backoff(std::time::Duration::ZERO)
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"what time is it"
+        }))
+        .unwrap();
+        let (tx, _rx) = tokio::sync::mpsc::channel(8);
+        let started = tokio::time::Instant::now();
+
+        let error = client.run_turn(&message, &[], tx).await.unwrap_err();
+
+        assert!(error.to_string().contains("step decode"), "{error}");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            tokio::time::Instant::now() - started,
+            std::time::Duration::from_secs(60)
+        );
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn run_budget_spares_a_live_explicit_buffered_deadline() {
+        use crate::agent::AgentClient;
+        use axum::{body::Body, response::Response, routing::post, Router};
+        use std::convert::Infallible;
+        use std::sync::Arc;
+
+        let app = Router::new().route(
+            "/chat/completions",
+            post(|| async {
+                Response::builder()
+                    .header("content-type", "application/json")
+                    .body(Body::from_stream(futures_util::stream::pending::<
+                        std::result::Result<axum::body::Bytes, Infallible>,
+                    >()))
+                    .unwrap()
+            }),
+        );
+        let (url, _server) = serve_main_retry(app).await;
+        let policy = crate::main_provider_timeouts::Policy::resolve(
+            &serde_json::json!({"providers":{"deepseek":{
+                "stale_timeout_seconds":600
+            }}}),
+            "deepseek",
+            "deepseek/deepseek-r1",
+            |_| None,
+        );
+        let client = super::NativeAgentClient::new("deepseek/deepseek-r1", "key", url)
+            .unwrap()
+            .with_provider_identity("deepseek")
+            .with_main_timeouts(policy)
+            .with_run_budget_seconds(&serde_json::json!(120))
+            .with_main_retry_attempts(1)
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)]);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"what time is it"
+        }))
+        .unwrap();
+        let (tx, _rx) = tokio::sync::mpsc::channel(8);
+
+        let result = tokio::time::timeout(
+            std::time::Duration::from_secs(100),
+            client.run_turn(&message, &[], tx),
+        )
+        .await;
+
+        assert!(result.is_err(), "explicit 600-second timeout was shortened");
     }
 
     #[tokio::test]

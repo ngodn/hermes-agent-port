@@ -1350,6 +1350,7 @@ fn build_agent_client_for_home_with_discovery(
                     let client = client
                         .with_provider_identity(provider_identity)
                         .with_main_timeouts(main_timeouts)
+                        .with_run_budget_seconds(&user_config["agent"]["run_budget_seconds"])
                         .with_turn_limit(limit)
                         .with_main_retry_attempts(native_agent::main_retry_attempts(
                             &user_config["agent"]["api_max_retries"],
@@ -2903,6 +2904,124 @@ mod startup_tests {
         }
 
         assert_eq!(reply, "fallback after buffered stall");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn configured_run_budget_caps_the_native_buffered_stale_deadline() {
+        use axum::{body::Body, extract::State, response::Response, routing::post, Json, Router};
+        use std::convert::Infallible;
+        use std::sync::atomic::{AtomicUsize, Ordering};
+
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        async fn serve(app: Router) -> (String, Server) {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "application/json")
+                        .body(Body::from_stream(futures_util::stream::pending::<
+                            std::result::Result<axum::body::Bytes, Infallible>,
+                        >()))
+                        .unwrap()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(json!({"choices":[{"message":{
+                        "role":"assistant", "content":"fallback after budget cap"
+                    }}]}))
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve(primary).await;
+        let (fallback_url, _fallback_server) = serve(fallback).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = TempHome(std::env::temp_dir().join(format!(
+            "hermes-main-run-budget-{}-{nonce}",
+            std::process::id()
+        )));
+        std::fs::create_dir_all(&home.0).unwrap();
+
+        let mut config = native_config();
+        config.llm_api_key = Some("primary-key".into());
+        config.llm_base_url = Some(primary_url);
+        config.agent_tools = true;
+        let user_config = json!({
+            "agent":{"api_max_retries":1, "run_budget_seconds":120},
+            "model":{"provider":"openrouter"},
+            "fallback_providers":[{
+                "provider":"custom", "model":"fallback-model",
+                "base_url":fallback_url, "api_key":"fallback-key"
+            }]
+        });
+        let agent = build_agent_client_for_home(
+            &config,
+            &user_config,
+            Some("deepseek/deepseek-r1"),
+            &home.0,
+            Some(NativeConversationState {
+                system_prompt: "stable\n\nModel: deepseek/deepseek-r1\nProvider: openrouter".into(),
+                tools: vec![Arc::new(native_tools::CurrentTimeTool)],
+                plugin_prompt: Default::default(),
+                extension_host: None,
+                hooks: None,
+                platform: "cli".into(),
+                context_length: 256_000,
+            }),
+        )
+        .unwrap();
+        let message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"hello"
+        }))
+        .unwrap();
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+        tokio::time::timeout(
+            std::time::Duration::from_secs(100),
+            agent.run_turn(&message, &[], sender),
+        )
+        .await
+        .expect("configured run budget must cap the 600-second reasoning floor")
+        .unwrap();
+        let mut reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+
+        assert_eq!(reply, "fallback after budget cap");
         assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
         assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
     }

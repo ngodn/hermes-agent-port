@@ -1,0 +1,11 @@
+Repository: /home/eins0fx/development/hermes-agent-port. Resolve every path under this repository and use absolute paths for filesystem tools. Do not search the home directory for another checkout.
+
+Own only an executable Python contract for the main-provider run-budget-aware buffered stale timeout. Do not inspect or edit Rust implementation files, PORT.md, INDEX.md, the progress audit, or Claude artifacts. This is separate from operator notices and from all streaming timeout behavior.
+
+Start from the live Python sources and the two existing run-budget cases in rust/tools/gen_main_provider_stall_goldens.py. Produce only:
+
+1. rust/analysis/main-provider-run-budget-contract-agy.md
+2. rust/tools/gen_main_provider_run_budget_goldens.py
+3. rust/tools/main-provider-run-budget-goldens.json
+
+The deterministic generator must execute the real Python normalization and _compute_non_stream_stale_timeout behavior, not copy its formula into a local simulator. Cover raw normalization types, fresh and elapsed turn clocks, reasoning-floor and context-scaled bases, model/provider/env explicit stale settings, local implicit infinity, the 60-second floor, negative remaining time, downward-only capping, and proof that streaming timeout derivation is unchanged. Preserve raw fixture input types. Assert every declared expectation against live source before writing it. Run the generator twice, run --check, run the smallest focused Python tests, and report exact counts and hashes. Do not edit existing oracle artifacts. Do not use em dash characters.

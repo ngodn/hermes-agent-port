@@ -141,6 +141,15 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [AGY contract](dropped-stream-contract-agy.md),
   [47-case corpus](../tools/dropped-stream-goldens.json), and
   [Claude run-budget map](main-provider-run-budget-scaling-claude.md).
+- Native buffered chat-completions requests now cap implicit default,
+  reasoning-floor, and context-scaled stale patience against the remaining
+  turn-wide run budget. Explicit model, provider, and environment settings,
+  plain local infinity, and every streaming deadline remain unchanged. See
+  [native-main-provider-run-budget-resolution.md](native-main-provider-run-budget-resolution.md),
+  with the repaired source-executed
+  [AGY contract](main-provider-run-budget-contract-agy.md),
+  [32-case corpus](../tools/main-provider-run-budget-goldens.json), and
+  [Claude operator-notice map](main-provider-operator-notices-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -222,6 +231,10 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [dropped-stream-contract-agy.md](dropped-stream-contract-agy.md) | AGY's corrected live-source and real-conversation-loop contract for dropped stream production and consumption |
 | [dropped-stream-goldens.json](../tools/dropped-stream-goldens.json) | Source-executed 47-case dropped-stream corpus across 11 sections |
 | [main-provider-run-budget-scaling-claude.md](main-provider-run-budget-scaling-claude.md) | Claude's separate map for the next implicit buffered-stale run-budget cap |
+| [native-main-provider-run-budget-resolution.md](native-main-provider-run-budget-resolution.md) | Production run-budget clock, buffered cap ordering, frozen route propagation, live HTTP proof, and measured progress |
+| [main-provider-run-budget-contract-agy.md](main-provider-run-budget-contract-agy.md) | Repaired AGY oracle lane and verified Python normalization, clocks, explicit settings, local behavior, and streaming boundary |
+| [main-provider-run-budget-goldens.json](../tools/main-provider-run-budget-goldens.json) | Source-executed 32-case run-budget corpus |
+| [main-provider-operator-notices-claude.md](main-provider-operator-notices-claude.md) | Claude's separate next-seam map for wait, retry, fallback, buffer, flush, and delivery-only notice behavior |
 | [native-ollama-glm-truncation-resolution.md](native-ollama-glm-truncation-resolution.md) | Production local Ollama GLM stop correction, serving-route identity, durable continuation, oracle repair, and measured progress |
 | [ollama-glm-truncation-contract-agy.md](ollama-glm-truncation-contract-agy.md) | AGY's source-executed Python contract for the ordered stop-correction gates and downstream continuation envelope |
 | [ollama-glm-truncation-goldens.json](../tools/ollama-glm-truncation-goldens.json) | Source-executed 113-case local Ollama GLM correction corpus with raw input types |

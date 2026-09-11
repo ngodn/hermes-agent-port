@@ -1,0 +1,252 @@
+{
+  "buffered_stale": [
+    {
+      "actual_timeout": 90.0,
+      "case_name": "no_budget_keeps_default",
+      "expected_timeout": 90.0
+    },
+    {
+      "actual_timeout": 600.0,
+      "case_name": "budget_without_clock_is_inert",
+      "expected_timeout": 600.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "run_budget_seconds": 120.0
+    },
+    {
+      "actual_timeout": 450.0,
+      "case_name": "fresh_reasoning_floor_uses_half_budget",
+      "elapsed_seconds": 0.0,
+      "expected_timeout": 450.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "run_budget_seconds": 900.0
+    },
+    {
+      "actual_timeout": 400.0,
+      "case_name": "elapsed_reasoning_floor_uses_remaining_budget",
+      "elapsed_seconds": 100.0,
+      "expected_timeout": 400.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "run_budget_seconds": 900.0
+    },
+    {
+      "actual_timeout": 60.0,
+      "case_name": "minimum_cap_floor",
+      "elapsed_seconds": 800.0,
+      "expected_timeout": 60.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "run_budget_seconds": 900.0
+    },
+    {
+      "actual_timeout": 60.0,
+      "case_name": "negative_remaining_uses_minimum_floor",
+      "elapsed_seconds": 200.0,
+      "expected_timeout": 60.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "run_budget_seconds": 120.0
+    },
+    {
+      "actual_timeout": 90.0,
+      "case_name": "cap_never_raises_default",
+      "elapsed_seconds": 0.0,
+      "expected_timeout": 90.0,
+      "run_budget_seconds": 1000.0
+    },
+    {
+      "actual_timeout": 100.0,
+      "case_name": "medium_context_is_capped_after_scaling",
+      "elapsed_seconds": 0.0,
+      "expected_timeout": 100.0,
+      "payload_kind": "medium",
+      "run_budget_seconds": 200.0
+    },
+    {
+      "actual_timeout": 100.0,
+      "case_name": "large_context_is_capped_after_scaling",
+      "elapsed_seconds": 0.0,
+      "expected_timeout": 100.0,
+      "payload_kind": "large",
+      "run_budget_seconds": 200.0
+    },
+    {
+      "actual_timeout": 600.0,
+      "case_name": "model_explicit_timeout_is_spared",
+      "elapsed_seconds": 200.0,
+      "expected_timeout": 600.0,
+      "explicit": "model",
+      "explicit_seconds": 600.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "run_budget_seconds": 120.0
+    },
+    {
+      "actual_timeout": 700.0,
+      "case_name": "provider_explicit_timeout_is_spared",
+      "elapsed_seconds": 200.0,
+      "expected_timeout": 700.0,
+      "explicit": "provider",
+      "explicit_seconds": 700.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "run_budget_seconds": 120.0
+    },
+    {
+      "actual_timeout": 1200.0,
+      "case_name": "environment_explicit_timeout_is_spared",
+      "elapsed_seconds": 200.0,
+      "expected_timeout": 1200.0,
+      "explicit": "environment",
+      "explicit_seconds": 1200.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "run_budget_seconds": 120.0
+    },
+    {
+      "actual_timeout": "inf",
+      "base_url": "http://localhost:11434",
+      "case_name": "local_implicit_default_remains_unbounded",
+      "elapsed_seconds": 200.0,
+      "expected_timeout": "inf",
+      "run_budget_seconds": 120.0
+    },
+    {
+      "actual_timeout": 60.0,
+      "base_url": "http://localhost:11434",
+      "case_name": "local_reasoning_floor_remains_finite_and_capped",
+      "elapsed_seconds": 200.0,
+      "expected_timeout": 60.0,
+      "model": "deepseek/deepseek-r1",
+      "provider": "ollama",
+      "run_budget_seconds": 120.0
+    }
+  ],
+  "metadata": {
+    "case_count": 32,
+    "provenance": "executed_live_python_source"
+  },
+  "normalization": [
+    {
+      "case_name": "null",
+      "expected_seconds": null,
+      "raw_input": null,
+      "raw_type": "NoneType"
+    },
+    {
+      "case_name": "false",
+      "expected_seconds": null,
+      "raw_input": false,
+      "raw_type": "bool"
+    },
+    {
+      "case_name": "true",
+      "expected_seconds": null,
+      "raw_input": true,
+      "raw_type": "bool"
+    },
+    {
+      "case_name": "zero",
+      "expected_seconds": null,
+      "raw_input": 0,
+      "raw_type": "int"
+    },
+    {
+      "case_name": "negative",
+      "expected_seconds": null,
+      "raw_input": -5,
+      "raw_type": "int"
+    },
+    {
+      "case_name": "bad_string",
+      "expected_seconds": null,
+      "raw_input": "abc",
+      "raw_type": "str"
+    },
+    {
+      "case_name": "nan_string",
+      "expected_seconds": null,
+      "raw_input": "nan",
+      "raw_type": "str"
+    },
+    {
+      "case_name": "nan_float",
+      "expected_seconds": null,
+      "raw_input": "nan",
+      "raw_type": "float"
+    },
+    {
+      "case_name": "empty_list",
+      "expected_seconds": null,
+      "raw_input": [],
+      "raw_type": "list"
+    },
+    {
+      "case_name": "object",
+      "expected_seconds": null,
+      "raw_input": {
+        "seconds": 900
+      },
+      "raw_type": "dict"
+    },
+    {
+      "case_name": "integer",
+      "expected_seconds": 900.0,
+      "raw_input": 900,
+      "raw_type": "int"
+    },
+    {
+      "case_name": "numeric_string",
+      "expected_seconds": 850.0,
+      "raw_input": "850",
+      "raw_type": "str"
+    },
+    {
+      "case_name": "fraction",
+      "expected_seconds": 0.5,
+      "raw_input": 0.5,
+      "raw_type": "float"
+    },
+    {
+      "case_name": "positive_infinity",
+      "expected_seconds": "inf",
+      "raw_input": "inf",
+      "raw_type": "float"
+    },
+    {
+      "case_name": "infinity_string",
+      "expected_seconds": "inf",
+      "raw_input": "inf",
+      "raw_type": "str"
+    }
+  ],
+  "streaming_unchanged": [
+    {
+      "case_name": "plain_small_stream",
+      "expected_timeout": 180.0,
+      "model": "gpt-4o",
+      "payload_kind": "small",
+      "with_expired_budget": 180.0,
+      "without_budget": 180.0
+    },
+    {
+      "case_name": "reasoning_small_stream",
+      "expected_timeout": 600.0,
+      "model": "deepseek/deepseek-r1",
+      "payload_kind": "small",
+      "provider": "deepseek",
+      "with_expired_budget": 600.0,
+      "without_budget": 600.0
+    },
+    {
+      "case_name": "plain_large_stream",
+      "expected_timeout": 300.0,
+      "model": "gpt-4o",
+      "payload_kind": "large",
+      "with_expired_budget": 300.0,
+      "without_budget": 300.0
+    }
+  ]
+}

@@ -24,6 +24,7 @@ pub struct Policy {
     stream_read_base: Duration,
     buffered_stale_base: Duration,
     buffered_stale_implicit: bool,
+    buffered_stale_explicit: bool,
     local_stream_stale: Duration,
     stream_attempts: usize,
     stale_giveup: usize,
@@ -38,6 +39,7 @@ impl Default for Policy {
             stream_read_base: Duration::from_secs_f64(DEFAULT_STREAM_READ_TIMEOUT_SECONDS),
             buffered_stale_base: Duration::from_secs_f64(DEFAULT_BUFFERED_STALE_TIMEOUT_SECONDS),
             buffered_stale_implicit: true,
+            buffered_stale_explicit: false,
             local_stream_stale: Duration::from_secs_f64(DEFAULT_LOCAL_STREAM_STALE_TIMEOUT_SECONDS),
             stream_attempts: DEFAULT_STREAM_RETRIES + 1,
             stale_giveup: DEFAULT_STALE_GIVEUP,
@@ -54,6 +56,15 @@ fn positive_seconds(value: &Value) -> Option<f64> {
         Value::Array(_) | Value::Object(_) => return None,
     };
     (seconds > 0.0).then_some(seconds.min(MAX_SAFE_TIMEOUT_SECONDS))
+}
+
+pub fn normalize_run_budget_seconds(value: &Value) -> Option<f64> {
+    let seconds = match value {
+        Value::Number(value) => value.as_f64()?,
+        Value::String(value) => value.trim().parse().ok()?,
+        Value::Null | Value::Bool(_) | Value::Array(_) | Value::Object(_) => return None,
+    };
+    (!seconds.is_nan() && seconds > 0.0).then_some(seconds)
 }
 
 fn positive_environment_seconds(value: Option<&str>) -> Option<f64> {
@@ -160,6 +171,8 @@ impl Policy {
             stream_read_base: Duration::from_secs_f64(stream_read_base),
             buffered_stale_base: Duration::from_secs_f64(buffered_stale_base),
             buffered_stale_implicit,
+            buffered_stale_explicit: configured_stale.is_some()
+                || buffered_stale_environment.is_some(),
             local_stream_stale: Duration::from_secs_f64(local_stream_stale),
             stream_attempts: usize::try_from(stream_retries)
                 .unwrap_or(usize::MAX)
@@ -239,6 +252,30 @@ impl Policy {
         Some(Duration::from_secs_f64(
             self.buffered_stale_base.as_secs_f64().max(context_floor),
         ))
+    }
+
+    /// Apply Python's run-budget cap after local and context scaling. A run
+    /// budget may shorten default and reasoning-floor timeouts, but explicit
+    /// model, provider, or environment settings remain authoritative.
+    pub fn buffered_stale_timeout_capped(
+        self,
+        base_url: &str,
+        body: &Value,
+        run_budget_remaining: Option<f64>,
+    ) -> Option<Duration> {
+        let timeout = self.buffered_stale_timeout(base_url, body)?;
+        let Some(remaining) = run_budget_remaining else {
+            return Some(timeout);
+        };
+        if self.buffered_stale_explicit {
+            return Some(timeout);
+        }
+        let cap = (remaining * 0.5).max(60.0);
+        if cap < timeout.as_secs_f64() {
+            Some(Duration::from_secs_f64(cap))
+        } else {
+            Some(timeout)
+        }
     }
 }
 
@@ -339,6 +376,13 @@ mod tests {
     fn goldens() -> Value {
         serde_json::from_str(include_str!(
             "../../../tools/main-provider-stall-goldens.json"
+        ))
+        .unwrap()
+    }
+
+    fn run_budget_goldens() -> Value {
+        serde_json::from_str(include_str!(
+            "../../../tools/main-provider-run-budget-goldens.json"
         ))
         .unwrap()
     }
@@ -485,6 +529,182 @@ mod tests {
         assert_eq!(
             short_read.stream_inactivity_timeout("https://api.example.test", "model", &json!({})),
             Duration::from_secs(10)
+        );
+    }
+
+    #[test]
+    fn run_budget_caps_an_implicit_reasoning_floor() {
+        let corpus = run_budget_goldens();
+        let golden = corpus["buffered_stale"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["case_name"] == "elapsed_reasoning_floor_uses_remaining_budget")
+            .unwrap();
+        let policy = Policy::resolve(&json!({}), "deepseek", "deepseek/deepseek-r1", |_| None);
+
+        assert_eq!(
+            policy.buffered_stale_timeout_capped(
+                "https://api.deepseek.com",
+                &json!({"messages":[{"role":"user", "content":"hi"}]}),
+                Some(
+                    golden["run_budget_seconds"].as_f64().unwrap()
+                        - golden["elapsed_seconds"].as_f64().unwrap(),
+                ),
+            ),
+            Some(Duration::from_secs_f64(
+                golden["expected_timeout"].as_f64().unwrap()
+            ))
+        );
+    }
+
+    #[test]
+    fn run_budget_config_normalization_matches_python() {
+        for case in run_budget_goldens()["normalization"].as_array().unwrap() {
+            let raw = &case["raw_input"];
+            let expected = match &case["expected_seconds"] {
+                Value::Null => None,
+                Value::String(value) if value == "inf" => Some(f64::INFINITY),
+                Value::Number(value) => value.as_f64(),
+                value => panic!("unexpected normalization fixture: {value}"),
+            };
+            assert_eq!(
+                normalize_run_budget_seconds(raw),
+                expected,
+                "{}",
+                case["case_name"]
+            );
+        }
+    }
+
+    #[test]
+    fn run_budget_buffered_policy_matches_python_goldens() {
+        for case in run_budget_goldens()["buffered_stale"].as_array().unwrap() {
+            let provider = case["provider"].as_str().unwrap_or("openai");
+            let model = case["model"].as_str().unwrap_or("gpt-4o");
+            let explicit = case["explicit"].as_str();
+            let explicit_seconds = case["explicit_seconds"].as_f64();
+            let config = match explicit {
+                Some("model") => json!({"providers": {provider: {"models": {
+                    model: {"stale_timeout_seconds": explicit_seconds.unwrap()}
+                }}}}),
+                Some("provider") => json!({"providers": {provider: {
+                    "stale_timeout_seconds": explicit_seconds.unwrap()
+                }}}),
+                _ => json!({}),
+            };
+            let policy = Policy::resolve(&config, provider, model, |name| {
+                (explicit == Some("environment") && name == "HERMES_API_CALL_STALE_TIMEOUT")
+                    .then(|| explicit_seconds.unwrap().to_string())
+            });
+            let body = match case["payload_kind"].as_str().unwrap_or("small") {
+                "small" => json!({"messages":[{"role":"user", "content":"hi"}]}),
+                "medium" => json!({"input":"m".repeat(240_004)}),
+                "large" => json!({"input":"L".repeat(440_004)}),
+                kind => panic!("unexpected payload kind: {kind}"),
+            };
+            let remaining = case["elapsed_seconds"]
+                .as_f64()
+                .map(|elapsed| case["run_budget_seconds"].as_f64().unwrap() - elapsed);
+            let actual = policy.buffered_stale_timeout_capped(
+                case["base_url"]
+                    .as_str()
+                    .unwrap_or("https://api.example.test/v1"),
+                &body,
+                remaining,
+            );
+            let expected = if case["expected_timeout"] == "inf" {
+                None
+            } else {
+                Some(Duration::from_secs_f64(
+                    case["expected_timeout"].as_f64().unwrap(),
+                ))
+            };
+            assert_eq!(actual, expected, "{}", case["case_name"]);
+        }
+    }
+
+    #[test]
+    fn run_budget_does_not_change_streaming_goldens() {
+        for case in run_budget_goldens()["streaming_unchanged"]
+            .as_array()
+            .unwrap()
+        {
+            let body = match case["payload_kind"].as_str().unwrap() {
+                "small" => json!({"messages":[{"role":"user", "content":"hi"}]}),
+                "large" => json!({"input":"L".repeat(440_004)}),
+                kind => panic!("unexpected payload kind: {kind}"),
+            };
+            let policy = Policy::resolve(
+                &json!({}),
+                case["provider"].as_str().unwrap_or("openai"),
+                case["model"].as_str().unwrap(),
+                |_| None,
+            );
+            assert_eq!(
+                policy.stream_stale_timeout(
+                    "https://api.example.test/v1",
+                    case["model"].as_str().unwrap(),
+                    &body,
+                ),
+                Duration::from_secs_f64(case["expected_timeout"].as_f64().unwrap()),
+                "{}",
+                case["case_name"]
+            );
+        }
+    }
+
+    #[test]
+    fn run_budget_cap_preserves_python_ordering_and_bounds() {
+        let body = json!({"messages":[{"role":"user", "content":"hi"}]});
+        let default = Policy::default();
+        assert_eq!(
+            default.buffered_stale_timeout_capped("https://api.example.test", &body, Some(-10.0),),
+            Some(Duration::from_secs(60))
+        );
+        assert_eq!(
+            default.buffered_stale_timeout_capped(
+                "https://api.example.test",
+                &body,
+                Some(10_000.0),
+            ),
+            Some(Duration::from_secs(90))
+        );
+        assert_eq!(
+            default.buffered_stale_timeout_capped("http://localhost:11434", &body, Some(1.0)),
+            None
+        );
+
+        let explicit = Policy::resolve(
+            &json!({"providers":{"fixture":{"stale_timeout_seconds":600}}}),
+            "fixture",
+            "deepseek/deepseek-r1",
+            |_| None,
+        );
+        assert_eq!(
+            explicit.buffered_stale_timeout_capped("https://api.example.test", &body, Some(1.0),),
+            Some(Duration::from_secs(600))
+        );
+        let explicit_env = Policy::resolve(&json!({}), "fixture", "plain", |name| {
+            (name == "HERMES_API_CALL_STALE_TIMEOUT").then(|| "1200".into())
+        });
+        assert_eq!(
+            explicit_env.buffered_stale_timeout_capped(
+                "https://api.example.test",
+                &body,
+                Some(1.0),
+            ),
+            Some(Duration::from_secs(1200))
+        );
+
+        let huge = json!({"messages":[{"role":"user", "content":"x".repeat(480_000)}]});
+        assert_eq!(
+            default.buffered_stale_timeout_capped("https://api.example.test", &huge, Some(200.0),),
+            Some(Duration::from_secs(100))
+        );
+        assert_eq!(
+            default.stream_stale_timeout("https://api.example.test", "gpt-4o", &huge),
+            Duration::from_secs(300)
         );
     }
 }

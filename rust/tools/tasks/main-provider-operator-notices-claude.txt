@@ -1,0 +1,7 @@
+Repository: /home/eins0fx/development/hermes-agent-port. Resolve all paths under this repository and do not search the home directory for another checkout.
+
+Map only Python's main-provider operator notices and their Rust delivery seam as the future checkpoint after run-budget-aware stale scaling. Do not analyze or implement run-budget scaling, dropped streams, general retry policy, non-chat transports, OAuth, plugins, or memory.
+
+Inspect the live Python sources, exact notice texts and timing, trigger and suppression state, streaming versus buffered behavior, callbacks, gateway/CLI consumers, persistence rules, retry/fallback interaction, and focused tests. Compare them to current Rust StreamEvent variants and every live consumer. Identify which notices are behavioral requirements versus presentation-only diagnostics, the narrowest deep Rust interface, cache/transcript invariants, and public end-to-end tests. Verify every line reference against the current checkout.
+
+Write only rust/analysis/main-provider-operator-notices-claude.md. Do not edit Rust, Python, JSON, PORT.md, INDEX.md, progress files, or any existing analysis file. Do not use em dash characters.

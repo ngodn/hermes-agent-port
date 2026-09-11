@@ -1,5 +1,40 @@
 # Hermes Rust rewrite
 
+## Native run-budget stale scaling: 2026-09-11
+
+Native tool-enabled chat-completions turns now resolve the existing
+`agent.run_budget_seconds` setting into Python-compatible buffered stale
+deadlines. Each admitted turn stamps one wall-clock start before restore,
+memory, or provider work. Primary and frozen fallback routes share that start,
+and each buffered request caps implicit default, reasoning-floor, and
+context-scaled patience at half the remaining budget with a 60-second floor.
+
+Explicit model, provider, and legacy environment stale settings remain
+authoritative. Plain local implicit routes remain unbounded, while local
+reasoning floors stay finite and budget-cappable. Request deadlines, streaming
+deadlines, retries, backoff, provider routing, prompt bytes, tool schemas, and
+transcript state are unchanged. The exact request-time buffered deadline is
+carried through body decoding so later wall-clock movement cannot alter timeout
+attribution.
+
+AGY owned the independent Python oracle lane. Its wrapper exited before its
+background task completed, and primary review replaced the blocked repeated
+full-agent construction with a sub-second source-executed harness. The final
+32-case corpus runs real Python normalization, buffered-timeout, and streaming
+derivation functions. Claude separately mapped operator notices as the next
+independent seam. See
+[native-main-provider-run-budget-resolution.md](analysis/native-main-provider-run-budget-resolution.md).
+
+The refreshed weighted full-port estimate is **59.15 points, reported as about
+59%** (judgment range 55% to 61%). Native agent core moves from 83% to 84%; the
+other area estimates are unchanged. Operator notices, interrupted-wait
+accounting, non-chat and remaining OAuth routes, dynamic providers, native
+plugin and external-memory managers, prompt invalidation, and broader client
+eviction remain. The full workspace passes **1,945 Rust tests with two
+ignored**. The 32-case corpus regenerates byte for byte, all 28 focused Python
+tests pass, and Rust/Python formatting, Ruff, workspace Clippy with warnings
+denied, and diff hygiene pass.
+
 ## Native dropped-stream recovery: 2026-09-11
 
 Native no-tools chat-completions streams now recover visible output after clean
