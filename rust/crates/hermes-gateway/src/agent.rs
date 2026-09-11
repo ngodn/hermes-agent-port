@@ -49,6 +49,8 @@ pub struct TurnContext<'a> {
     /// Owner token for the cross-process conversation lease held by this
     /// admitted turn. Transcript mutations can recheck it inside SQLite.
     pub turn_lease_holder: Option<&'a str>,
+    /// Control handle for this exact admitted turn generation.
+    pub turn_control: Option<&'a crate::turn_control::TurnControl>,
     /// True when the session reset policy has a finite boundary. Cache
     /// pressure must preserve its end-of-session memory extraction before
     /// releasing the live conversation client.
@@ -84,6 +86,7 @@ impl<'a> TurnContext<'a> {
             turn_session: None,
             compression_observer: None,
             turn_lease_holder: None,
+            turn_control: None,
             session_finalizable: false,
         }
     }
@@ -100,6 +103,14 @@ impl<'a> TurnContext<'a> {
 
     pub fn with_turn_lease_holder(mut self, holder: Option<&'a str>) -> Self {
         self.turn_lease_holder = holder;
+        self
+    }
+
+    pub fn with_turn_control(
+        mut self,
+        control: Option<&'a crate::turn_control::TurnControl>,
+    ) -> Self {
+        self.turn_control = control;
         self
     }
 
@@ -126,6 +137,12 @@ impl<'a> TurnContext<'a> {
 /// `= true`, and the caller then neither loads nor persists history for it.
 #[async_trait]
 pub trait AgentClient: Send + Sync {
+    /// Whether this backend observes [`TurnContext::turn_control`] itself.
+    /// Backends that return false are cancelled by dropping their turn future.
+    fn handles_turn_control(&self) -> bool {
+        false
+    }
+
     /// Internal routing context from the selected history store, never ingress
     /// payload. Existing backends keep their own profile/history semantics.
     async fn run_turn_with_context(
@@ -456,6 +473,7 @@ impl AgentClient for SubprocessAgentClient {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit());
+        cmd.kill_on_drop(true);
         if let Some(model) = &self.model {
             cmd.arg("-m").arg(model);
         }

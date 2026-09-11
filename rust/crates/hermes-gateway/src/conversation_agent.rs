@@ -1200,6 +1200,7 @@ mod tests {
             turn_session: None,
             compression_observer: None,
             turn_lease_holder: None,
+            turn_control: None,
             session_finalizable: false,
         }
     }

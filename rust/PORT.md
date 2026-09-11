@@ -1,5 +1,40 @@
 # Hermes Rust rewrite
 
+## Native cooperative stop control: 2026-09-11
+
+The live Rust gateway now handles `/stop` on both push adapters and synchronous
+HTTP `/message`. A route-scoped, generation-stamped control registry gives each
+admitted turn one cancellation handle. Busy stops return the exact Python
+acknowledgement, suppress stale turn delivery, release ownership, and allow the
+next turn. Idle stops return without invoking the model. Stop and natural
+completion linearize under the same registry mutex, so a late command cannot
+cancel an already-completed generation.
+
+Native chat-completions turns now wake during provider header or body waits,
+stream consumption, ordinary and empty-response retry backoff, and live tool
+execution. Cancellation never replays a provider request. Interrupted tool
+batches persist one failed result per call plus a terminal assistant row, which
+keeps tool pairing and role alternation valid for continuation. Generic agent
+backends are canceled at their future boundary, and subprocess agents terminate
+their child on drop.
+
+AGY independently established the Python `/stop` and `/steer` contract. Claude
+separately mapped Rust task ownership, route identity, provider waits, tool
+boundaries, and persistence. Both recommended staging `/steer` separately
+because it needs durable tool-row mutation and a late-arrival next-turn queue.
+See [native-stop-control-resolution.md](analysis/native-stop-control-resolution.md).
+
+The refreshed weighted full-port estimate is **60.10 points, reported as about
+60%** (judgment range 57% to 63%). Gateway moves from 67% to 68%, and native
+agent core moves from 86% to 87%; the other area estimates are unchanged.
+`/steer`, startup-sentinel and sibling-thread stop behavior, provider-response
+and managed-load notices, non-chat and remaining OAuth routes, dynamic
+providers, native plugin and external-memory managers, prompt invalidation,
+and broader client eviction remain. The full workspace passes **1,974 Rust
+tests with two ignored**. The focused Python reference suite passes 15 tests,
+and Rust formatting, workspace Clippy with warnings denied, and diff hygiene
+pass.
+
 ## Native main-provider retry notices: 2026-09-11
 
 Ordinary native chat-completions retries now use the complete turn-local

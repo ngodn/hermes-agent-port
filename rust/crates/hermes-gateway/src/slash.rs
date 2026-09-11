@@ -18,6 +18,7 @@ pub const BUILTIN_COMMANDS: &[&str] = &["help", "whoami", "status"];
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum NativeSlashCommand {
+    Stop,
     Reset {
         title: Option<String>,
     },
@@ -79,6 +80,7 @@ fn command_args(text: &str) -> &str {
 /// commands. Known but unported lifecycle commands fail explicitly.
 pub fn native_command(command: &str, text: &str) -> Option<NativeSlashCommand> {
     match command {
+        "stop" => Some(NativeSlashCommand::Stop),
         "new" => {
             let title = command_args(text);
             Some(NativeSlashCommand::Reset {
@@ -259,6 +261,10 @@ mod tests {
 
     #[test]
     fn classifies_native_lifecycle_commands_without_model_fallthrough() {
+        assert_eq!(
+            native_command("stop", "/stop"),
+            Some(NativeSlashCommand::Stop)
+        );
         assert_eq!(
             native_command("new", "/reset Project Phoenix"),
             Some(NativeSlashCommand::Reset {

@@ -199,6 +199,7 @@ mod tool_result_prune;
 mod toolset_resolution;
 mod transcription_enrichment;
 mod transcription_http;
+mod turn_control;
 mod turn_lease;
 mod turn_limit;
 mod turn_session;
@@ -2002,6 +2003,7 @@ fn start_push_path(
         state.route_leases.clone(),
         state.turn_generation.clone(),
     )
+    .with_turn_controls(state.turn_controls.clone())
     .with_slash_confirmations(state.slash_confirmations.clone())
     .with_tool_approvals(state.tool_approvals.clone());
     if let Some((store, freshness)) = &state.session_store {

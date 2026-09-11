@@ -170,6 +170,15 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [AGY validation](main-provider-retry-trace-validation-agy.md), the separate
   [Claude interrupted-wait map](main-provider-interrupted-wait-map-claude.md),
   and the final [Claude review](main-provider-retry-notices-review-claude.md).
+- Live push and HTTP ingress now handle `/stop` through one shared,
+  generation-stamped route-control registry. Provider waits and retry backoff
+  wake without replay, generic backends cancel at their future boundary, and
+  interrupted native tool batches persist complete call/result pairs plus an
+  assistant terminal before the next turn. `/steer` remains a separate durable
+  tail-mutation checkpoint. See
+  [native-stop-control-resolution.md](native-stop-control-resolution.md), with
+  the independent [AGY Python oracle](native-stop-steer-oracle-agy.md) and
+  [Claude Rust architecture map](native-stop-steer-map-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -247,6 +256,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-stop-control-resolution.md](native-stop-control-resolution.md) | Live route-scoped stop handling, cooperative provider and tool cancellation, race ownership, proof, and measured progress |
+| [native-stop-steer-oracle-agy.md](native-stop-steer-oracle-agy.md) | Python `/stop` and `/steer` routing, acknowledgements, wait behavior, tool-tail semantics, and TDD matrix |
+| [native-stop-steer-map-claude.md](native-stop-steer-map-claude.md) | Rust task, route, persistence, and control-state map plus the staged stop-then-steer design |
 | [native-dropped-stream-recovery-resolution.md](native-dropped-stream-recovery-resolution.md) | Production clean-EOF and post-generation transport recovery, completion evidence, durable continuation, explicit limits, and measured progress |
 | [dropped-stream-contract-agy.md](dropped-stream-contract-agy.md) | AGY's corrected live-source and real-conversation-loop contract for dropped stream production and consumption |
 | [dropped-stream-goldens.json](../tools/dropped-stream-goldens.json) | Source-executed 47-case dropped-stream corpus across 11 sections |

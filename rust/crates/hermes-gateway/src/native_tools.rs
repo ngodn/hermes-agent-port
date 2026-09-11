@@ -64,6 +64,14 @@ impl<'a> ToolCallContext<'a> {
 pub struct ToolTurnIdentity<'a> {
     pub principal: Option<&'a str>,
     pub route_key: Option<&'a str>,
+    pub control: Option<&'a crate::turn_control::TurnControl>,
+}
+
+async fn turn_cancelled(control: Option<&crate::turn_control::TurnControl>) {
+    match control {
+        Some(control) => control.cancelled().await,
+        None => std::future::pending::<()>().await,
+    }
 }
 
 /// A callable tool. External tools may cross a process or network boundary, so
@@ -874,36 +882,53 @@ pub async fn run_tool_loop_with_messages(
                     // reported execution time. Instant survives wall-clock jumps.
                     let started = std::time::Instant::now();
                     let tool = tools.iter().find(|tool| tool.spec().name == call.name);
-                    let (content, ok) = match tool {
-                        None => {
-                            let names: Vec<String> = tool_specs
-                                .iter()
-                                .filter_map(|spec| {
-                                    spec["function"]["name"].as_str().map(str::to_owned)
-                                })
-                                .collect::<std::collections::BTreeSet<_>>()
-                                .into_iter()
-                                .collect();
-                            (json!(invalid_tool_name(&call.name, &names)), false)
+                    let cancelled = identity
+                        .control
+                        .is_some_and(crate::turn_control::TurnControl::is_cancelled);
+                    let cancelled_content = || {
+                        json!(format!(
+                            "[Tool execution cancelled \u{2014} {} was skipped due to user interrupt]",
+                            call.name
+                        ))
+                    };
+                    let (content, ok) = if cancelled {
+                        (cancelled_content(), false)
+                    } else {
+                        match tool {
+                            None => {
+                                let names: Vec<String> = tool_specs
+                                    .iter()
+                                    .filter_map(|spec| {
+                                        spec["function"]["name"].as_str().map(str::to_owned)
+                                    })
+                                    .collect::<std::collections::BTreeSet<_>>()
+                                    .into_iter()
+                                    .collect();
+                                (json!(invalid_tool_name(&call.name, &names)), false)
+                            }
+                            Some(_) if !call.arguments.is_object() => {
+                                (json!(INVALID_TOOL_ARGUMENTS), false)
+                            }
+                            Some(tool) => {
+                                let tool_call = tool.call(
+                                    &call.arguments,
+                                    ToolCallContext {
+                                        events: Some(events),
+                                        call_id: &call.id,
+                                        principal: identity.principal,
+                                        route_key: identity.route_key,
+                                    },
+                                );
+                                tokio::select! {
+                                    biased;
+                                    _ = turn_cancelled(identity.control) => (cancelled_content(), false),
+                                    result = tool_call => match result {
+                                        Ok(out) => (out, true),
+                                        Err(error) => (json!(format!("tool error: {error}")), false),
+                                    },
+                                }
+                            }
                         }
-                        Some(_) if !call.arguments.is_object() => {
-                            (json!(INVALID_TOOL_ARGUMENTS), false)
-                        }
-                        Some(tool) => match tool
-                            .call(
-                                &call.arguments,
-                                ToolCallContext {
-                                    events: Some(events),
-                                    call_id: &call.id,
-                                    principal: identity.principal,
-                                    route_key: identity.route_key,
-                                },
-                            )
-                            .await
-                        {
-                            Ok(out) => (out, true),
-                            Err(error) => (json!(format!("tool error: {error}")), false),
-                        },
                     };
                     let content = tool_result_content(model, content);
                     let _ = events
@@ -926,6 +951,22 @@ pub async fn run_tool_loop_with_messages(
                     );
                     model.persist_tool_loop_message(&result)?;
                     messages.push(result);
+                }
+                if identity
+                    .control
+                    .is_some_and(crate::turn_control::TurnControl::is_cancelled)
+                {
+                    let terminal = json!({
+                        "role":"assistant",
+                        "content":"Operation interrupted.",
+                        "_interrupted_tool_terminal":true,
+                    });
+                    model.persist_tool_loop_message(&terminal)?;
+                    messages.push(terminal);
+                    let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                    return Err(hermes_core::Error::Other(
+                        "native agent turn stopped by user".into(),
+                    ));
                 }
                 match model
                     .maintain_tool_loop_messages(&mut messages, &tool_specs)
@@ -2285,6 +2326,139 @@ mod tests {
         assert!(matches!(
             events[3],
             StreamEvent::MessageStop { final_: true }
+        ));
+    }
+
+    #[tokio::test]
+    async fn explicit_stop_cancels_current_tool_skips_siblings_and_closes_tail() {
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        struct PersistingModel {
+            step: Mutex<Option<Step>>,
+            persisted: Mutex<Vec<Value>>,
+        }
+        #[async_trait]
+        impl ChatModel for PersistingModel {
+            fn persist_tool_loop_message(&self, message: &Value) -> Result<()> {
+                self.persisted.lock().unwrap().push(message.clone());
+                Ok(())
+            }
+            async fn step(&self, _: &[Value], _: &[Value]) -> Result<Step> {
+                Ok(self.step.lock().unwrap().take().unwrap())
+            }
+        }
+
+        struct BlockingTool(Arc<AtomicUsize>);
+        #[async_trait]
+        impl Tool for BlockingTool {
+            fn spec(&self) -> ToolSpec {
+                ToolSpec {
+                    name: "blocking".into(),
+                    description: "wait forever".into(),
+                    parameters: json!({"type":"object"}),
+                    extra: Default::default(),
+                }
+            }
+            async fn call(&self, _: &Value, _: ToolCallContext<'_>) -> Result<Value> {
+                self.0.fetch_add(1, Ordering::SeqCst);
+                std::future::pending::<Result<Value>>().await
+            }
+        }
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let model = PersistingModel {
+            step: Mutex::new(Some(tool_step(vec![
+                ToolCall {
+                    id: "first".into(),
+                    name: "blocking".into(),
+                    arguments: json!({"slot":1}),
+                },
+                ToolCall {
+                    id: "second".into(),
+                    name: "blocking".into(),
+                    arguments: json!({"slot":2}),
+                },
+            ]))),
+            persisted: Mutex::new(Vec::new()),
+        };
+        let tools: Vec<Arc<dyn Tool>> = vec![Arc::new(BlockingTool(calls.clone()))];
+        let controls = crate::turn_control::TurnControlRegistry::default();
+        let registration = controls.register("route");
+        let (tx, rx) = mpsc::channel(16);
+        let user_content = json!("work");
+        let run = run_tool_loop_with_messages(
+            &model,
+            &tools,
+            &[],
+            &user_content,
+            &tx,
+            8,
+            ToolTurnIdentity {
+                principal: Some("user"),
+                route_key: Some("route"),
+                control: Some(registration.control().as_ref()),
+            },
+        );
+        let cancel = async {
+            while calls.load(Ordering::SeqCst) == 0 {
+                tokio::task::yield_now().await;
+            }
+            assert_eq!(
+                controls.stop("route"),
+                crate::turn_control::StopOutcome::Requested
+            );
+        };
+        let (result, ()) = tokio::join!(run, cancel);
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "native agent turn stopped by user"
+        );
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+
+        let persisted = model.persisted.lock().unwrap();
+        assert_eq!(
+            persisted
+                .iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            ["assistant", "tool", "tool", "assistant"]
+        );
+        assert_eq!(persisted[1]["tool_call_id"], "first");
+        assert_eq!(persisted[2]["tool_call_id"], "second");
+        assert_eq!(persisted[3]["content"], "Operation interrupted.");
+        assert_eq!(persisted[3]["_interrupted_tool_terminal"], true);
+        assert!(persisted[1]["content"]
+            .as_str()
+            .unwrap()
+            .contains("skipped due to user interrupt"));
+        assert!(persisted[2]["content"]
+            .as_str()
+            .unwrap()
+            .contains("skipped due to user interrupt"));
+        drop(persisted);
+
+        drop(tx);
+        let events = collect(rx);
+        assert_eq!(
+            events
+                .iter()
+                .filter(|event| matches!(event, StreamEvent::ToolCallChunk { .. }))
+                .count(),
+            2
+        );
+        assert_eq!(
+            events
+                .iter()
+                .filter(|event| matches!(event, StreamEvent::ToolCallFinished { ok: false, .. }))
+                .count(),
+            2
+        );
+        assert!(matches!(
+            events.last(),
+            Some(StreamEvent::MessageStop { final_: true })
         ));
     }
 

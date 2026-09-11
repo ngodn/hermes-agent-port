@@ -175,6 +175,23 @@ pub async fn post_message(
         crate::slash::SlashDecision::NotSlash => {}
     }
 
+    if matches!(native_command, Some(crate::slash::NativeSlashCommand::Stop)) {
+        let control_key = state.session_store.as_ref().map_or_else(
+            || crate::session_db::message_session_id(&msg),
+            |(store, _)| store.session_key_for_source(&crate::session::source_from_message(&msg)),
+        );
+        let reply = match state.turn_controls.stop(&control_key) {
+            crate::turn_control::StopOutcome::Requested => {
+                state.tool_approvals.cancel_route(&control_key);
+                "⚡ Stopped. You can continue this session."
+            }
+            crate::turn_control::StopOutcome::Idle => "No active task to stop.",
+        };
+        return Ok(Json(MessageResponse {
+            reply: reply.into(),
+        }));
+    }
+
     if let Some(crate::slash::NativeSlashCommand::Title { raw_title }) = native_command.clone() {
         let Some((store, freshness)) = &state.session_store else {
             return Ok(Json(MessageResponse {
@@ -426,10 +443,13 @@ pub async fn post_message(
             turn_session.bind_transcript_lease(state.turn_leases.clone(), token);
         }
     }
+    let control_key = routing_key.clone().unwrap_or_else(|| session_id.clone());
+    let turn_control = state.turn_controls.register(&control_key);
     // Once admitted, the turn owns the lease and persistence independently of
     // the HTTP waiter. Dropping a client request must not detach a live agent
     // from its transcript lock or discard its completed assistant message.
     tokio::spawn(async move {
+        let control = turn_control.control().clone();
         let _turn_lease = turn_lease;
         let _durable_turn_lease = admitted_durable_lease;
         let turn_lease_holder = _durable_turn_lease
@@ -446,18 +466,27 @@ pub async fn post_message(
         let agent_turn_session = turn_session.clone();
         let agent_route_key = routing_key.clone();
         let turn = tokio::spawn(async move {
-            turn_agent
-                .run_turn_with_context(
-                    crate::agent::TurnContext::from_database(agent_db.as_deref())
-                        .with_session_finalizable(session_finalizable)
-                        .with_turn_lease_holder(agent_turn_lease_holder.as_deref())
-                        .with_turn_session(agent_turn_session.as_ref())
-                        .with_route_key(agent_route_key.as_deref()),
-                    &msg_for_agent,
-                    &history,
-                    tx,
-                )
-                .await
+            let turn = turn_agent.run_turn_with_context(
+                crate::agent::TurnContext::from_database(agent_db.as_deref())
+                    .with_session_finalizable(session_finalizable)
+                    .with_turn_lease_holder(agent_turn_lease_holder.as_deref())
+                    .with_turn_control(Some(control.as_ref()))
+                    .with_turn_session(agent_turn_session.as_ref())
+                    .with_route_key(agent_route_key.as_deref()),
+                &msg_for_agent,
+                &history,
+                tx,
+            );
+            if turn_agent.handles_turn_control() {
+                turn.await
+            } else {
+                tokio::select! {
+                    result = turn => result,
+                    _ = control.cancelled() => Err(hermes_core::Error::Other(
+                        "agent turn stopped by user".into()
+                    )),
+                }
+            }
         });
 
         // Assemble text + commentary into one reply, same rule as the Dispatcher.
@@ -487,7 +516,8 @@ pub async fn post_message(
         // the silence gate. The producer may still be finishing after its
         // terminal stream event, so keep ownership until it has stopped.
         let outcome = turn.await;
-        let succeeded = matches!(&outcome, Ok(Ok(())));
+        let interrupted = turn_control.finish();
+        let succeeded = !interrupted && matches!(&outcome, Ok(Ok(())));
         if let Some(turn_session) = &turn_session {
             msg.resolved_session_id = Some(turn_session.session_id());
         }
@@ -522,6 +552,12 @@ pub async fn post_message(
         // rather than echoing "NO_REPLY" to the caller.
         if crate::response_filters::is_intentional_silence_response(&reply) {
             reply.clear();
+        }
+
+        if interrupted {
+            return Ok(Json(MessageResponse {
+                reply: String::new(),
+            }));
         }
 
         match outcome {
@@ -955,6 +991,119 @@ mod tests {
         let history = db.load_history("cli:cancelled", 0).unwrap();
         assert_eq!(history.len(), 2);
         assert_eq!(history[1].content, "completed answer");
+    }
+
+    #[tokio::test]
+    async fn stop_interrupts_the_active_http_turn_and_allows_the_next_turn() {
+        struct StoppableAgent {
+            calls: std::sync::atomic::AtomicUsize,
+            entered: mpsc::Sender<()>,
+        }
+
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for StoppableAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                events: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                if self.calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst) == 0 {
+                    events
+                        .send(StreamEvent::MessageChunk {
+                            text: "stale partial".into(),
+                        })
+                        .await
+                        .unwrap();
+                    self.entered.send(()).await.unwrap();
+                    std::future::pending::<()>().await;
+                }
+                events
+                    .send(StreamEvent::MessageChunk {
+                        text: "fresh answer".into(),
+                    })
+                    .await
+                    .unwrap();
+                events
+                    .send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+
+        let (entered, mut arrivals) = mpsc::channel(1);
+        let state = AppState::new(
+            Arc::new(StoppableAgent {
+                calls: std::sync::atomic::AtomicUsize::new(0),
+                entered,
+            }),
+            Arc::new(json!({})),
+            None,
+            None,
+        );
+        let active_state = state.clone();
+        let active_turn = tokio::spawn(post_message(
+            State(active_state),
+            Json(MessageRequest {
+                channel_id: "stoppable".into(),
+                sender_id: "local".into(),
+                text: "question".into(),
+                content_parts: None,
+            }),
+        ));
+        tokio::time::timeout(std::time::Duration::from_secs(2), arrivals.recv())
+            .await
+            .expect("active turn did not enter")
+            .expect("active turn signal closed");
+
+        let stopped = post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "stoppable".into(),
+                sender_id: "local".into(),
+                text: "/stop".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(
+            stopped.0.reply,
+            "⚡ Stopped. You can continue this session."
+        );
+        let interrupted = tokio::time::timeout(std::time::Duration::from_secs(2), active_turn)
+            .await
+            .expect("stopped turn did not exit")
+            .unwrap()
+            .unwrap();
+        assert!(interrupted.0.reply.is_empty());
+
+        let resumed = post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "stoppable".into(),
+                sender_id: "local".into(),
+                text: "continue".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(resumed.0.reply, "fresh answer");
+
+        let idle = post_message(
+            State(state),
+            Json(MessageRequest {
+                channel_id: "stoppable".into(),
+                sender_id: "local".into(),
+                text: "/stop".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(idle.0.reply, "No active task to stop.");
     }
 
     #[tokio::test]

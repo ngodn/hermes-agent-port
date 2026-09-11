@@ -37,6 +37,7 @@ pub struct Dispatcher {
     route_lease: Arc<SessionTurnLeaseRegistry>,
     /// Monotonic per-turn generation, for lease ownership diagnostics.
     generation: Arc<AtomicU64>,
+    turn_controls: Arc<crate::turn_control::TurnControlRegistry>,
     /// User config, for slash-command gating.
     user_config: Arc<Value>,
     /// Confirmed-unreachable delivery targets: skip sends to them, clear on
@@ -60,6 +61,7 @@ struct AdmittedTurnOwnership {
     turn_session: Option<crate::turn_session::TurnSession>,
     transcript_lease: Option<crate::turn_lease::TurnLeaseToken>,
     durable_lease: Option<crate::durable_turn_lease::DurableTurnLease>,
+    control: crate::turn_control::TurnControlRegistration,
 }
 
 impl Dispatcher {
@@ -102,6 +104,7 @@ impl Dispatcher {
             lease: Arc::new(SessionTurnLeaseRegistry::default()),
             route_lease: Arc::new(SessionTurnLeaseRegistry::default()),
             generation: Arc::new(AtomicU64::new(0)),
+            turn_controls: Arc::new(crate::turn_control::TurnControlRegistry::default()),
             user_config,
             dead_targets,
             session_db,
@@ -125,6 +128,14 @@ impl Dispatcher {
         self.lease = leases;
         self.route_lease = route_leases;
         self.generation = generation;
+        self
+    }
+
+    pub fn with_turn_controls(
+        mut self,
+        controls: Arc<crate::turn_control::TurnControlRegistry>,
+    ) -> Self {
+        self.turn_controls = controls;
         self
     }
 
@@ -362,6 +373,24 @@ impl Dispatcher {
                 native_command = slash::native_command(&command, &msg.text);
             }
             SlashDecision::NotSlash => {}
+        }
+
+        if matches!(native_command, Some(crate::slash::NativeSlashCommand::Stop)) {
+            let control_key = self.session_store.as_ref().map_or_else(
+                || crate::session_db::message_session_id(&msg),
+                |(store, _)| {
+                    store.session_key_for_source(&crate::session::source_from_message(&msg))
+                },
+            );
+            let reply = match self.turn_controls.stop(&control_key) {
+                crate::turn_control::StopOutcome::Requested => {
+                    self.tool_approvals.cancel_route(&control_key);
+                    "⚡ Stopped. You can continue this session."
+                }
+                crate::turn_control::StopOutcome::Idle => "No active task to stop.",
+            };
+            self.deliver(&msg, reply.into()).await;
+            return;
         }
 
         if let Some(crate::slash::NativeSlashCommand::Title { raw_title }) = native_command.clone()
@@ -634,6 +663,8 @@ impl Dispatcher {
                 turn_session.bind_transcript_lease(self.lease.clone(), token);
             }
         }
+        let control_key = routing_key.clone().unwrap_or_else(|| session_id.clone());
+        let turn_control = self.turn_controls.register(&control_key);
 
         // An admitted turn outlives cancellation of its ingress waiter. Keep
         // its configured adapters and shared state alive through persistence
@@ -651,6 +682,7 @@ impl Dispatcher {
                         turn_session,
                         transcript_lease: turn_lease,
                         durable_lease: admitted_durable_lease,
+                        control: turn_control,
                     },
                 )
                 .await;
@@ -674,7 +706,9 @@ impl Dispatcher {
             turn_session,
             transcript_lease: _transcript_lease,
             durable_lease: durable_turn_lease,
+            control: turn_control,
         } = ownership;
+        let control = turn_control.control().clone();
         let turn_lease_holder = durable_turn_lease
             .as_ref()
             .map(|lease| lease.holder().to_owned());
@@ -693,18 +727,27 @@ impl Dispatcher {
         let agent_turn_session = turn_session.clone();
         let agent_route_key = routing_key.clone();
         let agent_task = tokio::spawn(async move {
-            turn_agent
-                .run_turn_with_context(
-                    crate::agent::TurnContext::from_database(agent_db.as_deref())
-                        .with_session_finalizable(session_finalizable)
-                        .with_turn_lease_holder(agent_turn_lease_holder.as_deref())
-                        .with_turn_session(agent_turn_session.as_ref())
-                        .with_route_key(agent_route_key.as_deref()),
-                    &msg_for_agent,
-                    &history,
-                    tx,
-                )
-                .await
+            let turn = turn_agent.run_turn_with_context(
+                crate::agent::TurnContext::from_database(agent_db.as_deref())
+                    .with_session_finalizable(session_finalizable)
+                    .with_turn_lease_holder(agent_turn_lease_holder.as_deref())
+                    .with_turn_control(Some(control.as_ref()))
+                    .with_turn_session(agent_turn_session.as_ref())
+                    .with_route_key(agent_route_key.as_deref()),
+                &msg_for_agent,
+                &history,
+                tx,
+            );
+            if turn_agent.handles_turn_control() {
+                turn.await
+            } else {
+                tokio::select! {
+                    result = turn => result,
+                    _ = control.cancelled() => Err(hermes_core::Error::Other(
+                        "agent turn stopped by user".into()
+                    )),
+                }
+            }
         });
 
         // Accumulate assistant text and deliver it back to the source platform.
@@ -760,7 +803,11 @@ impl Dispatcher {
             }
         }
 
-        let succeeded = match agent_task.await {
+        let task_outcome = agent_task.await;
+        let interrupted = turn_control.finish();
+        let succeeded = match task_outcome {
+            Ok(Ok(())) => !interrupted,
+            Ok(Err(_)) if interrupted => false,
             Ok(Err(err)) => {
                 warn!(platform = ?msg.platform, %err, "agent turn failed");
                 false
@@ -769,7 +816,6 @@ impl Dispatcher {
                 error!(?err, "agent task panicked");
                 false
             }
-            Ok(Ok(())) => true,
         };
 
         if let Some(turn_session) = &turn_session {
@@ -803,6 +849,10 @@ impl Dispatcher {
                 Ok(Ok(())) => {}
                 error => warn!(?error, "session activity update failed"),
             }
+        }
+
+        if interrupted {
+            return;
         }
 
         // Suppress delivery for intentional-silence markers and empty turns.
@@ -892,6 +942,93 @@ mod tests {
         drop(dispatcher);
         drop(db);
         std::fs::remove_dir_all(path).unwrap();
+    }
+
+    #[tokio::test]
+    async fn stop_interrupts_the_active_push_turn_and_allows_the_next_turn() {
+        struct StoppableAgent {
+            calls: AtomicUsize,
+            entered: mpsc::Sender<()>,
+            finalized: Arc<Mutex<Vec<bool>>>,
+        }
+
+        #[async_trait]
+        impl crate::agent::AgentClient for StoppableAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                if self.calls.fetch_add(1, Ordering::SeqCst) == 0 {
+                    tx.send(StreamEvent::MessageChunk {
+                        text: "stale partial".into(),
+                    })
+                    .await
+                    .unwrap();
+                    self.entered.send(()).await.unwrap();
+                    std::future::pending::<()>().await;
+                }
+                tx.send(StreamEvent::MessageChunk {
+                    text: "fresh answer".into(),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+
+            async fn finalize_turn_after_persist(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &Message,
+                _: &str,
+                succeeded: bool,
+            ) -> Result<()> {
+                self.finalized.lock().unwrap().push(succeeded);
+                Ok(())
+            }
+        }
+
+        let (mut dispatcher, _, sent) = harness("unused", json!({}));
+        let (entered, mut arrivals) = mpsc::channel(1);
+        let finalized = Arc::new(Mutex::new(Vec::new()));
+        dispatcher.agent = Arc::new(StoppableAgent {
+            calls: AtomicUsize::new(0),
+            entered,
+            finalized: finalized.clone(),
+        });
+
+        let active = dispatcher.clone();
+        let active_turn = tokio::spawn(async move {
+            active.handle_turn(cli_msg("question", "U")).await;
+        });
+        tokio::time::timeout(std::time::Duration::from_secs(2), arrivals.recv())
+            .await
+            .expect("active turn did not enter")
+            .expect("active turn signal closed");
+
+        dispatcher.handle_turn(cli_msg("/stop", "U")).await;
+        tokio::time::timeout(std::time::Duration::from_secs(2), active_turn)
+            .await
+            .expect("stopped turn did not exit")
+            .unwrap();
+        assert_eq!(
+            sent.lock().unwrap()[0].text,
+            "⚡ Stopped. You can continue this session."
+        );
+        assert_eq!(sent.lock().unwrap().len(), 1, "stale reply was delivered");
+        assert_eq!(*finalized.lock().unwrap(), [false]);
+
+        dispatcher.handle_turn(cli_msg("continue", "U")).await;
+        dispatcher.handle_turn(cli_msg("/stop", "U")).await;
+        let replies = sent.lock().unwrap();
+        assert_eq!(replies.len(), 3);
+        assert_eq!(replies[1].text, "fresh answer");
+        assert_eq!(replies[2].text, "No active task to stop.");
+        assert_eq!(*finalized.lock().unwrap(), [false, true]);
     }
 
     #[tokio::test]

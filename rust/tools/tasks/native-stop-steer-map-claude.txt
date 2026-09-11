@@ -1,0 +1,25 @@
+Own the Rust architecture lane for the next full-port checkpoint. Do not edit
+production code. Audit the current native gateway for the smallest complete,
+non-speculative implementation of advertised /stop and /steer semantics,
+including cooperative interruption of provider retry/backoff and response
+waits and steering injection at the next safe tool boundary.
+
+Map exact source paths, symbols, ownership, task lifetimes, route/session keys,
+slash authorization, push and synchronous HTTP ingress, transcript leases,
+SQLite persistence, StreamEvent delivery, and NativeAgent retry/tool loops.
+Identify every currently advertised surface that can issue these commands and
+whether it shares a process with the running turn. Explicitly call out relay
+send_interrupt behavior if it is a different transport concern.
+
+Propose a concrete state machine and minimal file-by-file implementation plan.
+It must avoid process-global session answers, stale controls crossing session
+rotation, duplicate user-role messages, request replay after visible output,
+prompt/tool-schema mutation, detached-turn leaks, and deadlocks. Include race
+cases and focused Rust tests. State clearly if stop and steer should be one
+checkpoint or staged separately based on existing concrete consumers.
+
+Write the complete report to:
+rust/analysis/native-stop-steer-map-claude.md
+
+Do not modify PORT.md, INDEX.md, or any file outside the assigned report. Do
+not launch nested agents.

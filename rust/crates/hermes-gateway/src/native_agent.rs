@@ -1950,6 +1950,7 @@ pub struct NativeAgentClient {
     main_notices: std::sync::Arc<std::sync::Mutex<crate::main_provider_notices::TurnNotices>>,
     /// Turn-local best-effort path for waits that Python surfaces immediately.
     main_live_notice_tx: std::sync::Arc<std::sync::Mutex<Option<mpsc::Sender<StreamEvent>>>>,
+    turn_control: Option<std::sync::Arc<crate::turn_control::TurnControl>>,
     run_budget_seconds: Option<f64>,
     run_budget_started_at: Option<std::time::SystemTime>,
     consecutive_stale_streams: std::sync::Arc<std::sync::atomic::AtomicUsize>,
@@ -2020,6 +2021,23 @@ pub struct NativeAgentClient {
 }
 
 impl NativeAgentClient {
+    fn turn_stopped_error() -> Error {
+        Error::Other("native agent turn stopped by user".into())
+    }
+
+    fn is_turn_cancelled(&self) -> bool {
+        self.turn_control
+            .as_ref()
+            .is_some_and(|control| control.is_cancelled())
+    }
+
+    async fn turn_cancelled(&self) {
+        match &self.turn_control {
+            Some(control) => control.cancelled().await,
+            None => std::future::pending::<()>().await,
+        }
+    }
+
     /// `base_url` is the API root (e.g. `https://openrouter.ai/api/v1`).
     pub fn new(
         model: impl Into<String>,
@@ -2040,6 +2058,7 @@ impl NativeAgentClient {
             main_timeouts: Default::default(),
             main_notices: Default::default(),
             main_live_notice_tx: Default::default(),
+            turn_control: None,
             run_budget_seconds: None,
             run_budget_started_at: None,
             consecutive_stale_streams: Default::default(),
@@ -2505,6 +2524,7 @@ impl NativeAgentClient {
         route.main_retry = self.main_retry;
         route.main_notices = self.main_notices.clone();
         route.main_live_notice_tx = self.main_live_notice_tx.clone();
+        route.turn_control = self.turn_control.clone();
         route.empty_response = self.empty_response;
         route.cache_scope = self.cache_scope.clone();
         route.automatic_compression_policy = self.automatic_compression_policy.clone();
@@ -2905,6 +2925,9 @@ impl NativeAgentClient {
         let mut request_failures = 0_usize;
         let mut max_attempts = self.main_retry.max_attempts;
         loop {
+            if self.is_turn_cancelled() {
+                return Err(MainRequestError::Internal(Self::turn_stopped_error()));
+            }
             let route = self
                 .main_pool
                 .as_ref()
@@ -2954,7 +2977,13 @@ impl NativeAgentClient {
                 let request_timeout = self.main_timeouts.request_timeout();
                 let header_timeout = stream_inactivity_timeout
                     .map_or(request_timeout, |stale| stale.min(request_timeout));
-                match tokio::time::timeout(header_timeout, request.send()).await {
+                let timed = tokio::select! {
+                    result = tokio::time::timeout(header_timeout, request.send()) => result,
+                    _ = self.turn_cancelled() => {
+                        return Err(MainRequestError::Internal(Self::turn_stopped_error()));
+                    }
+                };
+                match timed {
                     Ok(sent) => sent,
                     Err(_) => {
                         let failure = MainPoolFailure::Transport;
@@ -2987,7 +3016,8 @@ impl NativeAgentClient {
                                 &route.base_url,
                                 None,
                             )
-                            .await;
+                            .await
+                            .map_err(MainRequestError::Internal)?;
                             continue;
                         }
                         return Err(MainRequestError::Fallback {
@@ -2998,7 +3028,12 @@ impl NativeAgentClient {
                     }
                 }
             } else {
-                request.send().await
+                tokio::select! {
+                    result = request.send() => result,
+                    _ = self.turn_cancelled() => {
+                        return Err(MainRequestError::Internal(Self::turn_stopped_error()));
+                    }
+                }
             };
             let response = match sent {
                 Ok(response) => response,
@@ -3025,7 +3060,8 @@ impl NativeAgentClient {
                             &route.base_url,
                             None,
                         )
-                        .await;
+                        .await
+                        .map_err(MainRequestError::Internal)?;
                         continue;
                     }
                     return Err(MainRequestError::Fallback {
@@ -3045,7 +3081,12 @@ impl NativeAgentClient {
             }
             let status = response.status();
             let headers = response.headers().clone();
-            let text = response.text().await.unwrap_or_default();
+            let text = tokio::select! {
+                result = response.text() => result.unwrap_or_default(),
+                _ = self.turn_cancelled() => {
+                    return Err(MainRequestError::Internal(Self::turn_stopped_error()));
+                }
+            };
             let reasoning_mandatory = status == reqwest::StatusCode::BAD_REQUEST
                 && text.to_lowercase().contains("reasoning is mandatory")
                 && (body
@@ -3101,7 +3142,8 @@ impl NativeAgentClient {
                             &route.base_url,
                             Some(&provider_error),
                         )
-                        .await;
+                        .await
+                        .map_err(MainRequestError::Internal)?;
                         continue;
                     }
                     failure = retry_failure;
@@ -3222,7 +3264,7 @@ impl NativeAgentClient {
         failure: MainPoolFailure,
         base_url: &str,
         error: Option<&crate::retry_utils::ProviderError>,
-    ) {
+    ) -> Result<()> {
         let base = self.main_retry.backoff_base.as_secs_f64();
         let default_wait = if base <= 0.0 {
             0.0
@@ -3286,18 +3328,32 @@ impl NativeAgentClient {
                 .unwrap_or_else(|error| error.into_inner())
                 .record_transient("retry_wait", text);
         }
-        if wait > 0.0 {
-            tokio::time::sleep(std::time::Duration::from_secs_f64(wait)).await;
+        if self.is_turn_cancelled() {
+            return Err(Self::turn_stopped_error());
         }
+        if wait > 0.0 {
+            tokio::select! {
+                _ = tokio::time::sleep(std::time::Duration::from_secs_f64(wait)) => {}
+                _ = self.turn_cancelled() => return Err(Self::turn_stopped_error()),
+            }
+        }
+        Ok(())
     }
 
-    async fn wait_before_empty_response_retry(&self, attempt: i64) {
+    async fn wait_before_empty_response_retry(&self, attempt: i64) -> Result<()> {
         let base = self.empty_response.backoff_base.as_secs_f64();
         if base <= 0.0 {
-            return;
+            return if self.is_turn_cancelled() {
+                Err(Self::turn_stopped_error())
+            } else {
+                Ok(())
+            };
         }
         let wait = crate::retry_utils::jittered_backoff(attempt, base, 60.0, 0.5);
-        tokio::time::sleep(std::time::Duration::from_secs_f64(wait)).await;
+        tokio::select! {
+            _ = tokio::time::sleep(std::time::Duration::from_secs_f64(wait)) => Ok(()),
+            _ = self.turn_cancelled() => Err(Self::turn_stopped_error()),
+        }
     }
 
     /// Apply request hooks at the wire boundary so streaming and every tool
@@ -4907,6 +4963,7 @@ impl NativeAgentClient {
                 crate::native_tools::ToolTurnIdentity {
                     principal: Some(turn.principal),
                     route_key: turn.route_key,
+                    control: self.turn_control.as_deref(),
                 },
             )
             .await?;
@@ -4929,6 +4986,9 @@ impl NativeAgentClient {
         let mut disable_reasoning_once = false;
         let mut saw_visible_continuation_fragment = false;
         loop {
+            if self.is_turn_cancelled() {
+                return Err(Self::turn_stopped_error());
+            }
             if stale_stream_inner_attempts == 0 {
                 let active_index = self
                     .main_fallback
@@ -4995,7 +5055,8 @@ impl NativeAgentClient {
                         &route.model,
                         &dispatched.body,
                     );
-                    let outcome = forward_sse(
+                    let outcome = tokio::select! {
+                        result = forward_sse(
                         dispatched.response.bytes_stream(),
                         &events,
                         &dispatched.provider,
@@ -5003,8 +5064,11 @@ impl NativeAgentClient {
                         continuation_join_after.take(),
                         stream_inactivity_timeout,
                         stream_stale_timeout <= stream_inactivity_timeout,
-                    )
-                    .await?;
+                        ) => result?,
+                        _ = route.turn_cancelled() => {
+                            return Err(Self::turn_stopped_error());
+                        }
+                    };
                     (dispatched.route_index, route, dispatched.base_url, outcome)
                 }
                 Err(MainDispatchFailure::StreamInactivity {
@@ -5053,7 +5117,7 @@ impl NativeAgentClient {
                             &route.base_url,
                             None,
                         )
-                        .await;
+                        .await?;
                     continue;
                 }
                 if self
@@ -5317,7 +5381,7 @@ impl NativeAgentClient {
                     let route = self.main_route(route_index).unwrap_or_else(|| self.clone());
                     route
                         .wait_before_empty_response_retry(empty_stream_attempts as i64)
-                        .await;
+                        .await?;
                     continue;
                 }
                 if self
@@ -5377,7 +5441,7 @@ impl NativeAgentClient {
                 let route = self.main_route(route_index).unwrap_or_else(|| self.clone());
                 route
                     .wait_before_empty_response_retry(empty_retries as i64)
-                    .await;
+                    .await?;
                 continue;
             }
             if self
@@ -5437,6 +5501,12 @@ impl NativeAgentClient {
         turn_client.main_notices = std::sync::Arc::new(std::sync::Mutex::new(inherited_notices));
         turn_client.main_live_notice_tx =
             std::sync::Arc::new(std::sync::Mutex::new(Some(events.clone())));
+        turn_client.turn_control = context.turn_control.map(|control| {
+            // The registry owns the original Arc. TurnContext provides a
+            // borrowed view, so clone the shared cancellation handle for every
+            // frozen route clone in this turn.
+            std::sync::Arc::new(control.clone())
+        });
         turn_client.begin_run_budget_turn();
         turn_client.turn_reply_durable =
             std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
@@ -5628,6 +5698,10 @@ fn hermes_product_version() -> &'static str {
 
 #[async_trait]
 impl AgentClient for NativeAgentClient {
+    fn handles_turn_control(&self) -> bool {
+        true
+    }
+
     fn supports_structured_content(&self) -> bool {
         true
     }
@@ -6285,7 +6359,13 @@ impl ChatModel for NativeAgentClient {
                 .main_route(dispatched.route_index)
                 .unwrap_or_else(|| self.clone());
             let buffered_stale_timeout = dispatched.buffered_stale_timeout;
-            let decoded = dispatched.response.json::<Value>().await.map_err(|error| {
+            let decoded = tokio::select! {
+                result = dispatched.response.json::<Value>() => result,
+                _ = dispatched_route.turn_cancelled() => {
+                    return Err(Self::turn_stopped_error());
+                }
+            }
+            .map_err(|error| {
                 if error.is_timeout()
                     && buffered_stale_timeout.is_some_and(|stale| {
                         stale <= dispatched_route.main_timeouts.request_timeout()
@@ -6339,7 +6419,7 @@ impl ChatModel for NativeAgentClient {
                             .unwrap_or_else(|| self.clone());
                         route
                             .wait_before_empty_response_retry(invalid_attempts as i64)
-                            .await;
+                            .await?;
                         continue;
                     }
                     return Err(error);
@@ -6655,7 +6735,7 @@ impl ChatModel for NativeAgentClient {
                     .unwrap_or_else(|| self.clone());
                 route
                     .wait_before_empty_response_retry(empty_retries as i64)
-                    .await;
+                    .await?;
                 continue;
             }
             if self
@@ -7478,6 +7558,138 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn explicit_stop_cancels_main_retry_backoff_without_replaying_request() {
+        use crate::agent::AgentClient;
+        use axum::{
+            extract::State, http::StatusCode, response::IntoResponse, routing::post, Router,
+        };
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    (StatusCode::BAD_GATEWAY, "temporary server error").into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_main_retry_attempts(3)
+            .with_main_retry_backoff(std::time::Duration::from_secs(30));
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let controls = crate::turn_control::TurnControlRegistry::default();
+        let registration = controls.register("route");
+        let control = registration.control().clone();
+        let (tx, _rx) = tokio::sync::mpsc::channel(8);
+        let turn = tokio::spawn(async move {
+            client
+                .run_turn_with_context(
+                    crate::agent::TurnContext::default().with_turn_control(Some(control.as_ref())),
+                    &message,
+                    &[],
+                    tx,
+                )
+                .await
+        });
+
+        tokio::time::timeout(std::time::Duration::from_secs(2), async {
+            while calls.load(Ordering::SeqCst) == 0 {
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .unwrap();
+        assert_eq!(
+            controls.stop("route"),
+            crate::turn_control::StopOutcome::Requested
+        );
+        let error = tokio::time::timeout(std::time::Duration::from_secs(1), turn)
+            .await
+            .expect("stop should wake retry backoff")
+            .unwrap()
+            .unwrap_err();
+        assert_eq!(error.to_string(), "native agent turn stopped by user");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn explicit_stop_cancels_a_silent_provider_stream() {
+        use crate::agent::AgentClient;
+        use axum::{body::Body, extract::State, response::Response, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "text/event-stream")
+                        .body(Body::from_stream(futures_util::stream::pending::<
+                            std::result::Result<axum::body::Bytes, std::io::Error>,
+                        >()))
+                        .unwrap()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url).unwrap();
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let controls = crate::turn_control::TurnControlRegistry::default();
+        let registration = controls.register("route");
+        let control = registration.control().clone();
+        let (tx, _rx) = tokio::sync::mpsc::channel(8);
+        let turn = tokio::spawn(async move {
+            client
+                .run_turn_with_context(
+                    crate::agent::TurnContext::default().with_turn_control(Some(control.as_ref())),
+                    &message,
+                    &[],
+                    tx,
+                )
+                .await
+        });
+
+        tokio::time::timeout(std::time::Duration::from_secs(2), async {
+            while calls.load(Ordering::SeqCst) == 0 {
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .unwrap();
+        assert_eq!(
+            controls.stop("route"),
+            crate::turn_control::StopOutcome::Requested
+        );
+        let error = tokio::time::timeout(std::time::Duration::from_secs(1), turn)
+            .await
+            .expect("stop should wake silent stream")
+            .unwrap()
+            .unwrap_err();
+        assert_eq!(error.to_string(), "native agent turn stopped by user");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
     async fn terminal_unrelated_http_error_still_emits_nonretryable_status() {
         use crate::agent::AgentClient;
         use axum::{http::StatusCode, response::IntoResponse, routing::post, Router};
@@ -7537,7 +7749,8 @@ mod tests {
                 &client.base_url,
                 Some(&error),
             )
-            .await;
+            .await
+            .unwrap();
         assert!(rx.try_recv().is_err());
         client
             .wait_before_main_retry(
@@ -7547,7 +7760,8 @@ mod tests {
                 &client.base_url,
                 Some(&error),
             )
-            .await;
+            .await
+            .unwrap();
 
         let live = rx.try_recv().unwrap();
         assert!(matches!(

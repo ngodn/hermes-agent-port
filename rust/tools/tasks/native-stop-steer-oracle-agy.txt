@@ -1,0 +1,29 @@
+Own the Python behavioral-oracle lane for the next Rust port checkpoint. Do not
+edit Rust production code. Inspect and, where practical, execute the current
+Python Hermes gateway and AIAgent code to establish the exact contract for
+gateway /stop and /steer while a turn is running, with special attention to a
+provider retry/backoff wait, a provider-response wait, and a tool-call boundary.
+
+Answer these concrete questions with source paths and line numbers:
+
+1. How are /stop and /steer recognized, authorized, acknowledged, and routed?
+2. What state identifies the running conversation, who owns it, and when is it
+   created and cleared?
+3. During retry backoff and provider-response waits, what does stop do, what
+   does steer do, and what model/history/persistence effects occur?
+4. At a tool-call boundary, exactly when and in what role/content shape is a
+   steering message inserted? Does the original user message replay?
+5. What happens for idle sessions, concurrent duplicate commands, wrong users,
+   callback/send failures, and races with natural completion?
+6. Which output/ack strings and interrupt terminal strings are observable?
+
+Prefer real source-executed probes over copied simulations. If full gateway
+construction is too expensive, call real narrow Python functions/classes with
+minimal fixtures and clearly distinguish executed observations from source
+inference. Do not launch nested agents. Do not make network calls to providers.
+
+Write the complete report to:
+rust/analysis/native-stop-steer-oracle-agy.md
+
+Include a concise executable-test matrix suitable for Rust TDD. Do not modify
+PORT.md, INDEX.md, or any file outside the assigned report.
