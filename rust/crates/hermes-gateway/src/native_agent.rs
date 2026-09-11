@@ -1096,6 +1096,10 @@ enum MainRequestError {
         failure: MainPoolFailure,
         error: Error,
     },
+    StreamInactivity {
+        error: Error,
+        stale_strike: bool,
+    },
     Internal(Error),
 }
 
@@ -1110,7 +1114,25 @@ impl MainRequestError {
         match self {
             Self::Terminal(terminal) => terminal.into_error(),
             Self::Fallback { error, .. } => error,
+            Self::StreamInactivity { error, .. } => error,
             Self::Internal(error) => error,
+        }
+    }
+}
+
+enum MainDispatchFailure {
+    StreamInactivity {
+        route_index: usize,
+        error: Error,
+        stale_strike: bool,
+    },
+    Other(Error),
+}
+
+impl MainDispatchFailure {
+    fn into_error(self) -> Error {
+        match self {
+            Self::StreamInactivity { error, .. } | Self::Other(error) => error,
         }
     }
 }
@@ -1205,6 +1227,7 @@ impl MainPoolCredential {
 
 fn fresh_main_http_client() -> Result<reqwest::Client> {
     reqwest::Client::builder()
+        .connect_timeout(std::time::Duration::from_secs(15))
         .build()
         .map_err(|error| Error::Other(format!("native agent: build main HTTP client: {error}")))
 }
@@ -1674,6 +1697,13 @@ struct MainDispatch {
     response: reqwest::Response,
     provider: String,
     route_index: usize,
+    base_url: String,
+    body: Value,
+}
+
+struct MainSentResponse {
+    response: reqwest::Response,
+    base_url: String,
 }
 
 #[derive(Clone, Debug)]
@@ -1856,6 +1886,8 @@ pub struct NativeAgentClient {
     /// remainder of a tool loop and through any active cooldown.
     main_fallback: MainFallbackRoutes,
     main_retry: MainRetryPolicy,
+    main_timeouts: crate::main_provider_timeouts::Policy,
+    consecutive_stale_streams: std::sync::Arc<std::sync::atomic::AtomicUsize>,
     empty_response: MainEmptyResponsePolicy,
     provider_profile: Option<crate::provider_registry::ProviderProfile>,
     provider_identity: Option<String>,
@@ -1926,9 +1958,7 @@ impl NativeAgentClient {
         api_key: impl Into<String>,
         base_url: impl Into<String>,
     ) -> Result<Self> {
-        let client = reqwest::Client::builder()
-            .build()
-            .map_err(|e| Error::Other(format!("native agent: build http client: {e}")))?;
+        let client = fresh_main_http_client()?;
         Ok(Self {
             model: model.into(),
             api_key: api_key.into(),
@@ -1939,6 +1969,8 @@ impl NativeAgentClient {
             main_pool: None,
             main_fallback: Default::default(),
             main_retry: Default::default(),
+            main_timeouts: Default::default(),
+            consecutive_stale_streams: Default::default(),
             empty_response: Default::default(),
             provider_profile: None,
             provider_identity: None,
@@ -1985,9 +2017,7 @@ impl NativeAgentClient {
             .unwrap_or(fallback_base_url)
             .trim_end_matches('/')
             .to_owned();
-        self.client = reqwest::Client::builder()
-            .build()
-            .map_err(|error| Error::Other(format!("native agent: rebuild http client: {error}")))?;
+        self.client = fresh_main_http_client()?;
         self.compression_routes = Default::default();
         Ok(self)
     }
@@ -2140,6 +2170,31 @@ impl NativeAgentClient {
             route.main_retry = self.main_retry;
         }
         self
+    }
+
+    pub(crate) fn with_main_timeouts(
+        mut self,
+        timeouts: crate::main_provider_timeouts::Policy,
+    ) -> Self {
+        self.main_timeouts = timeouts;
+        self
+    }
+
+    fn reset_stale_stream_streak(&self) {
+        self.consecutive_stale_streams
+            .store(0, std::sync::atomic::Ordering::Release);
+    }
+
+    fn stale_stream_giveup_error(&self) -> Option<Error> {
+        let threshold = self.main_timeouts.stale_giveup();
+        let streak = self
+            .consecutive_stale_streams
+            .load(std::sync::atomic::Ordering::Acquire);
+        (threshold > 0 && streak >= threshold).then(|| {
+            Error::Other(format!(
+                "provider has been unresponsive for {streak} consecutive stale attempts; switch models or start a new session, then retry"
+            ))
+        })
     }
 
     pub(crate) fn with_empty_response_guard(mut self, value: &Value) -> Self {
@@ -2316,6 +2371,7 @@ impl NativeAgentClient {
         state.active = 0;
         state.cooldown_until = None;
         state.rate_limit_backoff_count = 0;
+        self.reset_stale_stream_streak();
     }
 
     fn main_route(&self, index: usize) -> Option<Self> {
@@ -2385,6 +2441,9 @@ impl NativeAgentClient {
     ) -> Option<usize> {
         let next = self.next_main_fallback_index(failed_index);
         if let Some(next) = next {
+            if let Some(failed) = self.main_route(failed_index) {
+                failed.reset_stale_stream_streak();
+            }
             let mut state = self
                 .main_fallback
                 .state
@@ -2422,6 +2481,9 @@ impl NativeAgentClient {
         _failure: MainSuccessBodyFailure,
     ) -> Option<usize> {
         let next = self.next_main_fallback_index(failed_index)?;
+        if let Some(failed) = self.main_route(failed_index) {
+            failed.reset_stale_stream_streak();
+        }
         self.main_fallback
             .state
             .lock()
@@ -2450,6 +2512,30 @@ impl NativeAgentClient {
     where
         F: Fn(&NativeAgentClient) -> Result<Value>,
     {
+        self.dispatch_main_turn_inner(label, false, build_body)
+            .await
+            .map_err(MainDispatchFailure::into_error)
+    }
+
+    async fn dispatch_main_stream_turn<F>(
+        &self,
+        build_body: F,
+    ) -> std::result::Result<MainDispatch, MainDispatchFailure>
+    where
+        F: Fn(&NativeAgentClient) -> Result<Value>,
+    {
+        self.dispatch_main_turn_inner("", true, build_body).await
+    }
+
+    async fn dispatch_main_turn_inner<F>(
+        &self,
+        label: &str,
+        expose_stream_stale: bool,
+        build_body: F,
+    ) -> std::result::Result<MainDispatch, MainDispatchFailure>
+    where
+        F: Fn(&NativeAgentClient) -> Result<Value>,
+    {
         let mut index = self
             .main_fallback
             .state
@@ -2460,26 +2546,28 @@ impl NativeAgentClient {
             let route = self
                 .main_route(index)
                 .unwrap_or_else(|| self.main_route(0).expect("primary main route"));
-            let body = build_body(&route)?;
+            let body = build_body(&route).map_err(MainDispatchFailure::Other)?;
             let has_fallback = self.next_main_fallback_index(index).is_some();
             match route.send_main_request(&body, label, has_fallback).await {
-                Ok(response) => {
+                Ok(sent) => {
                     self.main_fallback
                         .state
                         .lock()
                         .unwrap_or_else(|error| error.into_inner())
                         .active = index;
                     return Ok(MainDispatch {
-                        response,
+                        response: sent.response,
                         provider: route.provider_name().to_owned(),
                         route_index: index,
+                        base_url: sent.base_url,
+                        body,
                     });
                 }
                 Err(MainRequestError::Terminal(terminal))
                     if terminal.class.activates_provider_fallback() =>
                 {
                     let Some(next) = self.activate_main_fallback(index, terminal.class) else {
-                        return Err(terminal.into_error());
+                        return Err(MainDispatchFailure::Other(terminal.into_error()));
                     };
                     index = next;
                 }
@@ -2487,11 +2575,21 @@ impl NativeAgentClient {
                     if failure.activates_provider_fallback() =>
                 {
                     let Some(next) = self.activate_main_fallback(index, failure) else {
-                        return Err(error);
+                        return Err(MainDispatchFailure::Other(error));
                     };
                     index = next;
                 }
-                Err(error) => return Err(error.into_error()),
+                Err(MainRequestError::StreamInactivity {
+                    error,
+                    stale_strike,
+                }) if expose_stream_stale => {
+                    return Err(MainDispatchFailure::StreamInactivity {
+                        route_index: index,
+                        error,
+                        stale_strike,
+                    });
+                }
+                Err(error) => return Err(MainDispatchFailure::Other(error.into_error())),
             }
         }
     }
@@ -2501,7 +2599,7 @@ impl NativeAgentClient {
         body: &Value,
         label: &str,
         has_fallback: bool,
-    ) -> std::result::Result<reqwest::Response, MainRequestError> {
+    ) -> std::result::Result<MainSentResponse, MainRequestError> {
         let operation = if label.is_empty() { "" } else { " step" };
         let mut retried_429 = std::collections::HashSet::<(String, String)>::new();
         let mut recovery_attempts = std::collections::HashMap::<(String, String), usize>::new();
@@ -2523,17 +2621,87 @@ impl NativeAgentClient {
             // durable row identity. This key is request-local and never logged.
             let identity = (route.credential_id.clone(), route.api_key.clone());
             let url = format!("{}/chat/completions", route.base_url);
-            let response = match route
+            let mut request = route
                 .client
                 .post(url)
                 .bearer_auth(&route.api_key)
                 .headers(self.headers_for_main_route(&route.base_url))
-                .json(body)
-                .send()
-                .await
-            {
+                .json(body);
+            let buffered_stale_timeout = (!label.is_empty())
+                .then(|| {
+                    self.main_timeouts
+                        .buffered_stale_timeout(&route.base_url, body)
+                })
+                .flatten();
+            let stream_stale_timeout = label.is_empty().then(|| {
+                self.main_timeouts
+                    .stream_stale_timeout(&route.base_url, &self.model, body)
+            });
+            let stream_inactivity_timeout = label.is_empty().then(|| {
+                self.main_timeouts
+                    .stream_inactivity_timeout(&route.base_url, &self.model, body)
+            });
+            if !label.is_empty() {
+                request = request.timeout(
+                    buffered_stale_timeout.map_or(self.main_timeouts.request_timeout(), |stale| {
+                        stale.min(self.main_timeouts.request_timeout())
+                    }),
+                );
+            }
+            let sent = if label.is_empty() {
+                let request_timeout = self.main_timeouts.request_timeout();
+                let header_timeout = stream_inactivity_timeout
+                    .map_or(request_timeout, |stale| stale.min(request_timeout));
+                match tokio::time::timeout(header_timeout, request.send()).await {
+                    Ok(sent) => sent,
+                    Err(_) => {
+                        let failure = MainPoolFailure::Transport;
+                        let stale_strike = stream_stale_timeout.is_some_and(|stale| {
+                            stale <= request_timeout
+                                && stream_inactivity_timeout.is_some_and(|read| stale <= read)
+                        });
+                        if stream_inactivity_timeout
+                            .is_some_and(|inactivity| inactivity <= request_timeout)
+                        {
+                            return Err(MainRequestError::StreamInactivity {
+                                error: Error::Other(format!(
+                                    "native agent provider stream remained inactive before response headers after {:.3}s",
+                                    header_timeout.as_secs_f64()
+                                )),
+                                stale_strike,
+                            });
+                        }
+                        request_failures = request_failures.saturating_add(1);
+                        let error = Error::Other(format!(
+                            "native agent request timed out before response headers after {:.3}s",
+                            request_timeout.as_secs_f64()
+                        ));
+                        let attempt_limit = main_attempt_limit(failure, max_attempts, has_fallback);
+                        if request_failures < attempt_limit {
+                            self.wait_before_main_retry(
+                                request_failures as i64,
+                                &route.base_url,
+                                None,
+                            )
+                            .await;
+                            continue;
+                        }
+                        return Err(MainRequestError::Fallback { failure, error });
+                    }
+                }
+            } else {
+                request.send().await
+            };
+            let response = match sent {
                 Ok(response) => response,
                 Err(error) => {
+                    if error.is_timeout()
+                        && buffered_stale_timeout
+                            .is_some_and(|stale| stale <= self.main_timeouts.request_timeout())
+                    {
+                        self.consecutive_stale_streams
+                            .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
+                    }
                     let failure = main_transport_retry_failure(&main_error_chain(&error));
                     request_failures += 1;
                     let error = Error::Other(format!("native agent{operation} request: {error}"));
@@ -2550,7 +2718,10 @@ impl NativeAgentClient {
                 }
             };
             if response.status().is_success() {
-                return Ok(response);
+                return Ok(MainSentResponse {
+                    response,
+                    base_url: route.base_url,
+                });
             }
             let status = response.status();
             let headers = response.headers().clone();
@@ -4314,6 +4485,8 @@ impl NativeAgentClient {
         let mut empty_retries = 0_usize;
         let mut thinking_prefill_retries = 0_usize;
         let mut empty_stream_attempts = 0_usize;
+        let mut stale_stream_inner_attempts = 0_usize;
+        let mut stale_stream_outer_failures = 0_usize;
         let mut last_reasoning = None;
         let mut request_messages = history.clone();
         request_messages.push(json!({"role":"user", "content":content}));
@@ -4321,8 +4494,32 @@ impl NativeAgentClient {
         let mut continuation_join_after = None;
         let mut continuation_messages = Vec::new();
         loop {
-            let dispatched = self
-                .dispatch_main_turn("", |route| {
+            if stale_stream_inner_attempts == 0 {
+                let active_index = self
+                    .main_fallback
+                    .state
+                    .lock()
+                    .unwrap_or_else(|error| error.into_inner())
+                    .active;
+                let route = self
+                    .main_route(active_index)
+                    .unwrap_or_else(|| self.clone());
+                if let Some(error) = route.stale_stream_giveup_error() {
+                    if self
+                        .activate_main_success_body_fallback(
+                            active_index,
+                            MainSuccessBodyFailure::InvalidResponse,
+                        )
+                        .is_some()
+                    {
+                        stale_stream_outer_failures = 0;
+                        continue;
+                    }
+                    return Err(error);
+                }
+            }
+            let dispatch = self
+                .dispatch_main_stream_turn(|route| {
                     let messages = route.route_messages(&request_messages);
                     let mut body = json!({
                         "model":route.model,
@@ -4342,16 +4539,107 @@ impl NativeAgentClient {
                     }
                     Ok(body)
                 })
-                .await?;
+                .await;
 
-            let mut outcome = forward_sse(
-                dispatched.response.bytes_stream(),
-                &events,
-                &dispatched.provider,
-                false,
-                continuation_join_after.take(),
-            )
-            .await?;
+            let (route_index, route, mut outcome) = match dispatch {
+                Ok(dispatched) => {
+                    let route = self
+                        .main_route(dispatched.route_index)
+                        .unwrap_or_else(|| self.clone());
+                    let stream_stale_timeout = route.main_timeouts.stream_stale_timeout(
+                        &dispatched.base_url,
+                        &route.model,
+                        &dispatched.body,
+                    );
+                    let stream_inactivity_timeout = route.main_timeouts.stream_inactivity_timeout(
+                        &dispatched.base_url,
+                        &route.model,
+                        &dispatched.body,
+                    );
+                    let outcome = forward_sse(
+                        dispatched.response.bytes_stream(),
+                        &events,
+                        &dispatched.provider,
+                        false,
+                        continuation_join_after.take(),
+                        stream_inactivity_timeout,
+                        stream_stale_timeout <= stream_inactivity_timeout,
+                    )
+                    .await?;
+                    (dispatched.route_index, route, outcome)
+                }
+                Err(MainDispatchFailure::StreamInactivity {
+                    route_index,
+                    error: _,
+                    stale_strike,
+                }) => {
+                    let route = self.main_route(route_index).unwrap_or_else(|| self.clone());
+                    (
+                        route_index,
+                        route,
+                        MainStreamOutcome {
+                            stalled: true,
+                            stale_strike,
+                            ..Default::default()
+                        },
+                    )
+                }
+                Err(MainDispatchFailure::Other(error)) => return Err(error),
+            };
+            if outcome.stalled && !outcome.visible {
+                if outcome.stale_strike {
+                    route
+                        .consecutive_stale_streams
+                        .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
+                }
+                stale_stream_inner_attempts = stale_stream_inner_attempts.saturating_add(1);
+                if stale_stream_inner_attempts < route.main_timeouts.stream_attempts() {
+                    continue;
+                }
+                stale_stream_inner_attempts = 0;
+                stale_stream_outer_failures = stale_stream_outer_failures.saturating_add(1);
+                let outer_limit = if self.next_main_fallback_index(route_index).is_some() {
+                    route.main_retry.max_attempts.min(2)
+                } else {
+                    route.main_retry.max_attempts
+                };
+                if stale_stream_outer_failures < outer_limit {
+                    route
+                        .wait_before_main_retry(
+                            stale_stream_outer_failures as i64,
+                            &route.base_url,
+                            None,
+                        )
+                        .await;
+                    continue;
+                }
+                if self
+                    .activate_main_success_body_fallback(
+                        route_index,
+                        MainSuccessBodyFailure::InvalidResponse,
+                    )
+                    .is_some()
+                {
+                    stale_stream_outer_failures = 0;
+                    empty_attempts.clear();
+                    empty_retries = 0;
+                    empty_stream_attempts = 0;
+                    last_reasoning = None;
+                    continue;
+                }
+                return Err(Error::Other(format!(
+                    "native agent provider stream remained stale after {} attempts",
+                    route
+                        .main_timeouts
+                        .stream_attempts()
+                        .saturating_mul(outer_limit)
+                )));
+            }
+            stale_stream_inner_attempts = 0;
+            stale_stream_outer_failures = 0;
+            if outcome.visible || outcome.observed_generation || !outcome.finish_reason.is_empty() {
+                route.reset_stale_stream_streak();
+            }
             let content_policy_refusal = outcome.finish_reason == "content_filter"
                 || outcome.refusal.as_deref().is_some_and(|refusal| {
                     !refusal.trim().is_empty() && !outcome.observed_generation
@@ -4424,7 +4712,7 @@ impl NativeAgentClient {
             if content_policy_refusal {
                 if self
                     .activate_main_success_body_fallback(
-                        dispatched.route_index,
+                        route_index,
                         MainSuccessBodyFailure::ContentPolicyRefusal,
                     )
                     .is_some()
@@ -4462,9 +4750,7 @@ impl NativeAgentClient {
             if outcome.finish_reason.is_empty() && !outcome.observed_generation {
                 empty_stream_attempts = empty_stream_attempts.saturating_add(1);
                 if empty_stream_attempts < 3 {
-                    let route = self
-                        .main_route(dispatched.route_index)
-                        .unwrap_or_else(|| self.clone());
+                    let route = self.main_route(route_index).unwrap_or_else(|| self.clone());
                     route
                         .wait_before_empty_response_retry(empty_stream_attempts as i64)
                         .await;
@@ -4472,7 +4758,7 @@ impl NativeAgentClient {
                 }
                 if self
                     .activate_main_success_body_fallback(
-                        dispatched.route_index,
+                        route_index,
                         MainSuccessBodyFailure::InvalidResponse,
                     )
                     .is_some()
@@ -4513,7 +4799,7 @@ impl NativeAgentClient {
                     )
                 });
             empty_attempts.push(MainEmptyAttempt {
-                route_index: dispatched.route_index,
+                route_index,
                 finish_reason: outcome.finish_reason,
                 usage_present,
                 zero_output,
@@ -4524,9 +4810,7 @@ impl NativeAgentClient {
                 main_empty_is_deterministic(&empty_attempts, self.empty_response.enabled);
             if !deterministic && empty_retries < self.empty_response.retry_budget {
                 empty_retries = empty_retries.saturating_add(1);
-                let route = self
-                    .main_route(dispatched.route_index)
-                    .unwrap_or_else(|| self.clone());
+                let route = self.main_route(route_index).unwrap_or_else(|| self.clone());
                 route
                     .wait_before_empty_response_retry(empty_retries as i64)
                     .await;
@@ -4534,7 +4818,7 @@ impl NativeAgentClient {
             }
             if self
                 .activate_main_success_body_fallback(
-                    dispatched.route_index,
+                    route_index,
                     MainSuccessBodyFailure::InvalidResponse,
                 )
                 .is_some()
@@ -5064,6 +5348,8 @@ struct MainStreamOutcome {
     refusal: Option<String>,
     reasoning: String,
     raw_content: String,
+    stalled: bool,
+    stale_strike: bool,
 }
 
 fn observe_main_sse_line(line: &str, outcome: &mut MainStreamOutcome) {
@@ -5118,12 +5404,26 @@ fn observe_main_sse_line(line: &str, outcome: &mut MainStreamOutcome) {
     }
 }
 
+fn main_sse_line_is_activity(line: &str) -> bool {
+    let Some(payload) = line
+        .trim_end_matches(['\r', '\n'])
+        .strip_prefix("data:")
+        .map(str::trim)
+        .filter(|payload| !payload.is_empty())
+    else {
+        return false;
+    };
+    payload == "[DONE]" || serde_json::from_str::<Value>(payload).is_ok()
+}
+
 async fn forward_sse<S, E>(
     mut stream: S,
     events: &mpsc::Sender<StreamEvent>,
     provider: &str,
     emit_stop: bool,
     mut join_after: Option<char>,
+    stale_timeout: std::time::Duration,
+    stale_strike: bool,
 ) -> Result<MainStreamOutcome>
 where
     S: futures_util::Stream<Item = std::result::Result<axum::body::Bytes, E>> + Unpin,
@@ -5136,12 +5436,28 @@ where
     let mut done = false;
     let mut outcome = MainStreamOutcome::default();
     let mut scrubber = crate::think_scrubber::ThinkScrubber::default();
-    while let Some(chunk) = stream.next().await {
+    let mut stale_deadline = tokio::time::Instant::now() + stale_timeout;
+    loop {
+        let chunk = match tokio::time::timeout_at(stale_deadline, stream.next()).await {
+            Ok(Some(chunk)) => chunk,
+            Ok(None) => break,
+            Err(_) => {
+                outcome.stalled = true;
+                outcome.stale_strike = stale_strike;
+                if outcome.visible {
+                    outcome.finish_reason = "length".into();
+                }
+                break;
+            }
+        };
         let chunk = chunk.map_err(|e| Error::Other(format!("native agent stream: {e}")))?;
         buf.extend_from_slice(&chunk);
         while let Some(nl) = buf.iter().position(|byte| *byte == b'\n') {
             let line: Vec<u8> = buf.drain(..=nl).collect();
             let line = String::from_utf8_lossy(&line);
+            if main_sse_line_is_activity(&line) {
+                stale_deadline = tokio::time::Instant::now() + stale_timeout;
+            }
             observe_main_sse_line(&line, &mut outcome);
             if let Some(found) = crate::provider_usage::from_sse_line(
                 &line,
@@ -5260,6 +5576,28 @@ impl ChatModel for NativeAgentClient {
         let mut length_continue_retries = 0_usize;
         let mut truncated_tool_call_retries = 0_usize;
         loop {
+            let active_index = self
+                .main_fallback
+                .state
+                .lock()
+                .unwrap_or_else(|error| error.into_inner())
+                .active;
+            let active_route = self
+                .main_route(active_index)
+                .unwrap_or_else(|| self.clone());
+            if let Some(error) = active_route.stale_stream_giveup_error() {
+                if self
+                    .activate_main_success_body_fallback(
+                        active_index,
+                        MainSuccessBodyFailure::InvalidResponse,
+                    )
+                    .is_some()
+                {
+                    invalid_attempts = 0;
+                    continue;
+                }
+                return Err(error);
+            }
             let dispatched = self
                 .dispatch_main_turn("step", |route| {
                     let routed_messages = route.route_messages(&request_messages);
@@ -5293,11 +5631,24 @@ impl ChatModel for NativeAgentClient {
                     Ok(body)
                 })
                 .await?;
-            let decoded = dispatched
-                .response
-                .json::<Value>()
-                .await
-                .map_err(|error| Error::Other(format!("native agent step decode: {error}")));
+            let dispatched_route = self
+                .main_route(dispatched.route_index)
+                .unwrap_or_else(|| self.clone());
+            let buffered_stale_timeout = dispatched_route
+                .main_timeouts
+                .buffered_stale_timeout(&dispatched.base_url, &dispatched.body);
+            let decoded = dispatched.response.json::<Value>().await.map_err(|error| {
+                if error.is_timeout()
+                    && buffered_stale_timeout.is_some_and(|stale| {
+                        stale <= dispatched_route.main_timeouts.request_timeout()
+                    })
+                {
+                    dispatched_route
+                        .consecutive_stale_streams
+                        .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
+                }
+                Error::Other(format!("native agent step decode: {error}"))
+            });
             let (value, mut message) = match decoded.and_then(|value| {
                 let message = value
                     .get("choices")
@@ -5346,6 +5697,7 @@ impl ChatModel for NativeAgentClient {
                     return Err(error);
                 }
             };
+            dispatched_route.reset_stale_stream_streak();
             let choice = &value["choices"][0];
             if let Some(failure) = main_success_body_failure(choice, &message) {
                 if self.usage_bucket != UsageBucket::Main {
@@ -6386,6 +6738,299 @@ mod tests {
         assert_eq!(durable[1]["finish_reason"], "length");
         drop(database);
         let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn postvisible_stale_stream_uses_length_continuation_without_replay() {
+        use crate::agent::AgentClient;
+        use axum::{body::Body, extract::State, response::Response, routing::post, Router};
+        use futures_util::StreamExt;
+        use std::convert::Infallible;
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     axum::Json(body): axum::Json<serde_json::Value>| async move {
+                        let attempt = {
+                            let mut bodies = bodies.lock().unwrap();
+                            bodies.push(body);
+                            bodies.len()
+                        };
+                        let body = if attempt == 1 {
+                            Body::from_stream(
+                                futures_util::stream::once(async {
+                                    Ok::<_, Infallible>(axum::body::Bytes::from_static(
+                                        b"data: {\"choices\":[{\"delta\":{\"content\":\"part one\"}}]}\n\n",
+                                    ))
+                                })
+                                .chain(futures_util::stream::pending()),
+                            )
+                        } else {
+                            Body::from(
+                                "data: {\"choices\":[{\"delta\":{\"content\":\"part two\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                            )
+                        };
+                        Response::builder()
+                            .header("content-type", "text/event-stream")
+                            .body(body)
+                            .unwrap()
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let policy = crate::main_provider_timeouts::Policy::resolve(
+            &serde_json::json!({"providers":{"fixture":{"models":{"model":{
+                "stale_timeout_seconds":0.03
+            }}}}}),
+            "fixture",
+            "model",
+            |_| None,
+        );
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_timeouts(policy)
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user", "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        tokio::time::timeout(
+            std::time::Duration::from_millis(500),
+            client.run_turn(&message, &[], tx),
+        )
+        .await
+        .expect("postvisible stale stream must become a bounded continuation")
+        .unwrap();
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert_eq!(answer, "part one\npart two");
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2, "the visible fragment must not be replayed");
+        assert_eq!(bodies[1]["messages"][1]["content"], "part one");
+        assert_eq!(
+            bodies[1]["messages"][2]["content"],
+            super::MAIN_LENGTH_CONTINUATION_PROMPT
+        );
+    }
+
+    #[tokio::test]
+    async fn stale_stream_breaker_survives_turns_and_stops_network_replay() {
+        use crate::agent::AgentClient;
+        use axum::{body::Body, extract::State, response::Response, routing::post, Router};
+        use std::convert::Infallible;
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "text/event-stream")
+                        .body(Body::from_stream(futures_util::stream::pending::<
+                            std::result::Result<axum::body::Bytes, Infallible>,
+                        >()))
+                        .unwrap()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let policy = crate::main_provider_timeouts::Policy::resolve(
+            &serde_json::json!({
+                "providers":{"fixture":{"models":{"model":{
+                    "stale_timeout_seconds":0.02
+                }}}}
+            }),
+            "fixture",
+            "model",
+            |name| match name {
+                "HERMES_STREAM_RETRIES" => Some("0".into()),
+                "HERMES_STREAM_STALE_GIVEUP" => Some("2".into()),
+                _ => None,
+            },
+        );
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_timeouts(policy)
+            .with_main_retry_attempts(3)
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user", "text":"question"
+        }))
+        .unwrap();
+
+        for expected_calls in [2, 2] {
+            let (tx, _rx) = tokio::sync::mpsc::channel(4);
+            let error = tokio::time::timeout(
+                std::time::Duration::from_millis(300),
+                client.run_turn(&message, &[], tx),
+            )
+            .await
+            .expect("the stale breaker must be bounded")
+            .unwrap_err();
+            assert!(error.to_string().contains("consecutive stale attempts"));
+            assert_eq!(calls.load(Ordering::SeqCst), expected_calls);
+        }
+    }
+
+    #[tokio::test]
+    async fn preheader_stale_uses_stream_retry_batch_before_fallback() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+                    ([
+                        ("content-type", "text/event-stream"),
+                    ], "data: {\"choices\":[{\"delta\":{\"content\":\"late\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n")
+                        .into_response()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    ([
+                        ("content-type", "text/event-stream"),
+                    ], "data: {\"choices\":[{\"delta\":{\"content\":\"fallback\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n")
+                        .into_response()
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve_main_retry(primary).await;
+        let (fallback_url, _fallback_server) = serve_main_retry(fallback).await;
+        let policy = crate::main_provider_timeouts::Policy::resolve(
+            &serde_json::json!({"providers":{"fixture":{"models":{"model":{
+                "timeout_seconds":2, "stale_timeout_seconds":0.02
+            }}}}}),
+            "fixture",
+            "model",
+            |_| None,
+        );
+        let fallback = super::NativeAgentClient::new("fallback", "key", fallback_url)
+            .unwrap()
+            .with_provider_identity("fallback");
+        let client = super::NativeAgentClient::new("model", "key", primary_url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_timeouts(policy)
+            .with_main_fallback_routes(vec![fallback])
+            .with_main_retry_attempts(1)
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user", "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        tokio::time::timeout(
+            std::time::Duration::from_millis(500),
+            client.run_turn(&message, &[], tx),
+        )
+        .await
+        .expect("preheader stale replay must be bounded")
+        .unwrap();
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert_eq!(answer, "fallback");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 3);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn buffered_stale_breaker_stops_retries_and_survives_calls() {
+        use super::ChatModel;
+        use axum::{body::Body, extract::State, response::Response, routing::post, Router};
+        use futures_util::StreamExt;
+        use std::convert::Infallible;
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "application/json")
+                        .body(Body::from_stream(
+                            futures_util::stream::once(async {
+                                Ok::<_, Infallible>(axum::body::Bytes::from_static(
+                                    b"{\"choices\":[",
+                                ))
+                            })
+                            .chain(futures_util::stream::pending()),
+                        ))
+                        .unwrap()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let policy = crate::main_provider_timeouts::Policy::resolve(
+            &serde_json::json!({
+                "providers":{"fixture":{"models":{"model":{
+                    "timeout_seconds":2, "stale_timeout_seconds":0.02
+                }}}}
+            }),
+            "fixture",
+            "model",
+            |name| (name == "HERMES_STREAM_STALE_GIVEUP").then(|| "2".into()),
+        );
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_timeouts(policy)
+            .with_main_retry_attempts(4)
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let messages = [serde_json::json!({"role":"user", "content":"question"})];
+        let tools = [serde_json::json!({
+            "type":"function", "function":{"name":"fixture", "parameters":{"type":"object"}}
+        })];
+
+        for expected_calls in [2, 2] {
+            let error = tokio::time::timeout(
+                std::time::Duration::from_millis(300),
+                client.step(&messages, &tools),
+            )
+            .await
+            .expect("the buffered stale breaker must be bounded")
+            .unwrap_err();
+            assert!(error.to_string().contains("consecutive stale attempts"));
+            assert_eq!(calls.load(Ordering::SeqCst), expected_calls);
+        }
     }
 
     #[tokio::test]
@@ -11400,9 +12045,17 @@ mod tests {
                     .map(|byte| Ok(axum::body::Bytes::from(vec![byte])))
                     .collect();
                 let (tx, mut rx) = tokio::sync::mpsc::channel(16);
-                super::forward_sse(futures_util::stream::iter(chunks), &tx, "", true, None)
-                    .await
-                    .unwrap();
+                super::forward_sse(
+                    futures_util::stream::iter(chunks),
+                    &tx,
+                    "",
+                    true,
+                    None,
+                    std::time::Duration::from_secs(180),
+                    true,
+                )
+                .await
+                .unwrap();
                 drop(tx);
                 let mut visible = String::new();
                 let mut stops = 0;
@@ -11420,6 +12073,40 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn sse_comments_do_not_reset_the_provider_activity_deadline() {
+        use futures_util::StreamExt;
+
+        let comments = futures_util::stream::unfold((), |_| async {
+            tokio::time::sleep(std::time::Duration::from_millis(5)).await;
+            Some((
+                Ok::<_, std::io::Error>(axum::body::Bytes::from_static(b": keepalive\n\n")),
+                (),
+            ))
+        })
+        .boxed();
+        let (tx, _rx) = tokio::sync::mpsc::channel(4);
+
+        let outcome = tokio::time::timeout(
+            std::time::Duration::from_millis(500),
+            super::forward_sse(
+                comments,
+                &tx,
+                "fixture",
+                false,
+                None,
+                std::time::Duration::from_millis(30),
+                true,
+            ),
+        )
+        .await
+        .expect("SSE comments must not keep the inactivity timer alive")
+        .unwrap();
+
+        assert!(outcome.stalled);
+        assert!(!outcome.visible);
+    }
+
+    #[tokio::test]
     async fn streaming_unicode_survives_every_byte_boundary() {
         use hermes_core::StreamEvent;
         let expected = "你好🙂café";
@@ -11434,9 +12121,17 @@ mod tests {
                     Ok(axum::body::Bytes::copy_from_slice(&bytes[cut..])),
                 ];
                 let (tx, mut rx) = tokio::sync::mpsc::channel(8);
-                super::forward_sse(futures_util::stream::iter(chunks), &tx, "", true, None)
-                    .await
-                    .unwrap();
+                super::forward_sse(
+                    futures_util::stream::iter(chunks),
+                    &tx,
+                    "",
+                    true,
+                    None,
+                    std::time::Duration::from_secs(180),
+                    true,
+                )
+                .await
+                .unwrap();
                 drop(tx);
                 let mut text = String::new();
                 let mut stopped = false;

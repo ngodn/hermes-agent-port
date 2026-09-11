@@ -84,6 +84,7 @@ mod install_identity;
 mod kanban_watchers;
 mod lifecycle_ledger;
 mod local_probe;
+mod main_provider_timeouts;
 mod managed_capabilities;
 mod managed_catalog;
 mod media;
@@ -1073,8 +1074,13 @@ fn build_native_main_fallback_client(
         .to_owned();
 
     let reasoning_config = reasoning_effort::resolve_config(user_config, model);
+    let main_timeouts =
+        main_provider_timeouts::Policy::resolve(user_config, actual_provider, model, |name| {
+            environment(name).or_else(|| dotenv.get(name).cloned())
+        });
     let mut client = NativeAgentClient::new(model, api_key, &base_url)?
         .with_provider_identity(actual_provider)
+        .with_main_timeouts(main_timeouts)
         .with_reasoning_config(reasoning_config)
         .with_reasoning_echo(
             entry.reasoning_echo || reasoning_replay::needs_echo(actual_provider, model, &base_url),
@@ -1332,8 +1338,15 @@ fn build_agent_client_for_home_with_discovery(
                         user_config,
                         environment("HERMES_MAX_ITERATIONS").as_deref(),
                     )?;
+                    let main_timeouts = main_provider_timeouts::Policy::resolve(
+                        user_config,
+                        provider_identity,
+                        model,
+                        |name| environment(name).or_else(|| dotenv.get(name).cloned()),
+                    );
                     let client = client
                         .with_provider_identity(provider_identity)
+                        .with_main_timeouts(main_timeouts)
                         .with_turn_limit(limit)
                         .with_main_retry_attempts(native_agent::main_retry_attempts(
                             &user_config["agent"]["api_max_retries"],
@@ -2638,6 +2651,380 @@ mod startup_tests {
 
         assert_eq!(reply, "configured");
         assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn native_agent_applies_model_request_timeout_before_main_fallback() {
+        use axum::{body::Body, extract::State, response::Response, routing::post, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        async fn serve(app: Router) -> (String, Server) {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+                    Response::builder()
+                        .header("content-type", "text/event-stream")
+                        .body(Body::from(
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"late primary\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                        ))
+                        .unwrap()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "text/event-stream")
+                        .body(Body::from(
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"fallback after timeout\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                        ))
+                        .unwrap()
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve(primary).await;
+        let (fallback_url, _fallback_server) = serve(fallback).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = TempHome(std::env::temp_dir().join(format!(
+            "hermes-main-request-timeout-{}-{nonce}",
+            std::process::id()
+        )));
+        std::fs::create_dir_all(&home.0).unwrap();
+
+        let mut config = native_config();
+        config.llm_api_key = Some("primary-key".into());
+        config.llm_base_url = Some(primary_url);
+        let user_config = json!({
+            "agent":{"api_max_retries":1},
+            "model":{"provider":"openrouter"},
+            "providers":{"openrouter":{"models":{
+                "primary-model":{"timeout_seconds":0.05}
+            }}},
+            "fallback_providers":[{
+                "provider":"custom", "model":"fallback-model",
+                "base_url":fallback_url, "api_key":"fallback-key"
+            }]
+        });
+        let agent = build_agent_client_for_home(
+            &config,
+            &user_config,
+            Some("primary-model"),
+            &home.0,
+            Some(NativeConversationState {
+                system_prompt: "stable\n\nModel: primary-model\nProvider: openrouter".into(),
+                tools: Vec::new(),
+                plugin_prompt: Default::default(),
+                extension_host: None,
+                hooks: None,
+                platform: "cli".into(),
+                context_length: 256_000,
+            }),
+        )
+        .unwrap();
+        let message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"hello"
+        }))
+        .unwrap();
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+        tokio::time::timeout(
+            std::time::Duration::from_millis(500),
+            agent.run_turn(&message, &[], sender),
+        )
+        .await
+        .expect("configured request timeout must end the hung primary")
+        .unwrap();
+        let mut reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+
+        assert_eq!(reply, "fallback after timeout");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 3);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn native_agent_applies_buffered_stale_timeout_while_reading_response_body() {
+        use axum::{body::Body, extract::State, response::Response, routing::post, Json, Router};
+        use futures_util::StreamExt;
+        use std::convert::Infallible;
+        use std::sync::atomic::{AtomicUsize, Ordering};
+
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        async fn serve(app: Router) -> (String, Server) {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "application/json")
+                        .body(Body::from_stream(
+                            futures_util::stream::once(async {
+                                Ok::<_, Infallible>(axum::body::Bytes::from_static(
+                                    b"{\"choices\":[",
+                                ))
+                            })
+                            .chain(futures_util::stream::pending()),
+                        ))
+                        .unwrap()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(json!({"choices":[{"message":{
+                        "role":"assistant", "content":"fallback after buffered stall"
+                    }}]}))
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve(primary).await;
+        let (fallback_url, _fallback_server) = serve(fallback).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = TempHome(std::env::temp_dir().join(format!(
+            "hermes-main-buffered-stall-{}-{nonce}",
+            std::process::id()
+        )));
+        std::fs::create_dir_all(&home.0).unwrap();
+
+        let mut config = native_config();
+        config.llm_api_key = Some("primary-key".into());
+        config.llm_base_url = Some(primary_url);
+        config.agent_tools = true;
+        let user_config = json!({
+            "agent":{"api_max_retries":1},
+            "model":{"provider":"openrouter"},
+            "providers":{"openrouter":{"models":{
+                "primary-model":{"timeout_seconds":2, "stale_timeout_seconds":0.05}
+            }}},
+            "fallback_providers":[{
+                "provider":"custom", "model":"fallback-model",
+                "base_url":fallback_url, "api_key":"fallback-key"
+            }]
+        });
+        let agent = build_agent_client_for_home(
+            &config,
+            &user_config,
+            Some("primary-model"),
+            &home.0,
+            Some(NativeConversationState {
+                system_prompt: "stable\n\nModel: primary-model\nProvider: openrouter".into(),
+                tools: vec![Arc::new(native_tools::CurrentTimeTool)],
+                plugin_prompt: Default::default(),
+                extension_host: None,
+                hooks: None,
+                platform: "cli".into(),
+                context_length: 256_000,
+            }),
+        )
+        .unwrap();
+        let message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"hello"
+        }))
+        .unwrap();
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+
+        tokio::time::timeout(
+            std::time::Duration::from_millis(500),
+            agent.run_turn(&message, &[], sender),
+        )
+        .await
+        .expect("buffered stale timeout must cover response-body reads")
+        .unwrap();
+        let mut reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+
+        assert_eq!(reply, "fallback after buffered stall");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn native_agent_retries_configured_previsible_stream_stall_then_falls_back() {
+        use axum::{body::Body, extract::State, response::Response, routing::post, Router};
+        use std::convert::Infallible;
+        use std::sync::atomic::{AtomicUsize, Ordering};
+
+        struct Server(tokio::task::JoinHandle<()>);
+        impl Drop for Server {
+            fn drop(&mut self) {
+                self.0.abort();
+            }
+        }
+        struct TempHome(std::path::PathBuf);
+        impl Drop for TempHome {
+            fn drop(&mut self) {
+                let _ = std::fs::remove_dir_all(&self.0);
+            }
+        }
+        async fn serve(app: Router) -> (String, Server) {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let base_url = format!("http://{}", listener.local_addr().unwrap());
+            let server = Server(tokio::spawn(async move {
+                axum::serve(listener, app).await.unwrap();
+            }));
+            (base_url, server)
+        }
+
+        let primary_calls = Arc::new(AtomicUsize::new(0));
+        let primary = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "text/event-stream")
+                        .body(Body::from_stream(futures_util::stream::pending::<
+                            Result<axum::body::Bytes, Infallible>,
+                        >()))
+                        .unwrap()
+                }),
+            )
+            .with_state(primary_calls.clone());
+        let fallback_calls = Arc::new(AtomicUsize::new(0));
+        let fallback = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Response::builder()
+                        .header("content-type", "text/event-stream")
+                        .body(Body::from(
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"fallback after stall\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                        ))
+                        .unwrap()
+                }),
+            )
+            .with_state(fallback_calls.clone());
+        let (primary_url, _primary_server) = serve(primary).await;
+        let (fallback_url, _fallback_server) = serve(fallback).await;
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let home = TempHome(std::env::temp_dir().join(format!(
+            "hermes-main-stream-stall-{}-{nonce}",
+            std::process::id()
+        )));
+        std::fs::create_dir_all(&home.0).unwrap();
+
+        let mut config = native_config();
+        config.llm_api_key = Some("primary-key".into());
+        config.llm_base_url = Some(primary_url);
+        let user_config = json!({
+            "agent":{"api_max_retries":1},
+            "model":{"provider":"openrouter"},
+            "providers":{"openrouter":{"models":{
+                "primary-model":{"stale_timeout_seconds":0.05}
+            }}},
+            "fallback_providers":[{
+                "provider":"custom", "model":"fallback-model",
+                "base_url":fallback_url, "api_key":"fallback-key"
+            }]
+        });
+        let agent = build_agent_client_for_home(
+            &config,
+            &user_config,
+            Some("primary-model"),
+            &home.0,
+            Some(NativeConversationState {
+                system_prompt: "stable\n\nModel: primary-model\nProvider: openrouter".into(),
+                tools: Vec::new(),
+                plugin_prompt: Default::default(),
+                extension_host: None,
+                hooks: None,
+                platform: "cli".into(),
+                context_length: 256_000,
+            }),
+        )
+        .unwrap();
+        let message: hermes_core::Message = serde_json::from_value(json!({
+            "platform":"cli", "channel_id":"chat", "sender_id":"user", "text":"hello"
+        }))
+        .unwrap();
+        let (sender, mut receiver) = tokio::sync::mpsc::channel(16);
+        tokio::time::timeout(
+            std::time::Duration::from_secs(1),
+            agent.run_turn(&message, &[], sender),
+        )
+        .await
+        .expect("configured stale deadline must end each silent stream")
+        .unwrap();
+        let mut reply = String::new();
+        while let Some(event) = receiver.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                reply.push_str(&text);
+            }
+        }
+
+        assert_eq!(reply, "fallback after stall");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 3);
+        assert_eq!(fallback_calls.load(Ordering::SeqCst), 1);
     }
 
     #[tokio::test]

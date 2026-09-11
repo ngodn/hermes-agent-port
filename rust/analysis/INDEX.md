@@ -99,6 +99,17 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [AGY tool-truncation contract](main-provider-tool-truncation-contract-agy.md),
   [Claude timeout ownership audit](main-provider-stall-config-claude.md), and
   [Claude implementation review](main-provider-continuation-review-claude.md).
+- Ordinary native chat-completions routes now freeze model/provider request and
+  stale timeout precedence, local/context/reasoning scaling, and legacy retry
+  controls. Buffered response reads and streaming pre-header waits are bounded.
+  Meaningful SSE inactivity uses safe pre-visible replay, post-visible semantic
+  continuation, and one cross-turn route breaker without mutating prompt or
+  credential health. See
+  [native-main-provider-liveness-resolution.md](native-main-provider-liveness-resolution.md),
+  with the independent
+  [AGY contract](main-provider-stall-contract-agy.md),
+  [Claude next-seam map](main-provider-recovery-seam-claude.md), and
+  [Claude implementation review](main-provider-liveness-review-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task

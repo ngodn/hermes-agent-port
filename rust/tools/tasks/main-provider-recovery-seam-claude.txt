@@ -1,0 +1,5 @@
+You own an independent forward-mapping lane for the next ordinary main-provider response-recovery checkpoint after request and stream liveness. Do not edit Rust production code, Rust tests, PORT.md, AGY artifacts, or any existing analysis file.
+
+Inspect current Python and Rust behavior for the remaining response-recovery cases listed in rust/PORT.md: thinking-only finish_reason=length continuation, repetition rejection, dropped-stream stubs and dropped tool names, and the Ollama GLM stop-to-length correction. Trace exact runtime ownership, ordering, retry and continuation budgets, visible-output replay barriers, durable transcript behavior, usage accounting, fallback behavior, and provider/model gates. Identify which cases form one coherent checkpoint and which should stay separate. Do not redo timeout or stale-deadline analysis.
+
+Write only rust/analysis/main-provider-recovery-seam-claude.md. Include exact live file and line references, a behavior and ownership table, recommended public-seam tests, cache and alternation implications, a minimal deep-module interface recommendation, and explicit deferrals. Do not use em dash characters in authored files.

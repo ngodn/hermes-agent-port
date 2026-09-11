@@ -1,0 +1,19 @@
+Perform a narrow code review of the current uncommitted native liveness diff.
+
+Read only:
+- git diff for rust/crates/hermes-gateway/src/main.rs
+- git diff for rust/crates/hermes-gateway/src/native_agent.rs
+- rust/crates/hermes-gateway/src/main_provider_timeouts.rs
+- rust/analysis/main-provider-stall-contract-agy.md sections 3, 9, 10, 11, 12, and 14
+
+Do not run tests, do not inspect unrelated modules, and do not edit code.
+Report at most three concrete correctness findings. Prioritize replay safety,
+pre-header versus body inactivity, fallback cursor/reset behavior, breaker
+counting, and timeout precedence. Ignore style and missing future features.
+
+Write the result to
+rust/analysis/main-provider-liveness-review-claude.md
+
+Include exact current file/line evidence and the smallest fix. If there are no
+findings, say that clearly and list what you verified. Do not use em dash
+characters.

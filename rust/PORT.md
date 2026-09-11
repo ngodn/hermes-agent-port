@@ -1,5 +1,39 @@
 # Hermes Rust rewrite
 
+## Native main-provider liveness: 2026-09-11
+
+Ordinary native chat-completions routes now freeze Python-compatible request
+and stale timeout policy from the conversation config. No-tools calls bound the
+wait for response headers, buffered tool calls bound the complete JSON read,
+and streaming bodies use one rearmed meaningful-event inactivity deadline.
+SSE comments and partial wire bytes cannot keep a silent generation alive.
+
+Pre-visible stalls replay inside the exact two-layer budget before fallback.
+Post-visible stalls never replay the original request; they enter the existing
+durable length-continuation path and deliver only the missing suffix. Streaming
+and buffered stale expiries share a route-local cross-turn circuit breaker that
+stops new network work at its ceiling and resets on observable success,
+fallback, or primary restoration. Timeout failures never penalize credential
+pools or mutate the frozen prompt and tool schema.
+
+AGY independently produced a 168-case, 13-section source-executed Python
+contract and passed 68 focused Python tests. Claude separately mapped the next
+recovery seam while implementation proceeded, then reviewed this checkpoint.
+See
+[native-main-provider-liveness-resolution.md](analysis/native-main-provider-liveness-resolution.md).
+
+The refreshed weighted full-port estimate is **58.35 points, reported as about
+58%** (judgment range 55% to 61%). Native agent core moves from 79% to 80%; the
+other area estimates are unchanged. Thinking-only and provider-specific
+continuation, dropped-stream recovery, repetition rejection, run-budget-aware
+stale scaling, operator notices, non-chat and OAuth routes, dynamic providers,
+native plugin and external-memory managers, prompt invalidation, and broader
+client eviction remain. The full workspace passes **1,907 Rust tests with two
+ignored**. The 168-case Python corpus regenerates byte for byte, all 68 focused
+Python tests pass, and Ruff passes for the generator. Rust formatting, workspace
+Clippy with warnings denied, and diff hygiene are checked after the focused
+implementation review.
+
 ## Native buffered continuation and tool truncation: 2026-09-11
 
 Tool-enabled native chat-completions turns now continue visible

@@ -1,0 +1,1547 @@
+{
+  "buffered_timeout_behavior": [
+    {
+      "case_name": "inline_hard_timeout_finite_budget",
+      "connect": 60.0,
+      "expected_connect": 60.0,
+      "expected_read": 90.0,
+      "input_budget": 90.0,
+      "is_httpx_timeout": true,
+      "pool": 60.0,
+      "provenance": "executed_source",
+      "read": 90.0,
+      "write": 60.0
+    },
+    {
+      "case_name": "inline_hard_timeout_infinite_budget_returns_none",
+      "expected_value": null,
+      "input_budget": "inf",
+      "provenance": "executed_source",
+      "returned_value": null
+    },
+    {
+      "case_name": "inline_hard_timeout_zero_budget_returns_none",
+      "expected_value": null,
+      "input_budget": 0.0,
+      "provenance": "executed_source",
+      "returned_value": null
+    },
+    {
+      "case_name": "resolve_direct_stale_timeout_matches_agent_resolver",
+      "expected_budget": 90.0,
+      "provenance": "executed_source",
+      "resolved_budget": 90.0
+    }
+  ],
+  "context_size_scaling": [
+    {
+      "base_timeout": 180.0,
+      "case_name": "stream_default_small_ctx",
+      "computed_timeout": 180.0,
+      "expected_timeout": 180.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": null,
+      "provenance": "executed_source",
+      "token_count": 10000
+    },
+    {
+      "base_timeout": 180.0,
+      "case_name": "stream_default_medium_ctx",
+      "computed_timeout": 240.0,
+      "expected_timeout": 240.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": null,
+      "provenance": "executed_source",
+      "token_count": 60000
+    },
+    {
+      "base_timeout": 180.0,
+      "case_name": "stream_default_large_ctx",
+      "computed_timeout": 300.0,
+      "expected_timeout": 300.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": null,
+      "provenance": "executed_source",
+      "token_count": 120000
+    },
+    {
+      "base_timeout": 400.0,
+      "case_name": "stream_high_base_small_ctx",
+      "computed_timeout": 400.0,
+      "expected_timeout": 400.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": null,
+      "provenance": "executed_source",
+      "token_count": 10000
+    },
+    {
+      "base_timeout": 400.0,
+      "case_name": "stream_high_base_large_ctx",
+      "computed_timeout": 400.0,
+      "expected_timeout": 400.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": null,
+      "provenance": "executed_source",
+      "token_count": 120000
+    },
+    {
+      "base_timeout": 180.0,
+      "case_name": "stream_o1_small_ctx",
+      "computed_timeout": 600.0,
+      "expected_timeout": 600.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": "o1",
+      "provenance": "executed_source",
+      "token_count": 10000
+    },
+    {
+      "base_timeout": 180.0,
+      "case_name": "stream_o1_large_ctx",
+      "computed_timeout": 600.0,
+      "expected_timeout": 600.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": "o1",
+      "provenance": "executed_source",
+      "token_count": 120000
+    },
+    {
+      "base_timeout": 180.0,
+      "case_name": "stream_opus4_small_ctx",
+      "computed_timeout": 240.0,
+      "expected_timeout": 240.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": "claude-opus-4",
+      "provenance": "executed_source",
+      "token_count": 10000
+    },
+    {
+      "base_timeout": 180.0,
+      "case_name": "stream_opus4_medium_ctx",
+      "computed_timeout": 240.0,
+      "expected_timeout": 240.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": "claude-opus-4",
+      "provenance": "executed_source",
+      "token_count": 60000
+    },
+    {
+      "base_timeout": 180.0,
+      "case_name": "stream_opus4_large_ctx",
+      "computed_timeout": 300.0,
+      "expected_timeout": 300.0,
+      "matches_expected": true,
+      "mode": "streaming",
+      "model": "claude-opus-4",
+      "provenance": "executed_source",
+      "token_count": 120000
+    },
+    {
+      "case_name": "non_stream_small_ctx",
+      "computed_timeout": 90.0,
+      "estimated_tokens": 1007,
+      "expected_timeout": 90.0,
+      "mode": "non_streaming",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "non_stream_medium_ctx",
+      "computed_timeout": 150.0,
+      "estimated_tokens": 60007,
+      "expected_timeout": 150.0,
+      "mode": "non_streaming",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "non_stream_large_ctx",
+      "computed_timeout": 240.0,
+      "estimated_tokens": 110007,
+      "expected_timeout": 240.0,
+      "mode": "non_streaming",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "non_stream_run_budget_cap_caps_implicit_floor",
+      "computed_timeout": 100.0,
+      "expected_timeout": 100.0,
+      "mode": "non_streaming",
+      "model": "deepseek/deepseek-r1",
+      "provenance": "executed_source",
+      "remaining_budget": 200.0,
+      "run_budget_seconds": 300.0
+    },
+    {
+      "case_name": "non_stream_run_budget_cap_spares_explicit_config",
+      "computed_timeout": 600.0,
+      "expected_timeout": 600.0,
+      "explicit_config": 600.0,
+      "mode": "non_streaming",
+      "model": "deepseek/deepseek-r1",
+      "provenance": "executed_source"
+    }
+  ],
+  "context_token_estimation": [
+    {
+      "case_name": "empty_none_payload",
+      "estimated_tokens": 0,
+      "expected_tokens": 0,
+      "input_type": "None",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "empty_list_payload",
+      "estimated_tokens": 0,
+      "expected_tokens": 0,
+      "input_type": "list",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "empty_dict_payload",
+      "estimated_tokens": 0,
+      "expected_tokens": 0,
+      "input_type": "dict",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "bare_messages_list",
+      "estimated_tokens": 316,
+      "input_type": "list",
+      "item_count": 2,
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "chat_completions_dict_with_tools",
+      "estimated_tokens": 626,
+      "input_type": "dict_messages_tools",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "responses_api_dict_input_instructions",
+      "estimated_tokens": 1261,
+      "input_type": "dict_input_instructions",
+      "provenance": "executed_source"
+    }
+  ],
+  "local_endpoint_scaling": [
+    {
+      "base_url": "http://localhost:11434",
+      "case_name": "endpoint_loopback_hostname_http_localhost:11434",
+      "category": "loopback_hostname",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://127.0.0.1:11434",
+      "case_name": "endpoint_loopback_ipv4_http_127.0.0.1:11434",
+      "category": "loopback_ipv4",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://127.0.1.1:8000",
+      "case_name": "endpoint_loopback_ipv4_subnet_http_127.0.1.1:8000",
+      "category": "loopback_ipv4_subnet",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://[::1]:11434",
+      "case_name": "endpoint_loopback_ipv6_http_[::1]:11434",
+      "category": "loopback_ipv6",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://host.docker.internal:11434",
+      "case_name": "endpoint_docker_internal_http_host.docker.internal:11434",
+      "category": "docker_internal",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://host.lima.internal:8000",
+      "case_name": "endpoint_lima_internal_http_host.lima.internal:8000",
+      "category": "lima_internal",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://ollama:11434",
+      "case_name": "endpoint_unqualified_service_name_http_ollama:11434",
+      "category": "unqualified_service_name",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://vllm-server:8000",
+      "case_name": "endpoint_unqualified_service_name_http_vllm-server:8000",
+      "category": "unqualified_service_name",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://10.0.0.5:8000",
+      "case_name": "endpoint_rfc1918_10_http_10.0.0.5:8000",
+      "category": "rfc1918_10",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://172.20.0.2:11434",
+      "case_name": "endpoint_rfc1918_172_http_172.20.0.2:11434",
+      "category": "rfc1918_172",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://192.168.1.100:11434",
+      "case_name": "endpoint_rfc1918_192_http_192.168.1.100:11434",
+      "category": "rfc1918_192",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://100.64.0.1:11434",
+      "case_name": "endpoint_tailscale_cgnat_http_100.64.0.1:11434",
+      "category": "tailscale_cgnat",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://100.120.45.10:11434",
+      "case_name": "endpoint_tailscale_cgnat_http_100.120.45.10:11434",
+      "category": "tailscale_cgnat",
+      "expected_local": true,
+      "is_local": true,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "https://api.openai.com/v1",
+      "case_name": "endpoint_public_openai_https_api.openai.com_v1",
+      "category": "public_openai",
+      "expected_local": false,
+      "is_local": false,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "https://openrouter.ai/api/v1",
+      "case_name": "endpoint_public_openrouter_https_openrouter.ai_api_v1",
+      "category": "public_openrouter",
+      "expected_local": false,
+      "is_local": false,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "https://api.anthropic.com/v1",
+      "case_name": "endpoint_public_anthropic_https_api.anthropic.com_v1",
+      "category": "public_anthropic",
+      "expected_local": false,
+      "is_local": false,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://8.8.8.8:8080",
+      "case_name": "endpoint_public_ipv4_http_8.8.8.8:8080",
+      "category": "public_ipv4",
+      "expected_local": false,
+      "is_local": false,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://1.1.1.1:80",
+      "case_name": "endpoint_public_ipv4_http_1.1.1.1:80",
+      "category": "public_ipv4",
+      "expected_local": false,
+      "is_local": false,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "",
+      "case_name": "endpoint_empty_base_url_empty",
+      "category": "empty_base_url",
+      "expected_local": false,
+      "is_local": false,
+      "matches_expected": true,
+      "provenance": "executed_source"
+    },
+    {
+      "base_timeout": 180.0,
+      "base_url": "http://localhost:11434",
+      "case_name": "stream_local_default_base_escalates_to_900s",
+      "expected_stale_timeout": 900.0,
+      "provenance": "executed_source",
+      "stream_stale_timeout": 900.0
+    },
+    {
+      "base_timeout": 60.0,
+      "base_url": "http://localhost:11434",
+      "case_name": "stream_local_custom_base_not_escalated",
+      "expected_stale_timeout": 60.0,
+      "provenance": "executed_source",
+      "stream_stale_timeout": 60.0
+    },
+    {
+      "base_url": "http://localhost:11434",
+      "case_name": "non_stream_local_implicit_default_returns_inf",
+      "computed_timeout": "inf",
+      "expected_timeout": "inf",
+      "provenance": "executed_source"
+    },
+    {
+      "base_url": "http://localhost:11434",
+      "case_name": "non_stream_local_reasoning_model_preserves_floor",
+      "computed_timeout": 600.0,
+      "expected_infinite": false,
+      "expected_timeout": 600.0,
+      "is_infinite": false,
+      "model": "deepseek/deepseek-r1",
+      "provenance": "executed_source"
+    }
+  ],
+  "pre_vs_post_visible_effects": [
+    {
+      "case_name": "pre_visible_stale_kill_replay_allowed",
+      "deltas_were_sent": false,
+      "fallback_route": "eager_fallback_after_attempt_3",
+      "inner_retry_allowed": true,
+      "max_inner_attempts": 3,
+      "provenance": "source_inspection",
+      "surfaces_duplicate_text": false,
+      "tool_in_flight": false
+    },
+    {
+      "case_name": "post_visible_text_stream_fails_closed",
+      "deltas_were_sent": true,
+      "inner_retry_allowed": false,
+      "outcome": "partial_stream_stub",
+      "provenance": "source_inspection",
+      "resets_stale_streak": true,
+      "stub_finish_reason": "length",
+      "stub_id": "partial-stream-stub",
+      "surfaces_duplicate_text": false,
+      "tool_in_flight": false
+    },
+    {
+      "case_name": "post_visible_mid_tool_call_retries_silently",
+      "deltas_were_sent": true,
+      "inner_retry_allowed": true,
+      "is_transient_error": true,
+      "provenance": "source_inspection",
+      "reconnect_marker": "\n\n\u26a0 Connection dropped mid tool-call; reconnecting\u2026\n\n",
+      "resets_accumulators": true,
+      "resets_delivery_tracking": true,
+      "tool_in_flight": true
+    }
+  ],
+  "provider_exclusions_and_boundaries": [
+    {
+      "case_name": "bedrock_stream_stale_resolves_reasoning_floor",
+      "expected_timeout": 240.0,
+      "model_id": "us.anthropic.claude-opus-4-6-v1:0",
+      "provenance": "executed_source",
+      "resolved_timeout": 240.0
+    },
+    {
+      "case_name": "boundary_bedrock",
+      "circuit_breaker_shared": true,
+      "exclusion_reason": "boto3 manages its own client-level and botocore timeouts",
+      "provenance": "source_inspection",
+      "provider": "bedrock",
+      "streaming_watchdog_supported": true,
+      "wired_for_provider_config_timeouts": false
+    },
+    {
+      "case_name": "boundary_openai-codex",
+      "circuit_breaker_shared": true,
+      "has_absolute_hard_ceiling": true,
+      "has_event_idle_watchdog": true,
+      "has_gateway_stale_floor": true,
+      "has_ttfb_watchdog": true,
+      "provenance": "source_inspection",
+      "provider": "openai-codex",
+      "wired_for_provider_config_timeouts": true
+    },
+    {
+      "case_name": "boundary_anthropic_messages",
+      "circuit_breaker_shared": true,
+      "default_client_connect_timeout": 10.0,
+      "default_client_read_timeout": 900.0,
+      "provenance": "source_inspection",
+      "provider": "anthropic_messages",
+      "uses_request_local_client_for_abort": true,
+      "wired_for_provider_config_timeouts": true
+    },
+    {
+      "case_name": "boundary_openai_chat_completions",
+      "circuit_breaker_shared": true,
+      "default_client_connect_timeout": 15.0,
+      "default_client_read_timeout": null,
+      "provenance": "source_inspection",
+      "provider": "openai_chat_completions",
+      "uses_request_local_client_for_abort": true,
+      "wired_for_provider_config_timeouts": true
+    }
+  ],
+  "reasoning_model_floors": [
+    {
+      "case_name": "floor_nvidia/nemotron-3-ultra-550b-a55b",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "nvidia/nemotron-3-ultra-550b-a55b",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_nvidia/nemotron-3-super-120b-a12b",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "nvidia/nemotron-3-super-120b-a12b",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_nvidia/nemotron-3-nano-30b-a3b",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "nvidia/nemotron-3-nano-30b-a3b",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_nvidia/nemotron-3.5-lightning-30b-a3b",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "nvidia/nemotron-3.5-lightning-30b-a3b",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_deepseek/deepseek-r1",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "deepseek/deepseek-r1",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_deepseek/deepseek-r1-distill-llama-70b",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "deepseek/deepseek-r1-distill-llama-70b",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_deepseek/deepseek-reasoner",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "deepseek/deepseek-reasoner",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_deepseek/deepseek-v4-flash",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "deepseek/deepseek-v4-flash",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_deepseek/deepseek-v4-pro",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "deepseek/deepseek-v4-pro",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_deepseek-v4-flash-free",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "deepseek-v4-flash-free",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_qwen/qwq-32b-preview",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "qwen/qwq-32b-preview",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_qwen/qwen3-235b-a22b-thinking",
+      "expected_floor": 180.0,
+      "matched_floor": 180.0,
+      "matches_expected": true,
+      "model_input": "qwen/qwen3-235b-a22b-thinking",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_qwen3",
+      "expected_floor": 180.0,
+      "matched_floor": 180.0,
+      "matches_expected": true,
+      "model_input": "qwen3",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_openai/o1",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "openai/o1",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_openai/o1-mini",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "openai/o1-mini",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_openai/o1-pro",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "openai/o1-pro",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_openai/o1-preview",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "openai/o1-preview",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_openai/o3",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "openai/o3",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_openai/o3-pro",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "openai/o3-pro",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_openai/o3-mini",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "openai/o3-mini",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_openai/o4-mini",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "openai/o4-mini",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_anthropic/claude-opus-4-6",
+      "expected_floor": 240.0,
+      "matched_floor": 240.0,
+      "matches_expected": true,
+      "model_input": "anthropic/claude-opus-4-6",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_anthropic/claude-opus-5",
+      "expected_floor": 240.0,
+      "matched_floor": 240.0,
+      "matches_expected": true,
+      "model_input": "anthropic/claude-opus-5",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_anthropic/claude-sonnet-5",
+      "expected_floor": 180.0,
+      "matched_floor": 180.0,
+      "matches_expected": true,
+      "model_input": "anthropic/claude-sonnet-5",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_anthropic/claude-sonnet-4.5",
+      "expected_floor": 180.0,
+      "matched_floor": 180.0,
+      "matches_expected": true,
+      "model_input": "anthropic/claude-sonnet-4.5",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_anthropic/claude-sonnet-4.6",
+      "expected_floor": 180.0,
+      "matched_floor": 180.0,
+      "matches_expected": true,
+      "model_input": "anthropic/claude-sonnet-4.6",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_anthropic/claude-fable-5",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "anthropic/claude-fable-5",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_claude-fable",
+      "expected_floor": 600.0,
+      "matched_floor": 600.0,
+      "matches_expected": true,
+      "model_input": "claude-fable",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_x-ai/grok-4-fast-reasoning",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "x-ai/grok-4-fast-reasoning",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_x-ai/grok-4.20-reasoning",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "x-ai/grok-4.20-reasoning",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_x-ai/grok-4.5",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "x-ai/grok-4.5",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_x-ai/grok-4.6",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "x-ai/grok-4.6",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_x-ai/grok-4-fast-non-reasoning",
+      "expected_floor": 180.0,
+      "matched_floor": 180.0,
+      "matches_expected": true,
+      "model_input": "x-ai/grok-4-fast-non-reasoning",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_stealth/ox-alpha",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "stealth/ox-alpha",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_x-preview-f-free",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "x-preview-f-free",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_thinkingmachines/inkling",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "thinkingmachines/inkling",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_thinkingmachines/inkling:free",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "thinkingmachines/inkling:free",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_thinkingmachines/inkling-small:free",
+      "expected_floor": 300.0,
+      "matched_floor": 300.0,
+      "matches_expected": true,
+      "model_input": "thinkingmachines/inkling-small:free",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_gpt-4o",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "gpt-4o",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_gpt-4o-mini",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "gpt-4o-mini",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_claude-3-5-sonnet",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "claude-3-5-sonnet",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_claude-3-opus",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "claude-3-opus",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_olmo-1",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "olmo-1",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_llama-3.3-70b-instruct",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "llama-3.3-70b-instruct",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_llama-4-70b-o1-preview",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "llama-4-70b-o1-preview",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_some-other-qwen3",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "some-other-qwen3",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_bare-grok-3",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "bare-grok-3",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_none",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": "",
+      "provenance": "executed_source"
+    },
+    {
+      "case_name": "floor_none",
+      "expected_floor": null,
+      "matched_floor": null,
+      "matches_expected": true,
+      "model_input": null,
+      "provenance": "executed_source"
+    }
+  ],
+  "request_timeout_precedence": [
+    {
+      "case_name": "model_override_wins",
+      "expected_timeout": 42.0,
+      "model": "openai/gpt-4o-mini",
+      "precedence_tier": "model_config",
+      "provenance": "executed_source",
+      "provider_id": "openrouter",
+      "resolved_timeout": 42.0
+    },
+    {
+      "case_name": "provider_fallback_when_model_unconfigured",
+      "expected_timeout": 77.0,
+      "model": "meta-llama/llama-3-70b",
+      "precedence_tier": "provider_config",
+      "provenance": "executed_source",
+      "provider_id": "openrouter",
+      "resolved_timeout": 77.0
+    },
+    {
+      "case_name": "invalid_model_timeout_falls_back_to_provider",
+      "expected_timeout": 77.0,
+      "model": "anthropic/claude-3-haiku",
+      "precedence_tier": "provider_config",
+      "provenance": "executed_source",
+      "provider_id": "openrouter",
+      "resolved_timeout": 77.0
+    },
+    {
+      "case_name": "unconfigured_provider_returns_none",
+      "expected_timeout": null,
+      "model": "any-model",
+      "precedence_tier": "none",
+      "provenance": "executed_source",
+      "provider_id": "unconfigured",
+      "resolved_timeout": null
+    },
+    {
+      "case_name": "nonexistent_provider_returns_none",
+      "expected_timeout": null,
+      "model": "any-model",
+      "precedence_tier": "none",
+      "provenance": "executed_source",
+      "provider_id": "nonexistent",
+      "resolved_timeout": null
+    },
+    {
+      "case_name": "empty_provider_returns_none",
+      "expected_timeout": null,
+      "model": "any-model",
+      "precedence_tier": "none",
+      "provenance": "executed_source",
+      "provider_id": "",
+      "resolved_timeout": null
+    },
+    {
+      "case_name": "env_var_wins_over_default_when_no_config",
+      "env_value": "999.0",
+      "expected_timeout": 999.0,
+      "precedence_tier": "env_fallback",
+      "provenance": "executed_source",
+      "resolved_timeout": 999.0
+    },
+    {
+      "case_name": "builtin_default_1800s_when_unset",
+      "expected_timeout": 1800.0,
+      "precedence_tier": "builtin_default",
+      "provenance": "executed_source",
+      "resolved_timeout": 1800.0
+    }
+  ],
+  "socket_read_and_connect_bounds": [
+    {
+      "base_url": "https://api.openai.com/v1",
+      "case_name": "cloud_standard_default",
+      "env_read_timeout": null,
+      "expected_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 180.0,
+        "write": 1800.0
+      },
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "provider_cfg": null,
+      "resolved_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 180.0,
+        "write": 1800.0
+      },
+      "stream_stale_timeout": 180.0
+    },
+    {
+      "base_url": "https://api.anthropic.com/v1",
+      "case_name": "cloud_reasoning_opus_240s",
+      "env_read_timeout": null,
+      "expected_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 240.0,
+        "write": 1800.0
+      },
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "provider_cfg": null,
+      "resolved_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 240.0,
+        "write": 1800.0
+      },
+      "stream_stale_timeout": 240.0
+    },
+    {
+      "base_url": "https://api.openai.com/v1",
+      "case_name": "cloud_reasoning_o1_600s",
+      "env_read_timeout": null,
+      "expected_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 600.0,
+        "write": 1800.0
+      },
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "provider_cfg": null,
+      "resolved_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 600.0,
+        "write": 1800.0
+      },
+      "stream_stale_timeout": 600.0
+    },
+    {
+      "base_url": "http://localhost:11434",
+      "case_name": "local_endpoint_raises_read_to_base",
+      "env_read_timeout": null,
+      "expected_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 1800.0,
+        "write": 1800.0
+      },
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "provider_cfg": null,
+      "resolved_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 1800.0,
+        "write": 1800.0
+      },
+      "stream_stale_timeout": 900.0
+    },
+    {
+      "base_url": "https://api.openai.com/v1",
+      "case_name": "user_env_read_override",
+      "env_read_timeout": 45.0,
+      "expected_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 45.0,
+        "write": 1800.0
+      },
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "provider_cfg": null,
+      "resolved_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 45.0,
+        "write": 1800.0
+      },
+      "stream_stale_timeout": 180.0
+    },
+    {
+      "base_url": "http://localhost:11434",
+      "case_name": "user_env_read_override_local",
+      "env_read_timeout": 45.0,
+      "expected_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 45.0,
+        "write": 1800.0
+      },
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "provider_cfg": null,
+      "resolved_timeouts": {
+        "connect": 30.0,
+        "pool": 30.0,
+        "read": 45.0,
+        "write": 1800.0
+      },
+      "stream_stale_timeout": 900.0
+    },
+    {
+      "base_url": "https://api.openai.com/v1",
+      "case_name": "provider_config_override_short",
+      "env_read_timeout": null,
+      "expected_timeouts": {
+        "connect": 25.0,
+        "pool": 25.0,
+        "read": 25.0,
+        "write": 25.0
+      },
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "provider_cfg": 25.0,
+      "resolved_timeouts": {
+        "connect": 25.0,
+        "pool": 25.0,
+        "read": 25.0,
+        "write": 25.0
+      },
+      "stream_stale_timeout": 180.0
+    },
+    {
+      "base_url": "https://api.openai.com/v1",
+      "case_name": "provider_config_override_long",
+      "env_read_timeout": null,
+      "expected_timeouts": {
+        "connect": 60.0,
+        "pool": 60.0,
+        "read": 120.0,
+        "write": 120.0
+      },
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "provider_cfg": 120.0,
+      "resolved_timeouts": {
+        "connect": 60.0,
+        "pool": 60.0,
+        "read": 120.0,
+        "write": 120.0
+      },
+      "stream_stale_timeout": 180.0
+    }
+  ],
+  "stale_detection_and_operator_visibility": [
+    {
+      "buffer_status_template": "\u26a0\ufe0f No response from provider for {elapsed}s (model: {model}, context: ~{tokens} tokens). Reconnecting...",
+      "case_name": "first_byte_stale_trigger",
+      "elapsed_silence": 185.0,
+      "gap_type": "time_to_first_byte",
+      "provenance": "source_inspection",
+      "stale_timeout": 180.0,
+      "trips_stale_detector": true,
+      "wait_notice_template": "\u26a0 no output from provider for {elapsed}s -- reconnecting..."
+    },
+    {
+      "action_taken": "socket_abort_and_streak_bump",
+      "case_name": "inter_chunk_stale_trigger",
+      "elapsed_silence": 181.0,
+      "gap_type": "inter_chunk_silence",
+      "provenance": "source_inspection",
+      "stale_timeout": 180.0,
+      "trips_stale_detector": true
+    },
+    {
+      "case_name": "heartbeat_notice_threshold",
+      "emits_wait_notice": true,
+      "interval_seconds": 30.0,
+      "notice_format": "\u23f3 waiting on {model} -- {waiting_secs}s with no output yet (provider may be slow or overloaded, or the model is thinking{recovery})",
+      "provenance": "source_inspection",
+      "recovery_subformat": "; auto-reconnect at {timeout}s",
+      "waiting_seconds": 35
+    }
+  ],
+  "stale_streak_circuit_breaker": [
+    {
+      "case_name": "streak_initial_is_zero",
+      "expected_streak": 0,
+      "provenance": "executed_source",
+      "streak": 0
+    },
+    {
+      "case_name": "streak_after_two_bumps",
+      "expected_streak": 2,
+      "provenance": "executed_source",
+      "streak": 2
+    },
+    {
+      "case_name": "interrupted_pre_response_over_30s_bumps_streak",
+      "did_bump": true,
+      "elapsed": 35.0,
+      "expected_streak": 3,
+      "new_streak": 3,
+      "provenance": "executed_source",
+      "response_started": false
+    },
+    {
+      "case_name": "interrupted_post_response_does_not_bump_streak",
+      "did_bump": false,
+      "elapsed": 45.0,
+      "expected_streak": 3,
+      "new_streak": 3,
+      "provenance": "executed_source",
+      "response_started": true
+    },
+    {
+      "case_name": "interrupted_under_30s_does_not_bump_streak",
+      "did_bump": false,
+      "elapsed": 10.0,
+      "expected_streak": 3,
+      "new_streak": 3,
+      "provenance": "executed_source",
+      "response_started": false
+    },
+    {
+      "case_name": "streak_after_reset",
+      "expected_streak": 0,
+      "provenance": "executed_source",
+      "streak": 0
+    },
+    {
+      "case_name": "check_stale_giveup_under_threshold_passes",
+      "did_raise": false,
+      "giveup_threshold": 3,
+      "provenance": "executed_source",
+      "streak": 2
+    },
+    {
+      "case_name": "check_stale_giveup_at_threshold_raises",
+      "did_raise": true,
+      "error_contains_streak": true,
+      "error_contains_unresponsive": true,
+      "giveup_threshold": 3,
+      "provenance": "executed_source",
+      "streak": 3
+    },
+    {
+      "case_name": "check_stale_giveup_disabled_when_zero",
+      "did_raise": false,
+      "giveup_threshold": 0,
+      "provenance": "executed_source",
+      "streak": 10
+    },
+    {
+      "activated": false,
+      "case_name": "fallback_activation_resets_streak",
+      "expected_streak": 0,
+      "provenance": "executed_source",
+      "streak_after_fallback": 5
+    },
+    {
+      "case_name": "restore_primary_runtime_resets_streak",
+      "expected_streak": 0,
+      "provenance": "executed_source",
+      "streak_after_restore": 4
+    }
+  ],
+  "stale_timeout_precedence": [
+    {
+      "case_name": "model_stale_override_wins",
+      "expected_stale_timeout": 1800.0,
+      "model": "gpt-5.4",
+      "provenance": "executed_source",
+      "provider_id": "openai-codex",
+      "resolved_stale_timeout": 1800.0
+    },
+    {
+      "case_name": "provider_stale_fallback_when_model_unconfigured",
+      "expected_stale_timeout": 120.0,
+      "model": "other-model",
+      "provenance": "executed_source",
+      "provider_id": "openai-codex",
+      "resolved_stale_timeout": 120.0
+    },
+    {
+      "case_name": "invalid_model_stale_falls_back_to_provider",
+      "expected_stale_timeout": 120.0,
+      "model": "broken-model",
+      "provenance": "executed_source",
+      "provider_id": "openai-codex",
+      "resolved_stale_timeout": 120.0
+    },
+    {
+      "case_name": "unconfigured_provider_stale_returns_none",
+      "expected_stale_timeout": null,
+      "model": "any-model",
+      "provenance": "executed_source",
+      "provider_id": "unconfigured",
+      "resolved_stale_timeout": null
+    },
+    {
+      "case_name": "env_stale_override_wins",
+      "expected_base": 220.0,
+      "expected_explicit": true,
+      "expected_implicit": false,
+      "is_explicit": true,
+      "provenance": "executed_source",
+      "resolved_base": 220.0,
+      "uses_implicit_default": false
+    },
+    {
+      "case_name": "reasoning_floor_applies_with_implicit_false",
+      "expected_base": 600.0,
+      "expected_explicit": false,
+      "expected_implicit": false,
+      "is_explicit": false,
+      "model": "deepseek/deepseek-r1",
+      "provenance": "executed_source",
+      "resolved_base": 600.0,
+      "uses_implicit_default": false
+    },
+    {
+      "case_name": "plain_model_falls_back_to_90s_default",
+      "expected_base": 90.0,
+      "expected_explicit": false,
+      "expected_implicit": true,
+      "is_explicit": false,
+      "model": "gpt-4o",
+      "provenance": "executed_source",
+      "resolved_base": 90.0,
+      "uses_implicit_default": true
+    }
+  ],
+  "timeout_coercion_and_normalization": [
+    {
+      "case_name": "coerce_valid_int",
+      "coerced_value": 30.0,
+      "expected_value": 30.0,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": 30
+    },
+    {
+      "case_name": "coerce_valid_float",
+      "coerced_value": 45.5,
+      "expected_value": 45.5,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": 45.5
+    },
+    {
+      "case_name": "coerce_valid_int_str",
+      "coerced_value": 120.0,
+      "expected_value": 120.0,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "120"
+    },
+    {
+      "case_name": "coerce_valid_float_str",
+      "coerced_value": 1800.0,
+      "expected_value": 1800.0,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "1800.0"
+    },
+    {
+      "case_name": "coerce_zero_int",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": 0
+    },
+    {
+      "case_name": "coerce_zero_float",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": 0.0
+    },
+    {
+      "case_name": "coerce_zero_str",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "0"
+    },
+    {
+      "case_name": "coerce_negative_int",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": -1
+    },
+    {
+      "case_name": "coerce_negative_float",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": -45.5
+    },
+    {
+      "case_name": "coerce_negative_str",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "-10"
+    },
+    {
+      "case_name": "coerce_empty_str",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": ""
+    },
+    {
+      "case_name": "coerce_whitespace_str",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "   "
+    },
+    {
+      "case_name": "coerce_invalid_str",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "fast"
+    },
+    {
+      "case_name": "coerce_invalid_unit_str",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "120s"
+    },
+    {
+      "case_name": "coerce_none_input",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": null
+    },
+    {
+      "case_name": "coerce_dict_input",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "{'timeout': 30}"
+    },
+    {
+      "case_name": "coerce_list_input",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "[30]"
+    },
+    {
+      "case_name": "coerce_boolean_true",
+      "coerced_value": 1.0,
+      "expected_value": 1.0,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": true
+    },
+    {
+      "case_name": "coerce_boolean_false",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": false
+    },
+    {
+      "case_name": "deadline_clamp_none",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": null
+    },
+    {
+      "case_name": "deadline_clamp_zero",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": 0
+    },
+    {
+      "case_name": "deadline_clamp_negative",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": -5.0
+    },
+    {
+      "case_name": "deadline_clamp_normal",
+      "coerced_value": 60.0,
+      "expected_value": 60.0,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": 60.0
+    },
+    {
+      "case_name": "deadline_clamp_overflow",
+      "coerced_value": 31536000.0,
+      "expected_value": 31536000.0,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": 40000000.0
+    },
+    {
+      "case_name": "deadline_clamp_nan",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "nan"
+    },
+    {
+      "case_name": "deadline_clamp_unparseable",
+      "coerced_value": null,
+      "expected_value": null,
+      "matches_expected": true,
+      "provenance": "executed_source",
+      "raw_input": "not_a_number"
+    }
+  ]
+}

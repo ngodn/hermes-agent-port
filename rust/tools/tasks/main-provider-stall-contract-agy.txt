@@ -1,0 +1,11 @@
+You own the Python behavior-contract lane for ordinary main-provider request timeouts and streaming stale detection. Do not edit Rust production code, Rust tests, PORT.md, Claude artifacts, or existing generated corpora.
+
+Inspect and source-execute current Python production behavior for providers.<id>.request_timeout_seconds, providers.<id>.stale_timeout_seconds, per-model timeout_seconds and stale_timeout_seconds, the compatibility environment fallbacks, local-endpoint scaling, context-size scaling, reasoning-model floors, first-byte and inter-chunk stale detection, the stale give-up ceiling, and buffered timeout behavior. Pin precedence, coercion, defaults, exact replay counts, pre-visible versus post-visible effects, persistence, usage, fallback, and provider-specific exclusions. Ordinary response-body validation, tool truncation, Codex Responses, Anthropic Messages, and Bedrock are outside this lane except for explicit boundary notes.
+
+Produce:
+
+- rust/analysis/main-provider-stall-contract-agy.md
+- rust/tools/gen_main_provider_stall_goldens.py
+- rust/tools/main-provider-stall-goldens.json
+
+The generator must import or execute live Python production functions wherever possible, produce deterministic JSON suitable for Rust include_str! parity tests, and label unavoidable source-inspection literals. Run the generator and the smallest relevant focused Python suites. Record exact commands, case counts, invariants, uncertainties, and deferrals. Do not use em dash characters in authored files.
