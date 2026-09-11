@@ -1,0 +1,11 @@
+Repository: /home/eins0fx/development/hermes-agent-port. Resolve all paths under this repository. This is a focused follow-up on your existing dropped-stream oracle artifacts. Do not inspect or edit Rust implementation files, PORT.md, INDEX.md, or the Claude report.
+
+Audit and correct only:
+
+1. rust/analysis/dropped-stream-contract-agy.md
+2. rust/tools/gen_dropped_stream_goldens.py
+3. rust/tools/dropped-stream-goldens.json
+
+The primary reviewer found that gen_empty_stub_interim_suppression_cases, gen_retry_and_ceiling_metadata_cases, and the content-filter fallback case reproduce conversation-loop decisions in local _simulate_* functions instead of executing or extracting the live source, while the report broadly calls the oracle source-executed. Fix this rigorously. Prefer driving the real AIAgent conversation loop with controlled response stubs and asserting its real output/messages/counters. If a behavior cannot be executed without an unreasonable harness, extract its constants or decision inputs directly from live source and label that row and the report honestly. Do not claim a local copy of logic is source-executed.
+
+Also audit every generated row for the original requirement: each declared expected value must be asserted against live execution or direct live-source extraction, not merely copied into output. Preserve deterministic output, raw fixture types, the same intended behavior coverage, and zero em dash characters. Run the focused Python test, run the generator twice, run --check, and report exact counts and hashes. Make no files outside the three owned artifacts.

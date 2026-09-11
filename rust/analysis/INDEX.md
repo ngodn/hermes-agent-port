@@ -131,6 +131,16 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [AGY contract](ollama-glm-truncation-contract-agy.md),
   [113-case corpus](../tools/ollama-glm-truncation-goldens.json), and
   [Claude dropped-stream map](dropped-stream-recovery-claude.md).
+- Native no-tools streams now distinguish clean terminal evidence from visible
+  dropped output. Finish reasons, usage objects, and Nous `lastOne` frames stop
+  normally. Clean EOF, bare `[DONE]`, and post-generation body errors instead
+  use the exact network prompt, frozen route, durable fragment/nudge history,
+  suffix-only delivery, and four-attempt continuation ceiling. See
+  [native-dropped-stream-recovery-resolution.md](native-dropped-stream-recovery-resolution.md),
+  with the corrected live-loop
+  [AGY contract](dropped-stream-contract-agy.md),
+  [47-case corpus](../tools/dropped-stream-goldens.json), and
+  [Claude run-budget map](main-provider-run-budget-scaling-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -208,10 +218,14 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-dropped-stream-recovery-resolution.md](native-dropped-stream-recovery-resolution.md) | Production clean-EOF and post-generation transport recovery, completion evidence, durable continuation, explicit limits, and measured progress |
+| [dropped-stream-contract-agy.md](dropped-stream-contract-agy.md) | AGY's corrected live-source and real-conversation-loop contract for dropped stream production and consumption |
+| [dropped-stream-goldens.json](../tools/dropped-stream-goldens.json) | Source-executed 47-case dropped-stream corpus across 11 sections |
+| [main-provider-run-budget-scaling-claude.md](main-provider-run-budget-scaling-claude.md) | Claude's separate map for the next implicit buffered-stale run-budget cap |
 | [native-ollama-glm-truncation-resolution.md](native-ollama-glm-truncation-resolution.md) | Production local Ollama GLM stop correction, serving-route identity, durable continuation, oracle repair, and measured progress |
 | [ollama-glm-truncation-contract-agy.md](ollama-glm-truncation-contract-agy.md) | AGY's source-executed Python contract for the ordered stop-correction gates and downstream continuation envelope |
 | [ollama-glm-truncation-goldens.json](../tools/ollama-glm-truncation-goldens.json) | Source-executed 113-case local Ollama GLM correction corpus with raw input types |
-| [dropped-stream-recovery-claude.md](dropped-stream-recovery-claude.md) | Claude's separate next-checkpoint map for clean EOF and post-delta transport-error recovery |
+| [dropped-stream-recovery-claude.md](dropped-stream-recovery-claude.md) | Claude's independent pre-implementation map for clean EOF and post-delta transport-error recovery |
 | [ollama-glm-truncation-review-claude.md](ollama-glm-truncation-review-claude.md) | Claude's post-implementation adversarial review of classifier and runtime integration |
 | [native-main-provider-truncation-guards-resolution.md](native-main-provider-truncation-guards-resolution.md) | Production thinking exhaustion, repetition rejection, empty reasoning one-shot recovery, atomic sidecar durability, review fixes, and measured progress |
 | [main-provider-truncation-guards-agy.md](main-provider-truncation-guards-agy.md) | AGY's source-executed Python contract for the three ordered length-content guards and their retry, usage, and transcript behavior |

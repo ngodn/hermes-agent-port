@@ -1,5 +1,38 @@
 # Hermes Rust rewrite
 
+## Native dropped-stream recovery: 2026-09-11
+
+Native no-tools chat-completions streams now recover visible output after clean
+EOF, protocol `[DONE]`, or a body transport error when no trustworthy terminal
+evidence arrived. Provider finish reasons, zero-count usage objects, and
+top-level or nested Nous `lastOne` frames prove completion. Pre-generation
+transport failures still use the ordinary replay-safe retry and fallback path.
+
+Recoverable fragments use Python's exact network continuation prompt on the
+frozen serving route. The existing progressive output cap and four-attempt
+ceiling remain authoritative. Visible fragments are delivered once, then the
+assistant-fragment and user-nudge pair commits through the immediate SQLite
+continuation transaction before the final suffix. Reasoning-only failures
+suppress an invalid empty assistant row and preserve the established reasoning
+configuration.
+
+AGY produced a 47-case, 11-section Python contract. Primary review found copied
+conversation-loop simulations in its first version, so AGY replaced them with
+real `AIAgent.run_conversation()` execution and asserted every declared golden
+field. Claude separately mapped the next run-budget scaling seam while the
+oracle and implementation proceeded. See
+[native-dropped-stream-recovery-resolution.md](analysis/native-dropped-stream-recovery-resolution.md).
+
+The refreshed weighted full-port estimate is **58.95 points, reported as about
+59%** (judgment range 55% to 61%). Native agent core moves from 82% to 83%; the
+other area estimates are unchanged. Run-budget scaling, operator notices,
+non-chat and remaining OAuth routes, dynamic providers, native plugin and
+external-memory managers, prompt invalidation, and broader client eviction
+remain. The full workspace passes **1,937 Rust tests with two ignored**. The
+47-case corpus regenerates byte for byte, all 25 focused Python tests pass, and
+Ruff passes for the generator. Rust and Python formatting, workspace Clippy
+with warnings denied, and diff hygiene pass.
+
 ## Native local Ollama GLM stop correction: 2026-09-11
 
 Local Ollama GLM routes now apply Python's conservative correction when a

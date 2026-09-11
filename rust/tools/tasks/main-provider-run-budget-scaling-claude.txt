@@ -1,0 +1,7 @@
+Repository: /home/eins0fx/development/hermes-agent-port. Resolve all paths under this repository and do not search the home directory for another checkout.
+
+Map only Python's main-provider timeout and retry scaling that depends on the remaining run or goal budget, as the future checkpoint after dropped-stream recovery. Do not analyze dropped streams, Ollama/GLM correction, operator notice delivery, non-chat transports, OAuth, plugins, or write any implementation.
+
+Inspect the live Python sources, configuration resolution, call sites, counters, timeout calculations, and focused tests. Compare them to the current Rust native main-provider timeout and retry implementation. Identify the exact missing behavior, its ownership, ordering, lower and upper bounds, cancellation semantics, and whether it changes total request, pre-header, SSE inactivity, stale outer/inner attempts, backoff, or all of them. Propose the narrowest deep Rust interface and public run-turn tests. Verify every line reference against the current checkout.
+
+Write only rust/analysis/main-provider-run-budget-scaling-claude.md. Do not edit Rust, Python, JSON, PORT.md, INDEX.md, or any existing analysis file. Do not use em dash characters.

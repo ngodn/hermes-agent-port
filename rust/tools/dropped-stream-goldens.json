@@ -1,0 +1,482 @@
+{
+  "clean_eof_stream_recovery": [
+    {
+      "case_id": "clean_eof_text_only_drop",
+      "description": "Text delivered but SSE ends cleanly with no finish_reason and no usage",
+      "expected_content": "Partial prose delivered before EOF.",
+      "expected_dropped_tool_names": null,
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub",
+      "expected_tool_calls": null,
+      "is_stub": true,
+      "raw_chunks": [
+        {
+          "content": "Partial prose delivered before EOF.",
+          "finish_reason": null
+        }
+      ]
+    },
+    {
+      "case_id": "clean_eof_incomplete_tool_args_drop",
+      "description": "Tool call name and opening unclosed JSON delivered before stream terminates",
+      "expected_content": "\n",
+      "expected_dropped_tool_names": [
+        "execute_code"
+      ],
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub",
+      "expected_tool_calls": null,
+      "is_stub": true,
+      "raw_chunks": [
+        {
+          "content": "\n",
+          "type": "text"
+        },
+        {
+          "id": "call_x",
+          "name": "execute_code",
+          "type": "tool_call_start"
+        },
+        {
+          "arguments": "{\n  \"command\": \"ls",
+          "type": "tool_call_args"
+        }
+      ]
+    },
+    {
+      "case_id": "clean_eof_zero_byte_tool_args_drop",
+      "description": "Tool call name arrived but zero argument bytes streamed before clean EOF",
+      "expected_content": null,
+      "expected_dropped_tool_names": [
+        "write_file"
+      ],
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub",
+      "expected_tool_calls": null,
+      "is_stub": true,
+      "raw_chunks": [
+        {
+          "id": "call_zero",
+          "name": "write_file",
+          "type": "tool_call_start"
+        }
+      ]
+    },
+    {
+      "case_id": "clean_eof_mixed_tool_calls_all_or_nothing_drop",
+      "description": "One completed tool call and one dropped zero-byte tool call discards whole response as stub",
+      "expected_dropped_tool_names": [
+        "read_file",
+        "write_file"
+      ],
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub",
+      "expected_tool_calls": null,
+      "is_stub": true,
+      "raw_chunks": [
+        {
+          "arguments": "{\"path\": \"config.yaml\"}",
+          "name": "read_file",
+          "type": "tool_call_0"
+        },
+        {
+          "arguments": "",
+          "name": "write_file",
+          "type": "tool_call_1"
+        }
+      ]
+    },
+    {
+      "case_id": "repaired_tool_args_clean_finish",
+      "description": "Tool call arguments with repairable trailing comma survive repair and complete normally",
+      "expected_finish_reason": "tool_calls",
+      "expected_response_id_is_not_stub": true,
+      "is_stub": false,
+      "raw_arguments": "{\"path\": \"hello.txt\",}",
+      "repaired_arguments": "{\"path\": \"hello.txt\"}"
+    }
+  ],
+  "content_filter_tagging_and_escalation": [
+    {
+      "case_id": "error_classification_minimax_new_sensitive",
+      "error_string": "upstream output new_sensitive (1027)",
+      "expected_reason": "content_policy_blocked",
+      "expected_retryable": false,
+      "expected_should_fallback": true
+    },
+    {
+      "case_id": "error_classification_azure_content_filter",
+      "error_string": "Request was rejected by content_filter",
+      "expected_reason": "content_policy_blocked",
+      "expected_retryable": false,
+      "expected_should_fallback": true
+    },
+    {
+      "case_id": "error_classification_openai_usage_policy",
+      "error_string": "The generated response violates our usage policies",
+      "expected_reason": "content_policy_blocked",
+      "expected_should_fallback": true
+    },
+    {
+      "case_id": "error_classification_socket_reset_is_not_content_filter",
+      "error_string": "Connection reset by peer",
+      "is_content_policy_blocked": false
+    },
+    {
+      "case_id": "stream_call_stamps_content_filter_terminated_on_stub",
+      "description": "Stream transport error matching content filter stamps _content_filter_terminated=True on stub",
+      "expected_content_filter_terminated": true,
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub"
+    },
+    {
+      "case_id": "loop_content_filter_stub_activates_fallback_first_pass",
+      "description": "Loop detecting _content_filter_terminated immediately falls back without burning retries",
+      "fallback_activated": true,
+      "length_retries_burned": 0,
+      "messages_rolled_back": true
+    }
+  ],
+  "continuation_prompt_selection": [
+    {
+      "case_id": "prompt_partial_stub_network_error",
+      "description": "Partial stub with no dropped tools selects network error prompt",
+      "dropped_tools": null,
+      "expected_prompt": "[System: The previous response was cut off by a network error mid-stream. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "is_partial_stub": true,
+      "must_contain": "cut off by a network error mid-stream",
+      "must_not_contain": "output length limit"
+    },
+    {
+      "case_id": "prompt_partial_stub_empty_tools_network_error",
+      "description": "Partial stub with empty dropped_tools list selects network error prompt",
+      "dropped_tools": [],
+      "expected_prompt": "[System: The previous response was cut off by a network error mid-stream. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "is_partial_stub": true
+    },
+    {
+      "case_id": "prompt_partial_stub_single_dropped_tool",
+      "description": "Partial stub with dropped tool names requests chunking under ~8K tokens",
+      "dropped_tools": [
+        "write_file"
+      ],
+      "expected_prompt": "[System: Your previous tool call (write_file) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "is_partial_stub": true,
+      "must_contain": [
+        "(write_file)",
+        "under ~8K tokens"
+      ],
+      "starts_with": "[System: Your previous tool call "
+    },
+    {
+      "case_id": "prompt_partial_stub_tool_cap_at_three",
+      "description": "More than 3 dropped tools caps interpolated list at exactly first 3 names",
+      "dropped_tools": [
+        "tool_a",
+        "tool_b",
+        "tool_c",
+        "tool_d",
+        "tool_e"
+      ],
+      "expected_prompt": "[System: Your previous tool call (tool_a, tool_b, tool_c) was too large and the stream timed out before it could be delivered. Do NOT retry the same tool call with the same large content. Instead, break the content into multiple smaller tool calls (e.g. use multiple patch calls or write smaller files). Each tool call's arguments must be under ~8K tokens to avoid stream timeouts.]",
+      "is_partial_stub": true,
+      "must_contain": "(tool_a, tool_b, tool_c)",
+      "must_not_contain": "tool_d"
+    },
+    {
+      "case_id": "prompt_non_stub_output_limit",
+      "description": "Genuine output-length truncation selects output limit prompt",
+      "dropped_tools": null,
+      "expected_prompt": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "is_partial_stub": false,
+      "must_contain": "truncated by the output length limit",
+      "must_not_contain": "network error"
+    },
+    {
+      "case_id": "prompt_non_stub_ignores_dropped_tools",
+      "description": "Non-stub response ignores dropped_tools and uses output limit prompt",
+      "dropped_tools": [
+        "write_file"
+      ],
+      "expected_prompt": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "is_partial_stub": false
+    }
+  ],
+  "empty_stub_interim_suppression": [
+    {
+      "assistant_messages_count": 0,
+      "case_id": "empty_partial_stub_suppresses_assistant_message",
+      "content": "",
+      "description": "Empty stub content avoids appending empty assistant turn to protect Moonshot/Kimi",
+      "ephemeral_reasoning_off": false,
+      "nudge_appended": true,
+      "response_id": "partial-stream-stub",
+      "total_messages_count": 2
+    },
+    {
+      "assistant_messages_count": 1,
+      "case_id": "non_empty_partial_stub_appends_fragment",
+      "content": "First section delivered.",
+      "description": "Non-empty stub content appends assistant fragment tagged _length_continuation_fragment",
+      "fragment_tagged": true,
+      "response_id": "partial-stream-stub",
+      "truncated_parts": [
+        "First section delivered."
+      ]
+    },
+    {
+      "assistant_messages_count": 0,
+      "case_id": "non_stub_thinking_only_sets_reasoning_off",
+      "content": "",
+      "description": "Non-stub empty content (reasoning exhausted cap) sets ephemeral_reasoning_off=True",
+      "ephemeral_reasoning_off": true,
+      "response_id": "chatcmpl-real-uuid"
+    }
+  ],
+  "final_last_one_signals": [
+    {
+      "case_id": "last_one_bool_true_clean_stop",
+      "description": "Portal lastOne=True frame forces clean stop without [DONE] sentinel",
+      "expected_content": "Longcat stream complete.",
+      "expected_finish_reason": "stop",
+      "is_stub": false,
+      "raw_last_one": true
+    },
+    {
+      "case_id": "last_one_int_one_clean_stop",
+      "description": "Relabelled upstream sending integer lastOne=1 treated as clean stop",
+      "expected_content": "Integer lastOne complete.",
+      "expected_finish_reason": "stop",
+      "is_stub": false,
+      "raw_last_one": 1
+    },
+    {
+      "case_id": "last_one_str_true_clean_stop",
+      "description": "Relabelled upstream sending string lastOne='true' treated as clean stop",
+      "expected_content": "String lastOne complete.",
+      "expected_finish_reason": "stop",
+      "is_stub": false,
+      "raw_last_one": "true"
+    },
+    {
+      "case_id": "last_one_in_model_extra_dict_clean_stop",
+      "description": "lastOne located inside chunk.model_extra dict treated as clean stop",
+      "expected_content": "Extra dict lastOne complete.",
+      "expected_finish_reason": "stop",
+      "is_stub": false,
+      "raw_last_one": true
+    },
+    {
+      "case_id": "last_one_false_does_not_halt_drop_classification",
+      "description": "lastOne=False leaves finish_reason None and falls through to stub classification",
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub",
+      "is_stub": true,
+      "raw_last_one": false
+    }
+  ],
+  "partial_content_preservation": [
+    {
+      "case_id": "partial_text_only_preservation",
+      "description": "Stub faithfully preserves accumulated visible content with null reasoning",
+      "expected_content": "Preserved visible prose part 1.",
+      "expected_id": "partial-stream-stub",
+      "expected_reasoning_content": null,
+      "expected_role": "assistant",
+      "expected_tool_calls": null
+    },
+    {
+      "case_id": "partial_reasoning_and_text_preservation",
+      "description": "Stub preserves both internal reasoning content and visible prose content",
+      "expected_content": "Visible answer fragment.",
+      "expected_reasoning_content": "Chain of thought reasoning before drop.",
+      "expected_tool_calls": null
+    },
+    {
+      "case_id": "partial_reasoning_only_preservation",
+      "description": "Stub preserves reasoning content when visible prose is empty",
+      "expected_content": "",
+      "expected_reasoning_content": "Extensive reasoning before drop.",
+      "expected_tool_calls": null
+    },
+    {
+      "case_id": "partial_tool_call_suppression",
+      "description": "Stub message unconditionally sets tool_calls=None so broken calls never auto-execute",
+      "expected_dropped_tool_names": [
+        "bash",
+        "python"
+      ],
+      "expected_tool_calls": null
+    }
+  ],
+  "provider_reported_finish_reasons_exclusions": [
+    {
+      "case_id": "provider_reported_stop_exclusion",
+      "description": "Provider sent explicit finish_reason='stop'; drop detector excluded",
+      "expected_finish_reason": "stop",
+      "is_stub": false,
+      "raw_finish_reason": "stop"
+    },
+    {
+      "case_id": "provider_reported_length_exclusion",
+      "description": "Provider sent genuine finish_reason='length'; treated as real output cap, not stub",
+      "expected_finish_reason": "length",
+      "is_stub": false,
+      "raw_finish_reason": "length"
+    },
+    {
+      "case_id": "provider_reported_tool_calls_exclusion",
+      "description": "Provider sent finish_reason='tool_calls'; treated as tool execution turn",
+      "expected_finish_reason": "tool_calls",
+      "is_stub": false,
+      "raw_finish_reason": "tool_calls"
+    },
+    {
+      "case_id": "provider_reported_content_filter_exclusion",
+      "description": "Provider sent finish_reason='content_filter'; treated as policy refusal",
+      "expected_finish_reason": "content_filter",
+      "is_stub": false,
+      "raw_finish_reason": "content_filter"
+    },
+    {
+      "case_id": "vllm_merged_finish_content_chunk_exclusion",
+      "description": "Terminal finish_reason merged onto content chunk extracted before content continue",
+      "expected_content": ": uniform.",
+      "expected_finish_reason": "stop",
+      "is_stub": false
+    }
+  ],
+  "retry_and_ceiling_metadata": [
+    {
+      "case_id": "ceiling_exit_stitches_partial_and_strips_scaffolding",
+      "description": "After 4 continuation attempts, intermediate fragments and nudges are replaced by stitched partial",
+      "expected_completed": false,
+      "expected_error": "Response remained truncated after 4 continuation attempts",
+      "expected_final_response": "Quantum mechanics is the fundamental branch of physics",
+      "expected_partial": true,
+      "remaining_message_roles": [
+        "user",
+        "assistant"
+      ],
+      "retries_allowed": 4
+    },
+    {
+      "assistant_persisted": false,
+      "case_id": "ceiling_exit_zero_visible_text_guidance",
+      "description": "Ceiling exit when all fragments were empty returns actionable failure without assistant message",
+      "expected_completed": false,
+      "expected_final_response": "\u26a0\ufe0f **No visible answer was produced.** The model hit its output-token limit on every continuation attempt -- its reasoning consumed the entire budget each time.\n\nTo fix this:\n\u2192 Lower reasoning effort: `/reasoning low` or `/reasoning none`\n\u2192 Or raise max_tokens for this model",
+      "expected_partial": true
+    }
+  ],
+  "transport_error_boundary": [
+    {
+      "case_id": "transport_error_pre_visible_raises_directly",
+      "deltas_were_sent": false,
+      "description": "Stream transport error before visible deltas re-raises for outer retry ladder",
+      "expected_stub": false,
+      "raised_exception": "ConnectionResetError"
+    },
+    {
+      "case_id": "transport_error_post_visible_swallowed_into_stub",
+      "deltas_were_sent": true,
+      "description": "Stream error after visible tokens swallowed into length stub preserving text",
+      "expected_content": "Delivered text before disconnect.",
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub",
+      "expected_tool_calls": null,
+      "is_stub": true
+    },
+    {
+      "case_id": "transport_error_post_visible_with_tools_surfaces_warning",
+      "description": "Transport error mid tool-call appends user-visible warning naming dropped tools",
+      "expected_dropped_tool_names": [
+        "execute_cmd"
+      ],
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub",
+      "is_stub": true,
+      "warning_substring": "Stream stalled mid tool-call (execute_cmd)"
+    },
+    {
+      "case_id": "transport_error_post_visible_empty_text_stays_empty",
+      "description": "Empty recovered text deliberately kept empty to enable loop interim suppression",
+      "expected_content_falsy": true,
+      "expected_finish_reason": "length",
+      "expected_response_id": "partial-stream-stub",
+      "is_stub": true
+    }
+  ],
+  "usage_object_presence_semantics": [
+    {
+      "case_id": "final_usage_chunk_standard_tokens_is_clean_stop",
+      "description": "Trailing usage chunk with choices=[] and nonzero tokens proves completion",
+      "expected_completion_tokens": 15,
+      "expected_content": "Complete response verified by usage.",
+      "expected_finish_reason": "stop",
+      "expected_has_usage": true,
+      "expected_prompt_tokens": 100,
+      "is_stub": false,
+      "raw_usage": {
+        "completion_tokens": 15,
+        "prompt_tokens": 100,
+        "total_tokens": 115
+      }
+    },
+    {
+      "case_id": "final_usage_chunk_zero_tokens_is_clean_stop",
+      "description": "Trailing usage chunk with choices=[] and zero tokens proves completion by object presence",
+      "expected_completion_tokens": 0,
+      "expected_content": "Zero token usage chunk test.",
+      "expected_finish_reason": "stop",
+      "expected_has_usage": true,
+      "expected_prompt_tokens": 0,
+      "is_stub": false,
+      "raw_usage": {
+        "completion_tokens": 0,
+        "prompt_tokens": 0,
+        "total_tokens": 0
+      }
+    },
+    {
+      "case_id": "inline_usage_on_content_chunk_is_clean_stop",
+      "description": "Usage attached to content chunk proves stream completed cleanly despite finish_reason None",
+      "expected_content": "Inline usage present.",
+      "expected_finish_reason": "stop",
+      "expected_has_usage": true,
+      "is_stub": false
+    },
+    {
+      "case_id": "missing_usage_and_no_finish_routes_to_stub",
+      "description": "When usage_obj is None and finish_reason is None, drop detector classifies as stub",
+      "expected_content": "Abrupt drop without usage.",
+      "expected_finish_reason": "length",
+      "expected_has_usage": false,
+      "expected_response_id": "partial-stream-stub",
+      "is_stub": true
+    }
+  ],
+  "zero_output_eof": [
+    {
+      "case_id": "zero_chunks_raises_empty_stream_error",
+      "description": "Zero chunks delivered with finish_reason None raises EmptyStreamError",
+      "expected_exception": "EmptyStreamError",
+      "expected_message_substring": "Provider returned an empty stream with no finish_reason",
+      "raised": true,
+      "raw_chunks": []
+    },
+    {
+      "case_id": "empty_deltas_no_finish_raises_empty_stream_error",
+      "description": "Chunk with no content and no finish_reason raises EmptyStreamError",
+      "expected_exception": "EmptyStreamError",
+      "raised": true
+    },
+    {
+      "case_id": "zero_content_with_explicit_stop_completes_normally",
+      "description": "Provider sent finish_reason='stop' with empty content; returns complete turn without error",
+      "expected_content": "",
+      "expected_finish_reason": "stop",
+      "is_stub": false
+    }
+  ]
+}

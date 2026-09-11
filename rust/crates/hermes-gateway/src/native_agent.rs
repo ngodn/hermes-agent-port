@@ -1001,7 +1001,9 @@ enum MainSuccessBodyFailure {
 }
 
 const MAIN_LENGTH_CONTINUATION_PROMPT: &str =
-    "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]";
+    crate::main_dropped_stream::OUTPUT_LIMIT_CONTINUATION_PROMPT;
+const MAIN_NETWORK_CONTINUATION_PROMPT: &str =
+    crate::main_dropped_stream::NETWORK_CONTINUATION_PROMPT;
 
 fn main_length_needs_separator(previous: Option<char>, next: &str) -> bool {
     previous.is_some_and(|previous| {
@@ -4557,7 +4559,7 @@ impl NativeAgentClient {
         let mut continuation_join_after = None;
         let mut continuation_messages = Vec::new();
         let mut disable_reasoning_once = false;
-        let mut saw_visible_length_fragment = false;
+        let mut saw_visible_continuation_fragment = false;
         loop {
             if stale_stream_inner_attempts == 0 {
                 let active_index = self
@@ -4708,6 +4710,16 @@ impl NativeAgentClient {
             }
             stale_stream_inner_attempts = 0;
             stale_stream_outer_failures = 0;
+            let network_drop = outcome.dropped_stream_disposition()
+                == crate::main_dropped_stream::Disposition::ContinuePartial;
+            if network_drop {
+                tracing::warn!(
+                    end = ?outcome.stream_end,
+                    error = outcome.stream_error.as_deref().unwrap_or("clean EOF"),
+                    visible_chars = outcome.visible_content.chars().count(),
+                    "main-provider stream ended without a terminal signal; requesting continuation"
+                );
+            }
             let assistant_message = json!({
                 "role":"assistant",
                 "content":outcome.raw_content,
@@ -4739,6 +4751,40 @@ impl NativeAgentClient {
                 || outcome.refusal.as_deref().is_some_and(|refusal| {
                     !refusal.trim().is_empty() && !outcome.observed_generation
                 });
+            if network_drop && !content_policy_refusal && !outcome.visible {
+                self.capture_usage(outcome.usage);
+                length_continue_retries = length_continue_retries.saturating_add(1);
+                if length_continue_retries < 4 {
+                    self.mark_turn_continuation();
+                    crate::main_provider_truncation::append_reasoning_only_nudge(
+                        &mut request_messages,
+                        MAIN_NETWORK_CONTINUATION_PROMPT,
+                    );
+                    crate::main_provider_truncation::append_reasoning_only_nudge(
+                        &mut continuation_messages,
+                        MAIN_NETWORK_CONTINUATION_PROMPT,
+                    );
+                    continue;
+                }
+                self.clear_turn_continuation();
+                if !saw_visible_continuation_fragment {
+                    self.mark_turn_reply_delivery_only();
+                    let _ = events
+                        .send(StreamEvent::MessageChunk {
+                            text: crate::main_provider_truncation::NO_VISIBLE_RESPONSE.into(),
+                        })
+                        .await;
+                }
+                let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                return if saw_visible_continuation_fragment {
+                    Err(Error::Other(
+                        "native agent response remained truncated after 4 continuation attempts"
+                            .into(),
+                    ))
+                } else {
+                    Ok(None)
+                };
+            }
             if outcome.finish_reason == "length" && !outcome.stalled {
                 let disposition =
                     crate::main_provider_truncation::classify(Some(&outcome.raw_content), false);
@@ -4768,7 +4814,7 @@ impl NativeAgentClient {
                         continue;
                     }
                     self.clear_turn_continuation();
-                    if !saw_visible_length_fragment {
+                    if !saw_visible_continuation_fragment {
                         self.mark_turn_reply_delivery_only();
                         let _ = events
                             .send(StreamEvent::MessageChunk {
@@ -4777,7 +4823,7 @@ impl NativeAgentClient {
                             .await;
                     }
                     let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
-                    return if saw_visible_length_fragment {
+                    return if saw_visible_continuation_fragment {
                         Err(Error::Other(
                             "native agent response remained truncated after 4 continuation attempts"
                                 .into(),
@@ -4794,8 +4840,8 @@ impl NativeAgentClient {
                             .into(),
                     ));
                 }
-                if outcome.finish_reason == "length" {
-                    saw_visible_length_fragment = true;
+                if outcome.finish_reason == "length" || network_drop {
+                    saw_visible_continuation_fragment = true;
                     self.capture_usage(outcome.usage);
                     length_continue_retries = length_continue_retries.saturating_add(1);
                     if length_continue_retries < 4 {
@@ -4810,7 +4856,11 @@ impl NativeAgentClient {
                         }
                         let nudge = json!({
                             "role":"user",
-                            "content":MAIN_LENGTH_CONTINUATION_PROMPT,
+                            "content":if network_drop {
+                                MAIN_NETWORK_CONTINUATION_PROMPT
+                            } else {
+                                MAIN_LENGTH_CONTINUATION_PROMPT
+                            },
                         });
                         request_messages.push(assistant.clone());
                         request_messages.push(nudge.clone());
@@ -5485,6 +5535,7 @@ fn flatten_extra_body(body: &mut Value) -> Result<()> {
 #[derive(Default)]
 struct MainStreamOutcome {
     usage: Option<crate::provider_usage::CanonicalUsage>,
+    saw_usage_object: bool,
     visible: bool,
     visible_content: String,
     observed_generation: bool,
@@ -5494,6 +5545,20 @@ struct MainStreamOutcome {
     raw_content: String,
     stalled: bool,
     stale_strike: bool,
+    stream_end: crate::main_dropped_stream::StreamEnd,
+    stream_error: Option<String>,
+}
+
+impl MainStreamOutcome {
+    fn dropped_stream_disposition(&self) -> crate::main_dropped_stream::Disposition {
+        crate::main_dropped_stream::classify(crate::main_dropped_stream::Candidate {
+            end: self.stream_end,
+            finish_reason: (!self.finish_reason.is_empty()).then_some(self.finish_reason.as_str()),
+            visible_text: self.visible,
+            observed_generation: self.observed_generation,
+            saw_usage_object: self.saw_usage_object,
+        })
+    }
 }
 
 fn observe_main_sse_line(line: &str, outcome: &mut MainStreamOutcome) {
@@ -5508,9 +5573,13 @@ fn observe_main_sse_line(line: &str, outcome: &mut MainStreamOutcome) {
     let Ok(value) = serde_json::from_str::<Value>(payload) else {
         return;
     };
-    let last_one = value["lastOne"] == Value::Bool(true)
-        || value["lastOne"].as_i64() == Some(1)
-        || value["lastOne"].as_str() == Some("true");
+    let last_one = [&value["lastOne"], &value["model_extra"]["lastOne"]]
+        .into_iter()
+        .any(|last_one| {
+            *last_one == Value::Bool(true)
+                || last_one.as_i64() == Some(1)
+                || last_one.as_str() == Some("true")
+        });
     if outcome.finish_reason.is_empty() && last_one {
         outcome.finish_reason = "stop".into();
     }
@@ -5560,6 +5629,15 @@ fn main_sse_line_is_activity(line: &str) -> bool {
     payload == "[DONE]" || serde_json::from_str::<Value>(payload).is_ok()
 }
 
+fn main_sse_line_has_usage_object(line: &str) -> bool {
+    line.trim_end_matches(['\r', '\n'])
+        .strip_prefix("data:")
+        .map(str::trim)
+        .filter(|payload| !payload.is_empty() && *payload != "[DONE]")
+        .and_then(|payload| serde_json::from_str::<Value>(payload).ok())
+        .is_some_and(|value| value.get("usage").is_some_and(Value::is_object))
+}
+
 async fn forward_sse<S, E>(
     mut stream: S,
     events: &mpsc::Sender<StreamEvent>,
@@ -5594,7 +5672,14 @@ where
                 break;
             }
         };
-        let chunk = chunk.map_err(|e| Error::Other(format!("native agent stream: {e}")))?;
+        let chunk = match chunk {
+            Ok(chunk) => chunk,
+            Err(error) => {
+                outcome.stream_end = crate::main_dropped_stream::StreamEnd::TransportError;
+                outcome.stream_error = Some(format!("native agent stream: {error}"));
+                break;
+            }
+        };
         buf.extend_from_slice(&chunk);
         while let Some(nl) = buf.iter().position(|byte| *byte == b'\n') {
             let line: Vec<u8> = buf.drain(..=nl).collect();
@@ -5603,6 +5688,7 @@ where
                 stale_deadline = tokio::time::Instant::now() + stale_timeout;
             }
             observe_main_sse_line(&line, &mut outcome);
+            outcome.saw_usage_object |= main_sse_line_has_usage_object(&line);
             if let Some(found) = crate::provider_usage::from_sse_line(
                 &line,
                 crate::provider_usage::ApiMode::ChatCompletions,
@@ -5628,6 +5714,7 @@ where
                 }
                 SseEvent::Done => {
                     done = true;
+                    outcome.stream_end = crate::main_dropped_stream::StreamEnd::ProtocolDone;
                     break;
                 }
                 SseEvent::Ignore => {}
@@ -5641,6 +5728,7 @@ where
     if !done {
         let line = String::from_utf8_lossy(&buf);
         observe_main_sse_line(&line, &mut outcome);
+        outcome.saw_usage_object |= main_sse_line_has_usage_object(&line);
         if let Some(found) = crate::provider_usage::from_sse_line(
             &line,
             crate::provider_usage::ApiMode::ChatCompletions,
@@ -5680,6 +5768,14 @@ where
     }
     if !outcome.visible && outcome.reasoning.is_empty() {
         outcome.reasoning = main_inline_reasoning_text(&outcome.raw_content).unwrap_or_default();
+    }
+
+    if outcome.dropped_stream_disposition()
+        == crate::main_dropped_stream::Disposition::PropagateTransportError
+    {
+        return Err(Error::Other(outcome.stream_error.take().unwrap_or_else(
+            || "native agent stream ended before generation began".into(),
+        )));
     }
 
     if emit_stop {
@@ -6220,6 +6316,37 @@ mod tests {
         (base_url, server)
     }
 
+    async fn read_http_json_request(stream: &mut tokio::net::TcpStream) -> serde_json::Value {
+        use tokio::io::AsyncReadExt;
+
+        let mut request = Vec::new();
+        let header_end = loop {
+            if let Some(index) = request.windows(4).position(|window| window == b"\r\n\r\n") {
+                break index + 4;
+            }
+            let mut chunk = [0_u8; 4096];
+            let count = stream.read(&mut chunk).await.unwrap();
+            assert!(count > 0, "request ended before headers completed");
+            request.extend_from_slice(&chunk[..count]);
+        };
+        let headers = String::from_utf8_lossy(&request[..header_end]);
+        let content_length = headers
+            .lines()
+            .find_map(|line| {
+                let (name, value) = line.split_once(':')?;
+                name.eq_ignore_ascii_case("content-length")
+                    .then(|| value.trim().parse::<usize>().unwrap())
+            })
+            .expect("JSON request has content-length");
+        while request.len() < header_end + content_length {
+            let mut chunk = [0_u8; 4096];
+            let count = stream.read(&mut chunk).await.unwrap();
+            assert!(count > 0, "request ended before body completed");
+            request.extend_from_slice(&chunk[..count]);
+        }
+        serde_json::from_slice(&request[header_end..header_end + content_length]).unwrap()
+    }
+
     #[test]
     fn main_retry_attempts_match_python_config_coercion() {
         let cases = [
@@ -6500,6 +6627,12 @@ mod tests {
             );
             assert_eq!(nous.finish_reason, "stop", "{last_one}");
         }
+        let mut model_extra = super::MainStreamOutcome::default();
+        super::observe_main_sse_line(
+            r#"data: {"choices":[],"model_extra":{"lastOne":true}}"#,
+            &mut model_extra,
+        );
+        assert_eq!(model_extra.finish_reason, "stop");
     }
 
     #[test]
@@ -6766,7 +6899,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn partial_main_stream_is_not_replayed_or_sent_to_fallback() {
+    async fn postvisible_transport_error_continues_without_fallback_or_prefix_replay() {
         use crate::agent::AgentClient;
         use axum::{extract::State, routing::post, Json, Router};
         use std::sync::{
@@ -6780,27 +6913,40 @@ mod tests {
         let primary_calls = Arc::new(AtomicUsize::new(0));
         let primary_calls_in_task = primary_calls.clone();
         let _primary_server = MainRetryServer(tokio::spawn(async move {
-            let (mut stream, _) = listener.accept().await.unwrap();
-            let mut request = vec![0_u8; 16 * 1024];
-            let _ = stream.read(&mut request).await.unwrap();
-            primary_calls_in_task.fetch_add(1, Ordering::SeqCst);
-            let event = b"data: {\"choices\":[{\"delta\":{\"content\":\"partial\"}}]}\n\n";
-            let headers = concat!(
-                "HTTP/1.1 200 OK\r\n",
-                "content-type: text/event-stream\r\n",
-                "transfer-encoding: chunked\r\n",
-                "connection: close\r\n\r\n"
-            );
-            stream.write_all(headers.as_bytes()).await.unwrap();
-            stream
-                .write_all(format!("{:x}\r\n", event.len()).as_bytes())
-                .await
-                .unwrap();
-            stream.write_all(event).await.unwrap();
-            stream.write_all(b"\r\n").await.unwrap();
-            stream.flush().await.unwrap();
-            // Closing without the terminating zero-length chunk makes the body
-            // fail only after the first visible model delta has been delivered.
+            for attempt in 0..2 {
+                let (mut stream, _) = listener.accept().await.unwrap();
+                let mut request = vec![0_u8; 16 * 1024];
+                let _ = stream.read(&mut request).await.unwrap();
+                primary_calls_in_task.fetch_add(1, Ordering::SeqCst);
+                if attempt == 0 {
+                    let event = b"data: {\"choices\":[{\"delta\":{\"content\":\"partial\"}}]}";
+                    let headers = concat!(
+                        "HTTP/1.1 200 OK\r\n",
+                        "content-type: text/event-stream\r\n",
+                        "transfer-encoding: chunked\r\n",
+                        "connection: close\r\n\r\n"
+                    );
+                    stream.write_all(headers.as_bytes()).await.unwrap();
+                    stream
+                        .write_all(format!("{:x}\r\n", event.len()).as_bytes())
+                        .await
+                        .unwrap();
+                    stream.write_all(event).await.unwrap();
+                    stream.write_all(b"\r\n").await.unwrap();
+                    stream.flush().await.unwrap();
+                    // Closing without a line ending or terminating chunk makes
+                    // the body fail while the final valid SSE line is buffered.
+                } else {
+                    let body = b"data: {\"choices\":[{\"delta\":{\"content\":\"recovered\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n";
+                    let headers = format!(
+                        "HTTP/1.1 200 OK\r\ncontent-type: text/event-stream\r\ncontent-length: {}\r\nconnection: close\r\n\r\n",
+                        body.len()
+                    );
+                    stream.write_all(headers.as_bytes()).await.unwrap();
+                    stream.write_all(body).await.unwrap();
+                    stream.flush().await.unwrap();
+                }
+            }
         }));
 
         let fallback_calls = Arc::new(AtomicUsize::new(0));
@@ -6840,10 +6986,95 @@ mod tests {
             }
         }
 
-        assert!(result.is_err());
-        assert_eq!(visible, "partial");
-        assert_eq!(primary_calls.load(Ordering::SeqCst), 1);
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(visible, "partial\nrecovered");
+        assert_eq!(primary_calls.load(Ordering::SeqCst), 2);
         assert_eq!(fallback_calls.load(Ordering::SeqCst), 0);
+    }
+
+    #[tokio::test]
+    async fn postdelta_transport_error_suppresses_empty_assistant_replay() {
+        use crate::agent::AgentClient;
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc, Mutex,
+        };
+        use tokio::io::AsyncWriteExt;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let url = format!("http://{}", listener.local_addr().unwrap());
+        let server_calls = calls.clone();
+        let server_bodies = bodies.clone();
+        let _server = MainRetryServer(tokio::spawn(async move {
+            for attempt in 0..2 {
+                let (mut stream, _) = listener.accept().await.unwrap();
+                let body = read_http_json_request(&mut stream).await;
+                server_bodies.lock().unwrap().push(body);
+                server_calls.fetch_add(1, Ordering::SeqCst);
+                if attempt == 0 {
+                    let event = b"data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"private calculation\"}}]}\n\n";
+                    let headers = concat!(
+                        "HTTP/1.1 200 OK\r\n",
+                        "content-type: text/event-stream\r\n",
+                        "transfer-encoding: chunked\r\n",
+                        "connection: close\r\n\r\n"
+                    );
+                    stream.write_all(headers.as_bytes()).await.unwrap();
+                    stream
+                        .write_all(format!("{:x}\r\n", event.len()).as_bytes())
+                        .await
+                        .unwrap();
+                    stream.write_all(event).await.unwrap();
+                    stream.write_all(b"\r\n").await.unwrap();
+                    stream.flush().await.unwrap();
+                } else {
+                    let body = b"data: {\"choices\":[{\"delta\":{\"content\":\"visible answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n";
+                    let headers = format!(
+                        "HTTP/1.1 200 OK\r\ncontent-type: text/event-stream\r\ncontent-length: {}\r\nconnection: close\r\n\r\n",
+                        body.len()
+                    );
+                    stream.write_all(headers.as_bytes()).await.unwrap();
+                    stream.write_all(body).await.unwrap();
+                    stream.flush().await.unwrap();
+                }
+            }
+        }));
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_reasoning_config(Some(serde_json::json!({
+                "enabled":true, "effort":"high"
+            })))
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "visible answer");
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2);
+        assert_eq!(
+            bodies[1]["messages"],
+            serde_json::json!([{
+                "role":"user",
+                "content":format!("question\n\n{}", super::MAIN_NETWORK_CONTINUATION_PROMPT)
+            }])
+        );
+        assert_eq!(bodies[0]["reasoning"], bodies[1]["reasoning"]);
     }
 
     #[tokio::test]
@@ -6960,6 +7191,256 @@ mod tests {
         assert_eq!(durable[1]["finish_reason"], "length");
         drop(database);
         let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn clean_eof_after_visible_text_uses_network_continuation_and_durable_replay() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        let attempt = {
+                            let mut bodies = bodies.lock().unwrap();
+                            bodies.push(body);
+                            bodies.len()
+                        };
+                        let response = if attempt == 1 {
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"part one\"}}]}\n\n"
+                        } else {
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"part two\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n"
+                        };
+                        ([("content-type", "text/event-stream")], response).into_response()
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_output_cap(Some(serde_json::json!(4096)))
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let root = std::env::temp_dir().join(format!(
+            "hermes-stream-drop-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = crate::session_db::SessionDb::open(root.join("state.db")).unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question", "resolved_session_id":"stream-drop-session"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("stream-drop-session".into());
+        let history = crate::session_db::begin_turn(Some(&database), false, &message, "cli");
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &history,
+                tx,
+            )
+            .await;
+        let mut answer = String::new();
+        let mut stops = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::MessageStop { final_: true } => stops += 1,
+                _ => {}
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "part one\npart two");
+        assert_eq!(stops, 1);
+        let history_reply = client
+            .assistant_reply_for_history(&message, &answer)
+            .expect("continued reply remains durable");
+        crate::session_db::end_turn(Some(&database), false, &message, &history_reply);
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2);
+        assert_eq!(bodies[0]["max_tokens"], 4096);
+        assert_eq!(bodies[1]["max_tokens"], 8192);
+        assert_eq!(
+            bodies[1]["messages"],
+            serde_json::json!([
+                {"role":"user", "content":"question"},
+                {"role":"assistant", "content":"part one"},
+                {"role":"user", "content":super::MAIN_NETWORK_CONTINUATION_PROMPT}
+            ])
+        );
+        drop(bodies);
+        let durable = database
+            .load_lifecycle_messages("stream-drop-session")
+            .unwrap();
+        assert_eq!(
+            durable
+                .iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            ["user", "assistant", "user", "assistant"]
+        );
+        assert_eq!(durable[1]["content"], "part one");
+        assert_eq!(
+            durable[2]["content"],
+            super::MAIN_NETWORK_CONTINUATION_PROMPT
+        );
+        assert_eq!(durable[3]["content"], "part two");
+        assert_eq!(durable[1]["finish_reason"], "length");
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn usage_object_or_last_one_proves_visible_stream_completed() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        let cases = [
+            (
+                "usage",
+                concat!(
+                    "data: {\"choices\":[{\"delta\":{\"content\":\"usage complete\"}}]}\n\n",
+                    "data: {\"choices\":[],\"usage\":{\"prompt_tokens\":0,\"completion_tokens\":0,\"total_tokens\":0}}\n\n",
+                    "data: [DONE]\n\n"
+                ),
+                "usage complete",
+            ),
+            (
+                "last-one",
+                concat!(
+                    "data: {\"choices\":[{\"delta\":{\"content\":\"last one complete\"}}]}\n\n",
+                    "data: {\"choices\":[],\"lastOne\":true}\n\n"
+                ),
+                "last one complete",
+            ),
+        ];
+        for (name, response, expected) in cases {
+            let calls = Arc::new(AtomicUsize::new(0));
+            let app = Router::new()
+                .route(
+                    "/chat/completions",
+                    post(
+                        |State((calls, response)): State<(
+                            Arc<AtomicUsize>,
+                            &'static str,
+                        )>| async move {
+                            calls.fetch_add(1, Ordering::SeqCst);
+                            ([("content-type", "text/event-stream")], response).into_response()
+                        },
+                    ),
+                )
+                .with_state((calls.clone(), response));
+            let (url, _server) = serve_main_retry(app).await;
+            let client = super::NativeAgentClient::new("model", "key", url)
+                .unwrap()
+                .with_main_retry_backoff(std::time::Duration::ZERO);
+            let message = serde_json::from_value(serde_json::json!({
+                "platform":"cli", "channel_id":"channel", "sender_id":"user",
+                "text":"question"
+            }))
+            .unwrap();
+            let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+            let result = client.run_turn(&message, &[], tx).await;
+            let mut answer = String::new();
+            while let Some(event) = rx.recv().await {
+                if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                    answer.push_str(&text);
+                }
+            }
+
+            assert!(result.is_ok(), "{name}: {result:?}");
+            assert_eq!(answer, expected, "{name}");
+            assert_eq!(calls.load(Ordering::SeqCst), 1, "{name}");
+        }
+    }
+
+    #[tokio::test]
+    async fn dropped_stream_continuation_ceiling_is_bounded() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Json, Router};
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<serde_json::Value>::new()));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State(bodies): State<Arc<Mutex<Vec<serde_json::Value>>>>,
+                     Json(body): Json<serde_json::Value>| async move {
+                        let attempt = {
+                            let mut bodies = bodies.lock().unwrap();
+                            bodies.push(body);
+                            bodies.len()
+                        };
+                        let response = format!(
+                            "data: {{\"choices\":[{{\"delta\":{{\"content\":\"part {attempt}\"}}}}]}}\n\n"
+                        );
+                        ([("content-type", "text/event-stream")], response).into_response()
+                    },
+                ),
+            )
+            .with_state(bodies.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(16);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        let mut stops = 0;
+        while let Some(event) = rx.recv().await {
+            match event {
+                hermes_core::StreamEvent::MessageChunk { text } => answer.push_str(&text),
+                hermes_core::StreamEvent::MessageStop { final_: true } => stops += 1,
+                _ => {}
+            }
+        }
+
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("truncated after 4 continuation attempts"));
+        assert_eq!(answer, "part 1\npart 2\npart 3\npart 4");
+        assert_eq!(stops, 1);
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 4);
+        for body in &bodies[1..] {
+            let prompt = body["messages"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .rev()
+                .find(|message| message["role"] == "user")
+                .unwrap()["content"]
+                .as_str()
+                .unwrap();
+            assert_eq!(prompt, super::MAIN_NETWORK_CONTINUATION_PROMPT);
+        }
     }
 
     #[tokio::test]
@@ -13065,7 +13546,7 @@ mod tests {
             recorded.lock().unwrap().push(body.clone());
             async move {
                 if body["stream"] == true {
-                    ([("content-type", "text/event-stream")], "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\ndata: [DONE]\n").into_response()
+                    ([("content-type", "text/event-stream")], "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n").into_response()
                 } else if body["messages"].as_array().unwrap().last().unwrap()["role"] == "user" {
                     Json(json!({"choices": [{"message": {"role": "assistant", "tool_calls": [{"id": "clock", "type": "function", "function": {"name": "current_time", "arguments": "{}"}}]}}]})).into_response()
                 } else { Json(json!({"choices": [{"message": {"role": "assistant", "content": "ok"}}]})).into_response() }
@@ -13338,7 +13819,7 @@ mod tests {
             captured.lock().unwrap().push((headers, body.clone()));
             async move {
                 if body["stream"] == true {
-                    ([("content-type", "text/event-stream")], "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\ndata: [DONE]\n").into_response()
+                    ([("content-type", "text/event-stream")], "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n").into_response()
                 } else { Json(json!({"choices": [{"message": {"role": "assistant", "content": "ok"}}]})).into_response() }
             }
         }));

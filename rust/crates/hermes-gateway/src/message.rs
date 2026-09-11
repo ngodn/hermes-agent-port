@@ -605,7 +605,7 @@ mod tests {
         if body["stream"] == true {
             return (
                 [("content-type", "text/event-stream")],
-                "data: {\"choices\":[{\"delta\":{\"content\":\"seen\"}}]}\n\ndata: [DONE]\n\n",
+                "data: {\"choices\":[{\"delta\":{\"content\":\"seen\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
             )
                 .into_response();
         }
@@ -1939,7 +1939,7 @@ mod tests {
             }
             (
                 [("content-type", "text/event-stream")],
-                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\ndata: [DONE]\n\n",
+                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
             )
                 .into_response()
         }
@@ -2067,7 +2067,7 @@ mod tests {
             }
             (
                 [("content-type", "text/event-stream")],
-                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\ndata: [DONE]\n\n",
+                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
             )
                 .into_response()
         }
@@ -2185,7 +2185,7 @@ mod tests {
             }
             (
                 [("content-type", "text/event-stream")],
-                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\ndata: [DONE]\n\n",
+                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
             )
                 .into_response()
         }
@@ -2334,7 +2334,7 @@ mod tests {
             calls.lock().unwrap().push(body);
             (
                 [("content-type", "text/event-stream")],
-                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"}}]}\n\ndata: [DONE]\n\n",
+                "data: {\"choices\":[{\"delta\":{\"content\":\"answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
             )
                 .into_response()
         }

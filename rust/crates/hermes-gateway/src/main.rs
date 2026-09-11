@@ -84,6 +84,7 @@ mod install_identity;
 mod kanban_watchers;
 mod lifecycle_ledger;
 mod local_probe;
+mod main_dropped_stream;
 mod main_provider_timeouts;
 mod main_provider_truncation;
 mod managed_capabilities;
@@ -2596,7 +2597,7 @@ mod startup_tests {
             post(|| async {
                 (
                     [("content-type", "text/event-stream")],
-                    "data: {\"choices\":[{\"delta\":{\"content\":\"configured\"}}]}\n\ndata: [DONE]\n\n",
+                    "data: {\"choices\":[{\"delta\":{\"content\":\"configured\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
                 )
             }),
         );
@@ -3084,7 +3085,7 @@ mod startup_tests {
                         captures.lock().unwrap().push((headers, body));
                         (
                             [("content-type", "text/event-stream")],
-                            "data: {\"choices\":[{\"delta\":{\"content\":\"rescued\"}}]}\n\ndata: [DONE]\n\n",
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"rescued\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
                         )
                     }
                 }),
@@ -3411,7 +3412,7 @@ mod startup_tests {
                         (
                             [("content-type", "text/event-stream")],
                             format!(
-                                "data: {{\"choices\":[{{\"delta\":{{\"content\":{}}}}}]}}\n\ndata: [DONE]\n\n",
+                                "data: {{\"choices\":[{{\"delta\":{{\"content\":{}}},\"finish_reason\":\"stop\"}}]}}\n\ndata: [DONE]\n\n",
                                 serde_json::to_string(text).unwrap()
                             ),
                         )
@@ -4719,7 +4720,7 @@ def register(ctx):
                 async move {
                     captured.lock().unwrap().push((headers, body.clone()));
                     if body["stream"] == true {
-                        ([("content-type", "text/event-stream")], "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\ndata: [DONE]\n\n").into_response()
+                        ([("content-type", "text/event-stream")], "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n").into_response()
                     } else {
                         Json(json!({"choices": [{"message": {"role": "assistant", "content": "ok"}}]})).into_response()
                     }
@@ -5157,7 +5158,7 @@ def register(ctx):
                         if streaming {
                             (
                                 [("content-type", "text/event-stream")],
-                                "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"}}]}\n\ndata: [DONE]\n\n",
+                                "data: {\"choices\":[{\"delta\":{\"content\":\"ok\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
                             )
                                 .into_response()
                         } else if tools && index == 0 {
@@ -5355,7 +5356,7 @@ def register(ctx):
                     captured.lock().unwrap().push((headers, body.to_vec()));
                     (
                         [("content-type", "text/event-stream")],
-                        "data: {\"choices\":[{\"delta\":{\"content\":\"pool fallback\"}}]}\n\ndata: [DONE]\n\n",
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"pool fallback\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
                     )
                 }
             }),

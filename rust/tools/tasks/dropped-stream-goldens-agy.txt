@@ -1,0 +1,11 @@
+Repository: /home/eins0fx/development/hermes-agent-port. Resolve every path under this repository and use absolute paths for filesystem tools. Do not search the home directory for another checkout.
+
+Own only the executable Python oracle for dropped chat-completions stream recovery. Do not inspect or edit the Rust implementation. Do not cover provider-reported finish_reason="length", Ollama/GLM stop correction, inactivity-timeout stalls, thinking exhaustion, repetition guards, non-chat transports, or general pre-body retry policy.
+
+Inspect the live Python stream accumulator, partial-stream stub builder, conversation-loop consumer, continuation-prompt selector, constants, and focused tests. Produce only:
+
+1. rust/analysis/dropped-stream-contract-agy.md
+2. rust/tools/gen_dropped_stream_goldens.py
+3. rust/tools/dropped-stream-goldens.json
+
+The deterministic generator must execute or directly extract live Python behavior wherever possible. Cover clean EOF with visible text and no finish reason, usage-object presence including zero counts, final lastOne signals, zero-output EOF, provider-reported finish reasons as exclusions, transport error before and after visible deltas, partial text/reasoning preservation, network versus output-limit prompt selection, empty-stub interim suppression, retry/ceiling metadata, and any currently reachable content-filter tagging. Preserve raw fixture input types. Every declared matrix expectation must be asserted against the executed source, not merely recorded. Run the generator twice and prove byte-for-byte determinism. Run the smallest focused Python test set and record exact commands and counts. Do not edit existing files. Do not use em dash characters.

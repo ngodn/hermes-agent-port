@@ -1,6 +1,6 @@
 # Full Rust port progress audit, updated 2026-09-11
 
-Current estimate: **58.75% of the full native replacement**, reported as
+Current estimate: **58.95% of the full native replacement**, reported as
 **about 59%**, with a reasonable judgment range of **55% to 61%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
@@ -35,8 +35,12 @@ disables reasoning for one request, preserves its nudge in durable model-facing
 history, and restores the original cache key after a reasoning-mandatory
 rejection. Local Ollama GLM routes now conservatively correct suspicious
 post-tool `stop` responses into that same durable length continuation without
-touching hosted Ollama, cloud models, or unrelated local servers. The estimate
-remains conservative because dropped-stream continuation, other OAuth paths,
+touching hosted Ollama, cloud models, or unrelated local servers. Clean EOF,
+protocol `[DONE]`, and body transport failures after generation now preserve
+visible output through the network-specific continuation path. Finish reasons,
+usage objects, and Nous `lastOne` frames remain clean terminal evidence, while
+pre-generation failures retain ordinary retry and fallback behavior. The
+estimate remains conservative because run-budget scaling, other OAuth paths,
 non-chat provider transports, smart approval, PTY and notification support,
 remote execution, most tools, and the underlying plugin and external-memory
 managers are not native.
@@ -57,10 +61,10 @@ audits.
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 76% | 11.40 |
-| Native agent core | 20% | 82% | 16.40 |
-| Total | 100% | | **58.75** |
+| Native agent core | 20% | 83% | 16.60 |
+| Total | 100% | | **58.95** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 82 = 58.75`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 83 = 58.95`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -224,7 +228,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 81%
+### Native agent core, 83%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -384,8 +388,16 @@ a post-tool, long, whitespace-bearing, visibly unfinished `stop` response.
 Hosted Ollama, `:cloud` models, unrelated local endpoints, active tool calls,
 short text, and natural terminal boundaries remain untouched. Streaming and
 buffered paths both use the actual serving route and reuse the existing durable
-continuation protocol. Dropped-stream stubs remain. Ordinary
-chat-completions routes now freeze model/provider request and stale timeout
+continuation protocol. Text-only streams now distinguish clean terminal
+evidence from a dropped body. A finish reason, any usage object including zero
+counts, or top-level/nested Nous `lastOne` proves completion. Visible clean EOF,
+bare `[DONE]`, and post-generation body errors instead use the exact network
+continuation prompt without replaying the original request or entering
+fallback. Final unterminated SSE lines are parsed before classifying the body
+failure. Reasoning-only drops suppress empty assistant history, and visible
+fragment/nudge pairs use the same immediate SQLite continuation transaction and
+four-attempt ceiling as provider length. Ordinary chat-completions routes now
+freeze model/provider request and stale timeout
 precedence, local/context/reasoning scaling, and legacy retry/give-up controls.
 Streaming requests bound the pre-header wait, then use a meaningful-SSE-event
 inactivity clock. Buffered requests bound the complete JSON read. Pre-visible
@@ -458,8 +470,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,928 passing Rust tests and two expected ignores
-(1,927 gateway plus one core test).
+The workspace currently has 1,937 passing Rust tests and two expected ignores
+(1,936 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -467,7 +479,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,928 passed, two ignored (1,927 gateway plus one core).
+- Full Rust workspace: 1,937 passed, two ignored (1,936 gateway plus one core).
 - Selected Python main-provider classifier, credential-pool, provider-boundary,
   and runtime-resolution contracts: 256 passed at the preceding pool
   checkpoint. The focused main-provider fallback and restore suite adds 150
@@ -478,7 +490,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   checkpoint. The focused tool-truncation and interrupted-sequence suite adds
   14 passing tests. The main-provider liveness checkpoint adds 68 focused
   Python tests, the truncation content-guard checkpoint adds 20, and the local
-  Ollama GLM correction adds 3.
+  Ollama GLM correction adds 3. The dropped-stream checkpoint adds 25.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 112 task fallback-chain, 76 top-level
@@ -486,7 +498,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   86 main-provider credential-recovery, 104 main-provider fallback, 157
   main-provider retry, 114 main-provider successful-body, 81 main-provider
   tool-truncation, 168 main-provider liveness, 41 truncation content guards,
-  113 local Ollama GLM stop-correction, 87 Nous OAuth, 24 structural-backoff,
+  113 local Ollama GLM stop-correction, 47 dropped-stream recovery, 87 Nous
+  OAuth, 24 structural-backoff,
   and 60 handoff-layer
   cases, plus the 233-case terminal and approval corpus, 76 interactive-approval
   cases, and 251 exhaustive dangerous-command cases.
@@ -499,9 +512,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Dropped-stream recovery, operator notices, remaining OAuth providers, and
-   provider-specific successful-body rules complete the current main-provider
-   cluster.
+1. Run-budget-aware buffered stale scaling, operator notices, remaining OAuth
+   providers, and provider-specific successful-body rules complete the current
+   main-provider cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
 3. Smart and Tirith approval, PTY and remote terminal modes, then file, browser,
