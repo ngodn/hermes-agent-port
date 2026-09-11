@@ -110,6 +110,17 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   [AGY contract](main-provider-stall-contract-agy.md),
   [Claude next-seam map](main-provider-recovery-seam-claude.md), and
   [Claude implementation review](main-provider-liveness-review-claude.md).
+- Provider-reported `finish_reason="length"` now passes through one shared
+  ordered content guard in streaming and buffered turns. Tagged reasoning
+  exhaustion and repetition-dominated output abort without durable or usage
+  pollution. Empty reasoning gets one bounded reasoning-off continuation,
+  atomic model-facing nudge persistence, and cache-key-safe mandatory-reasoning
+  recovery. See
+  [native-main-provider-truncation-guards-resolution.md](native-main-provider-truncation-guards-resolution.md),
+  with the independent
+  [AGY contract](main-provider-truncation-guards-agy.md),
+  [Claude future Ollama/GLM map](ollama-glm-truncation-claude.md), and
+  [Claude implementation review](main-provider-truncation-review-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -187,6 +198,11 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 
 | Artifact | Takeaway |
 | --- | --- |
+| [native-main-provider-truncation-guards-resolution.md](native-main-provider-truncation-guards-resolution.md) | Production thinking exhaustion, repetition rejection, empty reasoning one-shot recovery, atomic sidecar durability, review fixes, and measured progress |
+| [main-provider-truncation-guards-agy.md](main-provider-truncation-guards-agy.md) | AGY's source-executed Python contract for the three ordered length-content guards and their retry, usage, and transcript behavior |
+| [main-provider-truncation-guard-goldens.json](../tools/main-provider-truncation-guard-goldens.json) | Source-executed 41-case content-guard corpus across three sections |
+| [ollama-glm-truncation-claude.md](ollama-glm-truncation-claude.md) | Claude's separate map for the future local Ollama/GLM stop-to-length correction |
+| [main-provider-truncation-review-claude.md](main-provider-truncation-review-claude.md) | Claude's post-implementation review that found the fixed mixed-ceiling data loss and dropped-stream scope leak |
 | [native-main-provider-length-continuation-resolution.md](native-main-provider-length-continuation-resolution.md) | Visible streaming text continuation, replay boundary, cap growth, helper split, and explicit remaining paths |
 | [main-provider-length-continuation-contract-agy.md](main-provider-length-continuation-contract-agy.md) | AGY's 104-case source-executed Python contract for finish normalization, guards, prompts, budgets, joining and persistence |
 | [main-provider-client-rebuild-seam-claude.md](main-provider-client-rebuild-seam-claude.md) | Claude's separate proof that reqwest does not need Python's httpx retirement machinery and that inactivity deadlines are the real missing seam |

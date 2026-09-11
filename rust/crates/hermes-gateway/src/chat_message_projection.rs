@@ -143,9 +143,9 @@ fn sanitize_message(msg: &Map<String, Value>, strip_extra_content: bool) -> Map<
 }
 
 /// Restore the content previously sent to the provider before stripping
-/// bookkeeping fields. Python's turn_context.substitute_api_content only
-/// restores nonempty strings on user and assistant messages. Tool/system
-/// sidecars are removed without changing their content.
+/// bookkeeping fields. SQLite stores structured content behind a sentinel,
+/// so user and assistant sidecars may project to either a string or an array.
+/// Tool/system sidecars are removed without changing their content.
 ///
 /// Call this on the outgoing copy, so persisted clean content stays available.
 pub fn substitute_api_content(message: &mut Value) {
@@ -159,7 +159,10 @@ pub fn substitute_api_content(message: &mut Value) {
     ) {
         if let Some(Value::String(content)) = sidecar {
             if !content.is_empty() {
-                message.insert("content".into(), Value::String(content));
+                message.insert(
+                    "content".into(),
+                    crate::session_db::decode_message_content(&content),
+                );
             }
         }
     }
@@ -194,6 +197,23 @@ mod tests {
             substitute_api_content(&mut message);
             assert_eq!(message, row["expected"], "{row}");
         }
+    }
+
+    #[test]
+    fn api_content_substitution_decodes_structured_sidecar() {
+        let structured = json!([
+            {"type":"text", "text":"describe this"},
+            {"type":"image_url", "image_url":{"url":"data:image/png;base64,AAAA"}}
+        ]);
+        let mut message = json!({
+            "role":"user",
+            "content":"describe this",
+            "api_content":crate::session_db::encode_message_content(&structured)
+        });
+
+        substitute_api_content(&mut message);
+
+        assert_eq!(message, json!({"role":"user", "content":structured}));
     }
 
     #[derive(serde::Deserialize)]

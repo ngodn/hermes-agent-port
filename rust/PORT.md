@@ -1,5 +1,44 @@
 # Hermes Rust rewrite
 
+## Native truncation content guards: 2026-09-11
+
+Provider-reported `finish_reason="length"` now passes through one shared
+content-guard order in no-tools streaming and buffered tool-enabled turns.
+Tagged inline reasoning with no visible answer stops immediately. Visible text
+dominated by exact repetition is rejected before continuation. Structured tool
+calls still bypass both checks and retain their separate safe retry lane.
+
+Empty reasoning-only truncations no longer append invalid assistant rows. The
+next request alone disables reasoning, uses the existing progressive output-cap
+schedule, and then restores the user's original cache key. A
+reasoning-mandatory 400 gets one immediate retry with that original config and
+prevents future disables on the affected route. Four empty attempts return an
+actionable delivery-only result, while mixed visible and empty attempts preserve
+the accumulated model-authored partial.
+
+The exact continuation nudge is durable without changing clean display text.
+One immediate SQLite transaction either merges it into the current user's
+model-facing `api_content` sidecar or inserts it after a completed tool group.
+The transaction checks the live lineage lease and transcript phase, and
+structured multimodal content remains an array at the provider boundary.
+
+AGY produced a 41-case source-executed Python contract and passed 20 focused
+Python tests. Claude independently mapped the separate future Ollama/GLM seam,
+then reviewed this implementation. Its mixed-ceiling data-loss and dropped-
+stream scope findings were reproduced and fixed. See
+[native-main-provider-truncation-guards-resolution.md](analysis/native-main-provider-truncation-guards-resolution.md).
+
+The refreshed weighted full-port estimate is **58.55 points, reported as about
+59%** (judgment range 55% to 61%). Native agent core moves from 80% to 81%; the
+other area estimates are unchanged. Local Ollama/GLM stop correction,
+dropped-stream stub recovery, run-budget scaling, operator notices, non-chat and
+remaining OAuth routes, dynamic providers, native plugin and external-memory
+managers, prompt invalidation, and broader client eviction remain. The full
+workspace passes **1,924 Rust tests with two ignored**. The 41-case corpus
+regenerates byte for byte, all 20 focused Python tests pass, and Ruff passes for
+the generator. Rust formatting, workspace Clippy with warnings denied, and diff
+hygiene pass.
+
 ## Native main-provider liveness: 2026-09-11
 
 Ordinary native chat-completions routes now freeze Python-compatible request

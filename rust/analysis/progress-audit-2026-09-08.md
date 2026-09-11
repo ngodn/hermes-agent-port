@@ -1,7 +1,7 @@
 # Full Rust port progress audit, updated 2026-09-11
 
-Current estimate: **58.35% of the full native replacement**, reported as
-**about 58%**, with a reasonable judgment range of **55% to 61%**. The native
+Current estimate: **58.55% of the full native replacement**, reported as
+**about 59%**, with a reasonable judgment range of **55% to 61%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
 static user deny rules with live last-known-good reload and manual approval on
@@ -28,8 +28,13 @@ never execute incomplete arguments. Ordinary requests now resolve per-route
 request and stale deadlines from the frozen config snapshot, bound buffered
 body reads and pre-header waits, detect meaningful SSE inactivity, perform
 bounded pre-visible replay, continue post-visible stalls without replay, and
-carry a stale circuit breaker across turns. The estimate remains conservative
-because thinking-only and provider-specific continuation paths, other OAuth paths,
+carry a stale circuit breaker across turns. Tagged thinking exhaustion,
+repetition-dominated output, and empty reasoning-only truncation now share one
+ordered guard in streaming and buffered turns. Empty reasoning recovery
+disables reasoning for one request, preserves its nudge in durable model-facing
+history, and restores the original cache key after a reasoning-mandatory
+rejection. The estimate remains conservative because provider-specific
+continuation paths, other OAuth paths,
 non-chat provider transports, smart approval, PTY and notification support,
 remote execution, most tools, and the underlying plugin and external-memory
 managers are not native.
@@ -50,10 +55,10 @@ audits.
 | Gateway | 35% | 67% | 23.45 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 76% | 11.40 |
-| Native agent core | 20% | 80% | 16.00 |
-| Total | 100% | | **58.35** |
+| Native agent core | 20% | 81% | 16.20 |
+| Total | 100% | | **58.55** |
 
-`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 80 = 58.35`
+`0.35 * 67 + 0.30 * 25 + 0.15 * 76 + 0.20 * 81 = 58.55`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -217,7 +222,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 80%
+### Native agent core, 81%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -365,8 +370,15 @@ tool effects or terminal delivery, and gateway history stores only the final
 provider suffix after those pairs. A length-terminated tool call instead retries
 the unchanged request four times with bounded output-cap growth, records only a
 recovered attempt's usage, never executes or persists incomplete arguments, and
-closes a durable tool tail on ceiling exit. Thinking-only continuation,
-dropped-stream stubs, and repetition rejection remain. Ordinary
+closes a durable tool tail on ceiling exit. Tagged inline reasoning with no
+visible answer and repetition-dominated visible output now abort before any
+continuation, usage capture, or durable assistant write. Empty reasoning-only
+lengths suppress invalid assistant rows, apply a one-request reasoning disable,
+grow the same bounded output cap, and preserve the exact continuation nudge in
+the current user's model-facing sidecar or after a completed tool group. A
+reasoning-mandatory 400 retries once on the user's established config and
+prevents later disables on that route. Dropped-stream stubs and local Ollama/GLM
+stop correction remain. Ordinary
 chat-completions routes now freeze model/provider request and stale timeout
 precedence, local/context/reasoning scaling, and legacy retry/give-up controls.
 Streaming requests bound the pre-header wait, then use a meaningful-SSE-event
@@ -440,8 +452,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,907 passing Rust tests and two expected ignores
-(1,906 gateway plus one core test).
+The workspace currently has 1,924 passing Rust tests and two expected ignores
+(1,923 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -449,7 +461,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,907 passed, two ignored (1,906 gateway plus one core).
+- Full Rust workspace: 1,924 passed, two ignored (1,923 gateway plus one core).
 - Selected Python main-provider classifier, credential-pool, provider-boundary,
   and runtime-resolution contracts: 256 passed at the preceding pool
   checkpoint. The focused main-provider fallback and restore suite adds 150
@@ -459,15 +471,15 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   continuation, and transport suite passes 161 tests at the preceding
   checkpoint. The focused tool-truncation and interrupted-sequence suite adds
   14 passing tests. The main-provider liveness checkpoint adds 68 focused
-  Python tests.
+  Python tests, and the truncation content-guard checkpoint adds 20.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 112 task fallback-chain, 76 top-level
   fallback-chain, 97 built-in discovery, 64 compression credential-recovery,
   86 main-provider credential-recovery, 104 main-provider fallback, 157
   main-provider retry, 114 main-provider successful-body, 81 main-provider
-  tool-truncation, 168 main-provider liveness, 87 Nous OAuth, 24
-  structural-backoff, and 60 handoff-layer
+  tool-truncation, 168 main-provider liveness, 41 truncation content guards,
+  87 Nous OAuth, 24 structural-backoff, and 60 handoff-layer
   cases, plus the 233-case terminal and approval corpus, 76 interactive-approval
   cases, and 251 exhaustive dangerous-command cases.
 - Rust and Python formatting, Ruff, Clippy with warnings denied, and
@@ -479,8 +491,8 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. Thinking-only and provider-specific continuation, dropped-stream recovery,
-   operator notices, remaining OAuth providers, and
+1. Provider-specific continuation, dropped-stream recovery, operator notices,
+   remaining OAuth providers, and
    provider-specific successful-body rules complete the current main-provider
    cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility

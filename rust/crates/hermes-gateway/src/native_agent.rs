@@ -1704,6 +1704,7 @@ struct MainDispatch {
 struct MainSentResponse {
     response: reqwest::Response,
     base_url: String,
+    body: Value,
 }
 
 #[derive(Clone, Debug)]
@@ -1892,6 +1893,9 @@ pub struct NativeAgentClient {
     provider_profile: Option<crate::provider_registry::ProviderProfile>,
     provider_identity: Option<String>,
     reasoning_config: Option<Value>,
+    /// Set after this route rejects a reasoning disable as mandatory. Shared
+    /// by all clones of the conversation route so later turns never resend it.
+    reasoning_disable_rejected: std::sync::Arc<std::sync::atomic::AtomicBool>,
     reasoning_echo: bool,
     output_cap: Option<Value>,
     context_length: u64,
@@ -1975,6 +1979,7 @@ impl NativeAgentClient {
             provider_profile: None,
             provider_identity: None,
             reasoning_config: None,
+            reasoning_disable_rejected: Default::default(),
             reasoning_echo: false,
             output_cap: None,
             context_length: 256_000,
@@ -2560,7 +2565,7 @@ impl NativeAgentClient {
                         provider: route.provider_name().to_owned(),
                         route_index: index,
                         base_url: sent.base_url,
-                        body,
+                        body: sent.body,
                     });
                 }
                 Err(MainRequestError::Terminal(terminal))
@@ -2600,6 +2605,7 @@ impl NativeAgentClient {
         label: &str,
         has_fallback: bool,
     ) -> std::result::Result<MainSentResponse, MainRequestError> {
+        let mut body = body.clone();
         let operation = if label.is_empty() { "" } else { " step" };
         let mut retried_429 = std::collections::HashSet::<(String, String)>::new();
         let mut recovery_attempts = std::collections::HashMap::<(String, String), usize>::new();
@@ -2626,20 +2632,20 @@ impl NativeAgentClient {
                 .post(url)
                 .bearer_auth(&route.api_key)
                 .headers(self.headers_for_main_route(&route.base_url))
-                .json(body);
+                .json(&body);
             let buffered_stale_timeout = (!label.is_empty())
                 .then(|| {
                     self.main_timeouts
-                        .buffered_stale_timeout(&route.base_url, body)
+                        .buffered_stale_timeout(&route.base_url, &body)
                 })
                 .flatten();
             let stream_stale_timeout = label.is_empty().then(|| {
                 self.main_timeouts
-                    .stream_stale_timeout(&route.base_url, &self.model, body)
+                    .stream_stale_timeout(&route.base_url, &self.model, &body)
             });
             let stream_inactivity_timeout = label.is_empty().then(|| {
                 self.main_timeouts
-                    .stream_inactivity_timeout(&route.base_url, &self.model, body)
+                    .stream_inactivity_timeout(&route.base_url, &self.model, &body)
             });
             if !label.is_empty() {
                 request = request.timeout(
@@ -2721,11 +2727,33 @@ impl NativeAgentClient {
                 return Ok(MainSentResponse {
                     response,
                     base_url: route.base_url,
+                    body,
                 });
             }
             let status = response.status();
             let headers = response.headers().clone();
             let text = response.text().await.unwrap_or_default();
+            let reasoning_mandatory = status == reqwest::StatusCode::BAD_REQUEST
+                && text.to_lowercase().contains("reasoning is mandatory")
+                && (body
+                    .get("reasoning")
+                    .is_some_and(crate::main_provider_truncation::reasoning_is_disabled)
+                    || body
+                        .get("reasoning_effort")
+                        .and_then(Value::as_str)
+                        .is_some_and(|effort| effort.eq_ignore_ascii_case("none")));
+            if reasoning_mandatory
+                && !self
+                    .reasoning_disable_rejected
+                    .swap(true, std::sync::atomic::Ordering::AcqRel)
+            {
+                if let Some(body) = body.as_object_mut() {
+                    body.shift_remove("reasoning");
+                    body.shift_remove("reasoning_effort");
+                }
+                self.apply_provider_extras_with_reasoning(&mut body, false)?;
+                continue;
+            }
             let mut failure = main_pool_failure(status, &text, &headers, self.provider_name());
             if let Some(retry_failure) = main_retry_failure(status, &text, self.provider_name()) {
                 let provider_error = crate::retry_utils::ProviderError {
@@ -2905,6 +2933,14 @@ impl NativeAgentClient {
     /// Apply request hooks at the wire boundary so streaming and every tool
     /// iteration share the same provider rules without rewriting past messages.
     fn apply_provider_extras(&self, body: &mut Value) -> Result<()> {
+        self.apply_provider_extras_with_reasoning(body, false)
+    }
+
+    fn apply_provider_extras_with_reasoning(
+        &self,
+        body: &mut Value,
+        disable_reasoning_once: bool,
+    ) -> Result<()> {
         // Project a fresh wire copy. Stored messages retain signatures and
         // reasoning for future turns, even when this endpoint rejects them.
         if let Some(messages) = body.get("messages").and_then(Value::as_array) {
@@ -2953,7 +2989,28 @@ impl NativeAgentClient {
             .cloned()
             .unwrap_or_default();
         let mut extra_body = serde_json::Map::new();
-        let wire_reasoning = crate::reasoning_effort::for_chat_wire(self.reasoning_config.as_ref());
+        let disabled_reasoning = disable_reasoning_once.then(|| {
+            crate::main_provider_truncation::reasoning_disabled_once(self.reasoning_config.as_ref())
+        });
+        let reasoning_disable_rejected = self
+            .reasoning_disable_rejected
+            .load(std::sync::atomic::Ordering::Acquire);
+        let configured_reasoning_is_disabled = self
+            .reasoning_config
+            .as_ref()
+            .is_some_and(crate::main_provider_truncation::reasoning_is_disabled);
+        let wire_reasoning =
+            crate::reasoning_effort::for_chat_wire(if reasoning_disable_rejected {
+                if configured_reasoning_is_disabled {
+                    None
+                } else {
+                    self.reasoning_config.as_ref()
+                }
+            } else {
+                disabled_reasoning
+                    .as_ref()
+                    .or(self.reasoning_config.as_ref())
+            });
         let cap = self.output_cap.clone().or_else(|| {
             self.provider_profile
                 .as_ref()
@@ -3019,7 +3076,13 @@ impl NativeAgentClient {
             self.cache_scope.as_deref(),
             None,
         );
-        flatten_extra_body(body)
+        flatten_extra_body(body)?;
+        if reasoning_disable_rejected && configured_reasoning_is_disabled {
+            let body = body.as_object_mut().expect("request object");
+            body.shift_remove("reasoning");
+            body.shift_remove("reasoning_effort");
+        }
+        Ok(())
     }
 
     /// Enable tool-calling with the given toolset. Turns then run the tool loop
@@ -4493,6 +4556,8 @@ impl NativeAgentClient {
         let mut length_continue_retries = 0_usize;
         let mut continuation_join_after = None;
         let mut continuation_messages = Vec::new();
+        let mut disable_reasoning_once = false;
+        let mut saw_visible_length_fragment = false;
         loop {
             if stale_stream_inner_attempts == 0 {
                 let active_index = self
@@ -4518,6 +4583,7 @@ impl NativeAgentClient {
                     return Err(error);
                 }
             }
+            let disable_reasoning_for_request = std::mem::take(&mut disable_reasoning_once);
             let dispatch = self
                 .dispatch_main_stream_turn(|route| {
                     let messages = route.route_messages(&request_messages);
@@ -4526,7 +4592,10 @@ impl NativeAgentClient {
                         "messages":messages,
                         "stream":true,
                     });
-                    route.apply_provider_extras(&mut body)?;
+                    route.apply_provider_extras_with_reasoning(
+                        &mut body,
+                        disable_reasoning_for_request,
+                    )?;
                     if length_continue_retries > 0 {
                         apply_main_length_continuation_cap(
                             route,
@@ -4644,6 +4713,54 @@ impl NativeAgentClient {
                 || outcome.refusal.as_deref().is_some_and(|refusal| {
                     !refusal.trim().is_empty() && !outcome.observed_generation
                 });
+            if outcome.finish_reason == "length" && !outcome.stalled {
+                let disposition =
+                    crate::main_provider_truncation::classify(Some(&outcome.raw_content), false);
+                if let Some(terminal) = disposition.terminal_response() {
+                    self.mark_turn_reply_delivery_only();
+                    let _ = events
+                        .send(StreamEvent::MessageChunk {
+                            text: terminal.into(),
+                        })
+                        .await;
+                    let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                    return Ok(None);
+                }
+                if disposition.disable_reasoning_once() {
+                    length_continue_retries = length_continue_retries.saturating_add(1);
+                    if length_continue_retries < 4 {
+                        self.mark_turn_continuation();
+                        crate::main_provider_truncation::append_reasoning_only_nudge(
+                            &mut request_messages,
+                            MAIN_LENGTH_CONTINUATION_PROMPT,
+                        );
+                        crate::main_provider_truncation::append_reasoning_only_nudge(
+                            &mut continuation_messages,
+                            MAIN_LENGTH_CONTINUATION_PROMPT,
+                        );
+                        disable_reasoning_once = true;
+                        continue;
+                    }
+                    self.clear_turn_continuation();
+                    if !saw_visible_length_fragment {
+                        self.mark_turn_reply_delivery_only();
+                        let _ = events
+                            .send(StreamEvent::MessageChunk {
+                                text: crate::main_provider_truncation::NO_VISIBLE_RESPONSE.into(),
+                            })
+                            .await;
+                    }
+                    let _ = events.send(StreamEvent::MessageStop { final_: true }).await;
+                    return if saw_visible_length_fragment {
+                        Err(Error::Other(
+                            "native agent response remained truncated after 4 continuation attempts"
+                                .into(),
+                        ))
+                    } else {
+                        Ok(None)
+                    };
+                }
+            }
             if outcome.visible {
                 if content_policy_refusal {
                     return Err(Error::Other(
@@ -4652,6 +4769,7 @@ impl NativeAgentClient {
                     ));
                 }
                 if outcome.finish_reason == "length" {
+                    saw_visible_length_fragment = true;
                     self.capture_usage(outcome.usage);
                     length_continue_retries = length_continue_retries.saturating_add(1);
                     if length_continue_retries < 4 {
@@ -5575,6 +5693,7 @@ impl ChatModel for NativeAgentClient {
         let mut continuation_parts = Vec::new();
         let mut length_continue_retries = 0_usize;
         let mut truncated_tool_call_retries = 0_usize;
+        let mut disable_reasoning_once = false;
         loop {
             let active_index = self
                 .main_fallback
@@ -5598,6 +5717,7 @@ impl ChatModel for NativeAgentClient {
                 }
                 return Err(error);
             }
+            let disable_reasoning_for_request = std::mem::take(&mut disable_reasoning_once);
             let dispatched = self
                 .dispatch_main_turn("step", |route| {
                     let routed_messages = route.route_messages(&request_messages);
@@ -5609,7 +5729,10 @@ impl ChatModel for NativeAgentClient {
                     if !tools.is_empty() {
                         body["tools"] = Value::Array(tools.to_vec());
                     }
-                    route.apply_provider_extras(&mut body)?;
+                    route.apply_provider_extras_with_reasoning(
+                        &mut body,
+                        disable_reasoning_for_request,
+                    )?;
                     let output_retry = length_continue_retries.max(truncated_tool_call_retries);
                     if output_retry > 0 {
                         apply_main_length_continuation_cap(route, &mut body, output_retry);
@@ -5782,6 +5905,56 @@ impl ChatModel for NativeAgentClient {
                 crate::provider_usage::ApiMode::ChatCompletions,
                 Some(&dispatched.provider),
             );
+
+            if self.usage_bucket == UsageBucket::Main
+                && choice["finish_reason"].as_str() == Some("length")
+            {
+                let disposition = crate::main_provider_truncation::classify(
+                    message["content"].as_str(),
+                    message["tool_calls"]
+                        .as_array()
+                        .is_some_and(|calls| !calls.is_empty()),
+                );
+                if let Some(terminal) = disposition.terminal_response() {
+                    self.mark_turn_reply_delivery_only();
+                    return Ok(Step::Final(terminal.into()));
+                }
+                let disable_reasoning_for_continuation = disposition.disable_reasoning_once();
+
+                if disable_reasoning_for_continuation {
+                    length_continue_retries = length_continue_retries.saturating_add(1);
+                    if length_continue_retries < 4 {
+                        self.mark_turn_continuation();
+                        crate::main_provider_truncation::append_reasoning_only_nudge(
+                            &mut request_messages,
+                            MAIN_LENGTH_CONTINUATION_PROMPT,
+                        );
+                        crate::main_provider_truncation::append_reasoning_only_nudge(
+                            &mut continuation_messages,
+                            MAIN_LENGTH_CONTINUATION_PROMPT,
+                        );
+                        disable_reasoning_once = true;
+                        continue;
+                    }
+                    self.clear_turn_continuation();
+                    let partial = main_join_length_parts(&continuation_parts);
+                    let no_visible_answer = partial.is_empty();
+                    if no_visible_answer {
+                        self.mark_turn_reply_delivery_only();
+                    }
+                    return Ok(Step::PartialFinal {
+                        text: if no_visible_answer {
+                            crate::main_provider_truncation::NO_VISIBLE_RESPONSE.into()
+                        } else {
+                            partial
+                        },
+                        error:
+                            "native agent response remained truncated after 4 continuation attempts"
+                                .into(),
+                        repair_tool_tail: false,
+                    });
+                }
+            }
 
             if self.usage_bucket == UsageBucket::Main
                 && choice["finish_reason"].as_str() == Some("length")
@@ -6741,6 +6914,697 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn thinking_exhausted_length_stream_stops_without_replay_or_persistence() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, response::IntoResponse, routing::post, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    ([
+                        ("content-type", "text/event-stream")
+                    ], "data: {\"choices\":[{\"delta\":{\"content\":\"<think>private calculation</think>\"},\"finish_reason\":\"length\"}]}\n\ndata: [DONE]\n\n")
+                        .into_response()
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            answer,
+            "⚠️ **Thinking Budget Exhausted**\n\nThe model used all its output tokens on reasoning and had none left for the actual response.\n\nTo fix this:\n→ Lower reasoning effort: `/reasoning low` or `/reasoning minimal`\n→ Or switch to a larger/non-reasoning model with `/model`"
+        );
+        assert!(!client.assistant_reply_is_durable(&message, &answer));
+    }
+
+    #[tokio::test]
+    async fn thinking_exhausted_buffered_length_stops_without_tool_execution() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"length","message":{
+                            "role":"assistant",
+                            "content":"<REASONING_SCRATCHPAD>private calculation</REASONING_SCRATCHPAD>"
+                        }}]
+                    }))
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            answer,
+            crate::main_provider_truncation::THINKING_EXHAUSTED_RESPONSE
+        );
+        assert!(!client.assistant_reply_is_durable(&message, &answer));
+    }
+
+    #[tokio::test]
+    async fn repetition_dominated_buffered_length_is_discarded_without_continuation() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let repeated = "好，你幫我更改成 Google Gemini 4 31B。".repeat(2_000);
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State((calls, repeated)): State<(Arc<AtomicUsize>, Arc<String>)>| async move {
+                        calls.fetch_add(1, Ordering::SeqCst);
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"length","message":{
+                                "role":"assistant", "content":repeated.as_str()
+                            }}]
+                        }))
+                    },
+                ),
+            )
+            .with_state((calls.clone(), Arc::new(repeated)));
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(answer, crate::main_provider_truncation::REPETITION_RESPONSE);
+        assert!(!client.assistant_reply_is_durable(&message, &answer));
+    }
+
+    #[tokio::test]
+    async fn reasoning_only_length_disables_reasoning_for_exactly_one_continuation_request() {
+        use crate::agent::AgentClient;
+        use axum::{routing::post, Json, Router};
+        use serde_json::Value;
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = bodies.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                let attempt = {
+                    let mut bodies = captured.lock().unwrap();
+                    bodies.push(body);
+                    bodies.len()
+                };
+                async move {
+                    let response = match attempt {
+                        1 => serde_json::json!({
+                            "choices":[{"finish_reason":"length","message":{
+                                "role":"assistant", "content":"",
+                                "reasoning_content":"private calculation"
+                            }}]
+                        }),
+                        2 => serde_json::json!({
+                            "choices":[{"finish_reason":"length","message":{
+                                "role":"assistant", "content":"part one"
+                            }}]
+                        }),
+                        _ => serde_json::json!({
+                            "choices":[{"finish_reason":"stop","message":{
+                                "role":"assistant", "content":"part two"
+                            }}]
+                        }),
+                    };
+                    Json(response)
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let _server = MainRetryServer(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let mut profile = crate::provider_registry::ProviderProfile::new("vercel");
+        profile.request_hook = crate::provider_registry::RequestHook::Vercel;
+        let mut client = super::NativeAgentClient::new(
+            "fixture",
+            "key",
+            format!("http://ai-gateway.vercel.sh:{}", address.port()),
+        )
+        .unwrap()
+        .with_provider_profile(&profile)
+        .unwrap()
+        .with_reasoning_config(Some(serde_json::json!({
+            "enabled":true, "effort":"high"
+        })))
+        .with_output_cap(Some(serde_json::json!(4096)))
+        .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+        .with_main_retry_backoff(std::time::Duration::ZERO);
+        client.client = reqwest::Client::builder()
+            .no_proxy()
+            .resolve("ai-gateway.vercel.sh", address)
+            .build()
+            .unwrap();
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "part one\npart two");
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 3);
+        assert_eq!(
+            bodies[0]["reasoning"],
+            serde_json::json!({"enabled":true,"effort":"high"})
+        );
+        assert_eq!(
+            bodies[1]["reasoning"],
+            serde_json::json!({"enabled":false,"effort":"none"})
+        );
+        assert_eq!(
+            bodies[2]["reasoning"],
+            serde_json::json!({"enabled":true,"effort":"high"})
+        );
+        assert!(bodies[1]["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|message| message["content"].as_str() != Some("")));
+        assert!(
+            bodies[1]["messages"].as_array().unwrap().last().unwrap()["content"]
+                .as_str()
+                .unwrap()
+                .contains(super::MAIN_LENGTH_CONTINUATION_PROMPT)
+        );
+    }
+
+    #[tokio::test]
+    async fn mixed_visible_then_empty_buffered_ceiling_preserves_partial_answer() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    let attempt = calls.fetch_add(1, Ordering::SeqCst) + 1;
+                    let content = match attempt {
+                        1 => "chapter one",
+                        2 => "chapter two",
+                        3 => "chapter three",
+                        _ => "",
+                    };
+                    Json(serde_json::json!({
+                        "choices":[{"finish_reason":"length","message":{
+                            "role":"assistant", "content":content,
+                            "reasoning_content":(content.is_empty()).then_some("private calculation")
+                        }}]
+                    }))
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_err(), "{result:?}");
+        assert_eq!(calls.load(Ordering::SeqCst), 4);
+        assert_eq!(answer, "chapter one\nchapter two\nchapter three");
+        assert!(client.assistant_reply_is_durable(&message, &answer));
+    }
+
+    #[tokio::test]
+    async fn reasoning_only_nudge_merges_into_durable_user_sidecar() {
+        use crate::agent::AgentClient;
+        use axum::{extract::State, routing::post, Json, Router};
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(|State(calls): State<Arc<AtomicUsize>>| async move {
+                    let attempt = calls.fetch_add(1, Ordering::SeqCst) + 1;
+                    if attempt == 1 {
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"length","message":{
+                                "role":"assistant", "content":"",
+                                "reasoning_content":"private calculation"
+                            }}]
+                        }))
+                    } else {
+                        Json(serde_json::json!({
+                            "choices":[{"finish_reason":"stop","message":{
+                                "role":"assistant", "content":"visible answer"
+                            }}]
+                        }))
+                    }
+                }),
+            )
+            .with_state(calls.clone());
+        let (url, _server) = serve_main_retry(app).await;
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_tools(vec![Arc::new(crate::native_tools::CurrentTimeTool)])
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let root = std::env::temp_dir().join(format!(
+            "hermes-reasoning-only-continuation-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let database = crate::session_db::SessionDb::open(root.join("state.db")).unwrap();
+        let mut message: hermes_core::Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question", "resolved_session_id":"reasoning-only-session"
+        }))
+        .unwrap();
+        message.resolved_session_id = Some("reasoning-only-session".into());
+        let history = crate::session_db::begin_turn(Some(&database), false, &message, "cli");
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client
+            .run_turn_with_context(
+                crate::agent::TurnContext::from_database(Some(&database)),
+                &message,
+                &history,
+                tx,
+            )
+            .await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "visible answer");
+        let history_reply = client
+            .assistant_reply_for_history(&message, &answer)
+            .expect("the recovered answer is durable");
+        crate::session_db::end_turn(Some(&database), false, &message, &history_reply);
+        let durable = database.load_history("reasoning-only-session", 0).unwrap();
+        assert_eq!(
+            durable
+                .iter()
+                .map(|message| message.role.as_str())
+                .collect::<Vec<_>>(),
+            ["user", "assistant"]
+        );
+        assert_eq!(durable[0].content, "question");
+        let expected_api_content =
+            format!("question\n\n{}", super::MAIN_LENGTH_CONTINUATION_PROMPT);
+        assert_eq!(
+            durable[0].api_content.as_deref(),
+            Some(expected_api_content.as_str())
+        );
+        assert_eq!(durable[1].content, "visible answer");
+        drop(database);
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[tokio::test]
+    async fn reasoning_only_length_stream_disables_reasoning_for_one_continuation() {
+        use crate::agent::AgentClient;
+        use axum::{response::IntoResponse, routing::post, Json, Router};
+        use serde_json::Value;
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = bodies.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                let attempt = {
+                    let mut bodies = captured.lock().unwrap();
+                    bodies.push(body);
+                    bodies.len()
+                };
+                async move {
+                    let response = if attempt == 1 {
+                        "data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"private calculation\"},\"finish_reason\":\"length\"}]}\n\ndata: [DONE]\n\n"
+                    } else {
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"visible answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n"
+                    };
+                    ([(("content-type"), "text/event-stream")], response).into_response()
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let _server = MainRetryServer(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let mut profile = crate::provider_registry::ProviderProfile::new("vercel");
+        profile.request_hook = crate::provider_registry::RequestHook::Vercel;
+        let mut client = super::NativeAgentClient::new(
+            "fixture",
+            "key",
+            format!("http://ai-gateway.vercel.sh:{}", address.port()),
+        )
+        .unwrap()
+        .with_provider_profile(&profile)
+        .unwrap()
+        .with_reasoning_config(Some(serde_json::json!({
+            "enabled":true, "effort":"high"
+        })))
+        .with_output_cap(Some(serde_json::json!(4096)))
+        .with_main_retry_backoff(std::time::Duration::ZERO);
+        client.client = reqwest::Client::builder()
+            .no_proxy()
+            .resolve("ai-gateway.vercel.sh", address)
+            .build()
+            .unwrap();
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "visible answer");
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 2);
+        assert_eq!(
+            bodies[0]["reasoning"],
+            serde_json::json!({"enabled":true,"effort":"high"})
+        );
+        assert_eq!(
+            bodies[1]["reasoning"],
+            serde_json::json!({"enabled":false,"effort":"none"})
+        );
+        assert!(bodies[1]["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|message| message["content"].as_str() != Some("")));
+        assert!(
+            bodies[1]["messages"].as_array().unwrap().last().unwrap()["content"]
+                .as_str()
+                .unwrap()
+                .contains(super::MAIN_LENGTH_CONTINUATION_PROMPT)
+        );
+    }
+
+    #[tokio::test]
+    async fn reasoning_only_stream_ceiling_is_bounded_and_does_not_leak_next_turn() {
+        use crate::agent::AgentClient;
+        use axum::{response::IntoResponse, routing::post, Json, Router};
+        use serde_json::Value;
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = bodies.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                let attempt = {
+                    let mut bodies = captured.lock().unwrap();
+                    bodies.push(body);
+                    bodies.len()
+                };
+                async move {
+                    let response = if attempt <= 4 {
+                        "data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"private calculation\"},\"finish_reason\":\"length\"}]}\n\ndata: [DONE]\n\n"
+                    } else {
+                        "data: {\"choices\":[{\"delta\":{\"content\":\"next answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n"
+                    };
+                    ([("content-type", "text/event-stream")], response).into_response()
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let _server = MainRetryServer(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let mut profile = crate::provider_registry::ProviderProfile::new("vercel");
+        profile.request_hook = crate::provider_registry::RequestHook::Vercel;
+        let mut client = super::NativeAgentClient::new(
+            "fixture",
+            "key",
+            format!("http://ai-gateway.vercel.sh:{}", address.port()),
+        )
+        .unwrap()
+        .with_provider_profile(&profile)
+        .unwrap()
+        .with_reasoning_config(Some(serde_json::json!({
+            "enabled":true, "effort":"high"
+        })))
+        .with_main_retry_backoff(std::time::Duration::ZERO);
+        client.client = reqwest::Client::builder()
+            .no_proxy()
+            .resolve("ai-gateway.vercel.sh", address)
+            .build()
+            .unwrap();
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+
+        let (first_tx, mut first_rx) = tokio::sync::mpsc::channel(8);
+        let first = client.run_turn(&message, &[], first_tx).await;
+        let mut first_answer = String::new();
+        while let Some(event) = first_rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                first_answer.push_str(&text);
+            }
+        }
+        assert!(first.is_ok(), "{first:?}");
+        assert_eq!(
+            first_answer,
+            crate::main_provider_truncation::NO_VISIBLE_RESPONSE
+        );
+        assert!(!client.assistant_reply_is_durable(&message, &first_answer));
+
+        let (second_tx, mut second_rx) = tokio::sync::mpsc::channel(8);
+        let second = client.run_turn(&message, &[], second_tx).await;
+        let mut second_answer = String::new();
+        while let Some(event) = second_rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                second_answer.push_str(&text);
+            }
+        }
+        assert!(second.is_ok(), "{second:?}");
+        assert_eq!(second_answer, "next answer");
+
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 5);
+        assert_eq!(
+            bodies[0]["reasoning"],
+            serde_json::json!({"enabled":true,"effort":"high"})
+        );
+        for body in &bodies[1..4] {
+            assert_eq!(
+                body["reasoning"],
+                serde_json::json!({"enabled":false,"effort":"none"})
+            );
+        }
+        assert_eq!(
+            bodies[4]["reasoning"],
+            serde_json::json!({"enabled":true,"effort":"high"})
+        );
+    }
+
+    #[tokio::test]
+    async fn reasoning_mandatory_rejection_retries_with_original_cache_key() {
+        use crate::agent::AgentClient;
+        use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
+        use serde_json::Value;
+        use std::sync::{Arc, Mutex};
+
+        let bodies = Arc::new(Mutex::new(Vec::<Value>::new()));
+        let captured = bodies.clone();
+        let app = Router::new().route(
+            "/chat/completions",
+            post(move |Json(body): Json<Value>| {
+                let attempt = {
+                    let mut bodies = captured.lock().unwrap();
+                    bodies.push(body);
+                    bodies.len()
+                };
+                async move {
+                    match attempt {
+                        1 => (
+                            StatusCode::OK,
+                            [("content-type", "text/event-stream")],
+                            "data: {\"choices\":[{\"delta\":{\"reasoning_content\":\"private calculation\"},\"finish_reason\":\"length\"}]}\n\ndata: [DONE]\n\n",
+                        )
+                            .into_response(),
+                        2 => (
+                            StatusCode::BAD_REQUEST,
+                            "Reasoning is mandatory for this endpoint and cannot be disabled.",
+                        )
+                            .into_response(),
+                        _ => (
+                            StatusCode::OK,
+                            [("content-type", "text/event-stream")],
+                            "data: {\"choices\":[{\"delta\":{\"content\":\"visible answer\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                        )
+                            .into_response(),
+                    }
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let _server = MainRetryServer(tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        }));
+        let mut profile = crate::provider_registry::ProviderProfile::new("vercel");
+        profile.request_hook = crate::provider_registry::RequestHook::Vercel;
+        let mut client = super::NativeAgentClient::new(
+            "fixture",
+            "key",
+            format!("http://ai-gateway.vercel.sh:{}", address.port()),
+        )
+        .unwrap()
+        .with_provider_profile(&profile)
+        .unwrap()
+        .with_reasoning_config(Some(serde_json::json!({
+            "enabled":true, "effort":"high"
+        })))
+        .with_main_retry_backoff(std::time::Duration::ZERO);
+        client.client = reqwest::Client::builder()
+            .no_proxy()
+            .resolve("ai-gateway.vercel.sh", address)
+            .build()
+            .unwrap();
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = client.run_turn(&message, &[], tx).await;
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(answer, "visible answer");
+        let bodies = bodies.lock().unwrap();
+        assert_eq!(bodies.len(), 3);
+        assert_eq!(
+            bodies[1]["reasoning"],
+            serde_json::json!({"enabled":false,"effort":"none"})
+        );
+        assert_eq!(bodies[2]["reasoning"], bodies[0]["reasoning"]);
+    }
+
+    #[tokio::test]
     async fn postvisible_stale_stream_uses_length_continuation_without_replay() {
         use crate::agent::AgentClient;
         use axum::{body::Body, extract::State, response::Response, routing::post, Router};
@@ -6825,6 +7689,87 @@ mod tests {
             bodies[1]["messages"][2]["content"],
             super::MAIN_LENGTH_CONTINUATION_PROMPT
         );
+    }
+
+    #[tokio::test]
+    async fn repetition_guard_does_not_reclassify_postvisible_stream_stall() {
+        use crate::agent::AgentClient;
+        use axum::{body::Body, extract::State, response::Response, routing::post, Router};
+        use futures_util::StreamExt;
+        use std::convert::Infallible;
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use std::sync::Arc;
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let repeated = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567".repeat(10);
+        let app = Router::new()
+            .route(
+                "/chat/completions",
+                post(
+                    |State((calls, repeated)): State<(Arc<AtomicUsize>, Arc<String>)>| async move {
+                        let attempt = calls.fetch_add(1, Ordering::SeqCst) + 1;
+                        let body = if attempt == 1 {
+                            let event = format!(
+                                "data: {{\"choices\":[{{\"delta\":{{\"content\":{}}}}}]}}\n\n",
+                                serde_json::to_string(repeated.as_str()).unwrap()
+                            );
+                            Body::from_stream(
+                                futures_util::stream::once(async move {
+                                    Ok::<_, Infallible>(axum::body::Bytes::from(event))
+                                })
+                                .chain(futures_util::stream::pending()),
+                            )
+                        } else {
+                            Body::from(
+                                "data: {\"choices\":[{\"delta\":{\"content\":\"finish\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n",
+                            )
+                        };
+                        Response::builder()
+                            .header("content-type", "text/event-stream")
+                            .body(body)
+                            .unwrap()
+                    },
+                ),
+            )
+            .with_state((calls.clone(), Arc::new(repeated.clone())));
+        let (url, _server) = serve_main_retry(app).await;
+        let policy = crate::main_provider_timeouts::Policy::resolve(
+            &serde_json::json!({"providers":{"fixture":{"models":{"model":{
+                "stale_timeout_seconds":0.03
+            }}}}}),
+            "fixture",
+            "model",
+            |_| None,
+        );
+        let client = super::NativeAgentClient::new("model", "key", url)
+            .unwrap()
+            .with_provider_identity("fixture")
+            .with_main_timeouts(policy)
+            .with_main_retry_backoff(std::time::Duration::ZERO);
+        let message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"question"
+        }))
+        .unwrap();
+        let (tx, mut rx) = tokio::sync::mpsc::channel(8);
+
+        let result = tokio::time::timeout(
+            std::time::Duration::from_millis(500),
+            client.run_turn(&message, &[], tx),
+        )
+        .await
+        .expect("the stalled stream must enter bounded continuation");
+        let mut answer = String::new();
+        while let Some(event) = rx.recv().await {
+            if let hermes_core::StreamEvent::MessageChunk { text } = event {
+                answer.push_str(&text);
+            }
+        }
+
+        assert!(result.is_ok(), "{result:?}");
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        assert_eq!(answer, format!("{repeated}\nfinish"));
+        assert!(!answer.contains(crate::main_provider_truncation::REPETITION_RESPONSE));
     }
 
     #[tokio::test]
@@ -11559,6 +12504,29 @@ mod tests {
             assert!(body["messages"][0].get("_internal").is_none());
             assert_eq!(source[1]["reasoning"], "stored thought");
         }
+    }
+
+    #[test]
+    fn rejected_configured_reasoning_disable_is_omitted_on_later_requests() {
+        let mut profile = crate::provider_registry::ProviderProfile::new("vercel");
+        profile.request_hook = crate::provider_registry::RequestHook::Vercel;
+        let client =
+            super::NativeAgentClient::new("fixture", "key", "https://ai-gateway.vercel.sh/v1")
+                .unwrap()
+                .with_provider_profile(&profile)
+                .unwrap()
+                .with_reasoning_config(Some(serde_json::json!({"enabled":false})));
+        client
+            .reasoning_disable_rejected
+            .store(true, std::sync::atomic::Ordering::Release);
+        let mut body = serde_json::json!({
+            "model":"fixture", "messages":[{"role":"user", "content":"question"}]
+        });
+
+        client.apply_provider_extras(&mut body).unwrap();
+
+        assert!(body.get("reasoning").is_none());
+        assert!(body.get("reasoning_effort").is_none());
     }
 
     #[tokio::test]

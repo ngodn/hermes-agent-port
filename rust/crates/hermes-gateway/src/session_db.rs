@@ -66,6 +66,14 @@ pub fn encode_message_content(content: &Value) -> String {
     }
 }
 
+pub fn decode_message_content(content: &str) -> Value {
+    if let Some(rest) = content.strip_prefix(CONTENT_JSON_PREFIX) {
+        serde_json::from_str(rest).unwrap_or_else(|_| Value::String(content.to_owned()))
+    } else {
+        Value::String(content.to_owned())
+    }
+}
+
 fn native_persisted_content(_role: &str, content: Option<&Value>) -> String {
     let content = content.unwrap_or(&Value::Null);
     let Value::Array(parts) = content else {
@@ -261,16 +269,7 @@ impl HistoryMessage {
     /// behavior. Anything without the sentinel is returned as a plain string
     /// with no content-sniffing.
     pub fn model_content(&self) -> Value {
-        if let Some(rest) = self.content.strip_prefix(CONTENT_JSON_PREFIX) {
-            match serde_json::from_str::<Value>(rest) {
-                Ok(v) => v,
-                // Python logs a warning and returns the raw `content` (the full
-                // string, sentinel included). We mirror that exactly.
-                Err(_) => Value::String(self.content.clone()),
-            }
-        } else {
-            Value::String(self.content.clone())
-        }
+        decode_message_content(&self.content)
     }
 }
 
@@ -600,6 +599,9 @@ fn partial_turn_phase(rows: &[(String, Option<String>, Option<String>)]) -> Opti
             TailPhase::Tools(pending) if role == "assistant" && pending.is_empty() => {
                 let next = phase_after_assistant(tool_calls.as_deref())?;
                 phase = next;
+            }
+            TailPhase::Tools(pending) if role == "user" && pending.is_empty() => {
+                phase = TailPhase::Assistant;
             }
             _ => return None,
         }
@@ -3944,30 +3946,51 @@ impl SessionDb {
         Ok(id)
     }
 
-    /// Atomically append the assistant-fragment/user-nudge pairs produced by
-    /// one successful native length-continuation step. The transaction checks
-    /// the live turn lease and current transcript phase before writing, so a
-    /// competing or stale producer cannot leave a half-pair in durable replay.
+    /// Atomically preserve the suffix produced by native length continuation.
+    /// Normal fragments arrive as assistant/user pairs. A leading reasoning-only
+    /// nudge has no valid assistant row, so it merges into the current user's
+    /// model-facing sidecar before any later pairs are appended.
     pub fn append_native_continuation_messages(
         &self,
         session_id: &str,
         messages: &[Value],
         turn_lease_holder: Option<&str>,
     ) -> rusqlite::Result<bool> {
+        let leading_reasoning_nudge = messages.first().is_some_and(|message| {
+            message.get("role").and_then(Value::as_str) == Some("user")
+                && message
+                    .get("_length_continuation_reasoning_only")
+                    .is_some_and(crate::python_value::truthy)
+        });
+        let persisted_messages = &messages[usize::from(leading_reasoning_nudge)..];
         if session_id.is_empty()
             || messages.is_empty()
-            || !messages.len().is_multiple_of(2)
+            || (leading_reasoning_nudge
+                && messages[0]
+                    .get("content")
+                    .and_then(Value::as_str)
+                    .is_none_or(str::is_empty))
+            || !persisted_messages.len().is_multiple_of(2)
+            || persisted_messages
+                .iter()
+                .enumerate()
+                .any(|(index, message)| {
+                    let expected = if index % 2 == 0 { "assistant" } else { "user" };
+                    message.get("role").and_then(Value::as_str) != Some(expected)
+                        || message
+                            .get("content")
+                            .and_then(Value::as_str)
+                            .is_none_or(str::is_empty)
+                        || message
+                            .get("tool_calls")
+                            .and_then(Value::as_array)
+                            .is_some_and(|calls| !calls.is_empty())
+                })
             || messages.iter().enumerate().any(|(index, message)| {
-                let expected = if index % 2 == 0 { "assistant" } else { "user" };
-                message.get("role").and_then(Value::as_str) != Some(expected)
-                    || message
-                        .get("content")
-                        .and_then(Value::as_str)
-                        .is_none_or(str::is_empty)
-                    || message
-                        .get("tool_calls")
-                        .and_then(Value::as_array)
-                        .is_some_and(|calls| !calls.is_empty())
+                index > 0
+                    && message
+                        .get("_length_continuation_reasoning_only")
+                        .is_some_and(crate::python_value::truthy)
             })
         {
             return Ok(false);
@@ -4016,7 +4039,8 @@ impl SessionDb {
                 .collect::<rusqlite::Result<Vec<_>>>()?;
             rows
         };
-        let allowed = match partial_turn_phase(&tail) {
+        let tail_phase = partial_turn_phase(&tail);
+        let allowed = match &tail_phase {
             Some(TailPhase::Assistant) => true,
             Some(TailPhase::Tools(pending)) => pending.is_empty(),
             Some(TailPhase::User) | None => false,
@@ -4026,7 +4050,62 @@ impl SessionDb {
         }
 
         let timestamp = now_secs();
-        for message in messages {
+        let insert_leading_nudge = leading_reasoning_nudge
+            && matches!(&tail_phase, Some(TailPhase::Tools(pending)) if pending.is_empty());
+        if leading_reasoning_nudge {
+            let nudge = messages[0]["content"].as_str().expect("validated content");
+            match &tail_phase {
+                Some(TailPhase::Assistant) => {
+                    let current = tx
+                        .query_row(
+                            "SELECT id, content, api_content, role FROM messages
+                             WHERE session_id = ? AND active = 1
+                             ORDER BY id DESC LIMIT 1",
+                            [session_id],
+                            |row| {
+                                Ok((
+                                    row.get::<_, i64>(0)?,
+                                    row.get::<_, String>(1)?,
+                                    row.get::<_, Option<String>>(2)?,
+                                    row.get::<_, String>(3)?,
+                                ))
+                            },
+                        )
+                        .optional()?;
+                    let Some((id, content, api_content, role)) = current else {
+                        return Ok(false);
+                    };
+                    if role != "user" {
+                        return Ok(false);
+                    }
+                    let base = decode_message_content(api_content.as_deref().unwrap_or(&content));
+                    let merged = match base {
+                        Value::String(content) => {
+                            let separator = if content.is_empty() { "" } else { "\n\n" };
+                            Value::String(format!("{content}{separator}{nudge}"))
+                        }
+                        Value::Array(mut parts) => {
+                            parts.push(serde_json::json!({"type":"text", "text":nudge}));
+                            Value::Array(parts)
+                        }
+                        _ => return Ok(false),
+                    };
+                    tx.execute(
+                        "UPDATE messages SET api_content = ? WHERE id = ?",
+                        params![encode_message_content(&merged), id],
+                    )?;
+                }
+                Some(TailPhase::Tools(pending)) if pending.is_empty() => {
+                    tx.execute(
+                        "INSERT INTO messages (session_id, role, content, timestamp, active)
+                         VALUES (?, 'user', ?, ?, 1)",
+                        params![session_id, nudge, timestamp],
+                    )?;
+                }
+                Some(TailPhase::Tools(_)) | Some(TailPhase::User) | None => return Ok(false),
+            }
+        }
+        for message in persisted_messages {
             let role = message["role"].as_str().expect("validated role");
             let content = native_persisted_content(role, message.get("content"));
             let json_text = |key: &str| {
@@ -4060,7 +4139,8 @@ impl SessionDb {
             "UPDATE sessions SET message_count = message_count + ?,
              last_activity_at = ? WHERE id = ?",
             params![
-                i64::try_from(messages.len()).unwrap_or(i64::MAX),
+                i64::try_from(persisted_messages.len() + usize::from(insert_leading_nudge))
+                    .unwrap_or(i64::MAX),
                 timestamp,
                 session_id
             ],
@@ -6732,6 +6812,16 @@ mod tests {
             .try_acquire_session_turn_lease("continuation-session", "holder", 60.0)
             .unwrap());
 
+        assert!(!db
+            .append_native_continuation_messages(
+                "continuation-session",
+                &[serde_json::json!({
+                    "role":"user", "_length_continuation_reasoning_only":true
+                })],
+                Some("holder"),
+            )
+            .unwrap());
+
         let malformed = [
             serde_json::json!({"role":"assistant", "content":"fragment"}),
             serde_json::json!({"role":"assistant", "content":"wrong role"}),
@@ -6778,6 +6868,138 @@ mod tests {
         assert_eq!(
             db.get_session("continuation-session").unwrap().unwrap()["message_count"],
             3
+        );
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn reasoning_only_nudge_sidecar_merge_is_atomic_and_structured() {
+        let path = temp_db("reasoning_nudge_sidecar");
+        let db = SessionDb::open(path.clone()).unwrap();
+        let mut msg: Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"describe this image"
+        }))
+        .unwrap();
+        msg.resolved_session_id = Some("reasoning-sidecar-session".into());
+        assert!(begin_turn(Some(&db), false, &msg, "cli").is_empty());
+        assert!(db
+            .try_acquire_session_turn_lease("reasoning-sidecar-session", "holder", 60.0)
+            .unwrap());
+        let original = serde_json::json!([
+            {"type":"text", "text":"describe this image"},
+            {"type":"image_url", "image_url":{"url":"data:image/png;base64,AAAA"}}
+        ]);
+        db.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE messages SET api_content = ? WHERE session_id = ?",
+                params![
+                    encode_message_content(&original),
+                    "reasoning-sidecar-session"
+                ],
+            )
+            .unwrap();
+        let nudge = serde_json::json!({
+            "role":"user",
+            "content":"continue without reasoning",
+            "_length_continuation_reasoning_only":true
+        });
+
+        assert!(!db
+            .append_native_continuation_messages(
+                "reasoning-sidecar-session",
+                std::slice::from_ref(&nudge),
+                Some("stale-holder"),
+            )
+            .unwrap());
+        let unchanged = db.load_history("reasoning-sidecar-session", 0).unwrap();
+        assert_eq!(
+            decode_message_content(unchanged[0].api_content.as_deref().unwrap()),
+            original
+        );
+        assert!(db
+            .append_native_continuation_messages(
+                "reasoning-sidecar-session",
+                std::slice::from_ref(&nudge),
+                Some("holder"),
+            )
+            .unwrap());
+
+        let history = db.load_history("reasoning-sidecar-session", 0).unwrap();
+        assert_eq!(history.len(), 1);
+        assert_eq!(history[0].content, "describe this image");
+        assert_eq!(
+            decode_message_content(history[0].api_content.as_deref().unwrap()),
+            serde_json::json!([
+                {"type":"text", "text":"describe this image"},
+                {"type":"image_url", "image_url":{"url":"data:image/png;base64,AAAA"}},
+                {"type":"text", "text":"continue without reasoning"}
+            ])
+        );
+        assert_eq!(
+            db.get_session("reasoning-sidecar-session")
+                .unwrap()
+                .unwrap()["message_count"],
+            1
+        );
+        drop(db);
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn reasoning_only_nudge_after_completed_tool_group_starts_user_continuation() {
+        let path = temp_db("reasoning_nudge_after_tools");
+        let db = SessionDb::open(path.clone()).unwrap();
+        let mut msg: Message = serde_json::from_value(serde_json::json!({
+            "platform":"cli", "channel_id":"channel", "sender_id":"user",
+            "text":"use the tool"
+        }))
+        .unwrap();
+        msg.resolved_session_id = Some("reasoning-after-tools".into());
+        assert!(begin_turn(Some(&db), false, &msg, "cli").is_empty());
+        let assistant = serde_json::json!({
+            "role":"assistant", "content":"",
+            "tool_calls":[{
+                "id":"call-1", "type":"function",
+                "function":{"name":"current_time", "arguments":"{}"}
+            }]
+        });
+        let tool = serde_json::json!({
+            "role":"tool", "tool_call_id":"call-1", "name":"current_time",
+            "content":"12:00"
+        });
+        assert!(db
+            .append_native_tool_message("reasoning-after-tools", &assistant, None)
+            .unwrap());
+        assert!(db
+            .append_native_tool_message("reasoning-after-tools", &tool, None)
+            .unwrap());
+        assert!(db
+            .append_native_continuation_messages(
+                "reasoning-after-tools",
+                &[serde_json::json!({
+                    "role":"user", "content":"continue without reasoning",
+                    "_length_continuation_reasoning_only":true
+                })],
+                None,
+            )
+            .unwrap());
+
+        let messages = db.load_lifecycle_messages("reasoning-after-tools").unwrap();
+        assert_eq!(
+            messages
+                .iter()
+                .map(|message| message["role"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            ["user", "assistant", "tool", "user"]
+        );
+        assert_eq!(messages[3]["content"], "continue without reasoning");
+        assert_eq!(
+            db.get_session("reasoning-after-tools").unwrap().unwrap()["message_count"],
+            4
         );
         drop(db);
         std::fs::remove_dir_all(path.parent().unwrap()).unwrap();

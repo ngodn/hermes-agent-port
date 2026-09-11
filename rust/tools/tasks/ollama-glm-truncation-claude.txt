@@ -1,0 +1,12 @@
+Map only Python's Ollama GLM stop-to-length correction as a separate future Rust
+lane. Do not analyze thinking-only handling, repetition, dropped streams,
+timeouts, or non-chat transports.
+
+Inspect the real helpers and call sites in run_agent.py and
+agent/conversation_loop.py plus focused tests. Write
+rust/analysis/ollama-glm-truncation-claude.md with exact truth tables for model,
+provider, base URL, api mode, history, assistant content/tool calls, natural
+ending detection, ordering, and cache/persistence effects. Identify the narrow
+Rust module interface and public run-turn tests needed, but do not edit code or
+run broad suites. Include exact source/test references and unresolved risks.
+Do not use em dash characters.

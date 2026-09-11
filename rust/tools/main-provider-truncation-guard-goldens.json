@@ -1,0 +1,463 @@
+{
+  "empty_reasoning_one_shot_disable": [
+    {
+      "appends_interim_assistant_message": false,
+      "case_name": "trigger_condition_empty_reasoning",
+      "finish_reason": "length",
+      "has_tool_calls": false,
+      "interim_content": "",
+      "is_empty_partial_stub": false,
+      "provenance": "source_inspection_literal",
+      "reason": "skips_empty_interim_row_to_prevent_http_400_poisoning",
+      "triggers_ephemeral_reasoning_off": true
+    },
+    {
+      "case_name": "flag_consumed_exactly_once_wire_lifecycle",
+      "flag_after_call1": false,
+      "initial_user_config": {
+        "effort": "high",
+        "enabled": true
+      },
+      "one_shot_invariant_preserved": true,
+      "provenance": "executed_source",
+      "wire_call1_config": {
+        "effort": "none",
+        "enabled": false
+      },
+      "wire_call2_config": {
+        "effort": "high",
+        "enabled": true
+      }
+    },
+    {
+      "case_name": "flag_with_no_user_reasoning_config",
+      "flag_reset": true,
+      "initial_user_config": null,
+      "provenance": "executed_source",
+      "wire_config": {
+        "effort": "none",
+        "enabled": false
+      }
+    },
+    {
+      "cache_key_preserved": true,
+      "case_name": "rejected_disable_resends_user_config_verbatim",
+      "flag_reset": true,
+      "initial_user_config": {
+        "effort": "high",
+        "enabled": true
+      },
+      "provenance": "executed_source",
+      "reasoning_disable_rejected": true,
+      "wire_config": {
+        "effort": "high",
+        "enabled": true
+      }
+    },
+    {
+      "case_name": "rejected_disable_omits_disabled_config",
+      "initial_user_config": {
+        "enabled": false
+      },
+      "provenance": "executed_source",
+      "reasoning_disable_rejected": true,
+      "wire_config": null
+    },
+    {
+      "action": "agent._ephemeral_reasoning_off = False",
+      "case_name": "stale_flag_reset_at_turn_start",
+      "flag_after_turn_init": false,
+      "flag_before_turn": true,
+      "prevents_leak_into_next_turn": true,
+      "provenance": "source_inspection_literal"
+    },
+    {
+      "case_name": "progressive_output_cap_boosting_schedule",
+      "provenance": "executed_source",
+      "schedule": [
+        {
+          "base": 4096,
+          "effective_cap": 8192,
+          "retry": 1
+        },
+        {
+          "base": 4096,
+          "effective_cap": 16384,
+          "retry": 2
+        },
+        {
+          "base": 4096,
+          "effective_cap": 32768,
+          "retry": 3
+        },
+        {
+          "base": 4096,
+          "effective_cap": 32768,
+          "retry": 4
+        },
+        {
+          "base": 16384,
+          "effective_cap": 32768,
+          "retry": 1
+        }
+      ]
+    },
+    {
+      "appended_as_role": "user",
+      "case_name": "continuation_prompt_nudge",
+      "nudge_content": "[System: Your previous response was truncated by the output length limit. Continue exactly where you left off. Do not restart or repeat prior text. Finish the answer directly.]",
+      "provenance": "source_inspection_literal",
+      "synthetic_tag": "_length_continuation_nudge"
+    },
+    {
+      "api_calls": 4,
+      "case_name": "ceiling_exit_all_empty_reasoning_attempts",
+      "completed": false,
+      "ephemeral_reasoning_off_cleared": false,
+      "error": "Response remained truncated after 4 continuation attempts",
+      "final_response": "\u26a0\ufe0f **No visible answer was produced.** The model hit its output-token limit on every continuation attempt -- its reasoning consumed the entire budget each time.\n\nTo fix this:\n\u2192 Lower reasoning effort: `/reasoning low` or `/reasoning none`\n\u2192 Or raise max_tokens for this model",
+      "length_continue_retries": 4,
+      "partial": true,
+      "partial_response": "",
+      "provenance": "source_inspection_literal",
+      "scaffolding_nudges_purged": true
+    },
+    {
+      "case_name": "mixed_fragment_multi_pass_recovery",
+      "empty_assistant_rows_in_transcript": 0,
+      "final_response_contains": [
+        "visible part one.",
+        "and the ending."
+      ],
+      "pass1": {
+        "ephemeral_reasoning_off": false,
+        "finish_reason": "length",
+        "interim_assistant_appended": true,
+        "response": "visible part one. "
+      },
+      "pass2": {
+        "ephemeral_reasoning_off": true,
+        "finish_reason": "length",
+        "interim_assistant_appended": false,
+        "response": ""
+      },
+      "pass3": {
+        "completed": true,
+        "ephemeral_reasoning_off": false,
+        "finish_reason": "stop",
+        "response": "and the ending."
+      },
+      "provenance": "source_inspection_literal"
+    }
+  ],
+  "repetition_dominated_rejection": [
+    {
+      "case_name": "below_min_fragment_length_fail_open",
+      "is_repetition_dominated": false,
+      "loop_action": "eligible_for_continuation",
+      "min_fragment_length": 400,
+      "provenance": "executed_source",
+      "text_length": 145
+    },
+    {
+      "case_name": "boundary_below_400_chars",
+      "is_repetition_dominated": false,
+      "loop_action": "eligible_for_continuation",
+      "min_fragment_length": 400,
+      "provenance": "executed_source",
+      "text_length": 399
+    },
+    {
+      "case_name": "line_path_incident_shape_with_narration",
+      "is_repetition_dominated": true,
+      "line_path_result": true,
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "text_length": 53600
+    },
+    {
+      "case_name": "line_path_single_line_echo",
+      "is_repetition_dominated": true,
+      "line_path_result": true,
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "text_length": 1500
+    },
+    {
+      "case_name": "line_path_minimal_count_and_dominance",
+      "is_repetition_dominated": true,
+      "line_path_result": true,
+      "loop_action": "abort_turn_immediately",
+      "min_repeat_count": 5,
+      "provenance": "executed_source",
+      "repeat_count": 5,
+      "text_length": 690
+    },
+    {
+      "case_name": "line_path_count_under_threshold",
+      "line_path_result": false,
+      "provenance": "executed_source",
+      "repeat_count": 4,
+      "text_length": 524
+    },
+    {
+      "case_name": "line_path_dominance_under_50_percent",
+      "is_repetition_dominated": false,
+      "line_path_result": false,
+      "loop_action": "eligible_for_continuation",
+      "provenance": "executed_source",
+      "text_length": 44819
+    },
+    {
+      "case_name": "window_path_no_line_breaks_incident_echo",
+      "is_repetition_dominated": true,
+      "line_path_result": false,
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "repeat_window_size": 60,
+      "text_length": 58000
+    },
+    {
+      "case_name": "window_path_exact_60_char_sliding_pattern",
+      "is_repetition_dominated": true,
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "repeat_window_size": 60,
+      "text_length": 1800
+    },
+    {
+      "case_name": "long_diverse_prose_not_flagged",
+      "is_repetition_dominated": false,
+      "loop_action": "eligible_for_continuation",
+      "provenance": "executed_source",
+      "text_length": 156269
+    },
+    {
+      "case_name": "repetition_inside_think_block_only",
+      "loop_action": "eligible_for_continuation",
+      "provenance": "executed_source",
+      "raw_is_repetition_dominated": true,
+      "raw_text_length": 1501,
+      "visible_is_repetition_dominated": false,
+      "visible_text": "Here is the unique and clean answer."
+    },
+    {
+      "case_name": "repetition_in_visible_text_with_think_block",
+      "loop_action": "abort_turn_immediately",
+      "provenance": "executed_source",
+      "raw_text_length": 1535,
+      "visible_is_repetition_dominated": true,
+      "visible_text_length": 1500
+    },
+    {
+      "case_name": "tool_calls_preempts_repetition_guard",
+      "evaluated_repetition_dominated": false,
+      "has_tool_calls": true,
+      "loop_action": "route_to_tool_call_truncation_retry",
+      "preempted_by": "tool_calls",
+      "provenance": "source_inspection_literal",
+      "visible_is_repetition_dominated": true
+    },
+    {
+      "case_name": "non_string_and_empty_inputs",
+      "empty_str_result": false,
+      "int_result": false,
+      "list_result": false,
+      "none_result": false,
+      "provenance": "executed_source"
+    },
+    {
+      "api_calls": 1,
+      "case_name": "repetition_dominated_abort_envelope",
+      "completed": false,
+      "error": "Model output entered a repetition loop and was truncated mid-loop; refusing to continue a degenerate response.",
+      "final_response": "\u26a0\ufe0f **Response Stopped -- Repetition Detected**\n\nThe model fell into a repetition loop while writing this response, so continuing would only produce more repeated text. The partial response was discarded.\n\n\u2192 Switch to a different model with `/model`\n\u2192 Or resend your message (your conversation history is preserved)",
+      "length_continue_retries": 0,
+      "messages_state": "pathological_fragment_discarded_not_appended",
+      "partial": true,
+      "provenance": "source_inspection_literal",
+      "retries_consumed": 0,
+      "session_persisted": true,
+      "task_resources_cleaned": true,
+      "usage_accounted_in_session": false
+    }
+  ],
+  "thinking_exhausted_detection": [
+    {
+      "action": "abort_turn_immediately",
+      "case_name": "closed_think_tag_no_trailing_text",
+      "content_snippet": "<think>internal reasoning monologue</think>",
+      "error_message": "Model used all output tokens on reasoning with none left for the response. Try lowering reasoning effort or increasing max_tokens.",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "retries_consumed": 0,
+      "thinking_exhausted": true
+    },
+    {
+      "action": "abort_turn_immediately",
+      "case_name": "closed_thinking_tag_no_trailing_text",
+      "content_snippet": "<thinking>step 1 analyze; step 2 compute</thinking>",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "retries_consumed": 0,
+      "thinking_exhausted": true
+    },
+    {
+      "action": "abort_turn_immediately",
+      "case_name": "closed_reasoning_tag_no_trailing_text",
+      "content_snippet": "<reasoning>analyzing constraints and edge cases</reasoning>",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "retries_consumed": 0,
+      "thinking_exhausted": true
+    },
+    {
+      "action": "abort_turn_immediately",
+      "case_name": "closed_scratchpad_tag_no_trailing_text",
+      "content_snippet": "<REASONING_SCRATCHPAD>scratchpad calculations</REASONING_SCRATCHPAD>",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "retries_consumed": 0,
+      "thinking_exhausted": true
+    },
+    {
+      "action": "abort_turn_immediately",
+      "case_name": "mixed_case_think_tags_no_trailing_text",
+      "content_snippet": "<Think>mixed case tag variant</Think>",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "retries_consumed": 0,
+      "thinking_exhausted": true
+    },
+    {
+      "action": "abort_turn_immediately",
+      "case_name": "unterminated_think_tag_at_content_start",
+      "content_snippet": "<think>the model output was cut off before finishing its chain of thought",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "retries_consumed": 0,
+      "thinking_exhausted": true
+    },
+    {
+      "action": "abort_turn_immediately",
+      "case_name": "unterminated_thinking_tag_after_newline",
+      "content_snippet": "\n<thinking>unterminated thought starting on fresh line",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "retries_consumed": 0,
+      "thinking_exhausted": true
+    },
+    {
+      "action": "proceed_to_repetition_or_continuation",
+      "case_name": "think_tag_with_trailing_visible_text",
+      "content_snippet": "<think>thought completed</think>Here is the visible answer.",
+      "has_content_after_think": true,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "thinking_exhausted": false,
+      "visible_text": "Here is the visible answer."
+    },
+    {
+      "action": "abort_turn_immediately",
+      "case_name": "think_tag_with_whitespace_only_trailing",
+      "content_snippet": "<think>thought completed</think>   \n\t  ",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "retries_consumed": 0,
+      "thinking_exhausted": true
+    },
+    {
+      "action": "route_to_tool_call_truncation_retry",
+      "case_name": "tool_calls_preempts_thinking_exhausted",
+      "content_snippet": "<think>I must invoke a function</think>",
+      "has_content_after_think": false,
+      "has_think_tags": true,
+      "has_tool_calls": true,
+      "preempted_by": "tool_calls",
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "action": "proceed_to_empty_reasoning_one_shot_disable",
+      "case_name": "empty_string_without_think_tags",
+      "content_snippet": "",
+      "has_content_after_think": false,
+      "has_think_tags": false,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "action": "proceed_to_empty_reasoning_one_shot_disable",
+      "case_name": "none_content_without_think_tags",
+      "content_snippet": null,
+      "has_content_after_think": false,
+      "has_think_tags": false,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "action": "proceed_to_repetition_guard",
+      "case_name": "normal_truncated_prose_without_think_tags",
+      "content_snippet": "The Tokyo skyline was covered in fog this morning and",
+      "has_content_after_think": true,
+      "has_think_tags": false,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "action": "proceed_to_repetition_guard",
+      "case_name": "inline_prose_mention_of_think_tag",
+      "content_snippet": "To format thoughts, enclose text in <think> tags like this.",
+      "has_content_after_think": true,
+      "has_think_tags": true,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "action": "not_flagged_by_has_think_tags_regex",
+      "case_name": "gemma_thought_tag_distinction",
+      "content_snippet": "<thought>Gemma 4 internal thought</thought>",
+      "has_content_after_think": false,
+      "has_think_tags": false,
+      "has_tool_calls": false,
+      "provenance": "executed_source",
+      "thinking_exhausted": false
+    },
+    {
+      "api_calls": 1,
+      "case_name": "thinking_exhausted_abort_envelope",
+      "completed": false,
+      "error": "Model used all output tokens on reasoning with none left for the response. Try lowering reasoning effort or increasing max_tokens.",
+      "final_response": "\u26a0\ufe0f **Thinking Budget Exhausted**\n\nThe model used all its output tokens on reasoning and had none left for the actual response.\n\nTo fix this:\n\u2192 Lower reasoning effort: `/reasoning low` or `/reasoning minimal`\n\u2192 Or switch to a larger/non-reasoning model with `/model`",
+      "length_continue_retries": 0,
+      "messages_state": "unmutated_truncated_assistant_not_appended",
+      "partial": true,
+      "provenance": "source_inspection_literal",
+      "retries_consumed": 0,
+      "session_persisted": true,
+      "task_resources_cleaned": true,
+      "usage_accounted_in_session": false
+    }
+  ]
+}

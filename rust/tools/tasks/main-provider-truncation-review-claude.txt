@@ -1,0 +1,26 @@
+Review the current uncommitted Rust checkpoint for ordinary main-provider
+finish_reason="length" content guards. This is a bounded correctness and
+security review, not an implementation task.
+
+Inspect the live diff and relevant Python sources/tests. Focus on:
+
+1. Thinking-tag exhaustion and repetition-dominated abort ordering.
+2. Empty reasoning-only continuation in both streaming and buffered paths.
+3. Exactly-one-request reasoning disable, reasoning-mandatory rejection
+   recovery, output-cap growth, retry ceilings, and next-turn state leakage.
+4. Prompt-cache stability, strict message ordering, usage accounting, and
+   delivery-only diagnostics.
+5. SQLite continuation durability, transaction/lease atomicity, structured
+   api_content preservation, and completed tool-tail handling.
+6. Differences between Python and Rust Unicode/string behavior that could
+   cause false positives or false negatives.
+
+Do not change production code, tests, PORT.md, INDEX.md, generated goldens, or
+the AGY report. Write only this report:
+
+rust/analysis/main-provider-truncation-review-claude.md
+
+List findings by severity with exact file/line evidence. Separate confirmed
+bugs from optional hardening and out-of-scope future work. If a suspected bug
+cannot be reproduced or does not hold against the code, say so. Include a
+short test-gap section. Do not use em dash characters anywhere in the report.

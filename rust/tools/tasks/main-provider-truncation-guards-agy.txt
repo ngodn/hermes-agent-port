@@ -1,0 +1,17 @@
+Analyze only Python's ordinary chat-completions length-truncation content guards:
+thinking-exhausted detection, empty reasoning-only one-shot reasoning disable,
+and repetition-dominated rejection. Do not analyze dropped streams, dropped tool
+names, Ollama/GLM correction, timeouts, or non-chat transports.
+
+Inspect the authoritative Python sources and focused tests. Produce:
+1. rust/analysis/main-provider-truncation-guards-agy.md, with exact ordering,
+   inputs, outputs, user-visible messages, retry/cap behavior, usage behavior,
+   transcript/persistence behavior, reasoning parameter mutation, and edge cases.
+2. rust/tools/gen_main_provider_truncation_guard_goldens.py, a deterministic
+   source-executed generator that imports or extracts the real Python helpers
+   where possible and emits independent classifier/repetition/reasoning cases.
+3. rust/tools/main-provider-truncation-guard-goldens.json.
+
+Run the generator twice and verify byte-for-byte determinism. Run the smallest
+focused Python test set covering these guards and record exact commands/counts.
+Do not edit Rust production code or existing files. Do not use em dash characters.
