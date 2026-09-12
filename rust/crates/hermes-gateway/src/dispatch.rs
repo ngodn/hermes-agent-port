@@ -393,6 +393,48 @@ impl Dispatcher {
             return;
         }
 
+        if let Some(crate::slash::NativeSlashCommand::Steer { text }) = native_command.clone() {
+            let control_key = self.session_store.as_ref().map_or_else(
+                || crate::session_db::message_session_id(&msg),
+                |(store, _)| {
+                    store.session_key_for_source(&crate::session::source_from_message(&msg))
+                },
+            );
+            match self.turn_controls.steer(&control_key, &text) {
+                crate::turn_control::SteerOutcome::Queued { preview } => {
+                    self.deliver(
+                        &msg,
+                        format!(
+                            "⏩ Steer queued \u{2014} arrives after the next tool call: '{preview}'"
+                        ),
+                    )
+                    .await;
+                    return;
+                }
+                crate::turn_control::SteerOutcome::Empty => {
+                    self.deliver(&msg, "Usage: /steer <prompt>".into()).await;
+                    return;
+                }
+                crate::turn_control::SteerOutcome::Idle if text.is_empty() => {
+                    self.deliver(
+                        &msg,
+                        "Usage: /steer <prompt>  (no agent is running; sending as a normal message)"
+                            .into(),
+                    )
+                    .await;
+                    return;
+                }
+                crate::turn_control::SteerOutcome::Idle => {
+                    msg.text = text;
+                    msg.content_parts = None;
+                    msg.audio_paths.clear();
+                    msg.video_paths.clear();
+                    msg.message_id = None;
+                    native_command = None;
+                }
+            }
+        }
+
         if let Some(crate::slash::NativeSlashCommand::Title { raw_title }) = native_command.clone()
         {
             let Some((store, freshness)) = &self.session_store else {
@@ -671,7 +713,7 @@ impl Dispatcher {
         // and delivery, rather than detaching only the inner agent task.
         let owner = self.clone();
         if let Err(error) = tokio::spawn(async move {
-            owner
+            let promoted = owner
                 .run_admitted_turn(
                     msg,
                     turn_db,
@@ -686,11 +728,21 @@ impl Dispatcher {
                     },
                 )
                 .await;
+            if let Some(msg) = promoted {
+                owner.handle_turn_boxed(msg).await;
+            }
         })
         .await
         {
             error!(%error, "push turn owner failed");
         }
+    }
+
+    fn handle_turn_boxed(
+        &self,
+        msg: Message,
+    ) -> std::pin::Pin<Box<dyn std::future::Future<Output = ()> + Send + '_>> {
+        Box::pin(self.handle_turn(msg))
     }
 
     async fn run_admitted_turn(
@@ -699,7 +751,7 @@ impl Dispatcher {
         turn_db: Option<Arc<crate::session_db::SessionDb>>,
         manages: bool,
         ownership: AdmittedTurnOwnership,
-    ) {
+    ) -> Option<Message> {
         let AdmittedTurnOwnership {
             routing_key,
             session_finalizable,
@@ -804,7 +856,9 @@ impl Dispatcher {
         }
 
         let task_outcome = agent_task.await;
-        let interrupted = turn_control.finish();
+        let completion = turn_control.finish();
+        let interrupted = completion.interrupted;
+        let pending_steer = completion.pending_steer;
         let succeeded = match task_outcome {
             Ok(Ok(())) => !interrupted,
             Ok(Err(_)) if interrupted => false,
@@ -852,15 +906,22 @@ impl Dispatcher {
         }
 
         if interrupted {
-            return;
+            return None;
         }
 
         // Suppress delivery for intentional-silence markers and empty turns.
-        if reply.is_empty() || crate::response_filters::is_intentional_silence_response(&reply) {
-            return;
+        if !reply.is_empty() && !crate::response_filters::is_intentional_silence_response(&reply) {
+            self.deliver(&msg, reply).await;
         }
 
-        self.deliver(&msg, reply).await;
+        pending_steer.map(|text| {
+            msg.text = text;
+            msg.content_parts = None;
+            msg.audio_paths.clear();
+            msg.video_paths.clear();
+            msg.message_id = None;
+            msg
+        })
     }
 }
 
@@ -1029,6 +1090,249 @@ mod tests {
         assert_eq!(replies[1].text, "fresh answer");
         assert_eq!(replies[2].text, "No active task to stop.");
         assert_eq!(*finalized.lock().unwrap(), [false, true]);
+    }
+
+    #[tokio::test]
+    async fn push_steer_queues_while_busy_then_promotes_after_turn_cleanup() {
+        struct SteerableAgent {
+            calls: AtomicUsize,
+            entered: mpsc::Sender<()>,
+            finish: tokio::sync::Notify,
+            seen: Arc<Mutex<Vec<Message>>>,
+            finalized: Arc<Mutex<Vec<String>>>,
+            sent: Arc<Mutex<Vec<Message>>>,
+        }
+
+        #[async_trait]
+        impl crate::agent::AgentClient for SteerableAgent {
+            fn supports_structured_content(&self) -> bool {
+                true
+            }
+
+            async fn run_turn(
+                &self,
+                msg: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                let call = self.calls.fetch_add(1, Ordering::SeqCst);
+                self.seen.lock().unwrap().push(msg.clone());
+                if call == 0 {
+                    self.entered.send(()).await.unwrap();
+                    self.finish.notified().await;
+                } else {
+                    assert!(self
+                        .sent
+                        .lock()
+                        .unwrap()
+                        .iter()
+                        .any(|message| message.text == "answer 0"));
+                    assert_eq!(self.finalized.lock().unwrap().as_slice(), ["turn 0"]);
+                }
+                tx.send(StreamEvent::MessageChunk {
+                    text: format!("answer {call}"),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+
+            async fn finalize_turn_after_persist(
+                &self,
+                _: crate::agent::TurnContext<'_>,
+                _: &Message,
+                _: &str,
+                succeeded: bool,
+            ) -> Result<()> {
+                assert!(succeeded);
+                let call = self.finalized.lock().unwrap().len();
+                self.finalized.lock().unwrap().push(format!("turn {call}"));
+                Ok(())
+            }
+        }
+
+        let (mut dispatcher, _, sent) = harness("unused", json!({}));
+        let (entered, mut arrivals) = mpsc::channel(1);
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        let finalized = Arc::new(Mutex::new(Vec::new()));
+        let agent = Arc::new(SteerableAgent {
+            calls: AtomicUsize::new(0),
+            entered,
+            finish: tokio::sync::Notify::new(),
+            seen: seen.clone(),
+            finalized: finalized.clone(),
+            sent: sent.clone(),
+        });
+        dispatcher.agent = agent.clone();
+
+        let mut initial = cli_msg("initial question", "U");
+        initial.content_parts = Some(vec![hermes_core::ContentPart::Text {
+            text: "initial structured question".into(),
+        }]);
+        initial.audio_paths.push("/tmp/original.ogg".into());
+        initial.video_paths.push("/tmp/original.mp4".into());
+        initial.message_id = Some("original-message".into());
+        let active = dispatcher.clone();
+        let active_turn = tokio::spawn(async move { active.handle_turn(initial).await });
+        tokio::time::timeout(std::time::Duration::from_secs(2), arrivals.recv())
+            .await
+            .expect("active turn did not enter")
+            .expect("active turn signal closed");
+
+        dispatcher.handle_turn(cli_msg("/steer   ", "U")).await;
+        assert_eq!(sent.lock().unwrap()[0].text, "Usage: /steer <prompt>");
+
+        dispatcher
+            .handle_turn(cli_msg("/steer  inspect the auth state  ", "U"))
+            .await;
+        assert_eq!(
+            sent.lock().unwrap()[1].text,
+            "⏩ Steer queued \u{2014} arrives after the next tool call: 'inspect the auth state'"
+        );
+
+        agent.finish.notify_one();
+        tokio::time::timeout(std::time::Duration::from_secs(2), active_turn)
+            .await
+            .expect("steered turn chain did not finish")
+            .unwrap();
+
+        assert_eq!(agent.calls.load(Ordering::SeqCst), 2);
+        assert_eq!(finalized.lock().unwrap().as_slice(), ["turn 0", "turn 1"]);
+        let seen = seen.lock().unwrap();
+        assert_eq!(seen[1].text, "inspect the auth state");
+        assert!(seen[1].content_parts.is_none());
+        assert!(seen[1].audio_paths.is_empty());
+        assert!(seen[1].video_paths.is_empty());
+        assert!(seen[1].message_id.is_none());
+        let replies = sent.lock().unwrap();
+        assert_eq!(replies[2].text, "answer 0");
+        assert_eq!(replies[3].text, "answer 1");
+        assert!(replies[3].message_id.is_none());
+    }
+
+    #[tokio::test]
+    async fn idle_push_steer_becomes_a_clean_normal_turn_or_returns_usage() {
+        struct CapturingAgent {
+            seen: Arc<Mutex<Vec<Message>>>,
+        }
+
+        #[async_trait]
+        impl crate::agent::AgentClient for CapturingAgent {
+            fn supports_structured_content(&self) -> bool {
+                true
+            }
+
+            async fn run_turn(
+                &self,
+                msg: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                tx: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                self.seen.lock().unwrap().push(msg.clone());
+                tx.send(StreamEvent::MessageChunk {
+                    text: format!("answer: {}", msg.text),
+                })
+                .await
+                .unwrap();
+                tx.send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+
+        let (mut dispatcher, _, sent) = harness("unused", json!({}));
+        let seen = Arc::new(Mutex::new(Vec::new()));
+        dispatcher.agent = Arc::new(CapturingAgent { seen: seen.clone() });
+        let mut steer = cli_msg("/steer  direct follow-up  ", "U");
+        steer.content_parts = Some(vec![hermes_core::ContentPart::Text {
+            text: "stale content".into(),
+        }]);
+        steer.audio_paths.push("/tmp/stale.ogg".into());
+        steer.video_paths.push("/tmp/stale.mp4".into());
+        steer.message_id = Some("slash-message".into());
+        dispatcher.handle_turn(steer).await;
+
+        {
+            let captured = seen.lock().unwrap();
+            assert_eq!(captured.len(), 1);
+            assert_eq!(captured[0].text, "direct follow-up");
+            assert!(captured[0].content_parts.is_none());
+            assert!(captured[0].audio_paths.is_empty());
+            assert!(captured[0].video_paths.is_empty());
+            assert!(captured[0].message_id.is_none());
+        }
+        assert_eq!(sent.lock().unwrap()[0].text, "answer: direct follow-up");
+
+        dispatcher.handle_turn(cli_msg("/steer", "U")).await;
+        assert_eq!(seen.lock().unwrap().len(), 1);
+        assert_eq!(
+            sent.lock().unwrap()[1].text,
+            "Usage: /steer <prompt>  (no agent is running; sending as a normal message)"
+        );
+    }
+
+    #[tokio::test]
+    async fn stop_discards_pending_push_steer() {
+        struct BlockedAgent {
+            calls: AtomicUsize,
+            entered: mpsc::Sender<()>,
+        }
+
+        #[async_trait]
+        impl crate::agent::AgentClient for BlockedAgent {
+            async fn run_turn(
+                &self,
+                _: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                _: mpsc::Sender<StreamEvent>,
+            ) -> Result<()> {
+                self.calls.fetch_add(1, Ordering::SeqCst);
+                self.entered.send(()).await.unwrap();
+                std::future::pending::<()>().await;
+                Ok(())
+            }
+        }
+
+        let (mut dispatcher, _, sent) = harness("unused", json!({}));
+        let (entered, mut arrivals) = mpsc::channel(1);
+        let agent = Arc::new(BlockedAgent {
+            calls: AtomicUsize::new(0),
+            entered,
+        });
+        dispatcher.agent = agent.clone();
+        let active = dispatcher.clone();
+        let active_turn = tokio::spawn(async move {
+            active.handle_turn(cli_msg("initial question", "U")).await;
+        });
+        tokio::time::timeout(std::time::Duration::from_secs(2), arrivals.recv())
+            .await
+            .expect("active turn did not enter")
+            .expect("active turn signal closed");
+
+        dispatcher
+            .handle_turn(cli_msg("/steer must not become another turn", "U"))
+            .await;
+        dispatcher.handle_turn(cli_msg("/stop", "U")).await;
+        tokio::time::timeout(std::time::Duration::from_secs(2), active_turn)
+            .await
+            .expect("stopped turn did not exit")
+            .unwrap();
+
+        assert_eq!(agent.calls.load(Ordering::SeqCst), 1);
+        let replies = sent.lock().unwrap();
+        assert_eq!(replies.len(), 2);
+        assert_eq!(
+            replies[0].text,
+            "⏩ Steer queued \u{2014} arrives after the next tool call: 'must not become another turn'"
+        );
+        assert_eq!(
+            replies[1].text,
+            "⚡ Stopped. You can continue this session."
+        );
     }
 
     #[tokio::test]

@@ -1,0 +1,30 @@
+Own the executable Python-contract lane for the native Rust `/steer`
+checkpoint. Do not edit Rust production code, PORT.md, or INDEX.md. Inspect and
+execute the real current Python Hermes implementation, not copied simulations.
+
+Build a deterministic generator at
+`rust/tools/gen_native_steer_goldens.py` and write its checked output to
+`rust/tools/native-steer-goldens.json`. The generator must import and call the
+real Python implementations wherever possible. Cover at least:
+
+1. `AIAgent.steer` normalization, empty rejection, FIFO concatenation, and
+   thread-safe concurrent submissions with an asserted deterministic order.
+2. `_drain_pending_steer` and hard-interrupt clearing.
+3. `apply_pending_steer_to_tool_results` for string content, list/block
+   content, multiple tool results, no matching tool row, zero recent rows, and
+   multiple queued steers.
+4. The pre-API drain behavior in the real conversation loop where practical.
+5. Leftover steer returned by the real turn finalizer when a turn ends without
+   another tool boundary.
+6. Exact busy and idle acknowledgement strings, preview truncation boundaries,
+   and idle valid-payload fallthrough text.
+
+Assert every expected value inside the generator before writing output. If a
+large full-agent construction is unsuitable, call the real narrow functions on
+minimal objects and clearly label source-derived strings separately from
+executed state transitions. Do not make provider network calls. Do not launch
+nested agents.
+
+Write a concise methodology and findings report to
+`rust/analysis/native-steer-contract-agy.md`, including exact commands run,
+case counts, limitations, and the Rust assertions the corpus should drive.

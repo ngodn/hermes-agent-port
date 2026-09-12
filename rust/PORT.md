@@ -1,5 +1,43 @@
 # Hermes Rust rewrite
 
+## Native conversation steering: 2026-09-12
+
+Explicit `/steer` is now live on push adapters and synchronous HTTP. Authorized
+busy guidance queues on the active route without cancelling provider or tool
+work; idle guidance becomes a clean normal user turn. Python-compatible usage,
+acknowledgement, Unicode preview, FIFO accumulation, and stop-discard behavior
+are covered directly.
+
+The native tool loop appends the exact out-of-band user marker only to a
+current-turn tool result, after the tool batch or immediately before the next
+provider call. It preserves string and structured content behavior without
+adding a synthetic user row or changing the frozen prompt prefix. Each marker
+is committed through a content-only newest-tail SQLite compare-and-swap before
+provider I/O. Stale rows, wrong leases, ended sessions, wider rewrites, and
+trigger failures fail closed and restore the queued steer.
+
+Push turns deliver and finalize the current response before promoting leftover
+guidance into a clean next turn. HTTP returns leftover guidance in an optional
+`pending_steer` field and omits that field otherwise. A real local model,
+blocking tool, and SQLite integration test proves durable marker reuse on the
+next request.
+
+AGY owned the 57-case source-executed Python contract and checked-in corpus.
+Claude separately audited the Rust ownership and ACID persistence boundary. See
+[native-steer-resolution.md](analysis/native-steer-resolution.md).
+
+The refreshed weighted full-port estimate is **60.65 points, reported as about
+61%** (judgment range 58% to 64%). Gateway moves from 68% to 69%, and native
+agent core moves from 87% to 88%; the other area estimates are unchanged. The
+implicit plain-text busy steer mode, startup-sentinel fallback, and general
+busy FIFO remain Python-only, along with provider-response and local-load
+notices, non-chat and remaining
+OAuth routes, dynamic providers, native plugin and external-memory managers,
+prompt invalidation, and broader client eviction. The full workspace passes
+**1,990 Rust tests with two ignored**. The 57-case corpus regenerates byte for
+byte, 47 focused Python tests pass, and Rust formatting, Ruff, workspace Clippy
+with warnings denied, and diff hygiene pass.
+
 ## Native cooperative stop control: 2026-09-11
 
 The live Rust gateway now handles `/stop` on both push adapters and synchronous

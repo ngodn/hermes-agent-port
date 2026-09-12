@@ -4334,6 +4334,103 @@ impl SessionDb {
         Ok(true)
     }
 
+    /// Replace only the content of the newest active native tool-result row.
+    /// The in-memory before/after pair must identify the same tool message and
+    /// differ only in content. The guarded update is an exact compare-and-swap
+    /// against the durable tail, so a delayed steer cannot rewrite a newer row.
+    pub fn amend_native_tool_tail(
+        &self,
+        session_id: &str,
+        before: &Value,
+        after: &Value,
+        turn_lease_holder: Option<&str>,
+    ) -> rusqlite::Result<bool> {
+        let (Some(before), Some(after)) = (before.as_object(), after.as_object()) else {
+            return Ok(false);
+        };
+        if session_id.is_empty()
+            || before.get("role").and_then(Value::as_str) != Some("tool")
+            || after.get("role").and_then(Value::as_str) != Some("tool")
+        {
+            return Ok(false);
+        }
+        let Some(tool_call_id) = before
+            .get("tool_call_id")
+            .and_then(Value::as_str)
+            .filter(|id| !id.trim().is_empty())
+        else {
+            return Ok(false);
+        };
+        if after.get("tool_call_id").and_then(Value::as_str) != Some(tool_call_id) {
+            return Ok(false);
+        }
+        let (Some(before_content), Some(after_content)) =
+            (before.get("content"), after.get("content"))
+        else {
+            return Ok(false);
+        };
+        if before_content == after_content {
+            return Ok(false);
+        }
+        let mut before_identity = before.clone();
+        let mut after_identity = after.clone();
+        before_identity.remove("content");
+        after_identity.remove("content");
+        if before_identity != after_identity {
+            return Ok(false);
+        }
+
+        let before_content = native_persisted_content("tool", Some(before_content));
+        let after_content = native_persisted_content("tool", Some(after_content));
+        if before_content == after_content {
+            return Ok(false);
+        }
+
+        let mut conn = self.conn.lock().unwrap();
+        let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        if let Some(holder) = turn_lease_holder {
+            let conversation_id = compression_lineage_root_on(&tx, session_id)?;
+            let owner = tx
+                .query_row(
+                    "SELECT holder FROM session_turn_leases
+                     WHERE conversation_id = ? AND expires_at >= ?",
+                    params![conversation_id, now_secs()],
+                    |row| row.get::<_, String>(0),
+                )
+                .optional()?;
+            if owner.as_deref() != Some(holder) {
+                return Ok(false);
+            }
+        }
+        let live = tx
+            .query_row(
+                "SELECT ended_at IS NULL FROM sessions WHERE id = ?",
+                [session_id],
+                |row| row.get::<_, bool>(0),
+            )
+            .optional()?;
+        if live != Some(true) {
+            return Ok(false);
+        }
+
+        let changed = tx.execute(
+            "UPDATE messages SET content = ?1
+             WHERE id = (
+                 SELECT id FROM messages
+                 WHERE session_id = ?2 AND active = 1
+                 ORDER BY id DESC LIMIT 1
+             )
+               AND session_id = ?2 AND active = 1 AND role = 'tool'
+               AND tool_call_id = ?3 AND content = ?4",
+            params![after_content, session_id, tool_call_id, before_content],
+        )?;
+        if changed != 1 {
+            return Ok(false);
+        }
+        tx.commit()?;
+        Ok(true)
+    }
+
     /// Read a single stored message by row id (for recovery / diagnostics).
     pub fn get_message(&self, id: i64) -> rusqlite::Result<Option<StoredMessage>> {
         let conn = self.conn.lock().unwrap();
@@ -5798,6 +5895,286 @@ mod tests {
         ));
         p.push("state.db");
         p
+    }
+
+    fn seed_native_tool_tail(db: &SessionDb, session_id: &str, content: Value) -> Value {
+        db.ensure_session(session_id, "local", None, None, None)
+            .unwrap();
+        db.append_message(session_id, "user", "question").unwrap();
+        assert!(db
+            .append_native_tool_message(
+                session_id,
+                &serde_json::json!({
+                    "role":"assistant",
+                    "content":null,
+                    "tool_calls":[{
+                        "id":"call-1",
+                        "type":"function",
+                        "function":{"name":"fixture_tool", "arguments":"{}"},
+                    }],
+                }),
+                None,
+            )
+            .unwrap());
+        let tool = serde_json::json!({
+            "role":"tool",
+            "name":"fixture_tool",
+            "tool_name":"fixture_tool",
+            "content":content,
+            "tool_call_id":"call-1",
+            "timestamp":123.0,
+        });
+        assert!(db
+            .append_native_tool_message(session_id, &tool, None)
+            .unwrap());
+        tool
+    }
+
+    #[test]
+    fn native_tool_tail_amendment_updates_content_and_fts_without_changing_identity_or_counters() {
+        let path = temp_db("native_tool_tail_amend_success");
+        let db = SessionDb::open(path.clone()).unwrap();
+        let before = seed_native_tool_tail(&db, "s", serde_json::json!("oldsteerneedle"));
+        assert!(db
+            .try_acquire_session_turn_lease("s", "holder", 60.0)
+            .unwrap());
+        let mut after = before.clone();
+        after["content"] = serde_json::json!("newsteerneedle");
+
+        let row_before: (i64, String, String, Option<String>, f64, i64) = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT id, role, tool_call_id, tool_name, timestamp, active
+                 FROM messages WHERE session_id='s' ORDER BY id DESC LIMIT 1",
+                [],
+                |row| {
+                    Ok((
+                        row.get(0)?,
+                        row.get(1)?,
+                        row.get(2)?,
+                        row.get(3)?,
+                        row.get(4)?,
+                        row.get(5)?,
+                    ))
+                },
+            )
+            .unwrap();
+        let counters_before: (i64, i64, f64) = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT message_count, tool_call_count, last_activity_at
+                 FROM sessions WHERE id='s'",
+                [],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+            )
+            .unwrap();
+
+        assert!(db
+            .amend_native_tool_tail("s", &before, &after, Some("holder"))
+            .unwrap());
+
+        let row_after: (i64, String, String, String, Option<String>, f64, i64) = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT id, role, content, tool_call_id, tool_name, timestamp, active
+                 FROM messages WHERE session_id='s' ORDER BY id DESC LIMIT 1",
+                [],
+                |row| {
+                    Ok((
+                        row.get(0)?,
+                        row.get(1)?,
+                        row.get(2)?,
+                        row.get(3)?,
+                        row.get(4)?,
+                        row.get(5)?,
+                        row.get(6)?,
+                    ))
+                },
+            )
+            .unwrap();
+        assert_eq!(row_after.2, "newsteerneedle");
+        assert_eq!(
+            (
+                row_after.0,
+                row_after.1,
+                row_after.3,
+                row_after.4,
+                row_after.5,
+                row_after.6
+            ),
+            row_before
+        );
+        let counters_after: (i64, i64, f64) = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT message_count, tool_call_count, last_activity_at
+                 FROM sessions WHERE id='s'",
+                [],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+            )
+            .unwrap();
+        assert_eq!(counters_after, counters_before);
+        assert!(db.search("oldsteerneedle", 10).unwrap().is_empty());
+        let hits = db.search("newsteerneedle", 10).unwrap();
+        assert_eq!(hits.len(), 1);
+        assert_eq!(hits[0].message_id, row_before.0);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn native_tool_tail_amendment_rejects_stale_and_non_tail_rows() {
+        let path = temp_db("native_tool_tail_amend_cas");
+        let db = SessionDb::open(path.clone()).unwrap();
+
+        let stale_before = seed_native_tool_tail(&db, "stale", serde_json::json!("stale original"));
+        let mut first = stale_before.clone();
+        first["content"] = serde_json::json!("first amendment");
+        assert!(db
+            .amend_native_tool_tail("stale", &stale_before, &first, None)
+            .unwrap());
+        let mut delayed = stale_before.clone();
+        delayed["content"] = serde_json::json!("delayed amendment");
+        assert!(!db
+            .amend_native_tool_tail("stale", &stale_before, &delayed, None)
+            .unwrap());
+        let stale_content: String = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT content FROM messages WHERE session_id='stale' ORDER BY id DESC LIMIT 1",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(stale_content, "first amendment");
+
+        let non_tail =
+            seed_native_tool_tail(&db, "non-tail", serde_json::json!("non-tail original"));
+        db.append_message("non-tail", "assistant", "newer row")
+            .unwrap();
+        let mut non_tail_after = non_tail.clone();
+        non_tail_after["content"] = serde_json::json!("must not land");
+        assert!(!db
+            .amend_native_tool_tail("non-tail", &non_tail, &non_tail_after, None)
+            .unwrap());
+        let original_content: String = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row(
+                "SELECT content FROM messages
+                 WHERE session_id='non-tail' AND role='tool'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(original_content, "non-tail original");
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn native_tool_tail_amendment_rejects_ended_wrong_lease_and_field_rewrites() {
+        let path = temp_db("native_tool_tail_amend_guards");
+        let db = SessionDb::open(path.clone()).unwrap();
+
+        let ended = seed_native_tool_tail(&db, "ended", serde_json::json!("ended original"));
+        db.end_session("ended", "session_reset").unwrap();
+        let mut ended_after = ended.clone();
+        ended_after["content"] = serde_json::json!("must not land");
+        assert!(!db
+            .amend_native_tool_tail("ended", &ended, &ended_after, None)
+            .unwrap());
+
+        let leased = seed_native_tool_tail(&db, "leased", serde_json::json!("leased original"));
+        assert!(db
+            .try_acquire_session_turn_lease("leased", "right-holder", 60.0)
+            .unwrap());
+        let mut leased_after = leased.clone();
+        leased_after["content"] = serde_json::json!("must not land");
+        assert!(!db
+            .amend_native_tool_tail("leased", &leased, &leased_after, Some("wrong-holder"))
+            .unwrap());
+
+        let rewrite = seed_native_tool_tail(&db, "rewrite", serde_json::json!("rewrite original"));
+        let mut rewrite_after = rewrite.clone();
+        rewrite_after["content"] = serde_json::json!("must not land");
+        rewrite_after["name"] = serde_json::json!("different_tool");
+        assert!(!db
+            .amend_native_tool_tail("rewrite", &rewrite, &rewrite_after, None)
+            .unwrap());
+
+        for (session_id, expected) in [
+            ("ended", "ended original"),
+            ("leased", "leased original"),
+            ("rewrite", "rewrite original"),
+        ] {
+            let content: String = db
+                .conn
+                .lock()
+                .unwrap()
+                .query_row(
+                    "SELECT content FROM messages
+                     WHERE session_id=? AND role='tool'",
+                    [session_id],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(content, expected);
+        }
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
+    }
+
+    #[test]
+    fn native_tool_tail_amendment_rolls_back_when_update_trigger_fails() {
+        let path = temp_db("native_tool_tail_amend_rollback");
+        let db = SessionDb::open(path.clone()).unwrap();
+        let before = seed_native_tool_tail(&db, "rollback", serde_json::json!("rollbackold"));
+        let mut after = before.clone();
+        after["content"] = serde_json::json!("rollbacknew");
+        db.conn
+            .lock()
+            .unwrap()
+            .execute_batch(
+                "CREATE TABLE amend_audit (message_id INTEGER NOT NULL);
+                 CREATE TRIGGER force_amend_failure AFTER UPDATE OF content ON messages
+                 WHEN old.session_id = 'rollback'
+                 BEGIN
+                     INSERT INTO amend_audit(message_id) VALUES (old.id);
+                     SELECT RAISE(ABORT, 'forced amend failure');
+                 END;",
+            )
+            .unwrap();
+
+        assert!(db
+            .amend_native_tool_tail("rollback", &before, &after, None)
+            .is_err());
+        let conn = db.conn.lock().unwrap();
+        let content: String = conn
+            .query_row(
+                "SELECT content FROM messages
+                 WHERE session_id='rollback' AND role='tool'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        let audit_count: i64 = conn
+            .query_row("SELECT COUNT(*) FROM amend_audit", [], |row| row.get(0))
+            .unwrap();
+        assert_eq!(content, "rollbackold");
+        assert_eq!(audit_count, 0);
+        drop(conn);
+        assert_eq!(db.search("rollbackold", 10).unwrap().len(), 1);
+        assert!(db.search("rollbacknew", 10).unwrap().is_empty());
+        let _ = std::fs::remove_dir_all(path.parent().unwrap());
     }
 
     #[test]

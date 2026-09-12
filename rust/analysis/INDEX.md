@@ -174,11 +174,19 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
   generation-stamped route-control registry. Provider waits and retry backoff
   wake without replay, generic backends cancel at their future boundary, and
   interrupted native tool batches persist complete call/result pairs plus an
-  assistant terminal before the next turn. `/steer` remains a separate durable
-  tail-mutation checkpoint. See
+  assistant terminal before the next turn. See
   [native-stop-control-resolution.md](native-stop-control-resolution.md), with
   the independent [AGY Python oracle](native-stop-steer-oracle-agy.md) and
   [Claude Rust architecture map](native-stop-steer-map-claude.md).
+- Explicit `/steer` now uses that route control without interrupting work,
+  appends exact user-authority markers only to current-turn tool results, and
+  persists each marker through a newest-tail SQLite compare-and-swap before the
+  next provider request. Push promotes late guidance after cleanup; synchronous
+  HTTP returns it as optional `pending_steer`. See
+  [native-steer-resolution.md](native-steer-resolution.md), the source-executed
+  [AGY contract](native-steer-contract-agy.md), its
+  [57-case corpus](../tools/native-steer-goldens.json), and the independent
+  [Claude persistence audit](native-steer-persistence-claude.md).
 - Full compression resolves a frozen, isolated `auxiliary.compression` client
   at native startup. Exact non-reasoning routes may carry a configured cap;
   unusable auxiliary output gets one clean main-route retry. Its ordered task
@@ -259,6 +267,9 @@ Read this before resuming, then [PORT.md](../PORT.md) for current progress.
 | [native-stop-control-resolution.md](native-stop-control-resolution.md) | Live route-scoped stop handling, cooperative provider and tool cancellation, race ownership, proof, and measured progress |
 | [native-stop-steer-oracle-agy.md](native-stop-steer-oracle-agy.md) | Python `/stop` and `/steer` routing, acknowledgements, wait behavior, tool-tail semantics, and TDD matrix |
 | [native-stop-steer-map-claude.md](native-stop-steer-map-claude.md) | Rust task, route, persistence, and control-state map plus the staged stop-then-steer design |
+| [native-steer-resolution.md](native-steer-resolution.md) | Live push and HTTP steering, tool-boundary injection, durable tail amendment, leftover delivery, proof, and measured progress |
+| [native-steer-contract-agy.md](native-steer-contract-agy.md) | Source-executed Python `/steer` contract across submission, drain, injection, finalization, and acknowledgements |
+| [native-steer-persistence-claude.md](native-steer-persistence-claude.md) | Independent Rust ownership and SQLite compare-and-swap audit for native steering |
 | [native-dropped-stream-recovery-resolution.md](native-dropped-stream-recovery-resolution.md) | Production clean-EOF and post-generation transport recovery, completion evidence, durable continuation, explicit limits, and measured progress |
 | [dropped-stream-contract-agy.md](dropped-stream-contract-agy.md) | AGY's corrected live-source and real-conversation-loop contract for dropped stream production and consumption |
 | [dropped-stream-goldens.json](../tools/dropped-stream-goldens.json) | Source-executed 47-case dropped-stream corpus across 11 sections |

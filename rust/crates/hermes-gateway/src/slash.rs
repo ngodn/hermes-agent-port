@@ -19,6 +19,9 @@ pub const BUILTIN_COMMANDS: &[&str] = &["help", "whoami", "status"];
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum NativeSlashCommand {
     Stop,
+    Steer {
+        text: String,
+    },
     Reset {
         title: Option<String>,
     },
@@ -70,9 +73,11 @@ pub fn command_name(text: &str) -> Option<String> {
 }
 
 fn command_args(text: &str) -> &str {
-    let trimmed = text.trim_start();
-    let token_end = trimmed.find(char::is_whitespace).unwrap_or(trimmed.len());
-    trimmed[token_end..].trim()
+    let trimmed = text.trim_start_matches(crate::python_value::python_whitespace);
+    let token_end = trimmed
+        .find(crate::python_value::python_whitespace)
+        .unwrap_or(trimmed.len());
+    trimmed[token_end..].trim_matches(crate::python_value::python_whitespace)
 }
 
 /// Classify commands whose lifecycle semantics belong to the native gateway.
@@ -81,6 +86,9 @@ fn command_args(text: &str) -> &str {
 pub fn native_command(command: &str, text: &str) -> Option<NativeSlashCommand> {
     match command {
         "stop" => Some(NativeSlashCommand::Stop),
+        "steer" => Some(NativeSlashCommand::Steer {
+            text: command_args(text).to_owned(),
+        }),
         "new" => {
             let title = command_args(text);
             Some(NativeSlashCommand::Reset {
@@ -264,6 +272,12 @@ mod tests {
         assert_eq!(
             native_command("stop", "/stop"),
             Some(NativeSlashCommand::Stop)
+        );
+        assert_eq!(
+            native_command("steer", "/steer  check the logs  "),
+            Some(NativeSlashCommand::Steer {
+                text: "check the logs".into(),
+            })
         );
         assert_eq!(
             native_command("new", "/reset Project Phoenix"),

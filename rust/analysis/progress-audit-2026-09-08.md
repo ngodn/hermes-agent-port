@@ -1,7 +1,7 @@
-# Full Rust port progress audit, updated 2026-09-11
+# Full Rust port progress audit, updated 2026-09-12
 
-Current estimate: **60.10% of the full native replacement**, reported as
-**about 60%**, with a reasonable judgment range of **57% to 63%**. The native
+Current estimate: **60.65% of the full native replacement**, reported as
+**about 61%**, with a reasonable judgment range of **58% to 64%**. The native
 terminal now executes Unix-local foreground commands and managed non-PTY
 background commands through the frozen conversation tool loop, including
 static user deny rules with live last-known-good reload and manual approval on
@@ -50,8 +50,12 @@ failure flushes it once, and adaptive long Z.AI waits surface live. The estimate
 now also includes route-scoped `/stop` control on live push and HTTP ingress.
 Active provider requests, retry waits, and tool calls wake without request
 replay; interrupted tool batches persist complete call/result pairing before a
-terminal assistant row. The estimate remains conservative because `/steer`,
-provider-response and local-load notices, other OAuth paths,
+terminal assistant row. Explicit `/steer` now queues without interruption,
+persists exact current-turn tool-tail markers before the next provider request,
+promotes push leftovers after cleanup, and surfaces HTTP leftovers explicitly.
+The estimate remains conservative because implicit busy steer mode, the
+startup-sentinel fallback and general busy FIFO, provider-response and
+local-load notices, other OAuth paths,
 non-chat provider transports, smart approval, PTY and notification support,
 remote execution, most tools, and the underlying plugin and external-memory
 managers are not native.
@@ -69,13 +73,13 @@ audits.
 
 | Area | Full-port weight | Current area completion | Overall points |
 | --- | ---: | ---: | ---: |
-| Gateway | 35% | 68% | 23.80 |
+| Gateway | 35% | 69% | 24.15 |
 | Tool runtime and RPC | 30% | 25% | 7.50 |
 | State and search | 15% | 76% | 11.40 |
-| Native agent core | 20% | 87% | 17.40 |
-| Total | 100% | | **60.10** |
+| Native agent core | 20% | 88% | 17.60 |
+| Total | 100% | | **60.65** |
 
-`0.35 * 68 + 0.30 * 25 + 0.15 * 76 + 0.20 * 87 = 60.10`
+`0.35 * 69 + 0.30 * 25 + 0.15 * 76 + 0.20 * 88 = 60.65`
 
 The arithmetic is exact. The four completion inputs are bounded judgments based
 on production wiring and remaining Python surfaces, so reporting more than a
@@ -83,7 +87,7 @@ small range would imply false precision.
 
 ## Evidence behind the scores
 
-### Gateway, 68%
+### Gateway, 69%
 
 Production startup, profile-aware client construction, HTTP and push dispatch,
 Telegram, Discord and Slack, session admission, delivery state, routing,
@@ -104,6 +108,14 @@ Push adapters and synchronous HTTP now share a generation-safe, route-scoped
 turn-control registry. `/stop` bypasses ordinary turn admission after slash
 authorization, cancels active work, suppresses stale delivery, and releases the
 route for the next turn. Natural completion and stop linearize under one mutex.
+
+Explicit `/steer` uses the same route identity after authorization but never
+cancels work or acquires a second turn lease. Busy guidance enters a FIFO
+buffer, idle guidance becomes an ordinary clean turn, and exact usage and
+acknowledgement text is shared across push and HTTP. Push promotes a late steer
+only after current delivery and finalization; HTTP returns it as optional
+`pending_steer`. The implicit plain-text busy mode, startup-sentinel fallback,
+and general busy-event FIFO remain unported.
 
 Most of the Python gateway breadth remains: many platform adapters, command
 handlers, queue and steer behavior, startup-sentinel and sibling-thread stop
@@ -245,7 +257,7 @@ state, pruning/export/import, topic bindings, auto-title,
 broader transcript operations, cron state, and several desktop/session queries
 remain.
 
-### Native agent core, 87%
+### Native agent core, 88%
 
 Native provider streaming and tool rounds, request shaping, output limits,
 reasoning projection, message repair, prompt construction and restore, immutable
@@ -442,8 +454,11 @@ clones. Stop wakes response-header waits, buffered body reads, live SSE streams,
 ordinary and empty-response backoff, and active tool calls. It does not replay a
 canceled provider request. A canceled tool batch persists a failed result for
 the current call and every unstarted sibling, then closes the durable tail with
-an assistant interruption row. `/steer` remains separate because its tool-tail
-mutation and late-arrival queue require their own persistence contract.
+an assistant interruption row. `/steer` now shares the route-scoped control but
+uses a separate non-cancelling buffer. Post-tool and pre-API drains append the
+exact authority marker only to current-turn tool rows, with content-only durable
+compare-and-swap before provider reuse. Failed amendments restore the guidance,
+and hard stop discards it.
 
 Canonical Nous discovery resolves its OAuth material lazily before the first
 auxiliary request. Valid inference JWTs avoid both network and shared-lock
@@ -509,8 +524,8 @@ despite broad helper and oracle coverage.
 
 ## Why test and line counts are not the percentage
 
-The workspace currently has 1,974 passing Rust tests and two expected ignores
-(1,973 gateway plus one core test).
+The workspace currently has 1,990 passing Rust tests and two expected ignores
+(1,989 gateway plus one core test).
 That is not a valid denominator against the Python product. Differential tests
 can thoroughly prove a narrow helper while a large runtime consumer is still
 missing. Likewise, Python contains adapters, UIs and compatibility code that do
@@ -518,7 +533,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## Current proof and uncertainty
 
-- Full Rust workspace: 1,974 passed, two ignored (1,973 gateway plus one core).
+- Full Rust workspace: 1,990 passed, two ignored (1,989 gateway plus one core).
 - Selected Python main-provider classifier, credential-pool, provider-boundary,
   and runtime-resolution contracts: 256 passed at the preceding pool
   checkpoint. The focused main-provider fallback and restore suite adds 150
@@ -532,7 +547,9 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   Ollama GLM correction adds 3. The dropped-stream checkpoint adds 25, and the
   run-budget checkpoint adds 28. The fallback-notice checkpoint adds 46
   focused retry-buffer and primary-restore tests. The cooperative-stop
-  checkpoint adds 15 focused Python interrupt and gateway-stop tests.
+  checkpoint adds 15 focused Python interrupt and gateway-stop tests. The
+  native steer checkpoint adds 47 focused Python submission, injection,
+  finalizer, and gateway tests.
 - Source-executed differential corpora: 17 estimator, 14 pruning, 3
   tail-selection, 21 micro-compaction state-machine, 25 same-turn decision and
   adoption, 129 auxiliary routing/config, 112 task fallback-chain, 76 top-level
@@ -542,7 +559,7 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
   tool-truncation, 168 main-provider liveness, 41 truncation content guards,
   113 local Ollama GLM stop-correction, 47 dropped-stream recovery, 32
   main-provider run-budget, 37 main-provider fallback notices, 87 Nous OAuth,
-  24 structural-backoff,
+  24 structural-backoff, 57 native steer,
   and 60 handoff-layer
   cases, plus the 233-case terminal and approval corpus, 76 interactive-approval
   cases, and 251 exhaustive dangerous-command cases.
@@ -555,9 +572,10 @@ not map line-for-line to Rust. Only a wired capability receives full credit.
 
 ## What moves the estimate next
 
-1. `/steer`, provider-response and managed-load notices, remaining OAuth
-   providers, and provider-specific successful-body rules complete the current
-   main-provider and turn-control cluster.
+1. Provider-response and managed-load notices, implicit busy-message steering,
+   startup-sentinel and FIFO handling, remaining OAuth providers, and
+   provider-specific successful-body rules complete the current main-provider
+   and turn-control cluster.
 2. Native plugin and memory managers replace the now-recoverable compatibility
    host with a broader native production capability.
 3. Smart and Tirith approval, PTY and remote terminal modes, then file, browser,

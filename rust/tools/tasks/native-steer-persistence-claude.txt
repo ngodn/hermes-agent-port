@@ -1,0 +1,31 @@
+Own the Rust persistence and ownership audit lane for the native `/steer`
+checkpoint. Do not edit production code, PORT.md, INDEX.md, or the AGY lane's
+files. Inspect the current tree after commit `25a1d1f712`.
+
+Determine the smallest complete implementation that matches Python for:
+
+1. Busy `/steer` on push and synchronous HTTP ingress, including exact
+   authorization ordering, argument parsing, acknowledgement, preview slicing,
+   and a route-scoped FIFO buffer that does not interrupt provider work.
+2. Injection after the current tool batch and before the next provider call,
+   for string and structured tool-result content.
+3. Atomic re-persistence of the already-inserted latest tool row. Identify the
+   exact SQLite invariants, lease/CAS checks, row identity, and FTS effects
+   needed so a failed update cannot leave in-memory and durable history split.
+4. Pre-API draining after a steer arrives during provider work, without
+   duplicating a marker already applied after a tool batch.
+5. A steer arriving during a final text-only response. Map how push ingress can
+   promote it into the next normal user turn after ownership releases, and what
+   truthful behavior is possible for synchronous HTTP without silently losing
+   or executing an undeliverable response.
+6. Stop-versus-steer, natural-completion, session rotation, reset/resume, and
+   stale-generation races. Prompt bytes and tool schemas must remain frozen.
+
+Prefer existing deep transaction helpers and interfaces over a special-case
+SQL shortcut. Check whether `ChatModel::persist_tool_loop_message` needs a
+separate replace-tail contract and how test fakes should model it. Include a
+minimal file-by-file plan and focused unit/integration test matrix. Do not
+launch nested agents.
+
+Write the complete report to
+`rust/analysis/native-steer-persistence-claude.md`.

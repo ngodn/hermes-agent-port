@@ -321,7 +321,7 @@ Implemented in [`agent/agent_runtime_helpers.py:5223-5285`](file:///home/eins0fx
 3. **Marker Constants** ([`agent/prompt_builder.py:733-744`](file:///home/eins0fx/development/hermes-agent-port/agent/prompt_builder.py#L733-L744)):
    ```python
    STEER_MARKER_OPEN = (
-       "[OUT-OF-BAND USER MESSAGE - a direct message from the user, delivered "
+       "[OUT-OF-BAND USER MESSAGE \u2014 a direct message from the user, delivered "
        "once at this position; not tool output and not a new delivery when replayed "
        "from conversation history]"
    )
@@ -453,7 +453,7 @@ The following table contains the exact, byte-for-byte strings emitted or returne
 | **History / Turn**| Skipped tool result | `[Tool execution cancelled - {name} was skipped due to user interrupt]` |
 | **History / Turn**| Unstarted tool result | `[Tool execution skipped - {name} was not started. User sent a new message]` |
 | **History / Turn**| General cancelled tool | `[Tool execution cancelled - {name} was skipped due to {reason}]` |
-| **Steer Marker** | Opening delimiter | `[OUT-OF-BAND USER MESSAGE - a direct message from the user, delivered once at this position; not tool output and not a new delivery when replayed from conversation history]` |
+| **Steer Marker** | Opening delimiter | `[OUT-OF-BAND USER MESSAGE \u2014 a direct message from the user, delivered once at this position; not tool output and not a new delivery when replayed from conversation history]` |
 | **Steer Marker** | Closing delimiter | `[/OUT-OF-BAND USER MESSAGE]` |
 | **Steer Marker** | Formatted block | `\n\n{STEER_MARKER_OPEN}\n{steer_text}\n{STEER_MARKER_CLOSE}` |
 

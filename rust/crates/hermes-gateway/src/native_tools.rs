@@ -205,6 +205,13 @@ pub trait ChatModel: Send + Sync {
         let _ = message;
         Ok(())
     }
+    /// Replace one already-persisted tool result before the next provider
+    /// request. Durable adapters enforce an exact-row compare-and-swap;
+    /// stateless adapters keep the default no-op.
+    fn replace_tool_loop_message(&self, before: &Value, after: &Value) -> Result<()> {
+        let _ = (before, after);
+        Ok(())
+    }
     /// Atomically persist assistant-fragment/user-nudge pairs produced by one
     /// model step. Stateless adapters keep the default no-op.
     fn persist_continuation_messages(&self, messages: &[Value]) -> Result<()> {
@@ -223,6 +230,62 @@ pub trait ChatModel: Send + Sync {
         Ok(false)
     }
     async fn step(&self, messages: &[Value], tools: &[Value]) -> Result<Step>;
+}
+
+const STEER_MARKER_OPEN: &str = concat!(
+    "[OUT-OF-BAND USER MESSAGE \u{2014} a direct message from the user, delivered ",
+    "once at this position; not tool output and not a new delivery when replayed ",
+    "from conversation history]"
+);
+const STEER_MARKER_CLOSE: &str = "[/OUT-OF-BAND USER MESSAGE]";
+
+fn format_steer_marker(text: &str) -> String {
+    format!("\n\n{STEER_MARKER_OPEN}\n{text}\n{STEER_MARKER_CLOSE}")
+}
+
+fn apply_pending_steer(
+    model: &dyn ChatModel,
+    messages: &mut [Value],
+    control: Option<&crate::turn_control::TurnControl>,
+    target_call_id: Option<&str>,
+    trim_structured_prefix: bool,
+) -> Result<bool> {
+    let (Some(control), Some(target_call_id)) = (control, target_call_id) else {
+        return Ok(false);
+    };
+    let Some(target_index) = messages.iter().rposition(|message| {
+        message.get("role").and_then(Value::as_str) == Some("tool")
+            && message.get("tool_call_id").and_then(Value::as_str) == Some(target_call_id)
+    }) else {
+        return Ok(false);
+    };
+    let Some(steer) = control.take_pending_steer() else {
+        return Ok(false);
+    };
+    let before = messages[target_index].clone();
+    let mut after = before.clone();
+    let marker = format_steer_marker(&steer);
+    match after.get_mut("content") {
+        Some(Value::String(content)) => content.push_str(&marker),
+        Some(Value::Array(parts)) => {
+            let text = if trim_structured_prefix {
+                marker
+                    .trim_start_matches(crate::python_value::python_whitespace)
+                    .to_owned()
+            } else {
+                marker
+            };
+            parts.push(json!({"type":"text", "text":text}));
+        }
+        Some(content) => *content = Value::String(format!("{content}{marker}")),
+        None => after["content"] = Value::String(marker),
+    }
+    if let Err(error) = model.replace_tool_loop_message(&before, &after) {
+        control.restore_pending_steer(&steer);
+        return Err(error);
+    }
+    messages[target_index] = after;
+    Ok(true)
 }
 
 /// Unwrap the registry's multimodal envelope before it reaches an API message.
@@ -676,7 +739,17 @@ pub async fn run_tool_loop_with_messages(
     let mut housekeeping_answer: Option<String> = None;
     let mut post_tool_empty_retried = false;
     let mut continuation_prefix = String::new();
+    // Only current-turn tool rows are eligible. This preserves the immutable
+    // cached prefix when steer arrives before the first tool boundary.
+    let mut steer_target_call_id: Option<String> = None;
     for _ in 0..max_iters {
+        apply_pending_steer(
+            model,
+            &mut messages,
+            identity.control,
+            steer_target_call_id.as_deref(),
+            false,
+        )?;
         let mut step = model.step(&messages, &tool_specs).await?;
         while let Step::WithContinuation {
             preceding_messages,
@@ -819,6 +892,7 @@ pub async fn run_tool_loop_with_messages(
                     invalid_json_retries = 0;
                     model.persist_tool_loop_message(&assistant_message)?;
                     messages.push(assistant_message);
+                    let last_batch_call_id = calls.last().map(|call| call.id.clone());
                     for call in calls {
                         let content = match invalid.iter().find(|(name, _)| name == &call.name) {
                             Some((_, error)) => format!("Error: Invalid JSON arguments. {error}. For tools with no required parameters, use an empty object: {{}}. Please retry with valid JSON."),
@@ -828,6 +902,14 @@ pub async fn run_tool_loop_with_messages(
                         model.persist_tool_loop_message(&result)?;
                         messages.push(result);
                     }
+                    steer_target_call_id = last_batch_call_id;
+                    apply_pending_steer(
+                        model,
+                        &mut messages,
+                        identity.control,
+                        steer_target_call_id.as_deref(),
+                        true,
+                    )?;
                     continue;
                 }
                 if calls.iter().any(|call| valid_names.contains(&call.name)) {
@@ -865,6 +947,7 @@ pub async fn run_tool_loop_with_messages(
                 }
                 model.persist_tool_loop_message(&assistant_message)?;
                 messages.push(assistant_message);
+                let last_batch_call_id = calls.last().map(|call| call.id.clone());
                 for call in calls {
                     let _ = events
                         .send(StreamEvent::ToolCallChunk {
@@ -981,6 +1064,20 @@ pub async fn run_tool_loop_with_messages(
                         warn!(%error, "same-turn tool-history maintenance failed open");
                     }
                 }
+                steer_target_call_id = last_batch_call_id.filter(|call_id| {
+                    messages.iter().any(|message| {
+                        message.get("role").and_then(Value::as_str) == Some("tool")
+                            && message.get("tool_call_id").and_then(Value::as_str)
+                                == Some(call_id.as_str())
+                    })
+                });
+                apply_pending_steer(
+                    model,
+                    &mut messages,
+                    identity.control,
+                    steer_target_call_id.as_deref(),
+                    true,
+                )?;
             }
             Step::WithContinuation { .. } => unreachable!("continuation wrapper was flattened"),
         }
@@ -2460,6 +2557,313 @@ mod tests {
             events.last(),
             Some(StreamEvent::MessageStop { final_: true })
         ));
+    }
+
+    #[tokio::test]
+    async fn steer_updates_the_latest_tool_result_before_the_next_model_call() {
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        struct SteerModel {
+            steps: AtomicUsize,
+            replacements: Mutex<Vec<(Value, Value)>>,
+            second_request: Mutex<Option<Vec<Value>>>,
+        }
+
+        #[async_trait]
+        impl ChatModel for SteerModel {
+            fn replace_tool_loop_message(&self, before: &Value, after: &Value) -> Result<()> {
+                self.replacements
+                    .lock()
+                    .unwrap()
+                    .push((before.clone(), after.clone()));
+                Ok(())
+            }
+
+            async fn step(&self, messages: &[Value], _: &[Value]) -> Result<Step> {
+                if self.steps.fetch_add(1, Ordering::SeqCst) == 0 {
+                    return Ok(tool_step(vec![ToolCall {
+                        id: "lookup-1".into(),
+                        name: "fixed".into(),
+                        arguments: json!({}),
+                    }]));
+                }
+                *self.second_request.lock().unwrap() = Some(messages.to_vec());
+                Ok(Step::Final("done".into()))
+            }
+        }
+
+        struct FixedTool;
+        #[async_trait]
+        impl Tool for FixedTool {
+            fn spec(&self) -> ToolSpec {
+                ToolSpec {
+                    name: "fixed".into(),
+                    description: "fixed result".into(),
+                    parameters: json!({"type":"object"}),
+                    extra: Default::default(),
+                }
+            }
+
+            async fn call(&self, _: &Value, _: ToolCallContext<'_>) -> Result<Value> {
+                Ok(json!("tool result"))
+            }
+        }
+
+        let model = SteerModel {
+            steps: AtomicUsize::new(0),
+            replacements: Mutex::new(Vec::new()),
+            second_request: Mutex::new(None),
+        };
+        let controls = crate::turn_control::TurnControlRegistry::default();
+        let registration = controls.register("route");
+        assert!(matches!(
+            controls.steer("route", "focus on auth"),
+            crate::turn_control::SteerOutcome::Queued { .. }
+        ));
+        let tools: Vec<Arc<dyn Tool>> = vec![Arc::new(FixedTool)];
+        let (tx, _rx) = mpsc::channel(16);
+        run_tool_loop_with_messages(
+            &model,
+            &tools,
+            &[],
+            &json!("original request"),
+            &tx,
+            3,
+            ToolTurnIdentity {
+                principal: Some("user"),
+                route_key: Some("route"),
+                control: Some(registration.control()),
+            },
+        )
+        .await
+        .unwrap();
+
+        let request = model.second_request.lock().unwrap().clone().unwrap();
+        assert_eq!(request[0]["content"], "original request");
+        assert_eq!(request[2]["role"], "tool");
+        assert_eq!(
+            request[2]["content"],
+            concat!(
+                "tool result\n\n",
+                "[OUT-OF-BAND USER MESSAGE \u{2014} a direct message from the user, delivered ",
+                "once at this position; not tool output and not a new delivery when replayed ",
+                "from conversation history]\n",
+                "focus on auth\n",
+                "[/OUT-OF-BAND USER MESSAGE]"
+            )
+        );
+        let replacements = model.replacements.lock().unwrap();
+        assert_eq!(replacements.len(), 1);
+        assert_eq!(replacements[0].0["content"], "tool result");
+        assert_eq!(replacements[0].1, request[2]);
+        assert_eq!(registration.control().take_pending_steer(), None);
+    }
+
+    #[test]
+    fn steer_marker_matches_the_source_executed_python_golden() {
+        let golden: Value =
+            serde_json::from_str(include_str!("../../../tools/native-steer-goldens.json")).unwrap();
+        let case = golden["acknowledgement_and_preview_strings"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["case_id"] == "STEER-ACK-13")
+            .unwrap();
+        assert_eq!(
+            format_steer_marker("sample instruction"),
+            case["formatted_sample"].as_str().unwrap()
+        );
+        assert_eq!(STEER_MARKER_OPEN, case["marker_open"].as_str().unwrap());
+        assert_eq!(STEER_MARKER_CLOSE, case["marker_close"].as_str().unwrap());
+    }
+
+    #[test]
+    fn steer_preserves_structured_tool_content_and_restores_on_persistence_failure() {
+        struct AcceptingReplacement;
+        struct FailingReplacement;
+
+        #[async_trait]
+        impl ChatModel for AcceptingReplacement {
+            async fn step(&self, _: &[Value], _: &[Value]) -> Result<Step> {
+                unreachable!("the injection seam does not call the provider")
+            }
+        }
+
+        #[async_trait]
+        impl ChatModel for FailingReplacement {
+            fn replace_tool_loop_message(&self, _: &Value, _: &Value) -> Result<()> {
+                Err(hermes_core::Error::Other("write refused".into()))
+            }
+
+            async fn step(&self, _: &[Value], _: &[Value]) -> Result<Step> {
+                unreachable!("the injection seam does not call the provider")
+            }
+        }
+
+        let structured_controls = crate::turn_control::TurnControlRegistry::default();
+        let structured = structured_controls.register("structured");
+        let mut structured_messages = vec![json!({
+            "role":"tool",
+            "tool_call_id":"call-1",
+            "content":[{"type":"text", "text":"old result"}],
+        })];
+        assert!(matches!(
+            structured_controls.steer("structured", "post batch"),
+            crate::turn_control::SteerOutcome::Queued { .. }
+        ));
+        apply_pending_steer(
+            &AcceptingReplacement,
+            &mut structured_messages,
+            Some(structured.control()),
+            Some("call-1"),
+            true,
+        )
+        .unwrap();
+        assert!(structured_messages[0]["content"][1]["text"]
+            .as_str()
+            .unwrap()
+            .starts_with(STEER_MARKER_OPEN));
+        assert!(matches!(
+            structured_controls.steer("structured", "pre api"),
+            crate::turn_control::SteerOutcome::Queued { .. }
+        ));
+        apply_pending_steer(
+            &AcceptingReplacement,
+            &mut structured_messages,
+            Some(structured.control()),
+            Some("call-1"),
+            false,
+        )
+        .unwrap();
+        assert!(structured_messages[0]["content"][2]["text"]
+            .as_str()
+            .unwrap()
+            .starts_with("\n\n[OUT-OF-BAND USER MESSAGE"));
+
+        let controls = crate::turn_control::TurnControlRegistry::default();
+        let registration = controls.register("route");
+        assert!(matches!(
+            controls.steer("route", "new guidance"),
+            crate::turn_control::SteerOutcome::Queued { .. }
+        ));
+        let original = json!({
+            "role":"tool",
+            "tool_call_id":"call-1",
+            "content":[{"type":"text", "text":"old result"}],
+        });
+        let mut messages = vec![original.clone()];
+        let error = apply_pending_steer(
+            &FailingReplacement,
+            &mut messages,
+            Some(registration.control()),
+            Some("call-1"),
+            true,
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "write refused");
+        assert_eq!(messages, [original]);
+        assert_eq!(
+            registration.control().take_pending_steer().as_deref(),
+            Some("new guidance")
+        );
+    }
+
+    #[tokio::test]
+    async fn steer_arriving_after_the_batch_drain_is_applied_before_the_next_api_call() {
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+
+        struct BoundaryModel {
+            steps: AtomicUsize,
+            replacements: AtomicUsize,
+            controls: crate::turn_control::TurnControlRegistry,
+            second_request: Mutex<Option<Vec<Value>>>,
+        }
+
+        #[async_trait]
+        impl ChatModel for BoundaryModel {
+            fn replace_tool_loop_message(&self, _: &Value, _: &Value) -> Result<()> {
+                if self.replacements.fetch_add(1, Ordering::SeqCst) == 0 {
+                    assert!(matches!(
+                        self.controls.steer("route", "arrived after drain"),
+                        crate::turn_control::SteerOutcome::Queued { .. }
+                    ));
+                }
+                Ok(())
+            }
+
+            async fn step(&self, messages: &[Value], _: &[Value]) -> Result<Step> {
+                if self.steps.fetch_add(1, Ordering::SeqCst) == 0 {
+                    return Ok(tool_step(vec![ToolCall {
+                        id: "call-1".into(),
+                        name: "fixed".into(),
+                        arguments: json!({}),
+                    }]));
+                }
+                *self.second_request.lock().unwrap() = Some(messages.to_vec());
+                Ok(Step::Final("done".into()))
+            }
+        }
+
+        struct FixedTool;
+        #[async_trait]
+        impl Tool for FixedTool {
+            fn spec(&self) -> ToolSpec {
+                ToolSpec {
+                    name: "fixed".into(),
+                    description: "fixed result".into(),
+                    parameters: json!({"type":"object"}),
+                    extra: Default::default(),
+                }
+            }
+
+            async fn call(&self, _: &Value, _: ToolCallContext<'_>) -> Result<Value> {
+                Ok(json!("result"))
+            }
+        }
+
+        let controls = crate::turn_control::TurnControlRegistry::default();
+        let registration = controls.register("route");
+        assert!(matches!(
+            controls.steer("route", "first guidance"),
+            crate::turn_control::SteerOutcome::Queued { .. }
+        ));
+        let model = BoundaryModel {
+            steps: AtomicUsize::new(0),
+            replacements: AtomicUsize::new(0),
+            controls,
+            second_request: Mutex::new(None),
+        };
+        let tools: Vec<Arc<dyn Tool>> = vec![Arc::new(FixedTool)];
+        let (tx, _rx) = mpsc::channel(16);
+        run_tool_loop_with_messages(
+            &model,
+            &tools,
+            &[],
+            &json!("request"),
+            &tx,
+            3,
+            ToolTurnIdentity {
+                principal: Some("user"),
+                route_key: Some("route"),
+                control: Some(registration.control()),
+            },
+        )
+        .await
+        .unwrap();
+
+        let request = model.second_request.lock().unwrap().clone().unwrap();
+        let content = request[2]["content"].as_str().unwrap();
+        assert_eq!(content.matches(STEER_MARKER_OPEN).count(), 2);
+        assert!(content.contains("first guidance"));
+        assert!(content.contains("arrived after drain"));
+        assert_eq!(model.replacements.load(Ordering::SeqCst), 2);
+        assert_eq!(registration.control().take_pending_steer(), None);
     }
 
     #[tokio::test]

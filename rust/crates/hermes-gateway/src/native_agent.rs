@@ -153,6 +153,25 @@ impl ChatModel for TranscriptModel<'_> {
         }
     }
 
+    fn replace_tool_loop_message(&self, before: &Value, after: &Value) -> Result<()> {
+        let Some(database) = self.turn.database else {
+            return Ok(());
+        };
+        let session_id = self.turn.session_id();
+        let amended = database
+            .amend_native_tool_tail(&session_id, before, after, self.turn.turn_lease_holder)
+            .map_err(|error| {
+                Error::Other(format!("native tool transcript amendment failed: {error}"))
+            })?;
+        if amended {
+            Ok(())
+        } else {
+            Err(Error::Other(
+                "native tool transcript amendment rejected a stale or invalid tail".into(),
+            ))
+        }
+    }
+
     fn persist_continuation_messages(&self, messages: &[Value]) -> Result<()> {
         let Some(database) = self.turn.database else {
             return Ok(());

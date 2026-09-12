@@ -61,6 +61,8 @@ fn default_sender() -> String {
 #[derive(Debug, Serialize)]
 pub struct MessageResponse {
     pub reply: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pending_steer: Option<String>,
 }
 
 /// Resolve the effective display config for a platform from the loaded user
@@ -122,11 +124,13 @@ pub async fn post_message(
             } => {
                 return Ok(Json(MessageResponse {
                     reply: crate::tool_approval::confirmation_text(&decision, count),
+                    pending_steer: None,
                 }));
             }
             crate::tool_approval::ResolveOutcome::Unauthorized => {
                 return Ok(Json(MessageResponse {
                     reply: crate::slash::denial_text("approve"),
+                    pending_steer: None,
                 }));
             }
             crate::tool_approval::ResolveOutcome::NoPending
@@ -154,6 +158,7 @@ pub async fn post_message(
         {
             return Ok(Json(MessageResponse {
                 reply: result.reply,
+                pending_steer: None,
             }));
         }
     }
@@ -164,11 +169,15 @@ pub async fn post_message(
         crate::slash::SlashDecision::Denied { command } => {
             return Ok(Json(MessageResponse {
                 reply: crate::slash::denial_text(&command),
+                pending_steer: None,
             }));
         }
         crate::slash::SlashDecision::Allowed { command } => {
             if let Some(reply) = crate::slash::handle_builtin(&command, &msg, &state.user_config) {
-                return Ok(Json(MessageResponse { reply }));
+                return Ok(Json(MessageResponse {
+                    reply,
+                    pending_steer: None,
+                }));
             }
             native_command = crate::slash::native_command(&command, &msg.text);
         }
@@ -189,13 +198,54 @@ pub async fn post_message(
         };
         return Ok(Json(MessageResponse {
             reply: reply.into(),
+            pending_steer: None,
         }));
+    }
+
+    if let Some(crate::slash::NativeSlashCommand::Steer { text }) = native_command.clone() {
+        let control_key = state.session_store.as_ref().map_or_else(
+            || crate::session_db::message_session_id(&msg),
+            |(store, _)| store.session_key_for_source(&crate::session::source_from_message(&msg)),
+        );
+        match state.turn_controls.steer(&control_key, &text) {
+            crate::turn_control::SteerOutcome::Queued { preview } => {
+                return Ok(Json(MessageResponse {
+                    reply: format!(
+                        "⏩ Steer queued \u{2014} arrives after the next tool call: '{preview}'"
+                    ),
+                    pending_steer: None,
+                }));
+            }
+            crate::turn_control::SteerOutcome::Empty => {
+                return Ok(Json(MessageResponse {
+                    reply: "Usage: /steer <prompt>".into(),
+                    pending_steer: None,
+                }));
+            }
+            crate::turn_control::SteerOutcome::Idle if text.is_empty() => {
+                return Ok(Json(MessageResponse {
+                    reply:
+                        "Usage: /steer <prompt>  (no agent is running; sending as a normal message)"
+                            .into(),
+                    pending_steer: None,
+                }));
+            }
+            crate::turn_control::SteerOutcome::Idle => {
+                msg.text = text;
+                msg.content_parts = None;
+                msg.audio_paths.clear();
+                msg.video_paths.clear();
+                msg.message_id = None;
+                native_command = None;
+            }
+        }
     }
 
     if let Some(crate::slash::NativeSlashCommand::Title { raw_title }) = native_command.clone() {
         let Some((store, freshness)) = &state.session_store else {
             return Ok(Json(MessageResponse {
                 reply: "Session database not available.".into(),
+                pending_steer: None,
             }));
         };
         let result =
@@ -221,6 +271,7 @@ pub async fn post_message(
             })?;
         return Ok(Json(MessageResponse {
             reply: result.reply,
+            pending_steer: None,
         }));
     }
 
@@ -232,6 +283,7 @@ pub async fn post_message(
         let Some((store, _)) = &state.session_store else {
             return Ok(Json(MessageResponse {
                 reply: "Session database not available.".into(),
+                pending_steer: None,
             }));
         };
         let result =
@@ -261,6 +313,7 @@ pub async fn post_message(
             })?;
         return Ok(Json(MessageResponse {
             reply: result.reply,
+            pending_steer: None,
         }));
     }
 
@@ -268,6 +321,7 @@ pub async fn post_message(
         let Some((store, freshness)) = &state.session_store else {
             return Ok(Json(MessageResponse {
                 reply: "Session database not available.".into(),
+                pending_steer: None,
             }));
         };
         let result =
@@ -301,6 +355,7 @@ pub async fn post_message(
             })?;
         return Ok(Json(MessageResponse {
             reply: result.reply,
+            pending_steer: None,
         }));
     }
 
@@ -308,6 +363,7 @@ pub async fn post_message(
         let Some((store, _)) = &state.session_store else {
             return Ok(Json(MessageResponse {
                 reply: "Session reset is not available on this backend.".into(),
+                pending_steer: None,
             }));
         };
         let result = crate::session_commands::reset_or_confirm(
@@ -337,6 +393,7 @@ pub async fn post_message(
         })?;
         return Ok(Json(MessageResponse {
             reply: result.reply,
+            pending_steer: None,
         }));
     }
 
@@ -516,7 +573,9 @@ pub async fn post_message(
         // the silence gate. The producer may still be finishing after its
         // terminal stream event, so keep ownership until it has stopped.
         let outcome = turn.await;
-        let interrupted = turn_control.finish();
+        let completion = turn_control.finish();
+        let interrupted = completion.interrupted;
+        let pending_steer = completion.pending_steer;
         let succeeded = !interrupted && matches!(&outcome, Ok(Ok(())));
         if let Some(turn_session) = &turn_session {
             msg.resolved_session_id = Some(turn_session.session_id());
@@ -557,11 +616,15 @@ pub async fn post_message(
         if interrupted {
             return Ok(Json(MessageResponse {
                 reply: String::new(),
+                pending_steer: None,
             }));
         }
 
         match outcome {
-            Ok(Ok(())) => Ok(Json(MessageResponse { reply })),
+            Ok(Ok(())) => Ok(Json(MessageResponse {
+                reply,
+                pending_steer,
+            })),
             Ok(Err(err)) => {
                 warn!(%err, "agent turn failed");
                 Err((
@@ -1104,6 +1167,255 @@ mod tests {
         .await
         .unwrap();
         assert_eq!(idle.0.reply, "No active task to stop.");
+    }
+
+    #[tokio::test]
+    async fn http_steer_queues_without_interrupting_and_surfaces_leftover_guidance() {
+        struct SteerableAgent {
+            calls: std::sync::atomic::AtomicUsize,
+            entered: mpsc::Sender<()>,
+            finish: tokio::sync::Notify,
+            messages: Mutex<Vec<String>>,
+        }
+
+        #[async_trait::async_trait]
+        impl crate::agent::AgentClient for SteerableAgent {
+            async fn run_turn(
+                &self,
+                message: &Message,
+                _: &[crate::session_db::HistoryMessage],
+                events: mpsc::Sender<StreamEvent>,
+            ) -> hermes_core::Result<()> {
+                self.messages.lock().unwrap().push(message.text.clone());
+                if self.calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst) == 0 {
+                    self.entered.send(()).await.unwrap();
+                    self.finish.notified().await;
+                }
+                events
+                    .send(StreamEvent::MessageChunk {
+                        text: format!("answer: {}", message.text),
+                    })
+                    .await
+                    .unwrap();
+                events
+                    .send(StreamEvent::MessageStop { final_: true })
+                    .await
+                    .unwrap();
+                Ok(())
+            }
+        }
+
+        let (entered, mut arrivals) = mpsc::channel(1);
+        let agent = Arc::new(SteerableAgent {
+            calls: std::sync::atomic::AtomicUsize::new(0),
+            entered,
+            finish: tokio::sync::Notify::new(),
+            messages: Mutex::new(Vec::new()),
+        });
+        let state = AppState::new(agent.clone(), Arc::new(json!({})), None, None);
+        let active_turn = tokio::spawn(post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "steerable".into(),
+                sender_id: "local".into(),
+                text: "initial question".into(),
+                content_parts: None,
+            }),
+        ));
+        tokio::time::timeout(std::time::Duration::from_secs(2), arrivals.recv())
+            .await
+            .expect("active turn did not enter")
+            .expect("active turn signal closed");
+
+        let empty = post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "steerable".into(),
+                sender_id: "local".into(),
+                text: "/steer   ".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(empty.0.reply, "Usage: /steer <prompt>");
+
+        let queued = post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "steerable".into(),
+                sender_id: "local".into(),
+                text: "/steer  inspect the auth state  ".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(
+            queued.0.reply,
+            "⏩ Steer queued \u{2014} arrives after the next tool call: 'inspect the auth state'"
+        );
+        assert_eq!(queued.0.pending_steer, None);
+
+        agent.finish.notify_one();
+        let completed = tokio::time::timeout(std::time::Duration::from_secs(2), active_turn)
+            .await
+            .expect("active turn did not finish")
+            .unwrap()
+            .unwrap();
+        assert_eq!(completed.0.reply, "answer: initial question");
+        assert_eq!(
+            completed.0.pending_steer.as_deref(),
+            Some("inspect the auth state")
+        );
+
+        let direct = post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "steerable".into(),
+                sender_id: "local".into(),
+                text: "/steer  direct follow-up  ".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(direct.0.reply, "answer: direct follow-up");
+        assert_eq!(
+            agent.messages.lock().unwrap().as_slice(),
+            ["initial question", "direct follow-up"]
+        );
+
+        let idle_empty = post_message(
+            State(state),
+            Json(MessageRequest {
+                channel_id: "steerable".into(),
+                sender_id: "local".into(),
+                text: "/steer".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(
+            idle_empty.0.reply,
+            "Usage: /steer <prompt>  (no agent is running; sending as a normal message)"
+        );
+        assert!(serde_json::to_value(&idle_empty.0)
+            .unwrap()
+            .get("pending_steer")
+            .is_none());
+    }
+
+    #[tokio::test]
+    async fn native_http_steer_is_durable_before_the_followup_model_request() {
+        struct BlockingEcho {
+            entered: mpsc::Sender<()>,
+            release: tokio::sync::Notify,
+        }
+
+        #[async_trait::async_trait]
+        impl Tool for BlockingEcho {
+            fn spec(&self) -> ToolSpec {
+                ToolSpec {
+                    name: "echo".into(),
+                    description: "blocking test tool".into(),
+                    parameters: json!({"type":"object"}),
+                    extra: Default::default(),
+                }
+            }
+
+            async fn call(
+                &self,
+                _: &Value,
+                _: crate::native_tools::ToolCallContext<'_>,
+            ) -> hermes_core::Result<Value> {
+                self.entered.send(()).await.unwrap();
+                self.release.notified().await;
+                Ok(json!("durable tool result"))
+            }
+        }
+
+        let home = TempHome::new();
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        let (model_url, _model_server) = serve(
+            axum::Router::new()
+                .route("/chat/completions", post(model))
+                .with_state(calls.clone()),
+        )
+        .await;
+        let (entered, mut arrivals) = mpsc::channel(1);
+        let tool = Arc::new(BlockingEcho {
+            entered,
+            release: tokio::sync::Notify::new(),
+        });
+        let agent = NativeAgentClient::new("fixture-model", "fixture-key", model_url)
+            .unwrap()
+            .with_tools(vec![tool.clone()]);
+        let db = Arc::new(crate::session_db::SessionDb::open(home.0.join("state.db")).unwrap());
+        let state = AppState::new(Arc::new(agent), Arc::new(json!({})), None, Some(db.clone()));
+        let active_turn = tokio::spawn(post_message(
+            State(state.clone()),
+            Json(MessageRequest {
+                channel_id: "native-steer".into(),
+                sender_id: "local".into(),
+                text: "use the tool".into(),
+                content_parts: None,
+            }),
+        ));
+        tokio::time::timeout(std::time::Duration::from_secs(5), arrivals.recv())
+            .await
+            .expect("tool did not start")
+            .expect("tool start signal closed");
+
+        let queued = post_message(
+            State(state),
+            Json(MessageRequest {
+                channel_id: "native-steer".into(),
+                sender_id: "local".into(),
+                text: "/steer verify persistence".into(),
+                content_parts: None,
+            }),
+        )
+        .await
+        .unwrap();
+        assert_eq!(
+            queued.0.reply,
+            "⏩ Steer queued \u{2014} arrives after the next tool call: 'verify persistence'"
+        );
+        tool.release.notify_one();
+        let completed = tokio::time::timeout(std::time::Duration::from_secs(5), active_turn)
+            .await
+            .expect("native turn did not finish")
+            .unwrap()
+            .unwrap();
+        assert_eq!(completed.0.reply, "seen");
+        assert_eq!(completed.0.pending_steer, None);
+
+        let requests = calls.lock().unwrap();
+        assert_eq!(requests.len(), 2);
+        let tool_content = requests[1]["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|message| message["role"] == "tool")
+            .unwrap()["content"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        assert_eq!(tool_content.matches("[OUT-OF-BAND USER MESSAGE").count(), 1);
+        assert!(tool_content.contains("verify persistence"));
+        drop(requests);
+
+        let connection = rusqlite::Connection::open(home.0.join("state.db")).unwrap();
+        let durable_content: String = connection
+            .query_row(
+                "SELECT content FROM messages WHERE session_id = ? AND role = 'tool' ORDER BY id DESC LIMIT 1",
+                ["cli:native-steer"],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(durable_content, tool_content);
     }
 
     #[tokio::test]
